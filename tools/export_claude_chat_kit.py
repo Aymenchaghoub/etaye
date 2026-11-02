@@ -67,7 +67,7 @@ def build_payload():
             raise ValueError("Source must be a repository file: " + name)
         content = path.read_bytes()
         reject_secrets(name, content)
-        source_hashes[name] = hashlib.sha256(content).hexdigest()
+        source_hashes[name] = {"sha256": hashlib.sha256(content).hexdigest()}
         return content
 
     preamble = (

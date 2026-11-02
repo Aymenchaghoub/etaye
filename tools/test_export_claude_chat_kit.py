@@ -38,8 +38,8 @@ class ResumeKitTests(unittest.TestCase):
         numbered = [n for n in manifest["files"] if n.startswith("attachments/")]
         self.assertEqual({n.split("/")[1][:2] for n in numbered},
                          {f"{i:02d}" for i in range(9)})
-        for name, digest in manifest["sourceSha256"].items():
-            self.assertEqual(hashlib.sha256((exporter.ROOT / name).read_bytes()).hexdigest(), digest)
+        for name, details in manifest["sourceSha256"].items():
+            self.assertEqual(hashlib.sha256((exporter.ROOT / name).read_bytes()).hexdigest(), details["sha256"])
         with zipfile.ZipFile(second / exporter.ARCHIVE) as archive:
             self.assertNotIn(user_file.read_text().encode(), [archive.read(n) for n in archive.namelist()])
             self.assertEqual(json.loads(archive.read("manifest.json")), manifest)
