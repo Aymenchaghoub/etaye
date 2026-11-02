@@ -6,7 +6,7 @@ import hashlib
 import json
 import re
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import unquote
 
@@ -232,7 +232,7 @@ for path in list((ROOT / "docs").rglob("*")) + list((ROOT / "tools").glob("*.py"
         scanned += 1
         require(not secret.search(path.read_text()), "Potential credential found in: " + str(path.relative_to(ROOT)))
 checks["projectFilesSecretScanned"] = scanned
-result = {"kind": "documentary-validation-only", "date": "2026-11-02", "ok": not errors,
+result = {"kind": "documentary-validation-only", "date": datetime.now(timezone.utc).date().isoformat(), "ok": not errors,
           "checks": checks, "errors": errors, "applicationTestsExecuted": False,
           "independentReview": "Authoring subagents stopped at usage limit; final checks performed by coordinator"}
 report_path.parent.mkdir(parents=True, exist_ok=True)

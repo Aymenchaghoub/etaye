@@ -15,6 +15,7 @@ assert workflow["permissions"] == {"contents": "read"}
 jobs = workflow["jobs"]
 assert set(jobs) == {"documentation"}
 job = jobs["documentation"]
+assert "continue-on-error" not in job
 assert int(job["timeout-minutes"]) <= 10
 steps = job["steps"]
 for step in steps:
@@ -31,9 +32,11 @@ assert "pull_request_target" not in workflow["on"]
 codeql = yaml.load((root / ".github/workflows/codeql.yml").read_text(), Loader=yaml.BaseLoader)
 assert codeql["permissions"] == {"contents": "read"}
 assert codeql["jobs"]["analyze"]["permissions"] == {"contents": "read", "security-events": "write"}
+assert "continue-on-error" not in codeql["jobs"]["analyze"]
 for step in codeql["jobs"]["analyze"]["steps"]:
     if "uses" in step:
         assert re.fullmatch(r"[A-Za-z0-9_./-]+@[a-f0-9]{40}", step["uses"])
+    assert "continue-on-error" not in step, "Required checks must not suppress failure"
 config = yaml.load((root / ".github/codeql-config.yml").read_text(), Loader=yaml.BaseLoader)
 assert config["paths"] == ["tools"], "Current CodeQL scope is first-party planning tooling"
 rabbit = yaml.safe_load((root / ".coderabbit.yaml").read_text())

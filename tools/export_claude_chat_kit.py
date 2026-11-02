@@ -4,6 +4,7 @@ from pathlib import Path
 import argparse
 import hashlib
 import json
+from datetime import datetime, timezone
 
 ROOT = Path(__file__).resolve().parents[1]
 GROUPS = {
@@ -45,7 +46,7 @@ def main():
     if OUT.is_relative_to(ROOT):
         parser.error("Use a folder outside the repository to avoid duplicate sources of truth")
     OUT.mkdir(parents=True, exist_ok=True)
-    manifest = {"generated": "2026-11-02", "purpose": "Derived chat attachments; repository sources remain authoritative", "files": {}}
+    manifest = {"generated": datetime.now(timezone.utc).date().isoformat(), "purpose": "Derived chat attachments; repository sources remain authoritative", "files": {}}
     for name, sources in GROUPS.items():
         chunks = ["# Étaye — Claude chat attachment\n\nGenerated distribution copy. Original repository files named below remain authoritative. These attachments include the named product/design sources, not every internally linked file. No source path grants access to the user's computer. See 00 for bundled versus unbundled context; ask Aymen for missing required content instead of guessing. No application implementation is authorized.\n"]
         for source in sources:
