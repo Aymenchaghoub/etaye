@@ -43,3 +43,6 @@ reviews:
     autofix:
       enabled: false
   post_merge_actions: []
+  pre_merge_checks:
+    docstrings:
+      mode: off
