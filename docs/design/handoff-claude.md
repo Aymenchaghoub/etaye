@@ -6,6 +6,8 @@ Status: Planning package ready for complete design work. Application development
 
 Complete and review every required Figma screen, state, interaction, modal/drawer, PDF and transactional email from this repository. Do not develop the application, scaffold Spring/React, create migrations, activate application CI/CD or deploy. Sequence: documentation → complete design/review → Aymen's explicit development authorization → implementation. Completing design does not itself authorize development.
 
+For a chat without local repository access, use the generated attachment kit: it bundles the named product/design documents, not every reference below. The exporter lists unbundled policies, technical contracts, stories and review context explicitly. Read required public repository files or request them from Aymen when a design decision depends on them; never assume a filesystem path gives chat access.
+
 ## Reading order
 
 1. Root AGENTS.md and CLAUDE.md; docs/continuation.md and docs/README.md.
@@ -19,7 +21,7 @@ Complete and review every required Figma screen, state, interaction, modal/drawe
 
 Evidence-supported consultation preparation for multi-practitioner isolated practices. A physician reviews/corrects exact versions; VALIDATED never means automatically PUBLISHED. Missing is never normal. Clinician brief and patient explanation are distinct audiences. Administration has no implied clinical access. Synthetic people/data only, no clinical or compliance claims. Required stack for eventual implementation is Spring Boot, React TypeScript and PostgreSQL; no code now.
 
-A-01–A-12 in the decision register remain working assumptions/proposals, including multiple memberships, shared-practice practitioner access, record-local portal linking, adults-only demo, self-validation and appointment policy defaults. Design these baselines explicitly; surface any structural change to Aymen and update rules/data/contracts/stories together. English-facing demo and follow-up PDF remain deferred decisions, not a translation or extra-screen project.
+A-01–A-12 in the decision register remain working assumptions/proposals, including multiple memberships, shared-practice practitioner access, record-local portal linking, adults-only demo, self-validation and appointment policy defaults. Design these baselines explicitly; surface any structural change to Aymen and update rules/data/contracts/stories together. PD-001 proposes a separate demographic-registration grant for schedulers without clinical access; include S-07/S-08/I-04/I-10 restricted variants in design review. English-facing demo and follow-up PDF remain deferred decisions, not a translation or extra-screen project.
 
 ## Existing Figma and assets
 

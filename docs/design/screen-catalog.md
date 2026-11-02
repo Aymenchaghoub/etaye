@@ -173,12 +173,12 @@ Every row inherits these checks; the local acceptance criterion adds the product
 
 | Field | Specification |
 |---|---|
-| Goal / actor | Patient directory and search for clinical practitioner |
+| Goal / actor | Patient directory and search for practitioner; restricted scheduling lookup for SCHEDULE_MANAGE |
 | Traceability | FR-004, FR-005; BR-001, BR-002, BR-004; J-02 |
-| Entry / exit | Shell / S-06 → S-09 or S-08 |
+| Entry / exit | Shell / S-06 → S-09 or S-08; I-10 staff lookup → selected patient or S-08 restricted registration → return to I-10 |
 | Content / example | Name, birth date, practice-local identifier, portal-link status; query and applied filters |
 | Actions / validation | Search, paginate, clear filters, create patient; preserve filters on back; bounded result counts |
-| Permission / visibility | Current practice clinical read; no cross-practice autocomplete or existence leak |
+| Permission / visibility | CLINICAL_READ for clinical directory; SCHEDULE_MANAGE uses only SchedulingPatient identity/contact projection. No cross-practice autocomplete, clinical columns or record links in scheduling mode |
 | Necessary states | Initial, loading, no patients, no results, partial error, long names, stale results; shared SP-STATE/SP-SAVE where applicable |
 | Responsive | SP-RESPONSIVE; preserve identity, dates, source readability and action order |
 | Reused components | Search; filter; paginated table; empty state; visual/behavioral specification in the UX spines |
@@ -191,12 +191,12 @@ Every row inherits these checks; the local acceptance criterion adds the product
 
 | Field | Specification |
 |---|---|
-| Goal / actor | Patient identity creation and editing for clinical practitioner with record-write capability |
+| Goal / actor | Patient identity creation and editing for clinical practitioner; restricted create-only variant for scheduler with PATIENT_REGISTER (PD-001) |
 | Traceability | FR-004; BR-002, BR-004, BR-015; J-02 |
-| Entry / exit | S-07 new / S-09 identity edit → S-09 |
+| Entry / exit | S-07 new / S-09 identity edit → S-09 for clinician; I-10 / S-07 scheduling variant → new minimal identity → I-10, never S-09 |
 | Content / example | Identity fields, date of birth, contact information and provenance; local possible-duplicate warning |
-| Actions / validation | Validate required identity/date fields; no global automatic merge; save expected version; portal linking is I-03 |
-| Permission / visibility | Clinical write in current practice; admin-only cannot open clinical identity form by role inheritance |
+| Actions / validation | Validate required identity/date fields; no global automatic merge; save expected version for clinical edits; portal linking is a separate clinical-team-issued invitation and recipient activation, never a registration side effect |
+| Permission / visibility | CLINICAL_WRITE for clinical create/edit; both SCHEDULE_MANAGE and PATIENT_REGISTER for demographic-only creation. No scheduler correction, clinical data or portal linking. Admin role alone grants neither path |
 | Necessary states | New, edit, validation error, possible duplicate, version conflict, saving, unsaved changes; shared SP-STATE/SP-SAVE where applicable |
 | Responsive | SP-RESPONSIVE; preserve identity, dates, source readability and action order |
 | Reused components | Form; date input; duplicate notice; conflict panel; visual/behavioral specification in the UX spines |
@@ -247,7 +247,7 @@ Every row inherits these checks; the local acceptance criterion adds the product
 |---|---|
 | Goal / actor | Vital signs, measurements and trends for clinical practitioner |
 | Traceability | FR-006; BR-008, BR-009, BR-015; J-02 |
-| Entry / exit | S-09 → I-08 entry/correction or source |
+| Entry / exit | S-09 → I-06 entry/correction or source |
 | Content / example | 128/80 then 134/82 mmHg; corrected weight 68,4 kg; date, unit, measurement origin |
 | Actions / validation | Add/correct measurement; select period; inspect points; show historical value/version; no derived global risk |
 | Permission / visibility | Current practice clinical read/write; patient does not see unpublished measurements by default |
@@ -265,7 +265,7 @@ Every row inherits these checks; the local acceptance criterion adds the product
 |---|---|
 | Goal / actor | Laboratory results and reference intervals for clinical practitioner |
 | Traceability | FR-007; BR-008, BR-009; J-02 |
-| Entry / exit | S-09 → I-09 or S-13 source |
+| Entry / exit | S-09 → I-07 entry/correction or I-09 / S-13 source |
 | Content / example | Creatinine 96 then 104 µmol/L with sample dates and lab-provided intervals; glucose 5,2 mmol/L |
 | Actions / validation | Manual entry/correction; filter analyte/period; inspect source page; no extraction button in initial scope |
 | Permission / visibility | Practice clinical read/write; uploaded document has its own access check |
@@ -283,9 +283,9 @@ Every row inherits these checks; the local acceptance criterion adds the product
 |---|---|
 | Goal / actor | Record documents and clinician source viewer for clinical practitioner |
 | Traceability | FR-008, FR-011; BR-010, BR-011; J-02 |
-| Entry / exit | S-09 / I-11 citation → document list / page anchor / return to statement |
+| Entry / exit | S-09 / I-09 citation → document list / page anchor / return to statement |
 | Content / example | Bilan fictif du 12 octobre 2026, upload metadata, source date, page location, title and version |
-| Actions / validation | Upload via I-10; preview authorized file; open cited page; download; metadata correction with history |
+| Actions / validation | Upload via I-08; preview authorized file; open cited page; download; metadata correction with history |
 | Permission / visibility | Each document and citation checked against active practice and record; no public storage URLs |
 | Necessary states | Upload pending, scanning, ready, rejected, unsupported preview, missing page, expired access, long filename; shared SP-STATE/SP-SAVE where applicable |
 | Responsive | SP-RESPONSIVE; preserve identity, dates, source readability and action order |
@@ -299,12 +299,12 @@ Every row inherits these checks; the local acceptance criterion adds the product
 
 | Field | Specification |
 |---|---|
-| Goal / actor | Practice schedule for clinical practitioner |
+| Goal / actor | Practice schedule for practitioner or explicitly assigned scheduler |
 | Traceability | FR-009; BR-006, BR-007; J-03 |
-| Entry / exit | Shell / S-06 → S-16 / I-04 / I-05 |
+| Entry / exit | Shell / S-06 → S-16 / I-10 / I-11 |
 | Content / example | Day/week agenda, practitioner availability, appointment status, local timezone |
-| Actions / validation | Book, move, open visit; drag optional with I-05 confirmation and keyboard equivalent; navigate dates |
-| Permission / visibility | Authorized practice clinical appointment view; own patient portal uses S-26 |
+| Actions / validation | Book, move, open visit; drag optional with I-11 confirmation and keyboard equivalent; navigate dates |
+| Permission / visibility | SCHEDULE_MANAGE for agenda and minimal identity/contact, without clinical notes or source/preparation content for nonclinical staff; clinical links additionally require CLINICAL_READ. Own patient portal uses S-26 |
 | Necessary states | Empty day, overlap rejected, concurrent booking, cancellation, no-show, service failure, date DST ambiguity; shared SP-STATE/SP-SAVE where applicable |
 | Responsive | SP-RESPONSIVE; preserve identity, dates, source readability and action order |
 | Reused components | Schedule grid; agenda list; appointment row; date navigation; visual/behavioral specification in the UX spines |
@@ -335,12 +335,12 @@ Every row inherits these checks; the local acceptance criterion adds the product
 
 | Field | Specification |
 |---|---|
-| Goal / actor | Appointment details for practitioner; patient in own variant |
+| Goal / actor | Appointment details for practitioner, restricted scheduler, or patient in own variant |
 | Traceability | FR-009, FR-010; BR-006, BR-007; J-03 |
 | Entry / exit | S-14 / S-26 → record, preparation, consultation or back |
 | Content / example | APT-A-001, Claire, Dr Lefebvre, 3 November 10:30–11:00; reason and status |
-| Actions / validation | Reschedule I-05; cancel I-06; check in/complete/no-show I-07 where authorized; start consultation independently |
-| Permission / visibility | Clinical view in practice; patient sees only own visit and permitted reason/preparation; no other slots’ identities |
+| Actions / validation | Reschedule I-11; cancel I-12; check in/complete/no-show I-13 where authorized; start consultation independently |
+| Permission / visibility | SCHEDULE_MANAGE for staff appointment metadata and attendance; clinical/preparation/record links require CLINICAL_READ. Patient sees only own visit and permitted reason/preparation; no other slots’ identities |
 | Necessary states | BOOKED, CHECKED_IN, COMPLETED, CANCELLED, NO_SHOW; edited elsewhere; session expired; shared SP-STATE/SP-SAVE where applicable |
 | Responsive | SP-RESPONSIVE; preserve identity, dates, source readability and action order |
 | Reused components | Appointment detail; status; action group; visual/behavioral specification in the UX spines |
@@ -375,7 +375,7 @@ Every row inherits these checks; the local acceptance criterion adds the product
 | Traceability | FR-011, FR-013, FR-014; BR-011, BR-012, BR-014; J-02 |
 | Entry / exit | S-06 / S-09 / S-17 → source, review, consultation or clinician PDF |
 | Content / example | BRIEF-A-001-v1; changes since last consultation; missing data; conflicting allergy sources; evidence list |
-| Actions / validation | Generate I-12; open citation I-11; correct I-14; submit/review; export P-01; never directly publish |
+| Actions / validation | Generate I-14; open citation I-09; correct I-15; submit/review; export P-01; never directly publish |
 | Permission / visibility | Clinician-only even if VALIDATED; publication action absent for this document kind |
 | Necessary states | No prior visit, insufficient sources, QUEUED/RUNNING task, DRAFT/IN_REVIEW/VALIDATED business state, STALE, failed task; shared SP-STATE/SP-SAVE where applicable |
 | Responsive | SP-RESPONSIVE; preserve identity, dates, source readability and action order |
@@ -411,7 +411,7 @@ Every row inherits these checks; the local acceptance criterion adds the product
 | Traceability | FR-012, FR-013; BR-008, BR-011, BR-015; J-04 |
 | Entry / exit | S-19 / S-21 → review, version history or save |
 | Content / example | Structured narrative, source-backed statements, author edits, unsupported-text flags, changed segments |
-| Actions / validation | Edit I-14; save expected version; compare original generation; add/remove reference with support review; no silent auto-save success |
+| Actions / validation | Edit I-15; save expected version; compare original generation; add/remove reference with support review; no silent auto-save success |
 | Permission / visibility | Clinical edit permission for DRAFT only; VALIDATED opens a new version instead |
 | Necessary states | DRAFT, dirty, saving, failed, saved, source removed, unsupported citation, conflict, read-only; shared SP-STATE/SP-SAVE where applicable |
 | Responsive | SP-RESPONSIVE; preserve identity, dates, source readability and action order |
@@ -465,8 +465,8 @@ Every row inherits these checks; the local acceptance criterion adds the product
 | Traceability | FR-014, FR-015; BR-012, BR-013; J-04, J-05 |
 | Entry / exit | S-20 / S-21 → VALIDATED document, then separate I-17 publication |
 | Content / example | Content version, unresolved issues, evidence inspected, validator identity; publication audience preview separately |
-| Actions / validation | Submit I-15; validate I-16; return for edits; then publish patient-eligible kind I-17 with audience/attachments |
-| Permission / visibility | VALIDATE and PUBLISH evaluated separately; clinician brief prohibited; stale or unresolved content blocked as specified |
+| Actions / validation | Submit for review; validate I-16; return for edits; then publish patient-eligible kind I-17 with audience/attachments |
+| Permission / visibility | CLINICAL_VALIDATE and PATIENT_PUBLISH evaluated separately; clinician brief may be validated internally but publication is prohibited; stale or unresolved content blocked as specified |
 | Necessary states | Missing source, unresolved contradiction, stale inputs, changed draft, publication forbidden, publish failure; shared SP-STATE/SP-SAVE where applicable |
 | Responsive | SP-RESPONSIVE; preserve identity, dates, source readability and action order |
 | Reused components | Review checklist; document preview; audience summary; status; visual/behavioral specification in the UX spines |
@@ -519,7 +519,7 @@ Every row inherits these checks; the local acceptance criterion adds the product
 | Traceability | FR-009, FR-016; BR-004, BR-006; J-06 |
 | Entry / exit | S-25 → available slots, S-16 own variant or preparation |
 | Content / example | Own upcoming/past appointments; anonymized bookable slots; dates/timezone and practitioner |
-| Actions / validation | Book I-04; reschedule I-05; cancel I-06 under policy; view no-show fact without editing attendance |
+| Actions / validation | Book I-10; reschedule I-11; cancel I-12 under policy; view no-show fact without editing attendance |
 | Permission / visibility | Own record only; slots show availability, never another patient’s identity or reason |
 | Necessary states | No slots, conflict on submit, BOOKED/CANCELLED/COMPLETED/NO_SHOW, unavailable service; shared SP-STATE/SP-SAVE where applicable |
 | Responsive | SP-RESPONSIVE; preserve identity, dates, source readability and action order |
@@ -610,7 +610,7 @@ Every row inherits these checks; the local acceptance criterion adds the product
 | Entry / exit | Admin landing / shell → I-01, S-32 or audit |
 | Content / example | Members, capabilities, active state and invitation expiry; no clinical snippets |
 | Actions / validation | Invite I-01; revoke pending invite; resend; inspect member; paginate |
-| Permission / visibility | TEAM_ADMIN in selected practice; no inferred clinical access |
+| Permission / visibility | TEAM_MANAGE in selected practice; no inferred clinical access |
 | Necessary states | Empty team, pending/expired/revoked invitation, suspended member, last-admin guard, request failure; shared SP-STATE/SP-SAVE where applicable |
 | Responsive | SP-RESPONSIVE; preserve identity, dates, source readability and action order |
 | Reused components | Team table; capability tags; invitation status; empty state; visual/behavioral specification in the UX spines |
@@ -628,7 +628,7 @@ Every row inherits these checks; the local acceptance criterion adds the product
 | Entry / exit | S-31 member → updated membership or deactivation I-02 |
 | Content / example | Account, practice-specific capabilities, active status, dependencies and last-admin warning |
 | Actions / validation | Change explicit capability set; deactivate with reason; protect last administrator; no global account suspension from practice-only action |
-| Permission / visibility | TEAM_ADMIN scoped to practice; own permissions changes guarded; global account state separate |
+| Permission / visibility | TEAM_MANAGE scoped to practice; own permissions changes guarded; global account state separate |
 | Necessary states | Read-only self view, concurrent permission edit, deactivation, pending invitation, dependencies; shared SP-STATE/SP-SAVE where applicable |
 | Responsive | SP-RESPONSIVE; preserve identity, dates, source readability and action order |
 | Reused components | Permission form; impact panel; conflict panel; visual/behavioral specification in the UX spines |
@@ -646,7 +646,7 @@ Every row inherits these checks; the local acceptance criterion adds the product
 | Entry / exit | Admin shell → practice settings / S-15 availability |
 | Content / example | Practice name/contact, timezone, booking policy, patient portal contact text, logo usage reference |
 | Actions / validation | Edit permitted settings with version; preview timezone impact; clinical defaults cannot invent medical rules |
-| Permission / visibility | PRACTICE_ADMIN; no unrestricted clinical access; clinically meaningful changes require separate authorized capability |
+| Permission / visibility | PRACTICE_SETTINGS; no unrestricted clinical access; clinically meaningful changes require separate authorized capability |
 | Necessary states | Initial, unsaved, validation error, saved, concurrent edit, timezone impact; shared SP-STATE/SP-SAVE where applicable |
 | Responsive | SP-RESPONSIVE; preserve identity, dates, source readability and action order |
 | Reused components | Settings form; impact panel; save indicator; visual/behavioral specification in the UX spines |
@@ -664,7 +664,7 @@ Every row inherits these checks; the local acceptance criterion adds the product
 | Entry / exit | Record / admin audit → filtered event detail |
 | Content / example | Actor, time, action, resource identifier, outcome, correlation ID; clinical detail only with clinical audit authority |
 | Actions / validation | Filter date/type/actor; paginate; inspect correction/publication sequence; no edit/delete |
-| Permission / visibility | ADMIN_AUDIT_READ sees membership/configuration metadata; clinical events require CLINICAL_AUDIT_READ or equivalent capability |
+| Permission / visibility | ADMIN_AUDIT sees membership/configuration metadata; clinical events require CLINICAL_AUDIT or equivalent capability |
 | Necessary states | No events, long history, restricted fields, export unavailable, partial service error; shared SP-STATE/SP-SAVE where applicable |
 | Responsive | SP-RESPONSIVE; preserve identity, dates, source readability and action order |
 | Reused components | Audit table; event detail; filter; restricted field; visual/behavioral specification in the UX spines |

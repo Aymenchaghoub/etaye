@@ -9,8 +9,8 @@ status: draft
 created: 2026-11-02
 updated: 2026-11-02
 binds: [FR-001, FR-002, FR-003, FR-004, FR-005, FR-006, FR-007, FR-008, FR-009, FR-010, FR-011, FR-012, FR-013, FR-014, FR-015, FR-016, FR-017, FR-018, FR-019, FR-020]
-sources: [../integration-map.md]
-companions: [../../decisions/README.md, ../data-model.md, ../data-dictionary.md, ../../contracts/openapi.yaml, ../ai-specification.md, ../security-privacy.md, ../non-functional-requirements.md, ../../operations/delivery-strategy.md, ../../operations/hosting-cost-assessment.md, ../../test-artifacts/test-strategy.md]
+sources: [../prd/prd.md, ../business-rules.md, ../../references/source-register.md]
+companions: [../../decisions/README.md, ../data-model.md, ../data-dictionary.md, ../../contracts/openapi.yaml, ../ai-specification.md, ../security-privacy.md, ../non-functional-requirements.md, ../../operations/cicd-deployment-strategy.md, ../../operations/hosting-cost-assessment.md, ../../test-artifacts/test-strategy.md]
 ---
 
 # Architecture Spine — Étaye

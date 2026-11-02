@@ -8246,6 +8246,172 @@
           }
         }
       }
+    },
+    "/practices/{practiceId}/scheduling/patients": {
+      "get": {
+        "operationId": "searchSchedulingPatients",
+        "summary": "Search the minimal scheduling patient directory",
+        "description": "Requires SCHEDULE_MANAGE in the selected practice. Returns only SchedulingPatient fields for booking and local duplicate disambiguation. No clinical-record endpoint becomes readable; query text is not logged.",
+        "x-required-permissions": [
+          "SCHEDULE_MANAGE"
+        ],
+        "parameters": [
+          {
+            "name": "practiceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/Cursor"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 100
+            },
+            "description": "Practice-local search; omit/redact query values in logs. No global matching.",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful outcome; no automatic review or publication.",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Quoted aggregate version for subsequent mutation."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SchedulingPatientPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem409"
+          },
+          "412": {
+            "$ref": "#/components/responses/Problem412"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem422"
+          },
+          "428": {
+            "$ref": "#/components/responses/Problem428"
+          },
+          "429": {
+            "$ref": "#/components/responses/Problem429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Problem503"
+          }
+        }
+      },
+      "post": {
+        "operationId": "registerSchedulingPatient",
+        "summary": "Register minimal local identity for an appointment",
+        "description": "Requires BOTH SCHEDULE_MANAGE and separately assigned PATIENT_REGISTER (PD-001 proposal). Accepts only PatientEdit demographic fields. Atomically create local Patient and empty PatientRecord plus audit/idempotency outcome. A likely duplicate returns Problem409 with code DUPLICATE_PATIENT; requery searchSchedulingPatients for authorized minimal candidates and human selection. No candidate clinical data is included in the error. No portal link, clinical facts, invitation or appointment is created. No existing-identity correction via this endpoint.",
+        "x-required-permissions": [
+          "SCHEDULE_MANAGE",
+          "PATIENT_REGISTER"
+        ],
+        "parameters": [
+          {
+            "name": "practiceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/Csrf"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful outcome; no automatic review or publication.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SchedulingPatient"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem409"
+          },
+          "412": {
+            "$ref": "#/components/responses/Problem412"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem422"
+          },
+          "428": {
+            "$ref": "#/components/responses/Problem428"
+          },
+          "429": {
+            "$ref": "#/components/responses/Problem429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Problem503"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatientEdit"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -8774,7 +8940,8 @@
                 "SCHEDULE_MANAGE",
                 "CLINICAL_VALIDATE",
                 "PATIENT_PUBLISH",
-                "CLINICAL_AUDIT"
+                "CLINICAL_AUDIT",
+                "PATIENT_REGISTER"
               ]
             },
             "maxItems": 100
@@ -8808,7 +8975,8 @@
                 "SCHEDULE_MANAGE",
                 "CLINICAL_VALIDATE",
                 "PATIENT_PUBLISH",
-                "CLINICAL_AUDIT"
+                "CLINICAL_AUDIT",
+                "PATIENT_REGISTER"
               ]
             },
             "maxItems": 100
@@ -8846,7 +9014,8 @@
                 "SCHEDULE_MANAGE",
                 "CLINICAL_VALIDATE",
                 "PATIENT_PUBLISH",
-                "CLINICAL_AUDIT"
+                "CLINICAL_AUDIT",
+                "PATIENT_REGISTER"
               ]
             },
             "maxItems": 100
@@ -11757,6 +11926,87 @@
               "string",
               "null"
             ]
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "SchedulingPatient": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Minimal practice-local scheduling projection. No clinical content, portal-account linkage, record revisions, sources or document metadata. A recordId selector does not grant clinical record access.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "practiceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firstName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "lastName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "format": "date"
+          },
+          "contactEmail": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "email"
+          },
+          "phone": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "id",
+          "practiceId",
+          "recordId",
+          "firstName",
+          "lastName",
+          "dateOfBirth",
+          "contactEmail",
+          "phone"
+        ]
+      },
+      "SchedulingPatientPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SchedulingPatient"
+            },
+            "maxItems": 100
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 1024
           }
         },
         "required": [

@@ -41,3 +41,12 @@ All entries are planned, not executed. Exact Given/When/Then conditions are in t
 | AT-035-A/B/C | [9.1](../planning-artifacts/epics/epic-9.md) | Enter and reset bounded synthetic journeys | Real assertions/report plus opened visual evidence; record commit/fixture/environment and limitations |
 | AT-036-A/B/C | [9.2](../planning-artifacts/epics/epic-9.md) | Produce real-stack quality and release evidence | Real assertions/report plus opened visual evidence; record commit/fixture/environment and limitations |
 | AT-037-A/B/C | [9.3](../planning-artifacts/epics/epic-9.md) | Recover unavailable services and releases | Real assertions/report plus opened visual evidence; record commit/fixture/environment and limitations |
+
+## Scheduling registration boundary (PD-001 proposal)
+
+- **AT-015-D (contract/design target, not executed application test):** Given Mila's explicitly assigned SCHEDULE_MANAGE and PATIENT_REGISTER in PRA-A, lookup returns only SchedulingPatient fields; registration creates identity plus empty local record and returns to the retained booking slot. GET clinical search/record/source stays forbidden. Birth date/contact validation, scoped duplicate candidates and idempotent retries must not create duplicate people or imply portal activation.
+- **AT-015-E (contract/design target, not executed application test):** With only SCHEDULE_MANAGE, existing-patient lookup/booking works but registration returns403 and shows the S-08 restriction without discarding the slot. Administrator-only cannot access either path. A PRA-B identifier/query never exposes PRA-A identity/contact or clinical details. The fixture must demonstrate these denied variants without broadening Mila's clinical capabilities.
+
+## Delivery artifact boundary
+
+**AT-036-D (future verification target):** Inspect the actual backend image and frontend artifact manifests. They include required reviewed runtime assets and license notices, and exclude planning documents, raw Figma evidence, agent skills, repository metadata, personal settings and credentials. The manifest links exact validated commit/artifact digests; no application build has run in this phase.

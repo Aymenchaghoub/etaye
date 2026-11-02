@@ -9,7 +9,7 @@ Status: Draft for design. Date: 2026-11-02. Authorization rules: [BR-001–004](
 | Unauthenticated visitor | Public showcase, synthetic demo entry, login/recovery requests | No practice, patient or membership enumeration. |
 | Practice administrator | TEAM_MANAGE, PRACTICE_SETTINGS, ADMIN_AUDIT | Membership and operational settings only. No implicit clinical, patient-document or patient-record access. |
 | Practitioner | CLINICAL_READ, CLINICAL_WRITE, SCHEDULE_MANAGE, CLINICAL_VALIDATE, PATIENT_PUBLISH, CLINICAL_AUDIT | Active membership and practitioner profile in selected practice required. Bundling is [ASSUMPTION] A-03/A-06; capabilities remain distinct. |
-| Scheduler (capability assignment, not a mandatory new user persona) | SCHEDULE_MANAGE | Minimum patient identity/contact and appointment information; no clinical notes, results or AI drafts. An administrator needs this explicitly to schedule. |
+| Scheduler (capability assignment, not a mandatory new user persona) | SCHEDULE_MANAGE; optional separately assigned PATIENT_REGISTER (PD-001 proposal) | Minimum patient identity/contact and appointment information; no clinical notes, results or AI drafts. An administrator needs this explicitly to schedule. |
 | Linked patient account | SELF_APPOINTMENTS, SELF_PREPARATION, SELF_PUBLICATIONS | Only separately verified record links; selected practice and linked record. Cannot browse the clinical record or internal sources. |
 | Background service | Named job execution grants tied to practice/resource snapshot | Never a broad interactive superuser; rechecks task scope before retrieval/output. |
 | Portfolio operator | Synthetic demo reset and service operations | Operational access is not a product role granting routine unrestricted clinical browsing. |
@@ -24,7 +24,7 @@ An account can combine administrator and practitioner capabilities only through 
 |---|---|---|---|---|---|
 | Practice profile/settings | Read/change operational fields | Read identity; change only with PRACTICE_SETTINGS | Read scheduling-relevant settings | Read public patient-facing fields | Never reveal secret configuration or provider credentials. |
 | Team/membership/invitation | Read/create/revoke/deactivate | Only if TEAM_MANAGE | No | No | Protect last active team administrator; self-escalation forbidden. |
-| Patient demographic registration | No | Create/read/correct | Minimum identity/contact for appointments, only with explicit registration grant | Own displayed identity; correction request/profile fields only | Clinical-team identity reconciliation; no automatic record merging. |
+| Patient demographic registration | No | Create/read/correct | Minimal lookup with SCHEDULE_MANAGE; new registration additionally requires PATIENT_REGISTER. No existing-identity correction or clinical access | Own displayed identity; correction request/profile fields only | Clinical-team identity reconciliation; no automatic record merging. |
 | Longitudinal clinical record | No | Practice clinical read/write | No | No direct record access | A-03 shared-practice model; no global patient search. |
 | Measurements/laboratory/history | No | Read/append/correct | No | Only snapshots explicitly included in a publication | Original values and correction lineage retained internally. |
 | Patient-reported preparation | No | Read; acknowledge/link to consultation | No clinical body access | Create/read/edit own before encounter begins | Author/source remains PATIENT_REPORTED; no automatic conversion to clinical fact. |
@@ -39,6 +39,8 @@ An account can combine administrator and practitioner capabilities only through 
 | Administrative audit | Practice membership/security events | Only with ADMIN_AUDIT | No | Own relevant access/security notices, not staff log | Redact patient/clinical details from admin view. |
 | Clinical audit | No | CLINICAL_AUDIT within practice | No | No general staff audit | Patient identifiers shown only with clinical grant; no full text or secrets. |
 | Account profile/preferences | Own account only | Own account only | Own account only | Own account only | Identity changes do not silently relink portal records. |
+
+A scheduler uses searchSchedulingPatients rather than the clinical searchPatients endpoint. The minimal projection contains local patient/record selectors, name, birth date and contact fields only. registerSchedulingPatient requires both grants, atomically creates Patient plus empty PatientRecord and audit, and returns that same projection. Duplicate candidates require human selection. It creates no appointment, clinical fact, portal invitation or publication. Only the clinical workflow can correct an existing identity. An administrator has neither scheduling nor registration rights unless explicitly assigned.
 
 ## Negative authorization examples
 

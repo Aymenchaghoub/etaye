@@ -40,6 +40,11 @@ for path in docs:
             "Unresolved authoring placeholder in: " + str(path.relative_to(ROOT)))
     # Code examples are not navigable prose links.
     prose = re.sub(r"```.*?```", "", text, flags=re.S)
+    if path.name == "ARCHITECTURE-SPINE.md":
+        for refs in re.findall(r"^(?:sources|companions): \[(.+)\]$", text, re.M):
+            for ref in refs.split(","):
+                require((path.parent / ref.strip()).is_file(),
+                        "Missing architecture metadata reference: " + ref.strip())
     for target in re.findall(r"\]\(([^)]+)\)", prose):
         target = target.strip().strip("<>")
         if re.match(r"[a-zA-Z][\w+.-]*:", target):
@@ -96,6 +101,13 @@ for path, methods in api["paths"].items():
         require(actual == set(re.findall(r"{([^}]+)}", path)), "Path parameter mismatch: " + path)
         require(any(code.startswith("2") for code in op["responses"]), "Missing success response: " + path)
 require(len(operations) == len(set(operations)), "Duplicate operation IDs")
+expected_operation_index = [
+    {"operationId": op["operationId"], "method": method, "path": path,
+     "permission": " AND ".join(op["x-required-permissions"])}
+    for path, methods in api["paths"].items() for method, op in methods.items()
+]
+require(read_json("docs/contracts/operation-index.json") == expected_operation_index,
+        "Operation index differs from the authoritative API contract")
 checks["apiOperations"] = len(operations)
 checks["apiSchemas"] = len(api["components"]["schemas"])
 
@@ -132,8 +144,25 @@ for row in rows:
     require(row["id"] in spec.read_text(), "Unspecified surface: " + row["id"])
 checks["requiredDesignFamilies"] = len(rows)
 
+screen_text = (ROOT / "docs/design/screen-catalog.md").read_text()
+interaction_text = (ROOT / "docs/design/interaction-catalog.md").read_text()
+interaction_surfaces = {}
+for iid, surfaces in re.findall(r"^\| \[(I-\d+)\].*?\| ([^|]+) \|$", interaction_text, re.M):
+    interaction_surfaces[iid] = set(re.findall(r"S-\d+", surfaces))
+for sid, section in re.findall(r"## (S-\d+) — (.*?)(?=\n<a id=|\Z)", screen_text, re.S):
+    for iid in set(re.findall(r"I-\d+", section)):
+        require(iid in interaction_surfaces, "Unknown screen interaction: " + sid + "/" + iid)
+        supported = interaction_surfaces.get(iid, set())
+        require(not supported or sid in supported,
+                "Interaction surface mismatch: " + sid + "/" + iid)
+checks["screenInteractionMappings"] = len(interaction_surfaces)
+
 data = read_json("docs/design/synthetic-data.json")
 require(data["synthetic"] is True and len(data["practices"]) >= 2, "Synthetic/isolation fixture missing")
+capabilities = set(api["components"]["schemas"]["MembershipEdit"]["properties"]["capabilities"]["items"]["enum"])
+for membership in data["memberships"]:
+    require(set(membership["capabilities"]) <= capabilities,
+            "Unknown fixture capability in " + membership["id"])
 all_ids = {item["id"] for value in data.values() if isinstance(value, list)
            for item in value if isinstance(item, dict) and "id" in item}
 require(len(all_ids) == sum(1 for v in data.values() if isinstance(v, list)
@@ -154,6 +183,9 @@ def validate_fixture(value, parent=None):
             if key.endswith("Ids") and isinstance(val, list):
                 for item in val:
                     require(item in all_ids, "Unknown fixture list reference: " + str(item))
+                    if item in by_id and value.get("practiceId") and by_id[item].get("practiceId"):
+                        require(value["practiceId"] == by_id[item]["practiceId"],
+                                "Cross-practice fixture relation: " + item)
             if key.endswith("At") and isinstance(val, str):
                 try:
                     datetime.fromisoformat(val.replace("Z", "+00:00"))

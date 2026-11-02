@@ -37,7 +37,7 @@ An authorized administrator manages scoped invitations and membership capabiliti
 Rule: BR-002–005. Journey: J-07. Design surface: S-31–34. Verification: successful authorized journey plus relevant denied, missing-data, failed and concurrent variants; no false success.
 
 ### FR-004 — Patient identity
-Practitioners register and correct practice-local identity; duplicate warnings require human resolution; portal linking is verified per record, never inferred from email.
+Practitioners register and correct practice-local identity; duplicate warnings require human resolution; portal linking is verified per record, never inferred from email. Proposed PD-001 adds an explicitly granted demographic-only registration variant for scheduling, without clinical-record access.
 
 Rule: BR-004. Journey: J-02. Design surface: S-07–08. Verification: successful authorized journey plus relevant denied, missing-data, failed and concurrent variants; no false success.
 

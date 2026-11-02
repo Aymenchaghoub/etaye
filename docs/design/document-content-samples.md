@@ -26,13 +26,13 @@ Use the short content followed by these complete sections and the source appendi
 
 ### Incomplete content
 
-Louis Bernard — historique minimal. Aucun antécédent renseigné dans le jeu fictif ne signifie pas absence d’antécédent. Traitements actuels : non renseignés. Aucune synthèse produite après l’échec du traitementAI-A-002. Résultat de traitement : échec, délai dépassé ; aucune classification de risque et aucun texte rassurant de remplacement.
+Louis Bernard — historique minimal. Aucun antécédent renseigné dans le jeu fictif ne signifie pas absence d’antécédent. Traitements actuels : non renseignés. Aucune synthèse produite après l’échec du traitement AI-A-002. Résultat de traitement : échec, délai dépassé ; aucune classification de risque et aucun texte rassurant de remplacement.
 
 ## P-02 — Consultation report
 
 ### Short content
 
-Compte rendu de consultation — version 1 VALIDATED, réservée aux professionnels tant qu’aucune publication n’existe. Claire Martin.20 octobre 2026. Dr Nora Lefebvre, Cabinet des Tilleuls. Résultats disponibles relus avec la patiente. Pression artérielle 134/82 mmHg. Liste des traitements non renseignée dans le dossier fictif. Validation :20 octobre 2026 à 10h 40. Sources SRC-A-003,004,006.
+Compte rendu de consultation — version 1 VALIDATED, réservée aux professionnels tant qu’aucune publication n’existe. Claire Martin. 20 octobre 2026. Dr Nora Lefebvre, Cabinet des Tilleuls. Résultats disponibles relus avec la patiente. Pression artérielle 134/82 mmHg. Liste des traitements non renseignée dans le dossier fictif. Validation : 20 octobre 2026 à 10 h 40. Sources SRC-A-003, SRC-A-004, SRC-A-006.
 
 ### Long content
 
@@ -40,23 +40,23 @@ Use the short content plus the following structured paragraphs and the clinician
 
 **Motif et contexte.** Consultation de suivi du 20 octobre. Les données présentées sont celles disponibles pour cet événement. Ce compte rendu historique ne se transforme pas automatiquement lorsqu’une préparation d’une visite ultérieure est saisie. Une correction d’une source citée doit en revanche entraîner une nouvelle revue de la version concernée.
 
-**Informations rapportées et observations.** La pression a été mesurée au cabinet à 10h 10 ; la source en conserve la date et l’auteur. Les résultats du 12 octobre ont été relus. Les traitements actuels ne sont pas renseignés ; cette absence est une limite du contenu, pas une constatation d’absence de traitement. Aucun diagnostic ni prescription n’est ajouté pour compléter la présentation.
+**Informations rapportées et observations.** La pression a été mesurée au cabinet à 10 h 10 ; la source en conserve la date et l’auteur. Les résultats du 12 octobre ont été relus. Les traitements actuels ne sont pas renseignés ; cette absence est une limite du contenu, pas une constatation d’absence de traitement. Aucun diagnostic ni prescription n’est ajouté pour compléter la présentation.
 
-**Traçabilité.** La consultationCONS-A-001 est reliée à un rendez-vous terminé, mais les deux objets restent distincts. La fin de la consultation n’a pas publié ce rapport. L’auteur et le validateur sont affichés séparément même s’il s’agit ici de la même praticienne. Les versions ultérieures nécessiteront un nouveau brouillon et conserveront la version validée.
+**Traçabilité.** La consultation CONS-A-001 est reliée à un rendez-vous terminé, mais les deux objets restent distincts. La fin de la consultation n’a pas publié ce rapport. L’auteur et le validateur sont affichés séparément même s’il s’agit ici de la même praticienne. Les versions ultérieures nécessiteront un nouveau brouillon et conserveront la version validée.
 
 **Diffusion.** Cette version du rapport n’a pas de publication dans le jeu de données. Le portail patient doit donc refuser son téléchargement, même si une autre explication a été publiée. Une publication future sélectionnerait explicitement la version, le destinataire et les pièces autorisées. Les brouillons et annotations internes resteraient exclus de cette projection.
 
 ### Incomplete content
 
-Compte rendu — BROUILLON, non validé. Motif saisi ; préparation de visite non reçue. Partie observations à compléter. Intervalle de référence non fourni pour le scénarioV-LAB-NO-INTERVAL. Ne pas afficher de date de validation ou de publication. Une zone incomplète reste explicitement incomplète, sans texte automatique qui suggère un examen normal.
+Compte rendu — BROUILLON, non validé. Motif saisi ; préparation de visite non reçue. Partie observations à compléter. Intervalle de référence non fourni pour le scénario V-LAB-NO-INTERVAL. Ne pas afficher de date de validation ou de publication. Une zone incomplète reste explicitement incomplète, sans texte automatique qui suggère un examen normal.
 
 ## P-03 — Patient explanation
 
 ### Short content
 
-Démonstration — personnes et données fictives. Claire Martin. Explicationv 2, validée le 2 novembre 2026 à 14h 20 et publiée à 14h 25 par Dr Nora Lefebvre.
+Démonstration — personnes et données fictives. Claire Martin. Explication v 2, validée le 2 novembre 2026 à 14 h 20 et publiée à 14 h 25 par Dr Nora Lefebvre.
 
-Vous avez signalé un souvenir de réaction à la pénicilline. Cette information sera précisée lors de votre prochaine consultation. La liste actuelle de vos traitements reste à compléter. [Extraits datés autorisés de SRC-A-001,005,006.]
+Vous avez signalé un souvenir de réaction à la pénicilline. Cette information sera précisée lors de votre prochaine consultation. La liste actuelle de vos traitements reste à compléter. [Extraits datés autorisés de SRC-A-001, SRC-A-005, SRC-A-006.]
 
 ### Long content
 
@@ -74,7 +74,7 @@ Use the short content plus the following patient-facing paragraphs. Do not inclu
 
 ### Incomplete content
 
-Explication non publiable : traitements actuels non renseignés et informations à relire. Un traitementAIen échec ne produit aucun texte publiable. Le praticien peut compléter une explication manuelle puis la relire et la valider ; aucune apparition automatique dans l’espace patient ne doit être représentée.
+Explication non publiable : traitements actuels non renseignés et informations à relire. Un traitement AI en échec ne produit aucun texte publiable. Le praticien peut compléter une explication manuelle puis la relire et la valider ; aucune apparition automatique dans l’espace patient ne doit être représentée.
 
 ## Clinician source appendix for long P-01/P-02 layouts
 
@@ -88,8 +88,8 @@ A source may be displayed as historical context without becoming evidence for ev
 | SRC-A-004 | 2026-10-20T10:10:00+02:00 / 2026-10-20T10:12:00+02:00 | PRACTITIONER_OBSERVED / PR-NORA | Pression artérielle mesurée au cabinet : 134/82 mmHg. — MEAS-A-002 |
 | SRC-A-005 | 2026-11-02T09:10:00+01:00 / 2026-11-02T09:10:00+01:00 | PATIENT_REPORTED / ACC-CLAIRE | Je me souviens d’une réaction à la pénicilline dans ma jeunesse. Je ne sais plus laquelle. — PREP-A-001:allergies |
 | SRC-A-006 | 2026-10-20T10:30:00+02:00 / 2026-10-20T10:35:00+02:00 | PRACTITIONER_OBSERVED / PR-NORA | Consultation de suivi : résultats disponibles relus avec la patiente. Traitements actuels non renseignés dans ce jeu de données. — CONS-A-001:report |
-| SRC-A-007-v 1 | 2026-10-20T10:12:00+02:00 / 2026-10-20T10:13:00+02:00 | PRACTITIONER_OBSERVED / PR-NORA | Poids saisi : 86,4 kg. Valeur historique corrigée ensuite. — MEAS-A-003:version-1 |
-| SRC-A-007-v 2 | 2026-10-20T10:12:00+02:00 / 2026-10-20T10:15:00+02:00 | PRACTITIONER_OBSERVED / PR-NORA | Poids corrigé : 68,4 kg. — MEAS-A-003:version-2 |
+| SRC-A-007-v1 | 2026-10-20T10:12:00+02:00 / 2026-10-20T10:13:00+02:00 | PRACTITIONER_OBSERVED / PR-NORA | Poids saisi : 86,4 kg. Valeur historique corrigée ensuite. — MEAS-A-003:version-1 |
+| SRC-A-007-v2 | 2026-10-20T10:12:00+02:00 / 2026-10-20T10:15:00+02:00 | PRACTITIONER_OBSERVED / PR-NORA | Poids corrigé : 68,4 kg. — MEAS-A-003:version-2 |
 | SRC-A-008 | 2026-09-14T09:35:00+02:00 / 2026-09-14T09:36:00+02:00 | PRACTITIONER_OBSERVED / PR-NORA | Pression artérielle : 128/80 mmHg. — MEAS-A-001 |
 
 For deterministic long-table pagination testing, repeat the appendix as explicitly labeled “Layout test copy 1/2/3 — same source events, not additional observations”. This is a print stress variant, never extra medical history or a chart series. Review each resulting page and all repeated headers.

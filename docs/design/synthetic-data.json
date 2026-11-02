@@ -64,8 +64,10 @@
       "capabilities": [
         "CLINICAL_READ",
         "CLINICAL_WRITE",
-        "VALIDATE",
-        "PUBLISH"
+        "CLINICAL_VALIDATE",
+        "PATIENT_PUBLISH",
+        "SCHEDULE_MANAGE",
+        "CLINICAL_AUDIT"
       ],
       "active": true
     },
@@ -76,8 +78,10 @@
       "capabilities": [
         "CLINICAL_READ",
         "CLINICAL_WRITE",
-        "VALIDATE",
-        "PUBLISH"
+        "CLINICAL_VALIDATE",
+        "PATIENT_PUBLISH",
+        "SCHEDULE_MANAGE",
+        "CLINICAL_AUDIT"
       ],
       "active": true
     },
@@ -88,7 +92,9 @@
       "capabilities": [
         "CLINICAL_READ",
         "CLINICAL_WRITE",
-        "VALIDATE"
+        "CLINICAL_VALIDATE",
+        "SCHEDULE_MANAGE",
+        "CLINICAL_AUDIT"
       ],
       "active": true
     },
@@ -99,8 +105,10 @@
       "capabilities": [
         "CLINICAL_READ",
         "CLINICAL_WRITE",
-        "VALIDATE",
-        "PUBLISH"
+        "CLINICAL_VALIDATE",
+        "PATIENT_PUBLISH",
+        "SCHEDULE_MANAGE",
+        "CLINICAL_AUDIT"
       ],
       "active": true
     },
@@ -109,9 +117,11 @@
       "accountId": "ACC-MILA",
       "practiceId": "PRA-A",
       "capabilities": [
-        "PRACTICE_ADMIN",
-        "TEAM_ADMIN",
-        "ADMIN_AUDIT_READ"
+        "PRACTICE_SETTINGS",
+        "TEAM_MANAGE",
+        "ADMIN_AUDIT",
+        "SCHEDULE_MANAGE",
+        "PATIENT_REGISTER"
       ],
       "active": true
     }

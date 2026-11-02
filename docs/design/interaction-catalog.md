@@ -22,13 +22,13 @@ Disable duplicate submits while pending, keep a stable idempotency key, and do n
 | [I-06](#i-06) | Enter or correct measurement | drawer | S-11 |
 | [I-07](#i-07) | Enter or correct laboratory result | drawer | S-12 |
 | [I-08](#i-08) | Upload file | drawer | S-13 |
-| [I-09](#i-09) | Open supporting source | drawer | S-13, S-18, S-21, S-29 |
-| [I-10](#i-10) | Create appointment | dialog | S-14, S-16, S-26 |
-| [I-11](#i-11) | Move appointment | dialog | S-16, S-26 |
+| [I-09](#i-09) | Open supporting source | drawer | S-11, S-12, S-13, S-18, S-20, S-21, S-29 |
+| [I-10](#i-10) | Create appointment | dialog | S-07, S-08, S-14, S-16, S-26 |
+| [I-11](#i-11) | Move appointment | dialog | S-14, S-16, S-26 |
 | [I-12](#i-12) | Cancel appointment | dialog | S-16, S-26 |
 | [I-13](#i-13) | Record attendance or no-show | inline | S-16 |
 | [I-14](#i-14) | Generate or regenerate draft | dialog | S-18, S-20, S-21 |
-| [I-15](#i-15) | Edit generated content | page | S-20, S-21 |
+| [I-15](#i-15) | Edit generated content | page | S-18, S-20, S-21 |
 | [I-16](#i-16) | Validate human-reviewed version | dialog | S-23 |
 | [I-17](#i-17) | Publish to named patient | dialog | S-23 |
 | [I-18](#i-18) | Replace or withdraw published content | page | S-24 |
@@ -90,11 +90,11 @@ Disable duplicate submits while pending, keep a stable idempotency key, and do n
 
 - **Traceability / trigger:** FR-004; S-08, invoked by its named action. See shared business rules and access matrix.
 - **Pattern / reason:** page; Long content, identity-sensitive access or multi-part review needs an addressable full context.
-- **Permission:** CLINICAL_WRITE; recheck resource practice and audience server-side.
+- **Permission:** CLINICAL_WRITE for clinical create/edit; both SCHEDULE_MANAGE and PATIENT_REGISTER for create-only scheduling variant. No clinical access follows registration.
 - **Title / content / fields:** “Identité du patient”. Name, birth date, contacts and local duplicate suggestions.
 - **Validation:** Required identity, valid date/contact, current version for edit; no automatic merge.
 - **Actions:** primary “Enregistrer l’identité”; secondary “Annuler”. Any destructive choice is explicitly labeled, separate from safe cancel, and never default-focused.
-- **Business result:** Create/correct local identity; retain audit/history.
+- **Business result:** Create/correct local identity for clinician; create only minimum identity plus empty record for scheduler, then return to I-10. Retain audit/history; no portal link/invitation or appointment side effect.
 - **Loading/error/duplicate behavior:** shared contract; show safe processing state and exact failure without erasing entered information. Invalid input has field error; permission denial removes protected content. Ambiguous response checks operation outcome.
 - **Closing/input/focus/mobile:** shared contract applies fully; preserve safe entered work on validation/network failure, require explicit discard for dirty work, restore trigger focus. This long action becomes a full-width mobile page when content does not fit.
 - **Acceptance:** keyboard completion and error recovery work; result follows the exact allowed lifecycle, no duplicate side effect, no premature visibility. Capture opened desktop/tablet/mobile review evidence under I-04.
@@ -172,10 +172,10 @@ Disable duplicate submits while pending, keep a stable idempotency key, and do n
 <a id="i-10"></a>
 ## I-10 — Create appointment
 
-- **Traceability / trigger:** FR-009; S-14, S-16, S-26, invoked by its named action. See shared business rules and access matrix.
+- **Traceability / trigger:** FR-009; S-07, S-08, S-14, S-16, S-26, invoked by its named action. See shared business rules and access matrix.
 - **Pattern / reason:** dialog; A bounded decision needs focused fields and explicit consequences.
 - **Permission:** SCHEDULE_MANAGE or own SELF_APPOINTMENTS; recheck resource practice and audience server-side.
-- **Title / content / fields:** “Prendre rendez-vous”. Eligible patient/practitioner, offered interval/timezone, scheduling reason.
+- **Title / content / fields:** “Prendre rendez-vous”. Eligible patient/practitioner, offered interval/timezone, scheduling reason. Staff lookup uses S-07 minimal SchedulingPatient variant; if no match, I-04/S-08 registration requires separate PATIENT_REGISTER. Preserve selected slot when returning; no nested dialogs.
 - **Validation:** Current availability; start<end; atomic conflict check; cutoff policy.
 - **Actions:** primary “Confirmer le rendez-vous”; secondary “Annuler”. Any destructive choice is explicitly labeled, separate from safe cancel, and never default-focused.
 - **Business result:** One BOOKED appointment; no consultation created.
@@ -186,7 +186,7 @@ Disable duplicate submits while pending, keep a stable idempotency key, and do n
 <a id="i-11"></a>
 ## I-11 — Move appointment
 
-- **Traceability / trigger:** FR-009; S-16, S-26, invoked by its named action. See shared business rules and access matrix.
+- **Traceability / trigger:** FR-009; S-14, S-16, S-26, invoked by its named action. See shared business rules and access matrix.
 - **Pattern / reason:** dialog; A bounded decision needs focused fields and explicit consequences.
 - **Permission:** SCHEDULE_MANAGE or own eligible appointment; recheck resource practice and audience server-side.
 - **Title / content / fields:** “Déplacer le rendez-vous”. Old/new date, practitioner, timezone, reason.
@@ -242,7 +242,7 @@ Disable duplicate submits while pending, keep a stable idempotency key, and do n
 <a id="i-15"></a>
 ## I-15 — Edit generated content
 
-- **Traceability / trigger:** FR-013, FR-014; S-20, S-21, invoked by its named action. See shared business rules and access matrix.
+- **Traceability / trigger:** FR-011, FR-013, FR-014; S-18, S-20, S-21, invoked by its named action. See shared business rules and access matrix.
 - **Pattern / reason:** page; Long content, identity-sensitive access or multi-part review needs an addressable full context.
 - **Permission:** CLINICAL_WRITE; recheck resource practice and audience server-side.
 - **Title / content / fields:** “Relire et corriger”. Generated baseline, human editor, source markers, unsupported statement flags.

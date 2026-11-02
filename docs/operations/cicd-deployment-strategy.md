@@ -21,6 +21,10 @@ Proposed baseline: zero failing required tests, nonzero expected suites, no unex
 
 The initial public-repository main ruleset is active and recorded in [GitHub security](github-security.md). Extend its actual required checks to the implemented application suites and quality results before feature delivery. Revalidate capability if account plan or visibility changes; an operational convention alone is not an enforced branch rule.
 
+## Production artifact boundary
+
+Planning/design evidence remains outside runtime packaging. Future backend/container contexts and frontend build inputs must allowlist application code, locked runtime dependencies and explicitly promoted assets; exclude docs/, the raw Figma snapshot/captures, tools/, _bmad/, .agents/, .claude/, Git metadata and personal settings. Promote only reviewed logo/token/font assets needed at runtime, with source hash and license attribution; do not copy the entire design evidence folder into a public web root. Inspect the actual built image/static artifact manifest before release (AT-036-D). This is a future build requirement, not a container configuration created now.
+
 ## Rollback and recovery
 
 Retain previous known-good image/static digest and release manifest. Prefer expand/contract migrations that permit old/new app versions during rollback window. On failure: stop promotion, inspect safe smoke/log evidence, choose compatible app rollback or forward fix. Never automatically reverse a destructive migration or edit an applied checksum. If data restore is necessary, restore into isolated database/store first, verify lineage/attachments, then switch deliberately; account for new writes since backup and document loss. Rehearse recovery against synthetic state. Proposed RPO/RTO are NFR targets, not measured guarantees.

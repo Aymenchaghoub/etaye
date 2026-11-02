@@ -43,6 +43,10 @@ Status: Draft for design. Date: 2026-11-02. A proposal reviewed by an agent is n
 | A-11 | [ASSUMPTION] No automatic migration of legacy patient records | New demo is synthetic and no real data is permitted | Legacy is evidence only; no code or data copied into the target application. | Aymen; explicit migration request with source rights and synthetic mapping needed. |
 | A-12 | To verify: final hosting budget and reliability expectation | Free tiers change and cold starts may impair demos | Hosting assessment must distinguish free feasibility from a reliable recruiter demo. | Aymen; choose deployment option before implementation of deployment work. |
 
+## Permission refinement proposed during PR review
+
+**PD-001 — Proposal, 2026-11-02:** Name the access matrix's previously unspecified demographic-registration grant PATIENT_REGISTER. A scheduler uses SCHEDULE_MANAGE for the minimal local patient lookup; registration requires both grants. It creates only identity plus an empty record boundary and never authorizes clinical read/write, portal linking or identity correction. A scheduler without PATIENT_REGISTER must select an existing patient or ask an authorized team member to register the person. This closes a contract gap rather than introducing another clinical role. Review S-07/S-08/I-04/I-10 restricted variants with Aymen before implementation; changing it affects registration permissions, two scheduling API operations and AT-015-D/E.
+
 ## Repository setup working choices
 
 - **User decision, 2026-11-02:** Aymen explicitly authorized public GitHub visibility, superseding the initial private working default after a publication scan.

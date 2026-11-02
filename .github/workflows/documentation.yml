@@ -45,7 +45,7 @@ jobs:
       - name: Verify workflow policy and whitespace
         run: |
           .venv-docs/bin/python tools/check_doc_workflow.py
-          git diff --check
+          git diff --check HEAD^1 HEAD
       - name: Scan committed history for secrets
         run: bash tools/run_secret_scan.sh
       - name: Retain actual documentary evidence

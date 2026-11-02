@@ -550,5 +550,17 @@
     "method": "get",
     "path": "/practices/{practiceId}/practitioners",
     "permission": "SCHEDULE_MANAGE_OR_PORTAL_SLOTS"
+  },
+  {
+    "operationId": "searchSchedulingPatients",
+    "method": "get",
+    "path": "/practices/{practiceId}/scheduling/patients",
+    "permission": "SCHEDULE_MANAGE"
+  },
+  {
+    "operationId": "registerSchedulingPatient",
+    "method": "post",
+    "path": "/practices/{practiceId}/scheduling/patients",
+    "permission": "SCHEDULE_MANAGE AND PATIENT_REGISTER"
   }
 ]
