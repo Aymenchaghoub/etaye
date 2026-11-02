@@ -6,11 +6,13 @@ Status: Planning package ready for complete design work. Application development
 
 Complete and review every required Figma screen, state, interaction, modal/drawer, PDF and transactional email from this repository. Do not develop the application, scaffold Spring/React, create migrations, activate application CI/CD or deploy. Sequence: documentation → complete design/review → Aymen's explicit development authorization → implementation. Completing design does not itself authorize development.
 
+Aymen authorized continuing offline HTML/CSS design and limited prototype navigation while Figma access/quota is unavailable. Recover the existing work using the [canonical session recovery note](session-recovery.md) before generating more; the reported corrections are not independently verified design completion. HTML work is a design artifact, not application implementation or proof of Figma synchronization. Track it separately under the [coverage guide](coverage-guide.md); final import/reconciliation and review remain outstanding. Preserve any newer tracker and source files.
+
 For a chat without local repository access, use the generated attachment kit: it bundles the named product/design documents, not every reference below. The exporter lists unbundled policies, technical contracts, stories and review context explicitly. Read required public repository files or request them from Aymen when a design decision depends on them; never assume a filesystem path gives chat access.
 
 ## Reading order
 
-1. Root AGENTS.md and CLAUDE.md; docs/continuation.md and docs/README.md.
+1. Root AGENTS.md and CLAUDE.md; docs/continuation.md, docs/README.md and the session recovery note.
 2. Product brief, PRD, functional-specification.md, business-rules.md, access-matrix.md and decisions-assumptions.md under docs/planning-artifacts/.
 3. UX DESIGN.md and EXPERIENCE.md, then this directory's figma-inventory.md and token-reference.md. Inspect the real Figma file before edits.
 4. screen-catalog.md, interaction-catalog.md, pdf-email-specifications.md, synthetic-data.md/json and coverage-guide.md/csv.
@@ -53,4 +55,4 @@ Use synthetic-data.json identifiers/names/dates/values and labeled scenario vari
 
 At desktop 1440×1024, tablet 1024×768, mobile 390×844 plus 320px reflow/200% zoom, open and inspect text, units, dates, hierarchy, density, contrast, focus, keyboard order, overflow, sources and action visibility. Review long/partial/error/restricted states. A4: open all pages, including source appendices, test long rows/page breaks, fonts/accents, selectable-text intent and grayscale. Record visual and functional design findings separately. An export request or successful prototype link is not a visual check until opened.
 
-Coverage.csv is authoritative for design progress. Required S-01–40, I-01–28, P-01–03 and M-01–05 must all be designed and reviewed before development, unless Aymen explicitly accepts a specific documented exception. Never mark Approved by Aymen without his actual approval. Do not convert backlog stories to ready-for-dev or start the first epic. Finish with design evidence, unresolved decisions and an explicit development stop.
+Coverage.csv owns Figma coverage; a separate HTML tracker records actual HTML design/review evidence while synchronization is pending. Attachment06 is an exported scope baseline: merge by stable ID without erasing newer nodes, reviews or findings. Never put an HTML path in figma_node. Required S-01–40, I-01–28, P-01–03 and M-01–05 must all be designed and reviewed before development, unless Aymen explicitly accepts a specific documented exception. Never mark Approved by Aymen without his actual approval. Do not convert backlog stories to ready-for-dev or start the first epic. Finish with design evidence, unresolved decisions and an explicit development stop.

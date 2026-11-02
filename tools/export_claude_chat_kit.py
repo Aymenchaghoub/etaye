@@ -4,6 +4,10 @@ from pathlib import Path
 import argparse
 import hashlib
 import json
+import re
+import subprocess
+import tempfile
+import zipfile
 from datetime import datetime, timezone
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -38,48 +42,196 @@ GROUPS = {
 }
 
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output", required=True, type=Path,
-                        help="External distribution folder; do not commit generated copies")
-    OUT = parser.parse_args().output.resolve()
-    if OUT.is_relative_to(ROOT):
-        parser.error("Use a folder outside the repository to avoid duplicate sources of truth")
-    OUT.mkdir(parents=True, exist_ok=True)
-    manifest = {"generated": datetime.now(timezone.utc).date().isoformat(), "purpose": "Derived chat attachments; repository sources remain authoritative", "files": {}}
+REPOSITORY = "https://github.com/Aymenchaghoub/etaye"
+ARCHIVE = "etaye-claude-resume-attachments.zip"
+# Defense in depth for explicit documentation inputs, never arbitrary external folders.
+SECRET_PATTERN = re.compile(
+    r"(?:figd_[A-Za-z0-9_-]{25,}|gh[pousr]_[A-Za-z0-9]{25,}|"
+    r"sk-[A-Za-z0-9]{30,}|-----BEGIN (?:RSA |OPENSSH )?PRIVATE KEY-----)"
+)
+
+
+def reject_secrets(name, content):
+    """Fail without printing the matched credential or source content."""
+    if SECRET_PATTERN.search(content.decode("utf-8")):
+        raise ValueError("Potential credential in export input: " + name)
+
+
+def build_payload():
+    """Read only named repository sources; user files and mockups are never bundled."""
+    source_hashes = {}
+
+    def read_source(name):
+        path = (ROOT / name).resolve()
+        if not path.is_relative_to(ROOT) or not path.is_file():
+            raise ValueError("Source must be a repository file: " + name)
+        content = path.read_bytes()
+        reject_secrets(name, content)
+        source_hashes[name] = hashlib.sha256(content).hexdigest()
+        return content
+
+    preamble = (
+        "# Étaye — derived Claude design attachment\n\n"
+        "Named repository sources remain authoritative. These are specification copies, "
+        "not the latest corrected mockups or a complete repository export. Read 00/08 "
+        "first; ask for necessary missing sources rather than guessing. "
+        "No application implementation is authorized.\n"
+    )
+    payload = {}
+    source_map = {}
     for name, sources in GROUPS.items():
-        chunks = ["# Étaye — Claude chat attachment\n\nGenerated distribution copy. Original repository files named below remain authoritative. These attachments include the named product/design sources, not every internally linked file. No source path grants access to the user's computer. See 00 for bundled versus unbundled context; ask Aymen for missing required content instead of guessing. No application implementation is authorized.\n"]
+        chunks = [preamble]
         for source in sources:
-            path = ROOT / source
-            chunks.append("\n---\n\n# Source: " + source + "\n\n" + path.read_text())
-        (OUT / name).write_text("\n".join(chunks))
-        manifest["files"][name] = sources
-    (OUT / "05-synthetic-data.json").write_bytes((ROOT / "docs/design/synthetic-data.json").read_bytes())
-    (OUT / "06-design-coverage.csv").write_bytes((ROOT / "docs/design/coverage.csv").read_bytes())
-    intro = """# Étaye — start here in Claude chat
+            chunks.append("\n---\n\n# Source: " + source + "\n\n" + read_source(source).decode("utf-8"))
+        payload["attachments/" + name] = "\n".join(chunks).encode("utf-8")
+        source_map["attachments/" + name] = sources
 
-Attach files 00 through 06 together in the existing Claude chat that began the Étaye design system. Reuse its existing Figma context and access. These are an export of the repository planning package, not new sources of product truth. If access has changed, report the concrete limitation; never claim to have changed Figma without an actual edit.
+    copies = {
+        "attachments/05-synthetic-data.json": "docs/design/synthetic-data.json",
+        "attachments/06-design-coverage.csv": "docs/design/coverage.csv",
+        "attachments/07-review-of-previous-design-bundle.md": "docs/design/external-bundle-review.md",
+        "attachments/08-session-recovery-and-next-actions.md": "docs/design/session-recovery.md",
+        "PROMPT-TO-PASTE.txt": "docs/design/continuation-prompt.md",
+    }
+    for target, source in copies.items():
+        payload[target] = read_source(source)
+        source_map[target] = [source]
+    intro = """# Étaye — resume the existing Claude design session
 
-## Copy-ready prompt
+Read attachment 08 and this handoff first. Recover current sources before generating more;
+keep any newer tracker and use attachment 06 as a scope snapshot, never a reset command.
+Aymen authorized continuing HTML design/prototypes while Figma is unavailable. Track HTML
+progress separately and record real Figma nodes only after actual synchronization.
 
-Continue the complete Figma design of Étaye using the attached English specifications and coverage tracker. Speak French with Aymen; preserve French interface copy. Read 00 first, then 01 product/rules, 02 design system, 03 screens/interactions, 04 PDFs/emails, and 05 shared synthetic data. Update 06 coverage with real nodes and opened visual-review evidence, and return it as a file. Inspect the existing Figma file before editing: https://www.figma.com/design/vfh4BSnbRAbaDE1q0CyssL/Etaye?node-id=0-1 . Reuse the original logo and verified foundations. Complete reusable components, then all 40 screen families, 28 interactions, 3 A4 PDF templates and 5 email templates, including required error/restricted/responsive states and navigable practitioner/patient/administration/AI-review-publication prototypes. Read the detailed handoff below for gates and review criteria. Do not begin application implementation. Ask promptly if actual Figma editing access is missing. Do not imply that attaching files supplies account permissions.
+**This kit does not contain the latest corrected mockup source bundle.** Recover it from
+the existing Claude chat/artifact or request its latest export. Do not restore an old ZIP
+over newer work. No token, recent working mockup, screenshot or approval is implied here.
 
-## Scope of the attached context
+## Scope and missing context
 
-Files 01–06 contain the product/rules/access/assumptions/glossary/deferred register, UX foundations and behavior, screen/interaction/PDF/email catalogs, document samples, synthetic dataset and coverage tracker. The repository handoff below is reproduced as a reference; its filesystem reading order assumes repository access.
+Files 01–04 bundle the named product/rules/access/assumptions/glossary/deferred, UX/token,
+screen/interaction and PDF/email specifications. Files 05/06 are the synthetic dataset and
+Figma scope tracker; 07 is the historical bundle review; 08 is the canonical recovery note.
+PROMPT-TO-PASTE.txt is the short continuation prompt. manifest.json records the actual
+source commit, dirty-tree flag, source hashes and exact payload hashes.
 
-This chat kit does not include AGENTS.md, CLAUDE.md, docs/continuation.md, architecture/ADRs/data model/dictionary, AI/security specifications, documentary API contracts, epics/stories, traceability or the review report. The public repository is https://github.com/Aymenchaghoub/etaye . If the chat cannot read a required source there, ask Aymen for that file or an export before making a decision that depends on it. Do not claim repository access, infer omitted contracts or invent missing product rules. The attached catalogs cover design composition; these attachments are not a complete repository export.
+AGENTS.md, CLAUDE.md, docs/continuation.md, architecture/ADRs/data model/dictionary,
+AI/security, API contracts, epics/stories, traceability and the review report are not
+bundled. Read necessary current files from https://github.com/Aymenchaghoub/etaye or ask
+Aymen for them if inaccessible. A filesystem path does not grant chat access. Use the
+handoff's reading order only with actual repository access; read relevant sources per
+batch rather than loading the entire repository. Do not invent omitted product rules.
 
 ## Detailed repository handoff
 
 """
-    (OUT / "00-start-here-and-handoff.md").write_text(intro + (ROOT / "docs/design/handoff-claude.md").read_text())
-    generated = [*GROUPS, "00-start-here-and-handoff.md", "05-synthetic-data.json", "06-design-coverage.csv"]
-    manifest["sha256"] = {
-        name: hashlib.sha256((OUT / name).read_bytes()).hexdigest() for name in sorted(generated)
+    target = "attachments/00-start-here-and-handoff.md"
+    source = "docs/design/handoff-claude.md"
+    payload[target] = intro.encode("utf-8") + read_source(source)
+    source_map[target] = [source]
+    payload["START-HERE.txt"] = (
+        "In the existing Claude chat, attach etaye-claude-resume-attachments.zip and paste "
+        "PROMPT-TO-PASTE.txt. If ZIP reading is unavailable, attach files 00–08 instead. "
+        "Optional technical references remain in the public repository.\n\n"
+        "No latest corrected mockup bundle is included. Recover the actual working sources "
+        "before continuing. This is planning/design only.\n\n"
+        "Each export uses a new subfolder; previous exports and user files are untouched. "
+        "manifest.json hashes all payload files; it excludes itself, the ZIP and SHA256SUMS "
+        "to avoid circular hashes. The ZIP contains exactly that payload plus the same "
+        "manifest. SHA256SUMS covers the ZIP and external manifest.\n"
+    ).encode("utf-8")
+    # Identify the generating tool as well as its exported source documents.
+    read_source("tools/export_claude_chat_kit.py")
+    return payload, source_map, source_hashes
+
+
+def verify_package(folder):
+    """Check delivered files, archive membership/bytes and both integrity layers."""
+    manifest_bytes = (folder / "manifest.json").read_bytes()
+    manifest = json.loads(manifest_bytes)
+    payload_names = set(manifest["files"])
+    expected = payload_names | {"manifest.json", ARCHIVE, "SHA256SUMS"}
+    actual = {str(p.relative_to(folder)) for p in folder.rglob("*") if p.is_file()}
+    if actual != expected:
+        raise ValueError("Unexpected or missing package files")
+    for name, details in manifest["files"].items():
+        if Path(name).is_absolute() or ".." in Path(name).parts or "\\" in name:
+            raise ValueError("Unsafe package path")
+        path = folder / name
+        if path.is_symlink() or not path.resolve().is_relative_to(folder.resolve()):
+            raise ValueError("Package payload must not follow symlinks")
+        content = path.read_bytes()
+        if len(content) != details["bytes"] or hashlib.sha256(content).hexdigest() != details["sha256"]:
+            raise ValueError("Payload integrity mismatch: " + name)
+        reject_secrets(name, content)
+    reject_secrets("manifest.json", manifest_bytes)
+    expected_members = payload_names | {"manifest.json"}
+    with zipfile.ZipFile(folder / ARCHIVE) as archive:
+        names = archive.namelist()
+        if len(names) != len(set(names)) or set(names) != expected_members or archive.testzip():
+            raise ValueError("Archive membership or CRC mismatch")
+        for name in names:
+            if archive.read(name) != (folder / name).read_bytes():
+                raise ValueError("Archive differs from delivered file: " + name)
+    sums = (folder / "SHA256SUMS").read_text().splitlines()
+    expected_sums = [hashlib.sha256((folder / name).read_bytes()).hexdigest() + "  " + name
+                     for name in ["manifest.json", ARCHIVE]]
+    if sums != expected_sums:
+        raise ValueError("Archive/manifest checksum mismatch")
+    return manifest
+
+
+def export_package(output):
+    """Create a new versioned child; never overwrite or ingest previous exports."""
+    output = output.resolve()
+    if output.is_relative_to(ROOT):
+        raise ValueError("Use a folder outside the repository")
+    payload, source_map, sources = build_payload()
+    for name, content in payload.items():
+        reject_secrets(name, content)
+    commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    dirty = bool(subprocess.check_output(
+        ["git", "status", "--porcelain"], cwd=ROOT, text=True).strip())
+    now = datetime.now(timezone.utc)
+    manifest = {
+        "schemaVersion": 1, "generatedAt": now.isoformat(), "repository": REPOSITORY,
+        "sourceCommit": commit, "sourceTreeDirty": dirty, "sourceSha256": sources,
+        "latestClaudeSourceBundleIncluded": False,
+        "mockupLimitation": "Specification export only; latest corrected Claude mockup sources have not been recovered into this kit.",
+        "archive": ARCHIVE,
+        "integrity": "files covers payload only; ZIP also contains manifest.json. SHA256SUMS covers the ZIP and manifest (no self-hash).",
+        "files": {name: {"bytes": len(content), "sha256": hashlib.sha256(content).hexdigest(),
+                         "sources": source_map.get(name, [])}
+                  for name, content in sorted(payload.items())},
     }
-    (OUT / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
-    print("Exported 7 chat attachments; no credentials or application code included.")
+    output.mkdir(parents=True, exist_ok=True)
+    folder = Path(tempfile.mkdtemp(prefix="etaye-resume-" + now.strftime("%Y%m%dT%H%M%SZ") + "-" + commit[:12] + "-", dir=output))
+    for name, content in payload.items():
+        path = folder / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(content)
+    (folder / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
+    with zipfile.ZipFile(folder / ARCHIVE, "w", zipfile.ZIP_DEFLATED) as archive:
+        for name in sorted([*payload, "manifest.json"]):
+            archive.write(folder / name, name)
+    (folder / "SHA256SUMS").write_text("".join(
+        hashlib.sha256((folder / name).read_bytes()).hexdigest() + "  " + name + "\n"
+        for name in ["manifest.json", ARCHIVE]))
+    verify_package(folder)
+    return folder
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output", required=True, type=Path,
+                        help="External parent folder; always creates a new versioned kit subfolder")
+    args = parser.parse_args()
+    try:
+        folder = export_package(args.output)
+    except (ValueError, OSError, subprocess.CalledProcessError) as exc:
+        parser.error(str(exc))
+    print(json.dumps({"folder": str(folder), "archive": str(folder / ARCHIVE),
+                      "attachments": 9, "verified": True, "latestClaudeSourceBundleIncluded": False}))
 
 
 if __name__ == "__main__":

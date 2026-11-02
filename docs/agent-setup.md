@@ -65,3 +65,19 @@ If skills are missing, launch in repository root, verify symlink/actual SKILL.md
 Aymen explicitly requested the initial CI and first PR after planning. `.github/workflows/documentation.yml` validates this package, lints first-party Python tools with Ruff and runs a checksum-pinned Gitleaks CLI against committed history. `.github/workflows/codeql.yml` analyzes only `tools/` with CodeQL Python security queries. Neither builds the application. Actions are pinned to full commit SHAs, the ordinary job has contents:read and no repository secrets; CodeQL alone has security-events:write. Dependencies are hash-locked in tools/requirements.txt, derived from tools/requirements.in. Dependabot watches Python tooling and action pins.
 
 Verified local equivalents (CI execution has its own actual run evidence): create `.venv-docs` with `uv venv --python 3.14 .venv-docs`, then `uv pip sync --python .venv-docs/bin/python --require-hashes tools/requirements.txt`. Run `.venv-docs/bin/ruff check --select E9,F tools`, `.venv-docs/bin/python tools/validate_docs.py --report reports/document-validation.json`, `.venv-docs/bin/python -m openapi_spec_validator docs/contracts/openapi.yaml`, the installed lint_spine.py with output under reports/, `tools/check_doc_workflow.py`, `git diff --check` and `bash tools/run_secret_scan.sh` after commits exist. Gitleaks scan failure must block the PR; redact report contents and do not silently suppress findings.
+
+## Resume kit export
+
+Canonical recovery instructions: [session recovery](design/session-recovery.md); copy-ready [short prompt](design/continuation-prompt.md). The exporter only bundles named documentation sources; it does not recover or include the latest corrected Claude mockups. Do not confuse its ZIP with a current design-source backup.
+
+Verified command for local regeneration:
+
+```bash
+python3 tools/export_claude_chat_kit.py --output ~/Desktop/Etaye-Claude-Reprise
+```
+
+The output is now a **new versioned child folder** on every run; use the returned path, rather than older files at the parent level. Existing user files, older kits and newer external trackers are untouched and never automatically included. The kit contains attachments 00–08, START-HERE.txt, PROMPT-TO-PASTE.txt, manifest.json, the ZIP and SHA256SUMS. Attach that ZIP in the existing chat and paste the prompt; attach 00–08 separately only if ZIP reading is unavailable.
+
+The manifest records UTC generation time, source HEAD commit, dirty-worktree flag, input-file hashes and every payload file's byte count/hash. A dirty flag means files may differ from that commit; use source hashes to identify the actual inputs, and export from a clean committed revision for delivery. The ZIP contains exactly the payload plus the identical manifest. SHA256SUMS hashes the external manifest and ZIP; those three integrity files are excluded from payload hashes to avoid circular self-hashing. The exporter reopens/checks every delivered payload and ZIP entry, rejects known credential patterns and refuses repository-internal destinations (including resolved symlinks). Only allowlisted text sources are read; no local token or arbitrary folder is ingested. Pattern scans do not prove detection of every possible secret; the existing history scan remains a separate check.
+
+Run preservation/tamper/destination/credential-pattern regression checks with `python3 -m unittest discover -s tools -p 'test_*.py'`. These test the documentation exporter, not the application. No generated kit, ZIP or duplicate specification belongs in Git.
