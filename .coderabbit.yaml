@@ -45,4 +45,4 @@ reviews:
   post_merge_actions: []
   pre_merge_checks:
     docstrings:
-      mode: off
+      mode: "off"
