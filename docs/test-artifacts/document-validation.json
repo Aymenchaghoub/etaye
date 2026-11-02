@@ -1,0 +1,20 @@
+{
+  "kind": "documentary-validation-only",
+  "date": "2026-11-02",
+  "ok": true,
+  "checks": {
+    "markdownFiles": 73,
+    "localLinks": 648,
+    "apiOperations": 94,
+    "apiSchemas": 86,
+    "planningStories": 37,
+    "requiredDesignFamilies": 76,
+    "screenInteractionMappings": 28,
+    "syntheticObjects": 66,
+    "verifiedFigmaExports": 15,
+    "projectFilesSecretScanned": 94
+  },
+  "errors": [],
+  "applicationTestsExecuted": false,
+  "independentReview": "Authoring subagents stopped at usage limit; final checks performed by coordinator"
+}

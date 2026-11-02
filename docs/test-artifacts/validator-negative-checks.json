@@ -1,0 +1,25 @@
+{
+  "kind": "document-validator-negative-fixtures",
+  "date": "2026-11-02",
+  "baselinePassed": true,
+  "checks": [
+    {
+      "case": "plural source reference crossing practice",
+      "rejected": true
+    },
+    {
+      "case": "noncanonical fixture capability",
+      "rejected": true
+    },
+    {
+      "case": "missing spine metadata source",
+      "rejected": true
+    },
+    {
+      "case": "measurement screen points to upload interaction",
+      "rejected": true
+    }
+  ],
+  "applicationTestsExecuted": false,
+  "method": "Temporary isolated copies; tracked repository documents were never mutated by negative checks"
+}

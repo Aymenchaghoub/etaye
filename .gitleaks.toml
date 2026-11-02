@@ -1,0 +1,60 @@
+title = "Etaye secret scanning: defaults plus verified public metadata"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Public Figma file identifier, not the REST authentication token"
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^(docs/design/figma/(manifest|resolved-tokens)\.json|tools/inspect_figma\.py)$''']
+regexes = ['''^vfh4BSnbRAbaDE1q0CyssL$''']
+
+[[allowlists]]
+description = "Verified Figma component/style publishing identifiers from the recorded snapshot"
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^docs/design/figma/file-snapshot\.json$''']
+regexes = [
+  '''^01e79418ffbe0df984e4290d696a01220893f27b$''',
+  '''^082810bc34371945029e16712642a7ccd432e2c0$''',
+  '''^0a60f0dabfa3c9e78370e235c1539562535c6021$''',
+  '''^0bb8f52314ad4966a89fc45ebd7274d76f0e4484$''',
+  '''^1d29c03897a20ede2d6bbc089bdbd62ff23676ca$''',
+  '''^2136cba6e7ae8c1744621cb8368c9fe01a98206d$''',
+  '''^23410a75a908dd5f73265b24c9992983adf4bdf3$''',
+  '''^31f3e90b24795664341aeb5a9c495f12c4b2f1b6$''',
+  '''^34a4e2c83503b2efb461c9e8e4dd7907ae35d48e$''',
+  '''^372be9f149f231af58b449ab8708181d52e8095e$''',
+  '''^3d697606d4c9fe9d962e63e7459c4b5a9c3b1f36$''',
+  '''^434217522a034a945d8529976623c39226d799f8$''',
+  '''^4d8d06f731e5ad32107b16e177a61dcfe6fcd935$''',
+  '''^5848742a181998fcd9ad4c9e9fcaa3a1b5c4ad87$''',
+  '''^957e9e643919db5d70bf976401e6350062496e70$''',
+  '''^99a0cbac6b7d596da0f7c02295ba7754a5317261$''',
+  '''^a312982398cc9faec31b19b4cd8a4eb72f701efe$''',
+  '''^a8f55853a26b0440d50b712be310048fc8e94590$''',
+  '''^a95ad51b65ff41be54a162f356b18a390603f3b5$''',
+  '''^af2770e27a09f1be28f8c923264712cd59be73cb$''',
+  '''^b19d0f3308e4536ec83be11bf192b80a2a39dfb4$''',
+  '''^b9066fbc4f751802e643fd439ee3b6b991ba8710$''',
+  '''^bd24528280008ab2a64b486fe174eaeef2729d76$''',
+  '''^c16743e129244a7f96595b7e8d984c3067ca533c$''',
+  '''^c480af8bc313d27ceb3ab2a1f2bc0564172a64a7$''',
+  '''^cf9d0246418c0b5a43b9fe7406fa82cf0fe26163$''',
+  '''^d0a4652a33fec18f4800d9ee6dfca55509eaebdf$''',
+  '''^d534a004543a0f457c01d67a998c602b7742a010$''',
+  '''^dd1c9ba1dc64ce8e1ab79b5970c4e7b99492be80$''',
+  '''^ded9676ed31b95176fd9dd21d4064cb4a40d1374$''',
+  '''^df11c8ca8a9cae7de4f8e4b641ef521605a22939$''',
+  '''^e3daa39f572bcf2c95d38f7ab41e3ba28e210e65$''',
+  '''^eeb692ebf3e9e9263d2c5b5d5203884b84b627f5$''',
+  '''^f7b8ac1889b0216eb7b1789de0f554894f59315c$''',
+]
+
+[[allowlists]]
+description = "SHA256 of the upstream BMAD key-screens documentation, verified in installer manifest"
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^_bmad/_config/files-manifest\.csv$''']
+regexes = ['''^ff1c5060673dd595edd61e76806bae876264ec6895c2eaadf8a6190785bf5f7b$''']

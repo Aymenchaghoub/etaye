@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: en-US
+tone_instructions: "Be concise and evidence-based. Distinguish verified defects, proposals, and missing evidence. Preserve French product copy."
+early_access: false
+enable_free_tier: true
+reviews:
+  profile: assertive
+  auto_approvals:
+    enabled: false
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  auto_apply_labels: false
+  auto_assign_reviewers: false
+  path_filters:
+    - "!_bmad/**"
+    - "!.claude/skills/**"
+    - "!docs/design/figma/file-snapshot.json"
+    - "!docs/design/figma/assets/**"
+  path_instructions:
+    - path: "**"
+      instructions: >-
+        Read AGENTS.md as the shared policy. The repository is planning and design only.
+        Review silent failures, edge cases and acceptance-criteria compliance with concrete
+        file references. Do not recommend starting an implementation story or replacing
+        the existing identity. A successful document check is not an application test.
+    - path: "docs/**"
+      instructions: >-
+        Follow the authoritative definitions linked from docs/README.md. Check consistency
+        of permissions, practice ownership, source provenance, lifecycles, patient publication
+        and design coverage. Distinguish proposed targets from measured results and actual
+        user approval. Report contradictions rather than duplicating specifications.
+  auto_review:
+    enabled: true
+    drafts: false
+  finishing_touches:
+    docstrings:
+      enabled: false
+    unit_tests:
+      enabled: false
+    simplify:
+      enabled: false
+    autofix:
+      enabled: false
+  post_merge_actions: []
+  pre_merge_checks:
+    docstrings:
+      mode: "off"

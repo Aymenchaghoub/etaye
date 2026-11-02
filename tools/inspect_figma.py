@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import re
+from datetime import datetime, timezone
 from pathlib import Path
 from urllib.error import HTTPError
 from urllib.parse import urlencode
@@ -40,7 +41,7 @@ def main():
     save("file-snapshot.json", {k: data[k] for k in
          ("name", "version", "lastModified", "document", "styles", "components", "componentSets") if k in data})
     manifest = {"fileKey": FILE_KEY, "version": data["version"],
-                "lastModified": data["lastModified"], "consulted": "2026-11-02",
+                "lastModified": data["lastModified"], "consulted": datetime.now(timezone.utc).date().isoformat(),
                 "method": "read-only REST API", "assets": [], "limitations": []}
     for endpoint in ("comments", "versions"):
         try:

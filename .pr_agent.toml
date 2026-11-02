@@ -1,0 +1,7 @@
+# CodeRabbit is the selected free public-repository reviewer. Avoid redundant
+# automatic Qodo usage while this account's free entitlement is unverified.
+# Official repository-level configuration takes effect for subsequent PRs.
+[github_app]
+pr_commands = []
+handle_push_trigger = false
+push_commands = []
