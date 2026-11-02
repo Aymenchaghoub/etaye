@@ -3,15 +3,15 @@
   "date": "2026-11-02",
   "ok": true,
   "checks": {
-    "markdownFiles": 71,
-    "localLinks": 642,
+    "markdownFiles": 73,
+    "localLinks": 645,
     "apiOperations": 92,
     "apiSchemas": 84,
     "planningStories": 37,
     "requiredDesignFamilies": 76,
     "syntheticObjects": 66,
     "verifiedFigmaExports": 15,
-    "projectFilesSecretScanned": 91
+    "projectFilesSecretScanned": 93
   },
   "errors": [],
   "applicationTestsExecuted": false,

@@ -25,4 +25,14 @@ Consulted2026-11-02: [public CodeQL availability](https://docs.github.com/en/cod
 
 ## Remote execution record
 
-Pending actual first-PR run and settings read-back; update with API results before final delivery. No runtime application tests, deployments, real-model evaluations or design approvals are claimed.
+Verified through authenticated GitHub API read-back on 2026-11-02:
+
+- Repository visibility is public, under Aymenchaghoub/etaye.
+- Secret scanning, push protection and Dependabot security updates enabled; Dependabot alerts enable request returned204. Automated fixes read-back: enabled=true, paused=false.
+- Private vulnerability reporting: enabled=true.
+- Actions: enabled; selected actions only (GitHub-owned actions and astral-sh/setup-uv); verified marketplace actions are not broadly allowed. Full commit SHA pinning is required.
+- Default GITHUB_TOKEN permissions: read; workflow pull-request approval permission disabled.
+- Squash merging only; automatic deletion of merged head branches enabled.
+- Local full-history Gitleaks8.30.1 scan: no leaks.38 generic-pattern candidates were individually verified as public Figma identifiers/publishing keys and an upstream BMAD document SHA256. .gitleaks.toml keeps defaults and restricts exceptions to exact verified values AND paths; it does not exclude whole asset/vendor directories.
+
+First PR execution and main ruleset remain to be verified. No runtime application tests, deployments, real-model evaluations or design approvals are claimed.
