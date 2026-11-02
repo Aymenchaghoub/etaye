@@ -50,7 +50,7 @@ uv run --no-cache .claude/skills/bmad-architecture/scripts/lint_spine.py --works
 python3 tools/export_claude_chat_kit.py --output /path/outside/repository/Etaye-Figma-Claude
 ```
 
-These documentary commands were run; results are recorded in review-report.md. `uvx` resolves a validation tool in its isolated cache, not app dependencies. The chat kit is a derived distribution outside Git, as requested; source documents remain authoritative. The current desktop folder contains files00–06 and optional original assets. Do not put tokens into exports.
+These documentary commands were run; results are recorded in review-report.md. `uvx` resolves a validation tool in its isolated cache, not app dependencies. The chat kit is a derived distribution outside Git, as requested; source documents remain authoritative. See [Resume kit export](#resume-kit-export) for the current versioned-folder contents; do not use an older parent-level inventory. Do not put tokens into exports.
 
 ## Access troubleshooting
 
@@ -76,7 +76,7 @@ Verified command for local regeneration:
 python3 tools/export_claude_chat_kit.py --output ~/Desktop/Etaye-Claude-Reprise
 ```
 
-The output is now a **new versioned child folder** on every run; use the returned path, rather than older files at the parent level. Existing user files, older kits and newer external trackers are untouched and never automatically included. The kit contains attachments 00–08, START-HERE.txt, PROMPT-TO-PASTE.txt, manifest.json, the ZIP and SHA256SUMS. Attach that ZIP in the existing chat and paste the prompt; attach 00–08 separately only if ZIP reading is unavailable.
+The output is now a **new versioned child folder** on every run; use the returned path, rather than older files at the parent level. Existing user files, older kits and newer external trackers are untouched and never automatically included. Writing/verification uses a hidden .etaye-resume-incomplete-* staging folder, renamed to a deliverable etaye-resume-* folder only after verification. On failure the exporter removes only its new staging folder; if cleanup is prevented, the remaining folder stays visibly marked incomplete and must not be sent. The kit contains attachments 00–08, START-HERE.txt, PROMPT-TO-PASTE.txt, manifest.json, the ZIP and SHA256SUMS. Attach that ZIP in the existing chat and paste the prompt; attach 00–08 separately only if ZIP reading is unavailable.
 
 The manifest records UTC generation time, source HEAD commit, dirty-worktree flag, input-file hashes and every payload file's byte count/hash. A dirty flag means files may differ from that commit; use source hashes to identify the actual inputs, and export from a clean committed revision for delivery. The ZIP contains exactly the payload plus the identical manifest. SHA256SUMS hashes the external manifest and ZIP; those three integrity files are excluded from payload hashes to avoid circular self-hashing. The exporter reopens/checks every delivered payload and ZIP entry, rejects known credential patterns and refuses repository-internal destinations (including resolved symlinks). Only allowlisted text sources are read; no local token or arbitrary folder is ingested. Pattern scans do not prove detection of every possible secret; the existing history scan remains a separate check.
 

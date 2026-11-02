@@ -4,7 +4,7 @@
   "ok": true,
   "checks": {
     "markdownFiles": 74,
-    "localLinks": 669,
+    "localLinks": 670,
     "apiOperations": 94,
     "apiSchemas": 86,
     "planningStories": 37,

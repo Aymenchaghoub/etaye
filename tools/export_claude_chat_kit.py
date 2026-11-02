@@ -5,6 +5,7 @@ import argparse
 import hashlib
 import json
 import re
+import shutil
 import subprocess
 import tempfile
 import zipfile
@@ -205,20 +206,31 @@ def export_package(output):
                   for name, content in sorted(payload.items())},
     }
     output.mkdir(parents=True, exist_ok=True)
-    folder = Path(tempfile.mkdtemp(prefix="etaye-resume-" + now.strftime("%Y%m%dT%H%M%SZ") + "-" + commit[:12] + "-", dir=output))
-    for name, content in payload.items():
-        path = folder / name
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_bytes(content)
-    (folder / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
-    with zipfile.ZipFile(folder / ARCHIVE, "w", zipfile.ZIP_DEFLATED) as archive:
-        for name in sorted([*payload, "manifest.json"]):
-            archive.write(folder / name, name)
-    (folder / "SHA256SUMS").write_text("".join(
-        hashlib.sha256((folder / name).read_bytes()).hexdigest() + "  " + name + "\n"
-        for name in ["manifest.json", ARCHIVE]))
-    verify_package(folder)
-    return folder
+    prefix = now.strftime("%Y%m%dT%H%M%SZ") + "-" + commit[:12] + "-"
+    # Incomplete output must never look like a deliverable kit, even after interruption.
+    folder = Path(tempfile.mkdtemp(prefix=".etaye-resume-incomplete-" + prefix, dir=output))
+    try:
+        for name, content in payload.items():
+            path = folder / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(content)
+        (folder / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
+        with zipfile.ZipFile(folder / ARCHIVE, "w", zipfile.ZIP_DEFLATED) as archive:
+            for name in sorted([*payload, "manifest.json"]):
+                archive.write(folder / name, name)
+        (folder / "SHA256SUMS").write_text("".join(
+            hashlib.sha256((folder / name).read_bytes()).hexdigest() + "  " + name + "\n"
+            for name in ["manifest.json", ARCHIVE]))
+        verify_package(folder)
+        completed = output / folder.name.replace(".etaye-resume-incomplete-", "etaye-resume-", 1)
+        if completed.exists():
+            raise FileExistsError("Refusing to replace an existing export: " + str(completed))
+        return folder.rename(completed)
+    except BaseException:
+        # Remove only this new staging folder; a cleanup failure leaves it marked incomplete.
+        shutil.rmtree(folder, ignore_errors=True)
+        raise
+
 
 
 def main():

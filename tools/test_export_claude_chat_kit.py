@@ -74,6 +74,29 @@ class ResumeKitTests(unittest.TestCase):
                 exporter.export_package(self.output)
         self.assertEqual(list(self.output.iterdir()), [])
 
+    def test_write_and_verification_failures_remove_only_new_staging_output(self):
+        previous = exporter.export_package(self.output)
+        user_file = self.output / "user-notes.txt"
+        user_file.write_text("Keep this file")
+        before = {str(p.relative_to(self.output)): p.read_bytes()
+                  for p in self.output.rglob("*") if p.is_file()}
+        original_write = Path.write_bytes
+
+        def fail_after_one_write(path, content):
+            original_write(path, content)
+            raise OSError("Simulated interrupted write")
+
+        failures = [
+            patch.object(Path, "write_bytes", fail_after_one_write),
+            patch.object(exporter, "verify_package", side_effect=ValueError("Simulated failed verification")),
+        ]
+        for failure in failures:
+            with failure, self.assertRaises((OSError, ValueError)):
+                exporter.export_package(self.output)
+            self.assertEqual(set(self.output.iterdir()), {previous, user_file})
+            for name, content in before.items():
+                self.assertEqual((self.output / name).read_bytes(), content)
+
 
 if __name__ == "__main__":
     unittest.main()
