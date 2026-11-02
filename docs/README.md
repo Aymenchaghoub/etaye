@@ -26,7 +26,7 @@ Status: Planning package ready for complete design work. Documents are reviewed 
 | Existing visual source and assets | [Figma inventory](design/figma-inventory.md), [tokens/assets](design/token-reference.md), [snapshot/export manifest](design/figma/manifest.json) |
 | Design surfaces | [Screens](design/screen-catalog.md), [interactions/modals](design/interaction-catalog.md), [PDFs/emails](design/pdf-email-specifications.md) |
 | Shared fictional content | [Narrative](design/synthetic-data.md), [dataset](design/synthetic-data.json) |
-| Design progress and next phase | [Coverage](design/coverage.csv), [tracking guide](design/coverage-guide.md), [Claude handoff](design/handoff-claude.md), [short continuation prompt](design/continuation-prompt.md) |
+| Design progress and next phase | [Coverage](design/coverage.csv), [tracking guide](design/coverage-guide.md), [Claude handoff](design/handoff-claude.md), [session recovery](design/session-recovery.md), [short continuation prompt](design/continuation-prompt.md) |
 | End-to-end mapping | [Traceability](traceability.md), [review](review-report.md), [documentary validation](test-artifacts/document-validation.json) |
 | Agent installation and policy | [Setup/troubleshooting](agent-setup.md), [workflow execution record](workflow-record.md), [AGENTS](../AGENTS.md), [CLAUDE](../CLAUDE.md) |
 

@@ -27,6 +27,7 @@ assert "persist-credentials: false" in path.read_text()
 assert all(command in path.read_text() for command in [
     "tools/validate_docs.py", "tools/check_doc_workflow.py", "openapi_spec_validator",
     "lint_spine.py", "git diff --check HEAD^1 HEAD", "--require-hashes",
+    "unittest discover -s tools -p 'test_*.py'",
 ])
 assert "pull_request_target" not in workflow["on"]
 codeql = yaml.load((root / ".github/workflows/codeql.yml").read_text(), Loader=yaml.BaseLoader)

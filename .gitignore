@@ -11,4 +11,5 @@ dist/
 .cache/
 .venv-docs/
 reports/
+__pycache__/
 local-reference/
