@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+*.user.toml
+.claude/settings.local.json
+.codex/config.local.toml
+.DS_Store
+node_modules/
+target/
+dist/
+.cache/
+local-reference/
