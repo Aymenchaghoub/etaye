@@ -1,0 +1,102 @@
+{
+  "fileKey": "vfh4BSnbRAbaDE1q0CyssL",
+  "version": "2417265104370398313",
+  "lastModified": "2026-11-02T13:47:25Z",
+  "consulted": "2026-11-02",
+  "method": "read-only REST API",
+  "assets": [
+    {
+      "nodeId": "4:13",
+      "file": "assets/logo-light.svg",
+      "sha256": "ffd6a6fbc0d172eeb08266295933853a1563af8472c1005414384b0acbf686e0",
+      "visualReview": "Opened 2026-11-02: original PNG or rasterized original SVG contact sheet; source identity only, not application design approval"
+    },
+    {
+      "nodeId": "4:19",
+      "file": "assets/logo-monochrome.svg",
+      "sha256": "a05f3dfd287a10a3d3c23348d0d05c05af5ac81a0cb5d2f2f01fd4980c29d808",
+      "visualReview": "Opened 2026-11-02: original PNG or rasterized original SVG contact sheet; source identity only, not application design approval"
+    },
+    {
+      "nodeId": "4:20",
+      "file": "assets/logo-patient.svg",
+      "sha256": "c19e154a0134ecce3b124c29cadbe6fba62cc905f1bccc453ba0122348056678",
+      "visualReview": "Opened 2026-11-02: original PNG or rasterized original SVG contact sheet; source identity only, not application design approval"
+    },
+    {
+      "nodeId": "4:33",
+      "file": "assets/logo-dark.svg",
+      "sha256": "b19c65d8e33c0d29170987355e20268d1c03b5ee3bae91161cbb372887ff2dd2",
+      "visualReview": "Opened 2026-11-02: original PNG or rasterized original SVG contact sheet; source identity only, not application design approval"
+    },
+    {
+      "nodeId": "4:37",
+      "file": "assets/mark-light.svg",
+      "sha256": "5b2002dd3efa3123b98182995711786daeee9d2f3bf5aece03577c3df01462cb",
+      "visualReview": "Opened 2026-11-02: original PNG or rasterized original SVG contact sheet; source identity only, not application design approval"
+    },
+    {
+      "nodeId": "4:41",
+      "file": "assets/mark-monochrome.svg",
+      "sha256": "353753b533770f36e59c84057dd95e28f15d784af02dd36348537861214afb54",
+      "visualReview": "Opened 2026-11-02: original PNG or rasterized original SVG contact sheet; source identity only, not application design approval"
+    },
+    {
+      "nodeId": "4:42",
+      "file": "assets/app-icon-light.svg",
+      "sha256": "9760c8d9b3dc3ec893c2418db9b17c1b8b9910f31fe44972692fa19500633be2",
+      "visualReview": "Opened 2026-11-02: original PNG or rasterized original SVG contact sheet; source identity only, not application design approval"
+    },
+    {
+      "nodeId": "4:47",
+      "file": "assets/app-icon-dark.svg",
+      "sha256": "be86e0e9d63493d93832a40107a6a555e867efda5543e103e664e70548c4089d",
+      "visualReview": "Opened 2026-11-02: original PNG or rasterized original SVG contact sheet; source identity only, not application design approval"
+    },
+    {
+      "nodeId": "3:2",
+      "file": "screenshots/colors-light.png",
+      "sha256": "5596ee49ed2e8cd97961a9a56c29cf2f61d4378c04bd58776f2897cfaa2823ec",
+      "visualReview": "Opened 2026-11-02: original PNG or rasterized original SVG contact sheet; source identity only, not application design approval"
+    },
+    {
+      "nodeId": "3:87",
+      "file": "screenshots/colors-dark.png",
+      "sha256": "47c82ca76f218543cbd22adf7e562e5b35ee1ac336f23801d3f88fca79fdc6f4",
+      "visualReview": "Opened 2026-11-02: original PNG or rasterized original SVG contact sheet; source identity only, not application design approval"
+    },
+    {
+      "nodeId": "3:172",
+      "file": "screenshots/typography.png",
+      "sha256": "241631dc77e716cf0135c5d3ecf4c631471f350cb3014d7b35db56a3f80738a6",
+      "visualReview": "Opened 2026-11-02: original PNG or rasterized original SVG contact sheet; source identity only, not application design approval"
+    },
+    {
+      "nodeId": "4:2",
+      "file": "screenshots/logos.png",
+      "sha256": "a4a74641d6e33d5d37c521216b4eabea74049dfda402c19a110d38bbe0057064",
+      "visualReview": "Opened 2026-11-02: original PNG or rasterized original SVG contact sheet; source identity only, not application design approval"
+    },
+    {
+      "nodeId": "5:22",
+      "file": "screenshots/buttons.png",
+      "sha256": "6e563b7c68eb22a5eff5e3f927c0b64bc0aec8467e027c463b52d17dd1ad4139",
+      "visualReview": "Opened 2026-11-02: original PNG or rasterized original SVG contact sheet; source identity only, not application design approval"
+    },
+    {
+      "nodeId": "5:46",
+      "file": "screenshots/statuses.png",
+      "sha256": "db1c147ef4b49a1ca4411ddf0b7335d28d7b4c6cf7718dd06065256f02d3fc3e",
+      "visualReview": "Opened 2026-11-02: original PNG or rasterized original SVG contact sheet; source identity only, not application design approval"
+    },
+    {
+      "nodeId": "6:2",
+      "file": "screenshots/source-annotation.png",
+      "sha256": "a09d9eb3aefd7c9c4c3936375a3387031b76b03e49e2f2afa53a74b8620d43f6",
+      "visualReview": "Opened 2026-11-02: original PNG or rasterized original SVG contact sheet; source identity only, not application design approval"
+    }
+  ],
+  "limitations": [
+    "versions: first API page only; inspect pagination before claiming complete history"
+  ]
+}

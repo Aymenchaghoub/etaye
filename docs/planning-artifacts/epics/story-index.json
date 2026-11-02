@@ -1,0 +1,580 @@
+[
+  {
+    "id": "1.1",
+    "epic": "1",
+    "title": "Activate an intended invitation",
+    "requirements": [
+      "FR-001",
+      "FR-004"
+    ],
+    "rules": "BR-004–005",
+    "journeys": "J-01",
+    "screens": "S-03",
+    "interactions": "I-01, I-03",
+    "test": "AT-001",
+    "path": "docs/planning-artifacts/epics/epic-1.md",
+    "status": "backlog"
+  },
+  {
+    "id": "1.2",
+    "epic": "1",
+    "title": "Sign in, recover and expire safely",
+    "requirements": [
+      "FR-001"
+    ],
+    "rules": "BR-003, BR-005",
+    "journeys": "J-01",
+    "screens": "S-02, S-04, S-38",
+    "interactions": "I-22",
+    "test": "AT-002",
+    "path": "docs/planning-artifacts/epics/epic-1.md",
+    "status": "backlog"
+  },
+  {
+    "id": "1.3",
+    "epic": "1",
+    "title": "Select and switch practice context",
+    "requirements": [
+      "FR-002",
+      "FR-016"
+    ],
+    "rules": "BR-001–004",
+    "journeys": "J-01",
+    "screens": "S-05",
+    "interactions": "I-20",
+    "test": "AT-003",
+    "path": "docs/planning-artifacts/epics/epic-1.md",
+    "status": "backlog"
+  },
+  {
+    "id": "1.4",
+    "epic": "1",
+    "title": "Demonstrate server-side resource isolation",
+    "requirements": [
+      "FR-002",
+      "FR-019"
+    ],
+    "rules": "BR-001–002",
+    "journeys": "J-08",
+    "screens": "S-36",
+    "interactions": "I-22",
+    "test": "AT-004",
+    "path": "docs/planning-artifacts/epics/epic-1.md",
+    "status": "backlog"
+  },
+  {
+    "id": "2.1",
+    "epic": "2",
+    "title": "Invite and manage team permissions",
+    "requirements": [
+      "FR-003"
+    ],
+    "rules": "BR-002–005",
+    "journeys": "J-07",
+    "screens": "S-31, S-32",
+    "interactions": "I-01",
+    "test": "AT-005",
+    "path": "docs/planning-artifacts/epics/epic-2.md",
+    "status": "backlog"
+  },
+  {
+    "id": "2.2",
+    "epic": "2",
+    "title": "Deactivate access without losing accountability",
+    "requirements": [
+      "FR-003"
+    ],
+    "rules": "BR-003, BR-017",
+    "journeys": "J-07",
+    "screens": "S-32",
+    "interactions": "I-02",
+    "test": "AT-006",
+    "path": "docs/planning-artifacts/epics/epic-2.md",
+    "status": "backlog"
+  },
+  {
+    "id": "2.3",
+    "epic": "2",
+    "title": "Maintain operational practice settings",
+    "requirements": [
+      "FR-018",
+      "FR-009"
+    ],
+    "rules": "BR-002, BR-006",
+    "journeys": "J-07",
+    "screens": "S-33",
+    "interactions": "I-24",
+    "test": "AT-007",
+    "path": "docs/planning-artifacts/epics/epic-2.md",
+    "status": "backlog"
+  },
+  {
+    "id": "2.4",
+    "epic": "2",
+    "title": "Inspect scoped audit and own preferences",
+    "requirements": [
+      "FR-018"
+    ],
+    "rules": "BR-002, BR-017",
+    "journeys": "J-07",
+    "screens": "S-34, S-35",
+    "interactions": "I-25",
+    "test": "AT-008",
+    "path": "docs/planning-artifacts/epics/epic-2.md",
+    "status": "backlog"
+  },
+  {
+    "id": "3.1",
+    "epic": "3",
+    "title": "Find and register a local patient",
+    "requirements": [
+      "FR-004",
+      "FR-005"
+    ],
+    "rules": "BR-004",
+    "journeys": "J-02",
+    "screens": "S-07, S-08",
+    "interactions": "I-04",
+    "test": "AT-009",
+    "path": "docs/planning-artifacts/epics/epic-3.md",
+    "status": "backlog"
+  },
+  {
+    "id": "3.2",
+    "epic": "3",
+    "title": "Explore chronology and explicit assertions",
+    "requirements": [
+      "FR-005"
+    ],
+    "rules": "BR-008",
+    "journeys": "J-02",
+    "screens": "S-09, S-10",
+    "interactions": "I-05",
+    "test": "AT-010",
+    "path": "docs/planning-artifacts/epics/epic-3.md",
+    "status": "backlog"
+  },
+  {
+    "id": "3.3",
+    "epic": "3",
+    "title": "Enter and correct measurements",
+    "requirements": [
+      "FR-006"
+    ],
+    "rules": "BR-008–009",
+    "journeys": "J-02",
+    "screens": "S-11",
+    "interactions": "I-06",
+    "test": "AT-011",
+    "path": "docs/planning-artifacts/epics/epic-3.md",
+    "status": "backlog"
+  },
+  {
+    "id": "3.4",
+    "epic": "3",
+    "title": "Enter and correct laboratory results",
+    "requirements": [
+      "FR-007"
+    ],
+    "rules": "BR-009",
+    "journeys": "J-02",
+    "screens": "S-12",
+    "interactions": "I-07",
+    "test": "AT-012",
+    "path": "docs/planning-artifacts/epics/epic-3.md",
+    "status": "backlog"
+  },
+  {
+    "id": "3.5",
+    "epic": "3",
+    "title": "Upload and inspect authorized documents",
+    "requirements": [
+      "FR-008"
+    ],
+    "rules": "BR-010",
+    "journeys": "J-02",
+    "screens": "S-13",
+    "interactions": "I-08, I-09",
+    "test": "AT-013",
+    "path": "docs/planning-artifacts/epics/epic-3.md",
+    "status": "backlog"
+  },
+  {
+    "id": "4.1",
+    "epic": "4",
+    "title": "Define availability and exceptions",
+    "requirements": [
+      "FR-009"
+    ],
+    "rules": "BR-006",
+    "journeys": "J-03",
+    "screens": "S-14, S-15",
+    "interactions": "I-24",
+    "test": "AT-014",
+    "path": "docs/planning-artifacts/epics/epic-4.md",
+    "status": "backlog"
+  },
+  {
+    "id": "4.2",
+    "epic": "4",
+    "title": "Book a real appointment",
+    "requirements": [
+      "FR-009"
+    ],
+    "rules": "BR-006",
+    "journeys": "J-03",
+    "screens": "S-14, S-16, S-26",
+    "interactions": "I-10",
+    "test": "AT-015",
+    "path": "docs/planning-artifacts/epics/epic-4.md",
+    "status": "backlog"
+  },
+  {
+    "id": "4.3",
+    "epic": "4",
+    "title": "Reschedule or cancel an appointment",
+    "requirements": [
+      "FR-009"
+    ],
+    "rules": "BR-006",
+    "journeys": "J-03",
+    "screens": "S-16, S-26",
+    "interactions": "I-11, I-12",
+    "test": "AT-016",
+    "path": "docs/planning-artifacts/epics/epic-4.md",
+    "status": "backlog"
+  },
+  {
+    "id": "4.4",
+    "epic": "4",
+    "title": "Record arrival, completion or no-show",
+    "requirements": [
+      "FR-009",
+      "FR-012"
+    ],
+    "rules": "BR-006–007",
+    "journeys": "J-03",
+    "screens": "S-16",
+    "interactions": "I-13",
+    "test": "AT-017",
+    "path": "docs/planning-artifacts/epics/epic-4.md",
+    "status": "backlog"
+  },
+  {
+    "id": "4.5",
+    "epic": "4",
+    "title": "Prepare a visit and inspect patient reports",
+    "requirements": [
+      "FR-010",
+      "FR-016"
+    ],
+    "rules": "BR-008",
+    "journeys": "J-06",
+    "screens": "S-17, S-27",
+    "interactions": "I-05",
+    "test": "AT-018",
+    "path": "docs/planning-artifacts/epics/epic-4.md",
+    "status": "backlog"
+  },
+  {
+    "id": "5.1",
+    "epic": "5",
+    "title": "Read a daily preparation workspace",
+    "requirements": [
+      "FR-009",
+      "FR-011"
+    ],
+    "rules": "BR-006, BR-011",
+    "journeys": "J-02",
+    "screens": "S-06, S-18",
+    "interactions": "I-09",
+    "test": "AT-019",
+    "path": "docs/planning-artifacts/epics/epic-5.md",
+    "status": "backlog"
+  },
+  {
+    "id": "5.2",
+    "epic": "5",
+    "title": "Generate a bounded clinician brief",
+    "requirements": [
+      "FR-011",
+      "FR-013"
+    ],
+    "rules": "BR-011",
+    "journeys": "J-02",
+    "screens": "S-18, S-40",
+    "interactions": "I-14",
+    "test": "AT-020",
+    "path": "docs/planning-artifacts/epics/epic-5.md",
+    "status": "backlog"
+  },
+  {
+    "id": "5.3",
+    "epic": "5",
+    "title": "Inspect dated statement support",
+    "requirements": [
+      "FR-008",
+      "FR-011",
+      "FR-013"
+    ],
+    "rules": "BR-008, BR-010–011",
+    "journeys": "J-02",
+    "screens": "S-13, S-18, S-21",
+    "interactions": "I-09",
+    "test": "AT-021",
+    "path": "docs/planning-artifacts/epics/epic-5.md",
+    "status": "backlog"
+  },
+  {
+    "id": "5.4",
+    "epic": "5",
+    "title": "Handle changed sources and failed tasks",
+    "requirements": [
+      "FR-013",
+      "FR-014"
+    ],
+    "rules": "BR-011, BR-014",
+    "journeys": "J-04",
+    "screens": "S-24, S-37, S-40",
+    "interactions": "I-23",
+    "test": "AT-022",
+    "path": "docs/planning-artifacts/epics/epic-5.md",
+    "status": "backlog"
+  },
+  {
+    "id": "6.1",
+    "epic": "6",
+    "title": "Conduct an encounter with or without appointment",
+    "requirements": [
+      "FR-012"
+    ],
+    "rules": "BR-007",
+    "journeys": "J-04",
+    "screens": "S-19",
+    "interactions": "I-05",
+    "test": "AT-023",
+    "path": "docs/planning-artifacts/epics/epic-6.md",
+    "status": "backlog"
+  },
+  {
+    "id": "6.2",
+    "epic": "6",
+    "title": "Draft a consultation report",
+    "requirements": [
+      "FR-012",
+      "FR-013"
+    ],
+    "rules": "BR-007, BR-011",
+    "journeys": "J-04",
+    "screens": "S-20, S-21",
+    "interactions": "I-14, I-15",
+    "test": "AT-024",
+    "path": "docs/planning-artifacts/epics/epic-6.md",
+    "status": "backlog"
+  },
+  {
+    "id": "6.3",
+    "epic": "6",
+    "title": "Review, correct and compare versions",
+    "requirements": [
+      "FR-014"
+    ],
+    "rules": "BR-012, BR-015",
+    "journeys": "J-04",
+    "screens": "S-21, S-22",
+    "interactions": "I-15, I-21",
+    "test": "AT-025",
+    "path": "docs/planning-artifacts/epics/epic-6.md",
+    "status": "backlog"
+  },
+  {
+    "id": "6.4",
+    "epic": "6",
+    "title": "Validate the exact reviewed version",
+    "requirements": [
+      "FR-014"
+    ],
+    "rules": "BR-012",
+    "journeys": "J-04",
+    "screens": "S-23",
+    "interactions": "I-16",
+    "test": "AT-026",
+    "path": "docs/planning-artifacts/epics/epic-6.md",
+    "status": "backlog"
+  },
+  {
+    "id": "7.1",
+    "epic": "7",
+    "title": "Prepare a separately reviewed patient explanation",
+    "requirements": [
+      "FR-013",
+      "FR-014",
+      "FR-015"
+    ],
+    "rules": "BR-011–013",
+    "journeys": "J-05",
+    "screens": "S-20, S-21",
+    "interactions": "I-15, I-16",
+    "test": "AT-027",
+    "path": "docs/planning-artifacts/epics/epic-7.md",
+    "status": "backlog"
+  },
+  {
+    "id": "7.2",
+    "epic": "7",
+    "title": "Publish selected validated content",
+    "requirements": [
+      "FR-015"
+    ],
+    "rules": "BR-013",
+    "journeys": "J-05",
+    "screens": "S-23",
+    "interactions": "I-17",
+    "test": "AT-028",
+    "path": "docs/planning-artifacts/epics/epic-7.md",
+    "status": "backlog"
+  },
+  {
+    "id": "7.3",
+    "epic": "7",
+    "title": "Replace or withdraw a publication",
+    "requirements": [
+      "FR-015"
+    ],
+    "rules": "BR-013–014",
+    "journeys": "J-05",
+    "screens": "S-24",
+    "interactions": "I-18",
+    "test": "AT-029",
+    "path": "docs/planning-artifacts/epics/epic-7.md",
+    "status": "backlog"
+  },
+  {
+    "id": "7.4",
+    "epic": "7",
+    "title": "Read only own published information",
+    "requirements": [
+      "FR-016"
+    ],
+    "rules": "BR-002, BR-013",
+    "journeys": "J-06",
+    "screens": "S-25, S-28, S-29",
+    "interactions": "I-09",
+    "test": "AT-030",
+    "path": "docs/planning-artifacts/epics/epic-7.md",
+    "status": "backlog"
+  },
+  {
+    "id": "7.5",
+    "epic": "7",
+    "title": "Manage patient appointments and authorized files",
+    "requirements": [
+      "FR-009",
+      "FR-016"
+    ],
+    "rules": "BR-006, BR-010, BR-013",
+    "journeys": "J-06",
+    "screens": "S-26, S-30",
+    "interactions": "I-10, I-11, I-12",
+    "test": "AT-031",
+    "path": "docs/planning-artifacts/epics/epic-7.md",
+    "status": "backlog"
+  },
+  {
+    "id": "8.1",
+    "epic": "8",
+    "title": "Export a practitioner-only brief",
+    "requirements": [
+      "FR-017",
+      "FR-011"
+    ],
+    "rules": "BR-016",
+    "journeys": "J-02",
+    "screens": "S-39, P-01",
+    "interactions": "I-19",
+    "test": "AT-032",
+    "path": "docs/planning-artifacts/epics/epic-8.md",
+    "status": "backlog"
+  },
+  {
+    "id": "8.2",
+    "epic": "8",
+    "title": "Export reports and patient explanations",
+    "requirements": [
+      "FR-017",
+      "FR-015",
+      "FR-016"
+    ],
+    "rules": "BR-013, BR-016",
+    "journeys": "J-06",
+    "screens": "S-39, P-02, P-03",
+    "interactions": "I-19",
+    "test": "AT-033",
+    "path": "docs/planning-artifacts/epics/epic-8.md",
+    "status": "backlog"
+  },
+  {
+    "id": "8.3",
+    "epic": "8",
+    "title": "Deliver minimal transactional notifications",
+    "requirements": [
+      "FR-001",
+      "FR-009",
+      "FR-015",
+      "FR-017"
+    ],
+    "rules": "BR-005, BR-006, BR-016",
+    "journeys": "J-01, J-05",
+    "screens": "M-01–05",
+    "interactions": "I-01, I-17, I-23",
+    "test": "AT-034",
+    "path": "docs/planning-artifacts/epics/epic-8.md",
+    "status": "backlog"
+  },
+  {
+    "id": "9.1",
+    "epic": "9",
+    "title": "Enter and reset bounded synthetic journeys",
+    "requirements": [
+      "FR-019"
+    ],
+    "rules": "BR-018",
+    "journeys": "J-08",
+    "screens": "S-01, S-37",
+    "interactions": "I-26",
+    "test": "AT-035",
+    "path": "docs/planning-artifacts/epics/epic-9.md",
+    "status": "backlog"
+  },
+  {
+    "id": "9.2",
+    "epic": "9",
+    "title": "Produce real-stack quality and release evidence",
+    "requirements": [
+      "FR-020"
+    ],
+    "rules": "BR-001, BR-017–018",
+    "journeys": "J-08",
+    "screens": "Operational evidence",
+    "interactions": "I-23",
+    "test": "AT-036",
+    "path": "docs/planning-artifacts/epics/epic-9.md",
+    "status": "backlog"
+  },
+  {
+    "id": "9.3",
+    "epic": "9",
+    "title": "Recover unavailable services and releases",
+    "requirements": [
+      "FR-019",
+      "FR-020"
+    ],
+    "rules": "BR-018",
+    "journeys": "J-08",
+    "screens": "S-37, S-38",
+    "interactions": "I-22, I-23",
+    "test": "AT-037",
+    "path": "docs/planning-artifacts/epics/epic-9.md",
+    "status": "backlog"
+  }
+]

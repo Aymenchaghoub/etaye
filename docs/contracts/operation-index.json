@@ -1,0 +1,554 @@
+[
+  {
+    "operationId": "getCsrfToken",
+    "method": "get",
+    "path": "/csrf",
+    "permission": "PUBLIC"
+  },
+  {
+    "operationId": "signIn",
+    "method": "post",
+    "path": "/session",
+    "permission": "PUBLIC"
+  },
+  {
+    "operationId": "getSession",
+    "method": "get",
+    "path": "/session",
+    "permission": "AUTHENTICATED"
+  },
+  {
+    "operationId": "signOut",
+    "method": "delete",
+    "path": "/session",
+    "permission": "AUTHENTICATED"
+  },
+  {
+    "operationId": "requestRecovery",
+    "method": "post",
+    "path": "/access-recovery",
+    "permission": "PUBLIC"
+  },
+  {
+    "operationId": "completeRecovery",
+    "method": "post",
+    "path": "/access-recovery/complete",
+    "permission": "PUBLIC"
+  },
+  {
+    "operationId": "acceptInvitation",
+    "method": "post",
+    "path": "/invitations/accept",
+    "permission": "INTENDED_RECIPIENT"
+  },
+  {
+    "operationId": "getOwnAccount",
+    "method": "get",
+    "path": "/account",
+    "permission": "AUTHENTICATED"
+  },
+  {
+    "operationId": "editOwnAccount",
+    "method": "patch",
+    "path": "/account",
+    "permission": "AUTHENTICATED"
+  },
+  {
+    "operationId": "listAuthorizedPractices",
+    "method": "get",
+    "path": "/practices",
+    "permission": "AUTHENTICATED"
+  },
+  {
+    "operationId": "getPractice",
+    "method": "get",
+    "path": "/practices/{practiceId}",
+    "permission": "MEMBERSHIP_OR_PORTAL"
+  },
+  {
+    "operationId": "editPractice",
+    "method": "patch",
+    "path": "/practices/{practiceId}",
+    "permission": "PRACTICE_SETTINGS"
+  },
+  {
+    "operationId": "listMemberships",
+    "method": "get",
+    "path": "/practices/{practiceId}/memberships",
+    "permission": "TEAM_MANAGE"
+  },
+  {
+    "operationId": "editMembershipCapabilities",
+    "method": "patch",
+    "path": "/practices/{practiceId}/memberships/{membershipId}",
+    "permission": "TEAM_MANAGE"
+  },
+  {
+    "operationId": "suspendMembership",
+    "method": "post",
+    "path": "/practices/{practiceId}/memberships/{membershipId}/suspend",
+    "permission": "TEAM_MANAGE"
+  },
+  {
+    "operationId": "listInvitations",
+    "method": "get",
+    "path": "/practices/{practiceId}/invitations",
+    "permission": "TEAM_MANAGE"
+  },
+  {
+    "operationId": "issueInvitation",
+    "method": "post",
+    "path": "/practices/{practiceId}/invitations",
+    "permission": "TEAM_MANAGE_OR_PORTAL_LINK_ISSUER"
+  },
+  {
+    "operationId": "revokeInvitation",
+    "method": "post",
+    "path": "/practices/{practiceId}/invitations/{invitationId}/revoke",
+    "permission": "AUTHORIZED_ISSUER"
+  },
+  {
+    "operationId": "resendInvitation",
+    "method": "post",
+    "path": "/practices/{practiceId}/invitations/{invitationId}/resend",
+    "permission": "AUTHORIZED_ISSUER"
+  },
+  {
+    "operationId": "searchPatients",
+    "method": "get",
+    "path": "/practices/{practiceId}/patients",
+    "permission": "CLINICAL_READ"
+  },
+  {
+    "operationId": "createPatient",
+    "method": "post",
+    "path": "/practices/{practiceId}/patients",
+    "permission": "CLINICAL_WRITE"
+  },
+  {
+    "operationId": "editPatient",
+    "method": "patch",
+    "path": "/practices/{practiceId}/patients/{patientId}",
+    "permission": "CLINICAL_WRITE"
+  },
+  {
+    "operationId": "getPatientRecord",
+    "method": "get",
+    "path": "/practices/{practiceId}/records/{recordId}",
+    "permission": "CLINICAL_READ"
+  },
+  {
+    "operationId": "getTimeline",
+    "method": "get",
+    "path": "/practices/{practiceId}/records/{recordId}/timeline",
+    "permission": "CLINICAL_READ"
+  },
+  {
+    "operationId": "listRecordSources",
+    "method": "get",
+    "path": "/practices/{practiceId}/records/{recordId}/sources",
+    "permission": "CLINICAL_READ"
+  },
+  {
+    "operationId": "getSourceRevision",
+    "method": "get",
+    "path": "/practices/{practiceId}/sources/{sourceId}",
+    "permission": "CLINICAL_READ"
+  },
+  {
+    "operationId": "listAssertions",
+    "method": "get",
+    "path": "/practices/{practiceId}/records/{recordId}/assertions",
+    "permission": "CLINICAL_READ"
+  },
+  {
+    "operationId": "appendAssertion",
+    "method": "post",
+    "path": "/practices/{practiceId}/records/{recordId}/assertions",
+    "permission": "CLINICAL_WRITE"
+  },
+  {
+    "operationId": "correctAssertion",
+    "method": "post",
+    "path": "/practices/{practiceId}/assertions/{assertionId}/corrections",
+    "permission": "CLINICAL_WRITE"
+  },
+  {
+    "operationId": "listMeasurements",
+    "method": "get",
+    "path": "/practices/{practiceId}/records/{recordId}/measurements",
+    "permission": "CLINICAL_READ"
+  },
+  {
+    "operationId": "appendMeasurement",
+    "method": "post",
+    "path": "/practices/{practiceId}/records/{recordId}/measurements",
+    "permission": "CLINICAL_WRITE"
+  },
+  {
+    "operationId": "correctMeasurement",
+    "method": "post",
+    "path": "/practices/{practiceId}/measurements/{measurementId}/corrections",
+    "permission": "CLINICAL_WRITE"
+  },
+  {
+    "operationId": "listLabResults",
+    "method": "get",
+    "path": "/practices/{practiceId}/records/{recordId}/lab-results",
+    "permission": "CLINICAL_READ"
+  },
+  {
+    "operationId": "appendLabResult",
+    "method": "post",
+    "path": "/practices/{practiceId}/records/{recordId}/lab-results",
+    "permission": "CLINICAL_WRITE"
+  },
+  {
+    "operationId": "correctLabResult",
+    "method": "post",
+    "path": "/practices/{practiceId}/lab-results/{labResultId}/corrections",
+    "permission": "CLINICAL_WRITE"
+  },
+  {
+    "operationId": "listRecordDocuments",
+    "method": "get",
+    "path": "/practices/{practiceId}/records/{recordId}/documents",
+    "permission": "CLINICAL_READ"
+  },
+  {
+    "operationId": "uploadRecordDocument",
+    "method": "post",
+    "path": "/practices/{practiceId}/records/{recordId}/documents",
+    "permission": "CLINICAL_WRITE"
+  },
+  {
+    "operationId": "listAvailability",
+    "method": "get",
+    "path": "/practices/{practiceId}/availability",
+    "permission": "SCHEDULE_MANAGE"
+  },
+  {
+    "operationId": "createAvailability",
+    "method": "post",
+    "path": "/practices/{practiceId}/availability",
+    "permission": "OWN_PRACTITIONER_OR_MANAGER"
+  },
+  {
+    "operationId": "editAvailability",
+    "method": "patch",
+    "path": "/practices/{practiceId}/availability/{availabilityId}",
+    "permission": "OWN_PRACTITIONER_OR_MANAGER"
+  },
+  {
+    "operationId": "listOfferedSlots",
+    "method": "get",
+    "path": "/practices/{practiceId}/slots",
+    "permission": "SCHEDULE_MANAGE_OR_SELF_APPOINTMENTS"
+  },
+  {
+    "operationId": "listAppointments",
+    "method": "get",
+    "path": "/practices/{practiceId}/appointments",
+    "permission": "SCHEDULE_MANAGE"
+  },
+  {
+    "operationId": "bookAppointment",
+    "method": "post",
+    "path": "/practices/{practiceId}/appointments",
+    "permission": "SCHEDULE_MANAGE"
+  },
+  {
+    "operationId": "getAppointment",
+    "method": "get",
+    "path": "/practices/{practiceId}/appointments/{appointmentId}",
+    "permission": "SCHEDULE_MANAGE"
+  },
+  {
+    "operationId": "rescheduleAppointment",
+    "method": "post",
+    "path": "/practices/{practiceId}/appointments/{appointmentId}/reschedule",
+    "permission": "SCHEDULE_MANAGE"
+  },
+  {
+    "operationId": "cancelAppointment",
+    "method": "post",
+    "path": "/practices/{practiceId}/appointments/{appointmentId}/cancel",
+    "permission": "SCHEDULE_MANAGE"
+  },
+  {
+    "operationId": "getVisitPreparation",
+    "method": "get",
+    "path": "/practices/{practiceId}/appointments/{appointmentId}/preparation",
+    "permission": "CLINICAL_READ"
+  },
+  {
+    "operationId": "startConsultation",
+    "method": "post",
+    "path": "/practices/{practiceId}/consultations",
+    "permission": "CLINICAL_WRITE"
+  },
+  {
+    "operationId": "getConsultation",
+    "method": "get",
+    "path": "/practices/{practiceId}/consultations/{consultationId}",
+    "permission": "CLINICAL_READ"
+  },
+  {
+    "operationId": "saveConsultationNotes",
+    "method": "patch",
+    "path": "/practices/{practiceId}/consultations/{consultationId}/notes",
+    "permission": "CLINICAL_WRITE"
+  },
+  {
+    "operationId": "createDocumentDraft",
+    "method": "post",
+    "path": "/practices/{practiceId}/document-versions",
+    "permission": "CLINICAL_WRITE"
+  },
+  {
+    "operationId": "listDocumentVersions",
+    "method": "get",
+    "path": "/practices/{practiceId}/records/{recordId}/document-versions",
+    "permission": "CLINICAL_READ"
+  },
+  {
+    "operationId": "getDocumentVersion",
+    "method": "get",
+    "path": "/practices/{practiceId}/document-versions/{documentVersionId}",
+    "permission": "CLINICAL_READ"
+  },
+  {
+    "operationId": "editDraftVersion",
+    "method": "patch",
+    "path": "/practices/{practiceId}/document-versions/{documentVersionId}",
+    "permission": "CLINICAL_WRITE"
+  },
+  {
+    "operationId": "deriveNewDraft",
+    "method": "post",
+    "path": "/practices/{practiceId}/document-versions/{documentVersionId}/new-draft",
+    "permission": "CLINICAL_WRITE"
+  },
+  {
+    "operationId": "validateDocumentVersion",
+    "method": "post",
+    "path": "/practices/{practiceId}/document-versions/{documentVersionId}/validate",
+    "permission": "CLINICAL_VALIDATE"
+  },
+  {
+    "operationId": "requestGeneration",
+    "method": "post",
+    "path": "/practices/{practiceId}/ai-tasks",
+    "permission": "CLINICAL_WRITE"
+  },
+  {
+    "operationId": "listProcessingTasks",
+    "method": "get",
+    "path": "/practices/{practiceId}/tasks",
+    "permission": "CLINICAL_READ"
+  },
+  {
+    "operationId": "getProcessingTask",
+    "method": "get",
+    "path": "/practices/{practiceId}/tasks/{taskId}",
+    "permission": "AUTHORIZED_TASK_READER"
+  },
+  {
+    "operationId": "retryProcessingTask",
+    "method": "post",
+    "path": "/practices/{practiceId}/tasks/{taskId}/retry",
+    "permission": "AUTHORIZED_REQUESTER"
+  },
+  {
+    "operationId": "cancelProcessingTask",
+    "method": "post",
+    "path": "/practices/{practiceId}/tasks/{taskId}/cancel",
+    "permission": "AUTHORIZED_REQUESTER"
+  },
+  {
+    "operationId": "publishVersion",
+    "method": "post",
+    "path": "/practices/{practiceId}/publications",
+    "permission": "PATIENT_PUBLISH"
+  },
+  {
+    "operationId": "replacePublication",
+    "method": "post",
+    "path": "/practices/{practiceId}/publications/{publicationId}/replace",
+    "permission": "PATIENT_PUBLISH"
+  },
+  {
+    "operationId": "withdrawPublication",
+    "method": "post",
+    "path": "/practices/{practiceId}/publications/{publicationId}/withdraw",
+    "permission": "PATIENT_PUBLISH"
+  },
+  {
+    "operationId": "requestExport",
+    "method": "post",
+    "path": "/practices/{practiceId}/exports",
+    "permission": "AUTHORIZED_EXPORT_READER"
+  },
+  {
+    "operationId": "getExport",
+    "method": "get",
+    "path": "/practices/{practiceId}/exports/{exportId}",
+    "permission": "AUTHORIZED_EXPORT_READER"
+  },
+  {
+    "operationId": "listScopedAudit",
+    "method": "get",
+    "path": "/practices/{practiceId}/audit",
+    "permission": "ADMIN_AUDIT_OR_CLINICAL_AUDIT"
+  },
+  {
+    "operationId": "appointmentCheckIn",
+    "method": "post",
+    "path": "/practices/{practiceId}/appointments/{appointmentId}/check-in",
+    "permission": "SCHEDULE_MANAGE"
+  },
+  {
+    "operationId": "appointmentComplete",
+    "method": "post",
+    "path": "/practices/{practiceId}/appointments/{appointmentId}/complete",
+    "permission": "SCHEDULE_MANAGE"
+  },
+  {
+    "operationId": "appointmentNoShow",
+    "method": "post",
+    "path": "/practices/{practiceId}/appointments/{appointmentId}/no-show",
+    "permission": "SCHEDULE_MANAGE"
+  },
+  {
+    "operationId": "completeConsultation",
+    "method": "post",
+    "path": "/practices/{practiceId}/consultations/{consultationId}/complete",
+    "permission": "CLINICAL_WRITE"
+  },
+  {
+    "operationId": "cancelConsultation",
+    "method": "post",
+    "path": "/practices/{practiceId}/consultations/{consultationId}/cancel",
+    "permission": "CLINICAL_WRITE"
+  },
+  {
+    "operationId": "submitreviewDocument",
+    "method": "post",
+    "path": "/practices/{practiceId}/document-versions/{documentVersionId}/submit-review",
+    "permission": "CLINICAL_WRITE_OR_REVIEWER"
+  },
+  {
+    "operationId": "requestchangesDocument",
+    "method": "post",
+    "path": "/practices/{practiceId}/document-versions/{documentVersionId}/request-changes",
+    "permission": "CLINICAL_WRITE_OR_REVIEWER"
+  },
+  {
+    "operationId": "listOwnAppointments",
+    "method": "get",
+    "path": "/portal/practices/{practiceId}/records/{recordId}/appointments",
+    "permission": "VERIFIED_OWN_PORTAL_LINK"
+  },
+  {
+    "operationId": "bookOwnAppointment",
+    "method": "post",
+    "path": "/portal/practices/{practiceId}/records/{recordId}/appointments",
+    "permission": "VERIFIED_OWN_PORTAL_LINK"
+  },
+  {
+    "operationId": "moveOwnAppointment",
+    "method": "post",
+    "path": "/portal/practices/{practiceId}/records/{recordId}/appointments/{appointmentId}/reschedule",
+    "permission": "VERIFIED_OWN_PORTAL_LINK"
+  },
+  {
+    "operationId": "cancelOwnAppointment",
+    "method": "post",
+    "path": "/portal/practices/{practiceId}/records/{recordId}/appointments/{appointmentId}/cancel",
+    "permission": "VERIFIED_OWN_PORTAL_LINK"
+  },
+  {
+    "operationId": "readOwnPreparation",
+    "method": "get",
+    "path": "/portal/practices/{practiceId}/records/{recordId}/appointments/{appointmentId}/preparation",
+    "permission": "VERIFIED_OWN_PORTAL_LINK"
+  },
+  {
+    "operationId": "editOwnPreparation",
+    "method": "patch",
+    "path": "/portal/practices/{practiceId}/records/{recordId}/appointments/{appointmentId}/preparation",
+    "permission": "VERIFIED_OWN_PORTAL_LINK"
+  },
+  {
+    "operationId": "submitOwnPreparation",
+    "method": "post",
+    "path": "/portal/practices/{practiceId}/records/{recordId}/appointments/{appointmentId}/preparation",
+    "permission": "VERIFIED_OWN_PORTAL_LINK"
+  },
+  {
+    "operationId": "listOwnPublications",
+    "method": "get",
+    "path": "/portal/practices/{practiceId}/records/{recordId}/publications",
+    "permission": "VERIFIED_OWN_PORTAL_LINK"
+  },
+  {
+    "operationId": "readOwnPublication",
+    "method": "get",
+    "path": "/portal/practices/{practiceId}/records/{recordId}/publications/{publicationId}",
+    "permission": "VERIFIED_OWN_PORTAL_LINK"
+  },
+  {
+    "operationId": "readPublishedSources",
+    "method": "get",
+    "path": "/portal/practices/{practiceId}/records/{recordId}/publications/{publicationId}/sources",
+    "permission": "VERIFIED_OWN_PORTAL_LINK"
+  },
+  {
+    "operationId": "exportOwnPublication",
+    "method": "post",
+    "path": "/portal/practices/{practiceId}/records/{recordId}/publications/{publicationId}/exports",
+    "permission": "VERIFIED_OWN_PORTAL_LINK"
+  },
+  {
+    "operationId": "downloadRecordDocument",
+    "method": "get",
+    "path": "/practices/{practiceId}/documents/{documentId}/content",
+    "permission": "CLINICAL_READ_CLEAN_FILE"
+  },
+  {
+    "operationId": "downloadExport",
+    "method": "get",
+    "path": "/practices/{practiceId}/exports/{exportId}/content",
+    "permission": "AUTHORIZED_EXPORT_READER"
+  },
+  {
+    "operationId": "downloadPublishedAttachment",
+    "method": "get",
+    "path": "/portal/practices/{practiceId}/records/{recordId}/publications/{publicationId}/attachments/{documentId}/content",
+    "permission": "CURRENT_PUBLICATION_ATTACHMENT_GRANT"
+  },
+  {
+    "operationId": "listDemoScenarios",
+    "method": "get",
+    "path": "/demo/scenarios",
+    "permission": "PUBLIC_SYNTHETIC"
+  },
+  {
+    "operationId": "resetSyntheticDemo",
+    "method": "post",
+    "path": "/demo/reset",
+    "permission": "OPERATOR_DEMO_RESET"
+  },
+  {
+    "operationId": "listOwnPortalLinks",
+    "method": "get",
+    "path": "/account/portal-links",
+    "permission": "AUTHENTICATED"
+  },
+  {
+    "operationId": "listPractitioners",
+    "method": "get",
+    "path": "/practices/{practiceId}/practitioners",
+    "permission": "SCHEDULE_MANAGE_OR_PORTAL_SLOTS"
+  }
+]

@@ -1,0 +1,7 @@
+# Third-party notices
+
+- **BMAD Method**, BMad Code, LLC and contributors. Installed core/BMM **6.12.4** from the official npm installer; source release [v6.12.4](https://github.com/bmad-code-org/BMAD-METHOD/releases/tag/v6.12.4), source commit `bab9082c3e884e0d72c759bcd1a6d90bcc01be84`. License retained in [_bmad/LICENSE](_bmad/LICENSE); upstream trademark terms remain applicable. Project-specific configuration is an adaptation; upstream workflows are retained without pretending they were authored for Étaye.
+- **Unslop**, created by **Damir Sokolovsky** ([heydamir](https://github.com/heydamir/unslop)). Pinned source commit `a6f121eee5f29c2f74976b75456feae8b66afb3a`; **Creative Commons Attribution 4.0**. Original skill, references, images/scripts and [license](.claude/skills/unslop/LICENSE) retained. Étaye uses its craft principles in planning, with verified Étaye foundations taking precedence; no attribution trailer is added to commits.
+- Étaye logos and design foundations were exported from the user-provided Figma file, preserving original geometry. No new generic logo was generated. Figma font names are references, not redistributed font binaries; obtain official font files/licenses before future embedding.
+
+No application-wide open-source license has been chosen by Aymen. A private repository or public visibility does not remove third-party license obligations.

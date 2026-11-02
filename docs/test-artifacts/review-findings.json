@@ -1,0 +1,98 @@
+[
+  {
+    "lens": "edge-case-hunter",
+    "location": "docs/contracts/openapi.yaml: patient sources",
+    "trigger_condition": "Portal source response originally reused internal Source schema",
+    "guard_snippet": "Use PublishedSource/Page projection with approved excerpt only",
+    "potential_consequence": "Patient could receive internal evidence metadata",
+    "resolution": "Fixed"
+  },
+  {
+    "lens": "edge-case-hunter",
+    "location": "docs/design/synthetic-data.json: measurement lineage",
+    "trigger_condition": "Corrected weight and earlier measurement lacked immutable dated source objects",
+    "guard_snippet": "Add SRC-A-007-v1/v2 correction lineage and SRC-A-008; attach every measurement source",
+    "potential_consequence": "Mock citation could fail to support displayed number",
+    "resolution": "Fixed"
+  },
+  {
+    "lens": "edge-case-hunter",
+    "location": "docs/design/pdf-email-specifications.md: P-01",
+    "trigger_condition": "Weight example referred to patient allergy source",
+    "guard_snippet": "Reference SRC-A-007-v2 and original correction source",
+    "potential_consequence": "Invalid supporting citation in future PDF",
+    "resolution": "Fixed"
+  },
+  {
+    "lens": "edge-case-hunter",
+    "location": "docs/design/synthetic-data.json: patient explanation v1",
+    "trigger_condition": "Published explanation claimed an internal report was available",
+    "guard_snippet": "Say shared consultation information, not an unpublished report",
+    "potential_consequence": "Patient journey implies premature report visibility",
+    "resolution": "Fixed"
+  },
+  {
+    "lens": "edge-case-hunter",
+    "location": "docs/contracts/openapi.yaml: visit preparation",
+    "trigger_condition": "Single conditional PUT conflated first creation with versioned editing",
+    "guard_snippet": "Separate idempotent POST creation and If-Match PATCH edit",
+    "potential_consequence": "First preparation has no valid expected version",
+    "resolution": "Fixed"
+  },
+  {
+    "lens": "edge-case-hunter",
+    "location": "docs/contracts/openapi.yaml: context discovery",
+    "trigger_condition": "Practitioner and own portal-link lists were missing",
+    "guard_snippet": "Add typed practitioner and own PortalLink endpoints",
+    "potential_consequence": "Design must invent context data or expose broader membership payload",
+    "resolution": "Fixed"
+  },
+  {
+    "lens": "verification-gap",
+    "location": "docs/planning-artifacts/prd/prd.md",
+    "trigger_condition": "Generated requirement headings and cross references retained placeholders",
+    "guard_snippet": "Resolve all20 headings/refs and fail documentary validation on unresolved authoring placeholders",
+    "potential_consequence": "Traceability and chat export contain ambiguous requirement IDs",
+    "resolution": "Fixed"
+  },
+  {
+    "lens": "verification-gap",
+    "location": "docs/design/figma/resolved-tokens.json: typography",
+    "trigger_condition": "Initial extraction selected the role label instead of the sample",
+    "guard_snippet": "Read applied sample node/style, preserve exact14 node references",
+    "potential_consequence": "Incorrect12px defaults overwrite verified typography",
+    "resolution": "Fixed"
+  },
+  {
+    "lens": "verification-gap",
+    "location": "docs/operations/technology-and-hosting-sources.md",
+    "trigger_condition": "Direct Sonar monorepo documentation was inaccessible",
+    "guard_snippet": "Distinguish linked official setup from unverified plan binding; require account check before activation",
+    "potential_consequence": "Unsupported integration entitlement treated as verified",
+    "resolution": "Recorded limitation"
+  },
+  {
+    "lens": "structure",
+    "location": "docs/design/claude-chat-kit and coordination copies",
+    "trigger_condition": "Derived chat distribution duplicated canonical repository documents",
+    "guard_snippet": "Export to requested Desktop folder; remove superseded coordination/lookup copies",
+    "potential_consequence": "Several conflicting sources of truth",
+    "resolution": "Fixed"
+  },
+  {
+    "lens": "prose",
+    "location": "docs/planning-artifacts/epics/ and docs/README.md",
+    "trigger_condition": "Planning completeness might be mistaken for implementation readiness",
+    "guard_snippet": "Use backlog/Ready for design and explicit approval/authorization gate",
+    "potential_consequence": "Agent starts first story prematurely",
+    "resolution": "Fixed"
+  },
+  {
+    "lens": "verification-gap",
+    "location": "docs/workflow-record.md: independent reviews",
+    "trigger_condition": "Authoring subagents stopped at usage limit",
+    "guard_snippet": "Record coordinator sequential review and do not claim independent completed review",
+    "potential_consequence": "False assurance from nonexistent review evidence",
+    "resolution": "Recorded limitation"
+  }
+]
