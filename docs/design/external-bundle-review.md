@@ -1,8 +1,8 @@
 # Review of the previously downloaded design-system bundle
 
-Source: local etaye-design-system.zip, SHA2569ffca590026ae65a3321a101d56c61f63e3e548e930fd363b29348db7a866333. Read-only archive inspection on2026-11-02. This may precede the work currently running in Claude's chat; do not overwrite that work or assume this is its latest revision.
+Source: local etaye-design-system.zip, SHA256 9ffca590026ae65a3321a101d56c61f63e3e548e930fd363b29348db7a866333. Read-only archive inspection on 2026-11-02. This may precede the work currently running in Claude's chat; do not overwrite that work or assume this is its latest revision.
 
-Observed archive:82files,16HTML files,30PNG captures,10SVG logos,7WOFF2 fonts. The chat reported102files; record the downloaded artifact hash/version rather than treating those counts as proof of coverage. Its README names only three mockups: Today, consultation preparation and mobile patient portal. This does not establish the required76surface-family coverage or Figma import/review.
+Observed archive: 82 files, 16 HTML files, 30 PNG captures, 10 SVG logos, 7 WOFF2 fonts. The chat reported 102 files; record the downloaded artifact hash/version rather than treating those counts as proof of coverage. Its README names only three mockups: Today, consultation preparation and mobile patient portal. This does not establish the required 76 surface-family coverage or Figma import/review.
 
 ## Concrete correction required
 

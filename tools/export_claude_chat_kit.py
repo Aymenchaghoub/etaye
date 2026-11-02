@@ -42,6 +42,8 @@ def main():
     parser.add_argument("--output", required=True, type=Path,
                         help="External distribution folder; do not commit generated copies")
     OUT = parser.parse_args().output.resolve()
+    if OUT.is_relative_to(ROOT):
+        parser.error("Use a folder outside the repository to avoid duplicate sources of truth")
     OUT.mkdir(parents=True, exist_ok=True)
     manifest = {"generated": "2026-11-02", "purpose": "Derived chat attachments; repository sources remain authoritative", "files": {}}
     for name, sources in GROUPS.items():
@@ -66,7 +68,7 @@ Continue the complete Figma design of Étaye using the attached English specific
 """
     (OUT / "00-start-here-and-handoff.md").write_text(intro + (ROOT / "docs/design/handoff-claude.md").read_text())
     for p in sorted(OUT.glob("*")):
-        if p.is_file():
+        if p.is_file() and p.name != "manifest.json":
             manifest.setdefault("sha256", {})[p.name] = hashlib.sha256(p.read_bytes()).hexdigest()
     (OUT / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     print("Exported 7 chat attachments; no credentials or application code included.")

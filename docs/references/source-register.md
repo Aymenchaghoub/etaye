@@ -15,6 +15,8 @@ Consultation date: **2026-11-02**. The labels defined in the [decision register]
 | SRC-09 | [Official Figma token instructions](https://developers.figma.com/docs/rest-api/personal-access-tokens/), [scopes](https://developers.figma.com/docs/rest-api/scopes/), [MCP limits](https://developers.figma.com/docs/figma-mcp-server/rate-limits-access/) | Access diagnosis and minimum read scopes | Read-only access was provided and verified. No paid subscription activated. Tokens remain outside the repository. |
 | SRC-10 | [Technology/hosting evidence](../operations/technology-and-hosting-sources.md), consulted 2026-11-02 | Current version compatibility, pricing/limits and conditional choices | Vendor terms can change. Revalidate before provisioning; no paid service, quality dashboard or deployment exists yet. |
 
+Additional current GitHub capability sources and actual run/settings evidence are recorded in [GitHub security and initial CI](../operations/github-security.md), consulted 2026-11-02. Those observations do not establish application correctness.
+
 ## Additional design-producer evidence
 
 Aymen reported continuing HTML design work in his existing Claude chat. The previously downloaded archive was read-only inspected with hash/version limitations in [external bundle review](../design/external-bundle-review.md). It is not evidence that all screens, Figma nodes or reviews are complete. No external HTML application was copied or executed.

@@ -19,7 +19,7 @@ Status: Application delivery planned only. Initial documentation/tooling CI and 
 
 Proposed baseline: zero failing required tests, nonzero expected suites, no unexplained skip, no unresolved relevant secret/critical exploitable dependency finding, both Sonar gates pass and human review of security hotspots, no broken migration/contract, complete critical journey evidence, no unresolved blocking visual mismatch. Coverage target new business code≥80% line and meaningful branch cases, not an excuse to omit risk-based tests; exact gates reviewed when app exists. Account plan may limit custom Sonar gates, so enforce additional thresholds explicitly in CI rather than falsely claiming a paid setting is available.
 
-Use branch protection/ruleset checks appropriate to actual GitHub plan and repository visibility; setup capability is to be verified, not claimed active. If private-plan protection is unavailable, document the limitation and use PR/manual enforcement until Aymen chooses a supported plan/visibility. An operational convention is not an enforced branch rule.
+The initial public-repository main ruleset is active and recorded in [GitHub security](github-security.md). Extend its actual required checks to the implemented application suites and quality results before feature delivery. Revalidate capability if account plan or visibility changes; an operational convention alone is not an enforced branch rule.
 
 ## Rollback and recovery
 

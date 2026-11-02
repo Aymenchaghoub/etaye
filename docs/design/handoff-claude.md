@@ -4,7 +4,7 @@ Status: Planning package ready for complete design work. Application development
 
 ## Mission and stopping point
 
-Complete and review every required Figma screen, state, interaction, modal/drawer, PDF and transactional email from this repository. Do not develop the application, scaffold Spring/React, create migrations, activate CI/CD or deploy. Sequence: documentation → complete design/review → Aymen's explicit development authorization → implementation. Completing design does not itself authorize development.
+Complete and review every required Figma screen, state, interaction, modal/drawer, PDF and transactional email from this repository. Do not develop the application, scaffold Spring/React, create migrations, activate application CI/CD or deploy. Sequence: documentation → complete design/review → Aymen's explicit development authorization → implementation. Completing design does not itself authorize development.
 
 ## Reading order
 

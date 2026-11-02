@@ -1,5 +1,8 @@
 # Étaye
 
+[![Documentation](https://github.com/Aymenchaghoub/etaye/actions/workflows/documentation.yml/badge.svg)](https://github.com/Aymenchaghoub/etaye/actions/workflows/documentation.yml)
+[![CodeQL](https://github.com/Aymenchaghoub/etaye/actions/workflows/codeql.yml/badge.svg)](https://github.com/Aymenchaghoub/etaye/actions/workflows/codeql.yml)
+
 Evidence-supported consultation preparation for general medical practices with multiple practitioners. A clinician can inspect dated sources, correct AI drafts, validate an exact version and explicitly publish selected information to a patient.
 
 **Current state: planning and design. Application development has not started.** This repository contains specifications, tooling and design evidence, not a running medical application. All demonstration people and data are fictional. No clinical validation, certification, regulatory compliance or readiness for real patient data is claimed.
