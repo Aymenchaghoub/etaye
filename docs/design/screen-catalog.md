@@ -174,7 +174,7 @@ Every row inherits these checks; the local acceptance criterion adds the product
 | Field | Specification |
 |---|---|
 | Goal / actor | Patient directory and search for practitioner; restricted scheduling lookup for SCHEDULE_MANAGE |
-| Traceability | FR-004, FR-005; BR-001, BR-002, BR-004; J-02 |
+| Traceability | FR-004, FR-005, FR-009; BR-001, BR-002, BR-004; J-02, J-03 |
 | Entry / exit | Shell / S-06 → S-09 or S-08; I-10 staff lookup → selected patient or S-08 restricted registration → return to I-10 |
 | Content / example | Name, birth date, practice-local identifier, portal-link status; query and applied filters |
 | Actions / validation | Search, paginate, clear filters, create patient; preserve filters on back; bounded result counts |
@@ -192,7 +192,7 @@ Every row inherits these checks; the local acceptance criterion adds the product
 | Field | Specification |
 |---|---|
 | Goal / actor | Patient identity creation and editing for clinical practitioner; restricted create-only variant for scheduler with PATIENT_REGISTER (PD-001) |
-| Traceability | FR-004; BR-002, BR-004, BR-015; J-02 |
+| Traceability | FR-004; BR-002, BR-004, BR-015; J-02, J-03 |
 | Entry / exit | S-07 new / S-09 identity edit → S-09 for clinician; I-10 / S-07 scheduling variant → new minimal identity → I-10, never S-09 |
 | Content / example | Identity fields, date of birth, contact information and provenance; local possible-duplicate warning |
 | Actions / validation | Validate required identity/date fields; no global automatic merge; save expected version for clinical edits; portal linking is a separate clinical-team-issued invitation and recipient activation, never a registration side effect |
