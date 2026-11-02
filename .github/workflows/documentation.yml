@@ -1,0 +1,58 @@
+name: Documentation
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: documentation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  documentation:
+    name: Planning package checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out the exact revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Install pinned uv
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: 0.12.24
+          enable-cache: false
+      - name: Install isolated, hash-locked documentation tools
+        run: |
+          uv venv --python 3.14 .venv-docs
+          uv pip sync --python .venv-docs/bin/python --require-hashes tools/requirements.txt
+      - name: Lint first-party Python tooling
+        run: .venv-docs/bin/ruff check --select E9,F tools
+      - name: Validate planning documents and synthetic fixtures
+        run: .venv-docs/bin/python tools/validate_docs.py --report reports/document-validation.json
+      - name: Validate the documentary OpenAPI contract
+        run: .venv-docs/bin/python -m openapi_spec_validator docs/contracts/openapi.yaml
+      - name: Lint the architecture spine
+        run: .venv-docs/bin/python .claude/skills/bmad-architecture/scripts/lint_spine.py --workspace docs/planning-artifacts/architecture -o reports/architecture-lint.json
+      - name: Verify workflow policy and whitespace
+        run: |
+          .venv-docs/bin/python tools/check_doc_workflow.py
+          git diff --check
+      - name: Scan committed history for secrets
+        run: bash tools/run_secret_scan.sh
+      - name: Retain actual documentary evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: planning-evidence-${{ github.sha }}
+          path: reports/*.json
+          if-no-files-found: error
+          retention-days: 7

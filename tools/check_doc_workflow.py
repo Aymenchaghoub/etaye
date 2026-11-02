@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+"""Check the planning-only CI boundary and pinned action permissions."""
+from pathlib import Path
+import json
+import re
+import yaml
+
+root = Path(__file__).resolve().parents[1]
+path = root / ".github/workflows/documentation.yml"
+# BaseLoader keeps the GitHub key `on` from YAML 1.1 boolean coercion.
+workflow = yaml.load(path.read_text(), Loader=yaml.BaseLoader)
+assert set(workflow["on"]) == {"pull_request", "push", "workflow_dispatch"}
+assert workflow["permissions"] == {"contents": "read"}
+jobs = workflow["jobs"]
+assert set(jobs) == {"documentation"}
+job = jobs["documentation"]
+assert int(job["timeout-minutes"]) <= 10
+steps = job["steps"]
+for step in steps:
+    if "uses" in step:
+        assert re.fullmatch(r"[A-Za-z0-9_./-]+@[a-f0-9]{40}", step["uses"]), "Unpinned action"
+    assert "continue-on-error" not in step, "Required checks must not suppress failure"
+assert "${{ secrets." not in path.read_text(), "Planning CI must not consume secrets"
+assert "persist-credentials: false" in path.read_text()
+assert all(command in path.read_text() for command in [
+    "tools/validate_docs.py", "tools/check_doc_workflow.py", "openapi_spec_validator",
+    "lint_spine.py", "git diff --check", "--require-hashes",
+])
+assert "pull_request_target" not in workflow["on"]
+codeql = yaml.load((root / ".github/workflows/codeql.yml").read_text(), Loader=yaml.BaseLoader)
+assert codeql["permissions"] == {"contents": "read"}
+assert codeql["jobs"]["analyze"]["permissions"] == {"contents": "read", "security-events": "write"}
+for step in codeql["jobs"]["analyze"]["steps"]:
+    if "uses" in step:
+        assert re.fullmatch(r"[A-Za-z0-9_./-]+@[a-f0-9]{40}", step["uses"])
+config = yaml.load((root / ".github/codeql-config.yml").read_text(), Loader=yaml.BaseLoader)
+assert config["paths"] == ["tools"], "Current CodeQL scope is first-party planning tooling"
+print(json.dumps({"ok": True, "kind": "documentation-workflow-policy", "jobs": len(jobs),
+                  "applicationBuild": False, "deployment": False}))
