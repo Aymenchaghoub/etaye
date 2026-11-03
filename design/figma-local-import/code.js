@@ -50,7 +50,7 @@ async function importBatch(data){
     let node;
     if(item.type==='text'){
       node=add(figma.createText(),parent);node.fontName=fonts.get(keyOf(item));node.fontSize=item.size;node.characters=item.text;
-      node.textAutoResize='HEIGHT';node.resize(Math.max(1,item.w+1),Math.max(1,item.h));node.lineHeight={unit:'PIXELS',value:Math.max(item.h,item.size)};fill(node,item.color);
+      node.textAutoResize='HEIGHT';node.resize(Math.max(1,item.w+1),Math.max(1,item.h));node.lineHeight={unit:'PIXELS',value:item.lineHeight||item.size*1.2};fill(node,item.color);
     }else if(item.type==='svg'){
       node=add(figma.createNodeFromSvg(item.svg),parent);node.resize(Math.max(1,item.w),Math.max(1,item.h));
       for(const child of node.findAll(()=>true))created.push(child.id);
@@ -58,7 +58,7 @@ async function importBatch(data){
       const image=figma.createImage(figma.base64Decode(item.base64));node=add(figma.createRectangle(),parent);node.resize(Math.max(1,item.w),Math.max(1,item.h));node.fills=[{type:'IMAGE',imageHash:image.hash,scaleMode:'FIT'}];
     }else{
       // Browser snapshots retain measured coordinates. These are editable inspection frames, not a new responsive component library.
-      node=add(figma.createFrame(),parent);node.resize(Math.max(1,item.w),Math.max(1,item.h));node.clipsContent=false;fill(node,item.fill);node.cornerRadius=Math.min(item.radius||0,Math.min(item.w,item.h)/2);
+      node=add(figma.createFrame(),parent);node.resize(Math.max(1,item.w),Math.max(1,item.h));node.clipsContent=Boolean(item.clip);fill(node,item.fill);node.cornerRadius=Math.min(item.radius||0,Math.min(item.w,item.h)/2);
       const edge=item.borders||[];
       for(let i=0;i<edge.length;i++)if(edge[i].width>0&&edge[i].color?.a){
         const border=add(figma.createRectangle(),node);border.name='Border '+i;fill(border,edge[i].color);

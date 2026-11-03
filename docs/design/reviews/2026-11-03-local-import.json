@@ -8,8 +8,8 @@
   "discretePdfPreviewImages": 31,
   "sceneValidation": "All57 exported batches passed the same structural validator used by the plugin",
   "isolatedPluginTests": {
-    "executed": 3,
-    "passed": 3,
+    "executed": 4,
+    "passed": 4,
     "scope": "Missing fonts prevent mutations; editable native text and duplicate preservation; new-section rollback"
   },
   "figmaNativeExecution": false,
