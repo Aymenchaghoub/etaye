@@ -496,7 +496,7 @@
       "height": 1024,
       "sha256": "13001125300285156183ca0f27346f4a7757842c7abcb01a2c58e659427aa6ff",
       "sourceSnapshotSha256": "af41624989448ae5cfcd066deedfb4e7623abd1794967ce105d0b3c4fc7962ba",
-      "currentSnapshotVisualStatus": "Opened by Codex on current exact snapshot; targeted scope only",
+      "currentSnapshotVisualStatus": "Pending: historical snapshot; not current HTML visual evidence",
       "scope": "Full-size render actually opened; no Aymen approval or exhaustive accessibility acceptance"
     },
     {
@@ -509,7 +509,7 @@
       "height": 720,
       "sha256": "281e2ec1e15415e4032df9637b09908a49207c640dfe220dab18b5788acae87b",
       "sourceSnapshotSha256": "af41624989448ae5cfcd066deedfb4e7623abd1794967ce105d0b3c4fc7962ba",
-      "currentSnapshotVisualStatus": "Opened by Codex on current exact snapshot; targeted scope only",
+      "currentSnapshotVisualStatus": "Pending: historical snapshot; not current HTML visual evidence",
       "scope": "Full-size render actually opened; no Aymen approval or exhaustive accessibility acceptance"
     },
     {
@@ -522,7 +522,7 @@
       "height": 844,
       "sha256": "6d7026eb323cdc845cb3325d8b14c293f542a42b9b8e4f9f671eb6b57984e443",
       "sourceSnapshotSha256": "af41624989448ae5cfcd066deedfb4e7623abd1794967ce105d0b3c4fc7962ba",
-      "currentSnapshotVisualStatus": "Opened by Codex on current exact snapshot; targeted scope only",
+      "currentSnapshotVisualStatus": "Pending: historical snapshot; not current HTML visual evidence",
       "scope": "Full-size render actually opened; no Aymen approval or exhaustive accessibility acceptance"
     },
     {
@@ -535,7 +535,7 @@
       "height": 844,
       "sha256": "0c2a33b73ed55d610116eddbf8f2df11836ebe823dae57347c00a78b0b25f3c8",
       "sourceSnapshotSha256": "af41624989448ae5cfcd066deedfb4e7623abd1794967ce105d0b3c4fc7962ba",
-      "currentSnapshotVisualStatus": "Opened by Codex on current exact snapshot; targeted scope only",
+      "currentSnapshotVisualStatus": "Pending: historical snapshot; not current HTML visual evidence",
       "scope": "Full-size render actually opened; no Aymen approval or exhaustive accessibility acceptance"
     },
     {
@@ -548,7 +548,7 @@
       "height": 844,
       "sha256": "3aefeceb313844d8b01338eba3f8af1e77964a254d03b9bbc37d96cb0689e3ad",
       "sourceSnapshotSha256": "af41624989448ae5cfcd066deedfb4e7623abd1794967ce105d0b3c4fc7962ba",
-      "currentSnapshotVisualStatus": "Opened by Codex on current exact snapshot; targeted scope only",
+      "currentSnapshotVisualStatus": "Pending: historical snapshot; not current HTML visual evidence",
       "scope": "Full-size render actually opened; no Aymen approval or exhaustive accessibility acceptance"
     },
     {
@@ -561,7 +561,7 @@
       "height": 1024,
       "sha256": "34dddd98fe47e7102be5ec41f5774eb36322c18551f16386221c37f15986625a",
       "sourceSnapshotSha256": "af41624989448ae5cfcd066deedfb4e7623abd1794967ce105d0b3c4fc7962ba",
-      "currentSnapshotVisualStatus": "Opened by Codex on current exact snapshot; targeted scope only",
+      "currentSnapshotVisualStatus": "Pending: historical snapshot; not current HTML visual evidence",
       "scope": "Full-size render actually opened; no Aymen approval or exhaustive accessibility acceptance"
     },
     {
@@ -574,7 +574,7 @@
       "height": 768,
       "sha256": "139d2bef65bcc942617053ca38b5819cd7f40b407976f22253bb3d0377b1190e",
       "sourceSnapshotSha256": "af41624989448ae5cfcd066deedfb4e7623abd1794967ce105d0b3c4fc7962ba",
-      "currentSnapshotVisualStatus": "Opened by Codex on current exact snapshot; targeted scope only",
+      "currentSnapshotVisualStatus": "Pending: historical snapshot; not current HTML visual evidence",
       "scope": "Full-size render actually opened; no Aymen approval or exhaustive accessibility acceptance"
     },
     {
@@ -587,7 +587,7 @@
       "height": 844,
       "sha256": "cbd6b9e210c131a108152956fde5fc908d1bc5f331bebe88171b5c94995a4fb9",
       "sourceSnapshotSha256": "af41624989448ae5cfcd066deedfb4e7623abd1794967ce105d0b3c4fc7962ba",
-      "currentSnapshotVisualStatus": "Opened by Codex on current exact snapshot; targeted scope only",
+      "currentSnapshotVisualStatus": "Pending: historical snapshot; not current HTML visual evidence",
       "scope": "Full-size render actually opened; no Aymen approval or exhaustive accessibility acceptance"
     },
     {
@@ -600,7 +600,7 @@
       "height": 844,
       "sha256": "64d8e252adb924a31d4f99e8e1b9ca51cd1f8bd5020d707ac4b316e469d8a7d6",
       "sourceSnapshotSha256": "af41624989448ae5cfcd066deedfb4e7623abd1794967ce105d0b3c4fc7962ba",
-      "currentSnapshotVisualStatus": "Opened by Codex on current exact snapshot; targeted scope only",
+      "currentSnapshotVisualStatus": "Pending: historical snapshot; not current HTML visual evidence",
       "scope": "Full-size render actually opened; no Aymen approval or exhaustive accessibility acceptance"
     },
     {
@@ -613,6 +613,136 @@
       "height": 1024,
       "sha256": "949a3529835c0ee8c8bb2249e5b2ff14ccfc9bca6d17a6c1c1eb5f4d8deb5038",
       "sourceSnapshotSha256": "af41624989448ae5cfcd066deedfb4e7623abd1794967ce105d0b3c4fc7962ba",
+      "currentSnapshotVisualStatus": "Pending: historical snapshot; not current HTML visual evidence",
+      "scope": "Full-size render actually opened; no Aymen approval or exhaustive accessibility acceptance"
+    },
+    {
+      "path": "bound-final-mail-visual-review/S-38-expiree-desktop.png",
+      "stateIds": [
+        "S-38/expiree"
+      ],
+      "profile": "desktop",
+      "width": 1440,
+      "height": 1024,
+      "sourceSnapshotSha256": "d2f0800e275c4b156fedbcf23656ffe2bf435f9b6a72faf0f86fc293e2a82ad6",
+      "sha256": "13001125300285156183ca0f27346f4a7757842c7abcb01a2c58e659427aa6ff",
+      "currentSnapshotVisualStatus": "Opened by Codex on current exact snapshot; targeted scope only",
+      "scope": "Full-size render actually opened; no Aymen approval or exhaustive accessibility acceptance"
+    },
+    {
+      "path": "bound-final-mail-visual-review/S-32-membre-narrow.png",
+      "stateIds": [
+        "S-32/membre"
+      ],
+      "profile": "narrow",
+      "width": 320,
+      "height": 720,
+      "sourceSnapshotSha256": "d2f0800e275c4b156fedbcf23656ffe2bf435f9b6a72faf0f86fc293e2a82ad6",
+      "sha256": "281e2ec1e15415e4032df9637b09908a49207c640dfe220dab18b5788acae87b",
+      "currentSnapshotVisualStatus": "Opened by Codex on current exact snapshot; targeted scope only",
+      "scope": "Full-size render actually opened; no Aymen approval or exhaustive accessibility acceptance"
+    },
+    {
+      "path": "bound-final-mail-visual-review/I-17-ouvert-mobile.png",
+      "stateIds": [
+        "I-17/ouvert"
+      ],
+      "profile": "mobile",
+      "width": 390,
+      "height": 844,
+      "sourceSnapshotSha256": "d2f0800e275c4b156fedbcf23656ffe2bf435f9b6a72faf0f86fc293e2a82ad6",
+      "sha256": "6d7026eb323cdc845cb3325d8b14c293f542a42b9b8e4f9f671eb6b57984e443",
+      "currentSnapshotVisualStatus": "Opened by Codex on current exact snapshot; targeted scope only",
+      "scope": "Full-size render actually opened; no Aymen approval or exhaustive accessibility acceptance"
+    },
+    {
+      "path": "bound-final-mail-visual-review/I-15-non-soutenu-dark.png",
+      "stateIds": [
+        "I-15/non-soutenu"
+      ],
+      "profile": "dark",
+      "width": 390,
+      "height": 844,
+      "sourceSnapshotSha256": "d2f0800e275c4b156fedbcf23656ffe2bf435f9b6a72faf0f86fc293e2a82ad6",
+      "sha256": "0c2a33b73ed55d610116eddbf8f2df11836ebe823dae57347c00a78b0b25f3c8",
+      "currentSnapshotVisualStatus": "Opened by Codex on current exact snapshot; targeted scope only",
+      "scope": "Full-size render actually opened; no Aymen approval or exhaustive accessibility acceptance"
+    },
+    {
+      "path": "bound-final-mail-visual-review/S-30-apercu-mobile.png",
+      "stateIds": [
+        "S-30/apercu"
+      ],
+      "profile": "mobile",
+      "width": 390,
+      "height": 844,
+      "sourceSnapshotSha256": "d2f0800e275c4b156fedbcf23656ffe2bf435f9b6a72faf0f86fc293e2a82ad6",
+      "sha256": "3aefeceb313844d8b01338eba3f8af1e77964a254d03b9bbc37d96cb0689e3ad",
+      "currentSnapshotVisualStatus": "Opened by Codex on current exact snapshot; targeted scope only",
+      "scope": "Full-size render actually opened; no Aymen approval or exhaustive accessibility acceptance"
+    },
+    {
+      "path": "bound-final-mail-visual-review/S-06-jour-vide-desktop.png",
+      "stateIds": [
+        "S-06/jour-vide"
+      ],
+      "profile": "desktop",
+      "width": 1440,
+      "height": 1024,
+      "sourceSnapshotSha256": "d2f0800e275c4b156fedbcf23656ffe2bf435f9b6a72faf0f86fc293e2a82ad6",
+      "sha256": "34dddd98fe47e7102be5ec41f5774eb36322c18551f16386221c37f15986625a",
+      "currentSnapshotVisualStatus": "Opened by Codex on current exact snapshot; targeted scope only",
+      "scope": "Full-size render actually opened; no Aymen approval or exhaustive accessibility acceptance"
+    },
+    {
+      "path": "bound-final-mail-visual-review/I-21-mesure-tablet.png",
+      "stateIds": [
+        "I-21/mesure"
+      ],
+      "profile": "tablet",
+      "width": 1024,
+      "height": 768,
+      "sourceSnapshotSha256": "d2f0800e275c4b156fedbcf23656ffe2bf435f9b6a72faf0f86fc293e2a82ad6",
+      "sha256": "139d2bef65bcc942617053ca38b5819cd7f40b407976f22253bb3d0377b1190e",
+      "currentSnapshotVisualStatus": "Opened by Codex on current exact snapshot; targeted scope only",
+      "scope": "Full-size render actually opened; no Aymen approval or exhaustive accessibility acceptance"
+    },
+    {
+      "path": "bound-final-mail-visual-review/M-02-html-mobile.png",
+      "stateIds": [
+        "M-02/html"
+      ],
+      "profile": "mobile",
+      "width": 390,
+      "height": 844,
+      "sourceSnapshotSha256": "d2f0800e275c4b156fedbcf23656ffe2bf435f9b6a72faf0f86fc293e2a82ad6",
+      "sha256": "3c01bd52c6612b61d06725bf13ad96f10f1586d679c3c64f528eb64ccc2498af",
+      "currentSnapshotVisualStatus": "Opened by Codex on current exact snapshot; targeted scope only",
+      "scope": "Full-size render actually opened; no Aymen approval or exhaustive accessibility acceptance"
+    },
+    {
+      "path": "bound-final-mail-visual-review/I-07-correction-fallback.png",
+      "stateIds": [
+        "I-07/correction"
+      ],
+      "profile": "fallback",
+      "width": 390,
+      "height": 844,
+      "sourceSnapshotSha256": "d2f0800e275c4b156fedbcf23656ffe2bf435f9b6a72faf0f86fc293e2a82ad6",
+      "sha256": "64d8e252adb924a31d4f99e8e1b9ca51cd1f8bd5020d707ac4b316e469d8a7d6",
+      "currentSnapshotVisualStatus": "Opened by Codex on current exact snapshot; targeted scope only",
+      "scope": "Full-size render actually opened; no Aymen approval or exhaustive accessibility acceptance"
+    },
+    {
+      "path": "bound-final-mail-visual-review/S-11-claire-desktop.png",
+      "stateIds": [
+        "S-11/claire"
+      ],
+      "profile": "desktop",
+      "width": 1440,
+      "height": 1024,
+      "sourceSnapshotSha256": "d2f0800e275c4b156fedbcf23656ffe2bf435f9b6a72faf0f86fc293e2a82ad6",
+      "sha256": "949a3529835c0ee8c8bb2249e5b2ff14ccfc9bca6d17a6c1c1eb5f4d8deb5038",
       "currentSnapshotVisualStatus": "Opened by Codex on current exact snapshot; targeted scope only",
       "scope": "Full-size render actually opened; no Aymen approval or exhaustive accessibility acceptance"
     }
@@ -620,5 +750,5 @@
   "approval": false,
   "figmaImported": false,
   "scope": "Actual opened views only. Historical HTML captures are bound to their own snapshots and pending for the current one. Ten current full-size captures are separately identified. PDF equivalence is explicit; no approval or Figma import.",
-  "currentSnapshotSha256": "af41624989448ae5cfcd066deedfb4e7623abd1794967ce105d0b3c4fc7962ba"
+  "currentSnapshotSha256": "d2f0800e275c4b156fedbcf23656ffe2bf435f9b6a72faf0f86fc293e2a82ad6"
 }

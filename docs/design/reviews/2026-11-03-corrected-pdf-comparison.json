@@ -1,138 +1,138 @@
 {
-  "snapshotSha256": "af41624989448ae5cfcd066deedfb4e7623abd1794967ce105d0b3c4fc7962ba",
+  "snapshotSha256": "d2f0800e275c4b156fedbcf23656ffe2bf435f9b6a72faf0f86fc293e2a82ad6",
   "pages": [
     {
-      "finalPath": "pr-reviewed-pdf-comparison/P-01-court-1.png",
+      "finalPath": "mail-reviewed-pdf-comparison/P-01-court-1.png",
       "openedPriorPath": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-01-court-1.png",
       "sha256": "5c10dac6f8cb81cb31f4283958d1bc3ea6eac9ce08123d1c152a60b6a3387eae",
       "pixelsIdentical": true
     },
     {
-      "finalPath": "pr-reviewed-pdf-comparison/P-01-court-2.png",
+      "finalPath": "mail-reviewed-pdf-comparison/P-01-court-2.png",
       "openedPriorPath": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-01-court-2.png",
       "sha256": "f872d35e342cb83ee4163a0db4bd41a3b710e02d4c7940505f21eeb85aec050d",
       "pixelsIdentical": true
     },
     {
-      "finalPath": "pr-reviewed-pdf-comparison/P-01-incomplet-1.png",
+      "finalPath": "mail-reviewed-pdf-comparison/P-01-incomplet-1.png",
       "openedPriorPath": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-01-incomplet-1.png",
       "sha256": "139a83acf9a4b391ffac851aa64c24c699b5113d13a4955cc7172766b4fe633c",
       "pixelsIdentical": true
     },
     {
-      "finalPath": "pr-reviewed-pdf-comparison/P-01-long-1.png",
+      "finalPath": "mail-reviewed-pdf-comparison/P-01-long-1.png",
       "openedPriorPath": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-01-long-1.png",
       "sha256": "dc2d3a93509fe7e562bc17418c8dc33a31c5f880d578c5007cc874b450cca566",
       "pixelsIdentical": true
     },
     {
-      "finalPath": "pr-reviewed-pdf-comparison/P-01-long-2.png",
+      "finalPath": "mail-reviewed-pdf-comparison/P-01-long-2.png",
       "openedPriorPath": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-01-long-2.png",
       "sha256": "6f14f9eea1cb5f5feba8560eb05d1fa01f9726791acb017e2816a4ed93875b33",
       "pixelsIdentical": true
     },
     {
-      "finalPath": "pr-reviewed-pdf-comparison/P-01-long-3.png",
+      "finalPath": "mail-reviewed-pdf-comparison/P-01-long-3.png",
       "openedPriorPath": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-01-long-3.png",
       "sha256": "97acc1e205db40b0d3fa7cc2be2bdd3043ab54c4e91c8c2088f199faad6d5242",
       "pixelsIdentical": true
     },
     {
-      "finalPath": "pr-reviewed-pdf-comparison/P-01-long-4.png",
+      "finalPath": "mail-reviewed-pdf-comparison/P-01-long-4.png",
       "openedPriorPath": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-01-long-4.png",
       "sha256": "b7e96d78bdcf6556f468a919b35dff6b6add86866956783c2f57e0a57a64af4f",
       "pixelsIdentical": true
     },
     {
-      "finalPath": "pr-reviewed-pdf-comparison/P-01-long-5.png",
+      "finalPath": "mail-reviewed-pdf-comparison/P-01-long-5.png",
       "openedPriorPath": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-01-long-5.png",
       "sha256": "f0509103fed8a083e6e9af87207869a39330ddb6051cc687289f0febadf937e0",
       "pixelsIdentical": true
     },
     {
-      "finalPath": "pr-reviewed-pdf-comparison/P-02-court-1.png",
+      "finalPath": "mail-reviewed-pdf-comparison/P-02-court-1.png",
       "openedPriorPath": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-02-court-1.png",
       "sha256": "13cbc31d455ad34080952b13ec4b7feb71fd3ebcc28dfc276e7c0d555e2bdc78",
       "pixelsIdentical": true
     },
     {
-      "finalPath": "pr-reviewed-pdf-comparison/P-02-incomplet-1.png",
+      "finalPath": "mail-reviewed-pdf-comparison/P-02-incomplet-1.png",
       "openedPriorPath": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-02-incomplet-1.png",
       "sha256": "5a27d2d4ac0db7f7b8e12ae6b2834103e951493f6b570f372fe8c85c52a6a380",
       "pixelsIdentical": true
     },
     {
-      "finalPath": "pr-reviewed-pdf-comparison/P-02-long-1.png",
+      "finalPath": "mail-reviewed-pdf-comparison/P-02-long-1.png",
       "openedPriorPath": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-02-long-1.png",
       "sha256": "45b8e501c2f724c2dbc3e1d845291db609e4c9fc6ae34aaecff627ea4b102d4a",
       "pixelsIdentical": true
     },
     {
-      "finalPath": "pr-reviewed-pdf-comparison/P-02-long-2.png",
+      "finalPath": "mail-reviewed-pdf-comparison/P-02-long-2.png",
       "openedPriorPath": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-02-long-2.png",
       "sha256": "6e9b82e3a8f4470df56bb8170bd089a573217d5063bc9c044c350fcb038ddf4e",
       "pixelsIdentical": true
     },
     {
-      "finalPath": "pr-reviewed-pdf-comparison/P-02-long-3.png",
+      "finalPath": "mail-reviewed-pdf-comparison/P-02-long-3.png",
       "openedPriorPath": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-02-long-3.png",
       "sha256": "6e481b86d170164ac95359a9f5dd7b39cd2700b5c62290e9a34ce99d7be6c8e0",
       "pixelsIdentical": true
     },
     {
-      "finalPath": "pr-reviewed-pdf-comparison/P-02-long-4.png",
+      "finalPath": "mail-reviewed-pdf-comparison/P-02-long-4.png",
       "openedPriorPath": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-02-long-4.png",
       "sha256": "b0f85735b12c664f9c1eea796ca5986855abfcf0866ad2532f85b64369607940",
       "pixelsIdentical": true
     },
     {
-      "finalPath": "pr-reviewed-pdf-comparison/P-02-long-5.png",
+      "finalPath": "mail-reviewed-pdf-comparison/P-02-long-5.png",
       "openedPriorPath": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-02-long-5.png",
       "sha256": "470677864cab630c6ee2a91f6ace17ad1175f7e59d6f85a869fb2768728cf459",
       "pixelsIdentical": true
     },
     {
-      "finalPath": "pr-reviewed-pdf-comparison/P-02-long-6.png",
+      "finalPath": "mail-reviewed-pdf-comparison/P-02-long-6.png",
       "openedPriorPath": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-02-long-6.png",
       "sha256": "530799c8405445d12b8e3c77b81ad4d2aacca22e087c7edeb497672230995034",
       "pixelsIdentical": true
     },
     {
-      "finalPath": "pr-reviewed-pdf-comparison/P-02-long-7.png",
+      "finalPath": "mail-reviewed-pdf-comparison/P-02-long-7.png",
       "openedPriorPath": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-02-long-7.png",
       "sha256": "24f2bb8af3189b4930964d4f99af5a48b0d9dc3166c8f41a1bee51d5c90f2244",
       "pixelsIdentical": true
     },
     {
-      "finalPath": "pr-reviewed-pdf-comparison/P-03-court-1.png",
+      "finalPath": "mail-reviewed-pdf-comparison/P-03-court-1.png",
       "openedPriorPath": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-03-court-1.png",
       "sha256": "d6f7d5388fc475176b8a0e89f0bd09c4d5cae9a85aab28dccf92b61cf02fd42d",
       "pixelsIdentical": true
     },
     {
-      "finalPath": "pr-reviewed-pdf-comparison/P-03-incomplet-1.png",
+      "finalPath": "mail-reviewed-pdf-comparison/P-03-incomplet-1.png",
       "openedPriorPath": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-03-incomplet-1.png",
       "sha256": "578d05d1c19a81acf0c73b40518742028802f1bb34d493b2d85b04eb28a00107",
       "pixelsIdentical": true
     },
     {
-      "finalPath": "pr-reviewed-pdf-comparison/P-03-long-1.png",
+      "finalPath": "mail-reviewed-pdf-comparison/P-03-long-1.png",
       "openedPriorPath": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-03-long-1.png",
       "sha256": "501981cdf71a84b68447e028a243244eba20d09fd1b653c0830aa97da373cb49",
       "pixelsIdentical": true
     },
     {
-      "finalPath": "pr-reviewed-pdf-comparison/P-03-long-2.png",
+      "finalPath": "mail-reviewed-pdf-comparison/P-03-long-2.png",
       "openedPriorPath": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-03-long-2.png",
       "sha256": "26159fe6963ee8f60f320d2d996a7a586a4d05fe5c587a9a5ec5a1b7be17f42c",
       "pixelsIdentical": true
     },
     {
-      "finalPath": "pr-reviewed-pdf-comparison/P-03-long-3.png",
+      "finalPath": "mail-reviewed-pdf-comparison/P-03-long-3.png",
       "openedPriorPath": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-03-long-3.png",
       "sha256": "f8ccb79dc6c037d5ca90e0d116c70a67c1639d878bfba618bee5505fb4c1d99c",
       "pixelsIdentical": true
     }
   ],
-  "scope": "PR-corrected final PDF renders compared pixel-for-pixel to the22 individually opened corrected pages; no renewed approval inferred"
+  "scope": "Final corrected PDF renders compared pixel-for-pixel to the22 individually opened corrected pages; no approval inferred"
 }

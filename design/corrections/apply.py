@@ -669,6 +669,7 @@ for key, m in by_key.items():
                 notes.append(
                     "Portal invitation expiry is absent from the dataset; the real configured expiry must be inserted before delivery."
                 )
+        replace_text(soup, "expire le la date indiquée", "expire à la date indiquée")
     if key == "S-05/choix":
         choices = soup.find_all("a", string=lambda s: s and s.strip() == "Ouvrir")
         for choice, target in zip(choices, ["S-06/sami-a", "S-06/jour-vide"]):

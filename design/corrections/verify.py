@@ -134,6 +134,12 @@ with sync_playwright() as p:
     goto("S-02/connexion")
     page.get_by_role("link", name="Se connecter", exact=True).click()
     check("Primary Nora login keeps Nora context", "/S-05/un-seul.html" in page.url)
+    for state in ["html", "texte", "sombre"]:
+        goto("M-02/" + state)
+        check(
+            "Portal invitation expiry copy: " + state,
+            "expire à la date indiquée" in page.locator("body").inner_text(),
+        )
 
     for journey in journeys:
         goto(journey["steps"][0], "?journey=" + journey["id"] + "&step=0")
