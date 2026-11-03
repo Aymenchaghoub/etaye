@@ -10,7 +10,7 @@
   "isolatedPluginTests": {
     "executed": 4,
     "passed": 4,
-    "scope": "Missing fonts prevent mutations; editable native text and duplicate preservation; new-section rollback"
+    "scope": "Missing fonts prevent mutations; editable native text and duplicate preservation; new-section rollback; multiline field spacing and clipped editable content"
   },
   "figmaNativeExecution": false,
   "figmaNodeIds": [],
@@ -21,5 +21,8 @@
     "Measured fixed geometry; responsive/auto-layout reconciliation pending",
     "Native prototypes and A4 print-layout review pending"
   ],
-  "externalExport": "/home/aymen.chaghoub/Projets/etaye-design-receipts/2026-11-03-d36658648db1/figma-editable-final"
+  "externalExport": "/home/aymen.chaghoub/Projets/etaye-design-receipts/2026-11-03-d36658648db1/figma-editable-reviewed",
+  "clippedContainers": 1146,
+  "fieldValues": 325,
+  "platformRequirement": "Figma Desktop Windows/macOS; Aymen confirmed Windows available for later first-batch check"
 }

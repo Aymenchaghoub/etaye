@@ -8,6 +8,10 @@ The exporter reads the frozen corrected HTML in Chromium and produces native-lay
 
 Actual local export, scene checks and isolated plugin tests are recorded in the delivery report. **Native Figma execution, font availability, imported rendering, nodes and design approval remain unverified until Aymen runs a first batch.** Do not update coverage.csv from an exported JSON. A successful local export does not bypass Figma file editing permissions or guarantee that a plan permits a particular action.
 
+## Platform requirement
+
+Figma's official development-plugin flow requires **Figma Desktop on Windows or macOS**. This session is Linux; no compatible local Figma runtime was found or used. Aymen confirmed that he has Windows available at home and will run the kit later. This is a pending native verification, not a reason to install an unsupported Linux client or purchase a plan.
+
 ## Install in Figma Desktop without publishing or a paid service
 
 1. Open the existing Étaye Design file in Figma Desktop. Preserve a named version/backup first. Choose a work page; the plugin appends a **new section** to its right and does not replace foundations. This also avoids assuming that Starter allows more pages.
