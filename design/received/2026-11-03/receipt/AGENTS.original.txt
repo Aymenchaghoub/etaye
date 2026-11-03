@@ -1,0 +1,25 @@
+# Instructions for coding agents (Codex, Claude Code, others)
+
+This folder is a design export for Étaye. Read `README.md` first.
+
+## Scope
+
+- Design work only: HTML/CSS mockups, the design system and their review evidence.
+- Do not scaffold Spring, React or any application, and do not write APIs, migrations, domain code, AI integrations, deployment or a user story. Completing the design does not authorize development; Aymen decides that explicitly.
+- Do not claim a review, an approval or a Figma import that did not happen. Record Figma node IDs only after a real import has been checked.
+
+## Data
+
+- Use only `gen/synthetic-data.json` (`etaye-design-v1`). Keep names, dates, values and source IDs exactly as written there.
+- Do not invent patients, results, diagnoses, prescriptions, identifiers or addresses. A state with no dataset example is labelled "template" or "variant" in its English label, and adds no clinical value.
+- E-mail addresses use `example.test` only.
+
+## Making changes
+
+- One writer for shared files: `gen/lib.py`, `ds/bundle-base.css`, `ds/bundle-app.css`, `icons.css`, tokens. Family modules (`gen/screens_*.py`) can be edited independently.
+- Every new state goes through `gen/build.py`, then `gen/render.py <ID> --variantes`. Open the captures and check them: desktop 1440×1024, tablet 1024×768, mobile 390×844, 320 px reflow, dark theme and fallback fonts. Automated checks (`overflow_check.py`, `lint.py`) are not enough on their own.
+- A4 documents: run `gen/pdf.py` after the build and open every page in grayscale (`review/_pdf-*.png`). Keep the footer, version ID and "Page x / y" on every page.
+- Call AI processing a *tâche*, never a *traitement* (that word means a patient's treatment here).
+- Record what you opened in `review/evidence.json`, then run `gen/tracker.py`. Keep `figma_sync` as "Pending".
+- UI copy stays in French: vouvoiement on the patient side, concise professional French on the practitioner side. Use exact action labels ("Valider cette version", "Publier pour Claire Martin", "Retirer la publication"), never "OK" or "Confirmer".
+- Product rules live in `gen/spec/01-product-and-rules.md` (BR-001…), screens and interactions in `gen/spec/03-screens-and-interactions.md`, documents and e-mails in `gen/spec/04-pdfs-emails.md`.

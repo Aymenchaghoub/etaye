@@ -1,0 +1,279 @@
+{
+  "archive": "etaye-design-final-20261103.zip",
+  "archiveSha256": "d36658648db1bbb523a2fa7aa3affcf5214d1a91eff6add5ef02a214c0343b8a",
+  "receivedAt": "2026-11-03",
+  "canonicalBaseline": "311bc77d0f804da40d98348facb48f0472b6a9a0",
+  "files": [
+    {
+      "path": "design-system/tokens.json",
+      "archivePath": "etaye-design/design-system/tokens.json",
+      "sha256": "4d50dfd4f1ce8824b96422e74f212a31158d51ba1c9ebabba37001783e526eb8"
+    },
+    {
+      "path": "ds/bundle-app.css",
+      "archivePath": "etaye-design/ds/bundle-app.css",
+      "sha256": "ca2bcdf1f03d491caf3a765dac3423dd78775025694235eac8df45be7897f6ec"
+    },
+    {
+      "path": "ds/bundle-base.css",
+      "archivePath": "etaye-design/ds/bundle-base.css",
+      "sha256": "5d4f5bf08c5b00d65161c72e5f18e998a883ef7ea93139b9646d9751bc1629f2"
+    },
+    {
+      "path": "ds/ext-consult.css",
+      "archivePath": "etaye-design/ds/ext-consult.css",
+      "sha256": "2b4ac07a334358798699f14f1fc5fa3662c4e90a523c688b5804113e342ae31d"
+    },
+    {
+      "path": "ds/ext-print.css",
+      "archivePath": "etaye-design/ds/ext-print.css",
+      "sha256": "a8382a31abfffcb37eee507eb572ed579d47b6c899743c5de706cb8bd0780b3d"
+    },
+    {
+      "path": "export/etaye-design-system/LICENCES.md",
+      "archivePath": "etaye-design/export/etaye-design-system/LICENCES.md",
+      "sha256": "925581011356e22c4fd4abb96c00cfccbdc4d1faf79c927f249704c0e781379d"
+    },
+    {
+      "path": "export/etaye-design-system/fonts/AtkinsonHyperlegibleMono-Regular.woff2",
+      "archivePath": "etaye-design/export/etaye-design-system/fonts/AtkinsonHyperlegibleMono-Regular.woff2",
+      "sha256": "87b5b94c18025729fc6ed4e8c25221ade3746dc87213943fa4de49f1f0f26787"
+    },
+    {
+      "path": "export/etaye-design-system/fonts/AtkinsonHyperlegibleMono-SemiBold.woff2",
+      "archivePath": "etaye-design/export/etaye-design-system/fonts/AtkinsonHyperlegibleMono-SemiBold.woff2",
+      "sha256": "a52c1396b3cc1b7c7e52dcb39ed9ed2aeb1b7b0ff3572bca076e441aa7d906f6"
+    },
+    {
+      "path": "export/etaye-design-system/fonts/AtkinsonHyperlegibleNext-Medium.woff2",
+      "archivePath": "etaye-design/export/etaye-design-system/fonts/AtkinsonHyperlegibleNext-Medium.woff2",
+      "sha256": "f5243b80fbcabc6756a4f67a2843a581216ecb89019a789335b85c924f05702e"
+    },
+    {
+      "path": "export/etaye-design-system/fonts/AtkinsonHyperlegibleNext-Regular.woff2",
+      "archivePath": "etaye-design/export/etaye-design-system/fonts/AtkinsonHyperlegibleNext-Regular.woff2",
+      "sha256": "5cb240a4d99ab7e6fc3a4d4e6d11d89789fdffe9c86a8384000d662c53283f6f"
+    },
+    {
+      "path": "export/etaye-design-system/fonts/AtkinsonHyperlegibleNext-SemiBold.woff2",
+      "archivePath": "etaye-design/export/etaye-design-system/fonts/AtkinsonHyperlegibleNext-SemiBold.woff2",
+      "sha256": "828f4525c741b6864718e41aa23a4acbc049b35e6271317c0fd86e0702dd5d2e"
+    },
+    {
+      "path": "export/etaye-design-system/fonts/SourceSerif4-Medium.woff2",
+      "archivePath": "etaye-design/export/etaye-design-system/fonts/SourceSerif4-Medium.woff2",
+      "sha256": "d3e119de0b756d9fa6d368de570f7168bb74eedf3289aaeae22dd97b900918d1"
+    },
+    {
+      "path": "export/etaye-design-system/fonts/SourceSerif4-Regular.woff2",
+      "archivePath": "etaye-design/export/etaye-design-system/fonts/SourceSerif4-Regular.woff2",
+      "sha256": "02194deb92d3975dd30e11a3824a1f1db32b48c93654e60560cb81ce8e7b5f95"
+    },
+    {
+      "path": "export/etaye-design-system/logos/README.md",
+      "archivePath": "etaye-design/export/etaye-design-system/logos/README.md",
+      "sha256": "2c14a047e9c9ef32b0aa8192c44c99a39500b8062b2665dae7b1a46ba0490f6d"
+    },
+    {
+      "path": "export/etaye-design-system/logos/etaye-icone-app-sombre.svg",
+      "archivePath": "etaye-design/export/etaye-design-system/logos/etaye-icone-app-sombre.svg",
+      "sha256": "a10d22a7e1d650da9e48419d9a29b75b6ff62b7a8ed9ff8a76f2adbd1620ea2f"
+    },
+    {
+      "path": "export/etaye-design-system/logos/etaye-icone-app.svg",
+      "archivePath": "etaye-design/export/etaye-design-system/logos/etaye-icone-app.svg",
+      "sha256": "021b62b7b8869664ee6d619dfce77bb54d1a840ef5c6bd7bb6481c7c671effa8"
+    },
+    {
+      "path": "export/etaye-design-system/logos/etaye-logo-espace-patient-sombre.svg",
+      "archivePath": "etaye-design/export/etaye-design-system/logos/etaye-logo-espace-patient-sombre.svg",
+      "sha256": "fc99bdc6f66d3c3e4b8092ab99658a09655b1b39bb0c587c4c80e323df24532d"
+    },
+    {
+      "path": "export/etaye-design-system/logos/etaye-logo-espace-patient.svg",
+      "archivePath": "etaye-design/export/etaye-design-system/logos/etaye-logo-espace-patient.svg",
+      "sha256": "a8f557db206c932d4acc736a19fff88ce5a34df3e7efe9a70274d97c5e967b80"
+    },
+    {
+      "path": "export/etaye-design-system/logos/etaye-logo-monochrome.svg",
+      "archivePath": "etaye-design/export/etaye-design-system/logos/etaye-logo-monochrome.svg",
+      "sha256": "169180fdbd9aefbc95cc6fd466a5abe6d21586b55c126b0c21683d586d9fbc60"
+    },
+    {
+      "path": "export/etaye-design-system/logos/etaye-logo-sombre.svg",
+      "archivePath": "etaye-design/export/etaye-design-system/logos/etaye-logo-sombre.svg",
+      "sha256": "ada6df5c70f443965e20bcfc4588b5e82a6601e3a040a0c40a831337d7a5504d"
+    },
+    {
+      "path": "export/etaye-design-system/logos/etaye-logo.svg",
+      "archivePath": "etaye-design/export/etaye-design-system/logos/etaye-logo.svg",
+      "sha256": "fcab630a862d9dab3777ae9cc793fb77cb65212aaf8b7c401c9f64df293029a5"
+    },
+    {
+      "path": "export/etaye-design-system/logos/etaye-signe-monochrome.svg",
+      "archivePath": "etaye-design/export/etaye-design-system/logos/etaye-signe-monochrome.svg",
+      "sha256": "ec7e31d74168d74445019d1000ec7fc746b091eca8bfe2f74b8e130ce27d23c1"
+    },
+    {
+      "path": "export/etaye-design-system/logos/etaye-signe-sombre.svg",
+      "archivePath": "etaye-design/export/etaye-design-system/logos/etaye-signe-sombre.svg",
+      "sha256": "beb37c19bfd7c94a145198e0dd12f82e4970c33d533ea387fa107d0d5ccb13f7"
+    },
+    {
+      "path": "export/etaye-design-system/logos/etaye-signe.svg",
+      "archivePath": "etaye-design/export/etaye-design-system/logos/etaye-signe.svg",
+      "sha256": "a0a03e59c23d89071c1b763220b20d2b389edbcda0af0a64491cd614768e51df"
+    },
+    {
+      "path": "export/etaye-design-system/tokens/tokens.css",
+      "archivePath": "etaye-design/export/etaye-design-system/tokens/tokens.css",
+      "sha256": "792cad4362d5f2a9c8bf43eabbb73676a1ade40743f3ad6e5a51089abe7d2bde"
+    },
+    {
+      "path": "export/etaye-design-system/tokens/tokens.json",
+      "archivePath": "etaye-design/export/etaye-design-system/tokens/tokens.json",
+      "sha256": "d988a221e09436392ca82d627219991fb48907f8fc87e418bb409c8e50396da0"
+    },
+    {
+      "path": "gen/build.py",
+      "archivePath": "etaye-design/gen/build.py",
+      "sha256": "e33bfbee03e7a4b57f9d81759fce0b802ee70558c28a6cc8a98d9ec85f726943"
+    },
+    {
+      "path": "gen/ds_check.py",
+      "archivePath": "etaye-design/gen/ds_check.py",
+      "sha256": "85ae89bd92eacf7123bc27afba72c894ad2aafe0dd4c50be035ab0ae2a295b6b"
+    },
+    {
+      "path": "gen/lib.py",
+      "archivePath": "etaye-design/gen/lib.py",
+      "sha256": "15b9ba7850a0a39da5330259600719e4fd01b4b983ec8d1e925a14bc91e31d2a"
+    },
+    {
+      "path": "gen/lint.py",
+      "archivePath": "etaye-design/gen/lint.py",
+      "sha256": "a56f9ec6e421d1d39b2c848fccec0545e47cd063d9d812e7dc9933ff1f4768c6"
+    },
+    {
+      "path": "gen/overflow_check.py",
+      "archivePath": "etaye-design/gen/overflow_check.py",
+      "sha256": "c6257b6bbf441f439fb305939b5dd7b26a4d2923511648d86246e83911021527"
+    },
+    {
+      "path": "gen/parcours.py",
+      "archivePath": "etaye-design/gen/parcours.py",
+      "sha256": "e79362a4cb188b54eaca0ab67591d4fd33db2a4f091007b46a3e9495f12b8648"
+    },
+    {
+      "path": "gen/paths.py",
+      "archivePath": "etaye-design/gen/paths.py",
+      "sha256": "25bae59585783ae97d01e76d40c0176e0141ebd5f1642386161aa2aa785d466a"
+    },
+    {
+      "path": "gen/pdf.py",
+      "archivePath": "etaye-design/gen/pdf.py",
+      "sha256": "e301bef46ac21d45e667e83faaa781f4ea64472cc00787ed1c396688cbb08b16"
+    },
+    {
+      "path": "gen/render.py",
+      "archivePath": "etaye-design/gen/render.py",
+      "sha256": "dd059c2bfe8d861615e2411b9f82aa3a295babc7a7aca1c42044d8668622d90e"
+    },
+    {
+      "path": "gen/screens_acces.py",
+      "archivePath": "etaye-design/gen/screens_acces.py",
+      "sha256": "8317206dd9a1398362e03350895e6c5de9cf20dabfd78b8df4d694dd7ee9dfba"
+    },
+    {
+      "path": "gen/screens_admin.py",
+      "archivePath": "etaye-design/gen/screens_admin.py",
+      "sha256": "fa147db85f50578edea14f34f3f917a2a3e60c3f29d9fe1e232e76de4ea85a7b"
+    },
+    {
+      "path": "gen/screens_agenda.py",
+      "archivePath": "etaye-design/gen/screens_agenda.py",
+      "sha256": "a20adae6828428b81d169401b3e98e6e65cb2e10c9230aae0df92e64a5a44097"
+    },
+    {
+      "path": "gen/screens_brief.py",
+      "archivePath": "etaye-design/gen/screens_brief.py",
+      "sha256": "b161a48de49566bba75b696057c1e1c662fef0079b30994ec3b3765fbf4882d6"
+    },
+    {
+      "path": "gen/screens_consult.py",
+      "archivePath": "etaye-design/gen/screens_consult.py",
+      "sha256": "9a6546b1566efaacad8fcf6320da414e4b3a2ba007899e474e8710e76c4853e1"
+    },
+    {
+      "path": "gen/screens_documents.py",
+      "archivePath": "etaye-design/gen/screens_documents.py",
+      "sha256": "0e616a3ffd33c4d3582d09e9b9516f0c6d532521a997b83d827b88f2f39447a8"
+    },
+    {
+      "path": "gen/screens_dossier.py",
+      "archivePath": "etaye-design/gen/screens_dossier.py",
+      "sha256": "8e90a5a03a9c1e1ea5ca78fffbe06687ad021c213f02c5a5154338d1ef4f29fe"
+    },
+    {
+      "path": "gen/screens_patient.py",
+      "archivePath": "etaye-design/gen/screens_patient.py",
+      "sha256": "833be282f8640fb6fdd41ccb5af22f5a03689e57e65eac99d9017fedaf3810d4"
+    },
+    {
+      "path": "gen/screens_patients.py",
+      "archivePath": "etaye-design/gen/screens_patients.py",
+      "sha256": "f72b37d6239cd8fac65b7f3a52542628c044d32000800669ed61a71eff6ad54d"
+    },
+    {
+      "path": "gen/screens_s06.py",
+      "archivePath": "etaye-design/gen/screens_s06.py",
+      "sha256": "038c07e9f61a809e38cc0f7286b55c0be68478eb9d86e185c767ad36d218f19f"
+    },
+    {
+      "path": "gen/spec/06-coverage.csv",
+      "archivePath": "etaye-design/gen/spec/06-coverage.csv",
+      "sha256": "83ef1597509edbb289448b95a186116283f9836a1e5e941f5204ce9385ff1fa5"
+    },
+    {
+      "path": "gen/synthetic-data.json",
+      "archivePath": "etaye-design/gen/synthetic-data.json",
+      "sha256": "07c34bb41d2fc1d9a793a2a9e5fd68a857c0b78eb3cc56d5270c82d3fa73837f"
+    },
+    {
+      "path": "gen/tracker.py",
+      "archivePath": "etaye-design/gen/tracker.py",
+      "sha256": "f32fa313466ef0a3a0d69dc44b0785453c45ba07bdd1acbf0e03529693089859"
+    },
+    {
+      "path": "icons.css",
+      "archivePath": "etaye-design/icons.css",
+      "sha256": "afe566e340399f1acc75325f3958cc9f63744e36ba995302c055a59f9fbf9c27"
+    },
+    {
+      "path": "receipt/README.original.txt",
+      "archivePath": "etaye-design/README.md",
+      "sha256": "aa89af359bb2876bd6eb3558b618800272a7af5664fe75733050a91c79bcc11c"
+    },
+    {
+      "path": "receipt/AGENTS.original.txt",
+      "archivePath": "etaye-design/AGENTS.md",
+      "sha256": "767d14bf0fa07155f2c613a34940b06419e69ff1e4e7c27866ba5adcf8b248dc"
+    },
+    {
+      "path": "receipt/REPORT.original.txt",
+      "archivePath": "etaye-design/review/REPORT.md",
+      "sha256": "469fb906f079dc5dbc959e2852e510ba106e73ffba15884c31774f922a4ba861"
+    },
+    {
+      "path": "review/evidence.json",
+      "archivePath": "etaye-design/review/evidence.json",
+      "sha256": "04420297686824649fc8750c83b86f89ef88edbd2428e3d2bff414607ac0a4c0"
+    },
+    {
+      "path": "receipt/claude-html-design-progress.csv",
+      "archivePath": "etaye-design/review/html-design-progress.csv",
+      "sha256": "04bce6c7ad44435d593717aba49060f8b61c130880b5c30c257ae8a5f49e8fee"
+    }
+  ],
+  "archiveManifestLocation": "Full original manifest retained in external received/etaye-design/MANIFEST.sha256.json"
+}

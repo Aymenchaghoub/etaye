@@ -1,6 +1,8 @@
 # Recover the interrupted Étaye design session
 
-Status: Ready for continuation, not design approval. Updated: 2026-11-02. This is the canonical recovery note; attachment08 is its derived copy. Product rules remain in the [handoff](handoff-claude.md) and its authoritative references. Use the [short prompt](continuation-prompt.md) in the existing Claude chat.
+Status: Ready for continuation, not design approval. Updated: 2026-11-02. This is the canonical recovery note; attachment08 is its derived copy. Product rules remain in the [handoff](handoff-claude.md) and its authoritative references. Use the [current short prompt](continuation-prompt.md) for local Codex continuation; Aymen no longer delegates this work to Claude.
+
+**Historical checkpoint, superseded by the received 2026-11-03 final HTML export:** use the [current correction report](reviews/2026-11-03-corrections.md), then the historical [independent reception](reviews/2026-11-03-reception.md). The former Claude correction brief is historical. The recovery safeguards below still apply, but failed-worker and missing-source descriptions are history, not the current delivery state. Do not overwrite the final receipt with an earlier recovery kit. No approval or Figma synchronization follows from delivery.
 
 ## Evidence and last checkpoint
 

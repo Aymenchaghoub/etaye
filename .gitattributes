@@ -1,2 +1,10 @@
 # Keep the editable design tracker consistent with committed-diff checks.
 docs/design/coverage.csv text eol=lf
+docs/design/html-reception.csv text eol=lf
+# Byte-exact third-party receipt; provenance is checked before reconstruction.
+design/received/2026-11-03/** -text
+design/received/2026-11-03/gen/overflow_check.py -whitespace
+design/received/2026-11-03/gen/screens_brief.py -whitespace
+design/received/2026-11-03/licenses/Atkinson-Mono-OFL.txt -whitespace
+design/received/2026-11-03/licenses/Atkinson-Next-OFL.txt -whitespace
+design/received/2026-11-03/receipt/claude-html-design-progress.csv whitespace=cr-at-eol

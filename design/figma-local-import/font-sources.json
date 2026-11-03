@@ -1,0 +1,89 @@
+[
+  {
+    "file": "atkinsonhyperlegiblenext/AtkinsonHyperlegibleNext[wght].ttf",
+    "url": "https://raw.githubusercontent.com/google/fonts/2fe1e8c6b137fb13041a7cfca6fdcd8a910ea4dc/ofl/atkinsonhyperlegiblenext/AtkinsonHyperlegibleNext%5Bwght%5D.ttf",
+    "sha256": "5a455d1cfa099b601ab70751bb9673e8fe1854dc4500c80e1a220d0d75e31745",
+    "consulted": "2026-11-03",
+    "version": "Version 2.001",
+    "family": "Atkinson Hyperlegible Next",
+    "namedStyles": [
+      "ExtraLight",
+      "Light",
+      "Regular",
+      "Medium",
+      "SemiBold",
+      "Bold",
+      "ExtraBold"
+    ]
+  },
+  {
+    "file": "atkinsonhyperlegiblenext/AtkinsonHyperlegibleNext-Italic[wght].ttf",
+    "url": "https://raw.githubusercontent.com/google/fonts/2fe1e8c6b137fb13041a7cfca6fdcd8a910ea4dc/ofl/atkinsonhyperlegiblenext/AtkinsonHyperlegibleNext-Italic%5Bwght%5D.ttf",
+    "sha256": "ce9cffed32742ad2d9238c561a93220385e5934cdc02b8eb4097a50efa957dc6",
+    "consulted": "2026-11-03",
+    "version": "Version 2.001",
+    "family": "Atkinson Hyperlegible Next",
+    "namedStyles": [
+      "ExtraLight Italic",
+      "Light Italic",
+      "Italic",
+      "Medium Italic",
+      "SemiBold Italic",
+      "Bold Italic",
+      "ExtraBold Italic"
+    ]
+  },
+  {
+    "file": "atkinsonhyperlegiblenext/OFL.txt",
+    "url": "https://raw.githubusercontent.com/google/fonts/2fe1e8c6b137fb13041a7cfca6fdcd8a910ea4dc/ofl/atkinsonhyperlegiblenext/OFL.txt",
+    "sha256": "aca6a428580965d2297d1b718042dd427c2a9443ece3b0d02d758e161e0c4030",
+    "consulted": "2026-11-03"
+  },
+  {
+    "file": "atkinsonhyperlegiblemono/AtkinsonHyperlegibleMono[wght].ttf",
+    "url": "https://raw.githubusercontent.com/google/fonts/2fe1e8c6b137fb13041a7cfca6fdcd8a910ea4dc/ofl/atkinsonhyperlegiblemono/AtkinsonHyperlegibleMono%5Bwght%5D.ttf",
+    "sha256": "5ce8b1698d1ded7dff2178c1a3ad159470085a58ea239e8b2cb88f4fb4a6f646",
+    "consulted": "2026-11-03",
+    "version": "Version 2.001",
+    "family": "Atkinson Hyperlegible Mono",
+    "namedStyles": [
+      "ExtraLight",
+      "Light",
+      "Regular",
+      "Medium",
+      "SemiBold",
+      "Bold",
+      "ExtraBold"
+    ]
+  },
+  {
+    "file": "atkinsonhyperlegiblemono/OFL.txt",
+    "url": "https://raw.githubusercontent.com/google/fonts/2fe1e8c6b137fb13041a7cfca6fdcd8a910ea4dc/ofl/atkinsonhyperlegiblemono/OFL.txt",
+    "sha256": "1ebb31cf7393164f20d10c1d48406cddb5314feff8465531cf1e4ba37e9dd740",
+    "consulted": "2026-11-03"
+  },
+  {
+    "file": "sourceserif4/SourceSerif4[opsz,wght].ttf",
+    "url": "https://raw.githubusercontent.com/google/fonts/2fe1e8c6b137fb13041a7cfca6fdcd8a910ea4dc/ofl/sourceserif4/SourceSerif4%5Bopsz%2Cwght%5D.ttf",
+    "sha256": "97b2d4da6e3cb494b5a1e66ae176914d852ccabef49e0c02c0df25f3e39aca0b",
+    "consulted": "2026-11-03",
+    "version": "Version 4.004;hotconv 1.0.116;makeotfexe 2.5.65601",
+    "family": "Source Serif 4",
+    "namedStyles": [
+      "ExtraLight",
+      "Light",
+      "Regular",
+      "Medium",
+      "SemiBold",
+      "Bold",
+      "ExtraBold",
+      "Black"
+    ]
+  },
+  {
+    "file": "sourceserif4/OFL.txt",
+    "url": "https://raw.githubusercontent.com/google/fonts/2fe1e8c6b137fb13041a7cfca6fdcd8a910ea4dc/ofl/sourceserif4/OFL.txt",
+    "sha256": "5f94c3fd3a23131a417ab5a0c8452de57e70c3cfb9f604d88241f7065ebf9fd9",
+    "consulted": "2026-11-03"
+  }
+]

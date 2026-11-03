@@ -1,0 +1,865 @@
+{
+  "kind": "design-prototype-verification-only",
+  "applicationTests": false,
+  "links": {
+    "htmlPages": 458,
+    "referencesChecked": 9013,
+    "missingFiles": [],
+    "missingFragments": [],
+    "duplicateIds": [],
+    "referencesOutsideSite": [],
+    "placeholderLinks": 14,
+    "scope": "Local file/fragment structure only; no application or visual acceptance",
+    "ok": true
+  },
+  "journeys": [
+    {
+      "id": "access",
+      "steps": 4,
+      "navigatedThroughGuidedControls": true
+    },
+    {
+      "id": "preparation",
+      "steps": 8,
+      "navigatedThroughGuidedControls": true
+    },
+    {
+      "id": "review-publication",
+      "steps": 13,
+      "navigatedThroughGuidedControls": true
+    },
+    {
+      "id": "replace-withdraw",
+      "steps": 10,
+      "navigatedThroughGuidedControls": true
+    },
+    {
+      "id": "consultation",
+      "steps": 8,
+      "navigatedThroughGuidedControls": true
+    },
+    {
+      "id": "scheduling",
+      "steps": 7,
+      "navigatedThroughGuidedControls": true
+    },
+    {
+      "id": "patient",
+      "steps": 12,
+      "navigatedThroughGuidedControls": true
+    },
+    {
+      "id": "administration",
+      "steps": 11,
+      "navigatedThroughGuidedControls": true
+    },
+    {
+      "id": "failed-task",
+      "steps": 7,
+      "navigatedThroughGuidedControls": true
+    },
+    {
+      "id": "isolation",
+      "steps": 5,
+      "navigatedThroughGuidedControls": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "Primary Nora login keeps Nora context",
+      "passed": true
+    },
+    {
+      "name": "Portal invitation expiry copy: html",
+      "passed": true
+    },
+    {
+      "name": "Portal invitation expiry copy: texte",
+      "passed": true
+    },
+    {
+      "name": "Portal invitation expiry copy: sombre",
+      "passed": true
+    },
+    {
+      "name": "access step 1",
+      "passed": true
+    },
+    {
+      "name": "access step 2",
+      "passed": true
+    },
+    {
+      "name": "access step 3",
+      "passed": true
+    },
+    {
+      "name": "access step 4",
+      "passed": true
+    },
+    {
+      "name": "preparation step 1",
+      "passed": true
+    },
+    {
+      "name": "preparation step 2",
+      "passed": true
+    },
+    {
+      "name": "preparation step 3",
+      "passed": true
+    },
+    {
+      "name": "preparation step 4",
+      "passed": true
+    },
+    {
+      "name": "preparation step 5",
+      "passed": true
+    },
+    {
+      "name": "preparation step 6",
+      "passed": true
+    },
+    {
+      "name": "preparation step 7",
+      "passed": true
+    },
+    {
+      "name": "preparation step 8",
+      "passed": true
+    },
+    {
+      "name": "review-publication step 1",
+      "passed": true
+    },
+    {
+      "name": "review-publication step 2",
+      "passed": true
+    },
+    {
+      "name": "review-publication step 3",
+      "passed": true
+    },
+    {
+      "name": "review-publication step 4",
+      "passed": true
+    },
+    {
+      "name": "review-publication step 5",
+      "passed": true
+    },
+    {
+      "name": "review-publication step 6",
+      "passed": true
+    },
+    {
+      "name": "review-publication step 7",
+      "passed": true
+    },
+    {
+      "name": "review-publication step 8",
+      "passed": true
+    },
+    {
+      "name": "review-publication step 9",
+      "passed": true
+    },
+    {
+      "name": "review-publication step 10",
+      "passed": true
+    },
+    {
+      "name": "review-publication step 11",
+      "passed": true
+    },
+    {
+      "name": "review-publication step 12",
+      "passed": true
+    },
+    {
+      "name": "review-publication step 13",
+      "passed": true
+    },
+    {
+      "name": "replace-withdraw step 1",
+      "passed": true
+    },
+    {
+      "name": "replace-withdraw step 2",
+      "passed": true
+    },
+    {
+      "name": "replace-withdraw step 3",
+      "passed": true
+    },
+    {
+      "name": "replace-withdraw step 4",
+      "passed": true
+    },
+    {
+      "name": "replace-withdraw step 5",
+      "passed": true
+    },
+    {
+      "name": "replace-withdraw step 6",
+      "passed": true
+    },
+    {
+      "name": "replace-withdraw step 7",
+      "passed": true
+    },
+    {
+      "name": "replace-withdraw step 8",
+      "passed": true
+    },
+    {
+      "name": "replace-withdraw step 9",
+      "passed": true
+    },
+    {
+      "name": "replace-withdraw step 10",
+      "passed": true
+    },
+    {
+      "name": "consultation step 1",
+      "passed": true
+    },
+    {
+      "name": "consultation step 2",
+      "passed": true
+    },
+    {
+      "name": "consultation step 3",
+      "passed": true
+    },
+    {
+      "name": "consultation step 4",
+      "passed": true
+    },
+    {
+      "name": "consultation step 5",
+      "passed": true
+    },
+    {
+      "name": "consultation step 6",
+      "passed": true
+    },
+    {
+      "name": "consultation step 7",
+      "passed": true
+    },
+    {
+      "name": "consultation step 8",
+      "passed": true
+    },
+    {
+      "name": "scheduling step 1",
+      "passed": true
+    },
+    {
+      "name": "scheduling step 2",
+      "passed": true
+    },
+    {
+      "name": "scheduling step 3",
+      "passed": true
+    },
+    {
+      "name": "scheduling step 4",
+      "passed": true
+    },
+    {
+      "name": "scheduling step 5",
+      "passed": true
+    },
+    {
+      "name": "scheduling step 6",
+      "passed": true
+    },
+    {
+      "name": "scheduling step 7",
+      "passed": true
+    },
+    {
+      "name": "patient step 1",
+      "passed": true
+    },
+    {
+      "name": "patient step 2",
+      "passed": true
+    },
+    {
+      "name": "patient step 3",
+      "passed": true
+    },
+    {
+      "name": "patient step 4",
+      "passed": true
+    },
+    {
+      "name": "patient step 5",
+      "passed": true
+    },
+    {
+      "name": "patient step 6",
+      "passed": true
+    },
+    {
+      "name": "patient step 7",
+      "passed": true
+    },
+    {
+      "name": "patient step 8",
+      "passed": true
+    },
+    {
+      "name": "patient step 9",
+      "passed": true
+    },
+    {
+      "name": "patient step 10",
+      "passed": true
+    },
+    {
+      "name": "patient step 11",
+      "passed": true
+    },
+    {
+      "name": "patient step 12",
+      "passed": true
+    },
+    {
+      "name": "administration step 1",
+      "passed": true
+    },
+    {
+      "name": "administration step 2",
+      "passed": true
+    },
+    {
+      "name": "administration step 3",
+      "passed": true
+    },
+    {
+      "name": "administration step 4",
+      "passed": true
+    },
+    {
+      "name": "administration step 5",
+      "passed": true
+    },
+    {
+      "name": "administration step 6",
+      "passed": true
+    },
+    {
+      "name": "administration step 7",
+      "passed": true
+    },
+    {
+      "name": "administration step 8",
+      "passed": true
+    },
+    {
+      "name": "administration step 9",
+      "passed": true
+    },
+    {
+      "name": "administration step 10",
+      "passed": true
+    },
+    {
+      "name": "administration step 11",
+      "passed": true
+    },
+    {
+      "name": "failed-task step 1",
+      "passed": true
+    },
+    {
+      "name": "failed-task step 2",
+      "passed": true
+    },
+    {
+      "name": "failed-task step 3",
+      "passed": true
+    },
+    {
+      "name": "failed-task step 4",
+      "passed": true
+    },
+    {
+      "name": "failed-task step 5",
+      "passed": true
+    },
+    {
+      "name": "failed-task step 6",
+      "passed": true
+    },
+    {
+      "name": "failed-task step 7",
+      "passed": true
+    },
+    {
+      "name": "isolation step 1",
+      "passed": true
+    },
+    {
+      "name": "isolation step 2",
+      "passed": true
+    },
+    {
+      "name": "isolation step 3",
+      "passed": true
+    },
+    {
+      "name": "isolation step 4",
+      "passed": true
+    },
+    {
+      "name": "isolation step 5",
+      "passed": true
+    },
+    {
+      "name": "Canal selection preserves Sami/Canal",
+      "passed": true
+    },
+    {
+      "name": "Canal patient list stays isolated",
+      "passed": true
+    },
+    {
+      "name": "Canal source backdrop links preserve practice",
+      "passed": true
+    },
+    {
+      "name": "Canal navigation has no inherited Tilleuls count",
+      "passed": true
+    },
+    {
+      "name": "Canal source drawer navigation preserves practice",
+      "passed": true
+    },
+    {
+      "name": "Measurement comparison retains actual unsaved proposal",
+      "passed": true
+    },
+    {
+      "name": "Session recovery Escape requires login: expiree",
+      "passed": true
+    },
+    {
+      "name": "Session recovery Escape requires login: enregistrement",
+      "passed": true
+    },
+    {
+      "name": "Session recovery Escape requires login: publication",
+      "passed": true
+    },
+    {
+      "name": "Session recovery Escape requires login: droits-modifies",
+      "passed": true
+    },
+    {
+      "name": "Session recovery Escape requires login: autre-compte",
+      "passed": true
+    },
+    {
+      "name": "Patient overlay returns to patient explanation: I-19/patient",
+      "passed": true
+    },
+    {
+      "name": "Patient overlay returns to patient explanation: S-29/extrait-src-a-005",
+      "passed": true
+    },
+    {
+      "name": "Louis retry never reuses Claire task",
+      "passed": true
+    },
+    {
+      "name": "Revoked membership removes clinical record",
+      "passed": true
+    },
+    {
+      "name": "New allergy opens exact source",
+      "passed": true
+    },
+    {
+      "name": "Reaction statement cites patient report",
+      "passed": true
+    },
+    {
+      "name": "Source inspection preserves unsaved correction",
+      "passed": true
+    },
+    {
+      "name": "Source Escape preserves editor and restores focus",
+      "passed": true
+    },
+    {
+      "name": "Modal has initial focus",
+      "passed": true
+    },
+    {
+      "name": "Validation requires attestation",
+      "passed": true
+    },
+    {
+      "name": "Validation remains internal",
+      "passed": true
+    },
+    {
+      "name": "Publication is separate explicit action",
+      "passed": true
+    },
+    {
+      "name": "Withdrawal needs reason",
+      "passed": true
+    },
+    {
+      "name": "Withdrawal reaches withdrawn state",
+      "passed": true
+    },
+    {
+      "name": "Move needs reason",
+      "passed": true
+    },
+    {
+      "name": "Move reaches event preview",
+      "passed": true
+    },
+    {
+      "name": "Patient cancellation requires reason",
+      "passed": true
+    },
+    {
+      "name": "Patient cancellation reaches cancelled state",
+      "passed": true
+    },
+    {
+      "name": "Mobile menu opens",
+      "passed": true
+    },
+    {
+      "name": "Escape returns to trigger",
+      "passed": true
+    },
+    {
+      "name": "No JavaScript errors in critical journeys",
+      "passed": true
+    },
+    {
+      "name": "No page overflow or broken images in checked scope",
+      "passed": true
+    },
+    {
+      "name": "Exact nine PDF variants",
+      "passed": true
+    },
+    {
+      "name": "P-01-court.pdf every page numbered",
+      "passed": true
+    },
+    {
+      "name": "P-01-incomplet.pdf every page numbered",
+      "passed": true
+    },
+    {
+      "name": "P-01-long.pdf every page numbered",
+      "passed": true
+    },
+    {
+      "name": "P-02-court.pdf every page numbered",
+      "passed": true
+    },
+    {
+      "name": "P-02-incomplet.pdf every page numbered",
+      "passed": true
+    },
+    {
+      "name": "P-02-long.pdf every page numbered",
+      "passed": true
+    },
+    {
+      "name": "P-03-court.pdf every page numbered",
+      "passed": true
+    },
+    {
+      "name": "P-03-incomplet.pdf every page numbered",
+      "passed": true
+    },
+    {
+      "name": "P-03-long.pdf every page numbered",
+      "passed": true
+    },
+    {
+      "name": "Artifact snapshot unchanged by verification",
+      "passed": true
+    }
+  ],
+  "overflow": [],
+  "captures": [
+    "S-05-choix-desktop.png",
+    "S-32-membre-desktop.png",
+    "I-15-non-soutenu-desktop.png",
+    "I-23-relance-desktop.png",
+    "S-19-lecture-seule-desktop.png",
+    "I-16-ouvert-desktop.png",
+    "I-17-ouvert-desktop.png",
+    "M-01-html-desktop.png",
+    "M-01-texte-desktop.png",
+    "M-01-sombre-desktop.png",
+    "M-02-html-desktop.png",
+    "M-02-texte-desktop.png",
+    "M-02-sombre-desktop.png",
+    "M-03-html-desktop.png",
+    "M-03-texte-desktop.png",
+    "M-03-sombre-desktop.png",
+    "M-04-html-desktop.png",
+    "M-04-texte-desktop.png",
+    "M-04-sombre-desktop.png",
+    "M-05-html-desktop.png",
+    "M-05-texte-desktop.png",
+    "M-05-sombre-desktop.png",
+    "S-29-v2-desktop.png",
+    "S-30-apercu-desktop.png",
+    "S-06-nora-desktop.png",
+    "S-06-jour-vide-desktop.png",
+    "S-40-louis-en-file-desktop.png",
+    "I-21-identite-desktop.png",
+    "I-21-mesure-desktop.png",
+    "I-21-disponibilite-desktop.png",
+    "I-07-qualitatif-desktop.png",
+    "I-07-correction-desktop.png",
+    "I-11-claire-desktop.png",
+    "S-05-choix-tablet.png",
+    "S-32-membre-tablet.png",
+    "I-15-non-soutenu-tablet.png",
+    "I-23-relance-tablet.png",
+    "S-19-lecture-seule-tablet.png",
+    "I-16-ouvert-tablet.png",
+    "I-17-ouvert-tablet.png",
+    "M-01-html-tablet.png",
+    "M-01-texte-tablet.png",
+    "M-01-sombre-tablet.png",
+    "M-02-html-tablet.png",
+    "M-02-texte-tablet.png",
+    "M-02-sombre-tablet.png",
+    "M-03-html-tablet.png",
+    "M-03-texte-tablet.png",
+    "M-03-sombre-tablet.png",
+    "M-04-html-tablet.png",
+    "M-04-texte-tablet.png",
+    "M-04-sombre-tablet.png",
+    "M-05-html-tablet.png",
+    "M-05-texte-tablet.png",
+    "M-05-sombre-tablet.png",
+    "S-29-v2-tablet.png",
+    "S-30-apercu-tablet.png",
+    "S-06-nora-tablet.png",
+    "S-06-jour-vide-tablet.png",
+    "S-40-louis-en-file-tablet.png",
+    "I-21-identite-tablet.png",
+    "I-21-mesure-tablet.png",
+    "I-21-disponibilite-tablet.png",
+    "I-07-qualitatif-tablet.png",
+    "I-07-correction-tablet.png",
+    "I-11-claire-tablet.png",
+    "S-05-choix-mobile.png",
+    "S-32-membre-mobile.png",
+    "I-15-non-soutenu-mobile.png",
+    "I-23-relance-mobile.png",
+    "S-19-lecture-seule-mobile.png",
+    "I-16-ouvert-mobile.png",
+    "I-17-ouvert-mobile.png",
+    "M-01-html-mobile.png",
+    "M-01-texte-mobile.png",
+    "M-01-sombre-mobile.png",
+    "M-02-html-mobile.png",
+    "M-02-texte-mobile.png",
+    "M-02-sombre-mobile.png",
+    "M-03-html-mobile.png",
+    "M-03-texte-mobile.png",
+    "M-03-sombre-mobile.png",
+    "M-04-html-mobile.png",
+    "M-04-texte-mobile.png",
+    "M-04-sombre-mobile.png",
+    "M-05-html-mobile.png",
+    "M-05-texte-mobile.png",
+    "M-05-sombre-mobile.png",
+    "S-29-v2-mobile.png",
+    "S-30-apercu-mobile.png",
+    "S-06-nora-mobile.png",
+    "S-06-jour-vide-mobile.png",
+    "S-40-louis-en-file-mobile.png",
+    "I-21-identite-mobile.png",
+    "I-21-mesure-mobile.png",
+    "I-21-disponibilite-mobile.png",
+    "I-07-qualitatif-mobile.png",
+    "I-07-correction-mobile.png",
+    "I-11-claire-mobile.png",
+    "S-05-choix-narrow.png",
+    "S-32-membre-narrow.png",
+    "I-15-non-soutenu-narrow.png",
+    "I-23-relance-narrow.png",
+    "S-19-lecture-seule-narrow.png",
+    "I-16-ouvert-narrow.png",
+    "I-17-ouvert-narrow.png",
+    "M-01-html-narrow.png",
+    "M-01-texte-narrow.png",
+    "M-01-sombre-narrow.png",
+    "M-02-html-narrow.png",
+    "M-02-texte-narrow.png",
+    "M-02-sombre-narrow.png",
+    "M-03-html-narrow.png",
+    "M-03-texte-narrow.png",
+    "M-03-sombre-narrow.png",
+    "M-04-html-narrow.png",
+    "M-04-texte-narrow.png",
+    "M-04-sombre-narrow.png",
+    "M-05-html-narrow.png",
+    "M-05-texte-narrow.png",
+    "M-05-sombre-narrow.png",
+    "S-29-v2-narrow.png",
+    "S-30-apercu-narrow.png",
+    "S-06-nora-narrow.png",
+    "S-06-jour-vide-narrow.png",
+    "S-40-louis-en-file-narrow.png",
+    "I-21-identite-narrow.png",
+    "I-21-mesure-narrow.png",
+    "I-21-disponibilite-narrow.png",
+    "I-07-qualitatif-narrow.png",
+    "I-07-correction-narrow.png",
+    "I-11-claire-narrow.png",
+    "S-05-choix-dark.png",
+    "S-06-nora-dark.png",
+    "S-06-jour-vide-dark.png",
+    "S-19-lecture-seule-dark.png",
+    "S-32-membre-dark.png",
+    "I-17-ouvert-dark.png",
+    "I-16-ouvert-dark.png",
+    "I-15-non-soutenu-dark.png",
+    "I-23-relance-dark.png",
+    "S-40-louis-en-file-dark.png",
+    "S-29-v2-dark.png",
+    "S-30-apercu-dark.png",
+    "I-07-qualitatif-dark.png",
+    "I-07-correction-dark.png",
+    "I-21-identite-dark.png",
+    "I-21-mesure-dark.png",
+    "I-21-disponibilite-dark.png",
+    "I-11-claire-dark.png",
+    "M-01-html-dark.png",
+    "M-01-texte-dark.png",
+    "M-01-sombre-dark.png",
+    "M-02-html-dark.png",
+    "M-02-texte-dark.png",
+    "M-02-sombre-dark.png",
+    "M-03-html-dark.png",
+    "M-03-texte-dark.png",
+    "M-03-sombre-dark.png",
+    "M-04-html-dark.png",
+    "M-04-texte-dark.png",
+    "M-04-sombre-dark.png",
+    "M-05-html-dark.png",
+    "M-05-texte-dark.png",
+    "M-05-sombre-dark.png",
+    "S-05-choix-fallback.png",
+    "S-06-nora-fallback.png",
+    "S-06-jour-vide-fallback.png",
+    "S-19-lecture-seule-fallback.png",
+    "S-32-membre-fallback.png",
+    "I-17-ouvert-fallback.png",
+    "I-16-ouvert-fallback.png",
+    "I-15-non-soutenu-fallback.png",
+    "I-23-relance-fallback.png",
+    "S-40-louis-en-file-fallback.png",
+    "S-29-v2-fallback.png",
+    "S-30-apercu-fallback.png",
+    "I-07-qualitatif-fallback.png",
+    "I-07-correction-fallback.png",
+    "I-21-identite-fallback.png",
+    "I-21-mesure-fallback.png",
+    "I-21-disponibilite-fallback.png",
+    "I-11-claire-fallback.png",
+    "M-01-html-fallback.png",
+    "M-01-texte-fallback.png",
+    "M-01-sombre-fallback.png",
+    "M-02-html-fallback.png",
+    "M-02-texte-fallback.png",
+    "M-02-sombre-fallback.png",
+    "M-03-html-fallback.png",
+    "M-03-texte-fallback.png",
+    "M-03-sombre-fallback.png",
+    "M-04-html-fallback.png",
+    "M-04-texte-fallback.png",
+    "M-04-sombre-fallback.png",
+    "M-05-html-fallback.png",
+    "M-05-texte-fallback.png",
+    "M-05-sombre-fallback.png"
+  ],
+  "pdfs": [
+    {
+      "file": "P-01-court.pdf",
+      "pages": 2,
+      "allPageFooters": true,
+      "sha256": "b103141ac19c6ba2189e51647b7b04c3b692ea53738ebd4417656f3f909859c8"
+    },
+    {
+      "file": "P-01-incomplet.pdf",
+      "pages": 1,
+      "allPageFooters": true,
+      "sha256": "b14697941de89d7f0da76880f2d6f08c70a0f84ba0178158e96ff8fef1614205"
+    },
+    {
+      "file": "P-01-long.pdf",
+      "pages": 5,
+      "allPageFooters": true,
+      "sha256": "6906a4c7dc4ef5b14bdee8ea4817ad5536f04381d80402d9fe4132e000646abd"
+    },
+    {
+      "file": "P-02-court.pdf",
+      "pages": 1,
+      "allPageFooters": true,
+      "sha256": "c2db846e0858854b3be2fe365a5387e0445dc2559b02ba2642ecab97bcde56be"
+    },
+    {
+      "file": "P-02-incomplet.pdf",
+      "pages": 1,
+      "allPageFooters": true,
+      "sha256": "6ece1602f69c9c6aa83f7e82ba8267e0fa31290c25c12f65fd02c64132d51bf9"
+    },
+    {
+      "file": "P-02-long.pdf",
+      "pages": 7,
+      "allPageFooters": true,
+      "sha256": "c8f5115a62ad91d9f816833c1b2abb38b14e6cb0b42e56ddb90b5d90304f87e7"
+    },
+    {
+      "file": "P-03-court.pdf",
+      "pages": 1,
+      "allPageFooters": true,
+      "sha256": "02ff2b67df0a4654ae315958a18d37e35255aa23758588f7e7181d2aa8ad7668"
+    },
+    {
+      "file": "P-03-incomplet.pdf",
+      "pages": 1,
+      "allPageFooters": true,
+      "sha256": "0060f56c3188e415d955650f1569175d8a2e8af69b8992b382b0db04e7665f0b"
+    },
+    {
+      "file": "P-03-long.pdf",
+      "pages": 3,
+      "allPageFooters": true,
+      "sha256": "1a7256c78ac1ae1318df6cf51555ad9d1bace87875d63d5361bd226d1a3a4fe0"
+    }
+  ],
+  "snapshotSha256": "d2f0800e275c4b156fedbcf23656ffe2bf435f9b6a72faf0f86fc293e2a82ad6",
+  "browser": "145.0.7632.6",
+  "stateCount": 456,
+  "families": 76,
+  "consoleErrors": [],
+  "errors": [],
+  "ok": true
+}

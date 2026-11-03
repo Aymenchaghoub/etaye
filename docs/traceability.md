@@ -80,3 +80,21 @@ Status: Reviewed planning coverage, not implementation or design completion.2026
 | M-05 | FR-015/017, BR-013/016 | Minimal portal notification, current grant on destination | PublicationCreated/Replaced/Withdrawn after commit |8.3 / AT-034|
 
 Detailed I-01–28 mappings are in the interaction catalog and coverage rows. FR-020 has no invented product screen; operations/test/release evidence is its surface. P-04 is deliberately outside scope D-07, not silently untraced required work.
+
+## HTML reception evidence, 3 November 2026
+
+[Independent review](design/reviews/2026-11-03-reception.md) and [76-row HTML reception tracker](design/html-reception.csv) extend this mapping with actual design evidence. Delivery, automatic inspection, targeted visual review, Aymen approval and Figma synchronization are separate axes. Existing Figma coverage and all37 backlog stories remain unchanged. These are design corrections, not implementation stories or passing application tests.
+
+| Findings | Requirement / rule / journey | Surfaces | Existing data/API boundary | Existing story / acceptance design |
+|---|---|---|---|---|
+| DHR-001,005 | FR-001/002; BR-001–003; J-01/J-07 | S-05,S-19,S-36 | Membership, authorized practice/context, clinical reads | 1.2–1.4 / AT-002–004 |
+| DHR-002,012,015 | FR-013/014; BR-011/012/015; J-04 | S-21,S-38,S-40,I-15,I-22,I-23 | ProcessingTask/retryProcessingTask, editDraftVersion, operation outcome | 5.4,6.3 / AT-022,025 |
+| DHR-003,004,006 | FR-008/011/014–017; BR-008/010–013; J-02/J-04–06 | S-10,S-23,S-29,I-09,I-16–18,P-03 | SourceRevision/StatementCitation/PublicationSourceGrant; validate/publish/replace/withdraw | 5.3,6.4,7.2–7.4,8.2 / AT-021,026,028–030,033 |
+| DHR-007,020,021 | FR-001/003/016/017/019; responsive/copy acceptance | S-06,S-31,S-32,I-01,I-17,P/M families | Design shells/content projection; no new API | 2.1,7.4,8.1–8.3 / AT-005,030,032–034 |
+| DHR-008,009,016 | FR-004/006/009/012/014; BR-007/012/015; J-03/04 | S-08,S-16,S-19,S-20,S-22,I-06,I-21 | Appointment/Consultation/DocumentVersion lineage and optimistic versions | 3.1,3.3,4.4,6.1–6.3 / AT-009,011,017,023–025 |
+| DHR-010 | FR-009; BR-006; J-03/J-06 | S-26,I-11,I-12 | AppointmentMove/Reason; reschedule/cancel including own appointment | 4.3,7.5 / AT-016,031 |
+| DHR-011,014 | FR-006/007; BR-008/009; J-02 | S-11,S-12,I-06,I-07 | Measurement/LabResult source/correction lineage; no invented medical bounds | 3.3/3.4 / AT-011/012 |
+| DHR-013 | FR-018; BR-017; J-07 | S-34,I-25 | AuditEvent/listScopedAudit permission projection | 2.4 / AT-008 |
+| DHR-017–019,022–024 | FR-017/019/020; BR-016/018; design/review gate | All HTML families; P-01–03, S-30,S-39,I-19,I-28 | ExportArtifact, frozen source/assets/evidence manifest; Figma pending | 8.1–8.3,9.1–9.3 / AT-032–037 |
+
+The REPORT's twelve decision subquestions and acknowledgement-contract gap are recorded in [decision reconciliation](design/reviews/2026-11-03-decisions.md). Existing canonical behavior is not rewritten to match mockups; new proposals remain pending Aymen.

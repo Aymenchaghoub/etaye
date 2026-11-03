@@ -1,0 +1,60 @@
+{
+  "htmlPages": 400,
+  "referencesChecked": 6625,
+  "missingFiles": [],
+  "missingFragments": [
+    [
+      "ecrans/I-05/annuler.html",
+      "#n-mesures"
+    ],
+    [
+      "ecrans/I-05/annuler.html",
+      "#n-sources"
+    ],
+    [
+      "ecrans/I-05/echec.html",
+      "#n-mesures"
+    ],
+    [
+      "ecrans/I-05/echec.html",
+      "#n-sources"
+    ],
+    [
+      "ecrans/I-05/enregistre.html",
+      "#n-mesures"
+    ],
+    [
+      "ecrans/I-05/enregistre.html",
+      "#n-sources"
+    ],
+    [
+      "ecrans/I-05/erreur.html",
+      "#n-mesures"
+    ],
+    [
+      "ecrans/I-05/erreur.html",
+      "#n-sources"
+    ],
+    [
+      "ecrans/I-05/ouvert.html",
+      "#n-mesures"
+    ],
+    [
+      "ecrans/I-05/ouvert.html",
+      "#n-sources"
+    ],
+    [
+      "ecrans/I-10/erreur.html",
+      "#rv-c"
+    ],
+    [
+      "ecrans/S-17/corrigee.html",
+      "#v1"
+    ]
+  ],
+  "duplicateIds": [],
+  "referencesOutsideSite": [],
+  "placeholderLinks": 15,
+  "scope": "Local file/fragment structure only; no application or visual acceptance",
+  "ok": false
+}

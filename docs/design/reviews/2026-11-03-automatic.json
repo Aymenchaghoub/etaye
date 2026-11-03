@@ -1,0 +1,826 @@
+{
+  "archivePayloadHashes": 1507,
+  "hashMismatches": [],
+  "stateCount": 398,
+  "families": 76,
+  "stateKinds": {
+    "S": 270,
+    "I": 100,
+    "P": 9,
+    "M": 19
+  },
+  "siteHtmlPages": 400,
+  "brokenLocalLinksOrAssets": [],
+  "missingCssAssets": [],
+  "missingFragments": [
+    [
+      "site/ecrans/I-05/annuler.html",
+      "#n-mesures"
+    ],
+    [
+      "site/ecrans/I-05/annuler.html",
+      "#n-sources"
+    ],
+    [
+      "site/ecrans/I-05/echec.html",
+      "#n-mesures"
+    ],
+    [
+      "site/ecrans/I-05/echec.html",
+      "#n-sources"
+    ],
+    [
+      "site/ecrans/I-05/enregistre.html",
+      "#n-mesures"
+    ],
+    [
+      "site/ecrans/I-05/enregistre.html",
+      "#n-sources"
+    ],
+    [
+      "site/ecrans/I-05/erreur.html",
+      "#n-mesures"
+    ],
+    [
+      "site/ecrans/I-05/erreur.html",
+      "#n-sources"
+    ],
+    [
+      "site/ecrans/I-05/ouvert.html",
+      "#n-mesures"
+    ],
+    [
+      "site/ecrans/I-05/ouvert.html",
+      "#n-sources"
+    ],
+    [
+      "site/ecrans/I-10/erreur.html",
+      "#rv-c"
+    ],
+    [
+      "site/ecrans/S-17/corrigee.html",
+      "#v1"
+    ]
+  ],
+  "placeholderLinks": 15,
+  "externalReferences": [],
+  "duplicateIds": [],
+  "journeys": [
+    {
+      "id": "HTML-J01",
+      "name": "Praticienne — entrée et journée",
+      "steps": [
+        "S-01/accueil",
+        "S-02/connexion",
+        "S-05/un-seul",
+        "S-06/nora"
+      ],
+      "edges": [
+        {
+          "from": "S-01/accueil",
+          "to": "S-02/connexion",
+          "directAnchor": false
+        },
+        {
+          "from": "S-02/connexion",
+          "to": "S-05/un-seul",
+          "directAnchor": false
+        },
+        {
+          "from": "S-05/un-seul",
+          "to": "S-06/nora",
+          "directAnchor": true
+        }
+      ]
+    },
+    {
+      "id": "HTML-J02",
+      "name": "Préparation d'une visite",
+      "steps": [
+        "S-06/nora",
+        "S-16/claire",
+        "S-17/claire",
+        "S-18/brouillon",
+        "S-21/revue",
+        "I-09/ouvert",
+        "S-39/options",
+        "P-01/court"
+      ],
+      "edges": [
+        {
+          "from": "S-06/nora",
+          "to": "S-16/claire",
+          "directAnchor": false
+        },
+        {
+          "from": "S-16/claire",
+          "to": "S-17/claire",
+          "directAnchor": true
+        },
+        {
+          "from": "S-17/claire",
+          "to": "S-18/brouillon",
+          "directAnchor": true
+        },
+        {
+          "from": "S-18/brouillon",
+          "to": "S-21/revue",
+          "directAnchor": true
+        },
+        {
+          "from": "S-21/revue",
+          "to": "I-09/ouvert",
+          "directAnchor": false
+        },
+        {
+          "from": "I-09/ouvert",
+          "to": "S-39/options",
+          "directAnchor": false
+        },
+        {
+          "from": "S-39/options",
+          "to": "P-01/court",
+          "directAnchor": false
+        }
+      ]
+    },
+    {
+      "id": "HTML-J03",
+      "name": "Texte généré : correction, validation, publication",
+      "steps": [
+        "S-21/non-soutenu",
+        "I-15/ouvert",
+        "I-15/sale",
+        "S-21/corrigee",
+        "S-22/comparaison",
+        "S-23/validation",
+        "I-16/ouvert",
+        "S-23/valide",
+        "I-17/ouvert",
+        "S-23/publie",
+        "M-05/html",
+        "S-29/v2",
+        "P-03/court"
+      ],
+      "edges": [
+        {
+          "from": "S-21/non-soutenu",
+          "to": "I-15/ouvert",
+          "directAnchor": true
+        },
+        {
+          "from": "I-15/ouvert",
+          "to": "I-15/sale",
+          "directAnchor": false
+        },
+        {
+          "from": "I-15/sale",
+          "to": "S-21/corrigee",
+          "directAnchor": true
+        },
+        {
+          "from": "S-21/corrigee",
+          "to": "S-22/comparaison",
+          "directAnchor": true
+        },
+        {
+          "from": "S-22/comparaison",
+          "to": "S-23/validation",
+          "directAnchor": false
+        },
+        {
+          "from": "S-23/validation",
+          "to": "I-16/ouvert",
+          "directAnchor": true
+        },
+        {
+          "from": "I-16/ouvert",
+          "to": "S-23/valide",
+          "directAnchor": false
+        },
+        {
+          "from": "S-23/valide",
+          "to": "I-17/ouvert",
+          "directAnchor": true
+        },
+        {
+          "from": "I-17/ouvert",
+          "to": "S-23/publie",
+          "directAnchor": false
+        },
+        {
+          "from": "S-23/publie",
+          "to": "M-05/html",
+          "directAnchor": false
+        },
+        {
+          "from": "M-05/html",
+          "to": "S-29/v2",
+          "directAnchor": false
+        },
+        {
+          "from": "S-29/v2",
+          "to": "P-03/court",
+          "directAnchor": false
+        }
+      ]
+    },
+    {
+      "id": "HTML-J04",
+      "name": "Remplacement et retrait d'une publication",
+      "steps": [
+        "S-24/perime",
+        "I-18/ouvert",
+        "I-18/remplacer",
+        "I-18/termine",
+        "S-24/remplace",
+        "S-29/remplacee",
+        "I-18/retrait",
+        "S-24/retire",
+        "M-05/retrait",
+        "S-29/retiree"
+      ],
+      "edges": [
+        {
+          "from": "S-24/perime",
+          "to": "I-18/ouvert",
+          "directAnchor": true
+        },
+        {
+          "from": "I-18/ouvert",
+          "to": "I-18/remplacer",
+          "directAnchor": false
+        },
+        {
+          "from": "I-18/remplacer",
+          "to": "I-18/termine",
+          "directAnchor": false
+        },
+        {
+          "from": "I-18/termine",
+          "to": "S-24/remplace",
+          "directAnchor": false
+        },
+        {
+          "from": "S-24/remplace",
+          "to": "S-29/remplacee",
+          "directAnchor": true
+        },
+        {
+          "from": "S-29/remplacee",
+          "to": "I-18/retrait",
+          "directAnchor": false
+        },
+        {
+          "from": "I-18/retrait",
+          "to": "S-24/retire",
+          "directAnchor": false
+        },
+        {
+          "from": "S-24/retire",
+          "to": "M-05/retrait",
+          "directAnchor": false
+        },
+        {
+          "from": "M-05/retrait",
+          "to": "S-29/retiree",
+          "directAnchor": false
+        }
+      ]
+    },
+    {
+      "id": "HTML-J05",
+      "name": "Consultation et compte rendu",
+      "steps": [
+        "S-19/en-cours",
+        "I-05/ouvert",
+        "I-05/enregistre",
+        "S-19/terminer",
+        "S-20/nouveau",
+        "S-20/lecture-seule",
+        "I-19/ouvert",
+        "P-02/court"
+      ],
+      "edges": [
+        {
+          "from": "S-19/en-cours",
+          "to": "I-05/ouvert",
+          "directAnchor": false
+        },
+        {
+          "from": "I-05/ouvert",
+          "to": "I-05/enregistre",
+          "directAnchor": false
+        },
+        {
+          "from": "I-05/enregistre",
+          "to": "S-19/terminer",
+          "directAnchor": true
+        },
+        {
+          "from": "S-19/terminer",
+          "to": "S-20/nouveau",
+          "directAnchor": true
+        },
+        {
+          "from": "S-20/nouveau",
+          "to": "S-20/lecture-seule",
+          "directAnchor": false
+        },
+        {
+          "from": "S-20/lecture-seule",
+          "to": "I-19/ouvert",
+          "directAnchor": false
+        },
+        {
+          "from": "I-19/ouvert",
+          "to": "P-02/court",
+          "directAnchor": false
+        }
+      ]
+    },
+    {
+      "id": "HTML-J06",
+      "name": "Agenda",
+      "steps": [
+        "S-14/jour",
+        "I-10/ouvert",
+        "I-10/conflit",
+        "S-16/claire",
+        "I-11/ouvert",
+        "M-04/modifie",
+        "I-13/ouvert"
+      ],
+      "edges": [
+        {
+          "from": "S-14/jour",
+          "to": "I-10/ouvert",
+          "directAnchor": true
+        },
+        {
+          "from": "I-10/ouvert",
+          "to": "I-10/conflit",
+          "directAnchor": false
+        },
+        {
+          "from": "I-10/conflit",
+          "to": "S-16/claire",
+          "directAnchor": true
+        },
+        {
+          "from": "S-16/claire",
+          "to": "I-11/ouvert",
+          "directAnchor": true
+        },
+        {
+          "from": "I-11/ouvert",
+          "to": "M-04/modifie",
+          "directAnchor": false
+        },
+        {
+          "from": "M-04/modifie",
+          "to": "I-13/ouvert",
+          "directAnchor": false
+        }
+      ]
+    },
+    {
+      "id": "HTML-J07",
+      "name": "Patiente — espace patient",
+      "steps": [
+        "M-02/html",
+        "I-03/ouvert",
+        "S-25/accueil",
+        "S-27/brouillon",
+        "S-27/envoyee",
+        "S-26/liste",
+        "S-28/liste",
+        "S-29/v2",
+        "S-29/extrait",
+        "S-30/apercu",
+        "I-28/ouvert",
+        "P-03/court"
+      ],
+      "edges": [
+        {
+          "from": "M-02/html",
+          "to": "I-03/ouvert",
+          "directAnchor": false
+        },
+        {
+          "from": "I-03/ouvert",
+          "to": "S-25/accueil",
+          "directAnchor": true
+        },
+        {
+          "from": "S-25/accueil",
+          "to": "S-27/brouillon",
+          "directAnchor": true
+        },
+        {
+          "from": "S-27/brouillon",
+          "to": "S-27/envoyee",
+          "directAnchor": false
+        },
+        {
+          "from": "S-27/envoyee",
+          "to": "S-26/liste",
+          "directAnchor": true
+        },
+        {
+          "from": "S-26/liste",
+          "to": "S-28/liste",
+          "directAnchor": true
+        },
+        {
+          "from": "S-28/liste",
+          "to": "S-29/v2",
+          "directAnchor": true
+        },
+        {
+          "from": "S-29/v2",
+          "to": "S-29/extrait",
+          "directAnchor": false
+        },
+        {
+          "from": "S-29/extrait",
+          "to": "S-30/apercu",
+          "directAnchor": false
+        },
+        {
+          "from": "S-30/apercu",
+          "to": "I-28/ouvert",
+          "directAnchor": true
+        },
+        {
+          "from": "I-28/ouvert",
+          "to": "P-03/court",
+          "directAnchor": false
+        }
+      ]
+    },
+    {
+      "id": "HTML-J08",
+      "name": "Administration",
+      "steps": [
+        "S-31/equipe",
+        "I-01/ouvert",
+        "I-01/envoye",
+        "M-01/html",
+        "S-03/equipe",
+        "S-32/membre",
+        "I-02/ouvert",
+        "S-32/soi-meme",
+        "S-34/admin",
+        "I-25/admin",
+        "S-36/interdit"
+      ],
+      "edges": [
+        {
+          "from": "S-31/equipe",
+          "to": "I-01/ouvert",
+          "directAnchor": true
+        },
+        {
+          "from": "I-01/ouvert",
+          "to": "I-01/envoye",
+          "directAnchor": false
+        },
+        {
+          "from": "I-01/envoye",
+          "to": "M-01/html",
+          "directAnchor": false
+        },
+        {
+          "from": "M-01/html",
+          "to": "S-03/equipe",
+          "directAnchor": false
+        },
+        {
+          "from": "S-03/equipe",
+          "to": "S-32/membre",
+          "directAnchor": false
+        },
+        {
+          "from": "S-32/membre",
+          "to": "I-02/ouvert",
+          "directAnchor": true
+        },
+        {
+          "from": "I-02/ouvert",
+          "to": "S-32/soi-meme",
+          "directAnchor": false
+        },
+        {
+          "from": "S-32/soi-meme",
+          "to": "S-34/admin",
+          "directAnchor": true
+        },
+        {
+          "from": "S-34/admin",
+          "to": "I-25/admin",
+          "directAnchor": false
+        },
+        {
+          "from": "I-25/admin",
+          "to": "S-36/interdit",
+          "directAnchor": false
+        }
+      ]
+    },
+    {
+      "id": "HTML-J09",
+      "name": "Échec d'une tâche et reprise",
+      "steps": [
+        "S-06/nora",
+        "S-40/echec",
+        "I-23/ouvert",
+        "I-23/relance",
+        "S-18/echec",
+        "S-37/ia",
+        "P-01/incomplet"
+      ],
+      "edges": [
+        {
+          "from": "S-06/nora",
+          "to": "S-40/echec",
+          "directAnchor": true
+        },
+        {
+          "from": "S-40/echec",
+          "to": "I-23/ouvert",
+          "directAnchor": false
+        },
+        {
+          "from": "I-23/ouvert",
+          "to": "I-23/relance",
+          "directAnchor": true
+        },
+        {
+          "from": "I-23/relance",
+          "to": "S-18/echec",
+          "directAnchor": false
+        },
+        {
+          "from": "S-18/echec",
+          "to": "S-37/ia",
+          "directAnchor": false
+        },
+        {
+          "from": "S-37/ia",
+          "to": "P-01/incomplet",
+          "directAnchor": false
+        }
+      ]
+    },
+    {
+      "id": "HTML-J10",
+      "name": "Sécurité et isolement",
+      "steps": [
+        "S-38/expiree",
+        "I-22/ouvert",
+        "S-36/introuvable",
+        "S-05/choix",
+        "S-06/jour-vide"
+      ],
+      "edges": [
+        {
+          "from": "S-38/expiree",
+          "to": "I-22/ouvert",
+          "directAnchor": false
+        },
+        {
+          "from": "I-22/ouvert",
+          "to": "S-36/introuvable",
+          "directAnchor": false
+        },
+        {
+          "from": "S-36/introuvable",
+          "to": "S-05/choix",
+          "directAnchor": true
+        },
+        {
+          "from": "S-05/choix",
+          "to": "S-06/jour-vide",
+          "directAnchor": false
+        }
+      ]
+    }
+  ],
+  "pdfs": [
+    {
+      "file": "site/docs/P-01-court.pdf",
+      "pages": 2,
+      "A4": false,
+      "tagged": true,
+      "pageLabels": [
+        true,
+        true
+      ],
+      "demoFooters": [
+        true,
+        true
+      ],
+      "fontRows": [
+        "AAAAAA+AtkinsonHyperlegibleNext-Regular CID TrueType      Identity-H       yes yes yes      4  0",
+        "BAAAAA+AtkinsonHyperlegibleNext-Medium CID TrueType      Identity-H       yes yes yes      5  0",
+        "CAAAAA+AtkinsonHyperlegibleNext-SemiBold CID TrueType      Identity-H       yes yes yes      6  0",
+        "DAAAAA+AtkinsonHyperlegibleMonoExtraLight-Regular CID TrueType      Identity-H       yes yes yes      7  0",
+        "EAAAAA+SourceSerif4-Regular          CID TrueType      Identity-H       yes yes yes      8  0",
+        "FAAAAA+AtkinsonHyperlegibleMonoExtraLight-SemiBold CID TrueType      Identity-H       yes yes yes      9  0",
+        "GAAAAA+SourceSerif4-Medium           Type 3            Custom           yes yes yes     10  0"
+      ],
+      "textCharacters": 3604
+    },
+    {
+      "file": "site/docs/P-01-incomplet.pdf",
+      "pages": 1,
+      "A4": false,
+      "tagged": true,
+      "pageLabels": [
+        true
+      ],
+      "demoFooters": [
+        true
+      ],
+      "fontRows": [
+        "AAAAAA+AtkinsonHyperlegibleNext-Regular CID TrueType      Identity-H       yes yes yes      4  0",
+        "BAAAAA+AtkinsonHyperlegibleNext-Medium CID TrueType      Identity-H       yes yes yes      5  0",
+        "CAAAAA+AtkinsonHyperlegibleNext-SemiBold CID TrueType      Identity-H       yes yes yes      6  0",
+        "DAAAAA+AtkinsonHyperlegibleMonoExtraLight-Regular CID TrueType      Identity-H       yes yes yes      7  0",
+        "EAAAAA+SourceSerif4-Regular          CID TrueType      Identity-H       yes yes yes      8  0"
+      ],
+      "textCharacters": 1884
+    },
+    {
+      "file": "site/docs/P-01-long.pdf",
+      "pages": 5,
+      "A4": false,
+      "tagged": true,
+      "pageLabels": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "demoFooters": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "fontRows": [
+        "AAAAAA+AtkinsonHyperlegibleNext-Regular CID TrueType      Identity-H       yes yes yes      4  0",
+        "BAAAAA+AtkinsonHyperlegibleNext-Medium CID TrueType      Identity-H       yes yes yes      5  0",
+        "CAAAAA+AtkinsonHyperlegibleNext-SemiBold CID TrueType      Identity-H       yes yes yes      6  0",
+        "DAAAAA+AtkinsonHyperlegibleMonoExtraLight-Regular CID TrueType      Identity-H       yes yes yes      7  0",
+        "EAAAAA+SourceSerif4-Regular          CID TrueType      Identity-H       yes yes yes      8  0",
+        "FAAAAA+AtkinsonHyperlegibleMonoExtraLight-SemiBold CID TrueType      Identity-H       yes yes yes      9  0",
+        "GAAAAA+SourceSerif4-Medium           Type 3            Custom           yes yes yes     10  0"
+      ],
+      "textCharacters": 19649
+    },
+    {
+      "file": "site/docs/P-02-court.pdf",
+      "pages": 1,
+      "A4": false,
+      "tagged": true,
+      "pageLabels": [
+        true
+      ],
+      "demoFooters": [
+        true
+      ],
+      "fontRows": [
+        "AAAAAA+AtkinsonHyperlegibleNext-Regular CID TrueType      Identity-H       yes yes yes      4  0",
+        "BAAAAA+AtkinsonHyperlegibleNext-Medium CID TrueType      Identity-H       yes yes yes      6  0",
+        "CAAAAA+AtkinsonHyperlegibleNext-SemiBold CID TrueType      Identity-H       yes yes yes      7  0",
+        "DAAAAA+AtkinsonHyperlegibleMonoExtraLight-Regular CID TrueType      Identity-H       yes yes yes      8  0",
+        "EAAAAA+SourceSerif4-Regular          CID TrueType      Identity-H       yes yes yes      9  0",
+        "FAAAAA+AtkinsonHyperlegibleMonoExtraLight-SemiBold CID TrueType      Identity-H       yes yes yes     10  0"
+      ],
+      "textCharacters": 2278
+    },
+    {
+      "file": "site/docs/P-02-incomplet.pdf",
+      "pages": 1,
+      "A4": false,
+      "tagged": true,
+      "pageLabels": [
+        true
+      ],
+      "demoFooters": [
+        true
+      ],
+      "fontRows": [
+        "AAAAAA+AtkinsonHyperlegibleNext-Regular CID TrueType      Identity-H       yes yes yes      4  0",
+        "BAAAAA+AtkinsonHyperlegibleNext-Medium CID TrueType      Identity-H       yes yes yes      5  0",
+        "CAAAAA+AtkinsonHyperlegibleNext-SemiBold CID TrueType      Identity-H       yes yes yes      6  0",
+        "DAAAAA+AtkinsonHyperlegibleMonoExtraLight-Regular CID TrueType      Identity-H       yes yes yes      7  0",
+        "EAAAAA+SourceSerif4-Regular          CID TrueType      Identity-H       yes yes yes      8  0"
+      ],
+      "textCharacters": 1453
+    },
+    {
+      "file": "site/docs/P-02-long.pdf",
+      "pages": 7,
+      "A4": false,
+      "tagged": true,
+      "pageLabels": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "demoFooters": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "fontRows": [
+        "AAAAAA+AtkinsonHyperlegibleNext-Regular CID TrueType      Identity-H       yes yes yes      4  0",
+        "BAAAAA+AtkinsonHyperlegibleNext-Medium CID TrueType      Identity-H       yes yes yes      6  0",
+        "CAAAAA+AtkinsonHyperlegibleNext-SemiBold CID TrueType      Identity-H       yes yes yes      7  0",
+        "DAAAAA+AtkinsonHyperlegibleMonoExtraLight-Regular CID TrueType      Identity-H       yes yes yes      8  0",
+        "EAAAAA+SourceSerif4-Regular          CID TrueType      Identity-H       yes yes yes      9  0",
+        "FAAAAA+AtkinsonHyperlegibleMonoExtraLight-SemiBold CID TrueType      Identity-H       yes yes yes     10  0"
+      ],
+      "textCharacters": 24723
+    },
+    {
+      "file": "site/docs/P-03-court.pdf",
+      "pages": 1,
+      "A4": false,
+      "tagged": true,
+      "pageLabels": [
+        true
+      ],
+      "demoFooters": [
+        true
+      ],
+      "fontRows": [
+        "AAAAAA+AtkinsonHyperlegibleNext-Regular CID TrueType      Identity-H       yes yes yes      4  0",
+        "BAAAAA+AtkinsonHyperlegibleNext-Medium CID TrueType      Identity-H       yes yes yes      6  0",
+        "CAAAAA+AtkinsonHyperlegibleNext-SemiBold CID TrueType      Identity-H       yes yes yes      7  0",
+        "DAAAAA+AtkinsonHyperlegibleMonoExtraLight-Regular CID TrueType      Identity-H       yes yes yes      8  0",
+        "EAAAAA+SourceSerif4-Regular          CID TrueType      Identity-H       yes yes yes      9  0",
+        "FAAAAA+AtkinsonHyperlegibleMonoExtraLight-SemiBold CID TrueType      Identity-H       yes yes yes     10  0"
+      ],
+      "textCharacters": 1962
+    },
+    {
+      "file": "site/docs/P-03-incomplet.pdf",
+      "pages": 1,
+      "A4": false,
+      "tagged": true,
+      "pageLabels": [
+        true
+      ],
+      "demoFooters": [
+        true
+      ],
+      "fontRows": [
+        "AAAAAA+AtkinsonHyperlegibleNext-Regular CID TrueType      Identity-H       yes yes yes      4  0",
+        "BAAAAA+AtkinsonHyperlegibleNext-Medium CID TrueType      Identity-H       yes yes yes      5  0",
+        "CAAAAA+AtkinsonHyperlegibleNext-SemiBold CID TrueType      Identity-H       yes yes yes      6  0",
+        "DAAAAA+AtkinsonHyperlegibleMonoExtraLight-Regular CID TrueType      Identity-H       yes yes yes      7  0",
+        "EAAAAA+SourceSerif4-Regular          CID TrueType      Identity-H       yes yes yes      8  0"
+      ],
+      "textCharacters": 1203
+    },
+    {
+      "file": "site/docs/P-03-long.pdf",
+      "pages": 3,
+      "A4": false,
+      "tagged": true,
+      "pageLabels": [
+        true,
+        true,
+        true
+      ],
+      "demoFooters": [
+        true,
+        true,
+        true
+      ],
+      "fontRows": [
+        "AAAAAA+AtkinsonHyperlegibleNext-Regular CID TrueType      Identity-H       yes yes yes      4  0",
+        "BAAAAA+AtkinsonHyperlegibleNext-Medium CID TrueType      Identity-H       yes yes yes      6  0",
+        "CAAAAA+AtkinsonHyperlegibleNext-SemiBold CID TrueType      Identity-H       yes yes yes      7  0",
+        "DAAAAA+AtkinsonHyperlegibleMonoExtraLight-Regular CID TrueType      Identity-H       yes yes yes      8  0",
+        "EAAAAA+SourceSerif4-Regular          CID TrueType      Identity-H       yes yes yes      9  0",
+        "FAAAAA+AtkinsonHyperlegibleMonoExtraLight-SemiBold CID TrueType      Identity-H       yes yes yes     10  0"
+      ],
+      "textCharacters": 8003
+    }
+  ]
+}

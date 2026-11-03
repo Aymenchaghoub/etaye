@@ -35,9 +35,14 @@ jobs:
           uv venv --python 3.14 .venv-docs
           uv pip sync --python .venv-docs/bin/python --require-hashes tools/requirements.txt
       - name: Lint first-party Python tooling
-        run: .venv-docs/bin/ruff check --select E9,F tools
+        run: .venv-docs/bin/ruff check --select E9,F tools design/corrections
       - name: Verify resume kit preservation and archive integrity
         run: .venv-docs/bin/python -m unittest discover -s tools -p 'test_*.py'
+      - name: Verify local design importer preservation
+        run: |
+          node --check design/figma-local-import/code.js
+          node --check design/figma-local-import/capture.js
+          node --test design/figma-local-import/test-plugin.cjs
       - name: Validate planning documents and synthetic fixtures
         run: .venv-docs/bin/python tools/validate_docs.py --report reports/document-validation.json
       - name: Validate the documentary OpenAPI contract

@@ -1,6 +1,6 @@
 # Source register
 
-Consultation date: **2026-11-02**. The labels defined in the [decision register](../planning-artifacts/decisions-assumptions.md) apply throughout. A previous AI answer is an investigation lead, never independent evidence.
+Initial consultation: **2026-11-02**; final HTML reception added **2026-11-03**. The labels defined in the [decision register](../planning-artifacts/decisions-assumptions.md) apply throughout. A previous AI answer is an investigation lead, never independent evidence.
 
 | ID | Source / location and version | Establishes | Limits / contradictions |
 |---|---|---|---|
@@ -19,7 +19,11 @@ Additional current GitHub capability sources and actual run/settings evidence ar
 
 ## Additional design-producer evidence
 
-Aymen reported continuing HTML design work in his existing Claude chat. The previously downloaded archive was read-only inspected with hash/version limitations in [external bundle review](../design/external-bundle-review.md). It is not evidence that all screens, Figma nodes or reviews are complete. No external HTML application was copied or executed.
+Aymen reported continuing HTML design work in his existing Claude chat. The earlier downloaded archive was inspected read-only in [external bundle review](../design/external-bundle-review.md); its inspection did not execute its HTML.
+
+**SRC-11 — Verified reception, 2026-11-03:** etaye-design-final-20261103.zip, SHA-256 `d36658648db1bbb523a2fa7aa3affcf5214d1a91eff6add5ef02a214c0343b8a`; original archive and all1,507 payload hashes verified. The [independent report](../design/reviews/2026-11-03-reception.md) records source custody, isolated reconstruction, browser/PDF review and limits against canonical main311bc77. This later design generator/HTML was executed only in isolated copies. Claude's REPORT/evidence are attributed self-review, not independent proof. No user approval, application tests or Figma import are established.
+
+**SRC-12 — Official redistribution notices, 2026-11-03:** pinned URLs/hashes in [notice sources](../../design/received/2026-11-03/licenses/sources.json). They establish the supplied OFL/ISC/MIT notice texts, not an exact originating Lucide release. Font family/version/copyright were also read from the seven received WOFF2 files. Supplemental notices do not modify the original archive.
 
 ## Authority and conflict handling
 
@@ -28,3 +32,5 @@ Explicit current user decisions govern scope. The business rules own domain beha
 ## Evidence preservation
 
 Evidence snapshots contain design properties and synthetic text, not credentials. Temporary export URLs and account metadata are excluded. Re-run read-only inspection only when needed; record the new version and invalidate changed token/asset references. Source citations and line references in the legacy audit are pinned to the reviewed commit.
+
+2026-11-03 Figma access recheck: local REST identity/file read HTTP200; existing file version2417265104370398313, role owner. After user reconnection, MCP whoami succeeds (Starter/View), but read-only use_figma page inventory returns monthly call limit exhausted. No canvas change. Official [MCP rate/access conditions](https://developers.figma.com/docs/figma-mcp-server/rate-limits-access/) consulted the same day: View/Collab up to20 monthly; Full/Dev on Professional up to200 daily. Some write tools are exempt, but actual use_figma was refused. No paid plan change, successful editable import or current variable audit is inferred. User selected editable Design layers; fallback/import approach remains an explicit next action.

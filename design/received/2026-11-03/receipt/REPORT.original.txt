@@ -1,0 +1,51 @@
+# Étaye — HTML design report (2026-11-03)
+
+Prepared by Claude. Every review here is Claude's own: it is not an independent review, and Aymen has approved nothing. The work is design only. It does not authorize development.
+
+## Coverage
+
+| Scope | Designed in HTML | States | Evidence |
+|---|---|---|---|
+| Screens S-01…S-40 | 40 / 40 | 398 states across all IDs | `html-design-progress.csv`, `evidence.json` |
+| Interactions I-01…I-28 | 28 / 28 | (included above) | same |
+| A4 documents P-01…P-03 | 3 / 3 | 9 PDFs (short, long, incomplete), 22 pages | `pdf-report.json`, `_pdf-*.png` |
+| E-mails M-01…M-05 | 5 / 5 | HTML 600 px, plain text, dark client, 320 px | `_lot9-mail-*.png` |
+| Navigable journeys | 10 | 85 steps | `site/parcours.html` |
+| Figma | 0 imported | — | `figma_sync` = Pending |
+
+Every state was rendered with scripts disabled at 1440×1024, 1024×768, 390×844 and 320 px. Dark theme and fallback fonts were rendered at desktop and mobile sizes. For each batch, Claude opened the contact sheets listed in `evidence.json` and `PROGRESS.md`. Tablet and 320 px captures were spot-opened (`_lot7-narrow.png`) and backed by an automated horizontal-overflow check on every state at 320, 390 and 1024 px (`gen/overflow_check.py`). A rule lint covered all 398 states: broken links, vague labels, combined validate+publish, percentages, "IA" badges, emoji, gradients, non-example.test addresses, an unquoted "Aucune allergie connue" and "aucun traitement" stated as a fact. It has one accepted exception: the source viewer shows the SRC-A-001 text verbatim (`lint-report.json`).
+
+## Findings fixed during this session (highlights)
+
+- **Ambiguous medical wording:** AI processing was labelled *Traitement(s)*, so the home page said "Aucun traitement en cours" next to patients' treatments. It is now *Tâche(s)* everywhere: navigation, status axis, banners, documents.
+- **Dialogs:** long dialogs scrolled their actions out of view. Their body now scrolls, and the title and actions stay visible (shared CSS).
+- **Stacked tables:** action buttons overflowed at 320 px. E-mail addresses broke mid-word (they now break only after "@" and before dots).
+- **Generated content:** pre-generation snapshots showed source markers and "Citée". The wrong decision was preselected on the unsupported passage. A patient explanation was labelled "jamais publié".
+- **PDFs:** footer margin boxes wrapped. The micro sign (µ) fell back to DejaVu because Atkinson Hyperlegible has no U+00B5. A source list could be orphaned across a page break.
+- **E-mails:** the plain-text version leaked HTML markup. Mockup annotations sat inside the e-mail copy.
+- **Consultation and publication batch:** a helper session built it and stopped at a rate limit before reporting. Claude rebuilt, re-rendered and re-opened all of its output, and no helper claim is used as evidence.
+
+## Decisions for Aymen
+
+1. **PD-001**: whether schedulers may register patients, which is shown as a proposal in the "planificateur" variants.
+2. **Login entry**: one login page with a patient-branded variant, or a separate patient entry URL. Also the password length rule (12 characters is a proposal).
+3. **Visit preparation**: whether an explicit sharing consent is needed to send it (proposed), and whether patients may cancel online or only move an appointment.
+4. **Consultation completion**: the guard where a missing reason blocks completion (proposed), and whether "Marquer comme lue" is needed on S-17.
+5. **Withdrawal label**: "Retirer l'accès" (spec I-18) or "Retirer la publication" (AGENTS label list).
+6. **Invitation validity**: 72 hours is a proposal. Also whether an administrator may grant clinical capabilities, which the access matrix allows with TEAM_MANAGE.
+7. **µ in the interface**: keep the per-glyph fallback, or add Source Serif 4 to `--font-donnee`.
+8. **Spec copy deviation**: I-23's title "Le traitement a échoué" now reads "La tâche a échoué".
+
+## Dataset gaps (shown as variants or "non fourni", never invented)
+
+- There is no audit log. Audit rows are derived from dated facts, and missing times or correlation references read "non fournie".
+- The dataset has no consultation report draft, no patient questions for CONS-A-001, no attachment grant, no capability set for INV-TEAM-01, no portal-invitation expiry and no recovery request time.
+- Louis Bernard has no dated source, which is why he serves as the V-EMPTY case.
+
+## Next action
+
+1. Aymen reviews `site/parcours.html` and the decisions above.
+2. Aymen runs `figma-plugin/` in an editable Figma file, then records the real node IDs.
+3. After Aymen's feedback, an independent review covers a sample of states and the three long PDFs.
+
+No implementation should start without Aymen's explicit go-ahead.

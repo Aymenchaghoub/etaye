@@ -27,6 +27,8 @@ Status: Planning package ready for complete design work. Documents are reviewed 
 | Design surfaces | [Screens](design/screen-catalog.md), [interactions/modals](design/interaction-catalog.md), [PDFs/emails](design/pdf-email-specifications.md) |
 | Shared fictional content | [Narrative](design/synthetic-data.md), [dataset](design/synthetic-data.json) |
 | Design progress and next phase | [Coverage](design/coverage.csv), [tracking guide](design/coverage-guide.md), [Claude handoff](design/handoff-claude.md), [session recovery](design/session-recovery.md), [short continuation prompt](design/continuation-prompt.md) |
+| Received and corrected HTML design | [Codex corrections/evidence](design/reviews/2026-11-03-corrections.md), [original reception](design/reviews/2026-11-03-reception.md), [decisions](design/reviews/2026-11-03-decisions.md), [separate HTML tracker](design/html-reception.csv), [preserved sources](../design/received/2026-11-03/README.md), [reconstruction/verification](../design/corrections/README.md) |
+| Free local editable Figma import | [Plugin/export guide](../design/figma-local-import/README.md); native execution and synchronized review pending |
 | End-to-end mapping | [Traceability](traceability.md), [review](review-report.md), [documentary validation](test-artifacts/document-validation.json) |
 | Agent installation and policy | [Setup/troubleshooting](agent-setup.md), [workflow execution record](workflow-record.md), [AGENTS](../AGENTS.md), [CLAUDE](../CLAUDE.md) |
 

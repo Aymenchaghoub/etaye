@@ -1,0 +1,30 @@
+{
+  "snapshotSha256": "d2f0800e275c4b156fedbcf23656ffe2bf435f9b6a72faf0f86fc293e2a82ad6",
+  "exportedStates": 456,
+  "batches": 57,
+  "viewport": "desktop1440",
+  "editableTextRuns": 28139,
+  "svgAssets": 6079,
+  "discretePdfPreviewImages": 31,
+  "sceneValidation": "All57 exported batches passed current plugin validator plus SVG-name and explicit line-height checks",
+  "isolatedPluginTests": {
+    "executed": 4,
+    "passed": 4,
+    "scope": "Missing fonts prevent mutations; editable native text and duplicate preservation; new-section rollback; multiline field spacing and clipped editable content"
+  },
+  "figmaNativeExecution": false,
+  "figmaNodeIds": [],
+  "visuallyReviewedInFigma": false,
+  "approvedByAymen": false,
+  "limits": [
+    "No automatic component/variable binding",
+    "Measured fixed geometry; responsive/auto-layout reconciliation pending",
+    "Native prototypes and A4 print-layout review pending"
+  ],
+  "externalExport": "/home/aymen.chaghoub/Projets/etaye-design-receipts/2026-11-03-d36658648db1/figma-editable-mail-reviewed",
+  "clippedContainers": 1146,
+  "fieldValues": 325,
+  "platformRequirement": "Figma Desktop Windows/macOS; Aymen confirmed Windows available for later first-batch check",
+  "uiEvidenceResetBrowserCheck": true,
+  "svgDashBrowserCheck": true
+}

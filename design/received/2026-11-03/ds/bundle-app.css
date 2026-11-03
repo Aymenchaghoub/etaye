@@ -1,0 +1,384 @@
+/* ═══ Étaye — application layer: shells, overlays and workflow components. Tokens only. ═══ */
+
+/* ── Logo theme swap (works without script) ───────────── */
+img.etaye-logo-c { display: block; }
+img.etaye-logo-s { display: none !important; }
+[data-theme="sombre"] img.etaye-logo-c { display: none !important; }
+[data-theme="sombre"] img.etaye-logo-s { display: block !important; }
+
+/* ── Demo notice (BR-018) ─────────────────────────────── */
+.etaye-demo { display: flex; align-items: center; gap: var(--espace-2); font: 400 12px/16px var(--font-texte); color: var(--encre-3); }
+.etaye-demo::before { content: ""; width: 6px; height: 6px; background: var(--encre-3); flex: none; }
+
+/* ── Practitioner / administration shell ─────────────── */
+.etaye-app { min-height: 100vh; display: grid; grid-template-columns: 248px minmax(0, 1fr); grid-template-rows: 56px minmax(0, 1fr); background: var(--fond); color: var(--encre); }
+.etaye-top { grid-column: 1 / -1; display: flex; align-items: center; gap: var(--espace-4); padding: 0 var(--espace-6) 0 var(--espace-4); background: var(--fond); border-bottom: var(--trait-filet) solid var(--filet); }
+.etaye-top__logo { display: flex; align-items: center; width: 216px; flex: none; }
+.etaye-top__logo img { height: 22px; display: block; }
+.etaye-top .etaye-top__menu { display: none; }
+.etaye-top__droite { margin-left: auto; display: flex; align-items: center; gap: var(--espace-4); }
+.etaye-contexte { text-decoration: none; display: inline-flex; align-items: center; gap: var(--espace-3); min-height: 40px; padding: 0 var(--espace-3); background: var(--surface); border: var(--trait-filet) solid var(--filet-controle); border-radius: var(--rayon-1); color: var(--encre); text-align: left; cursor: pointer; font: inherit; }
+.etaye-contexte__cabinet { font: 500 14px/18px var(--font-texte); display: block; }
+.etaye-contexte__role { font: 400 12px/16px var(--font-texte); color: var(--encre-2); display: block; }
+.etaye-compte { text-decoration: none; display: inline-flex; align-items: center; gap: var(--espace-2); min-height: 40px; padding: 0 var(--espace-2); background: transparent; border: 0; color: var(--encre-2); font: 400 14px/20px var(--font-texte); cursor: pointer; }
+.etaye-app .etaye-nav { width: auto; grid-row: 2; border-right: var(--trait-filet) solid var(--filet); }
+.etaye-app .etaye-nav__marque { display: none; }
+.etaye-main { grid-row: 2; min-width: 0; display: flex; flex-direction: column; background: var(--surface); }
+.etaye-page { padding: var(--espace-6); display: grid; gap: var(--espace-6); align-content: start; }
+.etaye-page--large { max-width: 1440px; }
+.etaye-entete { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--espace-4) var(--espace-6); }
+.etaye-entete__fil { font: 400 13px/20px var(--font-texte); color: var(--encre-2); margin-bottom: var(--espace-1); }
+.etaye-entete__fil a { color: var(--accent); text-underline-offset: 3px; }
+.etaye-entete h1 { font: 500 22px/28px var(--font-texte); }
+.etaye-entete__meta { font: 400 14px/20px var(--font-texte); color: var(--encre-2); margin-top: 2px; }
+.etaye-entete__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--espace-2); }
+.etaye-onglets { display: flex; gap: var(--espace-1); border-bottom: var(--trait-filet) solid var(--filet); overflow-x: auto; }
+.etaye-onglets a { display: inline-flex; align-items: center; gap: var(--espace-2); min-height: 40px; padding: 0 var(--espace-3); font: 400 14px/20px var(--font-texte); color: var(--encre-2); text-decoration: none; border-bottom: 2px solid transparent; white-space: nowrap; }
+.etaye-onglets a[aria-current="page"] { color: var(--encre); border-bottom-color: var(--encre); font-weight: 500; }
+.etaye-onglets .etaye-nav__compte { margin-left: var(--espace-1); }
+
+/* Columns: sequential below 1100 px, single column below 760 px */
+.etaye-cols { display: grid; gap: var(--espace-6); align-items: start; }
+.etaye-cols--2 { grid-template-columns: minmax(0, 1fr) 360px; }
+.etaye-cols--2g { grid-template-columns: 360px minmax(0, 1fr); }
+.etaye-cols--3 { grid-template-columns: 300px minmax(0, 1fr) 340px; }
+.etaye-cols--egal { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.etaye-panneau { background: var(--surface); border: var(--trait-filet) solid var(--filet); border-radius: var(--rayon-0); }
+.etaye-panneau__tete { display: flex; align-items: center; justify-content: space-between; gap: var(--espace-3); padding: var(--espace-3) var(--espace-4); border-bottom: var(--trait-filet) solid var(--filet); }
+.etaye-panneau__tete h2, .etaye-panneau__tete h3 { font: 500 16px/24px var(--font-texte); }
+.etaye-panneau__corps { padding: var(--espace-4); display: grid; gap: var(--espace-3); }
+.etaye-pile { display: grid; gap: var(--espace-3); align-content: start; }
+.etaye-pile--6 { gap: var(--espace-6); }
+.etaye-ligne { display: flex; flex-wrap: wrap; align-items: center; gap: var(--espace-2); }
+.etaye-sep { height: 1px; background: var(--filet); border: 0; margin: 0; }
+.etaye-def { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: var(--espace-2) var(--espace-4); font: 400 14px/20px var(--font-texte); }
+.etaye-def dt { color: var(--encre-2); }
+.etaye-def dd { margin: 0; }
+.etaye-panneau .etaye-def { grid-template-columns: 120px minmax(0, 1fr); }
+
+/* ── Auth shell ───────────────────────────────────────── */
+.etaye-auth { min-height: 100vh; background: var(--papier); display: grid; grid-template-rows: auto 1fr auto; padding: var(--espace-6); }
+.etaye-auth__corps { width: 100%; max-width: 440px; margin: var(--espace-10) auto; display: grid; gap: var(--espace-6); align-content: start; }
+.etaye-auth__corps--large { max-width: 640px; }
+.etaye-auth__carte { background: var(--surface); border: var(--trait-filet) solid var(--filet-controle); border-radius: var(--rayon-2); padding: var(--espace-6); display: grid; gap: var(--espace-4); }
+.etaye-auth h1 { font: 500 26px/32px var(--font-texte); }
+.etaye-auth__pied { font-size: 13px; line-height: 20px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--espace-3); }
+
+/* ── Patient shell (mobile first) ─────────────────────── */
+.etaye-papp { min-height: 100vh; background: var(--papier); color: var(--encre); font: 400 18px/28px var(--font-texte); display: flex; flex-direction: column; }
+.etaye-ptop { display: flex; align-items: center; gap: var(--espace-3); padding: var(--espace-3) var(--espace-5); border-bottom: var(--trait-filet) solid var(--filet); }
+.etaye-ptop img { height: 24px; display: block; }
+.etaye-ptop__cabinet { margin-left: auto; font: 400 14px/20px var(--font-texte); color: var(--encre-2); text-align: right; }
+.etaye-ptabs { display: flex; gap: var(--espace-1); padding: 0 var(--espace-3); border-bottom: var(--trait-filet) solid var(--filet); overflow-x: auto; }
+.etaye-ptabs a { display: inline-flex; align-items: center; gap: var(--espace-2); min-height: var(--cible-patient); padding: 0 var(--espace-3); font: 400 16px/24px var(--font-texte); color: var(--encre-2); text-decoration: none; white-space: nowrap; border-bottom: 2px solid transparent; }
+.etaye-ptabs a[aria-current="page"] { color: var(--encre); font-weight: 500; border-bottom-color: var(--encre); }
+.etaye-pmain { width: 100%; max-width: 720px; margin: 0 auto; padding: var(--espace-6) var(--espace-5) var(--espace-10); display: grid; gap: var(--espace-6); align-content: start; flex: 1; }
+.etaye-pmain h1 { font: 500 28px/36px var(--font-texte); }
+.etaye-pmain h2 { font: 500 20px/28px var(--font-texte); }
+.etaye-ppied { padding: var(--espace-4) var(--espace-5); border-top: var(--trait-filet) solid var(--filet); display: flex; flex-wrap: wrap; gap: var(--espace-2) var(--espace-6); justify-content: space-between; font: 400 14px/20px var(--font-texte); color: var(--encre-2); }
+.etaye-pliste { list-style: none; padding: 0; margin: 0; border-top: var(--trait-filet) solid var(--filet); }
+.etaye-pliste > li { display: flex; align-items: center; gap: var(--espace-3); min-height: 64px; padding: var(--espace-3) 0; border-bottom: var(--trait-filet) solid var(--filet); }
+.etaye-pliste__txt { flex: 1; min-width: 0; }
+.etaye-pliste__txt small { display: block; font: 400 16px/24px var(--font-texte); color: var(--encre-2); }
+
+/* ── Banners and toasts ───────────────────────────────── */
+.etaye-bandeau { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--espace-3); align-items: start; padding: var(--espace-3) var(--espace-4); border: var(--trait-filet) solid var(--filet-controle); border-radius: var(--rayon-1); background: var(--surface); font: 400 14px/20px var(--font-texte); }
+.etaye-bandeau > .etaye-icone { margin-top: 2px; }
+.etaye-bandeau__titre { font-weight: 500; }
+.etaye-bandeau__actions { display: flex; flex-wrap: wrap; gap: var(--espace-2); align-items: center; }
+.etaye-bandeau--attention { background: var(--attention-fond); border-color: var(--attention); }
+.etaye-bandeau--attention > .etaye-icone { color: var(--attention); }
+.etaye-bandeau--critique { background: var(--critique-fond); border-color: var(--critique); }
+.etaye-bandeau--critique > .etaye-icone { color: var(--critique); }
+.etaye-bandeau--info { background: var(--accent-fond); border-color: var(--accent); }
+.etaye-bandeau--info > .etaye-icone { color: var(--accent); }
+.etaye-bandeau--neutre > .etaye-icone { color: var(--encre-2); }
+.etaye-patient .etaye-bandeau { font: 400 16px/24px var(--font-texte); }
+.etaye-toast { display: inline-flex; align-items: center; gap: var(--espace-3); padding: var(--espace-3) var(--espace-4); background: var(--encre); color: var(--encre-inverse); border-radius: var(--rayon-2); box-shadow: var(--ombre-flottant); font: 400 14px/20px var(--font-texte); }
+.etaye-toast a, .etaye-toast button { color: var(--encre-inverse); }
+
+/* ── Overlays: one at a time; mobile becomes full page ── */
+.etaye-scene { position: relative; min-height: 100vh; overflow: hidden; }
+.etaye-voile { position: absolute; inset: 0; background: rgba(15, 16, 18, 0.48); }
+.etaye-voile--opaque { background: var(--fond); opacity: 0.97; }
+.etaye-apercu { max-width: 100%; }
+.etaye-panneau .etaye-bandeau, .etaye-auth .etaye-bandeau, .etaye-tiroir .etaye-bandeau, .etaye-dialogue .etaye-bandeau { grid-template-columns: auto minmax(0, 1fr); }
+.etaye-panneau .etaye-bandeau__actions, .etaye-auth .etaye-bandeau__actions, .etaye-tiroir .etaye-bandeau__actions, .etaye-dialogue .etaye-bandeau__actions { grid-column: 2; }
+.etaye-root a:not([class]) { color: var(--accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.etaye-root a:not([class]):visited { color: var(--accent); }
+.etaye-root a:not([class]):hover { text-decoration-thickness: 2px; }
+.etaye-root .etaye-onglets a { color: var(--encre-2); text-decoration: none; }
+.etaye-root .etaye-onglets a[aria-current="page"] { color: var(--encre); }
+.etaye-root .etaye-ptabs a { color: var(--encre-2); text-decoration: none; }
+.etaye-root .etaye-ptabs a[aria-current="page"] { color: var(--encre); }
+.etaye-root .etaye-ptop > a { text-decoration: none; }
+.etaye-patient .etaye-champ__libelle { font: 500 16px/24px var(--font-texte); }
+.etaye-patient .etaye-champ__saisie { min-height: var(--cible-patient); font-size: 18px; }
+.etaye-patient .etaye-champ__aide { font-size: 15px; line-height: 22px; }
+.etaye-dialogue { position: absolute; left: 50%; top: 96px; transform: translateX(-50%); width: min(560px, calc(100% - 48px)); max-height: calc(100% - 144px); overflow: hidden; background: var(--surface); color: var(--encre); border-radius: var(--rayon-2); box-shadow: var(--ombre-flottant); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; }
+.etaye-dialogue > .etaye-dialogue__corps { overflow: auto; min-height: 0; }
+.etaye-dialogue--large { width: min(720px, calc(100% - 48px)); }
+.etaye-dialogue__tete, .etaye-tiroir__tete { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--espace-4); padding: var(--espace-5) var(--espace-6) var(--espace-3); }
+.etaye-dialogue__tete h2, .etaye-tiroir__tete h2 { font: 500 20px/28px var(--font-texte); }
+.etaye-dialogue__tete p, .etaye-tiroir__tete p { font: 400 14px/20px var(--font-texte); color: var(--encre-2); margin-top: var(--espace-1); }
+.etaye-dialogue__corps, .etaye-tiroir__corps { padding: var(--espace-2) var(--espace-6) var(--espace-5); display: grid; gap: var(--espace-4); }
+.etaye-dialogue__pied, .etaye-tiroir__pied { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--espace-2); padding: var(--espace-4) var(--espace-6); border-top: var(--trait-filet) solid var(--filet); }
+.etaye-dialogue__pied--gauche { justify-content: space-between; }
+.etaye-fermer { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex: none; background: transparent; border: 0; border-radius: var(--rayon-1); color: var(--encre-2); cursor: pointer; }
+.etaye-tiroir { position: absolute; top: 0; right: 0; bottom: 0; width: min(480px, 100%); background: var(--surface); color: var(--encre); box-shadow: var(--ombre-flottant); display: flex; flex-direction: column; overflow: auto; }
+.etaye-tiroir--large { width: min(640px, 100%); }
+.etaye-tiroir__corps { flex: 1; align-content: start; }
+.etaye-fond-flou { filter: none; }
+
+/* ── Forms (extends Champ) ────────────────────────────── */
+.etaye-form { display: grid; gap: var(--espace-4); }
+.etaye-form__ligne { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--espace-4); align-items: start; }
+.etaye-champ__libelle .etaye-opt { font-weight: 400; color: var(--encre-2); }
+.etaye-champ__libelle .etaye-req { color: var(--encre); }
+select.etaye-champ__saisie { appearance: none; padding-right: var(--espace-8); background-image: linear-gradient(45deg, transparent 50%, var(--encre-2) 50%), linear-gradient(135deg, var(--encre-2) 50%, transparent 50%); background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%; background-size: 5px 5px; background-repeat: no-repeat; }
+.etaye-champ__saisie[readonly], .etaye-champ--lecture .etaye-champ__saisie { background: var(--surface-2); border-style: dashed; color: var(--encre); }
+.etaye-champ__saisie:disabled { background: var(--surface-2); color: var(--encre-2); border-color: var(--filet); }
+.etaye-champ__saisie--focus { outline: var(--trait-focus) solid var(--accent); outline-offset: 2px; }
+.etaye-choix { display: grid; gap: var(--espace-2); }
+.etaye-choix label { display: flex; align-items: flex-start; gap: var(--espace-3); min-height: 32px; font: 400 15px/22px var(--font-texte); cursor: pointer; }
+.etaye-choix input { width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--accent); flex: none; }
+.etaye-choix small { display: block; font: 400 13px/20px var(--font-texte); color: var(--encre-2); }
+.etaye-patient .etaye-choix label { min-height: var(--cible-patient); font: 400 18px/28px var(--font-texte); align-items: center; }
+.etaye-patient .etaye-choix input { width: 24px; height: 24px; }
+.etaye-resume-erreurs { padding: var(--espace-3) var(--espace-4); border: 2px solid var(--encre); border-radius: var(--rayon-1); background: var(--surface); font: 400 14px/20px var(--font-texte); }
+.etaye-resume-erreurs h2 { font: 500 15px/22px var(--font-texte); margin-bottom: var(--espace-1); }
+.etaye-resume-erreurs a { color: var(--accent); }
+.etaye-enregistrement { display: inline-flex; align-items: center; gap: var(--espace-2); font: 400 13px/20px var(--font-texte); color: var(--encre-2); }
+.etaye-enregistrement--sale::before { content: ""; width: 8px; height: 8px; border: 1.5px solid var(--encre-2); }
+.etaye-enregistrement--echec { color: var(--encre); font-weight: 500; }
+
+/* ── Search, filters, pagination ──────────────────────── */
+.etaye-filtres { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--espace-3); }
+.etaye-filtres .etaye-champ { min-width: 180px; }
+.etaye-recherche { position: relative; flex: 1; min-width: 240px; }
+.etaye-recherche .etaye-icone { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--encre-2); }
+.etaye-recherche input { padding-left: 36px; }
+.etaye-puce { display: inline-flex; align-items: center; gap: var(--espace-1); height: 28px; padding: 0 var(--espace-1) 0 var(--espace-2); border: var(--trait-filet) solid var(--filet-controle); border-radius: var(--rayon-1); font: 400 13px/20px var(--font-texte); background: var(--surface); }
+.etaye-puce button { display: inline-flex; width: 24px; height: 24px; align-items: center; justify-content: center; background: transparent; border: 0; color: var(--encre-2); cursor: pointer; }
+.etaye-pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--espace-3); font: 400 13px/20px var(--font-texte); color: var(--encre-2); }
+.etaye-pagination__pages { display: flex; gap: var(--espace-1); }
+.etaye-pagination__pages a, .etaye-pagination__pages span { display: inline-flex; min-width: 32px; height: 32px; align-items: center; justify-content: center; border: var(--trait-filet) solid var(--filet); border-radius: var(--rayon-1); color: var(--encre); text-decoration: none; font: 400 13px/20px var(--font-donnee); }
+.etaye-pagination__pages [aria-current="page"] { background: var(--encre); color: var(--encre-inverse); border-color: var(--encre); }
+.etaye-tableau a { color: var(--encre); text-underline-offset: 3px; }
+.etaye-tableau tr[aria-selected="true"] td { background: var(--accent-fond); }
+.etaye-defile { overflow-x: auto; }
+.etaye-defile:focus-visible { outline: var(--trait-focus) solid var(--accent); outline-offset: 2px; }
+
+/* Stacked rows on narrow screens */
+.etaye-lignes { list-style: none; padding: 0; margin: 0; border-top: var(--trait-filet) solid var(--filet); }
+.etaye-lignes > li { display: grid; grid-template-columns: 72px minmax(0, 1fr) auto; gap: var(--espace-2) var(--espace-4); align-items: center; padding: var(--espace-3) 0; border-bottom: var(--trait-filet) solid var(--filet); font: 400 14px/20px var(--font-texte); }
+.etaye-lignes__heure { font: 400 14px/20px var(--font-donnee); }
+.etaye-lignes__titre { font: 500 15px/22px var(--font-texte); }
+.etaye-lignes__titre a { color: var(--encre); text-underline-offset: 3px; }
+.etaye-lignes__detail { color: var(--encre-2); }
+.etaye-lignes__actions { display: flex; flex-wrap: wrap; gap: var(--espace-2); justify-content: flex-end; }
+
+/* ── Information state (missing ≠ negative) ───────────── */
+.etaye-etat { display: inline-flex; align-items: center; gap: var(--espace-1); font: 500 13px/20px var(--font-texte); color: var(--encre-2); }
+.etaye-etat::before { content: ""; width: 10px; height: 10px; flex: none; }
+.etaye-etat--manquant::before { border: 1.5px dashed var(--encre-2); }
+.etaye-etat--negatif::before { border: 1.5px solid var(--encre-2); background: linear-gradient(135deg, transparent 45%, var(--encre-2) 45%, var(--encre-2) 55%, transparent 55%); }
+.etaye-etat--declare::before { border: 1.5px solid var(--attention); border-radius: 50%; }
+.etaye-etat--declare { color: var(--attention); }
+.etaye-etat--discordant::before { width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 10px solid var(--attention); }
+.etaye-etat--discordant { color: var(--attention); }
+.etaye-etat--observe::before { background: var(--encre); }
+.etaye-etat--observe { color: var(--encre); }
+.etaye-etat--corrige::before { border: 1.5px solid var(--accent); }
+.etaye-etat--corrige { color: var(--accent); }
+
+/* ── Assertion / provenance row ───────────────────────── */
+.etaye-assertion { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--espace-1) var(--espace-4); padding: var(--espace-3) 0; border-bottom: var(--trait-filet) solid var(--filet); }
+.etaye-assertion:last-child { border-bottom: 0; }
+.etaye-assertion__texte { font: 400 15px/22px var(--font-texte); }
+.etaye-assertion__prov { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: var(--espace-1) var(--espace-3); font: 400 12px/16px var(--font-texte); color: var(--encre-3); }
+.etaye-assertion__prov .etaye-repere { top: 0; margin: 0; }
+.etaye-barre { text-decoration: line-through; text-decoration-color: var(--encre-2); color: var(--encre-2); }
+
+/* ── Source drawer / viewer ───────────────────────────── */
+.etaye-source-tete { display: grid; gap: var(--espace-1); }
+.etaye-source-tete .etaye-apercu__ref { font-size: 13px; }
+.etaye-source-texte { font: 400 16px/28px var(--font-document); padding: var(--espace-4); background: var(--papier); border: var(--trait-filet) solid var(--filet); }
+.etaye-source-texte mark { background: var(--accent-fond); color: var(--encre); padding: 0 2px; box-shadow: inset 0 -2px 0 var(--accent); }
+.etaye-visionneuse { background: var(--surface-2); border: var(--trait-filet) solid var(--filet); padding: var(--espace-6); display: grid; justify-items: center; gap: var(--espace-3); }
+.etaye-visionneuse__page { width: min(100%, 520px); aspect-ratio: 210 / 297; background: var(--papier); border: var(--trait-filet) solid var(--filet-controle); padding: 8%; display: grid; align-content: start; gap: 10px; font: 400 12px/18px var(--font-document); color: var(--encre); }
+.etaye-visionneuse__page mark { background: var(--accent-fond); color: var(--encre); box-shadow: inset 0 -2px 0 var(--accent); }
+.etaye-visionneuse__barre { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--espace-2); width: min(100%, 520px); font: 400 13px/20px var(--font-texte); color: var(--encre-2); }
+
+/* ── Status axes (distinct vocabularies) ──────────────── */
+.etaye-statut--publie { background: var(--surface); color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.etaye-axes { display: flex; flex-wrap: wrap; gap: var(--espace-2) var(--espace-3); align-items: center; }
+.etaye-axe { display: inline-flex; align-items: center; gap: var(--espace-1); font: 400 12px/16px var(--font-texte); color: var(--encre-3); }
+
+/* ── Task status ──────────────────────────────────────── */
+.etaye-tache { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--espace-2) var(--espace-3); align-items: start; padding: var(--espace-3) var(--espace-4); border: var(--trait-filet) solid var(--filet); background: var(--surface); }
+.etaye-tache > :nth-child(3) { grid-column: 2; }
+.etaye-tache__titre { font: 500 14px/20px var(--font-texte); }
+.etaye-tache__detail { font: 400 13px/20px var(--font-texte); color: var(--encre-2); }
+.etaye-etapes { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--espace-1); font: 400 13px/20px var(--font-texte); }
+.etaye-etapes li { display: flex; gap: var(--espace-2); align-items: center; color: var(--encre-2); }
+.etaye-etapes li[aria-current="step"] { color: var(--encre); font-weight: 500; }
+
+/* ── Version comparison ───────────────────────────────── */
+.etaye-diff { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--espace-4); }
+.etaye-diff__col { border: var(--trait-filet) solid var(--filet); background: var(--papier); }
+.etaye-diff__tete { padding: var(--espace-2) var(--espace-4); border-bottom: var(--trait-filet) solid var(--filet); font: 500 13px/20px var(--font-texte); display: flex; justify-content: space-between; gap: var(--espace-2); flex-wrap: wrap; }
+.etaye-diff__corps { padding: var(--espace-4); font: 400 16px/28px var(--font-document); display: grid; gap: var(--espace-2); }
+.etaye-diff del { text-decoration: line-through; text-decoration-thickness: 1.5px; background: var(--surface-2); color: var(--encre); }
+.etaye-diff ins { text-decoration: underline; text-decoration-thickness: 2px; text-decoration-color: var(--accent); text-underline-offset: 4px; background: var(--accent-fond); color: var(--encre); }
+.etaye-diff__legende { display: flex; flex-wrap: wrap; gap: var(--espace-4); font: 400 13px/20px var(--font-texte); color: var(--encre-2); }
+
+/* ── Review checklist ─────────────────────────────────── */
+.etaye-controle { list-style: none; padding: 0; margin: 0; display: grid; border-top: var(--trait-filet) solid var(--filet); }
+.etaye-controle li { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; gap: var(--espace-3); align-items: start; padding: var(--espace-3) 0; border-bottom: var(--trait-filet) solid var(--filet); font: 400 14px/20px var(--font-texte); }
+.etaye-controle__ok { color: var(--accent); }
+.etaye-controle__bloque { color: var(--attention); }
+.etaye-controle small { display: block; color: var(--encre-2); font-size: 13px; }
+
+/* ── Publication audience preview ─────────────────────── */
+.etaye-audience { display: grid; gap: var(--espace-3); padding: var(--espace-4); border: var(--trait-filet) solid var(--accent); background: var(--surface); }
+.etaye-audience__qui { display: flex; align-items: center; gap: var(--espace-3); font: 500 15px/22px var(--font-texte); }
+
+/* ── Upload / quarantine ──────────────────────────────── */
+.etaye-depot { display: grid; justify-items: center; gap: var(--espace-2); padding: var(--espace-8) var(--espace-6); border: 1.5px dashed var(--filet-controle); background: var(--surface-2); text-align: center; font: 400 14px/20px var(--font-texte); color: var(--encre-2); }
+.etaye-fichier { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--espace-1) var(--espace-3); align-items: center; padding: var(--espace-3) 0; border-bottom: var(--trait-filet) solid var(--filet); font: 400 14px/20px var(--font-texte); }
+.etaye-fichier__nom { font-weight: 500; overflow-wrap: anywhere; }
+.etaye-fichier__meta { grid-column: 2; font: 400 12px/16px var(--font-texte); color: var(--encre-3); }
+
+/* ── Empty / error / forbidden / session states ───────── */
+.etaye-vide { display: grid; justify-items: start; gap: var(--espace-2); padding: var(--espace-8) var(--espace-6); border: var(--trait-filet) dashed var(--filet-controle); font: 400 14px/20px var(--font-texte); color: var(--encre-2); }
+.etaye-vide strong { font: 500 16px/24px var(--font-texte); color: var(--encre); }
+.etaye-etat-page { max-width: 560px; display: grid; gap: var(--espace-4); padding: var(--espace-10) 0; }
+.etaye-etat-page__code { font: 400 13px/20px var(--font-donnee); color: var(--encre-3); }
+.etaye-etat-page h1 { font: 500 26px/32px var(--font-texte); }
+.etaye-etat-page p { font: 400 16px/24px var(--font-texte); color: var(--encre-2); }
+.etaye-squelette { display: grid; gap: var(--espace-2); }
+.etaye-squelette span { display: block; height: 12px; background: var(--surface-2); border-radius: 2px; }
+.etaye-squelette span:nth-child(2n) { width: 70%; }
+
+/* ── Agenda / slots / calendar ────────────────────────── */
+.etaye-agenda { display: grid; grid-template-columns: 64px repeat(var(--cols, 1), minmax(0, 1fr)); border: var(--trait-filet) solid var(--filet); background: var(--surface); }
+.etaye-agenda__tete { padding: var(--espace-2) var(--espace-3); border-bottom: var(--trait-filet) solid var(--filet); border-left: var(--trait-filet) solid var(--filet); font: 500 13px/20px var(--font-texte); }
+.etaye-agenda__heure { padding: var(--espace-1) var(--espace-2); text-align: right; font: 400 12px/16px var(--font-donnee); color: var(--encre-3); border-bottom: var(--trait-filet) solid var(--filet); height: 48px; }
+.etaye-agenda__case { border-bottom: var(--trait-filet) solid var(--filet); border-left: var(--trait-filet) solid var(--filet); height: 48px; padding: 2px; position: relative; }
+.etaye-agenda__case--dispo { background: repeating-linear-gradient(135deg, transparent 0 6px, var(--surface-2) 6px 7px); }
+.etaye-rdv { display: grid; gap: 0; height: 100%; padding: 2px var(--espace-2); background: var(--accent-fond); border-left: 3px solid var(--accent); font: 400 12px/16px var(--font-texte); overflow: hidden; }
+.etaye-rdv strong { font: 500 13px/18px var(--font-texte); }
+.etaye-rdv--annule { background: var(--surface-2); border-left-color: var(--filet-controle); color: var(--encre-2); }
+.etaye-creneaux { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: var(--espace-2); }
+.etaye-creneau { display: inline-flex; align-items: center; justify-content: center; min-height: var(--cible-patient); border: var(--trait-filet) solid var(--filet-controle); border-radius: var(--rayon-2); background: var(--surface); font: 500 16px/24px var(--font-donnee); color: var(--encre); cursor: pointer; }
+.etaye-creneau[aria-pressed="true"] { background: var(--encre); color: var(--encre-inverse); border-color: var(--encre); }
+.etaye-creneau:disabled { background: var(--surface-2); color: var(--encre-3); border-style: dashed; text-decoration: line-through; }
+.etaye-jours { display: flex; gap: var(--espace-2); overflow-x: auto; }
+.etaye-jour { display: grid; justify-items: center; min-width: 64px; padding: var(--espace-2); border: var(--trait-filet) solid var(--filet-controle); border-radius: var(--rayon-2); background: var(--surface); font: 400 14px/20px var(--font-texte); }
+.etaye-jour { color: var(--encre); }
+.etaye-jour b { font: 500 18px/24px var(--font-donnee); }
+.etaye-jour[aria-pressed="true"] { background: var(--encre); color: var(--encre-inverse); border-color: var(--encre); }
+
+/* ── Trend chart (always paired with a table) ─────────── */
+.etaye-courbe { width: 100%; max-width: 720px; height: auto; display: block; font-family: var(--font-donnee); }
+.etaye-courbe--etroite { display: none; }
+.etaye-agenda--liste { display: none; }
+.etaye-rdv:focus-visible { outline: var(--trait-focus) solid var(--accent); outline-offset: 1px; }
+.etaye-courbe .grille { stroke: var(--filet); stroke-width: 1; }
+.etaye-courbe .axe { fill: var(--encre-3); font-size: 11px; }
+.etaye-courbe .serie { fill: none; stroke: var(--accent); stroke-width: 2; }
+.etaye-courbe .serie-2 { fill: none; stroke: var(--encre-2); stroke-width: 2; stroke-dasharray: 6 4; }
+.etaye-courbe .point { fill: var(--surface); stroke: var(--accent); stroke-width: 2; }
+.etaye-courbe .point-2 { fill: var(--surface); stroke: var(--encre-2); stroke-width: 2; }
+.etaye-courbe .val { fill: var(--encre); font-size: 12px; }
+.etaye-courbe .trou { fill: var(--surface-2); }
+.etaye-courbe .trou-txt { fill: var(--encre-2); font-size: 11px; font-family: var(--font-texte); }
+
+/* ── Print / email blocks ─────────────────────────────── */
+.etaye-a4 { width: 794px; min-height: 1123px; background: #ffffff; color: #1b1b18; padding: 68px 68px 56px; display: flex; flex-direction: column; box-shadow: 0 0 0 1px #dedad0; font: 400 14px/21px var(--font-document); }
+.etaye-mail { width: 100%; max-width: 600px; margin: 0 auto; background: #ffffff; color: #1b1b18; font: 400 16px/24px var(--font-texte); }
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 1180px) {
+  .etaye-cols--3 { grid-template-columns: 280px minmax(0, 1fr); }
+  .etaye-cols--3 > :nth-child(3) { grid-column: 1 / -1; }
+  .etaye-cols--2 { grid-template-columns: minmax(0, 1fr) 320px; }
+}
+@media (max-width: 1100px) {
+  .etaye-app { grid-template-columns: 216px minmax(0, 1fr); }
+  .etaye-top__logo { width: 184px; }
+  .etaye-cols--2, .etaye-cols--2g, .etaye-cols--3 { grid-template-columns: minmax(0, 1fr); }
+  .etaye-cols--3 > :nth-child(3) { grid-column: auto; }
+  .etaye-annote { grid-template-columns: minmax(0, 1fr) 220px; column-gap: var(--espace-6); }
+}
+@media (max-width: 760px) {
+  .etaye-app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .etaye-top { padding: var(--espace-2) var(--espace-3); gap: var(--espace-2); flex-wrap: wrap; }
+  .etaye-top .etaye-contexte { order: 3; width: 100%; justify-content: space-between; }
+  .etaye-top__logo { width: auto; }
+  .etaye-top__logo img { height: 20px; }
+  .etaye-top .etaye-top__menu { display: inline-flex; }
+  .etaye-top .etaye-demo, .etaye-compte__nom { display: none; }
+  .etaye-contexte { min-height: 40px; padding: 0 var(--espace-2); }
+  .etaye-app .etaye-nav { display: none; }
+  .etaye-main { grid-row: 2; }
+  .etaye-page { padding: var(--espace-4); gap: var(--espace-5); }
+  .etaye-banniere { grid-template-columns: minmax(0, 1fr); padding: var(--espace-3) var(--espace-4); gap: var(--espace-3); }
+  .etaye-allergies { min-width: 0; }
+  .etaye-cols--egal, .etaye-form__ligne, .etaye-diff { grid-template-columns: minmax(0, 1fr); }
+  .etaye-def { grid-template-columns: minmax(0, 1fr); gap: 0 0; }
+  .etaye-def dd { margin-bottom: var(--espace-2); }
+  .etaye-annote { grid-template-columns: minmax(0, 1fr); row-gap: var(--espace-3); }
+  .etaye-annote__texte::after { display: none; }
+  .etaye-annote__texte { padding-left: var(--espace-3); border-left: var(--trait-filet) dashed var(--encre-3); }
+  .etaye-annote--valide .etaye-annote__texte { border-left: var(--trait-filet) solid var(--accent); }
+  .etaye-annote--humain .etaye-annote__texte { border-left: 0; padding-left: 0; }
+  .etaye-annote__marge { padding: var(--espace-3); background: var(--surface-2); }
+  .etaye-lignes > li { grid-template-columns: 56px minmax(0, 1fr); }
+  .etaye-lignes__actions { grid-column: 1 / -1; justify-content: flex-start; }
+  .etaye-dialogue, .etaye-dialogue--large { left: 0; top: 0; transform: none; width: 100%; max-height: none; height: 100%; border-radius: 0; align-content: start; }
+  .etaye-tiroir, .etaye-tiroir--large { width: 100%; }
+  .etaye-voile { display: none; }
+  .etaye-document { padding: var(--espace-6) var(--espace-5); }
+  .etaye-chrono__item { grid-template-columns: 64px 16px minmax(0, 1fr); column-gap: var(--espace-2); }
+  .etaye-entete__actions { width: 100%; }
+  .etaye-tableau--empile thead { display: none; }
+  .etaye-tableau--empile tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--espace-3); row-gap: var(--espace-1); padding: var(--espace-2) 0; border-bottom: var(--trait-filet) solid var(--filet); }
+  .etaye-tableau--empile td { border: 0; height: auto; padding: 2px var(--espace-2); }
+  .etaye-tableau--empile td[data-l]::before { content: attr(data-l); display: block; color: var(--encre-3); font: 400 12px/16px var(--font-texte); }
+  .etaye-tableau--empile td.etaye-col-num { text-align: left; }
+  .etaye-auth { padding: var(--espace-4); }
+  .etaye-auth__corps { margin: var(--espace-6) auto; }
+  .etaye-auth__carte { padding: var(--espace-5); }
+  .etaye-bandeau { grid-template-columns: auto minmax(0, 1fr); }
+  .etaye-bandeau__actions { grid-column: 2; }
+  .etaye-statut { white-space: normal; height: auto; min-height: 24px; }
+  .etaye-courbe--large { display: none; }
+  .etaye-agenda--grille { display: none; }
+  .etaye-ptabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); overflow: visible; }
+  .etaye-ptabs a { white-space: normal; }
+  .etaye-visionneuse { padding: var(--espace-3); }
+  .etaye-bandeau__actions .etaye-bouton { white-space: normal; height: auto; min-height: var(--cible-soignant); text-align: left; }
+  .etaye-patient .etaye-bandeau__actions .etaye-bouton { min-height: var(--cible-patient); }
+  .etaye-agenda--liste { display: block; }
+  .etaye-controle li { grid-template-columns: 24px minmax(0, 1fr); }
+  .etaye-controle li > :nth-child(3) { grid-column: 2; justify-self: start; }
+  .etaye-fichier { grid-template-columns: auto minmax(0, 1fr); }
+  .etaye-scene > [inert] { display: none; }
+  .etaye-scene .etaye-tiroir, .etaye-scene .etaye-dialogue { position: relative; inset: auto; transform: none; min-height: 100vh; height: auto; max-height: none; overflow: visible; box-shadow: none; }
+  .etaye-fichier__meta { order: 2; }
+  .etaye-fichier > .etaye-ligne { grid-column: 2; order: 3; flex-wrap: wrap; }
+  .etaye-courbe--etroite { display: block; }
+}
+@media (max-width: 360px) {
+  .etaye-page { padding: var(--espace-3); }
+  .etaye-pmain { padding: var(--espace-5) var(--espace-4) var(--espace-8); }
+  .etaye-contexte__cabinet { font-size: 13px; }
+}
+@media (prefers-reduced-motion: reduce) { .etaye-root *, .etaye-app * { transition: none !important; } }
+
+/* Stacked tables: action buttons wrap instead of overflowing at 320 px (batch 8) */
+@media (max-width: 760px) {
+  .etaye-tableau--empile .etaye-bouton { white-space: normal; height: auto; min-height: 40px; text-align: left; }
+}
