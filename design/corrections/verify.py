@@ -32,7 +32,7 @@ errors = []
 results = {
     "kind": "design-prototype-verification-only",
     "applicationTests": False,
-    "links": inspect(site),
+    "links": None,
     "journeys": [],
     "checks": [],
     "overflow": [],
@@ -54,6 +54,7 @@ def preserve_failure():
 
 
 atexit.register(preserve_failure)
+results["links"] = inspect(site)
 if not results["links"]["ok"]:
     errors.append("Local reference audit failed")
 snapshot_path = root / "review/corrected-snapshot.json"
