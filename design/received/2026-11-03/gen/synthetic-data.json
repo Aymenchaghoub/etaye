@@ -1,0 +1,819 @@
+{
+  "datasetId": "etaye-design-v1",
+  "synthetic": true,
+  "baseline": "2026-11-02T16:00:00+01:00",
+  "timezone": "Europe/Paris",
+  "locale": "fr-FR",
+  "notice": "Données entièrement fictives pour démonstration — aucun conseil médical.",
+  "identifierPolicy": "Readable design identifiers are aliases, not API UUIDs. Future seed generation must map aliases to stable UUIDs without changing relations.",
+  "practices": [
+    {
+      "id": "PRA-A",
+      "name": "Cabinet des Tilleuls",
+      "timezone": "Europe/Paris"
+    },
+    {
+      "id": "PRA-B",
+      "name": "Cabinet du Canal",
+      "timezone": "Europe/Paris"
+    }
+  ],
+  "accounts": [
+    {
+      "id": "ACC-NORA",
+      "name": "Nora Lefebvre",
+      "email": "nora.lefebvre@example.test",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "ACC-SAMI",
+      "name": "Sami Rahmani",
+      "email": "sami.rahmani@example.test",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "ACC-ELODIE",
+      "name": "Élodie Morel",
+      "email": "elodie.morel@example.test",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "ACC-MILA",
+      "name": "Mila Dubois",
+      "email": "mila.dubois@example.test",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "ACC-CLAIRE",
+      "name": "Claire Martin",
+      "email": "claire.martin@example.test",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "ACC-NEW",
+      "name": "Alex Rivière",
+      "email": "alex.riviere@example.test",
+      "status": "PENDING_ACTIVATION"
+    }
+  ],
+  "memberships": [
+    {
+      "id": "MEM-NORA-A",
+      "accountId": "ACC-NORA",
+      "practiceId": "PRA-A",
+      "capabilities": [
+        "CLINICAL_READ",
+        "CLINICAL_WRITE",
+        "CLINICAL_VALIDATE",
+        "PATIENT_PUBLISH",
+        "SCHEDULE_MANAGE",
+        "CLINICAL_AUDIT"
+      ],
+      "active": true
+    },
+    {
+      "id": "MEM-SAMI-A",
+      "accountId": "ACC-SAMI",
+      "practiceId": "PRA-A",
+      "capabilities": [
+        "CLINICAL_READ",
+        "CLINICAL_WRITE",
+        "CLINICAL_VALIDATE",
+        "PATIENT_PUBLISH",
+        "SCHEDULE_MANAGE",
+        "CLINICAL_AUDIT"
+      ],
+      "active": true
+    },
+    {
+      "id": "MEM-SAMI-B",
+      "accountId": "ACC-SAMI",
+      "practiceId": "PRA-B",
+      "capabilities": [
+        "CLINICAL_READ",
+        "CLINICAL_WRITE",
+        "CLINICAL_VALIDATE",
+        "SCHEDULE_MANAGE",
+        "CLINICAL_AUDIT"
+      ],
+      "active": true
+    },
+    {
+      "id": "MEM-ELODIE-B",
+      "accountId": "ACC-ELODIE",
+      "practiceId": "PRA-B",
+      "capabilities": [
+        "CLINICAL_READ",
+        "CLINICAL_WRITE",
+        "CLINICAL_VALIDATE",
+        "PATIENT_PUBLISH",
+        "SCHEDULE_MANAGE",
+        "CLINICAL_AUDIT"
+      ],
+      "active": true
+    },
+    {
+      "id": "MEM-MILA-A",
+      "accountId": "ACC-MILA",
+      "practiceId": "PRA-A",
+      "capabilities": [
+        "PRACTICE_SETTINGS",
+        "TEAM_MANAGE",
+        "ADMIN_AUDIT",
+        "SCHEDULE_MANAGE",
+        "PATIENT_REGISTER"
+      ],
+      "active": true
+    }
+  ],
+  "practitioners": [
+    {
+      "id": "PR-NORA",
+      "membershipId": "MEM-NORA-A",
+      "displayName": "Dr Nora Lefebvre"
+    },
+    {
+      "id": "PR-SAMI-A",
+      "membershipId": "MEM-SAMI-A",
+      "displayName": "Dr Sami Rahmani"
+    },
+    {
+      "id": "PR-SAMI-B",
+      "membershipId": "MEM-SAMI-B",
+      "displayName": "Dr Sami Rahmani"
+    },
+    {
+      "id": "PR-ELODIE",
+      "membershipId": "MEM-ELODIE-B",
+      "displayName": "Dr Élodie Morel"
+    }
+  ],
+  "records": [
+    {
+      "id": "R-A-001",
+      "practiceId": "PRA-A",
+      "name": {
+        "given": "Claire",
+        "family": "Martin"
+      },
+      "birthDate": "1978-04-18",
+      "portalAccountId": "ACC-CLAIRE",
+      "scenario": "longitudinal",
+      "version": 8
+    },
+    {
+      "id": "R-A-002",
+      "practiceId": "PRA-A",
+      "name": {
+        "given": "Louis",
+        "family": "Bernard"
+      },
+      "birthDate": "1991-07-09",
+      "portalAccountId": null,
+      "scenario": "minimal-history",
+      "version": 1
+    },
+    {
+      "id": "R-B-001",
+      "practiceId": "PRA-B",
+      "name": {
+        "given": "Hugo",
+        "family": "Petit"
+      },
+      "birthDate": "1986-02-25",
+      "portalAccountId": null,
+      "scenario": "practice-isolation",
+      "version": 2
+    }
+  ],
+  "invitations": [
+    {
+      "id": "INV-TEAM-01",
+      "practiceId": "PRA-A",
+      "kind": "MEMBERSHIP",
+      "accountId": "ACC-NEW",
+      "status": "PENDING",
+      "expiresAt": "2026-11-05T12:00:00+01:00"
+    },
+    {
+      "id": "INV-PORTAL-01",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "kind": "PORTAL_LINK",
+      "status": "ACCEPTED",
+      "acceptedAt": "2026-10-18T12:00:00+02:00"
+    },
+    {
+      "id": "INV-PORTAL-02",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-002",
+      "kind": "PORTAL_LINK",
+      "status": "EXPIRED",
+      "expiresAt": "2026-10-30T12:00:00+01:00"
+    }
+  ],
+  "sources": [
+    {
+      "id": "SRC-A-001",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "kind": "CONSULTATION_NOTE",
+      "occurredAt": "2026-09-14T09:30:00+02:00",
+      "recordedAt": "2026-09-14T09:45:00+02:00",
+      "authorId": "PR-NORA",
+      "version": 1,
+      "text": "Aucune allergie connue, selon la déclaration recueillie ce jour.",
+      "locator": "section:allergies",
+      "informationState": "EXPLICITLY_ABSENT",
+      "sourceType": "PATIENT_REPORTED"
+    },
+    {
+      "id": "SRC-A-002",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "kind": "MANUAL_LAB_PANEL",
+      "occurredAt": "2026-09-14T08:00:00+02:00",
+      "recordedAt": "2026-09-15T10:00:00+02:00",
+      "authorId": "PR-NORA",
+      "version": 1,
+      "text": "Créatinine 96 µmol/L, intervalle fourni 60–110 µmol/L.",
+      "locator": "LAB-A-001",
+      "sourceType": "DOCUMENT_REPORTED"
+    },
+    {
+      "id": "SRC-A-003",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "kind": "UPLOADED_DOCUMENT",
+      "occurredAt": "2026-10-12T08:00:00+02:00",
+      "recordedAt": "2026-10-13T10:00:00+02:00",
+      "authorId": "PR-SAMI-A",
+      "version": 1,
+      "text": "Exemple de compte rendu de laboratoire fictif : créatinine 104 µmol/L ; glucose 5,2 mmol/L.",
+      "locator": "DOC-A-001:page-1",
+      "documentId": "DOC-A-001",
+      "sourceType": "DOCUMENT_REPORTED"
+    },
+    {
+      "id": "SRC-A-004",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "kind": "PRACTITIONER_MEASUREMENT",
+      "occurredAt": "2026-10-20T10:10:00+02:00",
+      "recordedAt": "2026-10-20T10:12:00+02:00",
+      "authorId": "PR-NORA",
+      "version": 1,
+      "text": "Pression artérielle mesurée au cabinet : 134/82 mmHg.",
+      "locator": "MEAS-A-002",
+      "sourceType": "PRACTITIONER_OBSERVED"
+    },
+    {
+      "id": "SRC-A-005",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "kind": "PATIENT_PREPARATION",
+      "occurredAt": "2026-11-02T09:10:00+01:00",
+      "recordedAt": "2026-11-02T09:10:00+01:00",
+      "authorAccountId": "ACC-CLAIRE",
+      "version": 1,
+      "text": "Je me souviens d’une réaction à la pénicilline dans ma jeunesse. Je ne sais plus laquelle.",
+      "locator": "PREP-A-001:allergies",
+      "informationState": "PRESENT",
+      "sourceType": "PATIENT_REPORTED",
+      "verificationState": "UNCONFIRMED"
+    },
+    {
+      "id": "SRC-A-006",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "kind": "CONSULTATION_NOTE",
+      "occurredAt": "2026-10-20T10:30:00+02:00",
+      "recordedAt": "2026-10-20T10:35:00+02:00",
+      "authorId": "PR-NORA",
+      "version": 1,
+      "text": "Consultation de suivi : résultats disponibles relus avec la patiente. Traitements actuels non renseignés dans ce jeu de données.",
+      "locator": "CONS-A-001:report",
+      "sourceType": "PRACTITIONER_OBSERVED"
+    },
+    {
+      "id": "SRC-B-001",
+      "practiceId": "PRA-B",
+      "recordId": "R-B-001",
+      "kind": "CONSULTATION_NOTE",
+      "occurredAt": "2026-10-28T11:00:00+01:00",
+      "recordedAt": "2026-10-28T11:20:00+01:00",
+      "authorId": "PR-ELODIE",
+      "version": 1,
+      "text": "Note fictive du Cabinet du Canal.",
+      "locator": "CONS-B-001:report",
+      "sourceType": "PRACTITIONER_OBSERVED"
+    },
+    {
+      "id": "SRC-A-007-v1",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "kind": "PRACTITIONER_MEASUREMENT",
+      "sourceType": "PRACTITIONER_OBSERVED",
+      "occurredAt": "2026-10-20T10:12:00+02:00",
+      "recordedAt": "2026-10-20T10:13:00+02:00",
+      "authorId": "PR-NORA",
+      "version": 1,
+      "text": "Poids saisi : 86,4 kg. Valeur historique corrigée ensuite.",
+      "locator": "MEAS-A-003:version-1"
+    },
+    {
+      "id": "SRC-A-007-v2",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "kind": "PRACTITIONER_MEASUREMENT",
+      "sourceType": "PRACTITIONER_OBSERVED",
+      "occurredAt": "2026-10-20T10:12:00+02:00",
+      "recordedAt": "2026-10-20T10:15:00+02:00",
+      "authorId": "PR-NORA",
+      "version": 2,
+      "text": "Poids corrigé : 68,4 kg.",
+      "locator": "MEAS-A-003:version-2",
+      "supersedesId": "SRC-A-007-v1",
+      "correctionReason": "Correction d’une erreur de saisie, 86,4 devient 68,4 kg."
+    },
+    {
+      "id": "SRC-A-008",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "kind": "PRACTITIONER_MEASUREMENT",
+      "sourceType": "PRACTITIONER_OBSERVED",
+      "occurredAt": "2026-09-14T09:35:00+02:00",
+      "recordedAt": "2026-09-14T09:36:00+02:00",
+      "authorId": "PR-NORA",
+      "version": 1,
+      "text": "Pression artérielle : 128/80 mmHg.",
+      "locator": "MEAS-A-001"
+    }
+  ],
+  "history": [
+    {
+      "id": "HIST-A-001",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "category": "ALLERGY",
+      "informationState": "UNKNOWN",
+      "sourceIds": [
+        "SRC-A-001",
+        "SRC-A-005"
+      ],
+      "text": "Déclarations discordantes à préciser ; ne pas conclure à l’absence d’allergie.",
+      "hasContradictorySources": true
+    },
+    {
+      "id": "HIST-A-002",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "category": "REPORTED_TREATMENT",
+      "informationState": "UNKNOWN",
+      "sourceIds": [],
+      "text": null
+    },
+    {
+      "id": "HIST-A-003",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-002",
+      "category": "MEDICAL_HISTORY",
+      "informationState": "UNKNOWN",
+      "sourceIds": [],
+      "text": null
+    }
+  ],
+  "measurements": [
+    {
+      "id": "MEAS-A-001",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "code": "BLOOD_PRESSURE",
+      "occurredAt": "2026-09-14T09:35:00+02:00",
+      "values": {
+        "systolic": 128,
+        "diastolic": 80
+      },
+      "unit": "mmHg",
+      "origin": "PRACTITIONER_OBSERVED",
+      "authorId": "PR-NORA",
+      "version": 1,
+      "sourceId": "SRC-A-008"
+    },
+    {
+      "id": "MEAS-A-002",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "code": "BLOOD_PRESSURE",
+      "occurredAt": "2026-10-20T10:10:00+02:00",
+      "values": {
+        "systolic": 134,
+        "diastolic": 82
+      },
+      "unit": "mmHg",
+      "origin": "PRACTITIONER_OBSERVED",
+      "sourceId": "SRC-A-004",
+      "authorId": "PR-NORA",
+      "version": 1
+    },
+    {
+      "id": "MEAS-A-003",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "code": "WEIGHT",
+      "occurredAt": "2026-10-20T10:12:00+02:00",
+      "values": {
+        "value": 68.4
+      },
+      "unit": "kg",
+      "origin": "PRACTITIONER_OBSERVED",
+      "authorId": "PR-NORA",
+      "version": 2,
+      "correctionReason": "Correction d’une erreur de saisie : 86,4 devient 68,4 kg.",
+      "previousValue": 86.4,
+      "sourceId": "SRC-A-007-v2",
+      "previousSourceId": "SRC-A-007-v1"
+    }
+  ],
+  "labResults": [
+    {
+      "id": "LAB-A-001",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "analyte": "Créatinine",
+      "value": 96,
+      "unit": "µmol/L",
+      "referenceInterval": {
+        "low": 60,
+        "high": 110,
+        "unit": "µmol/L",
+        "origin": "SYNTHETIC_LAB_REPORTED"
+      },
+      "sampledAt": "2026-09-14T08:00:00+02:00",
+      "sourceId": "SRC-A-002",
+      "entryMode": "MANUAL",
+      "version": 1
+    },
+    {
+      "id": "LAB-A-002",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "analyte": "Créatinine",
+      "value": 104,
+      "unit": "µmol/L",
+      "referenceInterval": {
+        "low": 60,
+        "high": 110,
+        "unit": "µmol/L",
+        "origin": "SYNTHETIC_LAB_REPORTED"
+      },
+      "sampledAt": "2026-10-12T08:00:00+02:00",
+      "sourceId": "SRC-A-003",
+      "entryMode": "MANUAL",
+      "version": 1
+    },
+    {
+      "id": "LAB-A-003",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "analyte": "Glucose",
+      "value": 5.2,
+      "unit": "mmol/L",
+      "referenceInterval": {
+        "low": 4.1,
+        "high": 6.1,
+        "unit": "mmol/L",
+        "origin": "SYNTHETIC_LAB_REPORTED"
+      },
+      "sampledAt": "2026-10-12T08:00:00+02:00",
+      "sourceId": "SRC-A-003",
+      "entryMode": "MANUAL",
+      "version": 1
+    }
+  ],
+  "documents": [
+    {
+      "id": "DOC-A-001",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "title": "Bilan fictif du 12 octobre 2026",
+      "mediaType": "application/pdf",
+      "pages": 2,
+      "uploadedBy": "PR-SAMI-A",
+      "sourceId": "SRC-A-003",
+      "access": "CLINICIAN_ONLY",
+      "note": "Ordinary upload; results manually transcribed. No intelligent extraction has occurred."
+    }
+  ],
+  "availability": [
+    {
+      "id": "AVL-A-001",
+      "practiceId": "PRA-A",
+      "practitionerId": "PR-NORA",
+      "startsAt": "2026-11-03T09:00:00+01:00",
+      "endsAt": "2026-11-03T12:00:00+01:00",
+      "slotMinutes": 30,
+      "patientBookable": true
+    }
+  ],
+  "appointments": [
+    {
+      "id": "APT-A-001",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "practitionerId": "PR-NORA",
+      "startsAt": "2026-11-03T10:30:00+01:00",
+      "endsAt": "2026-11-03T11:00:00+01:00",
+      "status": "BOOKED",
+      "reason": "Consultation de suivi",
+      "version": 1
+    },
+    {
+      "id": "APT-A-002",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-002",
+      "practitionerId": "PR-SAMI-A",
+      "startsAt": "2026-11-02T14:00:00+01:00",
+      "endsAt": "2026-11-02T14:30:00+01:00",
+      "status": "CHECKED_IN",
+      "reason": "Première consultation",
+      "version": 2
+    },
+    {
+      "id": "APT-A-003",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "practitionerId": "PR-NORA",
+      "startsAt": "2026-10-20T10:00:00+02:00",
+      "endsAt": "2026-10-20T10:30:00+02:00",
+      "status": "COMPLETED",
+      "consultationId": "CONS-A-001",
+      "version": 3
+    },
+    {
+      "id": "APT-A-004",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-002",
+      "practitionerId": "PR-SAMI-A",
+      "startsAt": "2026-10-26T11:00:00+01:00",
+      "endsAt": "2026-10-26T11:30:00+01:00",
+      "status": "CANCELLED",
+      "cancellationReason": "Indisponibilité du patient",
+      "version": 2
+    },
+    {
+      "id": "APT-A-005",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "practitionerId": "PR-NORA",
+      "startsAt": "2026-10-15T09:00:00+02:00",
+      "endsAt": "2026-10-15T09:30:00+02:00",
+      "status": "NO_SHOW",
+      "version": 2
+    },
+    {
+      "id": "APT-B-001",
+      "practiceId": "PRA-B",
+      "recordId": "R-B-001",
+      "practitionerId": "PR-ELODIE",
+      "startsAt": "2026-11-03T10:30:00+01:00",
+      "endsAt": "2026-11-03T11:00:00+01:00",
+      "status": "BOOKED",
+      "version": 1
+    }
+  ],
+  "consultations": [
+    {
+      "id": "CONS-A-001",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "practitionerId": "PR-NORA",
+      "appointmentId": "APT-A-003",
+      "status": "COMPLETED",
+      "completedAt": "2026-10-20T10:35:00+02:00"
+    },
+    {
+      "id": "CONS-A-002",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-002",
+      "practitionerId": "PR-SAMI-A",
+      "appointmentId": null,
+      "status": "IN_PROGRESS",
+      "startedAt": "2026-11-02T14:10:00+01:00"
+    }
+  ],
+  "preparations": [
+    {
+      "id": "PREP-A-001",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "appointmentId": "APT-A-001",
+      "submittedAt": "2026-11-02T09:10:00+01:00",
+      "concerns": "Relire les résultats disponibles et préciser les informations manquantes.",
+      "patientReportedSourceIds": [
+        "SRC-A-005"
+      ],
+      "version": 1
+    }
+  ],
+  "documentVersions": [
+    {
+      "id": "BRIEF-A-001-v1",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "kind": "CLINICIAN_BRIEF",
+      "businessStatus": "DRAFT",
+      "freshness": "CURRENT",
+      "version": 1,
+      "sourceIds": [
+        "SRC-A-001",
+        "SRC-A-002",
+        "SRC-A-003",
+        "SRC-A-004",
+        "SRC-A-005",
+        "SRC-A-006"
+      ],
+      "generatedAt": "2026-11-02T14:05:00+01:00",
+      "taskId": "AI-A-001",
+      "text": "Depuis la consultation du 20 octobre, Claire Martin a signalé un souvenir de réaction à la pénicilline [SRC-A-005]. Cette déclaration diffère de la mention du 14 septembre [SRC-A-001]. La liste actuelle des traitements n’est pas renseignée. Les résultats de créatinine disponibles sont de 96 puis 104 µmol/L [SRC-A-002, SRC-A-003].",
+      "missing": [
+        "Current reported treatments"
+      ],
+      "contradictions": [
+        [
+          "SRC-A-001",
+          "SRC-A-005"
+        ]
+      ]
+    },
+    {
+      "id": "REPORT-A-001-v1",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "kind": "CONSULTATION_REPORT",
+      "businessStatus": "VALIDATED",
+      "freshness": "CURRENT",
+      "version": 1,
+      "consultationId": "CONS-A-001",
+      "authorId": "PR-NORA",
+      "validatedBy": "PR-NORA",
+      "validatedAt": "2026-10-20T10:40:00+02:00",
+      "sourceIds": [
+        "SRC-A-003",
+        "SRC-A-004",
+        "SRC-A-006"
+      ],
+      "text": "Consultation du 20 octobre 2026. Résultats disponibles relus avec Claire Martin. Pression artérielle mesurée : 134/82 mmHg. Liste des traitements non renseignée dans le dossier fictif."
+    },
+    {
+      "id": "PATIENT-A-001-v1",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "kind": "PATIENT_EXPLANATION",
+      "businessStatus": "VALIDATED",
+      "freshness": "STALE",
+      "version": 1,
+      "validatedBy": "PR-NORA",
+      "validatedAt": "2026-10-20T10:45:00+02:00",
+      "sourceIds": [
+        "SRC-A-001",
+        "SRC-A-006"
+      ],
+      "text": "Les informations partagées après votre consultation du 20 octobre sont disponibles. La rubrique allergies reprend la déclaration recueillie le 14 septembre.",
+      "staleSince": "2026-11-02T09:10:00+01:00",
+      "staleReason": "New patient-reported information SRC-A-005 contradicts an input source."
+    },
+    {
+      "id": "PATIENT-A-001-v2",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "kind": "PATIENT_EXPLANATION",
+      "businessStatus": "VALIDATED",
+      "freshness": "CURRENT",
+      "version": 2,
+      "validatedBy": "PR-NORA",
+      "validatedAt": "2026-11-02T14:20:00+01:00",
+      "sourceIds": [
+        "SRC-A-001",
+        "SRC-A-005",
+        "SRC-A-006"
+      ],
+      "aiOriginalText": "Vous n’avez pas d’allergie connue.",
+      "humanEditedText": "Vous avez signalé un souvenir de réaction à la pénicilline. Cette information sera précisée lors de votre prochaine consultation. La liste actuelle de vos traitements reste à compléter.",
+      "correctionReason": "Do not turn an earlier negative statement into an enduring fact; preserve the later patient report and missing-data status.",
+      "text": "Vous avez signalé un souvenir de réaction à la pénicilline. Cette information sera précisée lors de votre prochaine consultation. La liste actuelle de vos traitements reste à compléter."
+    }
+  ],
+  "publications": [
+    {
+      "id": "PUB-A-001",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "documentVersionId": "PATIENT-A-001-v1",
+      "status": "REPLACED",
+      "audienceAccountId": "ACC-CLAIRE",
+      "publishedBy": "PR-NORA",
+      "publishedAt": "2026-10-20T10:50:00+02:00",
+      "replacedBy": "PUB-A-002",
+      "sourceGrants": [
+        {
+          "sourceId": "SRC-A-001",
+          "publicLabel": "Déclaration ou note datée — extrait partagé",
+          "approvedExcerpt": "Aucune allergie connue, selon la déclaration recueillie ce jour."
+        },
+        {
+          "sourceId": "SRC-A-006",
+          "publicLabel": "Déclaration ou note datée — extrait partagé",
+          "approvedExcerpt": "Consultation de suivi : résultats disponibles relus avec la patiente. Traitements actuels non renseignés dans ce jeu de données."
+        }
+      ],
+      "attachmentDocumentIds": []
+    },
+    {
+      "id": "PUB-A-002",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "documentVersionId": "PATIENT-A-001-v2",
+      "status": "PUBLISHED",
+      "audienceAccountId": "ACC-CLAIRE",
+      "publishedBy": "PR-NORA",
+      "publishedAt": "2026-11-02T14:25:00+01:00",
+      "sourceGrants": [
+        {
+          "sourceId": "SRC-A-001",
+          "publicLabel": "Déclaration ou note datée — extrait partagé",
+          "approvedExcerpt": "Aucune allergie connue, selon la déclaration recueillie ce jour."
+        },
+        {
+          "sourceId": "SRC-A-005",
+          "publicLabel": "Déclaration ou note datée — extrait partagé",
+          "approvedExcerpt": "Je me souviens d’une réaction à la pénicilline dans ma jeunesse. Je ne sais plus laquelle."
+        },
+        {
+          "sourceId": "SRC-A-006",
+          "publicLabel": "Déclaration ou note datée — extrait partagé",
+          "approvedExcerpt": "Consultation de suivi : résultats disponibles relus avec la patiente. Traitements actuels non renseignés dans ce jeu de données."
+        }
+      ],
+      "attachmentDocumentIds": []
+    }
+  ],
+  "aiTasks": [
+    {
+      "id": "AI-A-001",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-001",
+      "status": "SUCCEEDED",
+      "purpose": "CLINICIAN_BRIEF",
+      "provider": "DETERMINISTIC_FIXTURE",
+      "requestedAt": "2026-11-02T14:04:50+01:00",
+      "completedAt": "2026-11-02T14:05:00+01:00",
+      "outputVersionId": "BRIEF-A-001-v1"
+    },
+    {
+      "id": "AI-A-002",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-002",
+      "status": "FAILED",
+      "purpose": "CLINICIAN_BRIEF",
+      "provider": "DETERMINISTIC_FIXTURE",
+      "errorCode": "PROVIDER_TIMEOUT",
+      "retryable": true,
+      "requestedAt": "2026-11-02T14:30:00+01:00",
+      "failedAt": "2026-11-02T14:30:30+01:00",
+      "outputVersionId": null
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "SC-ISOLATION",
+      "actorAccountId": "ACC-NORA",
+      "activePracticeId": "PRA-A",
+      "attemptedRecordId": "R-B-001",
+      "expected": "404 with no patient name or existence disclosure; security audit metadata only"
+    },
+    {
+      "id": "SC-ADMIN-CLINICAL",
+      "actorAccountId": "ACC-MILA",
+      "activePracticeId": "PRA-A",
+      "attemptedRecordId": "R-A-001",
+      "expected": "403 for clinical workspace navigation; direct object probes use non-disclosing policy"
+    },
+    {
+      "id": "SC-NOT-PUBLISHED",
+      "actorAccountId": "ACC-CLAIRE",
+      "attemptedVersionId": "REPORT-A-001-v1",
+      "expected": "Not visible: validation alone creates no publication"
+    },
+    {
+      "id": "SC-BOOKING-RACE",
+      "appointmentId": "APT-A-001",
+      "expected": "Only one conflicting booking commits; losing request retains fields and offers refreshed slots"
+    },
+    {
+      "id": "SC-UNSUPPORTED-DRAFT",
+      "documentVersionId": "PATIENT-A-001-v2",
+      "expected": "Original unsupported draft is rejected by human and corrected; never displayed as patient-approved content"
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 name: Étaye planning tools
 paths:
   - tools
+  - design/corrections
 queries:
   - uses: security-extended

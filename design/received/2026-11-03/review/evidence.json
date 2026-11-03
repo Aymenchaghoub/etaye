@@ -1,0 +1,1203 @@
+{
+ "S-06": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot4-s06a.png",
+   "review/_lot4-s06b.png",
+   "review/S-06/nora-variantes.png"
+  ],
+  "visual": "Fixed: stale-publication block squeezed title against two pills → stacked; banner actions stack inside side panels.",
+  "functional": "All necessary states: loading, empty day (Sami/Canal), partial task failure, stale publication (V-STALE 12:00 snapshot), cancelled visit (26 Oct snapshot), date boundary (3 Nov 00:05)."
+ },
+ "S-09": {
+  "viewports": "desktop 1440×1024, tablet 1024×768, mobile 390×844, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback with WOFF2 blocked (desktop+mobile)",
+  "scripts": "disabled for every capture",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/S-09/claire-planche.png",
+   "review/S-09/claire@desktop.png",
+   "review/S-09/claire-variantes.png",
+   "review/S-09/louis-planche.png",
+   "review/S-09/corrige-planche.png",
+   "review/S-09/corrige@mobile.png",
+   "review/S-09/date-inconnue-planche.png",
+   "review/S-09/erreur-partielle@desktop.png",
+   "review/_lot2-a.png (long, lecture-seule)"
+  ],
+  "visual": "Fixed: 320px overflow from nowrap status pills; stacked correction table collided at mobile → replaced by version list; banner actions overlapped text on mobile → actions move under text.",
+  "functional": "Occurrence vs recording dates shown on every sourced event; corrected weight keeps v1; missing data never 'none'. Read-only and unknown-date states are labelled test variant / template (dataset gaps)."
+ },
+ "S-10": {
+  "viewports": "desktop 1440×1024, tablet 1024×768, mobile 390×844, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback with WOFF2 blocked (desktop+mobile)",
+  "scripts": "disabled for every capture",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/S-10/claire-planche.png",
+   "review/S-10/claire-variantes.png",
+   "review/S-10/evaluation-erreur-planche.png",
+   "review/S-10/lecture-seule-planche.png",
+   "review/_lot2-a.png (louis, evaluation)"
+  ],
+  "visual": "Fixed: source rows squeezed quotes to one word per line at 320px (control list now drops the link under the text); truncated readonly field replaced by text.",
+  "functional": "Both dated allergy sources shown with type/author; treatments 'Non renseignés'; validation error no longer reported as a save failure."
+ },
+ "I-27": {
+  "viewports": "desktop 1440×1024, tablet 1024×768, mobile 390×844, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback with WOFF2 blocked (desktop+mobile)",
+  "scripts": "disabled for every capture",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/I-27/ouvert-planche.png",
+   "review/I-27/conserve@mobile.png"
+  ],
+  "visual": "Side-by-side opposing statements reflow to one column on mobile.",
+  "functional": "No auto-resolution; 'Conserver à vérifier' records a disposition only; both sources unchanged."
+ },
+ "S-11": {
+  "viewports": "desktop 1440×1024, tablet 1024×768, mobile 390×844, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback with WOFF2 blocked (desktop+mobile)",
+  "scripts": "disabled for every capture",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/S-11/claire-planche.png",
+   "review/S-11/claire@mobile.png",
+   "review/_lot2-b.png (louis, chargement, gabarits)"
+  ],
+  "visual": "Fixed: chart text unreadable at 390px → narrow chart rendering swapped by CSS; source legend markers on separate lines → inline.",
+  "functional": "Chart paired with table; gap between points explained; weight single point, no curve. Mixed units / unknown date are templates without values (dataset gap)."
+ },
+ "I-06": {
+  "viewports": "desktop 1440×1024, tablet 1024×768, mobile 390×844, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback with WOFF2 blocked (desktop+mobile)",
+  "scripts": "disabled for every capture",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/I-06/conflit-planche.png",
+   "review/I-06/erreur@tablet.png",
+   "review/_lot2-d.png (ouvert, correction)"
+  ],
+  "visual": "Fixed: paired fields stretched unevenly when one had an error (align-items:start).",
+  "functional": "Conflict uses the real v2 at 10:15; input preserved; reason required for correction."
+ },
+ "S-12": {
+  "viewports": "desktop 1440×1024, tablet 1024×768, mobile 390×844, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback with WOFF2 blocked (desktop+mobile)",
+  "scripts": "disabled for every capture",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/S-12/claire-planche.png",
+   "review/S-12/claire@desktop.png",
+   "review/_lot2-b.png (sans-intervalle)",
+   "review/_lot2-e.png (louis)"
+  ],
+  "visual": "Chart capped at 720px width; numeric columns aligned.",
+  "functional": "Intervals only as supplied; V-LAB-NO-INTERVAL reads 'Intervalle non fourni'; no extraction action. Textual/outside-interval/incompatible-units/corrected rows are rules only (dataset gap)."
+ },
+ "I-07": {
+  "viewports": "desktop 1440×1024, tablet 1024×768, mobile 390×844, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback with WOFF2 blocked (desktop+mobile)",
+  "scripts": "disabled for every capture",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/I-07/ouvert-planche.png",
+   "review/_lot2-d.png (erreur)"
+  ],
+  "visual": "OK at all widths.",
+  "functional": "Interval optional with explicit 'non fourni'; source required; no extraction."
+ },
+ "S-13": {
+  "viewports": "desktop 1440×1024, tablet 1024×768, mobile 390×844, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback with WOFF2 blocked (desktop+mobile)",
+  "scripts": "disabled for every capture",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/S-13/visionneuse-planche.png",
+   "review/S-13/file-planche.png",
+   "review/S-13/file@narrow.png",
+   "review/_lot2-c.png (claire, page-manquante, acces-expire, apercu-indisponible)",
+   "review/_lot2-e.png (louis)"
+  ],
+  "visual": "Fixed: file row actions squeezed filename to one character per line at 320px; metadata labels too wide in side panel.",
+  "functional": "Upload filenames labelled as UI placeholders; missing page not shown as verified; clinician-only access stated."
+ },
+ "I-08": {
+  "viewports": "desktop 1440×1024, tablet 1024×768, mobile 390×844, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback with WOFF2 blocked (desktop+mobile)",
+  "scripts": "disabled for every capture",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/I-08/erreur-planche.png",
+   "review/_lot2-d.png (envoi)"
+  ],
+  "visual": "Fixed: mobile drawer footer hidden below inner scroll → overlays become full pages on mobile (background hidden).",
+  "functional": "Fixed: date validation error wrongly showed the file as rejected."
+ },
+ "I-09": {
+  "viewports": "desktop 1440×1024, tablet 1024×768, mobile 390×844, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback with WOFF2 blocked (desktop+mobile)",
+  "scripts": "disabled for every capture",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/I-09/ouvert-planche.png",
+   "review/I-09/ouvert-variantes.png",
+   "review/_lot2-e.png (allergie, indisponible)"
+  ],
+  "visual": "OK; dark theme legible.",
+  "functional": "Exact excerpt highlighted; dates, author, version, locator; unavailable source keeps statement unverified."
+ },
+ "S-01": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/S-01/accueil-planche.png",
+   "review/_lot3-a.png"
+  ],
+  "visual": "Fixed: source preview overflowed at 320px (fixed 328px width) → capped; heading scales with clamp().",
+  "functional": "States: ready, preparing, resetting, unavailable. Design-status notice: mockups only, no live application."
+ },
+ "I-26": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot3-a.png"
+  ],
+  "visual": "OK.",
+  "functional": "Cast, practice, fixture version and limits named before entry; reset is a separate, non-primary destructive action."
+ },
+ "S-02": {
+  "viewports": "desktop, tablet, mobile, narrow 320, 200% zoom (720×512)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/S-02/connexion-planche.png",
+   "review/S-02/invalide-planche.png",
+   "review/S-02/patient-variantes.png",
+   "review/_lot3-d.png (suspendu, limite)"
+  ],
+  "visual": "Fixed: raw links used browser default blue (illegible in dark theme) → global accent link style; patient variant lacked large targets → patient scale for fields; throttle banner action moved inline.",
+  "functional": "Generic invalid message, email kept, password cleared; no account enumeration; suspended state is a template (no suspended account in dataset)."
+ },
+ "S-03": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot3-a.png (equipe, erreur)"
+  ],
+  "visual": "OK; masked recipient wraps on mobile.",
+  "functional": "INV-TEAM-01 pending with real expiry; capabilities not in dataset → stated as not specified (dataset gap). REVOKED / concurrent / expired on team invitation are templates."
+ },
+ "I-03": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/I-03/ouvert-planche.png"
+  ],
+  "visual": "Patient scale applied.",
+  "functional": "Historical state of INV-PORTAL-01 before acceptance; ambiguous identity stops without revealing which field; EXPIRED uses INV-PORTAL-02 (Louis)."
+ },
+ "S-04": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot3-b.png (envoye, nouveau-erreur)"
+  ],
+  "visual": "OK.",
+  "functional": "Generic confirmation (no enumeration); expired token → new request; success closes other sessions."
+ },
+ "S-05": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot3-b.png (choix, retire)"
+  ],
+  "visual": "OK.",
+  "functional": "Sami Rahmani's two memberships with the real capability difference (no PATIENT_PUBLISH in Canal); deactivated / removed-during-selection are templates."
+ },
+ "S-36": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot3-c.png (interdit, introuvable)"
+  ],
+  "visual": "OK.",
+  "functional": "SC-ADMIN-CLINICAL 403 without clinical metadata; SC-ISOLATION 404 without name or existence; patient-side unavailable page."
+ },
+ "S-38": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot3-c.png (expiree, publication)",
+   "review/_lot3-d.png (droits-modifies)"
+  ],
+  "visual": "Background obscured (opaque veil); close button removed from the session alert dialog.",
+  "functional": "Nothing replayed automatically (publication, save); draft only restored in same account/practice; revoked/other-account discard."
+ },
+ "I-22": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot3-d.png (ouvert)"
+  ],
+  "visual": "OK.",
+  "functional": "Full-page variant with 'Se reconnecter' / 'Quitter la session'."
+ },
+ "S-07": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot4-d.png (liste, aucun-resultat)",
+   "review/_lot4-variantes.png"
+  ],
+  "visual": "Fixed: search field had icon padding without icon → plain labelled search with example help.",
+  "functional": "'Petit' never finds Hugo Petit from PRA-A; scheduler lookup (PD-001 proposal) shows identity/contact only; long names are a layout template."
+ },
+ "S-08": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot4-d.png (doublon, erreur)"
+  ],
+  "visual": "Paired fields reflow to one column on mobile.",
+  "functional": "Duplicate warning without merge; version conflict keeps edits; scheduler create-only variant (PD-001). Contact fields not in dataset → empty, labelled."
+ },
+ "I-04": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot4-d.png (S-08 same form)"
+  ],
+  "visual": "Same form as S-08.",
+  "functional": "Page pattern; scheduler variant returns to I-10."
+ },
+ "I-20": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot4-e.png (I-20/ouvert)"
+  ],
+  "visual": "OK.",
+  "functional": "Save and continue / stay / explicit discard, discard not default."
+ },
+ "S-14": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot4-a.png",
+   "review/_lot4-variantes.png"
+  ],
+  "visual": "Fixed: day picker text invisible in dark theme (button default colour). Grid becomes agenda list with start/end times on mobile.",
+  "functional": "Concurrent booking (SC-BOOKING-RACE), cancelled, no-show, DST week, failure, admin view (PD-001)."
+ },
+ "S-15": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot4-b.png (semaine)"
+  ],
+  "visual": "Dated block vs weekly template distinct.",
+  "functional": "AVL-A-001 with 1 booking; empty variant."
+ },
+ "I-24": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot4-b.png (impact)"
+  ],
+  "visual": "OK.",
+  "functional": "Impact preview lists Claire's booking; never cancelled silently (AC-S15-F)."
+ },
+ "S-16": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot4-b.png (louis, annule)",
+   "review/_lot4-variantes.png",
+   "review/_lot4-e.png (termine)"
+  ],
+  "visual": "OK.",
+  "functional": "All appointment states from dataset; appointment and consultation IDs/statuses distinct (AC-S16-F). Check-in time not in dataset → stated."
+ },
+ "I-10": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot4-c.png (ouvert, conflit)",
+   "review/_lot4-variantes.png"
+  ],
+  "visual": "OK; dialog becomes full page on mobile.",
+  "functional": "Lost race keeps patient and reason; no consultation created."
+ },
+ "I-11": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot4-e.png (I-11/ouvert, I-11/conflit)"
+  ],
+  "visual": "OK.",
+  "functional": "Same appointment identity; notification after commit."
+ },
+ "I-12": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot4-c.png (ouvert)"
+  ],
+  "visual": "Safe choice first and focused; destructive separate.",
+  "functional": "Reason required; history kept."
+ },
+ "I-13": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot4-c.png (ouvert)"
+  ],
+  "visual": "OK.",
+  "functional": "No-show only after start; attendance creates no consultation or report."
+ },
+ "S-25": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot5-a.png (accueil)",
+   "review/_lot5-d.png (retiree)",
+   "review/_lot5-variantes.png"
+  ],
+  "visual": "Fixed: 4th patient tab clipped on mobile → tabs on a 2-column grid. No greeting title (voice rule).",
+  "functional": "REPORT-A-001-v1 never listed (SC-NOT-PUBLISHED); replaced/withdrawn/no-publication/no-appointment/revoked/unavailable states."
+ },
+ "S-26": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot5-a.png (creneaux)",
+   "review/_lot5-c.png (conflit)",
+   "review/_lot5-d.png (annuler)"
+  ],
+  "visual": "Slots are a button list (keyboard equivalent); status always text.",
+  "functional": "Anonymised slots; race lost keeps reason; no-show read-only; patient variants of I-10/I-11/I-12 and S-16."
+ },
+ "S-27": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot5-a.png (brouillon)",
+   "review/_lot5-c.png (brouillon, envoyee, erreur)",
+   "review/_lot5-e.png (erreur, vide)",
+   "review/_lot5-variantes.png"
+  ],
+  "visual": "Fixed: sticky action bar covered answers → actions at the end of the form; description field 3 rows.",
+  "functional": "'Je ne sais pas' / 'Je préfère ne pas répondre' / unanswered distinct from 'Non' (AC-S27-F); sharing consent required to send (spec 'confirm sharing'); earlier contradictory 'required' treatment question removed."
+ },
+ "S-28": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot5-a.png (liste)",
+   "review/_lot5-e.png (liste)",
+   "review/_lot5-variantes.png"
+  ],
+  "visual": "OK. Closed <details> no longer counted by the overlap check.",
+  "functional": "Only PUB-A-002 current; PUB-A-001 replaced, not openable; no internal report."
+ },
+ "S-29": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot5-b.png (v2, extrait)",
+   "review/_lot5-d.png (remplacee)",
+   "review/_lot5-variantes.png"
+  ],
+  "visual": "Source markers: 24px minimum target with tightened spacing before punctuation (32px left a visible gap before the full stop; re-rendered and opened 2026-11-03).",
+  "functional": "Exact v2 text; validated 14:20 vs published 14:25 shown separately; only approved excerpts (sourceGrants); I-09 patient variant as drawer/full page."
+ },
+ "S-30": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot5-b.png (apercu)",
+   "review/_lot5-d.png (lien-expire)",
+   "review/_lot5-e.png (apercu)"
+  ],
+  "visual": "Fixed: 320px overflow from a non-wrapping banner button and viewer padding.",
+  "functional": "No attachment is granted in the dataset (attachmentDocumentIds empty) → viewer shows the published version PDF only."
+ },
+ "I-28": {
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot5-b.png (ouvert)"
+  ],
+  "visual": "OK.",
+  "functional": "File/type/version/audience; downloaded copies cannot be recalled; refused when grant invalid."
+ },
+ "S-19": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot7b-r01.png",
+   "review/_lot7b-r02.png (termine, annulee, longue)",
+   "review/_lot7b-var1.png"
+  ],
+  "visual": "OK. Section plan hidden under 760px; sections sequential with persistent save state.",
+  "functional": "CONS-A-002 IN_PROGRESS, no appointment linked (APT-A-002 shown as independent resource); completion guard dialog; failed save/conflict/session keep entry; read-only on deactivated membership (template)."
+ },
+ "I-05": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot7b-r02.png (ouvert, erreur, echec)",
+   "review/_lot7b-r03.png (annuler, enregistre)",
+   "review/_lot7b-var1.png"
+  ],
+  "visual": "OK.",
+  "functional": "Unknown/explicit negative/not asked distinct; origin and date required; 'Présente' without text is a field error, no invented negative; explicit discard separate from safe cancel."
+ },
+ "S-20": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot7b-r03.png",
+   "review/_lot7b-r04.png",
+   "review/_lot7b-var1.png",
+   "review/_lot7-narrow.png"
+  ],
+  "visual": "Human correction underlined + text label, no coloured paragraph.",
+  "functional": "REPORT-A-001-v1 read-only (VALIDATED → new version); v2 draft variant keeps v1 text; save failure keeps text; unsupported citation and removed source flagged; stale write → I-21."
+ },
+ "I-21": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot7b-r05.png",
+   "review/_lot7b-var1.png"
+  ],
+  "visual": "Comparison sequential on mobile.",
+  "functional": "No automatic overwrite; local copy kept in memory only; labelled diff (Votre modification / Source ajoutée)."
+ },
+ "S-22": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot7b-r05.png",
+   "review/_lot7b-r06.png",
+   "review/_lot7b-var1.png",
+   "review/_lot7-narrow.png"
+  ],
+  "visual": "Supprimé/Ajouté text labels; sequential diff on mobile.",
+  "functional": "Origin layers: source facts, rejected generated text, human correction with reason; replaced publication link lands on history; one-version and read-only states."
+ },
+ "S-23": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot7b-r06.png (validation)",
+   "review/_lot7b-r07.png",
+   "review/_lot7b-r08.png (brief, echec-publication)",
+   "review/_lot7b-var1.png",
+   "review/_lot7-narrow.png"
+  ],
+  "visual": "Two steps in two separate blocks with different labels; no combined action.",
+  "functional": "Validation blocked by unsupported statement, missing source, stale sources, changed draft; VALIDATED 14:20 not visible to patient; PUBLISHED 14:25 PUB-A-002; clinician brief has no publication action."
+ },
+ "I-16": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot7b-r08.png",
+   "review/_lot7b-var2.png"
+  ],
+  "visual": "OK.",
+  "functional": "'Valider la version' / 'Poursuivre la relecture'; attestation checkbox; blocked when an unsupported statement remains; ambiguous response checked, nothing shared."
+ },
+ "I-17": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot7b-r09.png",
+   "review/_lot7b-var2.png",
+   "review/_lot7-narrow.png"
+  ],
+  "visual": "OK.",
+  "functional": "'Publier pour Claire Martin'; audience, exact version, patient preview, three approved excerpts, no attachment; brief forbidden; STALE v1 cannot be published again; failure keeps v1 published."
+ },
+ "S-24": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot7b-r09.png (perime)",
+   "review/_lot7b-r10.png",
+   "review/_lot7b-var2.png"
+  ],
+  "visual": "Old text labelled 'Texte historique · non actuel'.",
+  "functional": "STALE independent of VALIDATED (V-STALE 12:00); PUB-A-001 REPLACED 14:25; V-WITHDRAWN internal reason for professionals only; old download link inactive; attachment revocation as template."
+ },
+ "I-18": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot7b-r10.png (ouvert, remplacer)",
+   "review/_lot7b-r11.png",
+   "review/_lot7b-var2.png",
+   "review/_lot7-narrow.png"
+  ],
+  "visual": "Withdraw action uses the critical outline style, never default-focused.",
+  "functional": "Nothing preselected; withdrawal reason required (error state); copies and sent e-mail cannot be recalled; concurrent change blocks replacement."
+ },
+ "S-17": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot7a-r01.png",
+   "review/_lot7a-r02.png (lien-perime)",
+   "review/_lot7a-fix1.png (corrigee after fix)",
+   "review/_lot7a-var.png"
+  ],
+  "visual": "Fixed: v2 variant showed the v1 send time in the header.",
+  "functional": "Patient text never editable by the practice; SRC-A-005 shown as unconfirmed patient report with unknown reaction details; contradiction with SRC-A-001; unanswered treatments ≠ 'Non'; patient draft never visible."
+ },
+ "S-18": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot7a-r02.png",
+   "review/_lot7a-r03.png (valide, perime, echec)",
+   "review/_lot7a-fix1.png (en-file after fix)",
+   "review/_lot7a-var.png",
+   "review/_lot7-narrow.png"
+  ],
+  "visual": "Fixed: pre-generation snapshot showed source markers and 'Citée'; Louis header assumed an arrival time.",
+  "functional": "BRIEF-A-001-v1 exact text with 4 markers; missing treatments flagged inline; SRC-A-004/006 consulted, not cited; internal even when VALIDATED; STALE variant; AI-A-002 failure inline."
+ },
+ "I-14": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot7a-r03.png",
+   "review/_lot7a-r04.png",
+   "review/_lot7a-fix1.png (ouvert after fix)",
+   "review/_lot7a-var.png"
+  ],
+  "visual": "Fixed: input list mixed numbered and unnumbered sources before any generation.",
+  "functional": "Draft only, never validated or published; existing draft kept; duplicate request reused; quota disables the action (template)."
+ },
+ "S-21": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot7a-r04.png",
+   "review/_lot7a-r05.png",
+   "review/_lot7a-fix1.png (non-soutenu after fix)",
+   "review/_lot7a-var.png",
+   "review/_lot7-narrow.png"
+  ],
+  "visual": "Fixed: wrong decision preselected on the unsupported passage; patient explanation wrongly labelled 'jamais publié'; unnumbered suggested source.",
+  "functional": "Claim-by-claim support with occurred/recorded dates; counts, no confidence score; SC-UNSUPPORTED-DRAFT: a cited-looking source that does not support the claim is a defect; corrections survive regeneration."
+ },
+ "I-15": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot7a-r06.png (desktop only — mobile captures predated a fix)",
+   "review/_lot7a-fix1.png (ouvert, non-soutenu re-rendered)",
+   "review/_lot7a-var.png"
+  ],
+  "visual": "Fixed: inline column width broke the layout under 1100px (overflow at 320/390).",
+  "functional": "Generated baseline read-only; correction reason kept internal; save blocked on a sentence without source; failure keeps text."
+ },
+ "S-40": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot7a-s40-1.png",
+   "review/_lot7a-s40-2.png",
+   "review/_lot7a-var.png",
+   "review/_lot7-narrow.png"
+  ],
+  "visual": "Fixed: 7-column task table and side-by-side panels overflowed at 1024px.",
+  "functional": "Task state and document state separate; no completion percentage; success creates a DRAFT and no patient notification; duplicate reuses task; safe error with no patient data."
+ },
+ "I-23": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot7a-s40-2.png (ouvert, relance)",
+   "review/_lot7a-var.png (limite, ambigu)"
+  ],
+  "visual": "OK.",
+  "functional": "Safe reason, attempt and time; bounded retry; cap and ambiguous outcome as templates; no draft overwritten."
+ },
+ "S-31": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot8-r01.png",
+   "review/_lot8-r02.png (longs, erreur)",
+   "review/_lot8-fix.png",
+   "review/_lot8-var.png"
+  ],
+  "visual": "Fixed: e-mail addresses broke mid-word in stacked rows (now break after @ and before dots); action buttons wrap in stacked tables at 320 px.",
+  "functional": "Grouped readable capabilities, no clinical data; pending/expired/revoked invitations; suspended membership; last-admin guard (Mila is the only TEAM_MANAGE holder)."
+ },
+ "I-01": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot8-r02.png (ouvert, erreur, existant, combinaison)",
+   "review/_lot8-r03.png (renvoyer, envoye)",
+   "scratchpad crop of I-01/ouvert@desktop after fix",
+   "review/_lot8-var.png"
+  ],
+  "visual": "Fixed (shared CSS): long dialogs scrolled their footer out of view; dialog body now scrolls, header and actions stay visible.",
+  "functional": "Explicit capabilities, resend revokes the old link, invalid combination rejected server-side (template), M-01 queued with separate delivery status; 72 h expiry is a proposal."
+ },
+ "S-32": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot8-r03.png",
+   "review/_lot8-r04.png (dependances, desactive, invitation)",
+   "review/_lot8-fix.png",
+   "review/_lot8-var.png"
+  ],
+  "visual": "Added a default side panel (empty right column on desktop).",
+  "functional": "Capabilities grouped by consequence; practice-only scope, account and other practices untouched; self view read-only; dependencies (APT-A-001, AVL-A-001) shown without clinical content."
+ },
+ "I-02": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot8-r04.png",
+   "review/_lot8-r05.png (dependances, conflit)"
+  ],
+  "visual": "OK.",
+  "functional": "'Désactiver l'accès' / 'Conserver l'accès'; reason required; final administrator blocked; audit kept."
+ },
+ "S-33": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot8-r05.png",
+   "review/_lot8-r06.png (conflit, fuseau)",
+   "review/_lot8-var.png"
+  ],
+  "visual": "Fixed: error summary wording did not match the field label.",
+  "functional": "Timezone change previews display only (10:30 Paris → 05:30 Martinique), instants and source dates unchanged; no credential field; no medical defaults."
+ },
+ "S-34": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot8-r06.png",
+   "review/_lot8-r07.png (export, erreur-partielle)",
+   "review/_lot8-fix.png",
+   "review/_lot8-var.png"
+  ],
+  "visual": "Fixed: three-column filter row did not collapse on mobile.",
+  "functional": "ADMIN_AUDIT shows membership/invitation/access-denied events only; CLINICAL_AUDIT history derived from dataset dates; missing times and correlation references shown as not provided; read-only."
+ },
+ "I-25": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot8-r07.png",
+   "review/_lot8-fix.png"
+  ],
+  "visual": "OK.",
+  "functional": "Publication event records exact version, actor, replaced publication and source IDs only; admin event detail without record content."
+ },
+ "S-35": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot8-r08.png",
+   "review/_lot8-r09.png (session)",
+   "review/_lot8-var.png"
+  ],
+  "visual": "OK.",
+  "functional": "Own account only; theme choice; French-only notice; timezone display never rewrites dates; patient variant with vouvoiement and no relink."
+ },
+ "S-37": {
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check at 320/390/1024 on every state)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "scripts": "disabled",
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "opened": [
+   "review/_lot8-r09.png",
+   "review/_lot8-r10.png",
+   "review/_lot8-fix.png"
+  ],
+  "visual": "Fixed: offline biology panel claimed a loaded section with no content.",
+  "functional": "503/429/timeout/offline/reconnecting/maintenance; partial failure keeps identity and chronology and forbids an absence conclusion; AI down keeps manual notes (V-AI-DOWN); no secrets in the incident reference."
+ },
+ "P-01": {
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "scripts": "disabled",
+  "viewports": "A4 PDF (Chromium print, @page margin boxes) — every page rasterised in grayscale at 110 dpi; screen preview at 794 px",
+  "themes": "print (light) + grayscale",
+  "fonts": "brand fonts embedded (pdffonts), no fallback font after the µ fix",
+  "opened": [
+   "review/_pdf-P-01-long.png (all 5 pages)",
+   "review/_pdf-courts.png (court + incomplet pages)",
+   "review/P-01/long-gris-p3.png (full resolution)"
+  ],
+  "visual": "Fixed: footer margin boxes wrapped (merged into one); µ missing from Atkinson fonts fell back to DejaVu (now Source Serif 4); orphaned source list split across pages.",
+  "functional": "Pages court/long/incomplet = 2/5/1; tagged PDF, lang fr, selectable text with accents, 'Démonstration — personnes et données fictives' + version ID + 'Page x / y' on every page; table headers repeat; status as words with line style (grayscale-safe). Exact BRIEF-A-001-v1 text, DRAFT internal; Louis incomplete without risk wording."
+ },
+ "P-02": {
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "scripts": "disabled",
+  "viewports": "A4 PDF (Chromium print, @page margin boxes) — every page rasterised in grayscale at 110 dpi; screen preview at 794 px",
+  "themes": "print (light) + grayscale",
+  "fonts": "brand fonts embedded (pdffonts), no fallback font after the µ fix",
+  "opened": [
+   "review/_pdf-P-02-long.png (all 7 pages)",
+   "review/_pdf-courts.png (court + incomplet pages)"
+  ],
+  "visual": "Fixed: footer margin boxes wrapped (merged into one); µ missing from Atkinson fonts fell back to DejaVu (now Source Serif 4); orphaned source list split across pages.",
+  "functional": "Pages court/long/incomplet = 1/7/1; tagged PDF, lang fr, selectable text with accents, 'Démonstration — personnes et données fictives' + version ID + 'Page x / y' on every page; table headers repeat; status as words with line style (grayscale-safe). Exact REPORT-A-001-v1 text, VALIDATED not published; draft without validation footer."
+ },
+ "P-03": {
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "scripts": "disabled",
+  "viewports": "A4 PDF (Chromium print, @page margin boxes) — every page rasterised in grayscale at 110 dpi; screen preview at 794 px",
+  "themes": "print (light) + grayscale",
+  "fonts": "brand fonts embedded (pdffonts), no fallback font after the µ fix",
+  "opened": [
+   "review/_pdf-P-03-long.png (all 3 pages)",
+   "review/_pdf-courts.png (court + incomplet pages)"
+  ],
+  "visual": "Fixed: footer margin boxes wrapped (merged into one); µ missing from Atkinson fonts fell back to DejaVu (now Source Serif 4); orphaned source list split across pages.",
+  "functional": "Pages court/long/incomplet = 1/3/1; tagged PDF, lang fr, selectable text with accents, 'Démonstration — personnes et données fictives' + version ID + 'Page x / y' on every page; table headers repeat; status as words with line style (grayscale-safe). Exact PATIENT-A-001-v2 text and approved excerpts only; internal draft preview not publishable."
+ },
+ "S-39": {
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "scripts": "disabled",
+  "viewports": "desktop, tablet, mobile, narrow 320 (automated overflow check)",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "opened": [
+   "review/_lot9-s39.png",
+   "review/_lot9-i19.png (echec)",
+   "review/_lot9-s39-fix.png (after fix)",
+   "review/ds-cards/S-39-options-planche.png",
+   "review/ds-cards/S-39-perime-planche.png"
+  ],
+  "visual": "Fixed: status pills overflowed the narrow definition column of the options panel (labels now stacked above values).",
+  "functional": "Frozen version and status, audience, sources options; generating without percentage; failure, stale snapshot, font error without degraded file; patient refusal for an unpublished report (SC-NOT-PUBLISHED)."
+ },
+ "I-19": {
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "scripts": "disabled",
+  "viewports": "desktop, tablet, mobile, narrow 320",
+  "themes": "clair; sombre (desktop+mobile)",
+  "fonts": "brand; fallback (desktop+mobile)",
+  "opened": [
+   "review/_lot9-i19.png",
+   "review/_lot9-s39-fix.png (after fix)",
+   "review/ds-cards/S-39-options-planche.png",
+   "review/ds-cards/S-39-perime-planche.png"
+  ],
+  "visual": "Fixed: status pills overflowed the narrow definition column of the options panel (labels now stacked above values).",
+  "functional": "'Exporter un document' / 'Créer le PDF' / 'Fermer'; draft labelling; reauthorization; patient current publication only."
+ },
+ "M-01": {
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "scripts": "disabled",
+  "viewports": "mail 680 px (600 px reading width), narrow 320",
+  "themes": "light client; dark client state",
+  "fonts": "brand",
+  "opened": [
+   "review/_lot9-mail-1.png",
+   "review/_lot9-mail-b.png",
+   "review/_lot9-mail-fix.png"
+  ],
+  "visual": "Fixed: plain-text version leaked HTML markup; mockup annotations moved out of the e-mail copy; neutral heading for M-01.",
+  "functional": "Subject, preheader, one action, masked token link, plain-text twin, example.test only; INV-TEAM-01, expiry 5 Nov 12 h, rights shown only after opening."
+ },
+ "M-02": {
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "scripts": "disabled",
+  "viewports": "mail 680 px (600 px reading width), narrow 320",
+  "themes": "light client; dark client state",
+  "fonts": "brand",
+  "opened": [
+   "review/_lot9-mail-1.png",
+   "review/_lot9-mail-b.png",
+   "review/_lot9-mail-fix.png"
+  ],
+  "visual": "Fixed: plain-text version leaked HTML markup; mockup annotations moved out of the e-mail copy; neutral heading for M-01.",
+  "functional": "Subject, preheader, one action, masked token link, plain-text twin, example.test only; portal activation, expiry not in dataset shown as a variable."
+ },
+ "M-03": {
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "scripts": "disabled",
+  "viewports": "mail 680 px (600 px reading width), narrow 320",
+  "themes": "light client; dark client state",
+  "fonts": "brand",
+  "opened": [
+   "review/_lot9-mail-1.png",
+   "review/_lot9-mail-b.png",
+   "review/_lot9-mail-fix.png"
+  ],
+  "visual": "Fixed: plain-text version leaked HTML markup; mockup annotations moved out of the e-mail copy; neutral heading for M-01.",
+  "functional": "Subject, preheader, one action, masked token link, plain-text twin, example.test only; generic recovery, one-use link."
+ },
+ "M-04": {
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "scripts": "disabled",
+  "viewports": "mail 680 px (600 px reading width), narrow 320",
+  "themes": "light client; dark client state",
+  "fonts": "brand",
+  "opened": [
+   "review/_lot9-mail-1.png",
+   "review/_lot9-mail-b.png",
+   "review/_lot9-mail-fix.png"
+  ],
+  "visual": "Fixed: plain-text version leaked HTML markup; mockup annotations moved out of the e-mail copy; neutral heading for M-01.",
+  "functional": "Subject, preheader, one action, masked token link, plain-text twin, example.test only; confirmed/rescheduled/cancelled, Paris time, no reason or clinical note."
+ },
+ "M-05": {
+  "reviewer": "Claude (self-review, not independent)",
+  "date": "2026-11-03",
+  "status": "Reviewed (self) — HTML only, Figma sync pending",
+  "scripts": "disabled",
+  "viewports": "mail 680 px (600 px reading width), narrow 320",
+  "themes": "light client; dark client state",
+  "fonts": "brand",
+  "opened": [
+   "review/_lot9-mail-1.png",
+   "review/_lot9-mail-b.png",
+   "review/_lot9-mail-fix.png"
+  ],
+  "visual": "Fixed: plain-text version leaked HTML markup; mockup annotations moved out of the e-mail copy; neutral heading for M-01.",
+  "functional": "Subject, preheader, one action, masked token link, plain-text twin, example.test only; available/updated/withdrawn, no report body, no internal reason."
+ }
+}

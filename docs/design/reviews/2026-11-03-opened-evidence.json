@@ -1,0 +1,268 @@
+{
+  "reviewer": "Codex",
+  "date": "2026-11-03",
+  "externalBase": "independent-review/ relative to documented external receipt",
+  "opened": [
+    {
+      "path": "pdf-pages/P-01-court-1.png",
+      "scope": "Full grayscale PDF page opened individually",
+      "sha256": "92afc8cc26aa6524f07f823c02d4a1faeb67445b038361a948560f262e2d1f7a"
+    },
+    {
+      "path": "pdf-pages/P-01-court-2.png",
+      "scope": "Full grayscale PDF page opened individually",
+      "sha256": "9c8670e1aa24e7871735bc540a54bb30db6ee2703c817b3264884ef5fa95dc1f"
+    },
+    {
+      "path": "pdf-pages/P-01-incomplet-1.png",
+      "scope": "Full grayscale PDF page opened individually",
+      "sha256": "01696e48b381d2aaf05f68a50ac8556c4999af8d5a8adb0f7d46e6df76f33543"
+    },
+    {
+      "path": "pdf-pages/P-01-long-1.png",
+      "scope": "Full grayscale PDF page opened individually",
+      "sha256": "6dd7c7e51c7e8d79c63ef461f023f9f5500bf84e65ee13a68f2647649ff42d2a"
+    },
+    {
+      "path": "pdf-pages/P-01-long-2.png",
+      "scope": "Full grayscale PDF page opened individually",
+      "sha256": "64177a170306d19fdff63051dd15771b61985a8e6baaa01a057da757645e6b74"
+    },
+    {
+      "path": "pdf-pages/P-01-long-3.png",
+      "scope": "Full grayscale PDF page opened individually",
+      "sha256": "f1dfdb0ffbd3d98f58f373351f24d1127b569bb8fb61ed70a16a2638f9ff0a96"
+    },
+    {
+      "path": "pdf-pages/P-01-long-4.png",
+      "scope": "Full grayscale PDF page opened individually",
+      "sha256": "85b908795b3fa5c3af910bb8484a539b9601ae119f621d3d58780a874795dd36"
+    },
+    {
+      "path": "pdf-pages/P-01-long-5.png",
+      "scope": "Full grayscale PDF page opened individually",
+      "sha256": "0bb0cca95138d0cd378be6da8947c4121124083d23c98bd91f3ec6e89f9b23f4"
+    },
+    {
+      "path": "pdf-pages/P-02-court-1.png",
+      "scope": "Full grayscale PDF page opened individually",
+      "sha256": "4ace89331c956f0e5d2eed7c202f869974d6b9b0f62db4e4e78d75bb451ee02d"
+    },
+    {
+      "path": "pdf-pages/P-02-incomplet-1.png",
+      "scope": "Full grayscale PDF page opened individually",
+      "sha256": "8298c23a4a0ab68612bf6e1b76154a770640e0b11bdfac3eadea5c8a918c94fd"
+    },
+    {
+      "path": "pdf-pages/P-02-long-1.png",
+      "scope": "Full grayscale PDF page opened individually",
+      "sha256": "a665df4ab02fcb77eb7b83657f6238b8ba0a94e6441a1402ec024896490e3bda"
+    },
+    {
+      "path": "pdf-pages/P-02-long-2.png",
+      "scope": "Full grayscale PDF page opened individually",
+      "sha256": "80d84095f6cc4bf76f6ae2fee0eb9dba1fda280e577bb5c869019fdaffe70ce2"
+    },
+    {
+      "path": "pdf-pages/P-02-long-3.png",
+      "scope": "Full grayscale PDF page opened individually",
+      "sha256": "419c6af477e0cc3e33395551a40ff6c1a7bea248348739f15cfc252ba6790c5f"
+    },
+    {
+      "path": "pdf-pages/P-02-long-4.png",
+      "scope": "Full grayscale PDF page opened individually",
+      "sha256": "60e0a1f38a46330e4c69a2e5619d4f1d67795a389b0da89fdc12f18184ebfcb7"
+    },
+    {
+      "path": "pdf-pages/P-02-long-5.png",
+      "scope": "Full grayscale PDF page opened individually",
+      "sha256": "392f770d8f951edfdde9d2eb1d197c1eada337041fd7288637a51306a87713c5"
+    },
+    {
+      "path": "pdf-pages/P-02-long-6.png",
+      "scope": "Full grayscale PDF page opened individually",
+      "sha256": "6c04d7190e590e7ad7220be86e0d745116315d2562176db3fe941e53470343e8"
+    },
+    {
+      "path": "pdf-pages/P-02-long-7.png",
+      "scope": "Full grayscale PDF page opened individually",
+      "sha256": "35cee348a3e68e3f1519e311f694037da4a0e004987f51497e5a3ea2a3ebcd5e"
+    },
+    {
+      "path": "pdf-pages/P-03-court-1.png",
+      "scope": "Full grayscale PDF page opened individually",
+      "sha256": "b4bc99c7604b028401dbab7dc0267f05fe35f57632816a63e16e6f48c20d6f2d"
+    },
+    {
+      "path": "pdf-pages/P-03-incomplet-1.png",
+      "scope": "Full grayscale PDF page opened individually",
+      "sha256": "d02be2576957960195e3a91cc1f1da5008388fa86e0f6bc391a8e9b8b5d9e099"
+    },
+    {
+      "path": "pdf-pages/P-03-long-1.png",
+      "scope": "Full grayscale PDF page opened individually",
+      "sha256": "289a0fe5dd1421d64b7eb46d260a3279ac7a7816dcd988adc3b429b87d7ec9ed"
+    },
+    {
+      "path": "pdf-pages/P-03-long-2.png",
+      "scope": "Full grayscale PDF page opened individually",
+      "sha256": "2d442abe8a656a78bd0bbb33e71fc58501accd2888161ac5d83d8465c40ce4ed"
+    },
+    {
+      "path": "pdf-pages/P-03-long-3.png",
+      "scope": "Full grayscale PDF page opened individually",
+      "sha256": "d71f3262c08c6f265959a4482236acebfa321d09e13a033fb6f1b83c99976de7"
+    },
+    {
+      "path": "sheet-desktop-1.png",
+      "scope": "Overview sheet (layout only where small)",
+      "sha256": "eef71c28d7c5dd16ca0f72af92082e94316e9a536092bfa16387deca97201da5"
+    },
+    {
+      "path": "sheet-desktop-2.png",
+      "scope": "Overview sheet (layout only where small)",
+      "sha256": "20943827da21204bbfe62100ff6c1ea9028707c5849ba9565a907e9239838141"
+    },
+    {
+      "path": "sheet-desktop-3.png",
+      "scope": "Overview sheet (layout only where small)",
+      "sha256": "727a0d2544c2590aa3eed6ebc24b12294f3ac8cf2d3bff49551752eb0cbe53de"
+    },
+    {
+      "path": "sheet-desktop-4.png",
+      "scope": "Overview sheet (layout only where small)",
+      "sha256": "442164aa33018d6ac76ec7a95988dcae7b4447e5adc85668e27ddc99658aa9ae"
+    },
+    {
+      "path": "sheet-desktop-5.png",
+      "scope": "Overview sheet (layout only where small)",
+      "sha256": "033910dc5a9dddb6c83e1859cf658bc4f12bd4e4cf50ce743e46a2f4e648fd1a"
+    },
+    {
+      "path": "sheet-desktop-6.png",
+      "scope": "Overview sheet (layout only where small)",
+      "sha256": "9e0ff35e6d22fd2717480f18fc1543acea6f6aef411968234be33bcb0f015732"
+    },
+    {
+      "path": "sheet-mobile-1.png",
+      "scope": "Overview sheet (layout only where small)",
+      "sha256": "71c98e1a606496110377631492ce233de5c4069ed339da45f8acd4622f9aa8f7"
+    },
+    {
+      "path": "sheet-mobile-2.png",
+      "scope": "Overview sheet (layout only where small)",
+      "sha256": "353fa32a44356f843bf8c7448d3af859b877c638ff817b725b5093998d71bf8e"
+    },
+    {
+      "path": "sheet-mobile-3.png",
+      "scope": "Overview sheet (layout only where small)",
+      "sha256": "34182b71157ffced5d72eac977cda0f6eca30d1d33cc43154373d29eff347370"
+    },
+    {
+      "path": "sheet-mobile-4.png",
+      "scope": "Overview sheet (layout only where small)",
+      "sha256": "4afaf8d20f1c84618b0a6b6c290f675f32ddf6381ad10c4af5ff532931c5a52a"
+    },
+    {
+      "path": "sheet-mobile-5.png",
+      "scope": "Overview sheet (layout only where small)",
+      "sha256": "d288865d2be8312c0f876d3ad114099367025538e8a72cc8ec4cfbdd23d5f217"
+    },
+    {
+      "path": "sheet-mobile-6.png",
+      "scope": "Overview sheet (layout only where small)",
+      "sha256": "5d9c514741dd1520284447b1578fc4a332d945a6f0333f053f154eed8bfa209d"
+    },
+    {
+      "path": "sheet-narrow-1.png",
+      "scope": "Overview sheet (layout only where small)",
+      "sha256": "58ac259efcca67d87aab22d3a0f08309ba26ce7cc5ec497d55c481da6749d368"
+    },
+    {
+      "path": "sheet-narrow-2.png",
+      "scope": "Overview sheet (layout only where small)",
+      "sha256": "810fb989397e55e01ae64c2cd214e611689c825ec43715a23e3acadaf6b252ea"
+    },
+    {
+      "path": "sheet-narrow-5.png",
+      "scope": "Overview sheet (layout only where small)",
+      "sha256": "c3d3bde086cdec552ae3af06a6d3834394ba1019fdd0e1cec78b951a45e5e949"
+    },
+    {
+      "path": "sheet-narrow-6.png",
+      "scope": "Overview sheet (layout only where small)",
+      "sha256": "25a00b21a8ec58d044ee96d19e435ab15440a652450fd99cfd40fdb2a82cdf9e"
+    },
+    {
+      "path": "sheet-dark-mobile-1.png",
+      "scope": "Overview sheet (layout only where small)",
+      "sha256": "205cad39c423ab5972ec29a921a0032a29db6fe46b1e204932658f18f0fad89b"
+    },
+    {
+      "path": "sheet-dark-mobile-2.png",
+      "scope": "Overview sheet (layout only where small)",
+      "sha256": "11aacc877ae4d9ce94d9900d11b879740ed0f344a1acf1d045e7eef23cb9f5c5"
+    },
+    {
+      "path": "sheet-dark-mobile-3.png",
+      "scope": "Overview sheet (layout only where small)",
+      "sha256": "36299d1e4eed856da6f1a7d893cb7a5d4910ffc4916c787148a51c4e0e0e76ab"
+    },
+    {
+      "path": "sheet-fallback-mobile-1.png",
+      "scope": "Overview sheet (layout only where small)",
+      "sha256": "9c197615401bc3d7b6c223f7873f6d0bab34211bfd5553c62f515166ba687b17"
+    },
+    {
+      "path": "sheet-fallback-mobile-2.png",
+      "scope": "Overview sheet (layout only where small)",
+      "sha256": "6b110460d9a7f46dfeb3eb6fc775395b0742292fd0e12464f7899254f49ff147"
+    },
+    {
+      "path": "captures/I-17-ouvert-narrow.png",
+      "scope": "Full-size individual screenshot opened",
+      "sha256": "3069e4915351c5b86d7944487fbfa495990193967119768cd7f9c3a445599dc9"
+    },
+    {
+      "path": "captures/S-06-nora-desktop.png",
+      "scope": "Full-size individual screenshot opened",
+      "sha256": "1ab2cd32fa683cb20b33f4e519de174babcb6cd9ab6a752ff4d3a0a44c96ef39"
+    },
+    {
+      "path": "captures/I-09-ouvert-mobile.png",
+      "scope": "Full-size individual screenshot opened",
+      "sha256": "8641c0e01bcc64a3362d0638e6bd5e6320d023a72d23628a040b018e86553f49"
+    },
+    {
+      "path": "captures/S-32-membre-narrow-extra.png",
+      "scope": "Full-size targeted narrow screenshot opened",
+      "sha256": "97b576d527a7698fd5c5bf60785545947e37721cb98a8fe0621a60101bcddb6f"
+    },
+    {
+      "path": "captures/S-38-expiree-narrow-extra.png",
+      "scope": "Full-size targeted narrow screenshot opened",
+      "sha256": "9849238ebcbb0d8d6eca24246bbc60c6b36d7668157d283353263fe9ba92c20b"
+    },
+    {
+      "path": "captures/I-06-erreur-narrow-extra.png",
+      "scope": "Full-size targeted narrow screenshot opened",
+      "sha256": "a78053e16c00ce658da995133d5f2c2a3dca4615c318671606000b322101c0fe"
+    },
+    {
+      "path": "../received/etaye-design/review/_lot7-narrow.png",
+      "scope": "Received Claude contact sheet opened; historical self-review only",
+      "sha256": "becf2d34517c258241d1558935db19e791071f8582b199f20f1c7569a7d4015e"
+    },
+    {
+      "path": "../received/etaye-design/review/_lot9-mail-fix.png",
+      "scope": "Received Claude contact sheet opened; historical self-review only",
+      "sha256": "21bc93c948a5635df2e2f2fe99df082ccd60ac81a87ba132c1d45845c73fe7c7"
+    },
+    {
+      "path": "../received/etaye-design/review/_pdf-P-03-incomplet.png",
+      "scope": "Received Claude contact sheet opened; historical self-review only",
+      "sha256": "f000eca2c6953351207732eb36ac835ca4c6d5232978424fa50d1a124af91c67"
+    }
+  ],
+  "notApproval": true
+}

@@ -1,0 +1,14 @@
+const test=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs');
+const script=fs.readFileSync(__dirname+'/code.js','utf8');
+function harness(fonts){
+ let count=0;const messages=[],nodes=[],page={children:[],selection:[],id:'page-test'};
+ const create=(type)=>{const n={id:'test-'+(++count),type,children:[],x:0,y:0,width:10,height:10,data:{},appendChild(c){this.children.push(c);},resize(w,h){this.width=w;this.height=h;},resizeWithoutConstraints(w,h){this.resize(w,h);},setPluginData(k,v){this.data[k]=v;},getPluginData(k){return this.data[k]||'';},remove(){this.removed=true;},findAll(){return[];}};nodes.push(n);return n;};
+ const figma={showUI(){},ui:{postMessage:m=>messages.push(m)},currentPage:page,listAvailableFontsAsync:async()=>fonts,loadFontAsync:async()=>{},createSection(){const n=create('SECTION');page.children.push(n);return n;},createFrame:()=>create('FRAME'),createText:()=>create('TEXT'),createRectangle:()=>create('RECTANGLE'),createNodeFromSvg(){throw Error('Simulated invalid SVG');},getNodeByIdAsync:async id=>nodes.find(n=>n.id===id),viewport:{scrollAndZoomIntoView(){}},closePlugin(){}};
+ vm.runInNewContext(script,{figma,__html__:'',setTimeout});
+ return {figma,nodes,messages,page};
+}
+const batch=()=>({format:'etaye-editable-design-v1',snapshotSha256:'a'.repeat(64),frames:[{id:'S-01/test',name:'Test',viewport:'desktop1440',scene:{width:1440,height:1024,node:{type:'frame',name:'body',x:0,y:0,w:1440,h:1024,children:[{type:'text',name:'Title',text:'Étaye',x:24,y:24,w:200,h:32,size:24,family:'Atkinson Hyperlegible Next',weight:400}]}}}]});
+const fonts=[{fontName:{family:'Atkinson Hyperlegible Next',style:'Regular'}}];
+test('missing exact brand font prevents every canvas mutation',async()=>{const h=harness([]);await h.figma.ui.onmessage({type:'import',data:batch()});assert.equal(h.nodes.length,0);assert.match(h.messages.at(-1).message,/Polices/);});
+test('native text survives import, duplicate refuses replacement, existing page content preserved',async()=>{const h=harness(fonts);await h.figma.ui.onmessage({type:'import',data:batch()});const text=h.nodes.find(n=>n.type==='TEXT');assert.equal(text.characters,'Étaye');assert.equal(h.messages.at(-1).evidence.approved,false);const count=h.nodes.length;await h.figma.ui.onmessage({type:'import',data:batch()});assert.equal(h.nodes.length,count);assert.match(h.messages.at(-1).message,/existe déjà/);assert.equal(h.page.children[0].removed,undefined);});
+test('failure rolls back only its own new section',async()=>{const h=harness(fonts),d=batch();d.frames[0].scene.node.children.push({type:'svg',name:'Bad',svg:'<svg/>',x:0,y:0,w:24,h:24});await h.figma.ui.onmessage({type:'import',data:d});assert.equal(h.page.children.length,1);assert.equal(h.page.children[0].removed,true);assert.match(h.messages.at(-1).message,/Simulated/);});

@@ -1,0 +1,90 @@
+/* ── Batch 7b: consultation workspace, report editor, versions, validation and publication ──
+   Single writer: gen/screens_consult.py. Tokens only; dark theme follows the token redefinitions. */
+
+/* Structured notes (S-19, I-05) */
+.etaye-notes { display: grid; gap: var(--espace-4); align-content: start; }
+.etaye-notes__plan { display: grid; gap: var(--espace-2); align-content: start; }
+.etaye-notes__plan ol { list-style: none; margin: 0; padding: 0; display: grid; border-top: var(--trait-filet) solid var(--filet); }
+.etaye-notes__plan a { display: grid; gap: 2px; padding: var(--espace-2) var(--espace-3); border-bottom: var(--trait-filet) solid var(--filet); color: var(--encre); text-decoration: none; font: 400 14px/20px var(--font-texte); }
+.etaye-notes__plan a[aria-current] { box-shadow: inset 3px 0 0 var(--accent); font-weight: 500; background: var(--surface); }
+.etaye-notes__plan small { color: var(--encre-2); font-size: 12px; line-height: 16px; font-weight: 400; }
+.etaye-notes__section { border: var(--trait-filet) solid var(--filet); background: var(--surface); min-width: 0; }
+.etaye-notes__section--edition { box-shadow: 0 0 0 1px var(--accent); }
+.etaye-notes__tete { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--espace-2) var(--espace-3); padding: var(--espace-3) var(--espace-4); border-bottom: var(--trait-filet) solid var(--filet); }
+.etaye-notes__tete h3 { margin: 0; font: 500 16px/24px var(--font-texte); }
+.etaye-notes__origine { padding: var(--espace-3) var(--espace-4) 0; font: 400 12px/18px var(--font-texte); color: var(--encre-3); }
+.etaye-notes__corps { padding: var(--espace-3) var(--espace-4) var(--espace-4); display: grid; gap: var(--espace-3); font: 400 15px/24px var(--font-texte); min-width: 0; }
+.etaye-notes__corps blockquote { margin: 0; padding-left: var(--espace-3); border-left: var(--trait-filet) solid var(--filet-controle); font: 400 15px/26px var(--font-document); overflow-wrap: anywhere; }
+.etaye-notes__vide { color: var(--encre-2); margin: 0; }
+.etaye-notes__actions { display: flex; flex-wrap: wrap; gap: var(--espace-2); }
+.etaye-confirmer { display: grid; gap: var(--espace-3); padding: var(--espace-3) var(--espace-4); border: var(--trait-filet) solid var(--attention); background: var(--attention-fond); }
+
+/* Text origin labels: generated, human correction, unsupported, missing — always a word */
+.etaye-etiquette { display: inline-block; margin: 0 4px; padding: 0 6px; font: 500 11px/18px var(--font-texte); letter-spacing: .02em; vertical-align: 2px; border: var(--trait-filet) solid currentColor; border-radius: var(--rayon-1); color: var(--encre-2); background: var(--surface); white-space: nowrap; }
+.etaye-etiquette--humain { color: var(--accent); }
+.etaye-etiquette--alerte { color: var(--attention); }
+.etaye-etiquette--manque { color: var(--encre-2); border-style: dashed; }
+.etaye-segment--humain { text-decoration: underline solid var(--accent) 2px; text-underline-offset: 5px; }
+.etaye-segment--alerte { text-decoration: underline wavy var(--attention) 1.5px; text-underline-offset: 5px; }
+.etaye-segment--genere { text-decoration: underline dashed var(--encre-3) 1px; text-underline-offset: 5px; }
+
+/* Report editor (S-20, I-21) */
+.etaye-redaction { background: var(--papier); border: var(--trait-filet) solid var(--filet-controle); padding: var(--espace-6) var(--espace-8); display: grid; gap: var(--espace-2); min-width: 0; }
+.etaye-redaction--edition { box-shadow: 0 0 0 1px var(--accent); }
+.etaye-redaction--lecture { border-color: var(--filet); }
+.etaye-redaction h3 { margin: var(--espace-4) 0 0; font: 500 17px/26px var(--font-document); }
+.etaye-redaction h3:first-child { margin-top: 0; }
+.etaye-redaction p { margin: 0; font: 400 16px/30px var(--font-document); max-width: 68ch; overflow-wrap: break-word; }
+.etaye-redaction__barre { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--espace-2); padding-bottom: var(--espace-2); border-bottom: var(--trait-filet) solid var(--filet); font: 400 12px/18px var(--font-texte); color: var(--encre-3); }
+.etaye-sources-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--espace-4); }
+.etaye-sources-liste > li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--espace-1) var(--espace-2); font: 400 13px/20px var(--font-texte); color: var(--encre-2); }
+.etaye-sources-liste > li > :nth-child(n+3) { grid-column: 2; }
+.etaye-sources-liste blockquote { margin: 0; font: 400 14px/22px var(--font-document); color: var(--encre); overflow-wrap: anywhere; }
+.etaye-sources-liste .etaye-repere { margin-left: 0; top: 0; }
+
+/* Version lineage (S-22, S-24) */
+.etaye-lignee { list-style: none; margin: 0; padding: 0; display: grid; border-top: var(--trait-filet) solid var(--filet); }
+.etaye-lignee > li { display: grid; gap: var(--espace-1); padding: var(--espace-3); border-bottom: var(--trait-filet) solid var(--filet); font: 400 13px/20px var(--font-texte); color: var(--encre-2); }
+.etaye-lignee > li[aria-current] { box-shadow: inset 3px 0 0 var(--accent); background: var(--surface); }
+.etaye-lignee__titre { font: 500 15px/22px var(--font-texte); color: var(--encre); display: flex; flex-wrap: wrap; gap: var(--espace-2); align-items: center; }
+.etaye-couches { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--espace-3); }
+.etaye-couches > li { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: var(--espace-1) var(--espace-4); padding: var(--espace-3) 0; border-top: var(--trait-filet) solid var(--filet); font: 400 14px/22px var(--font-texte); }
+.etaye-couches__nom { font-weight: 500; }
+.etaye-couches blockquote { margin: 0; font: 400 15px/26px var(--font-document); overflow-wrap: anywhere; }
+.etaye-diff__corps p { margin: 0; }
+
+/* Two separate steps: validation, then publication (S-23) */
+.etaye-deuxtemps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--espace-4); }
+.etaye-deuxtemps > li { border: var(--trait-filet) solid var(--filet); background: var(--surface); padding: var(--espace-4); display: grid; gap: var(--espace-2); align-content: start; min-width: 0; }
+.etaye-deuxtemps > li[aria-current] { box-shadow: inset 0 3px 0 var(--accent); }
+.etaye-deuxtemps > li[data-etat="attente"] { background: var(--surface-2); color: var(--encre-2); }
+.etaye-deuxtemps__num { font: 500 12px/16px var(--font-texte); color: var(--encre-3); letter-spacing: .04em; }
+.etaye-deuxtemps__titre { font: 500 16px/24px var(--font-texte); color: var(--encre); margin: 0; }
+.etaye-deuxtemps p { margin: 0; font: 400 14px/20px var(--font-texte); }
+
+/* Patient-visible preview inside professional screens (I-17, I-18, S-24) */
+.etaye-vu-patient { display: grid; gap: var(--espace-2); padding: var(--espace-4); border: var(--trait-filet) dashed var(--filet-controle); background: var(--papier); }
+.etaye-vu-patient__titre { font: 500 12px/16px var(--font-texte); color: var(--encre-3); letter-spacing: .04em; }
+.etaye-vu-patient p { margin: 0; font: 400 16px/28px var(--font-document); }
+.etaye-bouton--retrait { background: var(--surface); color: var(--critique); border-color: var(--critique); }
+.etaye-option { display: grid; gap: var(--espace-2); padding: var(--espace-4); border: var(--trait-filet) solid var(--filet-controle); background: var(--surface); }
+.etaye-option[aria-checked="true"] { box-shadow: 0 0 0 1px var(--accent); border-color: var(--accent); }
+.etaye-option[aria-disabled="true"] { background: var(--surface-2); color: var(--encre-2); }
+.etaye-option > label { display: flex; gap: var(--espace-3); align-items: flex-start; font: 500 15px/22px var(--font-texte); }
+.etaye-option > label input { margin-top: 3px; width: 18px; height: 18px; flex: none; }
+.etaye-option ul { margin: 0; padding-left: 20px; font: 400 14px/22px var(--font-texte); color: var(--encre-2); }
+
+@media (max-width: 1200px) {
+  .etaye-redaction { padding: var(--espace-5) var(--espace-6); }
+}
+@media (max-width: 760px) {
+  .etaye-page--consult .etaye-bouton { white-space: normal; height: auto; text-align: left; }
+  .etaye-deuxtemps, .etaye-couches > li { grid-template-columns: minmax(0, 1fr); }
+  .etaye-redaction { padding: var(--espace-4); }
+  .etaye-redaction p { font-size: 16px; line-height: 28px; }
+  .etaye-notes__tete { padding: var(--espace-3); }
+  .etaye-notes__corps { padding: var(--espace-3); }
+  .etaye-notes__origine { padding: var(--espace-2) var(--espace-3) 0; }
+  .etaye-notes__plan { display: none; }
+  .etaye-etiquette { white-space: normal; }
+}

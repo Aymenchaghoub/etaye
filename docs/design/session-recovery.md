@@ -2,6 +2,8 @@
 
 Status: Ready for continuation, not design approval. Updated: 2026-11-02. This is the canonical recovery note; attachment08 is its derived copy. Product rules remain in the [handoff](handoff-claude.md) and its authoritative references. Use the [short prompt](continuation-prompt.md) in the existing Claude chat.
 
+**Historical checkpoint, superseded by the received 2026-11-03 final HTML export:** use the [independent reception report](reviews/2026-11-03-reception.md) and correction brief for current work. The recovery safeguards below still apply, but failed-worker and missing-source descriptions are history, not the current delivery state. Do not overwrite the final receipt with an earlier recovery kit. No approval or Figma synchronization follows from delivery.
+
 ## Evidence and last checkpoint
 
 **Verified by Codex:** [PR1](https://github.com/Aymenchaghoub/etaye/pull/1) merged on 2026-11-02 at 19:27:55 UTC into commit `48a3acf6f17271336a770fc8ecad5f9070ca77b5`. Post-merge [Documentation](https://github.com/Aymenchaghoub/etaye/actions/runs/41510181392) and [CodeQL](https://github.com/Aymenchaghoub/etaye/actions/runs/41510181006) succeeded. The Desktop recovery package existed and all 118 recorded file hashes matched when inspected for this consolidation. It contains specifications/reference evidence, **not the latest corrected Claude mockup sources**. No recent design render, worker output or Figma import was independently inspected by Codex in this consolidation.

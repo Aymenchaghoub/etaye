@@ -1,0 +1,11 @@
+<!doctype html><html lang="fr"><meta charset="utf-8"><style>body{font:14px/1.5 system-ui;padding:16px;color:#1b1b18;background:#efeeea}button,input{font:inherit;margin:12px 0}pre{white-space:pre-wrap;overflow-wrap:anywhere}</style>
+<h1>Importer Étaye</h1><p>Calques modifiables dans une nouvelle section de la page courante. Les éléments existants sont conservés. Conception à revoir, aucune approbation.</p>
+<p>Choisissez une page de travail dans le fichier Étaye, puis un lot JSON. Commencez par un seul lot pour vérifier les polices et le rendu.</p>
+<input id="file" type="file" accept=".json"><br><button id="import" disabled>Importer le lot</button><button id="cancel">Arrêter</button><a id="evidence" hidden>Télécharger les références réelles du lot</a><pre id="status" role="status">Aucun lot sélectionné.</pre>
+<script>
+let data;const status=document.getElementById('status'),button=document.getElementById('import');
+document.getElementById('file').onchange=async event=>{try{data=JSON.parse(await event.target.files[0].text());button.disabled=false;status.textContent=data.frames.length+' écrans · '+data.snapshotSha256;}catch{data=null;button.disabled=true;status.textContent='Fichier JSON invalide.';}};
+button.onclick=()=>{button.disabled=true;parent.postMessage({pluginMessage:{type:'import',data}},'*');};
+document.getElementById('cancel').onclick=()=>parent.postMessage({pluginMessage:{type:'cancel'}},'*');
+onmessage=event=>{const m=event.data.pluginMessage;if(!m)return;status.textContent=m.message;if(m.done)button.disabled=false;if(m.evidence){const link=document.getElementById('evidence');link.href=URL.createObjectURL(new Blob([JSON.stringify(m.evidence,null,2)],{type:'application/json'}));link.download='etaye-figma-import-evidence.json';link.hidden=false;}};
+</script></html>

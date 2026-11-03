@@ -1,0 +1,195 @@
+/* Étaye — composants. Toutes les valeurs viennent des tokens (tokens.css). Icônes : Lucide (ISC), trait 1,5. */
+
+.etaye-root { font-family: var(--font-texte); color: var(--encre); -webkit-font-smoothing: antialiased; }
+.etaye-root *, .etaye-root *::before, .etaye-root *::after { box-sizing: border-box; }
+:where(.etaye-root) :where(p, h1, h2, h3, ol, ul) { margin: 0; }
+.etaye-num { font-family: var(--font-donnee); font-variant-numeric: tabular-nums; }
+.etaye-2 { color: var(--encre-2); }
+.etaye-3 { color: var(--encre-3); }
+.etaye-root a, .etaye-root button { transition: background-color var(--duree-retour) var(--courbe), color var(--duree-retour) var(--courbe), border-color var(--duree-retour) var(--courbe); }
+.etaye-root a:focus-visible, .etaye-root button:focus-visible, .etaye-root input:focus-visible,
+.etaye-root textarea:focus-visible, .etaye-root select:focus-visible, .etaye-root [tabindex]:focus-visible {
+  outline: var(--trait-focus) solid var(--accent); outline-offset: 2px;
+}
+
+/* ── Bouton et touche ──────────────────────────────────── */
+.etaye-bouton {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--espace-2);
+  min-height: var(--cible-soignant); padding: 0 var(--espace-3);
+  font: 500 14px/20px var(--font-texte);
+  border: var(--trait-filet) solid transparent; border-radius: var(--rayon-1);
+  cursor: pointer; text-decoration: none; white-space: nowrap;
+}
+.etaye-bouton:active { transform: scale(0.98); }
+.etaye-bouton--principal { background: var(--encre); color: var(--encre-inverse); }
+.etaye-bouton--valider { background: var(--accent); color: var(--sur-accent); }
+.etaye-bouton--secondaire { background: var(--surface); color: var(--encre); border-color: var(--filet-controle); }
+.etaye-bouton--secondaire:hover { background: var(--surface-2); }
+.etaye-bouton--discret { background: transparent; color: var(--accent); padding: 0 var(--espace-1); text-decoration: underline; text-underline-offset: 3px; }
+.etaye-bouton[disabled] { background: var(--surface-2); color: var(--encre-2); border-color: var(--filet); cursor: not-allowed; }
+.etaye-bouton--patient { min-height: var(--cible-patient); padding: 0 var(--espace-6); font: 500 18px/24px var(--font-texte); border-radius: var(--rayon-2); }
+.etaye-touche {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; padding: 0 var(--espace-1);
+  font: 400 12px/16px var(--font-donnee); color: inherit; opacity: .8;
+  border: var(--trait-filet) solid currentColor; border-radius: var(--rayon-1);
+}
+
+/* ── Champ ─────────────────────────────────────────────── */
+.etaye-champ { display: grid; gap: var(--espace-1); }
+.etaye-champ__libelle { font: 500 13px/20px var(--font-texte); letter-spacing: .01em; }
+.etaye-champ__saisie {
+  min-height: var(--cible-soignant); padding: 0 var(--espace-3); width: 100%;
+  font: 400 15px/22px var(--font-texte); color: var(--encre);
+  background: var(--surface); border: var(--trait-filet) solid var(--filet-controle); border-radius: var(--rayon-1);
+}
+textarea.etaye-champ__saisie { padding: var(--espace-2) var(--espace-3); min-height: 72px; resize: vertical; }
+.etaye-champ__aide { font: 400 13px/20px var(--font-texte); color: var(--encre-2); }
+.etaye-champ--erreur .etaye-champ__saisie { border: var(--trait-erreur) solid var(--encre); }
+.etaye-champ--erreur .etaye-champ__aide { color: var(--encre); font-weight: 500; }
+.etaye-sauvegarde { display: inline-flex; align-items: center; gap: var(--espace-1); font: 400 12px/16px var(--font-texte); color: var(--encre-3); }
+
+/* ── Statut ────────────────────────────────────────────── */
+.etaye-statut {
+  display: inline-flex; align-items: center; gap: var(--espace-1); height: 24px;
+  padding: 0 var(--espace-2); border-radius: var(--rayon-1);
+  font: 500 13px/20px var(--font-texte); white-space: nowrap;
+}
+.etaye-statut--critique { background: var(--critique-fond); color: var(--critique); }
+.etaye-statut--attention { background: var(--attention-fond); color: var(--attention); }
+.etaye-statut--valide { background: var(--accent-fond); color: var(--accent); }
+.etaye-statut--neutre { background: transparent; color: var(--encre-2); box-shadow: inset 0 0 0 1px var(--filet); }
+
+/* ── Repère de source (signature) ──────────────────────── */
+.etaye-repere {
+  display: inline-flex; align-items: center; gap: 2px; height: 16px; padding: 0 2px; margin: 0 1px 0 2px;
+  position: relative; top: -0.45em;
+  font: 600 11px/16px var(--font-donnee); color: var(--accent);
+  background: transparent; border: 0; border-radius: 2px; cursor: pointer; text-decoration: none;
+}
+.etaye-repere::before {
+  content: ""; width: 7px; height: 6px; background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 12'%3E%3Cpath d='M5.6 0h2.8L14 12h-2.6L7 2.6 2.6 12H0z'/%3E%3C/svg%3E") center/contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 12'%3E%3Cpath d='M5.6 0h2.8L14 12h-2.6L7 2.6 2.6 12H0z'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+.etaye-repere:hover, .etaye-repere[aria-expanded="true"] { background: var(--accent-fond); }
+.etaye-repere--seul { top: 0; }
+.etaye-apercu {
+  width: 328px; padding: var(--espace-4); background: var(--surface); color: var(--encre);
+  border-radius: var(--rayon-2); box-shadow: var(--ombre-flottant);
+}
+.etaye-apercu__ref { display: flex; align-items: center; gap: var(--espace-2); font: 400 12px/16px var(--font-texte); color: var(--encre-3); }
+.etaye-apercu__titre { font: 500 14px/20px var(--font-texte); margin: var(--espace-1) 0 var(--espace-3); }
+.etaye-apercu__extrait { font: 400 15px/24px var(--font-document); padding: var(--espace-2) var(--espace-3); background: var(--papier); border-radius: var(--rayon-1); }
+.etaye-apercu__extrait mark { background: var(--accent-fond); color: var(--encre); padding: 0 2px; }
+.etaye-apercu__pied { margin-top: var(--espace-3); display: flex; justify-content: space-between; align-items: center; }
+
+/* ── Annotation : passage + note datée en marge ────────── */
+.etaye-annote { display: grid; grid-template-columns: minmax(0, 1fr) 248px; column-gap: var(--espace-8); align-items: start; }
+.etaye-annote + .etaye-annote { margin-top: var(--espace-6); }
+.etaye-annote__texte { position: relative; font: 400 16px/28px var(--font-document); }
+.etaye-annote__texte::after {
+  content: ""; position: absolute; top: 6px; bottom: 6px; right: calc(-1 * var(--espace-4)); width: 6px;
+  border: var(--trait-filet) dashed var(--encre-3); border-left: 0;
+}
+.etaye-annote--valide .etaye-annote__texte::after { border-style: solid; border-color: var(--accent); }
+.etaye-annote--humain .etaye-annote__texte::after { display: none; }
+.etaye-annote__marge { display: grid; gap: var(--espace-2); padding-top: 4px; font: 400 13px/20px var(--font-texte); color: var(--encre-2); }
+.etaye-annote__etat { display: flex; align-items: center; gap: var(--espace-2); font-weight: 500; color: var(--encre); }
+.etaye-annote--brouillon .etaye-annote__etat { color: var(--attention); }
+.etaye-annote--valide .etaye-annote__etat { color: var(--accent); }
+.etaye-annote__meta { font: 400 12px/16px var(--font-texte); color: var(--encre-3); }
+.etaye-annote__sources { list-style: none; padding: 0; display: grid; gap: var(--espace-1); }
+.etaye-annote__sources li { display: flex; gap: var(--espace-1); align-items: baseline; }
+.etaye-annote__sources .etaye-repere { top: 0; margin-left: 0; }
+.etaye-annote__actions { display: flex; flex-wrap: wrap; gap: var(--espace-2); margin-top: var(--espace-1); }
+
+/* ── Bannière identité ─────────────────────────────────── */
+.etaye-banniere {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--espace-6); align-items: start;
+  padding: var(--espace-3) var(--espace-6); background: var(--surface); border-bottom: var(--trait-filet) solid var(--filet);
+}
+.etaye-banniere__nom { font: 500 18px/24px var(--font-texte); }
+.etaye-banniere__nom .etaye-2 { font-weight: 400; }
+.etaye-banniere__traits { display: flex; flex-wrap: wrap; gap: var(--espace-1) var(--espace-4); margin-top: var(--espace-1); font: 400 14px/20px var(--font-texte); color: var(--encre-2); }
+.etaye-banniere__traits .etaye-num { color: var(--encre); }
+.etaye-banniere__ident { display: flex; flex-wrap: wrap; align-items: center; gap: var(--espace-2) var(--espace-4); margin-top: var(--espace-2); }
+.etaye-identifiant { font: 400 13px/20px var(--font-donnee); color: var(--encre-2); }
+.etaye-identifiant b { font-weight: 400; color: var(--encre); }
+.etaye-allergies { min-width: 240px; padding: var(--espace-2) var(--espace-3); background: var(--critique-fond); border-radius: var(--rayon-1); }
+.etaye-allergies__titre { display: flex; align-items: center; gap: var(--espace-2); font: 500 13px/20px var(--font-texte); color: var(--critique); }
+.etaye-allergies__liste { font: 500 15px/22px var(--font-texte); color: var(--encre); }
+.etaye-allergies--aucune { background: transparent; box-shadow: inset 0 0 0 1px var(--filet); }
+.etaye-allergies--aucune .etaye-allergies__titre { color: var(--encre-2); }
+.etaye-allergies--aucune .etaye-allergies__liste { font-weight: 400; }
+
+/* ── Tableau de résultats ──────────────────────────────── */
+.etaye-tableau { width: 100%; border-collapse: collapse; font: 400 14px/20px var(--font-texte); }
+.etaye-tableau th { text-align: left; padding: var(--espace-2) var(--espace-3); font: 500 13px/20px var(--font-texte); color: var(--encre-2); border-bottom: var(--trait-filet) solid var(--filet-controle); }
+.etaye-tableau td { padding: var(--espace-2) var(--espace-3); height: 36px; border-bottom: var(--trait-filet) solid var(--filet); vertical-align: middle; }
+.etaye-tableau .etaye-col-num { text-align: right; font-family: var(--font-donnee); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.etaye-tableau th.etaye-col-num { font-family: var(--font-texte); }
+.etaye-tableau .etaye-col-2 { color: var(--encre-2); white-space: nowrap; }
+.etaye-tableau .etaye-col-3 { color: var(--encre-3); white-space: nowrap; font: 400 13px/20px var(--font-donnee); }
+.etaye-tableau tbody tr:hover td { background: var(--surface-2); }
+.etaye-valeur--attention { color: var(--attention); font-weight: 600; }
+.etaye-valeur--critique { color: var(--critique); font-weight: 600; }
+.etaye-fleche { display: inline-block; width: 3ch; text-align: left; padding-left: var(--espace-1); }
+
+/* ── Chronologie ───────────────────────────────────────── */
+.etaye-chrono { list-style: none; padding: 0; }
+.etaye-chrono__item { display: grid; grid-template-columns: 84px 16px minmax(0, 1fr); column-gap: var(--espace-3); }
+.etaye-chrono__date { padding: var(--espace-3) 0; text-align: right; font: 400 12px/20px var(--font-donnee); color: var(--encre-3); }
+.etaye-chrono__rail { position: relative; }
+.etaye-chrono__rail::before { content: ""; position: absolute; left: 7px; top: 0; bottom: 0; width: 1px; background: var(--filet-controle); }
+.etaye-chrono__item:first-child .etaye-chrono__rail::before { top: 20px; }
+.etaye-chrono__item:last-child .etaye-chrono__rail::before { bottom: calc(100% - 20px); }
+.etaye-chrono__rail::after { content: ""; position: absolute; left: 4px; top: 16px; width: 8px; height: 8px; background: var(--surface); box-shadow: 0 0 0 1px var(--filet-controle); }
+.etaye-chrono__item--action .etaye-chrono__rail::after { background: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.etaye-chrono__corps { padding: var(--espace-3) 0; border-bottom: var(--trait-filet) solid var(--filet); }
+.etaye-chrono__item:last-child .etaye-chrono__corps { border-bottom: 0; }
+.etaye-chrono__type { font: 400 13px/20px var(--font-texte); color: var(--encre-2); }
+.etaye-chrono__titre { font: 500 15px/22px var(--font-texte); }
+.etaye-chrono__detail { font: 400 14px/20px var(--font-texte); color: var(--encre-2); }
+
+/* ── Navigation ────────────────────────────────────────── */
+.etaye-nav { display: flex; flex-direction: column; width: 248px; padding: var(--espace-4) var(--espace-3); background: var(--fond); }
+.etaye-nav__marque { display: flex; align-items: center; height: 32px; padding: 0 var(--espace-3); margin-bottom: var(--espace-4); }
+.etaye-nav__marque img { height: 22px; display: block; }
+.etaye-nav__section { padding: 0 var(--espace-3); margin: var(--espace-6) 0 var(--espace-2); font: 400 12px/16px var(--font-texte); color: var(--encre-3); }
+.etaye-nav__liste { list-style: none; padding: 0; display: grid; gap: 2px; }
+.etaye-nav__rangee {
+  display: flex; align-items: center; gap: var(--espace-3); height: 36px; padding: 0 var(--espace-3);
+  font: 400 15px/22px var(--font-texte); color: var(--encre-2); text-decoration: none; border-radius: var(--rayon-1);
+}
+.etaye-nav__rangee:hover { background: var(--surface-2); color: var(--encre); }
+.etaye-nav__rangee[aria-current="page"] { background: var(--surface); color: var(--encre); box-shadow: inset 0 0 0 1px var(--filet); }
+.etaye-nav__compte { margin-left: auto; font: 400 12px/16px var(--font-donnee); color: var(--encre-3); }
+.etaye-nav__recherche {
+  display: flex; align-items: center; gap: var(--espace-2); height: 32px; padding: 0 var(--espace-3);
+  font: 400 14px/20px var(--font-texte); color: var(--encre-3);
+  background: var(--surface); border: var(--trait-filet) solid var(--filet); border-radius: var(--rayon-1);
+}
+.etaye-nav__recherche .etaye-touche { margin-left: auto; }
+
+/* ── Document ──────────────────────────────────────────── */
+.etaye-document { background: var(--papier); color: var(--encre); padding: var(--espace-8) var(--espace-12); border: var(--trait-filet) solid var(--filet); }
+.etaye-document__entete { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--espace-6); padding-bottom: var(--espace-4); border-bottom: var(--trait-filet) solid var(--encre); }
+.etaye-document__entete img { height: 24px; display: block; }
+.etaye-document__emetteur { font: 400 13px/20px var(--font-texte); color: var(--encre-2); text-align: right; }
+.etaye-document__titre { font: 500 26px/32px var(--font-document); margin-top: var(--espace-6); }
+.etaye-document__sous-titre { font: 400 14px/20px var(--font-texte); color: var(--encre-2); margin: var(--espace-1) 0 var(--espace-6); }
+.etaye-document h3 { font: 500 18px/28px var(--font-document); margin: var(--espace-6) 0 var(--espace-1); }
+.etaye-document p { font: 400 16px/28px var(--font-document); max-width: 68ch; }
+.etaye-document__signature { margin-top: var(--espace-8); padding-top: var(--espace-3); border-top: var(--trait-filet) solid var(--filet); font: 400 12px/16px var(--font-texte); color: var(--encre-3); }
+
+/* ── Portail patient ───────────────────────────────────── */
+.etaye-patient { background: var(--papier); color: var(--encre); font: 400 18px/28px var(--font-texte); }
+.etaye-carte-patient { background: var(--surface); border: var(--trait-filet) solid var(--filet-controle); border-radius: var(--rayon-3); padding: var(--espace-6); }
+.etaye-carte-patient__quand { font: 500 28px/36px var(--font-texte); }
+.etaye-carte-patient__ou { color: var(--encre-2); }
+.etaye-a-faire { list-style: none; padding: var(--espace-4) 0 0; margin: var(--espace-6) 0; border-top: var(--trait-filet) solid var(--filet); display: grid; gap: var(--espace-3); }
+.etaye-a-faire li { display: flex; gap: var(--espace-3); align-items: flex-start; }
+.etaye-case { flex: none; width: 24px; height: 24px; margin-top: 2px; border: 2px solid var(--filet-controle); border-radius: var(--rayon-1); background: var(--surface); display: inline-flex; align-items: center; justify-content: center; color: var(--sur-accent); }
+.etaye-case--faite { background: var(--accent); border-color: var(--accent); }
+.etaye-a-faire .etaye-fait { color: var(--encre-2); }
+.etaye-actions-patient { display: flex; flex-wrap: wrap; gap: var(--espace-3); }

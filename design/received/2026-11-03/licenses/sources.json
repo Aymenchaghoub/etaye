@@ -1,0 +1,26 @@
+[
+  {
+    "file": "Atkinson-Next-OFL.txt",
+    "url": "https://raw.githubusercontent.com/google/fonts/2fe1e8c6b137fb13041a7cfca6fdcd8a910ea4dc/ofl/atkinsonhyperlegiblenext/OFL.txt",
+    "consulted": "2026-11-03",
+    "sha256": "aca6a428580965d2297d1b718042dd427c2a9443ece3b0d02d758e161e0c4030"
+  },
+  {
+    "file": "Atkinson-Mono-OFL.txt",
+    "url": "https://raw.githubusercontent.com/google/fonts/2fe1e8c6b137fb13041a7cfca6fdcd8a910ea4dc/ofl/atkinsonhyperlegiblemono/OFL.txt",
+    "consulted": "2026-11-03",
+    "sha256": "1ebb31cf7393164f20d10c1d48406cddb5314feff8465531cf1e4ba37e9dd740"
+  },
+  {
+    "file": "Source-Serif-OFL.txt",
+    "url": "https://raw.githubusercontent.com/adobe-fonts/source-serif/80d3f8894c09c937bebfa9011247d2e1c79fd6f4/LICENSE.md",
+    "consulted": "2026-11-03",
+    "sha256": "c21d7293d87b6d7ab1d0229a2f55b77f33a7613a6a4e66f6693d68d7d8d09464"
+  },
+  {
+    "file": "Lucide-LICENSE.txt",
+    "url": "https://raw.githubusercontent.com/lucide-icons/lucide/7bb15b80a3c885c68d2c65a11381f25920bbf1ef/LICENSE",
+    "consulted": "2026-11-03",
+    "sha256": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57"
+  }
+]

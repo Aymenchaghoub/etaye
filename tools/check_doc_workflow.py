@@ -39,7 +39,7 @@ for step in codeql["jobs"]["analyze"]["steps"]:
         assert re.fullmatch(r"[A-Za-z0-9_./-]+@[a-f0-9]{40}", step["uses"])
     assert "continue-on-error" not in step, "Required checks must not suppress failure"
 config = yaml.load((root / ".github/codeql-config.yml").read_text(), Loader=yaml.BaseLoader)
-assert config["paths"] == ["tools"], "Current CodeQL scope is first-party planning tooling"
+assert config["paths"] == ["tools", "design/corrections"], "CodeQL covers first-party planning/design tooling"
 rabbit = yaml.safe_load((root / ".coderabbit.yaml").read_text())
 assert rabbit["language"] == "en-US" and rabbit["early_access"] is False
 assert rabbit["reviews"]["auto_approvals"]["enabled"] is False

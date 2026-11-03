@@ -1,0 +1,25 @@
+{
+  "snapshotSha256": "5133332577cf1b549896006b894e841bedc19a5eaf815e7085e2fb977eef3f26",
+  "exportedStates": 456,
+  "batches": 57,
+  "viewport": "desktop1440",
+  "editableTextRuns": 28139,
+  "svgAssets": 6079,
+  "discretePdfPreviewImages": 31,
+  "sceneValidation": "All57 exported batches passed the same structural validator used by the plugin",
+  "isolatedPluginTests": {
+    "executed": 3,
+    "passed": 3,
+    "scope": "Missing fonts prevent mutations; editable native text and duplicate preservation; new-section rollback"
+  },
+  "figmaNativeExecution": false,
+  "figmaNodeIds": [],
+  "visuallyReviewedInFigma": false,
+  "approvedByAymen": false,
+  "limits": [
+    "No automatic component/variable binding",
+    "Measured fixed geometry; responsive/auto-layout reconciliation pending",
+    "Native prototypes and A4 print-layout review pending"
+  ],
+  "externalExport": "/home/aymen.chaghoub/Projets/etaye-design-receipts/2026-11-03-d36658648db1/figma-editable-final"
+}

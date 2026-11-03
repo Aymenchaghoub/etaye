@@ -1,0 +1,2610 @@
+{
+  "browser": "145.0.7632.6",
+  "overflowChecks": [
+    {
+      "state": "S-32/membre",
+      "profile": "narrow",
+      "width": 320,
+      "scrollWidth": 326,
+      "brokenImages": [],
+      "fonts": "loaded"
+    },
+    {
+      "state": "S-32/modifie",
+      "profile": "narrow",
+      "width": 320,
+      "scrollWidth": 326,
+      "brokenImages": [],
+      "fonts": "loaded"
+    },
+    {
+      "state": "S-32/conflit",
+      "profile": "narrow",
+      "width": 320,
+      "scrollWidth": 326,
+      "brokenImages": [],
+      "fonts": "loaded"
+    },
+    {
+      "state": "S-32/dependances",
+      "profile": "narrow",
+      "width": 320,
+      "scrollWidth": 324,
+      "brokenImages": [],
+      "fonts": "loaded"
+    },
+    {
+      "state": "S-32/desactive",
+      "profile": "narrow",
+      "width": 320,
+      "scrollWidth": 326,
+      "brokenImages": [],
+      "fonts": "loaded"
+    }
+  ],
+  "journeyVisits": [
+    {
+      "journey": "HTML-J01",
+      "state": "S-01/accueil",
+      "title": "S-01 · Vitrine et entrée de démonstration · Ready — purpose, one readable sourced sentence, three fictional scenarios, design-status notice · Étaye",
+      "main": [
+        "Préparer une consultation avec des informations datées et vérifiables"
+      ]
+    },
+    {
+      "journey": "HTML-J01",
+      "state": "S-02/connexion",
+      "title": "S-02 · Connexion · Initial — professional login, visible label, focus on email · Étaye",
+      "main": [
+        "Se connecter"
+      ]
+    },
+    {
+      "journey": "HTML-J01",
+      "state": "S-05/un-seul",
+      "title": "S-05 · Choix du cabinet et du contexte d'accès · Single context bypass — Nora Lefebvre goes straight to Today · Étaye",
+      "main": [
+        "Ouverture du Cabinet des Tilleuls"
+      ]
+    },
+    {
+      "journey": "HTML-J01",
+      "state": "S-06/nora",
+      "title": "S-06 · Accueil praticien et préparation du jour · Default — Dr Nora Lefebvre, Monday 2 Nov 2026 16:00, practice scope · Étaye",
+      "main": [
+        "Lundi 2 novembre 2026"
+      ]
+    },
+    {
+      "journey": "HTML-J02",
+      "state": "S-06/nora",
+      "title": "S-06 · Accueil praticien et préparation du jour · Default — Dr Nora Lefebvre, Monday 2 Nov 2026 16:00, practice scope · Étaye",
+      "main": [
+        "Lundi 2 novembre 2026"
+      ]
+    },
+    {
+      "journey": "HTML-J02",
+      "state": "S-16/claire",
+      "title": "S-16 · Détail du rendez-vous · BOOKED — APT-A-001 Claire, 03/11 10:30–11:00, preparation received · Étaye",
+      "main": [
+        "Rendez-vous"
+      ]
+    },
+    {
+      "journey": "HTML-J02",
+      "state": "S-17/claire",
+      "title": "S-17 · Préparation de visite (vue praticien) · PREP-A-001 submitted 2 Nov 09:10 — patient's own words, unknown reaction details, contradiction with SRC-A-001, treatments unanswered ≠ 'Non' · Étaye",
+      "main": [
+        "Préparation de visite"
+      ]
+    },
+    {
+      "journey": "HTML-J02",
+      "state": "S-18/brouillon",
+      "title": "S-18 · Brief de préparation sourcé · BRIEF-A-001-v1 DRAFT exact text — 4 markers, missing treatments flagged, contradiction, 6 sources (2 consulted, not cited), internal only · Étaye",
+      "main": [
+        "Brief de préparation"
+      ]
+    },
+    {
+      "journey": "HTML-J02",
+      "state": "S-21/revue",
+      "title": "S-21 · Relecture du brouillon généré · BRIEF-A-001-v1 claim by claim — exact excerpts with occurred/recorded dates, counts not scores, keep/correct/remove · Étaye",
+      "main": [
+        "Relire le brouillon généré"
+      ]
+    },
+    {
+      "journey": "HTML-J02",
+      "state": "I-09/ouvert",
+      "title": "I-09 · Ouvrir la source · Source drawer over labs — SRC-A-003 excerpt highlighted, dates, author, version, locator · Étaye",
+      "main": [
+        "Biologie"
+      ]
+    },
+    {
+      "journey": "HTML-J02",
+      "state": "S-39/options",
+      "title": "S-39 · Options d'export et aperçu avant impression · P-01 options — frozen version and status, audience, sources, real A4 page previews · Étaye",
+      "main": [
+        "Exporter un document"
+      ]
+    },
+    {
+      "journey": "HTML-J02",
+      "state": "P-01/court",
+      "title": "Brief de préparation — MARTIN Claire — BRIEF-A-001-v1 (brouillon) · Étaye",
+      "main": [
+        "Brief de préparation"
+      ]
+    },
+    {
+      "journey": "HTML-J03",
+      "state": "S-21/non-soutenu",
+      "title": "S-21 · Relecture du brouillon généré · SC-UNSUPPORTED-DRAFT — 'Vous n'avez pas d'allergie connue.' cites nothing that supports it at this date · Étaye",
+      "main": [
+        "Relire le brouillon généré"
+      ]
+    },
+    {
+      "journey": "HTML-J03",
+      "state": "I-15/ouvert",
+      "title": "I-15 · Relire et corriger · Generated baseline (read-only) and editor — PATIENT-A-001-v2 before correction · Étaye",
+      "main": [
+        "Relire et corriger"
+      ]
+    },
+    {
+      "journey": "HTML-J03",
+      "state": "I-15/sale",
+      "title": "I-15 · Relire et corriger · Dirty — humanEditedText typed, correction reason · Étaye",
+      "main": [
+        "Relire et corriger"
+      ]
+    },
+    {
+      "journey": "HTML-J03",
+      "state": "S-21/corrigee",
+      "title": "S-21 · Relecture du brouillon généré · Corrected — humanEditedText labelled, generated text rejected with reason, then validation · Étaye",
+      "main": [
+        "Relire le brouillon généré"
+      ]
+    },
+    {
+      "journey": "HTML-J03",
+      "state": "S-22/comparaison",
+      "title": "S-22 · Historique et comparaison des versions · PATIENT-A-001 v1 vs v2 — Supprimé/Ajouté labels, source set change, origin layers · Étaye",
+      "main": [
+        "Explication destinée à Claire Martin · historique"
+      ]
+    },
+    {
+      "journey": "HTML-J03",
+      "state": "S-23/validation",
+      "title": "S-23 · Validation humaine puis publication · IN_REVIEW PATIENT-A-001-v2 — checklist, two separate steps, publication not yet available · Étaye",
+      "main": [
+        "Explication destinée à Claire Martin · version 2"
+      ]
+    },
+    {
+      "journey": "HTML-J03",
+      "state": "I-16/ouvert",
+      "title": "I-16 · Valider la version relue · Validate dialog — exact version, patient, sources, gaps, attestation; not patient-visible · Étaye",
+      "main": [
+        "Explication destinée à Claire Martin · version 2"
+      ]
+    },
+    {
+      "journey": "HTML-J03",
+      "state": "S-23/valide",
+      "title": "S-23 · Validation humaine puis publication · VALIDATED 14:20, not published — step 2 offered separately · Étaye",
+      "main": [
+        "Explication destinée à Claire Martin · version 2"
+      ]
+    },
+    {
+      "journey": "HTML-J03",
+      "state": "I-17/ouvert",
+      "title": "I-17 · Publier pour la patiente · Publish dialog — audience, exact version, patient preview, 3 approved excerpts, no attachment, consequences · Étaye",
+      "main": [
+        "Explication destinée à Claire Martin · version 2"
+      ]
+    },
+    {
+      "journey": "HTML-J03",
+      "state": "S-23/publie",
+      "title": "S-23 · Validation humaine puis publication · PUBLISHED 14:25 as PUB-A-002, replaces PUB-A-001 · Étaye",
+      "main": [
+        "Explication destinée à Claire Martin · version 2"
+      ]
+    },
+    {
+      "journey": "HTML-J03",
+      "state": "M-05/html",
+      "title": "M-05 · Publication (e-mail) · PUB-A-002 replaces PUB-A-001 — no clinical content — HTML 600 px, one action, masked token link · Étaye",
+      "main": [
+        "Une publication a été mise à jour"
+      ]
+    },
+    {
+      "journey": "HTML-J03",
+      "state": "S-29/v2",
+      "title": "S-29 · Information publiée (patient) · PATIENT-A-001-v2 exact text, validated 14:20 vs published 14:25, three approved excerpts · Étaye",
+      "main": [
+        "Informations après votre consultation du 20 octobre 2026"
+      ]
+    },
+    {
+      "journey": "HTML-J03",
+      "state": "P-03/court",
+      "title": "Informations après votre consultation — Claire Martin — version 2 · Étaye",
+      "main": [
+        "Informations après votre consultation du 20 octobre 2026"
+      ]
+    },
+    {
+      "journey": "HTML-J04",
+      "state": "S-24/perime",
+      "title": "S-24 · Contenu périmé, remplacé ou retiré · V-STALE 12:00 — v1 VALIDATED + STALE + still PUBLISHED, reason SRC-A-005 vs SRC-A-001 · Étaye",
+      "main": [
+        "Explication destinée à Claire Martin · version 1"
+      ]
+    },
+    {
+      "journey": "HTML-J04",
+      "state": "I-18/ouvert",
+      "title": "I-18 · Remplacer ou retirer la publication · Choice page — PUB-A-001 (v1 STALE) between 14:20 and 14:25, replace or withdraw, nothing preselected · Étaye",
+      "main": [
+        "Remplacer ou retirer la publication"
+      ]
+    },
+    {
+      "journey": "HTML-J04",
+      "state": "I-18/remplacer",
+      "title": "I-18 · Remplacer ou retirer la publication · Replace selected — v2 validated, patient preview, atomic replacement · Étaye",
+      "main": [
+        "Remplacer ou retirer la publication"
+      ]
+    },
+    {
+      "journey": "HTML-J04",
+      "state": "I-18/termine",
+      "title": "I-18 · Remplacer ou retirer la publication · Replaced at 14:25 — PUB-A-001 REPLACED, PUB-A-002 PUBLISHED, M-05 queued · Étaye",
+      "main": [
+        "Remplacer ou retirer la publication"
+      ]
+    },
+    {
+      "journey": "HTML-J04",
+      "state": "S-24/remplace",
+      "title": "S-24 · Contenu périmé, remplacé ou retiré · PUB-A-001 REPLACED by PUB-A-002 at 14:25 — old text not presented as current · Étaye",
+      "main": [
+        "Explication destinée à Claire Martin · version 1"
+      ]
+    },
+    {
+      "journey": "HTML-J04",
+      "state": "S-29/remplacee",
+      "title": "S-29 · Information publiée (patient) · Replaced — v1 link no longer readable · Étaye",
+      "main": [
+        "Cette version a été remplacée"
+      ]
+    },
+    {
+      "journey": "HTML-J04",
+      "state": "I-18/retrait",
+      "title": "I-18 · Remplacer ou retirer la publication · Withdraw PUB-A-002 — V-WITHDRAWN start, reason required, no newer version to replace with · Étaye",
+      "main": [
+        "Remplacer ou retirer la publication"
+      ]
+    },
+    {
+      "journey": "HTML-J04",
+      "state": "S-24/retire",
+      "title": "S-24 · Contenu périmé, remplacé ou retiré · V-WITHDRAWN — PUB-A-002 withdrawn, internal reason for professionals only, copies not recalled · Étaye",
+      "main": [
+        "Explication destinée à Claire Martin · version 2"
+      ]
+    },
+    {
+      "journey": "HTML-J04",
+      "state": "M-05/retrait",
+      "title": "M-05 · Publication (e-mail) · Withdrawal — neutral notice, no reason (V-WITHDRAWN) · Étaye",
+      "main": [
+        "Un document n'est plus disponible"
+      ]
+    },
+    {
+      "journey": "HTML-J04",
+      "state": "S-29/retiree",
+      "title": "S-29 · Information publiée (patient) · Withdrawn — V-WITHDRAWN, downloaded copies not recalled · Étaye",
+      "main": [
+        "Cette information n'est plus disponible"
+      ]
+    },
+    {
+      "journey": "HTML-J05",
+      "state": "S-19/en-cours",
+      "title": "S-19 · Consultation et notes structurées · IN_PROGRESS — CONS-A-002 Louis Bernard, Dr Sami Rahmani since 14:10, no appointment linked, every section 'Non renseigné' · Étaye",
+      "main": [
+        "Consultation"
+      ]
+    },
+    {
+      "journey": "HTML-J05",
+      "state": "I-05/ouvert",
+      "title": "I-05 · Saisir des informations pour la consultation · Inline editor — Louis allergies, unknown/negative/not asked distinct, origin and date · Étaye",
+      "main": [
+        "Consultation"
+      ]
+    },
+    {
+      "journey": "HTML-J05",
+      "state": "I-05/enregistre",
+      "title": "I-05 · Saisir des informations pour la consultation · Saved — motif with author, date and origin (template) · Étaye",
+      "main": [
+        "Consultation"
+      ]
+    },
+    {
+      "journey": "HTML-J05",
+      "state": "S-19/terminer",
+      "title": "S-19 · Consultation et notes structurées · Completion guard dialog — motif missing blocks completion (proposed guard); appointment stays independent · Étaye",
+      "main": [
+        "Consultation"
+      ]
+    },
+    {
+      "journey": "HTML-J05",
+      "state": "S-20/nouveau",
+      "title": "S-20 · Rédaction du compte rendu · New report for CONS-A-002 (Louis) — missing-data statements only, no citable source, no generated text · Étaye",
+      "main": [
+        "Compte rendu · nouveau brouillon"
+      ]
+    },
+    {
+      "journey": "HTML-J05",
+      "state": "S-20/lecture-seule",
+      "title": "S-20 · Rédaction du compte rendu · REPORT-A-001-v1 VALIDATED — read-only, 'Créer une nouvelle version' instead of editing · Étaye",
+      "main": [
+        "Compte rendu du 20 octobre 2026 · version 1"
+      ]
+    },
+    {
+      "journey": "HTML-J05",
+      "state": "I-19/ouvert",
+      "title": "I-19 · Exporter un document · Drawer — template, exact status/version, audience, sources, preview · Étaye",
+      "main": [
+        "Exporter un document"
+      ]
+    },
+    {
+      "journey": "HTML-J05",
+      "state": "P-02/court",
+      "title": "Compte rendu de consultation — MARTIN Claire — REPORT-A-001-v1 · Étaye",
+      "main": [
+        "Compte rendu de consultation"
+      ]
+    },
+    {
+      "journey": "HTML-J06",
+      "state": "S-14/jour",
+      "title": "S-14 · Agenda du cabinet · Day — Tue 3 Nov: Nora's availability 09:00–12:00 hatched, Claire 10:30 booked; mobile agenda list · Étaye",
+      "main": [
+        "Mardi 3 novembre 2026"
+      ]
+    },
+    {
+      "journey": "HTML-J06",
+      "state": "I-10/ouvert",
+      "title": "I-10 · Prendre rendez-vous · Dialog — Louis Bernard, Nora, 11:00 chosen, 10:30 shown as taken · Étaye",
+      "main": [
+        "Mardi 3 novembre 2026"
+      ]
+    },
+    {
+      "journey": "HTML-J06",
+      "state": "I-10/conflit",
+      "title": "I-10 · Prendre rendez-vous · Lost race — slot taken, fields kept, refreshed slots · Étaye",
+      "main": [
+        "Mardi 3 novembre 2026"
+      ]
+    },
+    {
+      "journey": "HTML-J06",
+      "state": "S-16/claire",
+      "title": "S-16 · Détail du rendez-vous · BOOKED — APT-A-001 Claire, 03/11 10:30–11:00, preparation received · Étaye",
+      "main": [
+        "Rendez-vous"
+      ]
+    },
+    {
+      "journey": "HTML-J06",
+      "state": "I-11/ouvert",
+      "title": "I-11 · Déplacer le rendez-vous · Move APT-A-001 10:30 → 11:00, same identity · Étaye",
+      "main": [
+        "Rendez-vous"
+      ]
+    },
+    {
+      "journey": "HTML-J06",
+      "state": "M-04/modifie",
+      "title": "M-04 · Rendez-vous (e-mail) · Rescheduled to 11:00 (variant) · Étaye",
+      "main": [
+        "Votre rendez-vous a été modifié"
+      ]
+    },
+    {
+      "journey": "HTML-J06",
+      "state": "I-13/ouvert",
+      "title": "I-13 · Enregistrer la présence · Inline attendance on APT-A-002 (version 1, booked) — no-show only after start · Étaye",
+      "main": [
+        "Rendez-vous"
+      ]
+    },
+    {
+      "journey": "HTML-J07",
+      "state": "M-02/html",
+      "title": "M-02 · Activation de l'espace patient (e-mail) · Portal activation to claire.martin@example.test, expiry not in dataset — HTML 600 px, one action, masked token link · Étaye",
+      "main": [
+        "Activez votre espace patient"
+      ]
+    },
+    {
+      "journey": "HTML-J07",
+      "state": "I-03/ouvert",
+      "title": "I-03 · Activer l'espace patient · Patient activation page — INV-PORTAL-01 before acceptance; birth date check, single-use purpose · Étaye",
+      "main": [
+        "Activer mon espace patient"
+      ]
+    },
+    {
+      "journey": "HTML-J07",
+      "state": "S-25/accueil",
+      "title": "S-25 · Accueil de l'espace patient · Default — Claire Martin: next visit APT-A-001, preparation sent, explanation v2 published; REPORT-A-001-v1 absent (SC-NOT-PUBLISHED) · Étaye",
+      "main": [
+        "Votre espace"
+      ]
+    },
+    {
+      "journey": "HTML-J07",
+      "state": "S-27/brouillon",
+      "title": "S-27 · Préparation de visite (patient) · Draft — PREP-A-001 before 09:10, saved 09:02, patient-only · Étaye",
+      "main": [
+        "Préparer ma visite"
+      ]
+    },
+    {
+      "journey": "HTML-J07",
+      "state": "S-27/envoyee",
+      "title": "S-27 · Préparation de visite (patient) · Submitted — 2 Nov 09:10, own statements, treatments 'Non renseigné' · Étaye",
+      "main": [
+        "Préparer ma visite"
+      ]
+    },
+    {
+      "journey": "HTML-J07",
+      "state": "S-26/liste",
+      "title": "S-26 · Rendez-vous et réservation (patient) · Own appointments — upcoming BOOKED, past COMPLETED and NO_SHOW (read-only) · Étaye",
+      "main": [
+        "Mes rendez-vous"
+      ]
+    },
+    {
+      "journey": "HTML-J07",
+      "state": "S-28/liste",
+      "title": "S-28 · Documents publiés (patient) · Published list — PUB-A-002 current, PUB-A-001 replaced (not openable); no internal report · Étaye",
+      "main": [
+        "Mes documents"
+      ]
+    },
+    {
+      "journey": "HTML-J07",
+      "state": "S-29/v2",
+      "title": "S-29 · Information publiée (patient) · PATIENT-A-001-v2 exact text, validated 14:20 vs published 14:25, three approved excerpts · Étaye",
+      "main": [
+        "Informations après votre consultation du 20 octobre 2026"
+      ]
+    },
+    {
+      "journey": "HTML-J07",
+      "state": "S-29/extrait",
+      "title": "S-29 · Information publiée (patient) · Approved excerpt drawer — I-09 patient variant (SRC-A-005, own statement, unconfirmed) · Étaye",
+      "main": [
+        "Informations après votre consultation du 20 octobre 2026"
+      ]
+    },
+    {
+      "journey": "HTML-J07",
+      "state": "S-30/apercu",
+      "title": "S-30 · Document autorisé et téléchargement (patient) · PDF preview of the current published version (no attachment granted: attachmentDocumentIds empty) · Étaye",
+      "main": [
+        "Document PDF"
+      ]
+    },
+    {
+      "journey": "HTML-J07",
+      "state": "I-28/ouvert",
+      "title": "I-28 · Résultat du téléchargement autorisé · Inline download panel — file, type, version, audience; copies cannot be recalled · Étaye",
+      "main": [
+        "Informations après votre consultation du 20 octobre 2026"
+      ]
+    },
+    {
+      "journey": "HTML-J07",
+      "state": "P-03/court",
+      "title": "Informations après votre consultation — Claire Martin — version 2 · Étaye",
+      "main": [
+        "Informations après votre consultation du 20 octobre 2026"
+      ]
+    },
+    {
+      "journey": "HTML-J08",
+      "state": "S-31/equipe",
+      "title": "S-31 · Équipe et invitations · Three PRA-A members with readable grouped capabilities, INV-TEAM-01 pending (expires 5 Nov 12:00), no clinical data · Étaye",
+      "main": [
+        "Équipe du Cabinet des Tilleuls"
+      ]
+    },
+    {
+      "journey": "HTML-J08",
+      "state": "I-01/ouvert",
+      "title": "I-01 · Inviter un membre · Dialog — e-mail, explicit grouped capabilities, expiry (72 h proposal), no clinical detail · Étaye",
+      "main": [
+        "Équipe du Cabinet des Tilleuls"
+      ]
+    },
+    {
+      "journey": "HTML-J08",
+      "state": "I-01/envoye",
+      "title": "I-01 · Inviter un membre · Invitation recorded — M-01 queued, delivery status separate · Étaye",
+      "main": [
+        "Équipe du Cabinet des Tilleuls"
+      ]
+    },
+    {
+      "journey": "HTML-J08",
+      "state": "M-01/html",
+      "title": "M-01 · Invitation d'équipe (e-mail) · INV-TEAM-01 to alex.riviere@example.test, expires 5 Nov 12:00 — HTML 600 px, one action, masked token link · Étaye",
+      "main": [
+        "Invitation à rejoindre une équipe"
+      ]
+    },
+    {
+      "journey": "HTML-J08",
+      "state": "S-03/equipe",
+      "title": "S-03 · Invitation et activation du compte · PENDING team invitation — INV-TEAM-01 Alex Rivière, expiry 05/11/2026 12:00, masked recipient · Étaye",
+      "main": [
+        "Rejoindre le Cabinet des Tilleuls"
+      ]
+    },
+    {
+      "journey": "HTML-J08",
+      "state": "S-32/membre",
+      "title": "S-32 · Droits d'un membre et désactivation · MEM-SAMI-A — capabilities grouped by consequence with plain explanations; practice-only scope · Étaye",
+      "main": [
+        "Dr Sami Rahmani"
+      ]
+    },
+    {
+      "journey": "HTML-J08",
+      "state": "I-02/ouvert",
+      "title": "I-02 · Désactiver un accès · Dialog — named member and practice, capabilities removed, reason required · Étaye",
+      "main": [
+        "Dr Sami Rahmani"
+      ]
+    },
+    {
+      "journey": "HTML-J08",
+      "state": "S-32/soi-meme",
+      "title": "S-32 · Droits d'un membre et désactivation · Read-only self view — Mila, last administrator · Étaye",
+      "main": [
+        "Mila Dubois"
+      ]
+    },
+    {
+      "journey": "HTML-J08",
+      "state": "S-34/admin",
+      "title": "S-34 · Historique d'audit · ADMIN_AUDIT (Mila) — membership, invitation and access-denied events only; missing times shown as not provided · Étaye",
+      "main": [
+        "Audit administratif"
+      ]
+    },
+    {
+      "journey": "HTML-J08",
+      "state": "I-25/admin",
+      "title": "I-25 · Filtres et détail d'un événement d'audit · Admin event detail — SC-ADMIN-CLINICAL 403, no record content · Étaye",
+      "main": [
+        "Audit administratif"
+      ]
+    },
+    {
+      "journey": "HTML-J08",
+      "state": "S-36/interdit",
+      "title": "S-36 · Accès refusé et élément introuvable · 403 — SC-ADMIN-CLINICAL: Mila Dubois tries the clinical workspace; no clinical metadata · Étaye",
+      "main": [
+        "Cet espace est réservé aux soins"
+      ]
+    },
+    {
+      "journey": "HTML-J09",
+      "state": "S-06/nora",
+      "title": "S-06 · Accueil praticien et préparation du jour · Default — Dr Nora Lefebvre, Monday 2 Nov 2026 16:00, practice scope · Étaye",
+      "main": [
+        "Lundi 2 novembre 2026"
+      ]
+    },
+    {
+      "journey": "HTML-J09",
+      "state": "S-40/echec",
+      "title": "S-40 · Tâches de génération et détail · AI-A-002 detail — PROVIDER_TIMEOUT, retry, safe error with no patient data · Étaye",
+      "main": [
+        "Tâche AI-A-002"
+      ]
+    },
+    {
+      "journey": "HTML-J09",
+      "state": "I-23/ouvert",
+      "title": "I-23 · Échec d'une tâche et nouvelle tentative · Inline failure — AI-A-002 safe reason, attempt and time, no draft, retry allowed · Étaye",
+      "main": [
+        "Brief de préparation"
+      ]
+    },
+    {
+      "journey": "HTML-J09",
+      "state": "I-23/relance",
+      "title": "I-23 · Échec d'une tâche et nouvelle tentative · New bounded attempt queued (variant) · Étaye",
+      "main": [
+        "Brief de préparation"
+      ]
+    },
+    {
+      "journey": "HTML-J09",
+      "state": "S-18/echec",
+      "title": "S-18 · Brief de préparation sourcé · Failed task — AI-A-002 PROVIDER_TIMEOUT 14:30:30 (V-AI-DOWN), I-23 inline, no draft · Étaye",
+      "main": [
+        "Brief de préparation"
+      ]
+    },
+    {
+      "journey": "HTML-J09",
+      "state": "S-37/ia",
+      "title": "S-37 · Services indisponibles et échec partiel · AI unavailable (V-AI-DOWN) — manual notes continue · Étaye",
+      "main": [
+        "Consultation"
+      ]
+    },
+    {
+      "journey": "HTML-J09",
+      "state": "P-01/incomplet",
+      "title": "Brief de préparation — BERNARD Louis — aucun brief généré · Étaye",
+      "main": [
+        "Brief de préparation"
+      ]
+    },
+    {
+      "journey": "HTML-J10",
+      "state": "S-38/expiree",
+      "title": "S-38 · Session expirée et retour · Expired during editing (V-SESSION) — background obscured, draft kept in memory, nothing replayed · Étaye",
+      "main": [
+        "Antécédents et allergies"
+      ]
+    },
+    {
+      "journey": "HTML-J10",
+      "state": "I-22/ouvert",
+      "title": "I-22 · Expiration de session · Full-page session expiry — Se reconnecter / Quitter la session · Étaye",
+      "main": [
+        "Votre session a expiré"
+      ]
+    },
+    {
+      "journey": "HTML-J10",
+      "state": "S-36/introuvable",
+      "title": "S-36 · Accès refusé et élément introuvable · 404 — SC-ISOLATION: Nora Lefebvre opens R-B-001; no name, no existence disclosure · Étaye",
+      "main": [
+        "Élément introuvable"
+      ]
+    },
+    {
+      "journey": "HTML-J10",
+      "state": "S-05/choix",
+      "title": "S-05 · Choix du cabinet et du contexte d'accès · Multiple contexts — Sami Rahmani in Tilleuls and Canal; publication not allowed in Canal · Étaye",
+      "main": [
+        "Choisir un contexte de travail"
+      ]
+    },
+    {
+      "journey": "HTML-J10",
+      "state": "S-06/jour-vide",
+      "title": "S-06 · Accueil praticien et préparation du jour · Empty day — Dr Sami Rahmani in Cabinet du Canal (no appointment on 2 Nov; Hugo Petit tomorrow with Dr Élodie Morel) · Étaye",
+      "main": [
+        "Lundi 2 novembre 2026"
+      ]
+    }
+  ],
+  "captures": [
+    {
+      "state": "S-02/connexion",
+      "profile": "desktop",
+      "file": "captures/S-02-connexion-desktop.png"
+    },
+    {
+      "state": "S-05/choix",
+      "profile": "desktop",
+      "file": "captures/S-05-choix-desktop.png"
+    },
+    {
+      "state": "S-36/interdit",
+      "profile": "desktop",
+      "file": "captures/S-36-interdit-desktop.png"
+    },
+    {
+      "state": "S-31/equipe",
+      "profile": "desktop",
+      "file": "captures/S-31-equipe-desktop.png"
+    },
+    {
+      "state": "I-01/ouvert",
+      "profile": "desktop",
+      "file": "captures/I-01-ouvert-desktop.png"
+    },
+    {
+      "state": "S-37/ia",
+      "profile": "desktop",
+      "file": "captures/S-37-ia-desktop.png"
+    },
+    {
+      "state": "S-14/jour",
+      "profile": "desktop",
+      "file": "captures/S-14-jour-desktop.png"
+    },
+    {
+      "state": "S-18/brouillon",
+      "profile": "desktop",
+      "file": "captures/S-18-brouillon-desktop.png"
+    },
+    {
+      "state": "S-21/non-soutenu",
+      "profile": "desktop",
+      "file": "captures/S-21-non-soutenu-desktop.png"
+    },
+    {
+      "state": "I-23/ouvert",
+      "profile": "desktop",
+      "file": "captures/I-23-ouvert-desktop.png"
+    },
+    {
+      "state": "S-19/lecture-seule",
+      "profile": "desktop",
+      "file": "captures/S-19-lecture-seule-desktop.png"
+    },
+    {
+      "state": "I-21/ouvert",
+      "profile": "desktop",
+      "file": "captures/I-21-ouvert-desktop.png"
+    },
+    {
+      "state": "S-22/comparaison",
+      "profile": "desktop",
+      "file": "captures/S-22-comparaison-desktop.png"
+    },
+    {
+      "state": "S-23/validation",
+      "profile": "desktop",
+      "file": "captures/S-23-validation-desktop.png"
+    },
+    {
+      "state": "I-16/ouvert",
+      "profile": "desktop",
+      "file": "captures/I-16-ouvert-desktop.png"
+    },
+    {
+      "state": "I-17/ouvert",
+      "profile": "desktop",
+      "file": "captures/I-17-ouvert-desktop.png"
+    },
+    {
+      "state": "S-24/retire",
+      "profile": "desktop",
+      "file": "captures/S-24-retire-desktop.png"
+    },
+    {
+      "state": "I-18/retrait",
+      "profile": "desktop",
+      "file": "captures/I-18-retrait-desktop.png"
+    },
+    {
+      "state": "M-01/html",
+      "profile": "desktop",
+      "file": "captures/M-01-html-desktop.png"
+    },
+    {
+      "state": "M-01/texte",
+      "profile": "desktop",
+      "file": "captures/M-01-texte-desktop.png"
+    },
+    {
+      "state": "M-01/sombre",
+      "profile": "desktop",
+      "file": "captures/M-01-sombre-desktop.png"
+    },
+    {
+      "state": "M-02/html",
+      "profile": "desktop",
+      "file": "captures/M-02-html-desktop.png"
+    },
+    {
+      "state": "M-02/texte",
+      "profile": "desktop",
+      "file": "captures/M-02-texte-desktop.png"
+    },
+    {
+      "state": "M-02/sombre",
+      "profile": "desktop",
+      "file": "captures/M-02-sombre-desktop.png"
+    },
+    {
+      "state": "M-03/html",
+      "profile": "desktop",
+      "file": "captures/M-03-html-desktop.png"
+    },
+    {
+      "state": "M-03/texte",
+      "profile": "desktop",
+      "file": "captures/M-03-texte-desktop.png"
+    },
+    {
+      "state": "M-03/sombre",
+      "profile": "desktop",
+      "file": "captures/M-03-sombre-desktop.png"
+    },
+    {
+      "state": "M-04/html",
+      "profile": "desktop",
+      "file": "captures/M-04-html-desktop.png"
+    },
+    {
+      "state": "M-04/texte",
+      "profile": "desktop",
+      "file": "captures/M-04-texte-desktop.png"
+    },
+    {
+      "state": "M-04/sombre",
+      "profile": "desktop",
+      "file": "captures/M-04-sombre-desktop.png"
+    },
+    {
+      "state": "M-05/html",
+      "profile": "desktop",
+      "file": "captures/M-05-html-desktop.png"
+    },
+    {
+      "state": "M-05/texte",
+      "profile": "desktop",
+      "file": "captures/M-05-texte-desktop.png"
+    },
+    {
+      "state": "M-05/sombre",
+      "profile": "desktop",
+      "file": "captures/M-05-sombre-desktop.png"
+    },
+    {
+      "state": "S-09/claire",
+      "profile": "desktop",
+      "file": "captures/S-09-claire-desktop.png"
+    },
+    {
+      "state": "S-09/louis",
+      "profile": "desktop",
+      "file": "captures/S-09-louis-desktop.png"
+    },
+    {
+      "state": "S-10/claire",
+      "profile": "desktop",
+      "file": "captures/S-10-claire-desktop.png"
+    },
+    {
+      "state": "S-11/claire",
+      "profile": "desktop",
+      "file": "captures/S-11-claire-desktop.png"
+    },
+    {
+      "state": "S-12/claire",
+      "profile": "desktop",
+      "file": "captures/S-12-claire-desktop.png"
+    },
+    {
+      "state": "I-09/ouvert",
+      "profile": "desktop",
+      "file": "captures/I-09-ouvert-desktop.png"
+    },
+    {
+      "state": "S-25/accueil",
+      "profile": "desktop",
+      "file": "captures/S-25-accueil-desktop.png"
+    },
+    {
+      "state": "S-27/brouillon",
+      "profile": "desktop",
+      "file": "captures/S-27-brouillon-desktop.png"
+    },
+    {
+      "state": "S-29/v2",
+      "profile": "desktop",
+      "file": "captures/S-29-v2-desktop.png"
+    },
+    {
+      "state": "S-30/apercu",
+      "profile": "desktop",
+      "file": "captures/S-30-apercu-desktop.png"
+    },
+    {
+      "state": "S-06/nora",
+      "profile": "desktop",
+      "file": "captures/S-06-nora-desktop.png"
+    },
+    {
+      "state": "S-02/connexion",
+      "profile": "tablet",
+      "file": "captures/S-02-connexion-tablet.png"
+    },
+    {
+      "state": "S-05/choix",
+      "profile": "tablet",
+      "file": "captures/S-05-choix-tablet.png"
+    },
+    {
+      "state": "S-36/interdit",
+      "profile": "tablet",
+      "file": "captures/S-36-interdit-tablet.png"
+    },
+    {
+      "state": "S-31/equipe",
+      "profile": "tablet",
+      "file": "captures/S-31-equipe-tablet.png"
+    },
+    {
+      "state": "I-01/ouvert",
+      "profile": "tablet",
+      "file": "captures/I-01-ouvert-tablet.png"
+    },
+    {
+      "state": "S-37/ia",
+      "profile": "tablet",
+      "file": "captures/S-37-ia-tablet.png"
+    },
+    {
+      "state": "S-14/jour",
+      "profile": "tablet",
+      "file": "captures/S-14-jour-tablet.png"
+    },
+    {
+      "state": "S-18/brouillon",
+      "profile": "tablet",
+      "file": "captures/S-18-brouillon-tablet.png"
+    },
+    {
+      "state": "S-21/non-soutenu",
+      "profile": "tablet",
+      "file": "captures/S-21-non-soutenu-tablet.png"
+    },
+    {
+      "state": "I-23/ouvert",
+      "profile": "tablet",
+      "file": "captures/I-23-ouvert-tablet.png"
+    },
+    {
+      "state": "S-19/lecture-seule",
+      "profile": "tablet",
+      "file": "captures/S-19-lecture-seule-tablet.png"
+    },
+    {
+      "state": "I-21/ouvert",
+      "profile": "tablet",
+      "file": "captures/I-21-ouvert-tablet.png"
+    },
+    {
+      "state": "S-22/comparaison",
+      "profile": "tablet",
+      "file": "captures/S-22-comparaison-tablet.png"
+    },
+    {
+      "state": "S-23/validation",
+      "profile": "tablet",
+      "file": "captures/S-23-validation-tablet.png"
+    },
+    {
+      "state": "I-16/ouvert",
+      "profile": "tablet",
+      "file": "captures/I-16-ouvert-tablet.png"
+    },
+    {
+      "state": "I-17/ouvert",
+      "profile": "tablet",
+      "file": "captures/I-17-ouvert-tablet.png"
+    },
+    {
+      "state": "S-24/retire",
+      "profile": "tablet",
+      "file": "captures/S-24-retire-tablet.png"
+    },
+    {
+      "state": "I-18/retrait",
+      "profile": "tablet",
+      "file": "captures/I-18-retrait-tablet.png"
+    },
+    {
+      "state": "M-01/html",
+      "profile": "tablet",
+      "file": "captures/M-01-html-tablet.png"
+    },
+    {
+      "state": "M-01/texte",
+      "profile": "tablet",
+      "file": "captures/M-01-texte-tablet.png"
+    },
+    {
+      "state": "M-01/sombre",
+      "profile": "tablet",
+      "file": "captures/M-01-sombre-tablet.png"
+    },
+    {
+      "state": "M-02/html",
+      "profile": "tablet",
+      "file": "captures/M-02-html-tablet.png"
+    },
+    {
+      "state": "M-02/texte",
+      "profile": "tablet",
+      "file": "captures/M-02-texte-tablet.png"
+    },
+    {
+      "state": "M-02/sombre",
+      "profile": "tablet",
+      "file": "captures/M-02-sombre-tablet.png"
+    },
+    {
+      "state": "M-03/html",
+      "profile": "tablet",
+      "file": "captures/M-03-html-tablet.png"
+    },
+    {
+      "state": "M-03/texte",
+      "profile": "tablet",
+      "file": "captures/M-03-texte-tablet.png"
+    },
+    {
+      "state": "M-03/sombre",
+      "profile": "tablet",
+      "file": "captures/M-03-sombre-tablet.png"
+    },
+    {
+      "state": "M-04/html",
+      "profile": "tablet",
+      "file": "captures/M-04-html-tablet.png"
+    },
+    {
+      "state": "M-04/texte",
+      "profile": "tablet",
+      "file": "captures/M-04-texte-tablet.png"
+    },
+    {
+      "state": "M-04/sombre",
+      "profile": "tablet",
+      "file": "captures/M-04-sombre-tablet.png"
+    },
+    {
+      "state": "M-05/html",
+      "profile": "tablet",
+      "file": "captures/M-05-html-tablet.png"
+    },
+    {
+      "state": "M-05/texte",
+      "profile": "tablet",
+      "file": "captures/M-05-texte-tablet.png"
+    },
+    {
+      "state": "M-05/sombre",
+      "profile": "tablet",
+      "file": "captures/M-05-sombre-tablet.png"
+    },
+    {
+      "state": "S-09/claire",
+      "profile": "tablet",
+      "file": "captures/S-09-claire-tablet.png"
+    },
+    {
+      "state": "S-09/louis",
+      "profile": "tablet",
+      "file": "captures/S-09-louis-tablet.png"
+    },
+    {
+      "state": "S-10/claire",
+      "profile": "tablet",
+      "file": "captures/S-10-claire-tablet.png"
+    },
+    {
+      "state": "S-11/claire",
+      "profile": "tablet",
+      "file": "captures/S-11-claire-tablet.png"
+    },
+    {
+      "state": "S-12/claire",
+      "profile": "tablet",
+      "file": "captures/S-12-claire-tablet.png"
+    },
+    {
+      "state": "I-09/ouvert",
+      "profile": "tablet",
+      "file": "captures/I-09-ouvert-tablet.png"
+    },
+    {
+      "state": "S-25/accueil",
+      "profile": "tablet",
+      "file": "captures/S-25-accueil-tablet.png"
+    },
+    {
+      "state": "S-27/brouillon",
+      "profile": "tablet",
+      "file": "captures/S-27-brouillon-tablet.png"
+    },
+    {
+      "state": "S-29/v2",
+      "profile": "tablet",
+      "file": "captures/S-29-v2-tablet.png"
+    },
+    {
+      "state": "S-30/apercu",
+      "profile": "tablet",
+      "file": "captures/S-30-apercu-tablet.png"
+    },
+    {
+      "state": "S-06/nora",
+      "profile": "tablet",
+      "file": "captures/S-06-nora-tablet.png"
+    },
+    {
+      "state": "S-02/connexion",
+      "profile": "mobile",
+      "file": "captures/S-02-connexion-mobile.png"
+    },
+    {
+      "state": "S-05/choix",
+      "profile": "mobile",
+      "file": "captures/S-05-choix-mobile.png"
+    },
+    {
+      "state": "S-36/interdit",
+      "profile": "mobile",
+      "file": "captures/S-36-interdit-mobile.png"
+    },
+    {
+      "state": "S-31/equipe",
+      "profile": "mobile",
+      "file": "captures/S-31-equipe-mobile.png"
+    },
+    {
+      "state": "I-01/ouvert",
+      "profile": "mobile",
+      "file": "captures/I-01-ouvert-mobile.png"
+    },
+    {
+      "state": "S-37/ia",
+      "profile": "mobile",
+      "file": "captures/S-37-ia-mobile.png"
+    },
+    {
+      "state": "S-14/jour",
+      "profile": "mobile",
+      "file": "captures/S-14-jour-mobile.png"
+    },
+    {
+      "state": "S-18/brouillon",
+      "profile": "mobile",
+      "file": "captures/S-18-brouillon-mobile.png"
+    },
+    {
+      "state": "S-21/non-soutenu",
+      "profile": "mobile",
+      "file": "captures/S-21-non-soutenu-mobile.png"
+    },
+    {
+      "state": "I-23/ouvert",
+      "profile": "mobile",
+      "file": "captures/I-23-ouvert-mobile.png"
+    },
+    {
+      "state": "S-19/lecture-seule",
+      "profile": "mobile",
+      "file": "captures/S-19-lecture-seule-mobile.png"
+    },
+    {
+      "state": "I-21/ouvert",
+      "profile": "mobile",
+      "file": "captures/I-21-ouvert-mobile.png"
+    },
+    {
+      "state": "S-22/comparaison",
+      "profile": "mobile",
+      "file": "captures/S-22-comparaison-mobile.png"
+    },
+    {
+      "state": "S-23/validation",
+      "profile": "mobile",
+      "file": "captures/S-23-validation-mobile.png"
+    },
+    {
+      "state": "I-16/ouvert",
+      "profile": "mobile",
+      "file": "captures/I-16-ouvert-mobile.png"
+    },
+    {
+      "state": "I-17/ouvert",
+      "profile": "mobile",
+      "file": "captures/I-17-ouvert-mobile.png"
+    },
+    {
+      "state": "S-24/retire",
+      "profile": "mobile",
+      "file": "captures/S-24-retire-mobile.png"
+    },
+    {
+      "state": "I-18/retrait",
+      "profile": "mobile",
+      "file": "captures/I-18-retrait-mobile.png"
+    },
+    {
+      "state": "M-01/html",
+      "profile": "mobile",
+      "file": "captures/M-01-html-mobile.png"
+    },
+    {
+      "state": "M-01/texte",
+      "profile": "mobile",
+      "file": "captures/M-01-texte-mobile.png"
+    },
+    {
+      "state": "M-01/sombre",
+      "profile": "mobile",
+      "file": "captures/M-01-sombre-mobile.png"
+    },
+    {
+      "state": "M-02/html",
+      "profile": "mobile",
+      "file": "captures/M-02-html-mobile.png"
+    },
+    {
+      "state": "M-02/texte",
+      "profile": "mobile",
+      "file": "captures/M-02-texte-mobile.png"
+    },
+    {
+      "state": "M-02/sombre",
+      "profile": "mobile",
+      "file": "captures/M-02-sombre-mobile.png"
+    },
+    {
+      "state": "M-03/html",
+      "profile": "mobile",
+      "file": "captures/M-03-html-mobile.png"
+    },
+    {
+      "state": "M-03/texte",
+      "profile": "mobile",
+      "file": "captures/M-03-texte-mobile.png"
+    },
+    {
+      "state": "M-03/sombre",
+      "profile": "mobile",
+      "file": "captures/M-03-sombre-mobile.png"
+    },
+    {
+      "state": "M-04/html",
+      "profile": "mobile",
+      "file": "captures/M-04-html-mobile.png"
+    },
+    {
+      "state": "M-04/texte",
+      "profile": "mobile",
+      "file": "captures/M-04-texte-mobile.png"
+    },
+    {
+      "state": "M-04/sombre",
+      "profile": "mobile",
+      "file": "captures/M-04-sombre-mobile.png"
+    },
+    {
+      "state": "M-05/html",
+      "profile": "mobile",
+      "file": "captures/M-05-html-mobile.png"
+    },
+    {
+      "state": "M-05/texte",
+      "profile": "mobile",
+      "file": "captures/M-05-texte-mobile.png"
+    },
+    {
+      "state": "M-05/sombre",
+      "profile": "mobile",
+      "file": "captures/M-05-sombre-mobile.png"
+    },
+    {
+      "state": "S-09/claire",
+      "profile": "mobile",
+      "file": "captures/S-09-claire-mobile.png"
+    },
+    {
+      "state": "S-09/louis",
+      "profile": "mobile",
+      "file": "captures/S-09-louis-mobile.png"
+    },
+    {
+      "state": "S-10/claire",
+      "profile": "mobile",
+      "file": "captures/S-10-claire-mobile.png"
+    },
+    {
+      "state": "S-11/claire",
+      "profile": "mobile",
+      "file": "captures/S-11-claire-mobile.png"
+    },
+    {
+      "state": "S-12/claire",
+      "profile": "mobile",
+      "file": "captures/S-12-claire-mobile.png"
+    },
+    {
+      "state": "I-09/ouvert",
+      "profile": "mobile",
+      "file": "captures/I-09-ouvert-mobile.png"
+    },
+    {
+      "state": "S-25/accueil",
+      "profile": "mobile",
+      "file": "captures/S-25-accueil-mobile.png"
+    },
+    {
+      "state": "S-27/brouillon",
+      "profile": "mobile",
+      "file": "captures/S-27-brouillon-mobile.png"
+    },
+    {
+      "state": "S-29/v2",
+      "profile": "mobile",
+      "file": "captures/S-29-v2-mobile.png"
+    },
+    {
+      "state": "S-30/apercu",
+      "profile": "mobile",
+      "file": "captures/S-30-apercu-mobile.png"
+    },
+    {
+      "state": "S-06/nora",
+      "profile": "mobile",
+      "file": "captures/S-06-nora-mobile.png"
+    },
+    {
+      "state": "S-02/connexion",
+      "profile": "narrow",
+      "file": "captures/S-02-connexion-narrow.png"
+    },
+    {
+      "state": "S-05/choix",
+      "profile": "narrow",
+      "file": "captures/S-05-choix-narrow.png"
+    },
+    {
+      "state": "S-36/interdit",
+      "profile": "narrow",
+      "file": "captures/S-36-interdit-narrow.png"
+    },
+    {
+      "state": "S-31/equipe",
+      "profile": "narrow",
+      "file": "captures/S-31-equipe-narrow.png"
+    },
+    {
+      "state": "I-01/ouvert",
+      "profile": "narrow",
+      "file": "captures/I-01-ouvert-narrow.png"
+    },
+    {
+      "state": "S-37/ia",
+      "profile": "narrow",
+      "file": "captures/S-37-ia-narrow.png"
+    },
+    {
+      "state": "S-14/jour",
+      "profile": "narrow",
+      "file": "captures/S-14-jour-narrow.png"
+    },
+    {
+      "state": "S-18/brouillon",
+      "profile": "narrow",
+      "file": "captures/S-18-brouillon-narrow.png"
+    },
+    {
+      "state": "S-21/non-soutenu",
+      "profile": "narrow",
+      "file": "captures/S-21-non-soutenu-narrow.png"
+    },
+    {
+      "state": "I-23/ouvert",
+      "profile": "narrow",
+      "file": "captures/I-23-ouvert-narrow.png"
+    },
+    {
+      "state": "S-19/lecture-seule",
+      "profile": "narrow",
+      "file": "captures/S-19-lecture-seule-narrow.png"
+    },
+    {
+      "state": "I-21/ouvert",
+      "profile": "narrow",
+      "file": "captures/I-21-ouvert-narrow.png"
+    },
+    {
+      "state": "S-22/comparaison",
+      "profile": "narrow",
+      "file": "captures/S-22-comparaison-narrow.png"
+    },
+    {
+      "state": "S-23/validation",
+      "profile": "narrow",
+      "file": "captures/S-23-validation-narrow.png"
+    },
+    {
+      "state": "I-16/ouvert",
+      "profile": "narrow",
+      "file": "captures/I-16-ouvert-narrow.png"
+    },
+    {
+      "state": "I-17/ouvert",
+      "profile": "narrow",
+      "file": "captures/I-17-ouvert-narrow.png"
+    },
+    {
+      "state": "S-24/retire",
+      "profile": "narrow",
+      "file": "captures/S-24-retire-narrow.png"
+    },
+    {
+      "state": "I-18/retrait",
+      "profile": "narrow",
+      "file": "captures/I-18-retrait-narrow.png"
+    },
+    {
+      "state": "M-01/html",
+      "profile": "narrow",
+      "file": "captures/M-01-html-narrow.png"
+    },
+    {
+      "state": "M-01/texte",
+      "profile": "narrow",
+      "file": "captures/M-01-texte-narrow.png"
+    },
+    {
+      "state": "M-01/sombre",
+      "profile": "narrow",
+      "file": "captures/M-01-sombre-narrow.png"
+    },
+    {
+      "state": "M-02/html",
+      "profile": "narrow",
+      "file": "captures/M-02-html-narrow.png"
+    },
+    {
+      "state": "M-02/texte",
+      "profile": "narrow",
+      "file": "captures/M-02-texte-narrow.png"
+    },
+    {
+      "state": "M-02/sombre",
+      "profile": "narrow",
+      "file": "captures/M-02-sombre-narrow.png"
+    },
+    {
+      "state": "M-03/html",
+      "profile": "narrow",
+      "file": "captures/M-03-html-narrow.png"
+    },
+    {
+      "state": "M-03/texte",
+      "profile": "narrow",
+      "file": "captures/M-03-texte-narrow.png"
+    },
+    {
+      "state": "M-03/sombre",
+      "profile": "narrow",
+      "file": "captures/M-03-sombre-narrow.png"
+    },
+    {
+      "state": "M-04/html",
+      "profile": "narrow",
+      "file": "captures/M-04-html-narrow.png"
+    },
+    {
+      "state": "M-04/texte",
+      "profile": "narrow",
+      "file": "captures/M-04-texte-narrow.png"
+    },
+    {
+      "state": "M-04/sombre",
+      "profile": "narrow",
+      "file": "captures/M-04-sombre-narrow.png"
+    },
+    {
+      "state": "M-05/html",
+      "profile": "narrow",
+      "file": "captures/M-05-html-narrow.png"
+    },
+    {
+      "state": "M-05/texte",
+      "profile": "narrow",
+      "file": "captures/M-05-texte-narrow.png"
+    },
+    {
+      "state": "M-05/sombre",
+      "profile": "narrow",
+      "file": "captures/M-05-sombre-narrow.png"
+    },
+    {
+      "state": "S-09/claire",
+      "profile": "narrow",
+      "file": "captures/S-09-claire-narrow.png"
+    },
+    {
+      "state": "S-09/louis",
+      "profile": "narrow",
+      "file": "captures/S-09-louis-narrow.png"
+    },
+    {
+      "state": "S-10/claire",
+      "profile": "narrow",
+      "file": "captures/S-10-claire-narrow.png"
+    },
+    {
+      "state": "S-11/claire",
+      "profile": "narrow",
+      "file": "captures/S-11-claire-narrow.png"
+    },
+    {
+      "state": "S-12/claire",
+      "profile": "narrow",
+      "file": "captures/S-12-claire-narrow.png"
+    },
+    {
+      "state": "I-09/ouvert",
+      "profile": "narrow",
+      "file": "captures/I-09-ouvert-narrow.png"
+    },
+    {
+      "state": "S-25/accueil",
+      "profile": "narrow",
+      "file": "captures/S-25-accueil-narrow.png"
+    },
+    {
+      "state": "S-27/brouillon",
+      "profile": "narrow",
+      "file": "captures/S-27-brouillon-narrow.png"
+    },
+    {
+      "state": "S-29/v2",
+      "profile": "narrow",
+      "file": "captures/S-29-v2-narrow.png"
+    },
+    {
+      "state": "S-30/apercu",
+      "profile": "narrow",
+      "file": "captures/S-30-apercu-narrow.png"
+    },
+    {
+      "state": "S-06/nora",
+      "profile": "narrow",
+      "file": "captures/S-06-nora-narrow.png"
+    },
+    {
+      "state": "S-02/connexion",
+      "profile": "dark-desktop",
+      "file": "captures/S-02-connexion-dark-desktop.png"
+    },
+    {
+      "state": "S-05/choix",
+      "profile": "dark-desktop",
+      "file": "captures/S-05-choix-dark-desktop.png"
+    },
+    {
+      "state": "S-06/nora",
+      "profile": "dark-desktop",
+      "file": "captures/S-06-nora-dark-desktop.png"
+    },
+    {
+      "state": "S-09/claire",
+      "profile": "dark-desktop",
+      "file": "captures/S-09-claire-dark-desktop.png"
+    },
+    {
+      "state": "S-09/louis",
+      "profile": "dark-desktop",
+      "file": "captures/S-09-louis-dark-desktop.png"
+    },
+    {
+      "state": "S-10/claire",
+      "profile": "dark-desktop",
+      "file": "captures/S-10-claire-dark-desktop.png"
+    },
+    {
+      "state": "S-11/claire",
+      "profile": "dark-desktop",
+      "file": "captures/S-11-claire-dark-desktop.png"
+    },
+    {
+      "state": "S-12/claire",
+      "profile": "dark-desktop",
+      "file": "captures/S-12-claire-dark-desktop.png"
+    },
+    {
+      "state": "S-14/jour",
+      "profile": "dark-desktop",
+      "file": "captures/S-14-jour-dark-desktop.png"
+    },
+    {
+      "state": "S-18/brouillon",
+      "profile": "dark-desktop",
+      "file": "captures/S-18-brouillon-dark-desktop.png"
+    },
+    {
+      "state": "S-19/lecture-seule",
+      "profile": "dark-desktop",
+      "file": "captures/S-19-lecture-seule-dark-desktop.png"
+    },
+    {
+      "state": "S-21/non-soutenu",
+      "profile": "dark-desktop",
+      "file": "captures/S-21-non-soutenu-dark-desktop.png"
+    },
+    {
+      "state": "S-22/comparaison",
+      "profile": "dark-desktop",
+      "file": "captures/S-22-comparaison-dark-desktop.png"
+    },
+    {
+      "state": "S-23/validation",
+      "profile": "dark-desktop",
+      "file": "captures/S-23-validation-dark-desktop.png"
+    },
+    {
+      "state": "S-24/retire",
+      "profile": "dark-desktop",
+      "file": "captures/S-24-retire-dark-desktop.png"
+    },
+    {
+      "state": "S-25/accueil",
+      "profile": "dark-desktop",
+      "file": "captures/S-25-accueil-dark-desktop.png"
+    },
+    {
+      "state": "S-27/brouillon",
+      "profile": "dark-desktop",
+      "file": "captures/S-27-brouillon-dark-desktop.png"
+    },
+    {
+      "state": "S-29/v2",
+      "profile": "dark-desktop",
+      "file": "captures/S-29-v2-dark-desktop.png"
+    },
+    {
+      "state": "S-30/apercu",
+      "profile": "dark-desktop",
+      "file": "captures/S-30-apercu-dark-desktop.png"
+    },
+    {
+      "state": "S-31/equipe",
+      "profile": "dark-desktop",
+      "file": "captures/S-31-equipe-dark-desktop.png"
+    },
+    {
+      "state": "S-36/interdit",
+      "profile": "dark-desktop",
+      "file": "captures/S-36-interdit-dark-desktop.png"
+    },
+    {
+      "state": "S-37/ia",
+      "profile": "dark-desktop",
+      "file": "captures/S-37-ia-dark-desktop.png"
+    },
+    {
+      "state": "I-01/ouvert",
+      "profile": "dark-desktop",
+      "file": "captures/I-01-ouvert-dark-desktop.png"
+    },
+    {
+      "state": "I-09/ouvert",
+      "profile": "dark-desktop",
+      "file": "captures/I-09-ouvert-dark-desktop.png"
+    },
+    {
+      "state": "I-16/ouvert",
+      "profile": "dark-desktop",
+      "file": "captures/I-16-ouvert-dark-desktop.png"
+    },
+    {
+      "state": "I-17/ouvert",
+      "profile": "dark-desktop",
+      "file": "captures/I-17-ouvert-dark-desktop.png"
+    },
+    {
+      "state": "I-18/retrait",
+      "profile": "dark-desktop",
+      "file": "captures/I-18-retrait-dark-desktop.png"
+    },
+    {
+      "state": "I-21/ouvert",
+      "profile": "dark-desktop",
+      "file": "captures/I-21-ouvert-dark-desktop.png"
+    },
+    {
+      "state": "I-23/ouvert",
+      "profile": "dark-desktop",
+      "file": "captures/I-23-ouvert-dark-desktop.png"
+    },
+    {
+      "state": "M-01/html",
+      "profile": "dark-desktop",
+      "file": "captures/M-01-html-dark-desktop.png"
+    },
+    {
+      "state": "M-01/texte",
+      "profile": "dark-desktop",
+      "file": "captures/M-01-texte-dark-desktop.png"
+    },
+    {
+      "state": "M-01/sombre",
+      "profile": "dark-desktop",
+      "file": "captures/M-01-sombre-dark-desktop.png"
+    },
+    {
+      "state": "M-02/html",
+      "profile": "dark-desktop",
+      "file": "captures/M-02-html-dark-desktop.png"
+    },
+    {
+      "state": "M-02/texte",
+      "profile": "dark-desktop",
+      "file": "captures/M-02-texte-dark-desktop.png"
+    },
+    {
+      "state": "M-02/sombre",
+      "profile": "dark-desktop",
+      "file": "captures/M-02-sombre-dark-desktop.png"
+    },
+    {
+      "state": "M-03/html",
+      "profile": "dark-desktop",
+      "file": "captures/M-03-html-dark-desktop.png"
+    },
+    {
+      "state": "M-03/texte",
+      "profile": "dark-desktop",
+      "file": "captures/M-03-texte-dark-desktop.png"
+    },
+    {
+      "state": "M-03/sombre",
+      "profile": "dark-desktop",
+      "file": "captures/M-03-sombre-dark-desktop.png"
+    },
+    {
+      "state": "M-04/html",
+      "profile": "dark-desktop",
+      "file": "captures/M-04-html-dark-desktop.png"
+    },
+    {
+      "state": "M-04/texte",
+      "profile": "dark-desktop",
+      "file": "captures/M-04-texte-dark-desktop.png"
+    },
+    {
+      "state": "M-04/sombre",
+      "profile": "dark-desktop",
+      "file": "captures/M-04-sombre-dark-desktop.png"
+    },
+    {
+      "state": "M-05/html",
+      "profile": "dark-desktop",
+      "file": "captures/M-05-html-dark-desktop.png"
+    },
+    {
+      "state": "M-05/texte",
+      "profile": "dark-desktop",
+      "file": "captures/M-05-texte-dark-desktop.png"
+    },
+    {
+      "state": "M-05/sombre",
+      "profile": "dark-desktop",
+      "file": "captures/M-05-sombre-dark-desktop.png"
+    },
+    {
+      "state": "S-02/connexion",
+      "profile": "dark-mobile",
+      "file": "captures/S-02-connexion-dark-mobile.png"
+    },
+    {
+      "state": "S-05/choix",
+      "profile": "dark-mobile",
+      "file": "captures/S-05-choix-dark-mobile.png"
+    },
+    {
+      "state": "S-06/nora",
+      "profile": "dark-mobile",
+      "file": "captures/S-06-nora-dark-mobile.png"
+    },
+    {
+      "state": "S-09/claire",
+      "profile": "dark-mobile",
+      "file": "captures/S-09-claire-dark-mobile.png"
+    },
+    {
+      "state": "S-09/louis",
+      "profile": "dark-mobile",
+      "file": "captures/S-09-louis-dark-mobile.png"
+    },
+    {
+      "state": "S-10/claire",
+      "profile": "dark-mobile",
+      "file": "captures/S-10-claire-dark-mobile.png"
+    },
+    {
+      "state": "S-11/claire",
+      "profile": "dark-mobile",
+      "file": "captures/S-11-claire-dark-mobile.png"
+    },
+    {
+      "state": "S-12/claire",
+      "profile": "dark-mobile",
+      "file": "captures/S-12-claire-dark-mobile.png"
+    },
+    {
+      "state": "S-14/jour",
+      "profile": "dark-mobile",
+      "file": "captures/S-14-jour-dark-mobile.png"
+    },
+    {
+      "state": "S-18/brouillon",
+      "profile": "dark-mobile",
+      "file": "captures/S-18-brouillon-dark-mobile.png"
+    },
+    {
+      "state": "S-19/lecture-seule",
+      "profile": "dark-mobile",
+      "file": "captures/S-19-lecture-seule-dark-mobile.png"
+    },
+    {
+      "state": "S-21/non-soutenu",
+      "profile": "dark-mobile",
+      "file": "captures/S-21-non-soutenu-dark-mobile.png"
+    },
+    {
+      "state": "S-22/comparaison",
+      "profile": "dark-mobile",
+      "file": "captures/S-22-comparaison-dark-mobile.png"
+    },
+    {
+      "state": "S-23/validation",
+      "profile": "dark-mobile",
+      "file": "captures/S-23-validation-dark-mobile.png"
+    },
+    {
+      "state": "S-24/retire",
+      "profile": "dark-mobile",
+      "file": "captures/S-24-retire-dark-mobile.png"
+    },
+    {
+      "state": "S-25/accueil",
+      "profile": "dark-mobile",
+      "file": "captures/S-25-accueil-dark-mobile.png"
+    },
+    {
+      "state": "S-27/brouillon",
+      "profile": "dark-mobile",
+      "file": "captures/S-27-brouillon-dark-mobile.png"
+    },
+    {
+      "state": "S-29/v2",
+      "profile": "dark-mobile",
+      "file": "captures/S-29-v2-dark-mobile.png"
+    },
+    {
+      "state": "S-30/apercu",
+      "profile": "dark-mobile",
+      "file": "captures/S-30-apercu-dark-mobile.png"
+    },
+    {
+      "state": "S-31/equipe",
+      "profile": "dark-mobile",
+      "file": "captures/S-31-equipe-dark-mobile.png"
+    },
+    {
+      "state": "S-36/interdit",
+      "profile": "dark-mobile",
+      "file": "captures/S-36-interdit-dark-mobile.png"
+    },
+    {
+      "state": "S-37/ia",
+      "profile": "dark-mobile",
+      "file": "captures/S-37-ia-dark-mobile.png"
+    },
+    {
+      "state": "I-01/ouvert",
+      "profile": "dark-mobile",
+      "file": "captures/I-01-ouvert-dark-mobile.png"
+    },
+    {
+      "state": "I-09/ouvert",
+      "profile": "dark-mobile",
+      "file": "captures/I-09-ouvert-dark-mobile.png"
+    },
+    {
+      "state": "I-16/ouvert",
+      "profile": "dark-mobile",
+      "file": "captures/I-16-ouvert-dark-mobile.png"
+    },
+    {
+      "state": "I-17/ouvert",
+      "profile": "dark-mobile",
+      "file": "captures/I-17-ouvert-dark-mobile.png"
+    },
+    {
+      "state": "I-18/retrait",
+      "profile": "dark-mobile",
+      "file": "captures/I-18-retrait-dark-mobile.png"
+    },
+    {
+      "state": "I-21/ouvert",
+      "profile": "dark-mobile",
+      "file": "captures/I-21-ouvert-dark-mobile.png"
+    },
+    {
+      "state": "I-23/ouvert",
+      "profile": "dark-mobile",
+      "file": "captures/I-23-ouvert-dark-mobile.png"
+    },
+    {
+      "state": "M-01/html",
+      "profile": "dark-mobile",
+      "file": "captures/M-01-html-dark-mobile.png"
+    },
+    {
+      "state": "M-01/texte",
+      "profile": "dark-mobile",
+      "file": "captures/M-01-texte-dark-mobile.png"
+    },
+    {
+      "state": "M-01/sombre",
+      "profile": "dark-mobile",
+      "file": "captures/M-01-sombre-dark-mobile.png"
+    },
+    {
+      "state": "M-02/html",
+      "profile": "dark-mobile",
+      "file": "captures/M-02-html-dark-mobile.png"
+    },
+    {
+      "state": "M-02/texte",
+      "profile": "dark-mobile",
+      "file": "captures/M-02-texte-dark-mobile.png"
+    },
+    {
+      "state": "M-02/sombre",
+      "profile": "dark-mobile",
+      "file": "captures/M-02-sombre-dark-mobile.png"
+    },
+    {
+      "state": "M-03/html",
+      "profile": "dark-mobile",
+      "file": "captures/M-03-html-dark-mobile.png"
+    },
+    {
+      "state": "M-03/texte",
+      "profile": "dark-mobile",
+      "file": "captures/M-03-texte-dark-mobile.png"
+    },
+    {
+      "state": "M-03/sombre",
+      "profile": "dark-mobile",
+      "file": "captures/M-03-sombre-dark-mobile.png"
+    },
+    {
+      "state": "M-04/html",
+      "profile": "dark-mobile",
+      "file": "captures/M-04-html-dark-mobile.png"
+    },
+    {
+      "state": "M-04/texte",
+      "profile": "dark-mobile",
+      "file": "captures/M-04-texte-dark-mobile.png"
+    },
+    {
+      "state": "M-04/sombre",
+      "profile": "dark-mobile",
+      "file": "captures/M-04-sombre-dark-mobile.png"
+    },
+    {
+      "state": "M-05/html",
+      "profile": "dark-mobile",
+      "file": "captures/M-05-html-dark-mobile.png"
+    },
+    {
+      "state": "M-05/texte",
+      "profile": "dark-mobile",
+      "file": "captures/M-05-texte-dark-mobile.png"
+    },
+    {
+      "state": "M-05/sombre",
+      "profile": "dark-mobile",
+      "file": "captures/M-05-sombre-dark-mobile.png"
+    },
+    {
+      "state": "S-02/connexion",
+      "profile": "fallback-desktop",
+      "file": "captures/S-02-connexion-fallback-desktop.png"
+    },
+    {
+      "state": "S-05/choix",
+      "profile": "fallback-desktop",
+      "file": "captures/S-05-choix-fallback-desktop.png"
+    },
+    {
+      "state": "S-06/nora",
+      "profile": "fallback-desktop",
+      "file": "captures/S-06-nora-fallback-desktop.png"
+    },
+    {
+      "state": "S-09/claire",
+      "profile": "fallback-desktop",
+      "file": "captures/S-09-claire-fallback-desktop.png"
+    },
+    {
+      "state": "S-09/louis",
+      "profile": "fallback-desktop",
+      "file": "captures/S-09-louis-fallback-desktop.png"
+    },
+    {
+      "state": "S-10/claire",
+      "profile": "fallback-desktop",
+      "file": "captures/S-10-claire-fallback-desktop.png"
+    },
+    {
+      "state": "S-11/claire",
+      "profile": "fallback-desktop",
+      "file": "captures/S-11-claire-fallback-desktop.png"
+    },
+    {
+      "state": "S-12/claire",
+      "profile": "fallback-desktop",
+      "file": "captures/S-12-claire-fallback-desktop.png"
+    },
+    {
+      "state": "S-14/jour",
+      "profile": "fallback-desktop",
+      "file": "captures/S-14-jour-fallback-desktop.png"
+    },
+    {
+      "state": "S-18/brouillon",
+      "profile": "fallback-desktop",
+      "file": "captures/S-18-brouillon-fallback-desktop.png"
+    },
+    {
+      "state": "S-19/lecture-seule",
+      "profile": "fallback-desktop",
+      "file": "captures/S-19-lecture-seule-fallback-desktop.png"
+    },
+    {
+      "state": "S-21/non-soutenu",
+      "profile": "fallback-desktop",
+      "file": "captures/S-21-non-soutenu-fallback-desktop.png"
+    },
+    {
+      "state": "S-22/comparaison",
+      "profile": "fallback-desktop",
+      "file": "captures/S-22-comparaison-fallback-desktop.png"
+    },
+    {
+      "state": "S-23/validation",
+      "profile": "fallback-desktop",
+      "file": "captures/S-23-validation-fallback-desktop.png"
+    },
+    {
+      "state": "S-24/retire",
+      "profile": "fallback-desktop",
+      "file": "captures/S-24-retire-fallback-desktop.png"
+    },
+    {
+      "state": "S-25/accueil",
+      "profile": "fallback-desktop",
+      "file": "captures/S-25-accueil-fallback-desktop.png"
+    },
+    {
+      "state": "S-27/brouillon",
+      "profile": "fallback-desktop",
+      "file": "captures/S-27-brouillon-fallback-desktop.png"
+    },
+    {
+      "state": "S-29/v2",
+      "profile": "fallback-desktop",
+      "file": "captures/S-29-v2-fallback-desktop.png"
+    },
+    {
+      "state": "S-30/apercu",
+      "profile": "fallback-desktop",
+      "file": "captures/S-30-apercu-fallback-desktop.png"
+    },
+    {
+      "state": "S-31/equipe",
+      "profile": "fallback-desktop",
+      "file": "captures/S-31-equipe-fallback-desktop.png"
+    },
+    {
+      "state": "S-36/interdit",
+      "profile": "fallback-desktop",
+      "file": "captures/S-36-interdit-fallback-desktop.png"
+    },
+    {
+      "state": "S-37/ia",
+      "profile": "fallback-desktop",
+      "file": "captures/S-37-ia-fallback-desktop.png"
+    },
+    {
+      "state": "I-01/ouvert",
+      "profile": "fallback-desktop",
+      "file": "captures/I-01-ouvert-fallback-desktop.png"
+    },
+    {
+      "state": "I-09/ouvert",
+      "profile": "fallback-desktop",
+      "file": "captures/I-09-ouvert-fallback-desktop.png"
+    },
+    {
+      "state": "I-16/ouvert",
+      "profile": "fallback-desktop",
+      "file": "captures/I-16-ouvert-fallback-desktop.png"
+    },
+    {
+      "state": "I-17/ouvert",
+      "profile": "fallback-desktop",
+      "file": "captures/I-17-ouvert-fallback-desktop.png"
+    },
+    {
+      "state": "I-18/retrait",
+      "profile": "fallback-desktop",
+      "file": "captures/I-18-retrait-fallback-desktop.png"
+    },
+    {
+      "state": "I-21/ouvert",
+      "profile": "fallback-desktop",
+      "file": "captures/I-21-ouvert-fallback-desktop.png"
+    },
+    {
+      "state": "I-23/ouvert",
+      "profile": "fallback-desktop",
+      "file": "captures/I-23-ouvert-fallback-desktop.png"
+    },
+    {
+      "state": "M-01/html",
+      "profile": "fallback-desktop",
+      "file": "captures/M-01-html-fallback-desktop.png"
+    },
+    {
+      "state": "M-01/texte",
+      "profile": "fallback-desktop",
+      "file": "captures/M-01-texte-fallback-desktop.png"
+    },
+    {
+      "state": "M-01/sombre",
+      "profile": "fallback-desktop",
+      "file": "captures/M-01-sombre-fallback-desktop.png"
+    },
+    {
+      "state": "M-02/html",
+      "profile": "fallback-desktop",
+      "file": "captures/M-02-html-fallback-desktop.png"
+    },
+    {
+      "state": "M-02/texte",
+      "profile": "fallback-desktop",
+      "file": "captures/M-02-texte-fallback-desktop.png"
+    },
+    {
+      "state": "M-02/sombre",
+      "profile": "fallback-desktop",
+      "file": "captures/M-02-sombre-fallback-desktop.png"
+    },
+    {
+      "state": "M-03/html",
+      "profile": "fallback-desktop",
+      "file": "captures/M-03-html-fallback-desktop.png"
+    },
+    {
+      "state": "M-03/texte",
+      "profile": "fallback-desktop",
+      "file": "captures/M-03-texte-fallback-desktop.png"
+    },
+    {
+      "state": "M-03/sombre",
+      "profile": "fallback-desktop",
+      "file": "captures/M-03-sombre-fallback-desktop.png"
+    },
+    {
+      "state": "M-04/html",
+      "profile": "fallback-desktop",
+      "file": "captures/M-04-html-fallback-desktop.png"
+    },
+    {
+      "state": "M-04/texte",
+      "profile": "fallback-desktop",
+      "file": "captures/M-04-texte-fallback-desktop.png"
+    },
+    {
+      "state": "M-04/sombre",
+      "profile": "fallback-desktop",
+      "file": "captures/M-04-sombre-fallback-desktop.png"
+    },
+    {
+      "state": "M-05/html",
+      "profile": "fallback-desktop",
+      "file": "captures/M-05-html-fallback-desktop.png"
+    },
+    {
+      "state": "M-05/texte",
+      "profile": "fallback-desktop",
+      "file": "captures/M-05-texte-fallback-desktop.png"
+    },
+    {
+      "state": "M-05/sombre",
+      "profile": "fallback-desktop",
+      "file": "captures/M-05-sombre-fallback-desktop.png"
+    },
+    {
+      "state": "S-02/connexion",
+      "profile": "fallback-mobile",
+      "file": "captures/S-02-connexion-fallback-mobile.png"
+    },
+    {
+      "state": "S-05/choix",
+      "profile": "fallback-mobile",
+      "file": "captures/S-05-choix-fallback-mobile.png"
+    },
+    {
+      "state": "S-06/nora",
+      "profile": "fallback-mobile",
+      "file": "captures/S-06-nora-fallback-mobile.png"
+    },
+    {
+      "state": "S-09/claire",
+      "profile": "fallback-mobile",
+      "file": "captures/S-09-claire-fallback-mobile.png"
+    },
+    {
+      "state": "S-09/louis",
+      "profile": "fallback-mobile",
+      "file": "captures/S-09-louis-fallback-mobile.png"
+    },
+    {
+      "state": "S-10/claire",
+      "profile": "fallback-mobile",
+      "file": "captures/S-10-claire-fallback-mobile.png"
+    },
+    {
+      "state": "S-11/claire",
+      "profile": "fallback-mobile",
+      "file": "captures/S-11-claire-fallback-mobile.png"
+    },
+    {
+      "state": "S-12/claire",
+      "profile": "fallback-mobile",
+      "file": "captures/S-12-claire-fallback-mobile.png"
+    },
+    {
+      "state": "S-14/jour",
+      "profile": "fallback-mobile",
+      "file": "captures/S-14-jour-fallback-mobile.png"
+    },
+    {
+      "state": "S-18/brouillon",
+      "profile": "fallback-mobile",
+      "file": "captures/S-18-brouillon-fallback-mobile.png"
+    },
+    {
+      "state": "S-19/lecture-seule",
+      "profile": "fallback-mobile",
+      "file": "captures/S-19-lecture-seule-fallback-mobile.png"
+    },
+    {
+      "state": "S-21/non-soutenu",
+      "profile": "fallback-mobile",
+      "file": "captures/S-21-non-soutenu-fallback-mobile.png"
+    },
+    {
+      "state": "S-22/comparaison",
+      "profile": "fallback-mobile",
+      "file": "captures/S-22-comparaison-fallback-mobile.png"
+    },
+    {
+      "state": "S-23/validation",
+      "profile": "fallback-mobile",
+      "file": "captures/S-23-validation-fallback-mobile.png"
+    },
+    {
+      "state": "S-24/retire",
+      "profile": "fallback-mobile",
+      "file": "captures/S-24-retire-fallback-mobile.png"
+    },
+    {
+      "state": "S-25/accueil",
+      "profile": "fallback-mobile",
+      "file": "captures/S-25-accueil-fallback-mobile.png"
+    },
+    {
+      "state": "S-27/brouillon",
+      "profile": "fallback-mobile",
+      "file": "captures/S-27-brouillon-fallback-mobile.png"
+    },
+    {
+      "state": "S-29/v2",
+      "profile": "fallback-mobile",
+      "file": "captures/S-29-v2-fallback-mobile.png"
+    },
+    {
+      "state": "S-30/apercu",
+      "profile": "fallback-mobile",
+      "file": "captures/S-30-apercu-fallback-mobile.png"
+    },
+    {
+      "state": "S-31/equipe",
+      "profile": "fallback-mobile",
+      "file": "captures/S-31-equipe-fallback-mobile.png"
+    },
+    {
+      "state": "S-36/interdit",
+      "profile": "fallback-mobile",
+      "file": "captures/S-36-interdit-fallback-mobile.png"
+    },
+    {
+      "state": "S-37/ia",
+      "profile": "fallback-mobile",
+      "file": "captures/S-37-ia-fallback-mobile.png"
+    },
+    {
+      "state": "I-01/ouvert",
+      "profile": "fallback-mobile",
+      "file": "captures/I-01-ouvert-fallback-mobile.png"
+    },
+    {
+      "state": "I-09/ouvert",
+      "profile": "fallback-mobile",
+      "file": "captures/I-09-ouvert-fallback-mobile.png"
+    },
+    {
+      "state": "I-16/ouvert",
+      "profile": "fallback-mobile",
+      "file": "captures/I-16-ouvert-fallback-mobile.png"
+    },
+    {
+      "state": "I-17/ouvert",
+      "profile": "fallback-mobile",
+      "file": "captures/I-17-ouvert-fallback-mobile.png"
+    },
+    {
+      "state": "I-18/retrait",
+      "profile": "fallback-mobile",
+      "file": "captures/I-18-retrait-fallback-mobile.png"
+    },
+    {
+      "state": "I-21/ouvert",
+      "profile": "fallback-mobile",
+      "file": "captures/I-21-ouvert-fallback-mobile.png"
+    },
+    {
+      "state": "I-23/ouvert",
+      "profile": "fallback-mobile",
+      "file": "captures/I-23-ouvert-fallback-mobile.png"
+    },
+    {
+      "state": "M-01/html",
+      "profile": "fallback-mobile",
+      "file": "captures/M-01-html-fallback-mobile.png"
+    },
+    {
+      "state": "M-01/texte",
+      "profile": "fallback-mobile",
+      "file": "captures/M-01-texte-fallback-mobile.png"
+    },
+    {
+      "state": "M-01/sombre",
+      "profile": "fallback-mobile",
+      "file": "captures/M-01-sombre-fallback-mobile.png"
+    },
+    {
+      "state": "M-02/html",
+      "profile": "fallback-mobile",
+      "file": "captures/M-02-html-fallback-mobile.png"
+    },
+    {
+      "state": "M-02/texte",
+      "profile": "fallback-mobile",
+      "file": "captures/M-02-texte-fallback-mobile.png"
+    },
+    {
+      "state": "M-02/sombre",
+      "profile": "fallback-mobile",
+      "file": "captures/M-02-sombre-fallback-mobile.png"
+    },
+    {
+      "state": "M-03/html",
+      "profile": "fallback-mobile",
+      "file": "captures/M-03-html-fallback-mobile.png"
+    },
+    {
+      "state": "M-03/texte",
+      "profile": "fallback-mobile",
+      "file": "captures/M-03-texte-fallback-mobile.png"
+    },
+    {
+      "state": "M-03/sombre",
+      "profile": "fallback-mobile",
+      "file": "captures/M-03-sombre-fallback-mobile.png"
+    },
+    {
+      "state": "M-04/html",
+      "profile": "fallback-mobile",
+      "file": "captures/M-04-html-fallback-mobile.png"
+    },
+    {
+      "state": "M-04/texte",
+      "profile": "fallback-mobile",
+      "file": "captures/M-04-texte-fallback-mobile.png"
+    },
+    {
+      "state": "M-04/sombre",
+      "profile": "fallback-mobile",
+      "file": "captures/M-04-sombre-fallback-mobile.png"
+    },
+    {
+      "state": "M-05/html",
+      "profile": "fallback-mobile",
+      "file": "captures/M-05-html-fallback-mobile.png"
+    },
+    {
+      "state": "M-05/texte",
+      "profile": "fallback-mobile",
+      "file": "captures/M-05-texte-fallback-mobile.png"
+    },
+    {
+      "state": "M-05/sombre",
+      "profile": "fallback-mobile",
+      "file": "captures/M-05-sombre-fallback-mobile.png"
+    }
+  ],
+  "keyboard": [
+    {
+      "state": "I-16/ouvert",
+      "initialFocus": "BODY",
+      "dialogCount": 1,
+      "firstTab": "<button class=\"etaye-fermer\" type=\"button\" aria-label=\"Fermer\"><span class=\"etaye-icone etaye-icone--18 etaye-icone--fermer \" aria-hidden=\"true\"></span></button>",
+      "dialogAfterEscape": 1
+    },
+    {
+      "state": "I-17/ouvert",
+      "initialFocus": "BODY",
+      "dialogCount": 1,
+      "firstTab": "<button class=\"etaye-fermer\" type=\"button\" aria-label=\"Fermer\"><span class=\"etaye-icone etaye-icone--18 etaye-icone--fermer \" aria-hidden=\"true\"></span></button>",
+      "dialogAfterEscape": 1,
+      "primaryChangesRoute": false
+    },
+    {
+      "state": "I-09/ouvert",
+      "initialFocus": "BODY",
+      "dialogCount": 1,
+      "firstTab": "<button class=\"etaye-fermer\" type=\"button\" aria-label=\"Fermer\"><span class=\"etaye-icone etaye-icone--18 etaye-icone--fermer \" aria-hidden=\"true\"></span></button>",
+      "dialogAfterEscape": 1,
+      "sourceChangesRoute": false
+    },
+    {
+      "state": "S-06/nora",
+      "initialFocus": "BODY",
+      "dialogCount": 0,
+      "firstTab": "<a class=\"etaye-top__logo\" href=\"../S-06/nora.html\"><img class=\"etaye-logo-c\" src=\"../../logos/etaye-logo.svg\" alt=\"Étaye\" style=\"height:22px\"><img class=\"etaye-logo-s\" src=\"../../logos/etaye-logo-sombre.svg\" alt=\"Étaye\" style=\"height:22px\"></a>",
+      "dialogAfterEscape": 0
+    },
+    {
+      "state": "S-06/nora",
+      "width": 320,
+      "visibleButtons": [
+        ""
+      ],
+      "dialog": []
+    },
+    {
+      "state": "I-01/ouvert",
+      "width": 320,
+      "visibleButtons": [
+        "",
+        "Annuler",
+        "Envoyer l'invitation"
+      ],
+      "dialog": [
+        {
+          "height": 1190,
+          "scrollHeight": 1190,
+          "cssOverflow": "visible",
+          "top": 0
+        }
+      ]
+    },
+    {
+      "state": "I-17/ouvert",
+      "width": 320,
+      "visibleButtons": [
+        "",
+        "Garder en interne",
+        "Publier pour le patient"
+      ],
+      "dialog": [
+        {
+          "height": 1872,
+          "scrollHeight": 1872,
+          "cssOverflow": "visible",
+          "top": 0
+        }
+      ]
+    }
+  ],
+  "networkFailures": [],
+  "selected": [
+    "S-02/connexion",
+    "S-05/choix",
+    "S-06/nora",
+    "S-09/claire",
+    "S-09/louis",
+    "S-10/claire",
+    "S-11/claire",
+    "S-12/claire",
+    "S-14/jour",
+    "S-18/brouillon",
+    "S-19/lecture-seule",
+    "S-21/non-soutenu",
+    "S-22/comparaison",
+    "S-23/validation",
+    "S-24/retire",
+    "S-25/accueil",
+    "S-27/brouillon",
+    "S-29/v2",
+    "S-30/apercu",
+    "S-31/equipe",
+    "S-36/interdit",
+    "S-37/ia",
+    "I-01/ouvert",
+    "I-09/ouvert",
+    "I-16/ouvert",
+    "I-17/ouvert",
+    "I-18/retrait",
+    "I-21/ouvert",
+    "I-23/ouvert",
+    "M-01/html",
+    "M-01/texte",
+    "M-01/sombre",
+    "M-02/html",
+    "M-02/texte",
+    "M-02/sombre",
+    "M-03/html",
+    "M-03/texte",
+    "M-03/sombre",
+    "M-04/html",
+    "M-04/texte",
+    "M-04/sombre",
+    "M-05/html",
+    "M-05/texte",
+    "M-05/sombre"
+  ]
+}

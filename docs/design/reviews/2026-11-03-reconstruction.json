@@ -1,0 +1,52 @@
+{
+  "pdfTextComparison": [
+    {
+      "file": "P-01-court.pdf",
+      "textIdentical": false,
+      "textIgnoringWhitespaceIdentical": true
+    },
+    {
+      "file": "P-01-incomplet.pdf",
+      "textIdentical": false,
+      "textIgnoringWhitespaceIdentical": true
+    },
+    {
+      "file": "P-01-long.pdf",
+      "textIdentical": false,
+      "textIgnoringWhitespaceIdentical": false
+    },
+    {
+      "file": "P-02-court.pdf",
+      "textIdentical": false,
+      "textIgnoringWhitespaceIdentical": true
+    },
+    {
+      "file": "P-02-incomplet.pdf",
+      "textIdentical": false,
+      "textIgnoringWhitespaceIdentical": true
+    },
+    {
+      "file": "P-02-long.pdf",
+      "textIdentical": false,
+      "textIgnoringWhitespaceIdentical": false
+    },
+    {
+      "file": "P-03-court.pdf",
+      "textIdentical": false,
+      "textIgnoringWhitespaceIdentical": true
+    },
+    {
+      "file": "P-03-incomplet.pdf",
+      "textIdentical": false,
+      "textIgnoringWhitespaceIdentical": false
+    },
+    {
+      "file": "P-03-long.pdf",
+      "textIdentical": false,
+      "textIgnoringWhitespaceIdentical": true
+    }
+  ],
+  "stateHtmlFilesIdentical": 398,
+  "indexOrderingDiffers": true,
+  "selectedSourceRebuildCompleted": true
+}

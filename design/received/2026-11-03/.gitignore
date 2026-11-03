@@ -1,0 +1,4 @@
+site/
+design-system/components/
+review/*/
+__pycache__/

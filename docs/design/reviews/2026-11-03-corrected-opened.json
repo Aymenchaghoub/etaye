@@ -1,0 +1,220 @@
+{
+  "reviewer": "Codex",
+  "date": "2026-11-03",
+  "externalBase": "/home/aymen.chaghoub/Projets/etaye-design-receipts/2026-11-03-d36658648db1",
+  "opened": [
+    {
+      "path": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-01-court-1.png",
+      "scope": "Every corrected PDF page individually opened; later final PDFs require pixel or visual reconciliation",
+      "sha256": "5c10dac6f8cb81cb31f4283958d1bc3ea6eac9ce08123d1c152a60b6a3387eae"
+    },
+    {
+      "path": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-01-court-2.png",
+      "scope": "Every corrected PDF page individually opened; later final PDFs require pixel or visual reconciliation",
+      "sha256": "f872d35e342cb83ee4163a0db4bd41a3b710e02d4c7940505f21eeb85aec050d"
+    },
+    {
+      "path": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-01-incomplet-1.png",
+      "scope": "Every corrected PDF page individually opened; later final PDFs require pixel or visual reconciliation",
+      "sha256": "139a83acf9a4b391ffac851aa64c24c699b5113d13a4955cc7172766b4fe633c"
+    },
+    {
+      "path": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-01-long-1.png",
+      "scope": "Every corrected PDF page individually opened; later final PDFs require pixel or visual reconciliation",
+      "sha256": "dc2d3a93509fe7e562bc17418c8dc33a31c5f880d578c5007cc874b450cca566"
+    },
+    {
+      "path": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-01-long-2.png",
+      "scope": "Every corrected PDF page individually opened; later final PDFs require pixel or visual reconciliation",
+      "sha256": "6f14f9eea1cb5f5feba8560eb05d1fa01f9726791acb017e2816a4ed93875b33"
+    },
+    {
+      "path": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-01-long-3.png",
+      "scope": "Every corrected PDF page individually opened; later final PDFs require pixel or visual reconciliation",
+      "sha256": "97acc1e205db40b0d3fa7cc2be2bdd3043ab54c4e91c8c2088f199faad6d5242"
+    },
+    {
+      "path": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-01-long-4.png",
+      "scope": "Every corrected PDF page individually opened; later final PDFs require pixel or visual reconciliation",
+      "sha256": "b7e96d78bdcf6556f468a919b35dff6b6add86866956783c2f57e0a57a64af4f"
+    },
+    {
+      "path": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-01-long-5.png",
+      "scope": "Every corrected PDF page individually opened; later final PDFs require pixel or visual reconciliation",
+      "sha256": "f0509103fed8a083e6e9af87207869a39330ddb6051cc687289f0febadf937e0"
+    },
+    {
+      "path": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-02-court-1.png",
+      "scope": "Every corrected PDF page individually opened; later final PDFs require pixel or visual reconciliation",
+      "sha256": "13cbc31d455ad34080952b13ec4b7feb71fd3ebcc28dfc276e7c0d555e2bdc78"
+    },
+    {
+      "path": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-02-incomplet-1.png",
+      "scope": "Every corrected PDF page individually opened; later final PDFs require pixel or visual reconciliation",
+      "sha256": "5a27d2d4ac0db7f7b8e12ae6b2834103e951493f6b570f372fe8c85c52a6a380"
+    },
+    {
+      "path": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-02-long-1.png",
+      "scope": "Every corrected PDF page individually opened; later final PDFs require pixel or visual reconciliation",
+      "sha256": "45b8e501c2f724c2dbc3e1d845291db609e4c9fc6ae34aaecff627ea4b102d4a"
+    },
+    {
+      "path": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-02-long-2.png",
+      "scope": "Every corrected PDF page individually opened; later final PDFs require pixel or visual reconciliation",
+      "sha256": "6e9b82e3a8f4470df56bb8170bd089a573217d5063bc9c044c350fcb038ddf4e"
+    },
+    {
+      "path": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-02-long-3.png",
+      "scope": "Every corrected PDF page individually opened; later final PDFs require pixel or visual reconciliation",
+      "sha256": "6e481b86d170164ac95359a9f5dd7b39cd2700b5c62290e9a34ce99d7be6c8e0"
+    },
+    {
+      "path": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-02-long-4.png",
+      "scope": "Every corrected PDF page individually opened; later final PDFs require pixel or visual reconciliation",
+      "sha256": "b0f85735b12c664f9c1eea796ca5986855abfcf0866ad2532f85b64369607940"
+    },
+    {
+      "path": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-02-long-5.png",
+      "scope": "Every corrected PDF page individually opened; later final PDFs require pixel or visual reconciliation",
+      "sha256": "470677864cab630c6ee2a91f6ace17ad1175f7e59d6f85a869fb2768728cf459"
+    },
+    {
+      "path": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-02-long-6.png",
+      "scope": "Every corrected PDF page individually opened; later final PDFs require pixel or visual reconciliation",
+      "sha256": "530799c8405445d12b8e3c77b81ad4d2aacca22e087c7edeb497672230995034"
+    },
+    {
+      "path": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-02-long-7.png",
+      "scope": "Every corrected PDF page individually opened; later final PDFs require pixel or visual reconciliation",
+      "sha256": "24f2bb8af3189b4930964d4f99af5a48b0d9dc3166c8f41a1bee51d5c90f2244"
+    },
+    {
+      "path": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-03-court-1.png",
+      "scope": "Every corrected PDF page individually opened; later final PDFs require pixel or visual reconciliation",
+      "sha256": "d6f7d5388fc475176b8a0e89f0bd09c4d5cae9a85aab28dccf92b61cf02fd42d"
+    },
+    {
+      "path": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-03-incomplet-1.png",
+      "scope": "Every corrected PDF page individually opened; later final PDFs require pixel or visual reconciliation",
+      "sha256": "578d05d1c19a81acf0c73b40518742028802f1bb34d493b2d85b04eb28a00107"
+    },
+    {
+      "path": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-03-long-1.png",
+      "scope": "Every corrected PDF page individually opened; later final PDFs require pixel or visual reconciliation",
+      "sha256": "501981cdf71a84b68447e028a243244eba20d09fd1b653c0830aa97da373cb49"
+    },
+    {
+      "path": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-03-long-2.png",
+      "scope": "Every corrected PDF page individually opened; later final PDFs require pixel or visual reconciliation",
+      "sha256": "26159fe6963ee8f60f320d2d996a7a586a4d05fe5c587a9a5ec5a1b7be17f42c"
+    },
+    {
+      "path": "corrections/etaye-design-rebuild-dfb0pvq7/pdf-review/P-03-long-3.png",
+      "scope": "Every corrected PDF page individually opened; later final PDFs require pixel or visual reconciliation",
+      "sha256": "f8ccb79dc6c037d5ca90e0d116c70a67c1639d878bfba618bee5505fb4c1d99c"
+    },
+    {
+      "path": "corrected-review-3/sheet-desktop-1.png",
+      "scope": "Targeted opened correction render; overview sheets establish layout only where small",
+      "sha256": "751a8b54437584c37eeae9c111d8db6118fd2e87f21f9b676473fa136c5abe5c"
+    },
+    {
+      "path": "corrected-review-3/sheet-desktop-2.png",
+      "scope": "Targeted opened correction render; overview sheets establish layout only where small",
+      "sha256": "08733e70d2f912bc13892f0bffb4cf60c92748e4e80fdf0b3dd1f79ce03036b1"
+    },
+    {
+      "path": "corrected-review-3/sheet-mobile-1.png",
+      "scope": "Targeted opened correction render; overview sheets establish layout only where small",
+      "sha256": "857d58f77a4bd6aea9ef5739c1d7bc109a040ce43d883f7fae16452f707889d7"
+    },
+    {
+      "path": "corrected-review-3/sheet-mobile-2.png",
+      "scope": "Targeted opened correction render; overview sheets establish layout only where small",
+      "sha256": "6e02f4b80509a26178c1a92be6572e2c6e93cd936b063825fdc9e1dc12f14fdd"
+    },
+    {
+      "path": "corrected-review-3/sheet-mobile-3.png",
+      "scope": "Targeted opened correction render; overview sheets establish layout only where small",
+      "sha256": "c89e8b5dd1b708004c42a38fc2ffcf769bc90c830b9d92fdb040f725a8783fe0"
+    },
+    {
+      "path": "corrected-review-3/sheet-mobile-4.png",
+      "scope": "Targeted opened correction render; overview sheets establish layout only where small",
+      "sha256": "ee8d73d5c57d3eed2f8a2c4b4ef0376914ec1d13a4b50bc7c04019ea886128a1"
+    },
+    {
+      "path": "corrected-review-3/sheet-mobile-5.png",
+      "scope": "Targeted opened correction render; overview sheets establish layout only where small",
+      "sha256": "e77e82b1b2b24ab66cfa0ea7e027b03e4f3ecdafab5b9aed15e5d9cb4dcd2f94"
+    },
+    {
+      "path": "corrected-review-3/sheet-narrow-4.png",
+      "scope": "Targeted opened correction render; overview sheets establish layout only where small",
+      "sha256": "3800098eb02c30232c4337d582e35893fef138af929b55cd967096496bff6a93"
+    },
+    {
+      "path": "corrected-review-3/sheet-dark-1.png",
+      "scope": "Targeted opened correction render; overview sheets establish layout only where small",
+      "sha256": "ec1073cc2a81d69944f435d536a90d9a0be77950b4e0ce92aa89624994b85dac"
+    },
+    {
+      "path": "corrected-review-3/sheet-fallback-1.png",
+      "scope": "Targeted opened correction render; overview sheets establish layout only where small",
+      "sha256": "c255845691e4f6299afa4e72220d331dddbd993e53393a92480da56c9823effe"
+    },
+    {
+      "path": "corrected-review-3/S-32-membre-narrow.png",
+      "scope": "Targeted opened correction render; overview sheets establish layout only where small",
+      "sha256": "281e2ec1e15415e4032df9637b09908a49207c640dfe220dab18b5788acae87b"
+    },
+    {
+      "path": "corrected-review-3/I-17-ouvert-mobile.png",
+      "scope": "Targeted opened correction render; overview sheets establish layout only where small",
+      "sha256": "6d7026eb323cdc845cb3325d8b14c293f542a42b9b8e4f9f671eb6b57984e443"
+    },
+    {
+      "path": "corrected-review-3/S-30-apercu-mobile.png",
+      "scope": "Targeted opened correction render; overview sheets establish layout only where small",
+      "sha256": "3aefeceb313844d8b01338eba3f8af1e77964a254d03b9bbc37d96cb0689e3ad"
+    },
+    {
+      "path": "corrected-review-3/S-06-jour-vide-desktop.png",
+      "scope": "Targeted opened correction render; overview sheets establish layout only where small",
+      "sha256": "34dddd98fe47e7102be5ec41f5774eb36322c18551f16386221c37f15986625a"
+    },
+    {
+      "path": "corrected-review-final-targets/I-21-mesure.png",
+      "scope": "Full-size targeted render opened; native dialog viewport separately checked because full-page capture extends document",
+      "sha256": "139d2bef65bcc942617053ca38b5819cd7f40b407976f22253bb3d0377b1190e"
+    },
+    {
+      "path": "corrected-review-final-targets/I-09-source-src-b-001.png",
+      "scope": "Full-size targeted render opened; native dialog viewport separately checked because full-page capture extends document",
+      "sha256": "ff2513ebd31dfad0c8856a1f0b0060ac0bd2b0400974b8e5e1d8662981d003e8"
+    },
+    {
+      "path": "corrected-review-final-targets/I-19-patient.png",
+      "scope": "Full-size targeted render opened; native dialog viewport separately checked because full-page capture extends document",
+      "sha256": "a365bed7a9da1aca7695dbf64b9efdeaa287c99902afcb79119a314c362f4393"
+    },
+    {
+      "path": "corrected-review-final-targets/S-38-expiree.png",
+      "scope": "Full-size targeted render opened; native dialog viewport separately checked because full-page capture extends document",
+      "sha256": "f04230a12d009da8d76cb712f04d494733777c8b0f26719db2dcb1a0f0031ced"
+    },
+    {
+      "path": "corrected-review-final-targets/I-15-source-open.png",
+      "scope": "Full-size targeted render opened; native dialog viewport separately checked because full-page capture extends document",
+      "sha256": "1d49efb14323039404f740e4b219b168f1aff9bcd10359a9b19da7b3ced90ce4"
+    },
+    {
+      "path": "corrected-review-final-targets/I-15-source-viewport.png",
+      "scope": "Full-size targeted render opened; native dialog viewport separately checked because full-page capture extends document",
+      "sha256": "d6b5912b807957ee5b550a6ac04c0b9a3a9e41784f75999c80e2e42799ac8df2"
+    }
+  ],
+  "approval": false,
+  "figmaImported": false,
+  "scope": "Actual opened views only; generating screenshots is not visual acceptance"
+}
