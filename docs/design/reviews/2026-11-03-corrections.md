@@ -39,7 +39,7 @@ The overlay adds 58 variants, yielding **456 states in the same 76 families**, w
 | DHR-021 | Narrow S-32 long values wrap; all corrected states undergo four-width overflow checks. Long publication dialog uses a scrolling body and visible actions; full-size mobile render was opened. |
 | DHR-022 | **Contained; Figma synchronization remains pending.** Raster-frame plugin is not executed, committed or presented as an editable import. Aymen has selected real editable Design layers. Authentication, actual conversion, component reconciliation and synchronized visual review must occur separately. |
 | DHR-023 | Wrapper verifies original hashes, clears inherited root overrides, uses a fresh external folder and build/PDF/build sequence. Active corrected verification supersedes the obsolete standalone design-system checker; the old gallery/checker is not silently repaired or certified. |
-| DHR-024 | All nine PDFs and their previews regenerated from the same frozen corrected source; P-03 incomplete now agrees with source wording. Every corrected PDF page was opened in grayscale. Snapshot/PDF hashes bind the actual reviewed output. |
+| DHR-024 | All nine PDFs and their previews regenerated from the same frozen corrected source; P-03 incomplete now agrees with source wording. Every corrected PDF page was opened in grayscale. Final rebuilt pages are reconciled against those opened renders. Snapshot/PDF hashes bind the actual reviewed output. |
 
 ## Verification and actual visual scope
 
@@ -60,3 +60,9 @@ All 37 stories remain backlog. Functional and visual evidence stay separate from
 ## Delivery review and local import correction
 
 [PR3](https://github.com/Aymenchaghoub/etaye/pull/3) carries this design-only delivery. The first required documentation and Python CodeQL checks passed on9078dc5; head-specific GitHub results remain authoritative. Copilot's automatic attempt returned insufficient quota and is not counted as review. Two independent import reviewers then identified field-height/line-height conflation and lost scroll clipping. Both were corrected, CSS SVG paint was preserved, and a fourth isolated test asserts multiline spacing and clipped editable descendants. All desktop scenes were regenerated from the same verified HTML snapshot. This remains local export/model evidence, not native Figma execution.
+
+## PR review corrections
+
+CodeRabbit's initial review on9078dc5 posted11 actionable comments. Each was checked against current source. Corrections align agent-setup CI scope, guard every S-38 session-recovery dismissal before any return URL, upgrade optional Pillow to13.0.0 with regenerated hashes and Dependabot scope, use SVG-compatible class names, test preservation against a pre-existing sentinel, clear stale evidence links between imports, point recovery to the current report, map DHR-019, audit data-next/data-safe-return, make export text explicitly UTF-8, and reject corrected rebuilds without PDFs before creating output. The expanded local-reference scan checks9013 references without missing targets. Nine tooling tests and four isolated plugin tests pass.
+
+Pillow13.0.0 is the current stable release verified against [official release notes](https://pillow.readthedocs.io/en/stable/releasenotes/); this is dependency maintenance, not a claim that the synthetic design inputs exposed an exploitable path. Original receipt verification used12.1.0; subsequent corrected reconstruction/verification uses13.0.0. Original sources and earlier evidence stay unchanged. Installable official fonts for the later Windows check are supplied externally, with [version/license provenance](../../../design/figma-local-import/font-sources.json).

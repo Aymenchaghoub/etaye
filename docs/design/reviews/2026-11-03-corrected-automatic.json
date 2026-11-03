@@ -3,7 +3,7 @@
   "applicationTests": false,
   "links": {
     "htmlPages": 458,
-    "referencesChecked": 8683,
+    "referencesChecked": 9013,
     "missingFiles": [],
     "missingFragments": [],
     "duplicateIds": [],
@@ -434,7 +434,23 @@
       "passed": true
     },
     {
-      "name": "Expired session Escape requires login",
+      "name": "Session recovery Escape requires login: expiree",
+      "passed": true
+    },
+    {
+      "name": "Session recovery Escape requires login: enregistrement",
+      "passed": true
+    },
+    {
+      "name": "Session recovery Escape requires login: publication",
+      "passed": true
+    },
+    {
+      "name": "Session recovery Escape requires login: droits-modifies",
+      "passed": true
+    },
+    {
+      "name": "Session recovery Escape requires login: autre-compte",
       "passed": true
     },
     {
@@ -776,58 +792,58 @@
       "file": "P-01-court.pdf",
       "pages": 2,
       "allPageFooters": true,
-      "sha256": "d02ab5641677107b2ff0d062efbba6e215239efff27999057678973f17efb30d"
+      "sha256": "32377f88d7be7d2e2062cbbb7a76c27e6bea2ca9eea68e1f82499ad54cf64abc"
     },
     {
       "file": "P-01-incomplet.pdf",
       "pages": 1,
       "allPageFooters": true,
-      "sha256": "9e314b54d8691ec109c6c334c65b88db5f9ff196f7888f22142d522c32308fd8"
+      "sha256": "a9b77eb2a37ada3d63e114d958b41db17f34ee4fc5b704ccae0adbd2d7c86b4b"
     },
     {
       "file": "P-01-long.pdf",
       "pages": 5,
       "allPageFooters": true,
-      "sha256": "f8e00c516f01291432626b796a10c19d490f90061d203e21c95b33261c82684f"
+      "sha256": "b1f93956fec92282e95a3165b16626c885d294099f37e22698c709d284e28f6a"
     },
     {
       "file": "P-02-court.pdf",
       "pages": 1,
       "allPageFooters": true,
-      "sha256": "6d0b9fc4eb0fd44066474eb1914a2017367c61b364ccb13d72db988bcf56e49d"
+      "sha256": "d6da97b04aa299c3cf0ed74b7f1b561c2c7b97fce90bdfa00f449ce068cdd904"
     },
     {
       "file": "P-02-incomplet.pdf",
       "pages": 1,
       "allPageFooters": true,
-      "sha256": "e66fad7762e81b2183c56f702167e5b74249ffdb69088524637043b0b7272b7a"
+      "sha256": "763f88520b6450c30fb5c7c71e134110d99cb603dcae63decb7723e3fb6abdb0"
     },
     {
       "file": "P-02-long.pdf",
       "pages": 7,
       "allPageFooters": true,
-      "sha256": "eb938253c6952bceb1d1018f2f692ec83728c58ce42346c4740dd882025b8a7a"
+      "sha256": "b34410b4574bd4f851a00701d9ac83be5729ef16aa0779a5b024b3e1a1e1d28a"
     },
     {
       "file": "P-03-court.pdf",
       "pages": 1,
       "allPageFooters": true,
-      "sha256": "7c45713e500ca6ab2a14fa22da0c63c1a0c51f824dd26e64678e730ca10e0e46"
+      "sha256": "5ee093307243809afadec0735677afb9e60c5791e6a5053242c247a5a07c94bb"
     },
     {
       "file": "P-03-incomplet.pdf",
       "pages": 1,
       "allPageFooters": true,
-      "sha256": "e0df01827d1844c84cff45f6044b4d6f23c02646cb61cc660c7dc1d39f6adee2"
+      "sha256": "aa60d27ec9c099bbb18c514855fe03703f6663461307940a686d4851061a1c83"
     },
     {
       "file": "P-03-long.pdf",
       "pages": 3,
       "allPageFooters": true,
-      "sha256": "167b99167fa8dbc8be373cbbdc4a48a95e52b00d31b84d3951de421848977e80"
+      "sha256": "7d2a913342bacca1d707ef3804c6cead0e9a35c250398bf1d7d2ec7c1f32a33e"
     }
   ],
-  "snapshotSha256": "5133332577cf1b549896006b894e841bedc19a5eaf815e7085e2fb977eef3f26",
+  "snapshotSha256": "af41624989448ae5cfcd066deedfb4e7623abd1794967ce105d0b3c4fc7962ba",
   "browser": "145.0.7632.6",
   "stateCount": 456,
   "families": 76,

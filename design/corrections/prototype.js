@@ -56,7 +56,7 @@
   const dialog=document.querySelector('[role="dialog"],[role="alertdialog"]');
   const closeDialog = () => {
     // Session recovery must never dismiss back into protected clinical content.
-    if (/\/S-38\/expiree\.html$/.test(location.pathname)) { go('../S-02/connexion.html'); return; }
+    if (/\/S-38\/[^/]+\.html$/.test(location.pathname)) { go('../S-02/connexion.html'); return; }
     const back=safeReturn();
     if (back) { if(params.get('focus'))back.searchParams.set('focus',params.get('focus'));go(back.href); return; }
     if(document.body.dataset.safeReturn){go(document.body.dataset.safeReturn);return;}

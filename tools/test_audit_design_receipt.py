@@ -3,11 +3,44 @@
 from pathlib import Path
 import tempfile
 import unittest
+import subprocess
+import sys
 
 from audit_design_receipt import inspect
 
 
 class DesignReferenceTests(unittest.TestCase):
+    def test_prototype_transition_and_safe_return_are_audited(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            site = Path(temporary)
+            (site / "index.html").write_text(
+                '<button data-next="missing.html">Next</button><body data-safe-return="outside.html"></body>'
+            )
+            result = inspect(site)
+            self.assertFalse(result["ok"])
+            self.assertEqual(
+                {row[1] for row in result["missingFiles"]},
+                {"data-next", "data-safe-return"},
+            )
+
+    def test_corrected_rebuild_requires_pdfs_before_creating_output(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary) / "must-not-be-created"
+            run = subprocess.run(
+                [
+                    sys.executable,
+                    str(Path(__file__).with_name("rebuild_design_receipt.py")),
+                    "--output",
+                    str(output),
+                    "--corrected",
+                ],
+                capture_output=True,
+                text=True,
+            )
+            self.assertNotEqual(run.returncode, 0)
+            self.assertIn("--corrected requires --pdf", run.stderr)
+            self.assertFalse(output.exists())
+
     def test_refs_assets_and_fragments(self):
         with tempfile.TemporaryDirectory() as temporary:
             site = Path(temporary)

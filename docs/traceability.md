@@ -95,6 +95,6 @@ Detailed I-01–28 mappings are in the interaction catalog and coverage rows. FR
 | DHR-010 | FR-009; BR-006; J-03/J-06 | S-26,I-11,I-12 | AppointmentMove/Reason; reschedule/cancel including own appointment | 4.3,7.5 / AT-016,031 |
 | DHR-011,014 | FR-006/007; BR-008/009; J-02 | S-11,S-12,I-06,I-07 | Measurement/LabResult source/correction lineage; no invented medical bounds | 3.3/3.4 / AT-011/012 |
 | DHR-013 | FR-018; BR-017; J-07 | S-34,I-25 | AuditEvent/listScopedAudit permission projection | 2.4 / AT-008 |
-| DHR-017,018,022–024 | FR-017/019/020; BR-016/018; design/review gate | All HTML families; P-01–03, S-30,S-39,I-19,I-28 | ExportArtifact, frozen source/assets/evidence manifest; Figma pending | 8.1–8.3,9.1–9.3 / AT-032–037 |
+| DHR-017–019,022–024 | FR-017/019/020; BR-016/018; design/review gate | All HTML families; P-01–03, S-30,S-39,I-19,I-28 | ExportArtifact, frozen source/assets/evidence manifest; Figma pending | 8.1–8.3,9.1–9.3 / AT-032–037 |
 
 The REPORT's twelve decision subquestions and acknowledgement-contract gap are recorded in [decision reconciliation](design/reviews/2026-11-03-decisions.md). Existing canonical behavior is not rewritten to match mockups; new proposals remain pending Aymen.

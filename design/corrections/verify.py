@@ -190,13 +190,17 @@ with sync_playwright() as p:
         proposed.count() == 1
         and "68,4 kg · saisie non enregistrée" in proposed.inner_text(),
     )
-    goto("S-38/expiree")
-    page.wait_for_function(
-        'Boolean(document.activeElement.closest("[role=alertdialog]"))'
-    )
-    page.keyboard.press("Escape")
-    page.wait_for_url("**/S-02/connexion.html*")
-    check("Expired session Escape requires login", "/S-02/connexion.html" in page.url)
+    for state in [m for m in states if m["id"] == "S-38"]:
+        goto(state["id"] + "/" + state["slug"], "?return=../S-23/validation.html")
+        page.wait_for_function(
+            'Boolean(document.activeElement.closest("[role=alertdialog]"))'
+        )
+        page.keyboard.press("Escape")
+        page.wait_for_url("**/S-02/connexion.html*")
+        check(
+            "Session recovery Escape requires login: " + state["slug"],
+            "/S-02/connexion.html" in page.url,
+        )
     for state in ["I-19/patient", "S-29/extrait-src-a-005"]:
         goto(state)
         page.wait_for_function(

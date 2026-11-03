@@ -34,7 +34,9 @@ def main():
         parser.error("Choose a new external folder disjoint from source and repository")
     if not 1 <= args.batch_size <= 20 or (args.limit is not None and args.limit < 1):
         parser.error("batch-size must be 1..20; limit must be positive")
-    snapshot = json.loads((root / "review/corrected-snapshot.json").read_text())
+    snapshot = json.loads(
+        (root / "review/corrected-snapshot.json").read_text(encoding="utf-8")
+    )
     expected = {entry["path"]: entry["sha256"] for entry in snapshot["files"]}
     actual = {
         str(p.relative_to(root)): digest(p) for p in site.rglob("*") if p.is_file()
@@ -46,7 +48,7 @@ def main():
     states = [
         m
         for f in sorted((site / "manifest").glob("*.json"))
-        for m in json.loads(f.read_text())
+        for m in json.loads(f.read_text(encoding="utf-8"))
     ]
     states.sort(key=lambda m: (m["id"], m["slug"]))
     if args.limit:
@@ -81,7 +83,7 @@ def main():
     with sync_playwright() as p:
         browser = p.chromium.launch()
         page = browser.new_page(viewport={"width": 1440, "height": 1024})
-        capture = (PLUGIN / "capture.js").read_text()
+        capture = (PLUGIN / "capture.js").read_text(encoding="utf-8")
         for index, state in enumerate(states, 1):
             page.goto((site / state["path"]).as_uri())
             page.evaluate("document.fonts.ready")
@@ -110,7 +112,8 @@ def main():
                             "frames": captured,
                         },
                         ensure_ascii=False,
-                    )
+                    ),
+                    encoding="utf-8",
                 )
                 print(name, index, "/", len(states), flush=True)
                 captured = []
@@ -130,7 +133,9 @@ def main():
         "aymenApproval": False,
         "files": files,
     }
-    (out / "MANIFEST.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    (out / "MANIFEST.json").write_text(
+        json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
+    )
     print(
         "Export complete. Native Figma execution and visual reconciliation remain unverified."
     )

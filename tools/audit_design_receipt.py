@@ -21,7 +21,7 @@ class Page(HTMLParser):
         attributes = dict(attrs)
         if "id" in attributes:
             self.ids.append(attributes["id"])
-        for key in ("href", "src", "poster"):
+        for key in ("href", "src", "poster", "data-next", "data-safe-return"):
             if attributes.get(key):
                 self.references.append((tag, key, attributes[key]))
 

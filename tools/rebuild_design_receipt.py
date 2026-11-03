@@ -32,6 +32,10 @@ def main():
     parent = args.output.expanduser().resolve()
     if parent.is_relative_to(REPO):
         parser.error("Use an external output folder to preserve the source reference")
+    if args.corrected and not args.pdf:
+        parser.error(
+            "--corrected requires --pdf: corrected pages link to generated PDFs and previews"
+        )
     if sys.version_info < (3, 12):
         parser.error("The received generator needs Python 3.12 or newer")
     provenance = json.loads((SOURCE / "provenance.json").read_text())

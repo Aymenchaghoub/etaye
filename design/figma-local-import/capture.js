@@ -32,7 +32,7 @@
     const style=getComputedStyle(element),rect=element.getBoundingClientRect();
     if(style.display==='none'||style.visibility==='hidden'||!rect.width||!rect.height||number(style.opacity)===0)return null;
     const absolute={x:rect.x+scrollX,y:rect.y+scrollY};
-    const item={type:'frame',name:element.tagName.toLowerCase()+(element.id?'#'+element.id:'.'+String(element.className||'').split(' ').slice(0,2).join('.')),
+    const item={type:'frame',name:element.tagName.toLowerCase()+(element.id?'#'+element.id:'.'+(element.getAttribute('class')||'').split(/\s+/).filter(Boolean).slice(0,2).join('.')),
       x:absolute.x-parent.x,y:absolute.y-parent.y,w:rect.width,h:rect.height,opacity:number(style.opacity),fill:color(style.backgroundColor),radius:number(style.borderTopLeftRadius),clip:['hidden','auto','scroll','clip'].includes(style.overflowX)||['hidden','auto','scroll','clip'].includes(style.overflowY),children:[]};
     if(element.tagName.toUpperCase()==='SVG'){
       const clone=element.cloneNode(true);
