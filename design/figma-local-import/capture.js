@@ -39,7 +39,7 @@
       const sourceNodes=[element,...element.querySelectorAll('*')],copyNodes=[clone,...clone.querySelectorAll('*')];
       for(let index=0;index<sourceNodes.length;index++){
         const computed=getComputedStyle(sourceNodes[index]);
-        for(const property of ['fill','stroke','stroke-width','stroke-linecap','stroke-linejoin','opacity'])copyNodes[index].setAttribute(property,computed.getPropertyValue(property));
+        for(const property of ['fill','stroke','stroke-width','stroke-linecap','stroke-linejoin','stroke-dasharray','stroke-dashoffset','opacity'])copyNodes[index].setAttribute(property,computed.getPropertyValue(property));
       }
       for(const text of clone.querySelectorAll('text'))text.remove();
       item.type='svg';item.svg=clone.outerHTML.replace(/currentColor/g,style.color).replace(/var\((--[^)]+)\)/g,(_,name)=>style.getPropertyValue(name).trim());
