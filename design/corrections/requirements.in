@@ -1,4 +1,4 @@
 beautifulsoup4==4.15.0
 Pillow==13.0.0
 playwright==1.58.0
-pypdf==6.7.5
+pypdf==6.21.4
