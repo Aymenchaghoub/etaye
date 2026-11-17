@@ -50,7 +50,7 @@ All entries are planned, not executed. Exact Given/When/Then conditions are in t
 | AT-044-A/B/C | [10.7](../planning-artifacts/epics/epic-10.md) | Content-free push notifications | Real assertions and recorded reports; record commit/fixture/environment and limitations (no visual review) |
 | AT-045-A/B/C | [10.8](../planning-artifacts/epics/epic-10.md) | iOS build and store-readiness gate | Real assertions and recorded reports; record commit/fixture/environment and limitations (no visual review) |
 
-## Scheduling registration boundary (PD-001 proposal)
+## Scheduling registration boundary (PD-001, accepted UD-17)
 
 - **AT-015-D (contract/design target, not executed application test):** Given Mila's explicitly assigned SCHEDULE_MANAGE and PATIENT_REGISTER in PRA-A, lookup returns only SchedulingPatient fields; registration creates identity plus empty local record and returns to the retained booking slot. GET clinical search/record/source stays forbidden. Birth date/contact validation, scoped duplicate candidates and idempotent retries must not create duplicate people or imply portal activation.
 - **AT-015-E (contract/design target, not executed application test):** With only SCHEDULE_MANAGE, existing-patient lookup/booking works but registration returns403 and shows the S-08 restriction without discarding the slot. Administrator-only cannot access either path. A PRA-B identifier/query never exposes PRA-A identity/contact or clinical details. The fixture must demonstrate these denied variants without broadening Mila's clinical capabilities.
