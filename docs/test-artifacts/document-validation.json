@@ -4,7 +4,7 @@
   "ok": true,
   "checks": {
     "markdownFiles": 82,
-    "localLinks": 758,
+    "localLinks": 762,
     "apiOperations": 94,
     "apiSchemas": 86,
     "planningStories": 37,
@@ -12,7 +12,7 @@
     "screenInteractionMappings": 28,
     "syntheticObjects": 66,
     "verifiedFigmaExports": 15,
-    "projectFilesSecretScanned": 124
+    "projectFilesSecretScanned": 125
   },
   "errors": [],
   "applicationTestsExecuted": false,

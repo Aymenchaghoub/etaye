@@ -12,7 +12,7 @@ This handoff targets **Windows with Figma Desktop already installed**, as Aymen 
 
 ## Get the files
 
-Download the ZIP and its checksum file from the [Windows design handoff release](https://github.com/Aymenchaghoub/etaye/releases/tag/figma-windows-20261117). Extract to a short local path such as `C:\Etaye-Figma`.
+Download the ZIP and its checksum file from the [Windows design handoff release](https://github.com/Aymenchaghoub/etaye/releases/tag/figma-windows-20261117). The [delivery register](DELIVERY.json) records the actual archive SHA-256, source commit and upload verification. Extract to a short local path such as `C:\Etaye-Figma`.
 
 The archive contains:
 
