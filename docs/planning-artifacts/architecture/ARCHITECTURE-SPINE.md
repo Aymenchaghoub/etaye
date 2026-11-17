@@ -55,7 +55,7 @@ flowchart LR
 
 - **Binds:** FR-001, FR-002, FR-016.
 - **Prevents:** incompatible login models and stale roles encoded in browser tokens.
-- **Rule:** Browser uses an opaque server-side session cookie (`HttpOnly`, `Secure`, `SameSite=Lax`, host-only) and CSRF protection for unsafe methods, including login and logout. Session ID rotates at authentication. Resolve active grants server-side per request. Serve browser/API under one origin; do not store bearer tokens in browser storage. Revoke affected sessions after suspension/password reset. Profile and portal/clinical entry points share the account authentication authority.
+- **Rule:** Browser uses an opaque server-side session cookie (`HttpOnly`, `Secure`, `SameSite=Lax`, host-only) and CSRF protection for unsafe methods, including login and logout. Session ID rotates at authentication. Resolve active grants server-side per request. Serve browser/API under one origin; do not store bearer tokens in browser storage. Revoke affected sessions after suspension/password reset. Profile and portal/clinical entry points share the account authentication authority. Native clients use the transport of AD-11.
 
 ### AD-5 — Facts and source lineage
 
@@ -67,7 +67,7 @@ flowchart LR
 
 - **Binds:** FR-011 through FR-017.
 - **Prevents:** successful processing or validation exposing content to patients.
-- **Rule:** Business status is `DRAFT`, `IN_REVIEW` or `VALIDATED`; processing state belongs only to an AI/export task; freshness is `CURRENT` or `STALE`; publication state is `PUBLISHED`, `REPLACED` or `WITHDRAWN`. Validated versions are immutable. Edits create a new draft; they do not alter the published version. Publication targets one validated version, record and patient audience. Clinician briefs are never publishable. Replacement atomically publishes the selected version and replaces the prior active publication. Withdrawal removes future portal/download access; downloaded copies cannot be recalled.
+- **Rule:** Business status is `DRAFT`, `IN_REVIEW` or `VALIDATED`; processing state belongs only to an AI/export task; freshness is `CURRENT` or `STALE`; publication state is `PUBLISHED`, `REPLACED` or `WITHDRAWN`. Validated versions are immutable. Edits create a new draft; they do not alter the published version. Publication targets one validated version, record and patient audience. Clinician briefs are never publishable and have no review lifecycle: they stay `DRAFT` with an append-only acknowledgement (UD-22). Replacement atomically publishes the selected version and replaces the prior active publication. Withdrawal removes future portal/download access; downloaded copies cannot be recalled.
 
 ### AD-7 — Transactions and concurrency
 
@@ -85,13 +85,19 @@ flowchart LR
 
 - **Binds:** FR-008, FR-015, FR-016, FR-017.
 - **Prevents:** static URL exposure and a print path bypassing clinical permissions.
-- **Rule:** File IDs resolve through guarded metadata; no public clinical bucket or browser-supplied object key. Validate type/size, quarantine and scan before release. Export snapshots include exact content, template and source versions plus checksum. Download authorization is checked at delivery; private/no-store caching, attachment disposition and auditable download apply. Store persistent bytes outside ephemeral application disks; local private storage is an isolated-development adapter only.
+- **Rule:** File IDs resolve through guarded metadata; no public clinical bucket or browser-supplied object key. Validate type/size, quarantine and scan before release. The scan step is a port: increment 1 uses a deterministic inspection adapter (allowlist, signature and size checks); a real scanner and object storage are deferred (D-28, UD-24). Export snapshots include exact content, template and source versions plus checksum. Download authorization is checked at delivery; private/no-store caching, attachment disposition and auditable download apply. Store persistent bytes outside ephemeral application disks; local private storage is an isolated-development adapter only.
 
 ### AD-10 — Contract and quality boundary
 
 - **Binds:** all APIs and FR-020.
 - **Prevents:** incompatible errors, unchecked migration changes and unverified delivery claims.
 - **Rule:** REST `/api/v1`, UUID identifiers, ISO dates, UTC instants with IANA practice time zone, decimal strings with units, RFC 9457 problem responses. Applied Flyway versioned SQL migrations are immutable. Test isolated real PostgreSQL and real HTTP/UI stack, stubbing only external AI/email/file scan boundaries where necessary. Publish immutable artifacts identified by commit and digest only after required checks pass; no rebuild during promotion.
+
+### AD-11 — Multi-client access [Proposal]
+
+- **Binds:** FR-001, FR-016.
+- **Prevents:** a second session model, clinical data on devices and clients that break when the API evolves.
+- **Rule:** The web app, the installed web app and a native shell call the same versioned API with the same authorization. The web app and the installed web app use the AD-4 cookie and CSRF transport; a native shell uses the same server-side opaque session in an `Authorization` header from an allowlisted native origin (ADR-008). Cookie and bearer are never mixed and bearer is never accepted from a web origin. Devices hold the session secret only: no offline clinical cache, a service worker that caches the application shell only, and content-free push notifications re-authorized at delivery. API changes are additive within `/api/v1`, with a minimum client version and a compatibility window (ADR-009).
 
 ## Consistency Conventions
 
@@ -150,6 +156,7 @@ No directories below are created in this mission. Future seed: `apps/api`, `apps
 | FR-016 | portal projection of authorized domain services | AD-3, AD-4, AD-6, AD-9 |
 | FR-017, FR-018 | communications / files / audit | AD-7, AD-9 |
 | FR-019, FR-020 | demo administration / delivery | AD-1, AD-8, AD-10 |
+| Clients (web, installed web app, native shell) | identity, communications, API contract | AD-4, AD-11 |
 
 ## Deferred and open decisions
 
@@ -158,3 +165,4 @@ No directories below are created in this mission. Future seed: `apps/api`, `apps
 - Exact patch lockfiles, Maven wrapper and source scaffolds wait for development authorization. No scaffold command is verified.
 - Representatives/minors, narrower clinical record assignments and identity proof beyond the adult synthetic demo need product decisions before expanding scope; do not weaken the current boundaries.
 - Intelligent laboratory PDF extraction is a later increment with mandatory extraction review; ordinary upload/manual labs remain in the current scope.
+- Native publication, offline mode, a native practitioner app and device lock are decisions D-15 to D-18; store policies and fees are verified when Aymen decides.

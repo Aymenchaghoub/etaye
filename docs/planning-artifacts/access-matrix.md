@@ -9,12 +9,12 @@ Status: Draft for design. Date: 2026-11-02. Authorization rules: [BR-001–004](
 | Unauthenticated visitor | Public showcase, synthetic demo entry, login/recovery requests | No practice, patient or membership enumeration. |
 | Practice administrator | TEAM_MANAGE, PRACTICE_SETTINGS, ADMIN_AUDIT | Membership and operational settings only. No implicit clinical, patient-document or patient-record access. |
 | Practitioner | CLINICAL_READ, CLINICAL_WRITE, SCHEDULE_MANAGE, CLINICAL_VALIDATE, PATIENT_PUBLISH, CLINICAL_AUDIT | Active membership and practitioner profile in selected practice required. Bundling is [ASSUMPTION] A-03/A-06; capabilities remain distinct. |
-| Scheduler (capability assignment, not a mandatory new user persona) | SCHEDULE_MANAGE; optional separately assigned PATIENT_REGISTER (PD-001 proposal) | Minimum patient identity/contact and appointment information; no clinical notes, results or AI drafts. An administrator needs this explicitly to schedule. |
+| Scheduler (capability assignment, not a mandatory new user persona) | SCHEDULE_MANAGE; optional separately assigned PATIENT_REGISTER (PD-001, accepted UD-17) | Minimum patient identity/contact and appointment information; no clinical notes, results or AI drafts. An administrator needs this explicitly to schedule. |
 | Linked patient account | SELF_APPOINTMENTS, SELF_PREPARATION, SELF_PUBLICATIONS | Only separately verified record links; selected practice and linked record. Cannot browse the clinical record or internal sources. |
 | Background service | Named job execution grants tied to practice/resource snapshot | Never a broad interactive superuser; rechecks task scope before retrieval/output. |
 | Portfolio operator | Synthetic demo reset and service operations | Operational access is not a product role granting routine unrestricted clinical browsing. |
 
-An account can combine administrator and practitioner capabilities only through explicit assignment; display the active role/context. Revoking one practice membership does not revoke unrelated memberships. Server checks use current grants, not stale UI state.
+An account can combine administrator and practitioner capabilities only through explicit assignment; display the active role/context. Revoking one practice membership does not revoke unrelated memberships. Server checks use current grants, not stale UI state. The same capabilities and checks apply whatever the client: web app, installed web app or native shell (ADR-008).
 
 ## Resource matrix
 
@@ -27,10 +27,10 @@ An account can combine administrator and practitioner capabilities only through 
 | Patient demographic registration | No | Create/read/correct | Minimal lookup with SCHEDULE_MANAGE; new registration additionally requires PATIENT_REGISTER. No existing-identity correction or clinical access | Own displayed identity; correction request/profile fields only | Clinical-team identity reconciliation; no automatic record merging. |
 | Longitudinal clinical record | No | Practice clinical read/write | No | No direct record access | A-03 shared-practice model; no global patient search. |
 | Measurements/laboratory/history | No | Read/append/correct | No | Only snapshots explicitly included in a publication | Original values and correction lineage retained internally. |
-| Patient-reported preparation | No | Read; acknowledge/link to consultation | No clinical body access | Create/read/edit own before encounter begins | Author/source remains PATIENT_REPORTED; no automatic conversion to clinical fact. |
+| Patient-reported preparation | No | Read; acknowledge (CLINICAL_WRITE, acknowledgePreparation) and link to consultation | No clinical body access | Create/read/edit own before encounter begins | Author/source remains PATIENT_REPORTED; no automatic conversion to clinical fact. |
 | Appointment/availability | No unless SCHEDULE_MANAGE | Practice manage own/all authorized schedules | Practice scheduling scope | Own eligible offered slots and appointments | Other patient names/details never shown to patients. |
 | Consultation/report draft | No | Create/read/edit within practice | No | No | Draft/IN_REVIEW/VALIDATED states all internal until publication. |
-| Clinician brief | No | Read/generate/review | No | Never | Not directly publishable, even if validated. |
+| Clinician brief | No | Read/generate/edit draft/acknowledge (CLINICAL_WRITE, acknowledgeBrief) | No | Never | Never validated or published (UD-22); acknowledgement is append-only. |
 | AI task/input/output | No | In-scope clinical processing/result | No | No raw task access | Patient portal may see an unavailable published-content page, never draft fragments. |
 | Validation | No | CLINICAL_VALIDATE for exact version | No | No | Explicit review and version guard; validator/date recorded. |
 | Publication/replacement/withdrawal | No | PATIENT_PUBLISH plus clinical read and validated eligible version | No | Read current own PUBLISHED projection | Publication does not grant access to all underlying source documents. |

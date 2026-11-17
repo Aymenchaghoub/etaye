@@ -110,6 +110,23 @@ require(read_json("docs/contracts/operation-index.json") == expected_operation_i
         "Operation index differs from the authoritative API contract")
 checks["apiOperations"] = len(operations)
 checks["apiSchemas"] = len(api["components"]["schemas"])
+# Error responses and ETag follow the policy written in docs/contracts/README.md.
+for path, methods in api["paths"].items():
+    for method, op in methods.items():
+        ident = op["operationId"]
+        declared = {code for code in op["responses"] if not code.startswith("2")}
+        names = {p["$ref"].rsplit("/", 1)[-1] for p in op.get("parameters", []) if "$ref" in p}
+        require(("412" in declared) == ("IfMatch" in names), "412 must be declared exactly with If-Match: " + ident)
+        require(("428" in declared) == ("IfMatch" in names), "428 must be declared exactly with If-Match: " + ident)
+        if method == "get":
+            require(not declared & {"409", "412", "422", "428"}, "GET declares a write-only error: " + ident)
+        for code, response in op["responses"].items():
+            if code.startswith("2"):
+                schema = ((response.get("content") or {}).get("application/json") or {}).get("schema") or {}
+                name = schema.get("$ref", "").rsplit("/", 1)[-1]
+                versioned = bool(name) and "version" in api["components"]["schemas"].get(name, {}).get("properties", {})
+                require(versioned == ("ETag" in (response.get("headers") or {})),
+                        "ETag must mark a single versioned aggregate only: " + ident)
 
 stories = read_json("docs/planning-artifacts/epics/story-index.json")
 required = {f"FR-{i:03d}" for i in range(1, 21)}
@@ -121,6 +138,42 @@ for s in stories:
     require((ROOT / s["path"]).exists(), "Story source missing: " + s["id"])
     require(s["test"] in (ROOT / s["path"]).read_text(), "Unlinked AT design: " + s["id"])
 checks["planningStories"] = len(stories)
+by_story = {s["id"]: s for s in stories}
+roadmap = read_json("docs/planning-artifacts/roadmap-assignments.json")
+increments = set(roadmap["increments"])
+require(set(roadmap["stories"]) == set(by_story), "Roadmap stories differ from the story index")
+for sid, story in by_story.items():
+    require(isinstance(story.get("dependsOn"), list), "Story lacks dependsOn: " + sid)
+    item = roadmap["stories"].get(sid)
+    if item is None:
+        continue
+    require(str(item["increment"]) in increments, "Unknown increment for story " + sid)
+    for part in item["deferredParts"]:
+        require(str(part["increment"]) in increments and part["increment"] > item["increment"],
+                "Deferred part must come in a later increment: " + sid)
+    for dep in story.get("dependsOn", []):
+        require(dep in by_story, "Unknown story dependency: " + sid + "->" + dep)
+        if dep in roadmap["stories"]:
+            require(roadmap["stories"][dep]["increment"] <= item["increment"],
+                    "Story depends on a later increment: " + sid + "->" + dep)
+state = {}
+
+
+def visit_story(sid, trail=()):
+    if state.get(sid) == "done":
+        return
+    require(sid not in trail, "Story dependency cycle: " + " -> ".join(trail + (sid,)))
+    if sid in trail:
+        return
+    for dep in by_story[sid].get("dependsOn", []):
+        if dep in by_story:
+            visit_story(dep, trail + (sid,))
+    state[sid] = "done"
+
+
+for sid in by_story:
+    visit_story(sid)
+checks["roadmapStories"] = len(roadmap["stories"])
 
 with (ROOT / "docs/design/coverage.csv").open() as stream:
     rows = list(csv.DictReader(stream))
@@ -143,6 +196,20 @@ for row in rows:
     require(spec.exists(), "Missing surface specification: " + row["id"])
     require(row["id"] in spec.read_text(), "Unspecified surface: " + row["id"])
 checks["requiredDesignFamilies"] = len(rows)
+require(set(roadmap["surfaces"]) == expected, "Roadmap design families differ from the design inventory")
+for sid, item in roadmap["surfaces"].items():
+    require(str(item["increment"]) in increments, "Unknown increment for family " + sid)
+    for part in item["parts"]:
+        require(part["increment"] > item["increment"], "Surface part must come later: " + sid)
+core = roadmap["coreDesignFamilies"]
+require(set(core["screens"]) | set(core["interactions"]) <= expected, "Unknown core design family")
+contract_ops = {name for name, item in roadmap["operations"].items() if item["status"] == "contract"}
+require(contract_ops == set(operations), "Roadmap operations differ from the contract")
+for name, item in roadmap["operations"].items():
+    require(str(item["increment"]) in increments, "Unknown increment for operation " + name)
+    require(item["status"] != "planned" or name not in operations, "Planned operation already in contract: " + name)
+checks["roadmapSurfaces"] = len(roadmap["surfaces"])
+checks["roadmapOperations"] = len(roadmap["operations"])
 
 screen_text = (ROOT / "docs/design/screen-catalog.md").read_text()
 interaction_text = (ROOT / "docs/design/interaction-catalog.md").read_text()
@@ -159,7 +226,10 @@ checks["screenInteractionMappings"] = len(interaction_surfaces)
 
 data = read_json("docs/design/synthetic-data.json")
 require(data["synthetic"] is True and len(data["practices"]) >= 2, "Synthetic/isolation fixture missing")
-capabilities = set(api["components"]["schemas"]["MembershipEdit"]["properties"]["capabilities"]["items"]["enum"])
+capabilities = set(api["components"]["schemas"]["Capability"]["enum"])
+for holder in ("Membership", "MembershipEdit", "InvitationCreate"):
+    require(api["components"]["schemas"][holder]["properties"]["capabilities"]["items"]
+            == {"$ref": "#/components/schemas/Capability"}, "Capability enum must be referenced, not copied: " + holder)
 for membership in data["memberships"]:
     require(set(membership["capabilities"]) <= capabilities,
             "Unknown fixture capability in " + membership["id"])

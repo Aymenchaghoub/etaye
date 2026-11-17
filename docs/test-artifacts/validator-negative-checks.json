@@ -21,5 +21,48 @@
     }
   ],
   "applicationTestsExecuted": false,
-  "method": "Temporary isolated copies; tracked repository documents were never mutated by negative checks"
+  "method": "Temporary isolated copies; tracked repository documents were never mutated by negative checks",
+  "additionalRun": {
+    "date": "2026-11-17",
+    "baselinePassed": true,
+    "scope": "Roadmap completeness, story dependencies and contract policies added to tools/validate_docs.py",
+    "checks": [
+      {
+        "case": "ETag missing on a versioned aggregate response",
+        "rejected": true
+      },
+      {
+        "case": "412 declared on a GET without If-Match",
+        "rejected": true
+      },
+      {
+        "case": "capability enum copied inline",
+        "rejected": true
+      },
+      {
+        "case": "story missing from the roadmap",
+        "rejected": true
+      },
+      {
+        "case": "operation missing from the roadmap",
+        "rejected": true
+      },
+      {
+        "case": "design family missing from the roadmap",
+        "rejected": true
+      },
+      {
+        "case": "story dependency cycle",
+        "rejected": true
+      },
+      {
+        "case": "story depending on a later increment",
+        "rejected": true
+      },
+      {
+        "case": "deferred part not in a later increment",
+        "rejected": true
+      }
+    ]
+  }
 }

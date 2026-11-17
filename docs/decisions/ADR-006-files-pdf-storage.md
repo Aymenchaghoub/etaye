@@ -1,6 +1,6 @@
 # ADR-006 — Guarded persistent files and PDF exports
 
-Status: Proposed. Date: 2026-11-02. Related: BR-010/016, AD-9.
+Status: Proposed; amended 2026-11-17 (UD-24). Date: 2026-11-02. Related: BR-010/016, AD-9.
 
 **Choice:** private object storage behind a `FileStore` port. Metadata, practice ownership, record linkage, scan state, checksum, content type and grants stay in PostgreSQL. Local private directory adapter for isolated development; persistent object-store adapter for demo. Prefer authenticated proxy streaming for small demo files; no public object URL.
 
@@ -9,3 +9,7 @@ Alternative: store all binary payloads in PostgreSQL simplifies atomicity but co
 Uploads: proposed 10 MiB/file, PDF/PNG/JPEG allowlist, filename normalization and independent MIME/signature checks. Quarantine until scan completes; scan failures stay inaccessible with retry status. Never execute HTML, SVG, macros or instructions from imported content. Preview/download use explicit server authorization, `Cache-Control: no-store` and attachment headers. Filename alone is not a type check. Ordinary upload does not extract laboratory results.
 
 PDFBox is a proposed renderer to limit headless-browser memory. A layout service consumes a versioned export view model, embeds licensed Unicode fonts, keeps text selectable, numbers pages and repeats table headers. Tagged reading order/accessibility must be tested; server generation by itself proves neither security nor accessibility. Save template version and checksum. Short/long/incomplete sample layouts and A4 review are owned by [PDF specifications](../design/pdf-email-specifications.md) (resolve final catalog name via design index).
+
+## Amendment 2026-11-17 (UD-24)
+
+Aymen decided that demo files live in PostgreSQL or on a persistent volume behind the `FileStore` port, and that object storage and real antivirus scanning are deferred (D-25, D-28). Reason: the synthetic dataset contains one uploaded document; a separate object-store account (which may require a payment method, To verify) and a scanner (memory cost on a small host, To verify) are disproportionate. What stays: the `FileStore` port, metadata and grants in PostgreSQL, opaque storage keys, no public URL, authorization at delivery, `no-store` caching, the 10 MiB cap [ASSUMPTION; the demo may set a lower per-file cap and a per-practice file count], the PDF/PNG/JPEG allowlist with independent signature checks, and the quarantine states: in increment 1 the scan step is a deterministic inspection adapter (allowlist, signature, size) behind the scan port. Database storage keeps files transactional under the same row-level security and the same backup; on a VPS a volume adapter is equally valid and is chosen at the hosting decision (UD-25). Inline PDF display is not assumed: viewing is open or download, because an iframe with a page fragment is unreliable on iOS (UD-12); an in-browser excerpt viewer is D-28. The Neon S3-compatible storage and Cloudflare R2 candidates above remain deferred candidates.

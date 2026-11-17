@@ -2,7 +2,7 @@
 title: "Étaye — Product requirements"
 status: draft
 created: 2026-11-02
-updated: 2026-11-02
+updated: 2026-11-17
 review_status: ready-for-design
 user_approval: not-approved
 ---
@@ -16,6 +16,10 @@ user_approval: not-approved
 ## Actors and success
 
 The primary actor is the practitioner. Patients manage visits and read selected publications. Practice administrators manage operational access, with no implicit clinical grant. Proposed success is a demonstrated end-to-end practitioner, patient and administration journey with exact source inspection, preserved corrections and negative isolation cases. No adoption, clinical effectiveness or usability study result exists.
+
+## Platforms and clients
+
+Étaye is a web application and, by user direction (UD-12), also an installable Android and iOS app built from the same API and, as far as possible, the same React and TypeScript code. The native app targets the patient first (UD-13); practitioners use the responsive web app and its installable form. Packaging follows the order installable web app, then a Capacitor shell (UD-14), with no offline clinical mode (UD-15). Publishing in app stores is a separate decision with its own costs and policies (D-15). Multi-client rules are in [ADR-008](../../decisions/ADR-008-multi-client-access.md), [ADR-009](../../decisions/ADR-009-api-compatibility.md) and NFR-15; the delivery order is in the [roadmap](../roadmap.md).
 
 ## Functional requirements
 
@@ -37,7 +41,7 @@ An authorized administrator manages scoped invitations and membership capabiliti
 Rule: BR-002–005. Journey: J-07. Design surface: S-31–34. Verification: successful authorized journey plus relevant denied, missing-data, failed and concurrent variants; no false success.
 
 ### FR-004 — Patient identity
-Practitioners register and correct practice-local identity; duplicate warnings require human resolution; portal linking is verified per record, never inferred from email. Proposed PD-001 adds an explicitly granted demographic-only registration variant for scheduling, without clinical-record access.
+Practitioners register and correct practice-local identity; duplicate warnings require human resolution; portal linking is verified per record, never inferred from email. Accepted PD-001 (UD-17) adds an explicitly granted demographic-only registration variant for scheduling, without clinical-record access.
 
 Rule: BR-004. Journey: J-02, J-03. Design surface: S-07–08. Verification: successful authorized journey plus relevant denied, missing-data, failed and concurrent variants; no false success.
 
@@ -67,12 +71,12 @@ Availability and exceptions produce offered slots; atomic booking/rescheduling p
 Rule: BR-006. Journey: J-03. Design surface: S-14–16, S-26. Verification: successful authorized journey plus relevant denied, missing-data, failed and concurrent variants; no false success.
 
 ### FR-010 — Visit preparation
-Patients prepare their own eligible visit; practitioners inspect the dated report without silently promoting it to an observation or overwriting it.
+Patients prepare their own eligible visit; practitioners inspect the dated report without silently promoting it to an observation or overwriting it. A practitioner can explicitly acknowledge the exact submission (UD-18); acknowledgement never alters authorship.
 
 Rule: BR-008. Journey: J-02, J-06. Design surface: S-17, S-27. Verification: successful authorized journey plus relevant denied, missing-data, failed and concurrent variants; no false success.
 
 ### FR-011 — Clinician brief
-A clinician-only sourced brief explains changes, missing information and contradictions since the previous visit, with dated inspectable supporting evidence.
+A clinician-only sourced brief explains changes, missing information and contradictions since the previous visit, with dated inspectable supporting evidence. It is a generated draft that a practitioner acknowledges per version; it has no validation or publication path (UD-22).
 
 Rule: BR-011–014. Journey: J-02. Design surface: S-18. Verification: successful authorized journey plus relevant denied, missing-data, failed and concurrent variants; no false success.
 
@@ -87,7 +91,7 @@ A bounded asynchronous task creates a draft candidate with statement citations a
 Rule: BR-011. Journey: J-04. Design surface: S-21, S-37, S-40. Verification: successful authorized journey plus relevant denied, missing-data, failed and concurrent variants; no false success.
 
 ### FR-014 — Review, versions and freshness
-A human corrects and reviews exact versions, validates explicitly and inspects history/diffs. Changed relevant sources mark dependencies stale; approved text is never overwritten.
+A human corrects and reviews exact versions, validates explicitly and inspects history/diffs. Changed relevant sources mark dependencies stale; approved text is never overwritten. Review and validation apply to reports and patient explanations; briefs use acknowledgement.
 
 Rule: BR-012, BR-014–015. Journey: J-04. Design surface: S-21–24. Verification: successful authorized journey plus relevant denied, missing-data, failed and concurrent variants; no false success.
 
@@ -125,11 +129,11 @@ Rule: BR-001, BR-017–018. Journey: J-08. Design surface: Operational artifacts
 
 Billing, payments, commercial subscriptions, prescriptions, audio transcription, autonomous diagnosis/treatment and an unsupported global medical risk score are excluded. Conversational search and intelligent laboratory PDF extraction are deferred. Upload/view/manual result entry remain initial scope. Follow-up PDF value must be agreed before adding a fourth template. [Deferred register](../deferred-work.md) owns rationale and resumption triggers.
 
-Planning and documentation → complete design and review → Aymen's explicit development authorization → implementation. No scaffold, domain implementation, migrations, application CI/CD or deployment in this phase. All stories remain backlog/planning. A successful documentary review is not authorization to build.
+Planning and documentation → complete design and review → Aymen's explicit development authorization → implementation. No scaffold, domain implementation, migrations, application CI/CD or deployment in this phase. All stories remain backlog/planning. A successful documentary review is not authorization to build. The [roadmap](../roadmap.md) allocates every story, design family and API operation to an increment.
 
 ## Product decisions still open
 
-[Decision register](../decisions-assumptions.md) owns multi-practice account/linking assumptions, shared-practice clinical access, self-validation, patient booking windows, adults-only demo and optional English-facing demo. These are usable design baselines, not Aymen-approved product decisions. Confirm affected flows in design review before implementation.
+[Decision register](../decisions-assumptions.md) owns the decisions. On 2026-11-17 Aymen confirmed multi-practice accounts with practice switching (A-01), practice-wide clinical access (A-03), self-validation after review (A-06), the scheduling registration grant (PD-001) and the platform direction (UD-12 to UD-28). Still open: the booking and cancellation window policy, native session duration, hosting reliability, the adults-only demo (A-05), the optional English-facing demo and the remaining working assumptions listed in section 11 of the [roadmap](../roadmap.md). Development remains unauthorized.
 
 ## Quality, safety and internationalization
 
