@@ -1,0 +1,27 @@
+# Native import progress and Windows handoff — 2026-11-17
+
+**Current result: 8/456 corrected desktop states are imported; 448 remain.** The completed S-06 family is section `26:2`, with all exact roots in [the native identity record](../windows-handoff/EXISTING-FIGMA-STATE.json). This report supersedes current-state interpretations of the [earlier single-state pilot](2026-11-17-figma-mcp-import.md); that pilot remains historical evidence.
+
+## Actual native observation
+
+REST read-back at 2026-11-17T10:39:05Z reports file version `2422782521887797840`. The eight existing roots contain 344 editable native texts. S-06/nora (`26:1282`) contains 63 texts, 109 vectors, 147 frames and nine rectangles. The [final Nora render](2026-11-17-figma-mcp/S-06-family-nora-final.png) was opened and compared with the corrected HTML reference. The enhanced conversion restores link underlines, native radio/check controls, warning triangles, rounded borders and zero-blur outline strokes. Native text metrics and the remaining states still require review; this is not family acceptance or design approval.
+
+The source HTML remains frozen at snapshot `d2f0800e275c4b156fedbcf23656ffe2bf435f9b6a72faf0f86fc293e2a82ad6`. Enhanced capture digest is `a6c9010bc215d86d32e430c0e50abac5b75bca16c1ff6102f46892e62b17974b`. Its pseudo-element proxies are derived in memory, without changing the source. Two proxy capture states (`I-13/ouvert`, `S-38/enregistrement`) recorded subpixel shifts below 0.5px and remain explicit comparison targets. Ten synthetic PNGs supply 31 discrete PDF content-preview uses; no whole interface screenshot is used as a UI fill.
+
+The complete MCP loop stopped at packet `001-S-01-1` with the explicit Starter tool-call-limit error, before that packet created a section. The connector's account-wide quota persists across computers. The local development plugin is the prepared continuation route, without a paid plan or token. [Figma documents the MCP access/rate limits](https://developers.figma.com/docs/figma-mcp-server/rate-limits-access/).
+
+## Prepared Windows delivery
+
+Aymen confirmed Windows with Figma Desktop already installed and explicitly requested preparing, pushing and writing a continuation prompt. The [Windows guide](../windows-handoff/START-HERE.md) and [queue importer](../../../design/figma-windows-import/README.md) describe the ready archive: 94 native packets, all 456 states / 76 families, exact fonts/licenses, corrected HTML/PDF references, source/evidence, manifest and checksums. Figma Desktop creates the real local plugin ID; the supplied manifest is a template, not a fabricated registration.
+
+The importer preflights the complete queue, target and fonts before canvas writes, verifies/reuses the existing S-06 roots, preserves completed packets on interruption, rolls back its current section and exports actual node evidence. Import success, visual review, Aymen approval and application implementation remain separate fields. Foundations/components are preserved. No application story advances.
+
+Aymen authorized deleting his old trial `15:3`, pilot `19:2` and temporary placements `22:2`–`22:11` after replacement verification. Cleanup has **not** executed. The plugin revalidates all 456 replacement states and the fixed candidate IDs/types/names/parents/image hashes before deletion. An identity conflict retains the old work. Intermediate section `23:2` was already removed when corrected section `26:2` replaced it.
+
+## Verification and limits
+
+Executed locally: 15 Python tooling tests; 24 new importer fixture tests; the existing importer preservation suite; JS syntax; Python lint; documentary OpenAPI and architecture checks. All 94 packets were deterministically recompiled from the frozen scenes and still match the committed raw packet hashes. All 94 actual ready packets pass the plugin's structural validator, the eight actual S-06 REST roots pass its resume comparison, all 5,527 recorded native inventory records pass normalization, and all ten unique embedded PNG SHA-256 hashes match (13 packet entries). A preliminary generated archive passed CRC, full membership and every-payload-byte comparison, frozen-site/font hashes and credential-pattern filtering. It is a disposable preflight, not the final published archive. Final archive commit/hash and publication are recorded in the delivery register after upload.
+
+The independent oneshot review returned eleven findings; all received targeted corrections. Native leaf rollback was reproduced with two failing cases before its correction. The complete review triage is recorded in [the tooling spec](../../implementation-artifacts/spec-figma-windows-handoff.md). Documentation/link/workflow and secret checks are finalized there before publication. These are design/documentation tooling checks, not application tests. Native Windows plugin execution, PowerShell execution, Windows font installation, GUI automation availability, full native import, PDFs/emails and full visual acceptance remain pending on the destination PC. Reusable components, token bindings, responsive/theme reconciliation and prototype wiring are outside this desktop-state import result.
+
+Next action: use the Windows guide and complete prepared packet selection on the correct existing file, record actual result/evidence, review native renders, then perform the authorized guarded cleanup. Preserve all original design foundations and do not implement the application.
