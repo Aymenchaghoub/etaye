@@ -2,6 +2,8 @@
 
 Status: Proposed. Date: 2026-11-02. Related: FR-001/002/016, AD-4.
 
+Amended for native clients by [ADR-008](ADR-008-multi-client-access.md) (Proposed): the cookie and CSRF rules below remain the transport of the web app and the installed web app.
+
 **Choice:** one account authority, Spring Security credential verification and Spring Session JDBC opaque sessions. Distinct clinician and patient entry copy can route to the same authenticated account. A capability is resolved through membership or portal link, never inferred from entry route.
 
 JWT bearer tokens were evaluated. They suit independent API consumers, but add refresh-token rotation/revocation and browser storage tradeoffs here. Same-origin cookie sessions provide straightforward revocation and membership changes without a browser token store. A managed OIDC provider remains an option if future scope needs federation; no external identity subscription is required now.

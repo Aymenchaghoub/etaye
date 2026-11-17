@@ -41,8 +41,16 @@ All entries are planned, not executed. Exact Given/When/Then conditions are in t
 | AT-035-A/B/C | [9.1](../planning-artifacts/epics/epic-9.md) | Enter and reset bounded synthetic journeys | Real assertions/report plus opened visual evidence; record commit/fixture/environment and limitations |
 | AT-036-A/B/C | [9.2](../planning-artifacts/epics/epic-9.md) | Produce real-stack quality and release evidence | Real assertions/report plus opened visual evidence; record commit/fixture/environment and limitations |
 | AT-037-A/B/C | [9.3](../planning-artifacts/epics/epic-9.md) | Recover unavailable services and releases | Real assertions/report plus opened visual evidence; record commit/fixture/environment and limitations |
+| AT-038-A/B/C | [10.1](../planning-artifacts/epics/epic-10.md) | Walking skeleton and secure request path | Real assertions and recorded reports; record commit/fixture/environment and limitations (no visual review) |
+| AT-039-A/B/C | [10.2](../planning-artifacts/epics/epic-10.md) | Generated client, token bridge and multi-client foundations | Real assertions and recorded reports; record commit/fixture/environment and limitations (no visual review) |
+| AT-040-A/B/C | [10.3](../planning-artifacts/epics/epic-10.md) | Hosting benchmark and decision | Real assertions and recorded reports; record commit/fixture/environment and limitations (no visual review) |
+| AT-041-A/B/C | [10.4](../planning-artifacts/epics/epic-10.md) | Installable web app (PWA) | Real assertions and recorded reports; record commit/fixture/environment and limitations (no visual review) |
+| AT-042-A/B/C | [10.5](../planning-artifacts/epics/epic-10.md) | Native session transport and device registry | Real assertions and recorded reports; record commit/fixture/environment and limitations (no visual review) |
+| AT-043-A/B/C | [10.6](../planning-artifacts/epics/epic-10.md) | Native Android shell | Real assertions and recorded reports; record commit/fixture/environment and limitations (no visual review) |
+| AT-044-A/B/C | [10.7](../planning-artifacts/epics/epic-10.md) | Content-free push notifications | Real assertions and recorded reports; record commit/fixture/environment and limitations (no visual review) |
+| AT-045-A/B/C | [10.8](../planning-artifacts/epics/epic-10.md) | iOS build and store-readiness gate | Real assertions and recorded reports; record commit/fixture/environment and limitations (no visual review) |
 
-## Scheduling registration boundary (PD-001 proposal)
+## Scheduling registration boundary (PD-001, accepted UD-17)
 
 - **AT-015-D (contract/design target, not executed application test):** Given Mila's explicitly assigned SCHEDULE_MANAGE and PATIENT_REGISTER in PRA-A, lookup returns only SchedulingPatient fields; registration creates identity plus empty local record and returns to the retained booking slot. GET clinical search/record/source stays forbidden. Birth date/contact validation, scoped duplicate candidates and idempotent retries must not create duplicate people or imply portal activation.
 - **AT-015-E (contract/design target, not executed application test):** With only SCHEDULE_MANAGE, existing-patient lookup/booking works but registration returns403 and shows the S-08 restriction without discarding the slot. Administrator-only cannot access either path. A PRA-B identifier/query never exposes PRA-A identity/contact or clinical details. The fixture must demonstrate these denied variants without broadening Mila's clinical capabilities.

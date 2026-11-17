@@ -1,0 +1,1097 @@
+{
+  "version": 1,
+  "date": "2026-11-17",
+  "note": "Canonical allocation of every story, design family and API operation to a delivery increment (assumption A-16 until Aymen reorders). docs/planning-artifacts/roadmap.md renders it; tools/validate_docs.py enforces completeness.",
+  "increments": {
+    "1": {
+      "name": "Red-thread slice (web)",
+      "goal": "One complete, demonstrable journey on the web: invited access, practice context, record reading, visit preparation, sourced brief, consultation, human-reviewed report, explicit publication, patient reading, isolation proof, with the multi-client foundations in place."
+    },
+    "2": {
+      "name": "Web completion",
+      "goal": "Everything the specification requires on the web that increment 1 deliberately left out: team administration, availability and rescheduling, data entry screens, uploads and attachments, remaining PDFs and emails, audit and profile."
+    },
+    "3": {
+      "name": "Mobile (installable web app, then Android shell)",
+      "goal": "The same product usable as an installed app: installable PWA, native session transport, Android shell with bundled assets, content-free push notifications."
+    },
+    "4": {
+      "name": "Release engineering, iOS, stores and quality extensions",
+      "goal": "iOS build, explicit store decision, promotion pipeline, optional real-model evaluation, advanced audit and device privacy options."
+    }
+  },
+  "coreDesignFamilies": {
+    "screens": [
+      "S-01",
+      "S-02",
+      "S-05",
+      "S-06",
+      "S-09",
+      "S-10",
+      "S-18",
+      "S-19",
+      "S-21",
+      "S-22",
+      "S-23",
+      "S-25",
+      "S-28",
+      "S-29",
+      "S-36"
+    ],
+    "interactions": [
+      "I-09",
+      "I-15",
+      "I-16",
+      "I-17"
+    ]
+  },
+  "stories": {
+    "1.1": {
+      "increment": 1,
+      "deferredParts": [
+        {
+          "part": "Issuing, resending and revoking invitations (issueInvitation, revokeInvitation, resendInvitation) and the invitation emails M-01 and M-02; increment 1 activates seeded pending, expired, revoked and recipient-mismatched invitations",
+          "increment": 2,
+          "ref": "D-23"
+        }
+      ]
+    },
+    "1.2": {
+      "increment": 1,
+      "deferredParts": []
+    },
+    "1.3": {
+      "increment": 1,
+      "deferredParts": []
+    },
+    "1.4": {
+      "increment": 1,
+      "deferredParts": [
+        {
+          "part": "Extending the adversarial matrix to each resource group added later (uploads, availability, audit, devices); every later story adds its resource to the matrix",
+          "increment": 2,
+          "ref": "10.1"
+        }
+      ]
+    },
+    "2.1": {
+      "increment": 2,
+      "deferredParts": []
+    },
+    "2.2": {
+      "increment": 2,
+      "deferredParts": []
+    },
+    "2.3": {
+      "increment": 2,
+      "deferredParts": []
+    },
+    "2.4": {
+      "increment": 2,
+      "deferredParts": [
+        {
+          "part": "Advanced audit filters and clinical-audit detail beyond actor, event type and period",
+          "increment": 4,
+          "ref": "D-30"
+        }
+      ]
+    },
+    "3.1": {
+      "increment": 1,
+      "deferredParts": []
+    },
+    "3.2": {
+      "increment": 1,
+      "deferredParts": []
+    },
+    "3.3": {
+      "increment": 1,
+      "deferredParts": [
+        {
+          "part": "Entering and correcting measurements (I-06; appendMeasurement, correctMeasurement)",
+          "increment": 2,
+          "ref": "D-24"
+        }
+      ]
+    },
+    "3.4": {
+      "increment": 1,
+      "deferredParts": [
+        {
+          "part": "Entering and correcting laboratory results (I-07; appendLabResult, correctLabResult)",
+          "increment": 2,
+          "ref": "D-24"
+        }
+      ]
+    },
+    "3.5": {
+      "increment": 2,
+      "deferredParts": []
+    },
+    "4.1": {
+      "increment": 2,
+      "deferredParts": []
+    },
+    "4.2": {
+      "increment": 1,
+      "deferredParts": []
+    },
+    "4.3": {
+      "increment": 1,
+      "deferredParts": [
+        {
+          "part": "Rescheduling and patient move (I-11; rescheduleAppointment, moveOwnAppointment)",
+          "increment": 2,
+          "ref": "D-22"
+        }
+      ]
+    },
+    "4.4": {
+      "increment": 1,
+      "deferredParts": [
+        {
+          "part": "No-show marking (appointmentNoShow)",
+          "increment": 2,
+          "ref": "D-22"
+        }
+      ]
+    },
+    "4.5": {
+      "increment": 1,
+      "deferredParts": []
+    },
+    "5.1": {
+      "increment": 1,
+      "deferredParts": []
+    },
+    "5.2": {
+      "increment": 1,
+      "deferredParts": [
+        {
+          "part": "Optional AI rephrasing of the brief and any real model provider",
+          "increment": 4,
+          "ref": "D-26"
+        }
+      ]
+    },
+    "5.3": {
+      "increment": 1,
+      "deferredParts": []
+    },
+    "5.4": {
+      "increment": 1,
+      "deferredParts": []
+    },
+    "6.1": {
+      "increment": 1,
+      "deferredParts": []
+    },
+    "6.2": {
+      "increment": 1,
+      "deferredParts": []
+    },
+    "6.3": {
+      "increment": 1,
+      "deferredParts": []
+    },
+    "6.4": {
+      "increment": 1,
+      "deferredParts": []
+    },
+    "7.1": {
+      "increment": 1,
+      "deferredParts": []
+    },
+    "7.2": {
+      "increment": 1,
+      "deferredParts": []
+    },
+    "7.3": {
+      "increment": 1,
+      "deferredParts": []
+    },
+    "7.4": {
+      "increment": 1,
+      "deferredParts": []
+    },
+    "7.5": {
+      "increment": 1,
+      "deferredParts": [
+        {
+          "part": "Authorized publication attachments (S-30; downloadPublishedAttachment); increment 1 covers the patient appointment screens only",
+          "increment": 2,
+          "ref": "D-25"
+        }
+      ]
+    },
+    "8.1": {
+      "increment": 2,
+      "deferredParts": []
+    },
+    "8.2": {
+      "increment": 1,
+      "deferredParts": [
+        {
+          "part": "P-02 consultation report PDF",
+          "increment": 2,
+          "ref": "D-27"
+        }
+      ]
+    },
+    "8.3": {
+      "increment": 1,
+      "deferredParts": [
+        {
+          "part": "Team invitation email M-01 and patient activation email M-02 (they need invitation issuance)",
+          "increment": 2,
+          "ref": "D-23"
+        }
+      ]
+    },
+    "9.1": {
+      "increment": 1,
+      "deferredParts": []
+    },
+    "9.2": {
+      "increment": 1,
+      "deferredParts": [
+        {
+          "part": "Promotion pipeline, SBOM and provenance signing, SonarQube Cloud analysis",
+          "increment": 4,
+          "ref": "D-29"
+        }
+      ]
+    },
+    "9.3": {
+      "increment": 1,
+      "deferredParts": [
+        {
+          "part": "Release rollback rehearsal",
+          "increment": 4,
+          "ref": "D-29"
+        }
+      ]
+    },
+    "10.1": {
+      "increment": 1,
+      "deferredParts": []
+    },
+    "10.2": {
+      "increment": 1,
+      "deferredParts": []
+    },
+    "10.3": {
+      "increment": 1,
+      "deferredParts": []
+    },
+    "10.4": {
+      "increment": 3,
+      "deferredParts": []
+    },
+    "10.5": {
+      "increment": 3,
+      "deferredParts": []
+    },
+    "10.6": {
+      "increment": 3,
+      "deferredParts": []
+    },
+    "10.7": {
+      "increment": 3,
+      "deferredParts": []
+    },
+    "10.8": {
+      "increment": 4,
+      "deferredParts": []
+    }
+  },
+  "surfaces": {
+    "S-01": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-02": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-03": {
+      "increment": 1,
+      "parts": [
+        {
+          "part": "Team and patient invitation issuance variants",
+          "increment": 2,
+          "ref": "D-23"
+        }
+      ]
+    },
+    "S-04": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-05": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-06": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-07": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-08": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-09": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-10": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-11": {
+      "increment": 1,
+      "parts": [
+        {
+          "part": "Entry and correction drawer I-06",
+          "increment": 2,
+          "ref": "D-24"
+        }
+      ]
+    },
+    "S-12": {
+      "increment": 1,
+      "parts": [
+        {
+          "part": "Entry and correction drawer I-07",
+          "increment": 2,
+          "ref": "D-24"
+        }
+      ]
+    },
+    "S-13": {
+      "increment": 1,
+      "parts": [
+        {
+          "part": "Upload drawer I-08 and inspection states",
+          "increment": 2,
+          "ref": "D-25"
+        }
+      ]
+    },
+    "S-14": {
+      "increment": 1,
+      "parts": [
+        {
+          "part": "Availability-aware schedule with exceptions",
+          "increment": 2,
+          "ref": "D-20"
+        }
+      ]
+    },
+    "S-15": {
+      "increment": 2,
+      "parts": []
+    },
+    "S-16": {
+      "increment": 1,
+      "parts": [
+        {
+          "part": "Reschedule and no-show variants",
+          "increment": 2,
+          "ref": "D-22"
+        }
+      ]
+    },
+    "S-17": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-18": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-19": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-20": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-21": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-22": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-23": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-24": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-25": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-26": {
+      "increment": 1,
+      "parts": [
+        {
+          "part": "Patient move (reschedule) variant",
+          "increment": 2,
+          "ref": "D-22"
+        }
+      ]
+    },
+    "S-27": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-28": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-29": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-30": {
+      "increment": 2,
+      "parts": []
+    },
+    "S-31": {
+      "increment": 2,
+      "parts": []
+    },
+    "S-32": {
+      "increment": 2,
+      "parts": []
+    },
+    "S-33": {
+      "increment": 2,
+      "parts": []
+    },
+    "S-34": {
+      "increment": 2,
+      "parts": [
+        {
+          "part": "Advanced filters and clinical-audit detail",
+          "increment": 4,
+          "ref": "D-30"
+        }
+      ]
+    },
+    "S-35": {
+      "increment": 2,
+      "parts": []
+    },
+    "S-36": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-37": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-38": {
+      "increment": 1,
+      "parts": []
+    },
+    "S-39": {
+      "increment": 1,
+      "parts": [
+        {
+          "part": "Export options for P-01 and P-02",
+          "increment": 2,
+          "ref": "D-27"
+        }
+      ]
+    },
+    "S-40": {
+      "increment": 1,
+      "parts": []
+    },
+    "I-01": {
+      "increment": 2,
+      "parts": []
+    },
+    "I-02": {
+      "increment": 2,
+      "parts": []
+    },
+    "I-03": {
+      "increment": 1,
+      "parts": []
+    },
+    "I-04": {
+      "increment": 1,
+      "parts": []
+    },
+    "I-05": {
+      "increment": 1,
+      "parts": []
+    },
+    "I-06": {
+      "increment": 2,
+      "parts": []
+    },
+    "I-07": {
+      "increment": 2,
+      "parts": []
+    },
+    "I-08": {
+      "increment": 2,
+      "parts": []
+    },
+    "I-09": {
+      "increment": 1,
+      "parts": []
+    },
+    "I-10": {
+      "increment": 1,
+      "parts": []
+    },
+    "I-11": {
+      "increment": 2,
+      "parts": []
+    },
+    "I-12": {
+      "increment": 1,
+      "parts": []
+    },
+    "I-13": {
+      "increment": 1,
+      "parts": [
+        {
+          "part": "No-show marking",
+          "increment": 2,
+          "ref": "D-22"
+        }
+      ]
+    },
+    "I-14": {
+      "increment": 1,
+      "parts": []
+    },
+    "I-15": {
+      "increment": 1,
+      "parts": []
+    },
+    "I-16": {
+      "increment": 1,
+      "parts": []
+    },
+    "I-17": {
+      "increment": 1,
+      "parts": []
+    },
+    "I-18": {
+      "increment": 1,
+      "parts": []
+    },
+    "I-19": {
+      "increment": 1,
+      "parts": [
+        {
+          "part": "Export choices for P-01 and P-02",
+          "increment": 2,
+          "ref": "D-27"
+        }
+      ]
+    },
+    "I-20": {
+      "increment": 1,
+      "parts": []
+    },
+    "I-21": {
+      "increment": 1,
+      "parts": []
+    },
+    "I-22": {
+      "increment": 1,
+      "parts": []
+    },
+    "I-23": {
+      "increment": 1,
+      "parts": []
+    },
+    "I-24": {
+      "increment": 2,
+      "parts": []
+    },
+    "I-25": {
+      "increment": 2,
+      "parts": [
+        {
+          "part": "Advanced audit filters",
+          "increment": 4,
+          "ref": "D-30"
+        }
+      ]
+    },
+    "I-26": {
+      "increment": 1,
+      "parts": []
+    },
+    "I-27": {
+      "increment": 1,
+      "parts": []
+    },
+    "I-28": {
+      "increment": 1,
+      "parts": []
+    },
+    "P-01": {
+      "increment": 2,
+      "parts": []
+    },
+    "P-02": {
+      "increment": 2,
+      "parts": []
+    },
+    "P-03": {
+      "increment": 1,
+      "parts": []
+    },
+    "M-01": {
+      "increment": 2,
+      "parts": []
+    },
+    "M-02": {
+      "increment": 2,
+      "parts": []
+    },
+    "M-03": {
+      "increment": 1,
+      "parts": []
+    },
+    "M-04": {
+      "increment": 1,
+      "parts": []
+    },
+    "M-05": {
+      "increment": 1,
+      "parts": []
+    }
+  },
+  "operations": {
+    "getCsrfToken": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "signIn": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "getSession": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "signOut": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "requestRecovery": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "completeRecovery": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "acceptInvitation": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "getOwnAccount": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "editOwnAccount": {
+      "increment": 2,
+      "status": "contract"
+    },
+    "listAuthorizedPractices": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "getPractice": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "editPractice": {
+      "increment": 2,
+      "status": "contract"
+    },
+    "listMemberships": {
+      "increment": 2,
+      "status": "contract"
+    },
+    "editMembershipCapabilities": {
+      "increment": 2,
+      "status": "contract"
+    },
+    "suspendMembership": {
+      "increment": 2,
+      "status": "contract"
+    },
+    "listInvitations": {
+      "increment": 2,
+      "status": "contract"
+    },
+    "issueInvitation": {
+      "increment": 2,
+      "status": "contract"
+    },
+    "revokeInvitation": {
+      "increment": 2,
+      "status": "contract"
+    },
+    "resendInvitation": {
+      "increment": 2,
+      "status": "contract"
+    },
+    "searchPatients": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "createPatient": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "editPatient": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "getPatientRecord": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "getTimeline": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "listRecordSources": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "getSourceRevision": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "listAssertions": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "appendAssertion": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "correctAssertion": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "listMeasurements": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "appendMeasurement": {
+      "increment": 2,
+      "status": "contract"
+    },
+    "correctMeasurement": {
+      "increment": 2,
+      "status": "contract"
+    },
+    "listLabResults": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "appendLabResult": {
+      "increment": 2,
+      "status": "contract"
+    },
+    "correctLabResult": {
+      "increment": 2,
+      "status": "contract"
+    },
+    "listRecordDocuments": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "uploadRecordDocument": {
+      "increment": 2,
+      "status": "contract"
+    },
+    "listAvailability": {
+      "increment": 2,
+      "status": "contract"
+    },
+    "createAvailability": {
+      "increment": 2,
+      "status": "contract"
+    },
+    "editAvailability": {
+      "increment": 2,
+      "status": "contract"
+    },
+    "listOfferedSlots": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "listAppointments": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "bookAppointment": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "getAppointment": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "rescheduleAppointment": {
+      "increment": 2,
+      "status": "contract"
+    },
+    "cancelAppointment": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "getVisitPreparation": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "acknowledgePreparation": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "startConsultation": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "getConsultation": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "saveConsultationNotes": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "createDocumentDraft": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "listDocumentVersions": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "getDocumentVersion": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "editDraftVersion": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "deriveNewDraft": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "validateDocumentVersion": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "acknowledgeBrief": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "listProcessingTasks": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "requestGeneration": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "getProcessingTask": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "retryProcessingTask": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "cancelProcessingTask": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "publishVersion": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "replacePublication": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "withdrawPublication": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "requestExport": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "getExport": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "listScopedAudit": {
+      "increment": 2,
+      "status": "contract"
+    },
+    "appointmentCheckIn": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "appointmentComplete": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "appointmentNoShow": {
+      "increment": 2,
+      "status": "contract"
+    },
+    "completeConsultation": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "cancelConsultation": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "submitDocumentForReview": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "requestDocumentChanges": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "listOwnAppointments": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "bookOwnAppointment": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "moveOwnAppointment": {
+      "increment": 2,
+      "status": "contract"
+    },
+    "cancelOwnAppointment": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "readOwnPreparation": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "editOwnPreparation": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "submitOwnPreparation": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "listOwnPublications": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "readOwnPublication": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "readPublishedSources": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "exportOwnPublication": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "downloadRecordDocument": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "downloadExport": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "downloadPublishedAttachment": {
+      "increment": 2,
+      "status": "contract"
+    },
+    "listDemoScenarios": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "resetSyntheticDemo": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "listOwnPortalLinks": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "listPractitioners": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "searchSchedulingPatients": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "registerSchedulingPatient": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "getApiMeta": {
+      "increment": 1,
+      "status": "planned",
+      "description": "Report the supported API version and minimum client version; owned by ADR-009, needed by story 10.2."
+    },
+    "createNativeSession": {
+      "increment": 3,
+      "status": "planned",
+      "description": "Native session transport: issue the opaque session for a native client; owned by ADR-008, story 10.5."
+    },
+    "registerDevice": {
+      "increment": 3,
+      "status": "planned",
+      "description": "Register a device and its push token for the signed-in account; ADR-008, stories 10.5 and 10.7."
+    },
+    "listOwnDevices": {
+      "increment": 3,
+      "status": "planned",
+      "description": "List the account's registered devices and native sessions; ADR-008, story 10.5."
+    },
+    "revokeDevice": {
+      "increment": 3,
+      "status": "planned",
+      "description": "Revoke one device, its native session and its push token; ADR-008, story 10.5."
+    }
+  }
+}
