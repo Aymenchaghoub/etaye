@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="clair">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Étaye — background direction study (proposal)</title>
+<script>try{var t0=new URLSearchParams(location.search).get('t');if(t0)document.documentElement.setAttribute('data-theme',t0);}catch(e){}</script>
+<!-- Existing tokens, fonts and component rules, reused unchanged from the received design system. -->
+<link rel="stylesheet" href="../../../design/received/2026-11-03/export/etaye-design-system/tokens/tokens.css">
+<link rel="stylesheet" href="../../../design/received/2026-11-03/ds/bundle-base.css">
+<link rel="stylesheet" href="background.css">
+<style>
+  /* Study layout only (stand-in content). Not part of the proposal. */
+  :root { --pad-x: 24px; --pad-y: 24px; }
+  /* The study is static: no colour transition may leak into a measured or captured frame. */
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  body.etaye-root { margin: 0; background: transparent; }
+  .etaye-bg-host { display: flex; flex-direction: column; }
+  .stage { flex: 1; display: flex; flex-direction: column; gap: var(--espace-10); box-sizing: border-box;
+           width: 100%; max-width: 1280px; margin: 0 auto; padding: var(--pad-y) var(--pad-x) var(--espace-12); }
+  .brand { width: fit-content; }
+  .brand img { display: block; height: 60px; width: auto; }
+  .brand .logo-dark { display: none; }
+  [data-theme="sombre"] .brand .logo-light { display: none; }
+  [data-theme="sombre"] .brand .logo-dark { display: block; }
+  .grid { display: grid; gap: var(--espace-12); grid-template-columns: minmax(0, 1fr); margin-block: auto; }
+  .hero { display: grid; gap: var(--espace-6); align-content: start; max-width: 620px; }
+  .actions { display: flex; flex-wrap: wrap; gap: var(--espace-3); }
+  .tokens { margin: 0; display: flex; flex-wrap: wrap; gap: var(--espace-1) var(--espace-3); }
+  .preview { background: var(--surface); border: var(--trait-filet) solid var(--filet); border-radius: var(--rayon-2);
+             padding: var(--espace-6); display: grid; gap: var(--espace-4); align-content: start; max-width: 440px; }
+  .preview p, .preview blockquote { margin: 0; }
+  .preview .quote { font: 400 15px/24px var(--font-document); padding: var(--espace-2) var(--espace-3);
+                    background: var(--papier); border-radius: var(--rayon-1); }
+  .preview .ref { display: flex; gap: var(--espace-2); align-items: baseline; }
+  @media (min-width: 640px) { :root { --pad-x: 48px; --pad-y: 32px; } }
+  @media (min-width: 1100px) {
+    :root { --pad-x: 64px; --pad-y: 40px; }
+    .grid { grid-template-columns: minmax(0, 620px) minmax(0, 420px); gap: 96px; align-items: center; }
+  }
+  @media (max-width: 639px) { .actions { flex-direction: column; } .actions .etaye-bouton { width: 100%; } }
+  /* Review aid (?ui=1) — never part of a measured render. */
+  .review-ui { position: fixed; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 10;
+               display: flex; gap: var(--espace-4); align-items: center; flex-wrap: wrap; justify-content: center;
+               padding: var(--espace-2) var(--espace-4); background: var(--surface); color: var(--encre);
+               border: var(--trait-filet) solid var(--filet-controle); border-radius: var(--rayon-2);
+               font: 500 13px/20px var(--font-texte); max-width: calc(100vw - 32px); }
+  .review-ui label { display: inline-flex; gap: 6px; align-items: center; }
+  /* Measurement pass: keep every fill, hide every glyph, border and logo. */
+  body.measure .stage * { color: transparent !important; text-decoration-color: transparent !important; }
+  body.measure .brand img { visibility: hidden; }
+  body.measure .etaye-bouton--secondaire { border-color: transparent !important; }
+</style>
+</head>
+<body class="etaye-root">
+
+<!-- Decorative symbols for the blueprint layer (see README "Markup contract"). -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="etaye-bp-fade-v" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="192">
+      <stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="etaye-bp-fade-h" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="192" y2="0">
+      <stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <mask id="etaye-bp-mask-v" maskUnits="userSpaceOnUse" x="0" y="0" width="192" height="192"><rect width="192" height="192" fill="url(#etaye-bp-fade-v)"/></mask>
+    <mask id="etaye-bp-mask-h" maskUnits="userSpaceOnUse" x="0" y="0" width="192" height="192"><rect width="192" height="192" fill="url(#etaye-bp-fade-h)"/></mask>
+    <pattern id="etaye-bp-minor-v" x="9" y="0" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="3" height="1" style="fill:var(--encre)"/></pattern>
+    <pattern id="etaye-bp-major-v" x="9" y="0" width="8" height="24" patternUnits="userSpaceOnUse"><rect width="7" height="1" style="fill:var(--encre)"/></pattern>
+    <pattern id="etaye-bp-minor-h" x="0" y="9" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="1" height="3" style="fill:var(--encre)"/></pattern>
+    <pattern id="etaye-bp-major-h" x="0" y="9" width="24" height="8" patternUnits="userSpaceOnUse"><rect width="1" height="7" style="fill:var(--encre)"/></pattern>
+    <symbol id="etaye-bp-ruler-sym" viewBox="0 0 192 192">
+      <g mask="url(#etaye-bp-mask-v)">
+        <rect x="0" y="0" width="16" height="192" style="fill:var(--accent-fond)"/>
+        <rect x="8" y="0" width="1" height="192" style="fill:var(--filet)"/>
+        <g style="opacity:var(--bg-tick-opacity)">
+          <rect x="9" y="0" width="3" height="192" fill="url(#etaye-bp-minor-v)"/>
+          <rect x="9" y="0" width="7" height="192" fill="url(#etaye-bp-major-v)"/>
+        </g>
+      </g>
+      <g mask="url(#etaye-bp-mask-h)">
+        <rect x="0" y="0" width="192" height="16" style="fill:var(--accent-fond)"/>
+        <rect x="0" y="8" width="192" height="1" style="fill:var(--filet)"/>
+        <g style="opacity:var(--bg-tick-opacity)">
+          <rect x="0" y="9" width="192" height="3" fill="url(#etaye-bp-minor-h)"/>
+          <rect x="0" y="9" width="192" height="7" fill="url(#etaye-bp-major-h)"/>
+        </g>
+      </g>
+    </symbol>
+    <symbol id="etaye-bp-mark-sym" viewBox="0 0 16 16">
+      <g style="stroke:var(--encre);opacity:var(--bg-tick-opacity)" fill="none" stroke-width="1" shape-rendering="crispEdges">
+        <circle cx="8.5" cy="8.5" r="4"/><path d="M0 8.5h16M8.5 0v16"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="etaye-bg-host">
+  <div class="etaye-bg" id="bg" aria-hidden="true">
+    <div class="etaye-bg__paper"></div>
+    <div class="etaye-bg__blueprint">
+      <svg class="etaye-bp-ruler" focusable="false"><use href="#etaye-bp-ruler-sym"/></svg>
+      <svg class="etaye-bp-ruler etaye-bp-ruler--end" focusable="false"><use href="#etaye-bp-ruler-sym"/></svg>
+      <svg class="etaye-bp-mark etaye-bp-mark--tr" focusable="false"><use href="#etaye-bp-mark-sym"/></svg>
+      <svg class="etaye-bp-mark etaye-bp-mark--bl" focusable="false"><use href="#etaye-bp-mark-sym"/></svg>
+    </div>
+  </div>
+
+  <div class="stage">
+    <header class="brand" data-m="logo" data-kind="logo">
+      <img class="logo-light" src="../figma/assets/logo-light.svg" alt="Étaye" width="188" height="60">
+      <img class="logo-dark" src="../figma/assets/logo-dark.svg" alt="Étaye" width="188" height="60">
+    </header>
+
+    <main class="grid">
+      <section class="hero" aria-labelledby="titre">
+        <p class="meta etaye-3" data-m="notice" style="margin:0">Démonstration — personnes et données fictives</p>
+        <h1 class="patient-titre" id="titre" data-m="title" style="margin:0">Préparer une consultation avec des informations datées et vérifiables</h1>
+        <p class="patient-corps etaye-2" data-m="lead" style="margin:0">Étaye aide un cabinet à préparer ses consultations, à tenir le dossier et à rédiger des comptes rendus. Les brouillons générés citent leurs sources et restent des brouillons tant qu'un praticien ne les a pas relus et validés.</p>
+        <div class="actions">
+          <a class="etaye-bouton etaye-bouton--principal etaye-bouton--patient" href="#" data-m="primary" data-inset="10">Se connecter</a>
+          <a class="etaye-bouton etaye-bouton--secondaire etaye-bouton--patient" href="#" data-m="secondary" data-inset="10">Comptes de démonstration</a>
+        </div>
+        <p class="ui-dense etaye-3" data-m="note" style="margin:0">Projet en conception : ces pages sont des maquettes. Aucune application n'est en service et aucun usage clinique n'est possible.</p>
+        <p class="tokens ui-dense">
+          <span data-m="tok-encre" style="color:var(--encre)">texte/encre</span>
+          <span data-m="tok-encre-2" style="color:var(--encre-2)">texte/encre-2</span>
+          <span data-m="tok-encre-3" style="color:var(--encre-3)">texte/encre-3</span>
+          <span data-m="tok-accent" style="color:var(--accent)">accent/accent</span>
+        </p>
+      </section>
+
+      <!-- Clinical-looking synthetic content: always on an opaque surface, never directly on the layer. -->
+      <aside class="preview" data-opaque aria-label="Aperçu d'une source">
+        <p class="doc-corps" data-m="statement">Depuis la consultation du 20 octobre, Claire Martin a signalé un souvenir de réaction à la <span style="white-space:nowrap">pénicilline<button class="etaye-repere" type="button" data-m="marker" aria-label="Source 1">1</button>.</span></p>
+        <p class="ref ui-dense etaye-3" data-m="ref"><span class="donnee-forte" style="color:var(--accent)">1</span> Préparation de visite · 02/11/2026 09:10</p>
+        <p class="quote" data-m="quote">Je me souviens d’une réaction à la pénicilline dans ma jeunesse. Je ne sais plus laquelle.</p>
+        <p class="meta etaye-3" data-m="status">Déclaré par la patiente · non confirmé</p>
+      </aside>
+    </main>
+  </div>
+</div>
+
+<script>
+(function () {
+  var q = new URLSearchParams(location.search), root = document.documentElement, bg = document.getElementById('bg');
+  if (q.get('t')) root.setAttribute('data-theme', q.get('t'));
+  if (q.get('v') === 'a' || q.get('bp') === 'off') bg.setAttribute('data-blueprint', 'off');
+  if (q.get('paper') === 'off') bg.setAttribute('data-paper', 'off');
+  if (q.get('grain') !== null) bg.style.setProperty('--bg-grain-opacity', q.get('grain'));
+  if (q.get('tick') !== null) bg.style.setProperty('--bg-tick-opacity', q.get('tick'));
+  if (q.get('m') === '1') document.body.classList.add('measure');
+
+  if (q.get('ui') === '1') {
+    var ui = document.createElement('div'); ui.className = 'review-ui'; ui.setAttribute('role', 'group'); ui.setAttribute('aria-label', 'Review controls');
+    ui.innerHTML = '<label><input type="checkbox" id="u-paper" checked> Paper</label>' +
+      '<label><input type="checkbox" id="u-bp" checked> Blueprint touch</label>' +
+      '<label><input type="checkbox" id="u-dark"> Sombre</label>' +
+      '<label>Grain <input type="range" id="u-grain" min="0" max="0.12" step="0.005" style="width:110px"> <output id="u-gv"></output></label>';
+    document.body.appendChild(ui);
+    var g = document.getElementById('u-grain'), gv = document.getElementById('u-gv');
+    function cur() { return parseFloat(getComputedStyle(bg).getPropertyValue('--bg-grain-opacity')); }
+    function sync() { g.value = cur(); gv.textContent = (cur() * 100).toFixed(1) + ' %'; }
+    document.getElementById('u-paper').checked = bg.getAttribute('data-paper') !== 'off';
+    document.getElementById('u-bp').checked = bg.getAttribute('data-blueprint') !== 'off';
+    document.getElementById('u-dark').checked = root.getAttribute('data-theme') === 'sombre';
+    sync();
+    document.getElementById('u-paper').onchange = function (e) { e.target.checked ? bg.removeAttribute('data-paper') : bg.setAttribute('data-paper', 'off'); };
+    document.getElementById('u-bp').onchange = function (e) { e.target.checked ? bg.removeAttribute('data-blueprint') : bg.setAttribute('data-blueprint', 'off'); };
+    document.getElementById('u-dark').onchange = function (e) { root.setAttribute('data-theme', e.target.checked ? 'sombre' : 'clair'); bg.style.removeProperty('--bg-grain-opacity'); sync(); };
+    g.oninput = function () { bg.style.setProperty('--bg-grain-opacity', g.value); gv.textContent = (g.value * 100).toFixed(1) + ' %'; };
+  }
+
+  // Layout facts for the measurement script (read in the normal pass only).
+  document.fonts.ready.then(function () {
+    var data = { vw: innerWidth, vh: innerHeight, dpr: devicePixelRatio, pageW: root.scrollWidth, pageH: root.scrollHeight, items: [] };
+    [].forEach.call(document.querySelectorAll('[data-m]'), function (el) {
+      var r = el.getBoundingClientRect(), cs = getComputedStyle(el);
+      data.items.push({ id: el.getAttribute('data-m'), kind: el.getAttribute('data-kind') || 'text',
+        x: r.left + scrollX, y: r.top + scrollY, w: r.width, h: r.height,
+        color: cs.color, bg: cs.backgroundColor, border: cs.borderTopColor, fs: parseFloat(cs.fontSize), fw: parseInt(cs.fontWeight, 10),
+        inset: parseFloat(el.getAttribute('data-inset') || '0'), panel: !!el.closest('[data-opaque]') });
+    });
+    var panel = document.querySelector('[data-opaque]').getBoundingClientRect();
+    data.panel = { x: panel.left + scrollX, y: panel.top + scrollY, w: panel.width, h: panel.height };
+    var s = document.createElement('script'); s.type = 'application/json'; s.id = 'measure-data'; s.textContent = JSON.stringify(data);
+    document.body.appendChild(s); root.setAttribute('data-ready', '1');
+  });
+})();
+</script>
+</body>
+</html>

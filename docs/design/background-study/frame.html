@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Study frame (measurement helper)</title>
+<!--
+  Hosts study.html in an iframe of an exact CSS size. Headless Chromium refuses windows narrower
+  than 500 px, so the 390 px mobile viewport is obtained from the iframe: its media queries see
+  the iframe width. The layout facts written by study.html are copied to this page for the
+  measurement script. Usage: frame.html?w=390&h=844&q=v%3Db%26t%3Dclair
+-->
+<style>html, body { margin: 0; background: #fff; } iframe { border: 0; display: block; }</style>
+</head>
+<body>
+<iframe id="f" title="study"></iframe>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search), f = document.getElementById('f');
+  f.width = q.get('w'); f.height = q.get('h');
+  f.src = 'study.html?' + (q.get('q') || '');
+  var timer = setInterval(function () {
+    var d = f.contentDocument, s = d && d.getElementById('measure-data');
+    if (!s) return;
+    clearInterval(timer);
+    var c = document.createElement('script'); c.type = 'application/json'; c.id = 'measure-data'; c.textContent = s.textContent;
+    document.body.appendChild(c);
+  }, 40);
+})();
+</script>
+</body>
+</html>
