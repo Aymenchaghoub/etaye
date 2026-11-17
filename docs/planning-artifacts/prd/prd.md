@@ -133,7 +133,7 @@ Planning and documentation → complete design and review → Aymen's explicit d
 
 ## Product decisions still open
 
-[Decision register](../decisions-assumptions.md) owns the decisions. On 2026-11-17 Aymen confirmed multi-practice accounts with practice switching (A-01), practice-wide clinical access (A-03), self-validation after review (A-06), the scheduling registration grant (PD-001) and the platform direction (UD-12 to UD-28). Still open: the booking and cancellation window policy, native session duration, hosting reliability, the adults-only demo (A-05), the optional English-facing demo and the remaining working assumptions listed in section 11 of the [roadmap](../roadmap.md). Development remains unauthorized.
+[Decision register](../decisions-assumptions.md) owns the decisions. On 2026-11-17 Aymen confirmed multi-practice accounts with practice switching (A-01), practice-wide clinical access (A-03), self-validation after review (A-06), the scheduling registration grant (PD-001) and the platform direction (UD-12 to UD-37). Still open: the booking and cancellation window policy, native session duration, hosting reliability, the optional English-facing demo; the adults-only demo (A-05) and the other working assumptions are confirmed as baselines (UD-37). The gated decisions are listed in section 11 of the [roadmap](../roadmap.md). Development remains unauthorized.
 
 ## Quality, safety and internationalization
 

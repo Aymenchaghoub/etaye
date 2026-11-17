@@ -2,7 +2,7 @@
 
 Status: backlog. Design: Ready for design, not designed or approved. Source versions: user mission 2026-11-02; Figma 2417265104370398313; stable BMAD 6.12.4; legacy audit 83d0439920d598775d4f424229a913b125b52217. Read current authoritative documents again before refinement.
 
-Allocation and story text refreshed on 2026-11-17 after the user decisions of that date ([decision register](../decisions-assumptions.md), UD-12 to UD-28) and aligned with the [roadmap](../roadmap.md). Sources consulted in full for this refresh: PRD, business rules, access matrix, functional specification, UX, architecture spine, data model and dictionary, API contract and README, AI specification, security/privacy, test strategy, deferred register, traceability and the dependency stories.
+Allocation and story text refreshed on 2026-11-17 after the user decisions of that date ([decision register](../decisions-assumptions.md), UD-12 to UD-37) and aligned with the [roadmap](../roadmap.md). Sources consulted in full for this refresh: PRD, business rules, access matrix, functional specification, UX, architecture spine, data model and dictionary, API contract and README, AI specification, security/privacy, test strategy, deferred register, traceability and the dependency stories.
 
 These are planning-level slices, not implementation authorization. Shared gate: complete reviewed required screen/interaction/print coverage, confirmed blocking assumptions, Aymen's explicit development authorization, then installed BMAD readiness check. Validation of code and visual fidelity remain separate.
 
@@ -21,7 +21,7 @@ As a practice administrator, I want to invite colleagues with explicit capabilit
 
 **AT-005-B:** Given an invalid, missing, stale or unauthorized condition, when the same action is attempted, then duplicate sends do not duplicate membership; administrator alone cannot open clinical data.
 
-**AT-005-C:** Given long content, keyboard-only navigation and a failed or loading state on S-31, S-32, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-31, S-32: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (proposed default: 8–10 screens across all sampled families, adjustable by Aymen), preserved as separate visual evidence.
+**AT-005-C:** Given long content, keyboard-only navigation and a failed or loading state on S-31, S-32, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-31, S-32: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (8–10 screens across all sampled families, at 2 widths; confirmed UD-37), preserved as separate visual evidence.
 
 ## Story 2.2: Deactivate access without losing accountability
 
@@ -38,7 +38,7 @@ As a practice administrator, I want to suspend a membership with a reason so tha
 
 **AT-006-B:** Given an invalid, missing, stale or unauthorized condition, when the same action is attempted, then the final active administrator cannot be removed and unrelated practice memberships remain unchanged.
 
-**AT-006-C:** Given long content, keyboard-only navigation and a failed or loading state on S-32, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-32: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (proposed default: 8–10 screens across all sampled families, adjustable by Aymen), preserved as separate visual evidence.
+**AT-006-C:** Given long content, keyboard-only navigation and a failed or loading state on S-32, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-32: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (8–10 screens across all sampled families, at 2 widths; confirmed UD-37), preserved as separate visual evidence.
 
 ## Story 2.3: Maintain operational practice settings
 
@@ -55,7 +55,7 @@ As a practice administrator, I want to maintain operational practice settings so
 
 **AT-007-B:** Given an invalid, missing, stale or unauthorized condition, when the same action is attempted, then a concurrent change is rejected; changing availability cannot silently strand existing bookings.
 
-**AT-007-C:** Given long content, keyboard-only navigation and a failed or loading state on S-33, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-33: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (proposed default: 8–10 screens across all sampled families, adjustable by Aymen), preserved as separate visual evidence.
+**AT-007-C:** Given long content, keyboard-only navigation and a failed or loading state on S-33, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-33: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (8–10 screens across all sampled families, at 2 widths; confirmed UD-37), preserved as separate visual evidence.
 
 ## Story 2.4: Inspect scoped audit and own preferences
 
@@ -72,4 +72,4 @@ As an authorized auditor or account holder, I want to inspect scoped audit event
 
 **AT-008-B:** Given an invalid, missing, stale or unauthorized condition, when the same action is attempted, then administrative audit contains no clinical body and profile changes cannot escalate permissions.
 
-**AT-008-C:** Given long content, keyboard-only navigation and a failed or loading state on S-34, S-35, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-34, S-35: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (proposed default: 8–10 screens across all sampled families, adjustable by Aymen), preserved as separate visual evidence.
+**AT-008-C:** Given long content, keyboard-only navigation and a failed or loading state on S-34, S-35, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-34, S-35: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (8–10 screens across all sampled families, at 2 widths; confirmed UD-37), preserved as separate visual evidence.

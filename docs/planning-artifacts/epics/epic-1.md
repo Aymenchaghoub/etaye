@@ -2,7 +2,7 @@
 
 Status: backlog. Design: Ready for design, not designed or approved. Source versions: user mission 2026-11-02; Figma 2417265104370398313; stable BMAD 6.12.4; legacy audit 83d0439920d598775d4f424229a913b125b52217. Read current authoritative documents again before refinement.
 
-Allocation and story text refreshed on 2026-11-17 after the user decisions of that date ([decision register](../decisions-assumptions.md), UD-12 to UD-28) and aligned with the [roadmap](../roadmap.md). Sources consulted in full for this refresh: PRD, business rules, access matrix, functional specification, UX, architecture spine, data model and dictionary, API contract and README, AI specification, security/privacy, test strategy, deferred register, traceability and the dependency stories.
+Allocation and story text refreshed on 2026-11-17 after the user decisions of that date ([decision register](../decisions-assumptions.md), UD-12 to UD-37) and aligned with the [roadmap](../roadmap.md). Sources consulted in full for this refresh: PRD, business rules, access matrix, functional specification, UX, architecture spine, data model and dictionary, API contract and README, AI specification, security/privacy, test strategy, deferred register, traceability and the dependency stories.
 
 These are planning-level slices, not implementation authorization. Shared gate: complete reviewed required screen/interaction/print coverage, confirmed blocking assumptions, Aymen's explicit development authorization, then installed BMAD readiness check. Validation of code and visual fidelity remain separate.
 
@@ -21,7 +21,7 @@ As an invited team member or patient, I want to activate exactly the grant my in
 
 **AT-001-B:** Given an invalid, missing, stale or unauthorized condition, when the same action is attempted, then expired, revoked, already-used or recipient-mismatched tokens grant nothing and show the recovery route.
 
-**AT-001-C:** Given long content, keyboard-only navigation and a failed or loading state on S-03, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-03: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (proposed default: 8–10 screens across all sampled families, adjustable by Aymen), preserved as separate visual evidence.
+**AT-001-C:** Given long content, keyboard-only navigation and a failed or loading state on S-03, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-03: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (8–10 screens across all sampled families, at 2 widths; confirmed UD-37), preserved as separate visual evidence.
 
 ## Story 1.2: Sign in, recover and expire safely
 
@@ -38,7 +38,7 @@ As an account holder, I want to sign in, recover access and return safely after 
 
 **AT-002-B:** Given an invalid, missing, stale or unauthorized condition, when the same action is attempted, then invalid/recovery responses do not enumerate accounts; expiry preserves safe in-memory work without saving falsely.
 
-**AT-002-C:** Given long content, keyboard-only navigation and a failed or loading state on S-02, S-04, S-38, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level CORE for S-02: open captures at desktop 1440×1024, tablet 1024×768 and mobile 390×844, with 320 CSS px reflow, long French content, keyboard focus and the failed, loading and restricted states of the family, compared with the approved design reference and preserved as separate visual evidence. Evidence level SAMPLED for S-04, S-38: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (proposed default: 8–10 screens across all sampled families, adjustable by Aymen), preserved as separate visual evidence.
+**AT-002-C:** Given long content, keyboard-only navigation and a failed or loading state on S-02, S-04, S-38, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level CORE for S-02: open captures at desktop 1440×1024, tablet 1024×768 and mobile 390×844, with 320 CSS px reflow, long French content, keyboard focus and the failed, loading and restricted states of the family, compared with the approved design reference and preserved as separate visual evidence. Evidence level SAMPLED for S-04, S-38: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (8–10 screens across all sampled families, at 2 widths; confirmed UD-37), preserved as separate visual evidence.
 
 ## Story 1.3: Select and switch practice context
 
@@ -68,7 +68,7 @@ As the portfolio author, I want a visible, repeatable demonstration of server-si
 - Read before refinement: [PRD](../prd/prd.md), [rules](../business-rules.md), [access](../access-matrix.md), [architecture](../architecture/ARCHITECTURE-SPINE.md), [data](../data-model.md), [contracts](../../contracts/openapi.yaml), [screen catalog](../../design/screen-catalog.md), [test strategy](../../test-artifacts/test-strategy.md).
 - Assumptions: apply relevant A-01–A-12 from the decision register; never treat them as verified facts. Record any changed source/version and resulting AC change in the future story.
 
-**AT-004-A:** Given valid current permission and the documented prerequisite state, when the actor completes this action, then practitioner A reads record A through the intended resource guard.
+**AT-004-A:** Given valid current permission and the documented prerequisite state, when the actor completes this action, then practitioner A reads record A through the intended resource guard. The adversarial matrix is generated and published as a report by CI, and an interactive isolation journey in the demo replays the same refusals (UD-33).
 
 **AT-004-B:** Given an invalid, missing, stale or unauthorized condition, when the same action is attempted, then record B/source/task/export identifiers are denied under the documented existence-hiding policy.
 

@@ -1,6 +1,6 @@
 # Roadmap and increment allocation
 
-Status: Proposal derived from the user decisions of 2026-11-17 (UD-12 to UD-28). The allocation itself is
+Status: Proposal derived from the user decisions of 2026-11-17 (UD-12 to UD-37). The allocation itself is
 [ASSUMPTION A-16] until Aymen reorders it. Development is not authorized (UD-28). The machine-readable source is
 [roadmap-assignments.json](roadmap-assignments.json); the tables below are rendered from it and
 `tools/validate_docs.py` fails if a story, design family or API operation is left unassigned.
@@ -27,8 +27,8 @@ Sources consulted in full for this version (2026-11-17): [PRD](prd/prd.md), [bus
 | 3 | Mobile (installable web app, then Android shell) | 4 | The same product usable as an installed app: installable PWA, native session transport, Android shell with bundled assets, content-free push notifications. |
 | 4 | Release engineering, iOS, stores and quality extensions | 1 | iOS build, explicit store decision, promotion pipeline, optional real-model evaluation, advanced audit and device privacy options. |
 
-Increments 2 and 3 both depend only on increment 1 and may run in either order; the default is 2 then 3 (open
-decision O-2). Increment 3 needs a stable HTTPS origin, hence the hosting decision of story 10.3. Relative size
+Increments 2 and 3 both depend only on increment 1 and may run in either order; the order is 2 then 3 (settled,
+UD-37). Increment 3 needs a stable HTTPS origin, hence the hosting decision of story 10.3. Relative size
 [ASSUMPTION]: increment 1 is the largest, increment 2 about two thirds of it, increments 3 and 4 smaller.
 
 ## 2. Gates, owners and what blocks what
@@ -38,7 +38,7 @@ decision O-2). Increment 3 needs a stable HTTPS origin, hence the hosting decisi
 | Development authorization | Aymen | Every implementation story | Not given (UD-28) |
 | Core design families reviewed (UD-16) | Aymen, with Codex for the Figma side | Increment 1 build of those families | Pending |
 | Increment 1 exit review | Aymen | Increments 2 and 3 | Future |
-| ADR-008 and ADR-009 accepted | Aymen | Stories 10.2 (API meta), 10.4 to 10.8 | Proposed |
+| ADR-008 and ADR-009 accepted | Aymen | Stories 10.2 (API meta), 10.4 to 10.8 | Done (UD-29); contract operations are added before stories 10.2 and 10.5 |
 | Hosting decision (story 10.3, UD-25) | Aymen | Story 10.4 onward, any store step | Future |
 | Store decision (D-15) | Aymen | Story 10.8 submission | Future |
 
@@ -432,43 +432,47 @@ visual evidence.
 - Screens: S-01, S-02, S-05, S-06, S-09, S-10, S-18, S-19, S-21, S-22, S-23, S-25, S-28, S-29, S-36.
 - Interactions: I-09, I-15, I-16, I-17.
 - CORE evidence: open captures at desktop 1440×1024, tablet 1024×768 and mobile 390×844, with 320 CSS px reflow, long French content, keyboard focus and the failed, loading and restricted states of the family, compared with the approved design reference and preserved as separate visual evidence.
-- SAMPLED evidence: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (proposed default: 8–10 screens across all sampled families, adjustable by Aymen), preserved as separate visual evidence. The sampling numbers are [ASSUMPTION] pending open decision O-4.
-- Families added by later decisions (S-07, S-08, S-17, S-26, S-27) are SAMPLED unless Aymen promotes them (O-3).
+- SAMPLED evidence: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (8–10 screens across all sampled families, at 2 widths; confirmed UD-37), preserved as separate visual evidence.
+- Families added by later decisions (S-07, S-08, S-17, S-26, S-27) stay SAMPLED (confirmed UD-37, O-3).
 - The honest tracking columns of `docs/design/coverage.csv` are unchanged; a Figma node or an approval is still
   recorded only when it exists.
 
-## 10. Proposals awaiting Aymen's decision
+## 10. Adopted proposals (UD-30 to UD-36)
 
-None of these is adopted. Each is a Proposal with its evidence, so that nothing proposed is lost.
+Aymen validated these on 2026-11-17; they are decisions now. The rules, specification, contract, stories and tests named below were updated in the change that records them; the design alignments are DF-15 to DF-18.
 
-| ID | Proposal | Where it lands | Why |
+| ID | Adopted proposal | Where it lands | Why |
 |---|---|---|---|
-| P-1 | Brief composed by a deterministic, side-effect-free service from structured facts: changes since the previous visit, contradictions (an explicit negative followed by a later positive report), explicit gaps; every statement cited by construction; AI may only rephrase later | Story 5.2; BR-011 and AI specification would change | Reproducible, €0, no latency or hallucination risk, makes the demo independent of a provider |
-| P-2 | Mechanical support checks for citations: value, date and unit found in the cited excerpt, negation, later contradicting source; result is flags, never a score, and never the word verified | Stories 5.3, 6.3, 6.4 | First line of defense for the product's defining rule; the fixture `SC-UNSUPPORTED-DRAFT` is the first test |
-| P-3 | Record viewed as known at a past instant (`asOf` on read operations, last revision per lineage with `recorded_at` at or before the instant, read-only) | Stories 3.2, 3.3 | Uses the immutable revisions already specified; shows the weight 86,4 to 68,4 kg correction |
-| P-4 | Isolation proof: a CI-generated report of the adversarial matrix plus an interactive journey | Story 1.4 | One investment serves test and demonstration |
-| P-5 | Reproducible demo package: `docker compose up`, scripted Playwright journey that is also the test and the video recorder, static warm-up page, portfolio-first README | Stories 9.1, 10.3 | Recruiters see the product in 90 seconds |
-| P-6 | Module-boundary verification (ArchUnit or Spring Modulith, compatibility with Boot 4.1.2 to verify) and axe-core in Playwright | Stories 10.1, 10.2 | Enforces ADR-001 and NFR-05 cheaply |
-| P-7 | Real-model evaluation reduced to 12–15 hand-annotated cases instead of at least 30 with two judges | D-26 | The specified protocol assumes a second human |
+| P-1 (UD-30) | Brief composed by a deterministic, side-effect-free service from structured facts: changes since the previous visit, contradictions (an explicit negative followed by a later positive report), explicit gaps; every statement cited by construction; AI may only rephrase later | Story 5.2; BR-011 and the AI specification changed | Reproducible, €0, no latency or hallucination risk, makes the demo independent of a provider |
+| P-2 (UD-31) | Mechanical support checks for citations: value, date and unit found in the cited excerpt, negation, later contradicting source; result is flags, never a score, and never the word verified | Stories 5.3, 6.3, 6.4 | First line of defense for the product's defining rule; the fixture `SC-UNSUPPORTED-DRAFT` is the first test |
+| P-3 (UD-32) | Record viewed as known at a past instant (`asOf` on read operations, last revision per lineage with `recorded_at` at or before the instant, read-only) | Stories 3.2, 3.3 | Uses the immutable revisions already specified; shows the weight 86,4 to 68,4 kg correction |
+| P-4 (UD-33) | Isolation proof: a CI-generated report of the adversarial matrix plus an interactive journey | Story 1.4 | One investment serves test and demonstration |
+| P-5 (UD-34) | Reproducible demo package: `docker compose up`, scripted Playwright journey that is also the test and the video recorder, static warm-up page, portfolio-first README | Stories 9.1, 10.3 | Recruiters see the product in 90 seconds |
+| P-6 (UD-35) | Module-boundary verification (ArchUnit or Spring Modulith, compatibility with Boot 4.1.2 to verify) and axe-core in Playwright | Stories 10.1, 10.2 | Enforces ADR-001 and NFR-05 cheaply |
+| P-7 (UD-36) | Real-model evaluation reduced to 12–15 hand-annotated cases instead of at least 30 with two judges | D-26 | The specified protocol assumes a second human |
 | P-8 | Spec freeze lifted only through one-page mini-ADRs (accepted as UD-27; listed for completeness) | Governance | Limits the documentation tax |
 
-## 11. Open decisions
+## 11. Decisions: settled, gated and kept by Aymen
 
-| ID | Decision | Default until decided |
+On 2026-11-17 Aymen validated every recommendation of this list except the development authorization, which he keeps (UD-28). Gated decisions are not blocking: they need a measurement, a cost or a spike first.
+
+| ID | Decision | State |
 |---|---|---|
-| O-1 | Native session duration and refresh (A-15, D-19) | Decided at ADR-008 acceptance |
-| O-2 | Order of increments 2 and 3 after increment 1 | 2 then 3 |
-| O-3 | Promote S-07, S-08, S-17, S-26, S-27 to CORE | SAMPLED |
-| O-4 | Sampling numbers for SAMPLED evidence | 8–10 screens, 2 widths |
-| O-5 | Hosting decision after the benchmark (UD-25) | €0 best effort |
-| O-6 | Accept ADR-008 and ADR-009 | Proposed |
-| O-7 | Accept proposals P-1 to P-7 | Not adopted |
-| O-8 | Booking and cancellation windows (D-21) | Fixed grid, no window policy |
-| O-9 | Store decision (D-15): Apple program, Google fee and tester rule | No store |
-| O-10 | Custom domain and privacy-policy page (D-32) | None |
-| O-11 | Unconfirmed assumptions A-02, A-04, A-05, A-08, A-09, A-10, A-11 | Working assumptions |
-| O-12 | Real-model evaluation corpus size (specification: at least 30) | Specification text |
-| O-13 | Module-verification tool and exact dependency versions | Chosen at the story 10.1 spike |
+| O-1 | Native session duration and refresh (A-15, D-19) | Open; decided in story 10.5 (increment 3) |
+| O-2 | Order of increments 2 and 3 | Settled: 2 then 3 (UD-37) |
+| O-3 | Promote S-07, S-08, S-17, S-26, S-27 to CORE | Settled: they stay SAMPLED (UD-37) |
+| O-4 | Sampling numbers for SAMPLED evidence | Settled: 8–10 screens, 2 widths (UD-37) |
+| O-5 | Hosting decision after the benchmark | Gated: story 10.3 benchmark, then Aymen chooses; €0 best effort until then (UD-25) |
+| O-6 | Accept ADR-008 and ADR-009 | Settled: accepted (UD-29) |
+| O-7 | Adopt proposals P-1 to P-7 | Settled: adopted (UD-30 to UD-36) |
+| O-8 | Booking and cancellation windows (D-21) | Gated: decided at the start of increment 2; fixed grid until then |
+| O-9 | Store decision (D-15): Apple program, Google fee and tester rule | Gated: at the story 10.8 gate with costs and policies; no store until then |
+| O-10 | Custom domain and privacy-policy page (D-32) | Gated: with the store or deep-link decision |
+| O-11 | Assumptions A-02, A-04, A-05, A-08, A-09, A-10, A-11 | Settled: confirmed as working baselines (UD-37); each keeps its revisit trigger |
+| O-12 | Real-model evaluation corpus size | Settled: 12 to 15 hand-annotated cases (UD-36) |
+| O-13 | Module-verification tool and exact dependency versions | Delegated: chosen at the story 10.1 spike and recorded |
+
+Still kept by Aymen: the development authorization (UD-28) and the review and approval of the core design families (UD-16).
 
 ## 12. Follow-ups outside this change, by owner
 
@@ -491,16 +495,21 @@ is working there. These alignments are needed; items DF-11 to DF-13 were observe
 | DF-11 | Source excerpts are not in chronological order in I-17 and in the patient view (14/09, 02/11, 20/10; numbering ^1 = 2 November): decide an ordering rule | Local captures I-17, S-29 |
 | DF-12 | S-06 repeats the empty-day message in two sentences | Local capture S-06 |
 | DF-13 | ADR-004 expires a session after 30 minutes of inactivity: design autosave or heartbeat states for I-05, I-15, I-22 | ADR-004, I-22 |
-| DF-14 | Decide whether S-07, S-08, S-17, S-26, S-27 become CORE | O-3 |
+| DF-14 | S-07, S-08, S-17, S-26 and S-27 stay SAMPLED; revisit only if a review finds a risk | UD-37 |
+| DF-15 | The fixture AI-A-002 and the S-06, S-37, S-40, I-14 copy assume the brief is generated by a provider and can time out; with the deterministic composer the brief is computed, so the timeout fixture moves to the report draft or to the optional rephrasing, and the brief action becomes a recalculation | UD-30 |
+| DF-16 | S-18, S-21, S-23: show each citation's mechanical check result and its flags, the copy "Contrôles mécaniques passés — relecture humaine requise" (never "vérifié") and the validation-blocked state | UD-31 |
+| DF-17 | S-09, S-11: the as-of selector, the "Vue historique — lecture seule" banner and the link to the correction | UD-32 |
+| DF-18 | S-01, S-36: the guided "Prouvez l'isolation" journey and the static warm-up page of the demo package | UD-33, UD-34 |
 
 **Contract and rules (this change did the following; pending items are listed).**
 
 | ID | Item | State |
 |---|---|---|
 | CF-1 | Error responses per operation, ETag only on versioned aggregates, `operationId` names, `/tasks` collection, `Capability` schema, conditional schemas, acknowledgement operations, manifest rule | Done in this change |
-| CF-2 | Five planned operations (section 8.3) | Pending ADR-008 and ADR-009 acceptance |
+| CF-2 | Five planned operations (section 8.3) | Pending: add `getApiMeta` before story 10.2 and the other four before story 10.5 (ADR-008 and ADR-009 are accepted) |
 | CF-3 | Update `docs/design/synthetic-data.json` if Aymen wants an acknowledgement fixture | Optional, design owner |
 | CF-4 | Version comparison is computed on the client in increment 1 (no diff operation) | Decided in the contract README |
+| CF-5 | `AsOf` parameter on five record read operations and `Citation.mechanicalCheck` (contract 0.2.1-planning) | Done in this change |
 
 **Tooling.**
 
@@ -513,3 +522,4 @@ is working there. These alignments are needed; items DF-11 to DF-13 were observe
 ## 13. Change log
 
 - 2026-11-17: first version, from the user decisions of that date.
+- 2026-11-17 (later): UD-29 to UD-37 settle the open decisions and adopt proposals P-1 to P-7.

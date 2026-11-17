@@ -1,6 +1,6 @@
 # Architecture decision records
 
-Date: 2026-11-02. Status: Draft / internally reviewed when recorded in the review report. **No ADR is approved by Aymen.** The user selected the product boundaries and three core technologies; the concrete choices here are proposals for design continuity.
+Date: 2026-11-02. Status: Draft / internally reviewed when recorded in the review report. **ADR-001 to ADR-007 are not approved by Aymen; ADR-008 and ADR-009 were accepted by him on 2026-11-17 (UD-29).** The user selected the product boundaries and three core technologies; the concrete choices here are proposals for design continuity.
 
 | ADR | Decision |
 |---|---|

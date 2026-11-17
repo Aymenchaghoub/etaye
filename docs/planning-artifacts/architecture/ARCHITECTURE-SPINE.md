@@ -93,7 +93,7 @@ flowchart LR
 - **Prevents:** incompatible errors, unchecked migration changes and unverified delivery claims.
 - **Rule:** REST `/api/v1`, UUID identifiers, ISO dates, UTC instants with IANA practice time zone, decimal strings with units, RFC 9457 problem responses. Applied Flyway versioned SQL migrations are immutable. Test isolated real PostgreSQL and real HTTP/UI stack, stubbing only external AI/email/file scan boundaries where necessary. Publish immutable artifacts identified by commit and digest only after required checks pass; no rebuild during promotion.
 
-### AD-11 — Multi-client access [Proposal]
+### AD-11 — Multi-client access [ADOPTED]
 
 - **Binds:** FR-001, FR-016.
 - **Prevents:** a second session model, clinical data on devices and clients that break when the API evolves.
