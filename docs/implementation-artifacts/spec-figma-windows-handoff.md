@@ -51,4 +51,6 @@ The oneshot route activates Blind Hunter only; other dispatch review layers were
 
 ## Delivery verification
 
+The post-commit secret scan initially reported five occurrences of the already verified public Figma file identifier. The existing exact-value exception was extended to only the five new source/report paths; authentication-token rules remain active. The final history scan is rerun before push.
+
 Executed: 15 Python tooling tests, 24 new importer fixture tests, four existing importer fixture tests, JS syntax, Python lint, documentary OpenAPI/architecture/link/workflow checks and the pinned secret scan. All 94 actual packets, eight existing roots, 5,527 inventory records and ten unique PNG hashes were checked. The final clean-source archive and publication identity are recorded separately after the source commit; this spec marks tooling preparation complete, not native Windows import complete. Native Windows execution, PowerShell verification and user design acceptance remain pending; all application stories remain backlog.
