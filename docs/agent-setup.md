@@ -1,6 +1,6 @@
 # Agent setup and troubleshooting
 
-Updated 2026-11-02. This guide describes actual installed project tooling, not a working application. Shared policy is AGENTS.md; CLAUDE.md imports it using `@AGENTS.md`. [Official Claude imports](https://code.claude.com/docs/en/memory) and [skills](https://code.claude.com/docs/en/skills), [official Codex skills](https://developers.openai.com/codex/skills/) support this arrangement. No application build/test command has been verified. Documentation/tooling CI was subsequently authorized; its checks are listed below.
+Updated 2026-11-17. This guide describes actual installed project tooling, not a working application. Shared policy is AGENTS.md; CLAUDE.md imports it using `@AGENTS.md`. [Official Claude imports](https://code.claude.com/docs/en/memory) and [skills](https://code.claude.com/docs/en/skills), [official Codex skills](https://developers.openai.com/codex/skills/) support this arrangement. No application build/test command has been verified. Documentation/tooling CI was subsequently authorized; its checks are listed below.
 
 ## Pinned installation
 
@@ -16,6 +16,12 @@ Rerunning an installer can regenerate files; inspect Git state first and preserv
 
 Unslop was installed using the skill-installer helper from `heydamir/unslop`, path `skills/unslop`, pinned commit `a6f121eee5f29c2f74976b75456feae8b66afb3a`, destination `.claude/skills`. Its repository-root license was fetched at that commit and retained locally. Author Damir Sokolovsky, CC BY4.0; see THIRD_PARTY_NOTICES.md. SKILL.md plus signs.md/tokens.md were read. No UI redesign performed.
 
+## Karpathy Guidelines addition — 2026-11-17
+
+Aymen requested a project-local installation for Claude Code and Codex from `multica-ai/andrej-karpathy-skills`. The skill-installer helper installed `skills/karpathy-guidelines` at commit `2c606141936f1eeef17fa3043a72095b4765b9c2` into `.claude/skills`. The existing `.agents/skills` symlink exposes the same copy to Codex. [Provenance](../.claude/skills/karpathy-guidelines/UPSTREAM.md) records source and license declarations; `SKILL.md` is unchanged and its Git blob matches upstream exactly.
+
+Filesystem discovery paths were verified for both tools. Native discovery was not rerun for this addition; the earlier 30-skill observations below are dated evidence. The skill will be available on the next turn; open a fresh session if a running client retains its previous inventory. Project policy and the development authorization gate still apply.
+
 ## Effective configuration
 
 `_bmad/custom/config.toml` pins Étaye/Aymen, French conversation, English documents, planning/implementation/project knowledge paths and the project test-artifact path. User-scope installer answers in ignored `_bmad/config.user.toml` do not by themselves configure a fresh clone; the committed team override makes required defaults portable. Personal customization belongs in ignored `*.user.toml`/settings.local.json, never in shared rules.
@@ -30,7 +36,7 @@ uv run --no-cache _bmad/scripts/resolve_customization.py --skill .claude/skills/
 
 The third command is an example for the actual local workflow selected; use its exact directory. Resolution merges generated team/personal config then custom team/personal overrides. Read returned values, expand `{project-root}` once, never double-prefix. `etaye.test_artifacts` is project metadata, not a claim that the optional TEA module is installed; test strategy is authored under docs/test-artifacts. TEA is not installed.
 
-## Verified discovery and versions
+## Verified discovery and versions — 2026-11-02
 
 Installed local CLI versions observed: Codex0.166.0, Claude Code2.1.316, uv0.12.24, Node22.23.2, Python3.14.8. These are tooling observations, not the chosen future application runtime. BMAD official prerequisites are Node20.12+/Python3.10+ plus uv.
 

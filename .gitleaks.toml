@@ -7,7 +7,12 @@ useDefault = true
 description = "Public Figma file identifier, not the REST authentication token"
 targetRules = ["generic-api-key"]
 condition = "AND"
-paths = ['''^(docs/design/figma/(manifest|resolved-tokens)\.json|tools/inspect_figma\.py)$''']
+paths = [
+  '''^(docs/design/figma/(manifest|resolved-tokens)\.json|tools/inspect_figma\.py)$''',
+  '''^docs/design/reviews/2026-11-17-(windows-handoff|figma-mcp-import)\.json$''',
+  '''^docs/design/windows-handoff/EXISTING-FIGMA-STATE\.json$''',
+  '''^design/figma-windows-import/(code\.js|test-plugin\.cjs)$''',
+]
 regexes = ['''^vfh4BSnbRAbaDE1q0CyssL$''']
 
 [[allowlists]]
