@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <!--
+    Paper grain tile, 256 x 256 CSS px, seamless (stitchTiles). PROPOSAL, see ../README.md.
+    Only the ALPHA channel matters: the tile is used as a CSS mask, so the visible colour always
+    comes from a design token (the ink token) and follows the light/dark theme. The RGB values
+    below are therefore not a design colour. Keep this comment free of double hyphens: XML forbids them.
+  -->
+  <filter id="paper" filterUnits="userSpaceOnUse" x="0" y="0" width="256" height="256" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="4" stitchTiles="stitch" result="g"/>
+    <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  4 0 0 0 -2" result="grain"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.055 0.8" numOctaves="2" seed="9" stitchTiles="stitch" result="f1"/>
+    <feColorMatrix in="f1" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  6 0 0 0 -3.4" result="fiberA"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.8 0.055" numOctaves="2" seed="21" stitchTiles="stitch" result="f2"/>
+    <feColorMatrix in="f2" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  6 0 0 0 -3.4" result="fiberB"/>
+    <feComposite in="grain" in2="fiberA" operator="arithmetic" k1="0" k2="1" k3="0.35" k4="0" result="gf"/>
+    <feComposite in="gf" in2="fiberB" operator="arithmetic" k1="0" k2="1" k3="0.35" k4="0"/>
+  </filter>
+  <rect width="256" height="256" filter="url(#paper)"/>
+</svg>

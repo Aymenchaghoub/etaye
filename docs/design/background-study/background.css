@@ -1,0 +1,52 @@
+/*
+ * Étaye — background layers. PROPOSAL, not approved (see README.md).
+ *
+ * Needs the existing tokens (tokens.css): --fond --papier --encre --filet --accent-fond,
+ * theme switched with <html data-theme="clair|sombre">. No new colour is introduced.
+ * The layer is decorative: aria-hidden, no events, no animation, no network request.
+ * It must never sit behind tables, forms, clinical data, documents, PDF or e-mail:
+ * those always live on an opaque --surface panel that fully covers it.
+ */
+
+.etaye-bg-host { position: relative; min-height: 100vh; isolation: isolate; }
+
+.etaye-bg {
+  position: absolute; inset: 0; z-index: -1;
+  pointer-events: none; contain: strict;
+  background: var(--fond);               /* today's plain surface: what remains when the layers are off */
+  --bg-grain-opacity: .03;               /* ink grain strength, light theme (see README sweep) */
+  --bg-tick-opacity: .32;                /* blueprint ticks and registration marks */
+}
+[data-theme="sombre"] .etaye-bg { --bg-grain-opacity: .045; --bg-tick-opacity: .38; }
+
+/* Layer 1 — paper: --papier fill + one tiled ink-grain mask. */
+.etaye-bg__paper { position: absolute; inset: 0; background: var(--papier); }
+.etaye-bg__paper::after {
+  content: ""; position: absolute; inset: 0;
+  background: var(--encre);
+  opacity: var(--bg-grain-opacity);
+  -webkit-mask: url("assets/paper-grain.svg") 0 0 / 256px 256px repeat;
+          mask: url("assets/paper-grain.svg") 0 0 / 256px 256px repeat;
+}
+
+/* Layer 2 — blueprint touch: two L-shaped survey rulers (top-left, bottom-right) and two
+   registration marks (top-right, bottom-left). Everything sits in the outer 24px margin
+   (--espace-6): a 16px tinted band (--espace-4), a hairline at 8px (--espace-2) and ticks
+   of 4px / 8px. The rulers fade out over 192px (8 x --espace-6) along each edge, so content
+   at the usual 24px page padding keeps at least 8px of clear space. */
+.etaye-bg__blueprint { position: absolute; inset: 0; }
+.etaye-bg__blueprint > svg { position: absolute; display: block; overflow: visible; }
+.etaye-bp-ruler { width: 192px; height: 192px; top: 0; left: 0; }
+.etaye-bp-ruler--end { top: auto; left: auto; right: 0; bottom: 0; transform: rotate(180deg); }
+.etaye-bp-mark { width: 16px; height: 16px; }
+.etaye-bp-mark--tr { top: 8px; right: 8px; }
+.etaye-bp-mark--bl { bottom: 8px; left: 8px; }
+
+/* Independent switches (the two layers never depend on each other). */
+.etaye-bg[data-paper="off"] .etaye-bg__paper,
+.etaye-bg[data-blueprint="off"] .etaye-bg__blueprint { display: none; }
+
+/* Never in high-contrast, reduced-transparency or print contexts. */
+@media (forced-colors: active), (prefers-contrast: more), (prefers-reduced-transparency: reduce), print {
+  .etaye-bg__paper::after, .etaye-bg__blueprint { display: none; }
+}
