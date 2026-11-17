@@ -43,6 +43,8 @@ jobs:
           node --check design/figma-local-import/code.js
           node --check design/figma-local-import/capture.js
           node --test design/figma-local-import/test-plugin.cjs
+          node --check design/figma-windows-import/code.js
+          node design/figma-windows-import/test-plugin.cjs
       - name: Validate planning documents and synthetic fixtures
         run: .venv-docs/bin/python tools/validate_docs.py --report reports/document-validation.json
       - name: Validate the documentary OpenAPI contract

@@ -1,0 +1,69 @@
+{
+  "kind": "windows-figma-design-handoff",
+  "date": "2026-11-17",
+  "fileKey": "vfh4BSnbRAbaDE1q0CyssL",
+  "pageId": "15:2",
+  "nativeObservation": {
+    "version": "2422782521887797840",
+    "observedAt": "2026-11-17T10:39:05Z",
+    "completedStates": 8,
+    "remainingStates": 448,
+    "completedSection": "26:2",
+    "editableTextsInEightRoots": 344,
+    "noraNode": "26:1282",
+    "noraNodeTypes": {
+      "FRAME": 147,
+      "RECTANGLE": 9,
+      "VECTOR": 109,
+      "TEXT": 63
+    }
+  },
+  "source": {
+    "snapshotSha256": "d2f0800e275c4b156fedbcf23656ffe2bf435f9b6a72faf0f86fc293e2a82ad6",
+    "captureSha256": "a6c9010bc215d86d32e430c0e50abac5b75bca16c1ff6102f46892e62b17974b",
+    "states": 456,
+    "families": 76,
+    "packets": 94,
+    "discretePngAssets": 10,
+    "contentImageUses": 31,
+    "minorCaptureLayoutShiftStates": [
+      "I-13/ouvert",
+      "S-38/enregistrement"
+    ]
+  },
+  "quota": {
+    "mcpStopped": true,
+    "nextPacket": "001-S-01-1",
+    "message": "You've reached the Figma MCP tool call limit on the Starter plan",
+    "changingComputerResetsQuota": false
+  },
+  "evidence": {
+    "currentNoraRender": "2026-11-17-figma-mcp/S-06-family-nora-final.png",
+    "sha256": "0094b05e1155629982680b3467bd18610cf69ea526cb26b7d51facb73ac5b9af",
+    "opened": true,
+    "previousPilot": "2026-11-17-figma-mcp-import.json",
+    "currentNativeIdentity": "../windows-handoff/EXISTING-FIGMA-STATE.json"
+  },
+  "verification": {
+    "pythonToolingTests": 15,
+    "windowsImporterFixtureTests": 24,
+    "actualPreparedPacketStructure": 94,
+    "actualExistingRootsComparedToRestCache": 8,
+    "actualEmbeddedPngHashes": 10,
+    "preliminaryArchiveCrcMembershipAndByteEquality": true,
+    "nativeWindowsExecution": false,
+    "powershellExecution": false,
+    "canonicalRecompiledPackets": 94,
+    "recordedNativeInventoryNodes": 5527,
+    "independentReviewFindings": 11,
+    "nativeLeafRollbackRegression": "reproduced two failures, then corrected",
+    "realNativeInventoryNormalizationRecords": 5527,
+    "actualEmbeddedPngEntries": 13
+  },
+  "cleanupAuthorized": true,
+  "cleanupExecuted": false,
+  "fullImportComplete": false,
+  "fullVisualReviewComplete": false,
+  "approvedByAymen": false,
+  "applicationImplementationStarted": false
+}

@@ -2,7 +2,11 @@
 
 Aymen requested this free fallback after the official MCP connector's Starter/View monthly quota was actually exhausted. The local token worked for read-only REST access; no token belongs in this plugin. The original raster-frame plugin is not used.
 
+**2026-11-17 MCP retest:** one isolated S-06/nora frame was imported and inspected through the connector, with REST-token reads/exports for verification. See the [pilot evidence](../../docs/design/reviews/2026-11-17-figma-mcp-import.md). Text rewrapping was corrected; other fidelity/component/responsive gaps remain. This is distinct from running this local plugin in native Windows/macOS Figma, which remains unverified. The full library is not synchronized or approved.
+
 ## What this delivers and what remains unverified
+
+For the current complete desktop import, use the separate [Windows queue importer](../figma-windows-import/README.md) and [ready Windows kit](../../docs/design/windows-handoff/START-HERE.md). This older plugin and its earlier export remain preserved; they do not consume the new native-v2 packets.
 
 The exporter reads the frozen corrected HTML in Chromium and produces native-layer scene batches. The plugin creates new **TEXT**, vector SVG, shape and nested frame nodes. Discrete PDF-page content previews remain images, as in the interface; entire UI screenshots are never used as screen fills. Logos/icons retain source SVG geometry. Browser geometry and text-line boundaries are retained for inspection. This is **not automatic reconstruction of reusable component variants, token bindings, auto-layout, responsive behavior or prototype wiring**; these require Figma reconciliation/review. PDF source bodies can be edited as layers; the nine actual paginated PDFs remain the print reference.
 

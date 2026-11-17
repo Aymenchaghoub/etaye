@@ -1,0 +1,63 @@
+{
+  "kind": "published-windows-figma-kit",
+  "date": "2026-11-17",
+  "release": "https://github.com/Aymenchaghoub/etaye/releases/tag/figma-windows-20261117",
+  "prerelease": true,
+  "pullRequest": "https://github.com/Aymenchaghoub/etaye/pull/16",
+  "branch": "docs/figma-windows-handoff",
+  "sourceCommit": "a4bd5d3c7a6ee92f7f7cc8aa6ce87db427690621",
+  "archiveSourceTreeDirty": false,
+  "payloadFiles": 1694,
+  "archiveEntries": 1695,
+  "states": 456,
+  "families": 76,
+  "packets": 94,
+  "alreadyImportedStates": 8,
+  "remainingNativeStates": 448,
+  "assets": [
+    {
+      "name": "Etaye-Figma-Windows-20261117-1gj058js.zip",
+      "url": "https://github.com/Aymenchaghoub/etaye/releases/download/figma-windows-20261117/Etaye-Figma-Windows-20261117-1gj058js.zip",
+      "bytes": 18627788,
+      "sha256": "76af2de85ea9742c81c270e3f4ed0fd76a414b050f9e74113e7490d7d8832e11",
+      "githubUploadedDigestMatches": true
+    },
+    {
+      "name": "Etaye-Figma-Windows-20261117-1gj058js-SHA256SUMS.txt",
+      "url": "https://github.com/Aymenchaghoub/etaye/releases/download/figma-windows-20261117/Etaye-Figma-Windows-20261117-1gj058js-SHA256SUMS.txt",
+      "bytes": 226,
+      "sha256": "69c83fd8ff3a492074e17ca0c7f07f44f5e1b219432289267f9b6ad303002ef5",
+      "githubUploadedDigestMatches": true
+    },
+    {
+      "name": "MANIFEST.json",
+      "url": "https://github.com/Aymenchaghoub/etaye/releases/download/figma-windows-20261117/MANIFEST.json",
+      "bytes": 342143,
+      "sha256": "ffcfe909929d57bcd8ba0253649c8759190b157afc4a04c83258026e5ad20350",
+      "githubUploadedDigestMatches": true
+    }
+  ],
+  "verification": {
+    "archiveCrcMembershipEveryPayloadByte": true,
+    "frozenSiteAndFonts": true,
+    "canonicalPacketSha256s": 94,
+    "actualPacketStructure": 94,
+    "existingRoots": 8,
+    "nativeInventoryRecords": 5527,
+    "uniquePngByteHashes": 10,
+    "pythonToolingTests": 15,
+    "newImporterFixtureTests": 24,
+    "existingImporterFixtureTests": 4,
+    "independentReviewFindingsAddressed": 11,
+    "historySecretScan": "passed; public identifier exception limited to exact value and known paths",
+    "documentationCiAtSourceCommit": "success",
+    "nativeWindowsExecution": false,
+    "powershellExecution": false
+  },
+  "limits": [
+    "Eight imported states have targeted native visual evidence, not full family acceptance.",
+    "Complete Windows import, PDF/email/native visual comparison and Aymen approval remain pending.",
+    "Delivery register commits may postdate the immutable release source snapshot.",
+    "No application implementation or story advancement."
+  ]
+}
