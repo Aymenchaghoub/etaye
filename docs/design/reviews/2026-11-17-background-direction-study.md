@@ -1,6 +1,6 @@
 # Background direction study — review report
 
-Date: 2026-11-17. Author: Claude (Claude Code session). Status: **proposal evidence, not a design approval.** The specification is in [the study README](../background-study/README.md); this report records what was verified, what failed and what was not done.
+Date: 2026-11-17. Author: Claude (Claude Code session). Status: **proposal evidence, not a design approval.** Update: the opacity values below (3 % light, 4.5 % dark) were superseded later the same day by the 12 % grain with calm plates, see the [calm-zones report](2026-11-17-background-calm-zones.md). The specification is in [the study README](../background-study/README.md); this report records what was verified, what failed and what was not done.
 
 ## 1. Mission and outcome
 

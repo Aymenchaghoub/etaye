@@ -113,7 +113,7 @@
     </header>
 
     <main class="grid">
-      <section class="hero" aria-labelledby="titre">
+      <section class="hero etaye-calm" aria-labelledby="titre">
         <p class="meta etaye-3" data-m="notice" style="margin:0">Démonstration — personnes et données fictives</p>
         <h1 class="patient-titre" id="titre" data-m="title" style="margin:0">Préparer une consultation avec des informations datées et vérifiables</h1>
         <p class="patient-corps etaye-2" data-m="lead" style="margin:0">Étaye aide un cabinet à préparer ses consultations, à tenir le dossier et à rédiger des comptes rendus. Les brouillons générés citent leurs sources et restent des brouillons tant qu'un praticien ne les a pas relus et validés.</p>
@@ -148,6 +148,9 @@
   if (q.get('v') === 'a' || q.get('bp') === 'off') bg.setAttribute('data-blueprint', 'off');
   if (q.get('paper') === 'off') bg.setAttribute('data-paper', 'off');
   if (q.get('grain') !== null) bg.style.setProperty('--bg-grain-opacity', q.get('grain'));
+  var host = document.querySelector('.etaye-bg-host');
+  if (q.get('calm') === 'off') host.setAttribute('data-calm', 'off');
+  if (q.get('calmop') !== null) [].forEach.call(document.querySelectorAll('.etaye-calm'), function (el) { el.style.setProperty('--bg-calm-opacity', q.get('calmop')); });
   if (q.get('tick') !== null) bg.style.setProperty('--bg-tick-opacity', q.get('tick'));
   if (q.get('m') === '1') document.body.classList.add('measure');
 
@@ -155,6 +158,7 @@
     var ui = document.createElement('div'); ui.className = 'review-ui'; ui.setAttribute('role', 'group'); ui.setAttribute('aria-label', 'Review controls');
     ui.innerHTML = '<label><input type="checkbox" id="u-paper" checked> Paper</label>' +
       '<label><input type="checkbox" id="u-bp" checked> Blueprint touch</label>' +
+      '<label><input type="checkbox" id="u-calm" checked> Calm plates</label>' +
       '<label><input type="checkbox" id="u-dark"> Sombre</label>' +
       '<label>Grain <input type="range" id="u-grain" min="0" max="0.12" step="0.005" style="width:110px"> <output id="u-gv"></output></label>';
     document.body.appendChild(ui);
@@ -166,6 +170,8 @@
     document.getElementById('u-dark').checked = root.getAttribute('data-theme') === 'sombre';
     sync();
     document.getElementById('u-paper').onchange = function (e) { e.target.checked ? bg.removeAttribute('data-paper') : bg.setAttribute('data-paper', 'off'); };
+    document.getElementById('u-calm').checked = host.getAttribute('data-calm') !== 'off';
+    document.getElementById('u-calm').onchange = function (e) { e.target.checked ? host.removeAttribute('data-calm') : host.setAttribute('data-calm', 'off'); };
     document.getElementById('u-bp').onchange = function (e) { e.target.checked ? bg.removeAttribute('data-blueprint') : bg.setAttribute('data-blueprint', 'off'); };
     document.getElementById('u-dark').onchange = function (e) { root.setAttribute('data-theme', e.target.checked ? 'sombre' : 'clair'); bg.style.removeProperty('--bg-grain-opacity'); sync(); };
     g.oninput = function () { bg.style.setProperty('--bg-grain-opacity', g.value); gv.textContent = (g.value * 100).toFixed(1) + ' %'; };
@@ -183,6 +189,9 @@
     });
     var panel = document.querySelector('[data-opaque]').getBoundingClientRect();
     data.panel = { x: panel.left + scrollX, y: panel.top + scrollY, w: panel.width, h: panel.height };
+    var plate = document.querySelector('.etaye-calm'), pr = plate.getBoundingClientRect(), pcs = getComputedStyle(plate);
+    data.plate = { x: pr.left + scrollX, y: pr.top + scrollY, w: pr.width, h: pr.height,
+      inflate: parseFloat(pcs.getPropertyValue('--bg-calm-inset')) + parseFloat(pcs.getPropertyValue('--bg-calm-feather')) };
     var s = document.createElement('script'); s.type = 'application/json'; s.id = 'measure-data'; s.textContent = JSON.stringify(data);
     document.body.appendChild(s); root.setAttribute('data-ready', '1');
   });

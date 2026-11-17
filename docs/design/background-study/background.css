@@ -14,10 +14,10 @@
   position: absolute; inset: 0; z-index: -1;
   pointer-events: none; contain: strict;
   background: var(--fond);               /* today's plain surface: what remains when the layers are off */
-  --bg-grain-opacity: .03;               /* ink grain strength, light theme (see README sweep) */
+  --bg-grain-opacity: .12;               /* ink grain strength in open areas, both themes */
   --bg-tick-opacity: .32;                /* blueprint ticks and registration marks */
 }
-[data-theme="sombre"] .etaye-bg { --bg-grain-opacity: .045; --bg-tick-opacity: .38; }
+[data-theme="sombre"] .etaye-bg { --bg-tick-opacity: .38; }
 
 /* Layer 1 — paper: --papier fill + one tiled ink-grain mask. */
 .etaye-bg__paper { position: absolute; inset: 0; background: var(--papier); }
@@ -42,11 +42,37 @@
 .etaye-bp-mark--tr { top: 8px; right: 8px; }
 .etaye-bp-mark--bl { bottom: 8px; left: 8px; }
 
-/* Independent switches (the two layers never depend on each other). */
+/* Calm plate — the grain is strong in open areas, so any block that carries small meta text
+   (--encre-3) or outline controls takes .etaye-calm. It lays a --papier plate over the grain,
+   which cuts the grain behind the block to (1 - opacity) of its strength: 12% x (1 - .8) = 2.4%,
+   inside the measured limits (see README). The plate is solid for --bg-calm-inset (8px) around
+   the block, then fades out over --bg-calm-feather (32px, 24px on tablets, 4px on phones) so it
+   never reaches the blueprint margin. The fade is a two-axis alpha mask, not a shadow, so the
+   edge has no visible step. */
+.etaye-calm { position: relative; isolation: isolate;
+  --bg-calm-opacity: .8; --bg-calm-inset: 8px; --bg-calm-feather: 32px; }
+.etaye-calm::before {
+  content: ""; position: absolute; z-index: -1; pointer-events: none;
+  inset: calc(-1 * (var(--bg-calm-inset) + var(--bg-calm-feather)));
+  background: var(--papier); opacity: var(--bg-calm-opacity);
+  -webkit-mask: linear-gradient(to right, transparent, #000 var(--bg-calm-feather), #000 calc(100% - var(--bg-calm-feather)), transparent),
+                linear-gradient(to bottom, transparent, #000 var(--bg-calm-feather), #000 calc(100% - var(--bg-calm-feather)), transparent);
+  -webkit-mask-composite: source-in;
+          mask: linear-gradient(to right, transparent, #000 var(--bg-calm-feather), #000 calc(100% - var(--bg-calm-feather)), transparent),
+                linear-gradient(to bottom, transparent, #000 var(--bg-calm-feather), #000 calc(100% - var(--bg-calm-feather)), transparent);
+          mask-composite: intersect;
+}
+/* Rule: plate reach (inset + feather) <= page padding - 16px, so it stops at the blueprint band.
+   Page padding is 64 / 48 / 24px here (espace-16 / espace-12 / espace-6): reach 40 / 32 / 8px. */
+@media (max-width: 1099px) { .etaye-calm { --bg-calm-feather: 24px; } }
+@media (max-width: 639px) { .etaye-calm { --bg-calm-inset: 4px; --bg-calm-feather: 4px; } }
+
+/* Independent switches (the layers and the plates never depend on each other). */
 .etaye-bg[data-paper="off"] .etaye-bg__paper,
 .etaye-bg[data-blueprint="off"] .etaye-bg__blueprint { display: none; }
+.etaye-bg-host[data-calm="off"] .etaye-calm::before { display: none; }
 
 /* Never in high-contrast, reduced-transparency or print contexts. */
 @media (forced-colors: active), (prefers-contrast: more), (prefers-reduced-transparency: reduce), print {
-  .etaye-bg__paper::after, .etaye-bg__blueprint { display: none; }
+  .etaye-bg__paper::after, .etaye-bg__blueprint, .etaye-calm::before { display: none; }
 }

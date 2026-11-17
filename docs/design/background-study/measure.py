@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Render the background study in Chromium and measure WCAG contrast on real pixels.
 
-For every configuration (variant A/B x light/dark x desktop/tablet/mobile) the study page is
+For every configuration (variant A/B x light/dark x desktop/tablet/tablet-landscape/mobile) the study page is
 rendered twice: normally (the reviewed PNG) and in "measure" mode, where every glyph, border
 and logo is hidden but every fill is kept. The measure render therefore shows what really sits
 behind each text or control: the grain, the blueprint margin, an opaque panel or a button fill.
@@ -9,7 +9,7 @@ The worst pixel under each element is compared with the element's real colour (W
 
 Usage (from anywhere, Chromium and Pillow/NumPy required):
     python3 measure.py --out DIR --json results/contrast.json
-    python3 measure.py --sweep --out DIR              # grain opacity sensitivity only
+    python3 measure.py --sweep --out DIR              # calm-plate opacity sensitivity only
 
 This script measures a design proposal rendered from static HTML. It is not an application
 test and no clinical, accessibility-audit or compliance claim follows from it.
@@ -35,7 +35,7 @@ ROOT = Path(__file__).resolve().parents[3]
 FRAME = "docs/design/background-study/frame.html"
 MIN_WINDOW = 500  # headless Chromium refuses narrower windows
 CHROMIUM = "chromium-browser"
-VIEWPORTS = {"desktop": (1440, 1024), "tablet": (768, 1024), "mobile": (390, 844)}
+VIEWPORTS = {"desktop": (1440, 1024), "tablet": (768, 1024), "tablet-landscape": (1024, 768), "mobile": (390, 844)}
 THEMES = {"light": "clair", "dark": "sombre"}
 TOKENS_CSS = ROOT / "design/received/2026-11-03/export/etaye-design-system/tokens/tokens.css"
 # Blueprint geometry (CSS px), kept in sync with background.css / study.html.
@@ -162,13 +162,12 @@ def overlaps(a: tuple, b: tuple) -> bool:
     return a[0] < b[2] and b[0] < a[2] and a[1] < b[3] and b[1] < a[3]
 
 
-def measure_config(port: int, variant: str, theme: str, vp: str, out: Path, grain: str | None = None,
+def measure_config(port: int, variant: str, theme: str, vp: str, out: Path, extra: str = "",
                    keep_png: bool = True) -> dict:
     vw, vh = VIEWPORTS[vp]
     first = read_layout(port, variant, theme, vw, vh)
     height = max(vh, first["pageH"])
     layout = read_layout(port, variant, theme, vw, height) if height != vh else first
-    extra = f"&grain={grain}" if grain is not None else ""
     name = f"{variant.upper()}-{vp}-{theme}"
     normal, bgonly = out / f"{name}.png", out / f"{name}-bg-only.png"
     if keep_png:
@@ -205,6 +204,11 @@ def measure_config(port: int, variant: str, theme: str, vp: str, out: Path, grai
 
     pan = layout["panel"]
     rects.append((pan["x"], pan["y"], pan["x"] + pan["w"], pan["y"] + pan["h"]))
+    pl = layout["plate"]
+    plate_rect = (pl["x"], pl["y"], pl["x"] + pl["w"], pl["y"] + pl["h"])
+    reach = (plate_rect[0] - pl["inflate"], plate_rect[1] - pl["inflate"],
+             plate_rect[2] + pl["inflate"], plate_rect[3] + pl["inflate"])  # plate plus its feather
+    rects.append(reach)
     zones = blueprint_zones(vw, height)
     gaps = [rect_gap(r, z) for r in rects for z in zones] if variant == "b" else []
     crossings = sum(overlaps(r, z) for r in rects for z in zones) if variant == "b" else 0
@@ -214,13 +218,23 @@ def measure_config(port: int, variant: str, theme: str, vp: str, out: Path, grai
         keep[max(0, math.floor(y0 - 6)):math.ceil(y1 + 6), max(0, math.floor(x0 - 6)):math.ceil(x1 + 6)] = False
     for x0, y0, x1, y1 in blueprint_zones(vw, height):
         keep[max(0, math.floor(y0 - 2)):math.ceil(y1 + 2), max(0, math.floor(x0 - 2)):math.ceil(x1 + 2)] = False
-    bg = img[keep].astype(float)
+    open_keep = keep.copy()
+    open_keep[max(0, math.floor(reach[1])):math.ceil(reach[3]), max(0, math.floor(reach[0])):math.ceil(reach[2])] = False
+    bg = img[open_keep].astype(float)
+    calm_keep = np.zeros(img.shape[:2], bool)
+    calm_keep[math.floor(plate_rect[1]):math.ceil(plate_rect[3]), math.floor(plate_rect[0]):math.ceil(plate_rect[2])] = True
+    for x0, y0, x1, y1 in rects[:-1]:  # drop text and panel boxes (the last rect is the plate reach)
+        calm_keep[max(0, math.floor(y0 - 3)):math.ceil(y1 + 3), max(0, math.floor(x0 - 3)):math.ceil(x1 + 3)] = False
+    calm = img[calm_keep].astype(float)
     token = hex_rgb("#f6f4ee" if theme == "light" else "#17181a")
     luma = luminance(bg)
     return {
         "config": name, "variant": variant, "theme": theme, "viewport": vp,
         "window": [vw, height], "items": items,
         "blueprint": ({"overlaps": int(crossings), "min_clearance_px": round(min(gaps), 1)} if gaps else None),
+        "calm": ({"mean_rgb": [round(v, 2) for v in calm.mean(0)], "delta_l_star": round(float(lab(calm.mean(0))[0] - lab(token)[0]), 2),
+                  "rgb_min": calm.min(0).tolist(), "rgb_max": calm.max(0).tolist(), "samples": int(len(calm))}
+                 if len(calm) else None),
         "paper": {"mean_rgb": [round(v, 2) for v in bg.mean(0)], "token_rgb": token.tolist(),
                   "delta_l_star": round(float(lab(bg.mean(0))[0] - lab(token)[0]), 2),
                   "luminance_min": round(float(luma.min()), 4), "luminance_max": round(float(luma.max()), 4),
@@ -249,16 +263,18 @@ def token_pairs() -> dict:
 
 
 def sweep(port: int, out: Path) -> list[dict]:
+    """Calm-plate opacity sensitivity at the working grain (12 %), plus the no-plate baseline."""
     rows = []
     for theme in ("light", "dark"):
-        for g in ("0", "0.02", "0.03", "0.035", "0.04", "0.045", "0.05", "0.06", "0.08", "0.10"):
-            r = measure_config(port, "a", theme, "desktop", out / "sweep", grain=g, keep_png=False)
+        for label, extra in (("no plates", "&calm=off"), ("0.5", "&calmop=0.5"), ("0.6", "&calmop=0.6"),
+                             ("0.7", "&calmop=0.7"), ("0.75", "&calmop=0.75"), ("0.8", "&calmop=0.8"),
+                             ("0.9", "&calmop=0.9")):
+            r = measure_config(port, "b", theme, "desktop", out / "sweep", extra=extra, keep_png=False)
             worst = {i["id"]: i["min"] for i in r["items"] if i["kind"] in ("text", "control")}
-            rows.append({"theme": theme, "grain": float(g), "delta_l_star": r["paper"]["delta_l_star"],
+            rows.append({"theme": theme, "plate_opacity": label, "open_dl_star": r["paper"]["delta_l_star"],
+                         "calm_dl_star": (r["calm"] or {}).get("delta_l_star"),
                          "notice_encre3_min": worst["notice"], "lead_encre2_min": worst["lead"],
-                         "tok_accent_min": worst["tok-accent"],
-                         "secondary_border_min": worst["secondary-boundary"],
-                         "primary_edge_min": worst["primary-boundary"]})
+                         "tok_accent_min": worst["tok-accent"], "secondary_border_min": worst["secondary-boundary"]})
     return rows
 
 
@@ -266,7 +282,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--out", required=True, type=Path, help="directory for PNG renders (kept outside Git)")
     ap.add_argument("--json", type=Path, help="write the measurements here")
-    ap.add_argument("--sweep", action="store_true", help="only run the grain-opacity sensitivity table")
+    ap.add_argument("--sweep", action="store_true", help="only run the calm-plate opacity sensitivity table")
     args = ap.parse_args()
     server, port = serve()
     try:
