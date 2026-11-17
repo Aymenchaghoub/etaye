@@ -9,3 +9,7 @@ Prefer an initial same-origin application on a single backend host with PostgreS
 Alternatives: a paid small always-on instance improves readiness but needs explicit budget authorization; self-hosting lowers vendor cost but adds maintenance; multiple free services maximize fragmentation and cold-start failure points. No choice is justified by portfolio decoration.
 
 Rollback means redeploying a prior compatible image and static artifact, not automatically reversing migrations. Expand/contract changes preserve the prior application compatibility window; destructive changes require a verified backup and recovery drill. Forward fix or restore into a separate database is preferred over editing applied migrations. No service, billing plan, CI workflow or deployment is activated during planning.
+
+## Amendment 2026-11-17 (UD-25, UD-12)
+
+The hosting decision follows the story 10.3 benchmark: €0 first (local compose and free best-effort hosting), then possibly a VPS (about €4 to €7 per month, To verify at purchase). Installed and native clients need an always-on backend and a stable HTTPS origin before any store step; a sleeping host remains acceptable only for the web demo. Mobile artifacts (the web build, an Android package, an iOS archive) follow the same rule as the rest: validated once, signing material never in the repository, and no store or developer account without Aymen's decision (D-15).

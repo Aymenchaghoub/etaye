@@ -11,5 +11,7 @@ Date: 2026-11-02. Status: Draft / internally reviewed when recorded in the revie
 | [005](ADR-005-document-lineage-publication.md) | Immutable versions, evidence and explicit publication |
 | [006](ADR-006-files-pdf-storage.md) | Guarded files and reproducible PDF export |
 | [007](ADR-007-delivery-and-hosting.md) | Immutable delivery with a benchmarked hosting choice |
+| [008](ADR-008-multi-client-access.md) | Multi-client access: web, installed web app and native shell |
+| [009](ADR-009-api-compatibility.md) | API compatibility and client versioning |
 
 The [architecture spine](../planning-artifacts/architecture/ARCHITECTURE-SPINE.md) owns cross-domain constraints; ADRs explain the tradeoffs. Update both when an invariant changes, preserving IDs and supersession history.
