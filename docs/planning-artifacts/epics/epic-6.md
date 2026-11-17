@@ -2,7 +2,7 @@
 
 Status: backlog. Design: Ready for design, not designed or approved. Source versions: user mission 2026-11-02; Figma 2417265104370398313; stable BMAD 6.12.4; legacy audit 83d0439920d598775d4f424229a913b125b52217. Read current authoritative documents again before refinement.
 
-Allocation and story text refreshed on 2026-11-17 after the user decisions of that date ([decision register](../decisions-assumptions.md), UD-12 to UD-28) and aligned with the [roadmap](../roadmap.md). Sources consulted in full for this refresh: PRD, business rules, access matrix, functional specification, UX, architecture spine, data model and dictionary, API contract and README, AI specification, security/privacy, test strategy, deferred register, traceability and the dependency stories.
+Allocation and story text refreshed on 2026-11-17 after the user decisions of that date ([decision register](../decisions-assumptions.md), UD-12 to UD-37) and aligned with the [roadmap](../roadmap.md). Sources consulted in full for this refresh: PRD, business rules, access matrix, functional specification, UX, architecture spine, data model and dictionary, API contract and README, AI specification, security/privacy, test strategy, deferred register, traceability and the dependency stories.
 
 These are planning-level slices, not implementation authorization. Shared gate: complete reviewed required screen/interaction/print coverage, confirmed blocking assumptions, Aymen's explicit development authorization, then installed BMAD readiness check. Validation of code and visual fidelity remain separate.
 
@@ -38,7 +38,7 @@ As a practitioner, I want a consultation report draft that separates generated b
 
 **AT-024-B:** Given an invalid, missing, stale or unauthorized condition, when the same action is attempted, then malformed/unsupported AI output remains failed or reviewable candidate, never approved content.
 
-**AT-024-C:** Given long content, keyboard-only navigation and a failed or loading state on S-20, S-21, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level CORE for S-21: open captures at desktop 1440×1024, tablet 1024×768 and mobile 390×844, with 320 CSS px reflow, long French content, keyboard focus and the failed, loading and restricted states of the family, compared with the approved design reference and preserved as separate visual evidence. Evidence level SAMPLED for S-20: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (proposed default: 8–10 screens across all sampled families, adjustable by Aymen), preserved as separate visual evidence.
+**AT-024-C:** Given long content, keyboard-only navigation and a failed or loading state on S-20, S-21, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level CORE for S-21: open captures at desktop 1440×1024, tablet 1024×768 and mobile 390×844, with 320 CSS px reflow, long French content, keyboard focus and the failed, loading and restricted states of the family, compared with the approved design reference and preserved as separate visual evidence. Evidence level SAMPLED for S-20: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (8–10 screens across all sampled families, at 2 widths; confirmed UD-37), preserved as separate visual evidence.
 
 ## Story 6.3: Review, correct and compare versions
 
@@ -51,7 +51,7 @@ As a practitioner, I want to review, correct and compare versions so that every 
 - Read before refinement: [PRD](../prd/prd.md), [rules](../business-rules.md), [access](../access-matrix.md), [architecture](../architecture/ARCHITECTURE-SPINE.md), [data](../data-model.md), [contracts](../../contracts/openapi.yaml), [screen catalog](../../design/screen-catalog.md), [test strategy](../../test-artifacts/test-strategy.md).
 - Assumptions: apply relevant A-01–A-12 from the decision register; never treat them as verified facts. Record any changed source/version and resulting AC change in the future story.
 
-**AT-025-A:** Given valid current permission and the documented prerequisite state, when the actor completes this action, then corrections preserve history and comparison shows actor/time and exact changed text.
+**AT-025-A:** Given valid current permission and the documented prerequisite state, when the actor completes this action, then corrections preserve history and comparison shows actor/time and exact changed text. The mechanical flags of the compared versions stay visible (UD-31).
 
 **AT-025-B:** Given an invalid, missing, stale or unauthorized condition, when the same action is attempted, then concurrent write returns 412 with local text retained; approved content is edited only through new draft.
 
@@ -68,7 +68,7 @@ As a practitioner holding the validation capability, I want to validate one exac
 - Read before refinement: [PRD](../prd/prd.md), [rules](../business-rules.md), [access](../access-matrix.md), [architecture](../architecture/ARCHITECTURE-SPINE.md), [data](../data-model.md), [contracts](../../contracts/openapi.yaml), [screen catalog](../../design/screen-catalog.md), [test strategy](../../test-artifacts/test-strategy.md).
 - Assumptions: apply relevant A-01–A-12 from the decision register; never treat them as verified facts. Record any changed source/version and resulting AC change in the future story.
 
-**AT-026-A:** Given valid current permission and the documented prerequisite state, when the actor completes this action, then reviewer checks facts/citations/missing data and explicitly validates a current exact version.
+**AT-026-A:** Given valid current permission and the documented prerequisite state, when the actor completes this action, then reviewer checks facts/citations/missing data and explicitly validates a current exact version. A mechanical flag blocks validation until corrected or dispositioned with a reason (UD-31).
 
 **AT-026-B:** Given an invalid, missing, stale or unauthorized condition, when the same action is attempted, then invalid or stale preconditions prevent validation; success grants no patient visibility. Validation applies to consultation reports and patient explanations only; a clinician brief is rejected with 422 BRIEF_NOT_REVIEWABLE.
 

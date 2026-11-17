@@ -2,7 +2,7 @@
 
 Status: backlog. Design: Ready for design, not designed or approved. Source versions: user mission 2026-11-02; Figma 2417265104370398313; stable BMAD 6.12.4; legacy audit 83d0439920d598775d4f424229a913b125b52217. Read current authoritative documents again before refinement.
 
-Allocation and story text refreshed on 2026-11-17 after the user decisions of that date ([decision register](../decisions-assumptions.md), UD-12 to UD-28) and aligned with the [roadmap](../roadmap.md). Sources consulted in full for this refresh: PRD, business rules, access matrix, functional specification, UX, architecture spine, data model and dictionary, API contract and README, AI specification, security/privacy, test strategy, deferred register, traceability and the dependency stories.
+Allocation and story text refreshed on 2026-11-17 after the user decisions of that date ([decision register](../decisions-assumptions.md), UD-12 to UD-37) and aligned with the [roadmap](../roadmap.md). Sources consulted in full for this refresh: PRD, business rules, access matrix, functional specification, UX, architecture spine, data model and dictionary, API contract and README, AI specification, security/privacy, test strategy, deferred register, traceability and the dependency stories.
 
 These are planning-level slices, not implementation authorization. Shared gate: complete reviewed required screen/interaction/print coverage, confirmed blocking assumptions, Aymen's explicit development authorization, then installed BMAD readiness check. Validation of code and visual fidelity remain separate.
 
@@ -21,7 +21,7 @@ As a practitioner or an authorized scheduler, I want to find and register practi
 
 **AT-009-B:** Given an invalid, missing, stale or unauthorized condition, when the same action is attempted, then likely duplicates prompt human selection and no cross-practice matching occurs.
 
-**AT-009-C:** Given long content, keyboard-only navigation and a failed or loading state on S-07, S-08, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-07, S-08: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (proposed default: 8–10 screens across all sampled families, adjustable by Aymen), preserved as separate visual evidence.
+**AT-009-C:** Given long content, keyboard-only navigation and a failed or loading state on S-07, S-08, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-07, S-08: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (8–10 screens across all sampled families, at 2 widths; confirmed UD-37), preserved as separate visual evidence.
 
 ## Story 3.2: Explore chronology and explicit assertions
 
@@ -34,7 +34,7 @@ As a practitioner, I want to explore a patient's chronology, history, allergies 
 - Read before refinement: [PRD](../prd/prd.md), [rules](../business-rules.md), [access](../access-matrix.md), [architecture](../architecture/ARCHITECTURE-SPINE.md), [data](../data-model.md), [contracts](../../contracts/openapi.yaml), [screen catalog](../../design/screen-catalog.md), [test strategy](../../test-artifacts/test-strategy.md).
 - Assumptions: apply relevant A-01–A-12 from the decision register; never treat them as verified facts. Record any changed source/version and resulting AC change in the future story.
 
-**AT-010-A:** Given valid current permission and the documented prerequisite state, when the actor completes this action, then the rich record exposes dated history, allergies and reported treatments with source types.
+**AT-010-A:** Given valid current permission and the documented prerequisite state, when the actor completes this action, then the rich record exposes dated history, allergies and reported treatments with source types. The record can also be viewed as known at a past instant through the read-only asOf view without exposing later revisions (UD-32).
 
 **AT-010-B:** Given an invalid, missing, stale or unauthorized condition, when the same action is attempted, then minimal history shows unknown/not-asked rather than absence; conflicting reports remain visible.
 
@@ -51,11 +51,11 @@ As a practitioner, I want to see measurements and trends with their correction l
 - Read before refinement: [PRD](../prd/prd.md), [rules](../business-rules.md), [access](../access-matrix.md), [architecture](../architecture/ARCHITECTURE-SPINE.md), [data](../data-model.md), [contracts](../../contracts/openapi.yaml), [screen catalog](../../design/screen-catalog.md), [test strategy](../../test-artifacts/test-strategy.md).
 - Assumptions: apply relevant A-01–A-12 from the decision register; never treat them as verified facts. Record any changed source/version and resulting AC change in the future story.
 
-**AT-011-A:** Given valid current permission and the documented prerequisite state, when the actor completes this action, then a dated measurement has valid value/unit/provenance and appears in a labeled trend. Increment 1 verifies this on seeded measurements and the weight correction lineage; entry and correction through the interface are verified in increment 2 (D-24).
+**AT-011-A:** Given valid current permission and the documented prerequisite state, when the actor completes this action, then a dated measurement has valid value/unit/provenance and appears in a labeled trend. Increment 1 verifies this on seeded measurements and the weight correction lineage; entry and correction through the interface are verified in increment 2 (D-24). The asOf view shows the weight before and after the correction (UD-32).
 
 **AT-011-B:** Given an invalid, missing, stale or unauthorized condition, when the same action is attempted, then correction retains old revision/reason; incompatible-unit series and missing values are not joined silently.
 
-**AT-011-C:** Given long content, keyboard-only navigation and a failed or loading state on S-11, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-11: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (proposed default: 8–10 screens across all sampled families, adjustable by Aymen), preserved as separate visual evidence.
+**AT-011-C:** Given long content, keyboard-only navigation and a failed or loading state on S-11, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-11: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (8–10 screens across all sampled families, at 2 widths; confirmed UD-37), preserved as separate visual evidence.
 
 ## Story 3.4: Enter and correct laboratory results
 
@@ -72,7 +72,7 @@ As a practitioner, I want to see laboratory results with their supplied interval
 
 **AT-012-B:** Given an invalid, missing, stale or unauthorized condition, when the same action is attempted, then absent interval is explicitly absent, correction keeps lineage and no intelligent PDF import is implied.
 
-**AT-012-C:** Given long content, keyboard-only navigation and a failed or loading state on S-12, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-12: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (proposed default: 8–10 screens across all sampled families, adjustable by Aymen), preserved as separate visual evidence.
+**AT-012-C:** Given long content, keyboard-only navigation and a failed or loading state on S-12, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-12: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (8–10 screens across all sampled families, at 2 widths; confirmed UD-37), preserved as separate visual evidence.
 
 ## Story 3.5: Upload and inspect authorized documents
 
@@ -89,4 +89,4 @@ As a practitioner, I want to upload and inspect record documents so that files a
 
 **AT-013-B:** Given an invalid, missing, stale or unauthorized condition, when the same action is attempted, then invalid/quarantined files never become facts; guessed download IDs cannot bypass record access.
 
-**AT-013-C:** Given long content, keyboard-only navigation and a failed or loading state on S-13, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-13: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (proposed default: 8–10 screens across all sampled families, adjustable by Aymen), preserved as separate visual evidence.
+**AT-013-C:** Given long content, keyboard-only navigation and a failed or loading state on S-13, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-13: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (8–10 screens across all sampled families, at 2 widths; confirmed UD-37), preserved as separate visual evidence.

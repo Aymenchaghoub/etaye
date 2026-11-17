@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Étaye documentary API contract",
-    "version": "0.2.0-planning",
+    "version": "0.2.1-planning",
     "description": "Planning only. No endpoints implemented. Domain transitions in business-rules.md; transport/access/validation details in README.md. All examples synthetic."
   },
   "servers": [
@@ -1541,7 +1541,7 @@
       "get": {
         "operationId": "getTimeline",
         "summary": "getTimeline",
-        "description": "Requires CLINICAL_READ. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
+        "description": "Requires CLINICAL_READ. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README. Optional asOf returns the record as known at a past instant (UD-32).",
         "x-required-permissions": [
           "CLINICAL_READ"
         ],
@@ -1585,6 +1585,9 @@
               "type": "string",
               "format": "date-time"
             }
+          },
+          {
+            "$ref": "#/components/parameters/AsOf"
           }
         ],
         "responses": {
@@ -1623,7 +1626,7 @@
       "get": {
         "operationId": "listRecordSources",
         "summary": "listRecordSources",
-        "description": "Requires CLINICAL_READ. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
+        "description": "Requires CLINICAL_READ. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README. Optional asOf returns the record as known at a past instant (UD-32).",
         "x-required-permissions": [
           "CLINICAL_READ"
         ],
@@ -1651,6 +1654,9 @@
           },
           {
             "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/AsOf"
           }
         ],
         "responses": {
@@ -1749,7 +1755,7 @@
       "get": {
         "operationId": "listAssertions",
         "summary": "listAssertions",
-        "description": "Requires CLINICAL_READ. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
+        "description": "Requires CLINICAL_READ. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README. Optional asOf returns the record as known at a past instant (UD-32).",
         "x-required-permissions": [
           "CLINICAL_READ"
         ],
@@ -1777,6 +1783,9 @@
           },
           {
             "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/AsOf"
           }
         ],
         "responses": {
@@ -2002,7 +2011,7 @@
       "get": {
         "operationId": "listMeasurements",
         "summary": "listMeasurements",
-        "description": "Requires CLINICAL_READ. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
+        "description": "Requires CLINICAL_READ. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README. Optional asOf returns the record as known at a past instant (UD-32).",
         "x-required-permissions": [
           "CLINICAL_READ"
         ],
@@ -2046,6 +2055,9 @@
               "type": "string",
               "format": "date-time"
             }
+          },
+          {
+            "$ref": "#/components/parameters/AsOf"
           }
         ],
         "responses": {
@@ -2271,7 +2283,7 @@
       "get": {
         "operationId": "listLabResults",
         "summary": "listLabResults",
-        "description": "Requires CLINICAL_READ. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
+        "description": "Requires CLINICAL_READ. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README. Optional asOf returns the record as known at a past instant (UD-32).",
         "x-required-permissions": [
           "CLINICAL_READ"
         ],
@@ -2315,6 +2327,9 @@
               "type": "string",
               "format": "date-time"
             }
+          },
+          {
+            "$ref": "#/components/parameters/AsOf"
           }
         ],
         "responses": {
@@ -7664,6 +7679,16 @@
           "minimum": 1,
           "maximum": 100
         }
+      },
+      "AsOf": {
+        "name": "asOf",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "description": "Past instant. Returns, for every lineage, the latest revision recorded at or before it; read-only, same authorization as the current view; a future instant is rejected with 400."
       }
     },
     "schemas": {
@@ -9673,6 +9698,18 @@
               "SUPPORTED",
               "UNSUPPORTED"
             ]
+          },
+          "mechanicalCheck": {
+            "type": "string",
+            "enum": [
+              "PASS_MECHANICAL",
+              "FLAG_VALUE_NOT_FOUND",
+              "FLAG_SUPERSEDED",
+              "FLAG_NEGATION_MISMATCH",
+              "UNVERIFIED"
+            ],
+            "readOnly": true,
+            "description": "Computed by the server (BR-012, UD-31). A flag blocks validation until corrected or dispositioned; never a confidence score and never a statement that the source supports the claim."
           }
         },
         "required": [

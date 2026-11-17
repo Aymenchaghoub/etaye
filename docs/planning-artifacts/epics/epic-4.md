@@ -2,7 +2,7 @@
 
 Status: backlog. Design: Ready for design, not designed or approved. Source versions: user mission 2026-11-02; Figma 2417265104370398313; stable BMAD 6.12.4; legacy audit 83d0439920d598775d4f424229a913b125b52217. Read current authoritative documents again before refinement.
 
-Allocation and story text refreshed on 2026-11-17 after the user decisions of that date ([decision register](../decisions-assumptions.md), UD-12 to UD-28) and aligned with the [roadmap](../roadmap.md). Sources consulted in full for this refresh: PRD, business rules, access matrix, functional specification, UX, architecture spine, data model and dictionary, API contract and README, AI specification, security/privacy, test strategy, deferred register, traceability and the dependency stories.
+Allocation and story text refreshed on 2026-11-17 after the user decisions of that date ([decision register](../decisions-assumptions.md), UD-12 to UD-37) and aligned with the [roadmap](../roadmap.md). Sources consulted in full for this refresh: PRD, business rules, access matrix, functional specification, UX, architecture spine, data model and dictionary, API contract and README, AI specification, security/privacy, test strategy, deferred register, traceability and the dependency stories.
 
 These are planning-level slices, not implementation authorization. Shared gate: complete reviewed required screen/interaction/print coverage, confirmed blocking assumptions, Aymen's explicit development authorization, then installed BMAD readiness check. Validation of code and visual fidelity remain separate.
 
@@ -21,7 +21,7 @@ As a practitioner or practice manager, I want to define availability and excepti
 
 **AT-014-B:** Given an invalid, missing, stale or unauthorized condition, when the same action is attempted, then DST ambiguity requires an explicit offset and impacted bookings are disclosed before changes.
 
-**AT-014-C:** Given long content, keyboard-only navigation and a failed or loading state on S-14, S-15, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-14, S-15: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (proposed default: 8–10 screens across all sampled families, adjustable by Aymen), preserved as separate visual evidence.
+**AT-014-C:** Given long content, keyboard-only navigation and a failed or loading state on S-14, S-15, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-14, S-15: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (8–10 screens across all sampled families, at 2 widths; confirmed UD-37), preserved as separate visual evidence.
 
 ## Story 4.2: Book a real appointment
 
@@ -38,7 +38,7 @@ As a scheduler, practitioner or linked patient, I want to book an offered slot s
 
 **AT-015-B:** Given an invalid, missing, stale or unauthorized condition, when the same action is attempted, then concurrent identical-slot attempts produce one booking and a preserved-input conflict for the other.
 
-**AT-015-C:** Given long content, keyboard-only navigation and a failed or loading state on S-14, S-16, S-26, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-14, S-16, S-26: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (proposed default: 8–10 screens across all sampled families, adjustable by Aymen), preserved as separate visual evidence.
+**AT-015-C:** Given long content, keyboard-only navigation and a failed or loading state on S-14, S-16, S-26, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-14, S-16, S-26: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (8–10 screens across all sampled families, at 2 widths; confirmed UD-37), preserved as separate visual evidence.
 
 ## Story 4.3: Reschedule or cancel an appointment
 
@@ -55,7 +55,7 @@ As a scheduler, practitioner or linked patient, I want to cancel (increment 1) o
 
 **AT-016-B:** Given an invalid, missing, stale or unauthorized condition, when the same action is attempted, then stale version, cutoff or occupied target slot leaves original booking intact and reports the reason.
 
-**AT-016-C:** Given long content, keyboard-only navigation and a failed or loading state on S-16, S-26, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-16, S-26: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (proposed default: 8–10 screens across all sampled families, adjustable by Aymen), preserved as separate visual evidence.
+**AT-016-C:** Given long content, keyboard-only navigation and a failed or loading state on S-16, S-26, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-16, S-26: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (8–10 screens across all sampled families, at 2 widths; confirmed UD-37), preserved as separate visual evidence.
 
 ## Story 4.4: Record arrival, completion or no-show
 
@@ -72,7 +72,7 @@ As a scheduler or practitioner, I want to record arrival and completion (increme
 
 **AT-017-B:** Given an invalid, missing, stale or unauthorized condition, when the same action is attempted, then no-show cannot imply an encounter; completing attendance does not validate/publish a report.
 
-**AT-017-C:** Given long content, keyboard-only navigation and a failed or loading state on S-16, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-16: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (proposed default: 8–10 screens across all sampled families, adjustable by Aymen), preserved as separate visual evidence.
+**AT-017-C:** Given long content, keyboard-only navigation and a failed or loading state on S-16, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-16: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (8–10 screens across all sampled families, at 2 widths; confirmed UD-37), preserved as separate visual evidence.
 
 ## Story 4.5: Prepare a visit and inspect patient reports
 
@@ -89,4 +89,4 @@ As a linked patient, I want to prepare my visit, and as a practitioner I want to
 
 **AT-018-B:** Given an invalid, missing, stale or unauthorized condition, when the same action is attempted, then a different patient cannot edit it; encounter-start lock or concurrency preserves safe comparison/recovery.
 
-**AT-018-C:** Given long content, keyboard-only navigation and a failed or loading state on S-17, S-27, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-17, S-27: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (proposed default: 8–10 screens across all sampled families, adjustable by Aymen), preserved as separate visual evidence.
+**AT-018-C:** Given long content, keyboard-only navigation and a failed or loading state on S-17, S-27, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-17, S-27: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (8–10 screens across all sampled families, at 2 widths; confirmed UD-37), preserved as separate visual evidence.

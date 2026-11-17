@@ -1,6 +1,6 @@
 # Documentary API contract
 
-Status: Proposed, ready for design and review. `openapi.yaml` is OpenAPI 3.1 written in JSON syntax (valid YAML 1.2); no endpoint is implemented. [Operation index](operation-index.json) maps all operations. [Business rules](../planning-artifacts/business-rules.md), [access matrix](../planning-artifacts/access-matrix.md), [data dictionary](../planning-artifacts/data-dictionary.md) and ADRs are authoritative companions. Version 0.2.0-planning (2026-11-17): 96 operations.
+Status: Proposed, ready for design and review. `openapi.yaml` is OpenAPI 3.1 written in JSON syntax (valid YAML 1.2); no endpoint is implemented. [Operation index](operation-index.json) maps all operations. [Business rules](../planning-artifacts/business-rules.md), [access matrix](../planning-artifacts/access-matrix.md), [data dictionary](../planning-artifacts/data-dictionary.md) and ADRs are authoritative companions. Version 0.2.1-planning (2026-11-17): 96 operations.
 
 ## Common transport and permissions
 
@@ -41,7 +41,9 @@ Error responses are declared per operation, never copied onto all of them. A GET
 - A creation that needs a parent in its body (for example a document draft with its `recordId`) lives at the practice level and is listed under the record; the body `recordId` must match the authorized record.
 - Version comparison is computed on the client from two versions in increment 1; no diff operation exists (decision of 2026-11-17).
 - Acknowledgements: `acknowledgePreparation` (visit preparation) and `acknowledgeBrief` (CLINICIAN_BRIEF only) append an acknowledgement to the exact current version under `If-Match`. They never change authorship, content or visibility.
-- Operations owned by ADR-008 and ADR-009 (`createNativeSession`, `registerDevice`, `listOwnDevices`, `revokeDevice`, `getApiMeta`) are not in this contract yet; the [roadmap](../planning-artifacts/roadmap.md) lists them as planned.
+- `asOf` (UD-32) is an optional query parameter of the record read operations (timeline, assertions, measurements, laboratory results, sources): it returns each lineage's latest revision recorded at or before a past instant, read-only and under the same authorization; a future instant is a 400.
+- `Citation.mechanicalCheck` (UD-31) is computed by the server and read-only; it is a flag, never a score.
+- Operations owned by ADR-008 and ADR-009 (`createNativeSession`, `registerDevice`, `listOwnDevices`, `revokeDevice`, `getApiMeta`) are accepted but not in this contract yet; they are added before the stories that need them (see section 8.3 of the [roadmap](../planning-artifacts/roadmap.md)).
 
 ## Pagination, filters and ordering
 

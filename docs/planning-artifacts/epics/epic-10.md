@@ -1,10 +1,10 @@
 # Epic 10: Platform foundation and multi-client delivery
 
-Status: backlog. Design: operational stories, no new screen families; the surfaces they carry are covered by epics 1–9. Source versions: user decisions of 2026-11-17 (UD-12 to UD-28); stable BMAD 6.12.4; ADR-008 and ADR-009 (Proposed).
+Status: backlog. Design: operational stories, no new screen families; the surfaces they carry are covered by epics 1–9. Source versions: user decisions of 2026-11-17 (UD-12 to UD-37); stable BMAD 6.12.4; ADR-008 and ADR-009 (accepted, UD-29).
 
-Allocation and story text refreshed on 2026-11-17 after the user decisions of that date ([decision register](../decisions-assumptions.md), UD-12 to UD-28) and aligned with the [roadmap](../roadmap.md). Sources consulted in full for this refresh: PRD, business rules, access matrix, functional specification, UX, architecture spine, data model and dictionary, API contract and README, AI specification, security/privacy, test strategy, deferred register, traceability and the dependency stories.
+Allocation and story text refreshed on 2026-11-17 after the user decisions of that date ([decision register](../decisions-assumptions.md), UD-12 to UD-37) and aligned with the [roadmap](../roadmap.md). Sources consulted in full for this refresh: PRD, business rules, access matrix, functional specification, UX, architecture spine, data model and dictionary, API contract and README, AI specification, security/privacy, test strategy, deferred register, traceability and the dependency stories.
 
-These are planning-level slices, not implementation authorization. Shared gate: Aymen's explicit development authorization, the core design families (UD-16), accepted ADR-008 and ADR-009 for stories 10.2 and 10.4 to 10.8, then the installed BMAD readiness check. Validation of code and visual fidelity remain separate.
+These are planning-level slices, not implementation authorization. Shared gate: Aymen's explicit development authorization, the core design families (UD-16), ADR-008 and ADR-009 (accepted, UD-29) with their contract operations for stories 10.2 and 10.4 to 10.8, then the installed BMAD readiness check. Validation of code and visual fidelity remain separate.
 
 ## Story 10.1: Walking skeleton and secure request path
 
@@ -17,7 +17,7 @@ As the maintainer, I want a walking skeleton with the secure request path so tha
 - Read before refinement: [PRD](../prd/prd.md), [rules](../business-rules.md), [access](../access-matrix.md), [architecture](../architecture/ARCHITECTURE-SPINE.md), [data](../data-model.md), [contracts](../../contracts/openapi.yaml), [screen catalog](../../design/screen-catalog.md), [test strategy](../../test-artifacts/test-strategy.md), [ADR-008](../../decisions/ADR-008-multi-client-access.md), [ADR-009](../../decisions/ADR-009-api-compatibility.md).
 - Assumptions: apply relevant A-01–A-12 from the decision register; never treat them as verified facts. Record any changed source/version and resulting AC change in the future story.
 
-**AT-038-A:** Given a clean checkout and Aymen's development authorization, when the skeleton is built and run, then one request path resolves session, membership or portal link, capability and resource ownership, opens a transaction with practice context, and commits domain change, audit and outbox together.
+**AT-038-A:** Given a clean checkout and Aymen's development authorization, when the skeleton is built and run, then one request path resolves session, membership or portal link, capability and resource ownership, opens a transaction with practice context, and commits domain change, audit and outbox together. Module boundaries are verified by the tool chosen at the spike, ArchUnit or Spring Modulith (UD-35).
 
 **AT-038-B:** Given absent context, a pooled connection reused after an error or a missing capability, when the same path runs, then access is denied and no audit or outbox row is committed for the failed attempt.
 
@@ -34,7 +34,7 @@ As the maintainer, I want a generated typed client, a design-token bridge and mu
 - Read before refinement: [PRD](../prd/prd.md), [rules](../business-rules.md), [access](../access-matrix.md), [architecture](../architecture/ARCHITECTURE-SPINE.md), [data](../data-model.md), [contracts](../../contracts/openapi.yaml), [screen catalog](../../design/screen-catalog.md), [test strategy](../../test-artifacts/test-strategy.md), [ADR-008](../../decisions/ADR-008-multi-client-access.md), [ADR-009](../../decisions/ADR-009-api-compatibility.md).
 - Assumptions: apply relevant A-01–A-12 from the decision register; never treat them as verified facts. Record any changed source/version and resulting AC change in the future story.
 
-**AT-039-A:** Given the cleaned OpenAPI contract, when the web client is built, then every call goes through the generated client, design tokens are generated from the verified token file, and the foundations exist: transport abstraction behind a flag, empty CORS allowlist, no-op push port, client-version endpoint and no inline-PDF dependency.
+**AT-039-A:** Given the cleaned OpenAPI contract, when the web client is built, then every call goes through the generated client, design tokens are generated from the verified token file, and the foundations exist: transport abstraction behind a flag, empty CORS allowlist, no-op push port, client-version endpoint and no inline-PDF dependency. axe-core runs in the Playwright journeys (UD-35).
 
 **AT-039-B:** Given contract drift, an unlisted origin or a push payload containing clinical text, when the checks run, then the build fails or the request is refused.
 
@@ -51,7 +51,7 @@ As the maintainer, I want a measured hosting benchmark and a recorded decision s
 - Read before refinement: [PRD](../prd/prd.md), [rules](../business-rules.md), [access](../access-matrix.md), [architecture](../architecture/ARCHITECTURE-SPINE.md), [data](../data-model.md), [contracts](../../contracts/openapi.yaml), [screen catalog](../../design/screen-catalog.md), [test strategy](../../test-artifacts/test-strategy.md), [ADR-008](../../decisions/ADR-008-multi-client-access.md), [ADR-009](../../decisions/ADR-009-api-compatibility.md).
 - Assumptions: apply relevant A-01–A-12 from the decision register; never treat them as verified facts. Record any changed source/version and resulting AC change in the future story.
 
-**AT-040-A:** Given the increment 1 application, when the benchmark runs, then peak memory, startup, cold start and PDF memory are recorded with commit, host and fixture, and Aymen records the hosting decision with its cost.
+**AT-040-A:** Given the increment 1 application, when the benchmark runs, then peak memory, startup, cold start and PDF memory are recorded with commit, host and fixture, and Aymen records the hosting decision with its cost. The benchmark runs against the reproducible demo package (UD-34).
 
 **AT-040-B:** Given an unmeasured claim or a paid option, when the decision is prepared, then it is refused or marked To verify, and no paid service is activated without Aymen's explicit consent.
 
