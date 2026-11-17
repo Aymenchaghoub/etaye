@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Étaye documentary API contract",
-    "version": "0.1.0-planning",
+    "version": "0.2.0-planning",
     "description": "Planning only. No endpoints implemented. Domain transitions in business-rules.md; transport/access/validation details in README.md. All examples synthetic."
   },
   "servers": [
@@ -29,14 +29,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -44,30 +36,6 @@
                 }
               }
             }
-          },
-          "400": {
-            "$ref": "#/components/responses/Problem400"
-          },
-          "401": {
-            "$ref": "#/components/responses/Problem401"
-          },
-          "403": {
-            "$ref": "#/components/responses/Problem403"
-          },
-          "404": {
-            "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -95,14 +63,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -120,20 +80,8 @@
           "403": {
             "$ref": "#/components/responses/Problem403"
           },
-          "404": {
-            "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
           "422": {
             "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -165,14 +113,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -181,29 +121,11 @@
               }
             }
           },
-          "400": {
-            "$ref": "#/components/responses/Problem400"
-          },
           "401": {
             "$ref": "#/components/responses/Problem401"
           },
           "403": {
             "$ref": "#/components/responses/Problem403"
-          },
-          "404": {
-            "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -227,18 +149,7 @@
         ],
         "responses": {
           "204": {
-            "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/Problem400"
+            "description": "Successful outcome; no automatic review or publication."
           },
           "401": {
             "$ref": "#/components/responses/Problem401"
@@ -246,20 +157,8 @@
           "403": {
             "$ref": "#/components/responses/Problem403"
           },
-          "404": {
-            "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
           "422": {
             "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -289,14 +188,6 @@
         "responses": {
           "202": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -308,26 +199,11 @@
           "400": {
             "$ref": "#/components/responses/Problem400"
           },
-          "401": {
-            "$ref": "#/components/responses/Problem401"
-          },
           "403": {
             "$ref": "#/components/responses/Problem403"
           },
-          "404": {
-            "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
           "422": {
             "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -368,14 +244,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -387,26 +255,11 @@
           "400": {
             "$ref": "#/components/responses/Problem400"
           },
-          "401": {
-            "$ref": "#/components/responses/Problem401"
-          },
           "403": {
             "$ref": "#/components/responses/Problem403"
           },
-          "404": {
-            "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
           "422": {
             "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -447,14 +300,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -478,14 +323,8 @@
           "409": {
             "$ref": "#/components/responses/Problem409"
           },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
           "422": {
             "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -535,29 +374,11 @@
               }
             }
           },
-          "400": {
-            "$ref": "#/components/responses/Problem400"
-          },
           "401": {
             "$ref": "#/components/responses/Problem401"
           },
           "403": {
             "$ref": "#/components/responses/Problem403"
-          },
-          "404": {
-            "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -610,9 +431,6 @@
           "403": {
             "$ref": "#/components/responses/Problem403"
           },
-          "404": {
-            "$ref": "#/components/responses/Problem404"
-          },
           "409": {
             "$ref": "#/components/responses/Problem409"
           },
@@ -663,14 +481,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -687,21 +497,6 @@
           },
           "403": {
             "$ref": "#/components/responses/Problem403"
-          },
-          "404": {
-            "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -761,18 +556,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -896,14 +679,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -923,18 +698,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -1168,14 +931,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -1195,18 +950,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -1274,14 +1017,8 @@
           "409": {
             "$ref": "#/components/responses/Problem409"
           },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
           "422": {
             "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -1528,14 +1265,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -1555,18 +1284,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -1634,14 +1351,8 @@
           "409": {
             "$ref": "#/components/responses/Problem409"
           },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
           "422": {
             "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -1817,18 +1528,6 @@
           "404": {
             "$ref": "#/components/responses/Problem404"
           },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
-          },
           "429": {
             "$ref": "#/components/responses/Problem429"
           },
@@ -1891,14 +1590,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -1918,18 +1609,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -1977,14 +1656,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -2004,18 +1675,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -2057,14 +1716,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -2084,18 +1735,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -2143,14 +1782,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -2170,18 +1801,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -2258,14 +1877,8 @@
           "409": {
             "$ref": "#/components/responses/Problem409"
           },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
           "422": {
             "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -2438,14 +2051,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -2465,18 +2070,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -2553,14 +2146,8 @@
           "409": {
             "$ref": "#/components/responses/Problem409"
           },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
           "422": {
             "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -2733,14 +2320,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -2760,18 +2339,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -2848,14 +2415,8 @@
           "409": {
             "$ref": "#/components/responses/Problem409"
           },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
           "422": {
             "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -3012,14 +2573,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -3039,18 +2592,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -3127,14 +2668,8 @@
           "409": {
             "$ref": "#/components/responses/Problem409"
           },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
           "422": {
             "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -3191,14 +2726,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -3218,18 +2745,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -3297,14 +2812,8 @@
           "409": {
             "$ref": "#/components/responses/Problem409"
           },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
           "422": {
             "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -3473,14 +2982,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -3500,18 +3001,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -3588,14 +3077,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -3615,18 +3096,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -3694,14 +3163,8 @@
           "409": {
             "$ref": "#/components/responses/Problem409"
           },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
           "422": {
             "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -3780,18 +3243,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -4059,6 +3510,83 @@
           "404": {
             "$ref": "#/components/responses/Problem404"
           },
+          "429": {
+            "$ref": "#/components/responses/Problem429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Problem503"
+          }
+        }
+      }
+    },
+    "/practices/{practiceId}/appointments/{appointmentId}/preparation/acknowledge": {
+      "post": {
+        "operationId": "acknowledgePreparation",
+        "summary": "acknowledgePreparation",
+        "description": "Requires CLINICAL_WRITE. Appends the practitioner acknowledgement of the exact current preparation submission (If-Match). It never changes the patient's authorship, provenance or content; a later patient submission needs its own acknowledgement. Practice IDs select context, never grant authority.",
+        "x-required-permissions": [
+          "CLINICAL_WRITE"
+        ],
+        "parameters": [
+          {
+            "name": "practiceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "appointmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/Csrf"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/IfMatch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful outcome; no automatic review or publication.",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Quoted aggregate version for subsequent mutation."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Preparation"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem404"
+          },
           "409": {
             "$ref": "#/components/responses/Problem409"
           },
@@ -4139,14 +3667,8 @@
           "409": {
             "$ref": "#/components/responses/Problem409"
           },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
           "422": {
             "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -4225,18 +3747,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -4402,14 +3912,8 @@
           "409": {
             "$ref": "#/components/responses/Problem409"
           },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
           "422": {
             "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -4467,14 +3971,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -4494,18 +3990,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -4574,18 +4058,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -4793,7 +4265,7 @@
       "post": {
         "operationId": "validateDocumentVersion",
         "summary": "validateDocumentVersion",
-        "description": "Requires CLINICAL_VALIDATE. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
+        "description": "Requires CLINICAL_VALIDATE. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README. Purpose CLINICIAN_BRIEF is rejected with 422 BRIEF_NOT_REVIEWABLE: a brief is acknowledged with acknowledgeBrief, never reviewed or validated.",
         "x-required-permissions": [
           "CLINICAL_VALIDATE"
         ],
@@ -4888,7 +4360,151 @@
         }
       }
     },
-    "/practices/{practiceId}/ai-tasks": {
+    "/practices/{practiceId}/document-versions/{documentVersionId}/acknowledge": {
+      "post": {
+        "operationId": "acknowledgeBrief",
+        "summary": "acknowledgeBrief",
+        "description": "Requires CLINICAL_WRITE. Applies only to purpose CLINICIAN_BRIEF: appends the practitioner acknowledgement of the exact current brief version (If-Match). It is not validation and never grants patient visibility. Other purposes are rejected with 422 NOT_A_BRIEF. Practice IDs select context, never grant authority.",
+        "x-required-permissions": [
+          "CLINICAL_WRITE"
+        ],
+        "parameters": [
+          {
+            "name": "practiceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "documentVersionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/Csrf"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/IfMatch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful outcome; no automatic review or publication.",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Quoted aggregate version for subsequent mutation."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentVersion"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem409"
+          },
+          "412": {
+            "$ref": "#/components/responses/Problem412"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem422"
+          },
+          "428": {
+            "$ref": "#/components/responses/Problem428"
+          },
+          "429": {
+            "$ref": "#/components/responses/Problem429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Problem503"
+          }
+        }
+      }
+    },
+    "/practices/{practiceId}/tasks": {
+      "get": {
+        "operationId": "listProcessingTasks",
+        "summary": "listProcessingTasks",
+        "description": "Requires CLINICAL_READ. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
+        "x-required-permissions": [
+          "CLINICAL_READ"
+        ],
+        "parameters": [
+          {
+            "name": "practiceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/Cursor"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful outcome; no automatic review or publication.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem404"
+          },
+          "429": {
+            "$ref": "#/components/responses/Problem429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Problem503"
+          }
+        }
+      },
       "post": {
         "operationId": "requestGeneration",
         "summary": "requestGeneration",
@@ -4947,14 +4563,8 @@
           "409": {
             "$ref": "#/components/responses/Problem409"
           },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
           "422": {
             "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -4971,83 +4581,6 @@
                 "$ref": "#/components/schemas/Generation"
               }
             }
-          }
-        }
-      }
-    },
-    "/practices/{practiceId}/tasks": {
-      "get": {
-        "operationId": "listProcessingTasks",
-        "summary": "listProcessingTasks",
-        "description": "Requires CLINICAL_READ. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
-        "x-required-permissions": [
-          "CLINICAL_READ"
-        ],
-        "parameters": [
-          {
-            "name": "practiceId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "$ref": "#/components/parameters/Cursor"
-          },
-          {
-            "$ref": "#/components/parameters/Limit"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TaskPage"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/Problem400"
-          },
-          "401": {
-            "$ref": "#/components/responses/Problem401"
-          },
-          "403": {
-            "$ref": "#/components/responses/Problem403"
-          },
-          "404": {
-            "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
-          },
-          "429": {
-            "$ref": "#/components/responses/Problem429"
-          },
-          "503": {
-            "$ref": "#/components/responses/Problem503"
           }
         }
       }
@@ -5110,18 +4643,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -5389,14 +4910,8 @@
           "409": {
             "$ref": "#/components/responses/Problem409"
           },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
           "422": {
             "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -5674,14 +5189,8 @@
           "409": {
             "$ref": "#/components/responses/Problem409"
           },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
           "422": {
             "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -5761,18 +5270,6 @@
           "404": {
             "$ref": "#/components/responses/Problem404"
           },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
-          },
           "429": {
             "$ref": "#/components/responses/Problem429"
           },
@@ -5834,14 +5331,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -5861,18 +5350,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -6380,9 +5857,9 @@
     },
     "/practices/{practiceId}/document-versions/{documentVersionId}/submit-review": {
       "post": {
-        "operationId": "submitreviewDocument",
-        "summary": "submitreviewDocument",
-        "description": "Requires CLINICAL_WRITE_OR_REVIEWER. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
+        "operationId": "submitDocumentForReview",
+        "summary": "submitDocumentForReview",
+        "description": "Requires CLINICAL_WRITE_OR_REVIEWER. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README. Purpose CLINICIAN_BRIEF is rejected with 422 BRIEF_NOT_REVIEWABLE: a brief is acknowledged with acknowledgeBrief, never reviewed or validated.",
         "x-required-permissions": [
           "CLINICAL_WRITE_OR_REVIEWER"
         ],
@@ -6479,9 +5956,9 @@
     },
     "/practices/{practiceId}/document-versions/{documentVersionId}/request-changes": {
       "post": {
-        "operationId": "requestchangesDocument",
-        "summary": "requestchangesDocument",
-        "description": "Requires CLINICAL_WRITE_OR_REVIEWER. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
+        "operationId": "requestDocumentChanges",
+        "summary": "requestDocumentChanges",
+        "description": "Requires CLINICAL_WRITE_OR_REVIEWER. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README. Purpose CLINICIAN_BRIEF is rejected with 422 BRIEF_NOT_REVIEWABLE: a brief is acknowledged with acknowledgeBrief, never reviewed or validated.",
         "x-required-permissions": [
           "CLINICAL_WRITE_OR_REVIEWER"
         ],
@@ -6629,14 +6106,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -6656,18 +6125,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -6744,14 +6201,8 @@
           "409": {
             "$ref": "#/components/responses/Problem409"
           },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
           "422": {
             "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -7056,18 +6507,6 @@
           "404": {
             "$ref": "#/components/responses/Problem404"
           },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
-          },
           "429": {
             "$ref": "#/components/responses/Problem429"
           },
@@ -7222,36 +6661,6 @@
           }
         ],
         "responses": {
-          "400": {
-            "$ref": "#/components/responses/Problem400"
-          },
-          "401": {
-            "$ref": "#/components/responses/Problem401"
-          },
-          "403": {
-            "$ref": "#/components/responses/Problem403"
-          },
-          "404": {
-            "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
-          },
-          "429": {
-            "$ref": "#/components/responses/Problem429"
-          },
-          "503": {
-            "$ref": "#/components/responses/Problem503"
-          },
           "201": {
             "description": "Successful outcome; no automatic review or publication.",
             "headers": {
@@ -7269,6 +6678,30 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Problem429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Problem503"
           }
         },
         "requestBody": {
@@ -7320,14 +6753,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -7347,18 +6772,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -7409,14 +6822,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -7436,18 +6841,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -7504,14 +6897,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -7531,18 +6916,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -7630,14 +7003,8 @@
           "409": {
             "$ref": "#/components/responses/Problem409"
           },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
           "422": {
             "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -7689,14 +7056,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/pdf": {
                 "schema": {
@@ -7729,18 +7088,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -7782,14 +7129,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/pdf": {
                 "schema": {
@@ -7822,18 +7161,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -7893,14 +7220,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/pdf": {
                 "schema": {
@@ -7934,18 +7253,6 @@
           "404": {
             "$ref": "#/components/responses/Problem404"
           },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
-          },
           "429": {
             "$ref": "#/components/responses/Problem429"
           },
@@ -7974,14 +7281,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -7992,27 +7291,6 @@
           },
           "400": {
             "$ref": "#/components/responses/Problem400"
-          },
-          "401": {
-            "$ref": "#/components/responses/Problem401"
-          },
-          "403": {
-            "$ref": "#/components/responses/Problem403"
-          },
-          "404": {
-            "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -8043,14 +7321,6 @@
         "responses": {
           "202": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -8068,20 +7338,11 @@
           "403": {
             "$ref": "#/components/responses/Problem403"
           },
-          "404": {
-            "$ref": "#/components/responses/Problem404"
-          },
           "409": {
             "$ref": "#/components/responses/Problem409"
           },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
           "422": {
             "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -8121,14 +7382,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -8146,21 +7399,6 @@
           "403": {
             "$ref": "#/components/responses/Problem403"
           },
-          "404": {
-            "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
-          },
           "429": {
             "$ref": "#/components/responses/Problem429"
           },
@@ -8174,7 +7412,7 @@
       "get": {
         "operationId": "listPractitioners",
         "summary": "listPractitioners",
-        "description": "Requires TEAM_MANAGE. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
+        "description": "Requires SCHEDULE_MANAGE_OR_PORTAL_SLOTS: a practice scheduler or a verified own portal link, limited to the practitioner display fields needed to choose a slot. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
         "x-required-permissions": [
           "SCHEDULE_MANAGE_OR_PORTAL_SLOTS"
         ],
@@ -8198,14 +7436,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -8225,18 +7455,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -8286,14 +7504,6 @@
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
-            "headers": {
-              "ETag": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Quoted aggregate version for subsequent mutation."
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -8313,18 +7523,6 @@
           },
           "404": {
             "$ref": "#/components/responses/Problem404"
-          },
-          "409": {
-            "$ref": "#/components/responses/Problem409"
-          },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -8385,14 +7583,8 @@
           "409": {
             "$ref": "#/components/responses/Problem409"
           },
-          "412": {
-            "$ref": "#/components/responses/Problem412"
-          },
           "422": {
             "$ref": "#/components/responses/Problem422"
-          },
-          "428": {
-            "$ref": "#/components/responses/Problem428"
           },
           "429": {
             "$ref": "#/components/responses/Problem429"
@@ -8892,6 +8084,21 @@
           "bookingPolicy"
         ]
       },
+      "Capability": {
+        "type": "string",
+        "enum": [
+          "TEAM_MANAGE",
+          "PRACTICE_SETTINGS",
+          "ADMIN_AUDIT",
+          "CLINICAL_READ",
+          "CLINICAL_WRITE",
+          "SCHEDULE_MANAGE",
+          "CLINICAL_VALIDATE",
+          "PATIENT_PUBLISH",
+          "CLINICAL_AUDIT",
+          "PATIENT_REGISTER"
+        ]
+      },
       "Membership": {
         "type": "object",
         "additionalProperties": false,
@@ -8930,19 +8137,7 @@
           "capabilities": {
             "type": "array",
             "items": {
-              "type": "string",
-              "enum": [
-                "TEAM_MANAGE",
-                "PRACTICE_SETTINGS",
-                "ADMIN_AUDIT",
-                "CLINICAL_READ",
-                "CLINICAL_WRITE",
-                "SCHEDULE_MANAGE",
-                "CLINICAL_VALIDATE",
-                "PATIENT_PUBLISH",
-                "CLINICAL_AUDIT",
-                "PATIENT_REGISTER"
-              ]
+              "$ref": "#/components/schemas/Capability"
             },
             "maxItems": 100
           }
@@ -8965,19 +8160,7 @@
           "capabilities": {
             "type": "array",
             "items": {
-              "type": "string",
-              "enum": [
-                "TEAM_MANAGE",
-                "PRACTICE_SETTINGS",
-                "ADMIN_AUDIT",
-                "CLINICAL_READ",
-                "CLINICAL_WRITE",
-                "SCHEDULE_MANAGE",
-                "CLINICAL_VALIDATE",
-                "PATIENT_PUBLISH",
-                "CLINICAL_AUDIT",
-                "PATIENT_REGISTER"
-              ]
+              "$ref": "#/components/schemas/Capability"
             },
             "maxItems": 100
           }
@@ -9004,19 +8187,7 @@
           "capabilities": {
             "type": "array",
             "items": {
-              "type": "string",
-              "enum": [
-                "TEAM_MANAGE",
-                "PRACTICE_SETTINGS",
-                "ADMIN_AUDIT",
-                "CLINICAL_READ",
-                "CLINICAL_WRITE",
-                "SCHEDULE_MANAGE",
-                "CLINICAL_VALIDATE",
-                "PATIENT_PUBLISH",
-                "CLINICAL_AUDIT",
-                "PATIENT_REGISTER"
-              ]
+              "$ref": "#/components/schemas/Capability"
             },
             "maxItems": 100
           },
@@ -9028,7 +8199,37 @@
         "required": [
           "purpose",
           "recipientEmail"
-        ]
+        ],
+        "if": {
+          "properties": {
+            "purpose": {
+              "const": "TEAM_MEMBERSHIP"
+            }
+          },
+          "required": [
+            "purpose"
+          ]
+        },
+        "then": {
+          "required": [
+            "capabilities"
+          ],
+          "not": {
+            "required": [
+              "recordId"
+            ]
+          }
+        },
+        "else": {
+          "required": [
+            "recordId"
+          ],
+          "not": {
+            "required": [
+              "capabilities"
+            ]
+          }
+        }
       },
       "Invitation": {
         "type": "object",
@@ -10292,6 +9493,14 @@
             "enum": [
               "PATIENT_REPORTED"
             ]
+          },
+          "acknowledgedBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "acknowledgedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "required": [
@@ -10629,6 +9838,14 @@
           "validatedAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "acknowledgedBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "acknowledgedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "required": [
@@ -10709,7 +9926,8 @@
               "type": "string",
               "format": "uuid"
             },
-            "maxItems": 100
+            "maxItems": 100,
+            "description": "Required for CONSULTATION_REPORT and PATIENT_EXPLANATION: the explicit subset of source revisions to use; relevant sources left out are recorded with their exclusion reason in the source snapshot. Forbidden for CLINICIAN_BRIEF: the server derives the manifest from recordRevision."
           },
           "recordRevision": {
             "type": "integer",
@@ -10719,9 +9937,30 @@
         "required": [
           "recordId",
           "purpose",
-          "sourceRevisionIds",
           "recordRevision"
-        ]
+        ],
+        "if": {
+          "properties": {
+            "purpose": {
+              "const": "CLINICIAN_BRIEF"
+            }
+          },
+          "required": [
+            "purpose"
+          ]
+        },
+        "then": {
+          "not": {
+            "required": [
+              "sourceRevisionIds"
+            ]
+          }
+        },
+        "else": {
+          "required": [
+            "sourceRevisionIds"
+          ]
+        }
       },
       "Task": {
         "type": "object",
@@ -11093,6 +10332,28 @@
         },
         "required": [
           "template"
+        ],
+        "oneOf": [
+          {
+            "required": [
+              "documentVersionId"
+            ],
+            "not": {
+              "required": [
+                "publicationId"
+              ]
+            }
+          },
+          {
+            "required": [
+              "publicationId"
+            ],
+            "not": {
+              "required": [
+                "documentVersionId"
+              ]
+            }
+          }
         ]
       },
       "Export": {

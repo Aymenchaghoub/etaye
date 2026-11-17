@@ -16,7 +16,7 @@ Status: Draft for design. Date: 2026-11-02. Use these terms consistently in requ
 | Availability | Disponibilité | Practitioner working intervals and exceptions from which valid appointment slots can be offered. |
 | Consultation | Consultation | Clinical encounter, with an optional appointment link. Walk-in or unscheduled encounters are allowed. |
 | Consultation report | Compte rendu de consultation | Versioned account of an encounter, authored or reviewed by a practitioner. Patient access still requires publication. |
-| Pre-visit brief | Brief de préparation | Clinician-only synthesis of relevant changes, sources and gaps before a visit. It cannot be directly published to a patient. |
+| Pre-visit brief | Brief de préparation | Clinician-only synthesis of relevant changes, sources and gaps before a visit. It is acknowledged per version, never validated, and it cannot be directly published to a patient. |
 | Patient explanation | Explication destinée au patient | Separately reviewed content written for patient comprehension, with its own validation and explicit publication. |
 | Observation | Observation | A dated clinical assertion with provenance and assertion status. Patient-reported and practitioner-observed facts remain distinguishable. |
 | Measurement | Mesure | Structured observed value with measured time, unit, provenance and correction lineage. |
@@ -38,6 +38,10 @@ Status: Draft for design. Date: 2026-11-02. Use these terms consistently in requ
 | Reported treatment | Traitement déclaré | Historical or patient-reported treatment information. This is not a prescribing capability. |
 | Audit event | Événement d’audit | Attributable, dated event about access or change with resource and practice scope; avoid clinical body text in logs. |
 | Synthetic data | Données fictives | Invented people and clinical examples for demonstration, never real patient information or clinical advice. |
+| Acknowledgement | Prise de connaissance | Append-only practitioner action on one exact visit preparation or clinician brief version. It is not validation, never changes authorship and never creates patient visibility. |
+| Increment | Incrément | A delivery slice of the roadmap that allocates stories, design families and API operations; the allocation is an assumption until Aymen reorders it. |
+| Installed web app (PWA) | Application web installée | The web app installed on a phone from the browser, with a service worker that caches the application shell only. |
+| Native shell | Coque native | A thin native container (Capacitor) around the bundled web app, with secure session storage and native sharing and notifications. |
 
 ## Status axes
 

@@ -27,3 +27,7 @@ Default demo/CI uses deterministic provider adapter: no paid model calls. Real e
 ## Decision gate before deployment
 
 Choose budget/reliability requirement, benchmark real app footprint, confirm account entitlements/remaining quotas/regions, persistent storage/backup and exact artifact deployment support. If candidate host cannot deploy a validated external image digest, select a supported method/provider; never silently rebuild from source during promotion. Document paid limits and set budget alerts. No deployment credentials are needed now.
+
+## Update 2026-11-17 (UD-25, UD-12)
+
+Option D, added with the mobile direction: one low-cost VPS running the application, PostgreSQL and a file volume on one origin, without sleeping. Published entry prices observed on 2026-11-17: OVHcloud VPS-1 from €3.81 per month excluding VAT; Hetzner CX23 between €3.49 and €6.49 per month excluding VAT depending on the page (To verify at purchase). Hidden costs: system maintenance (about one to two hours per month, an estimate), backups, a domain. Installed and native clients need a stable always-on HTTPS origin before any store step, so the story 10.3 benchmark compares option A (free, best effort) with option D before Aymen decides; nothing is provisioned and no payment method is added until he does.

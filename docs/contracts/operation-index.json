@@ -282,6 +282,12 @@
     "permission": "CLINICAL_READ"
   },
   {
+    "operationId": "acknowledgePreparation",
+    "method": "post",
+    "path": "/practices/{practiceId}/appointments/{appointmentId}/preparation/acknowledge",
+    "permission": "CLINICAL_WRITE"
+  },
+  {
     "operationId": "startConsultation",
     "method": "post",
     "path": "/practices/{practiceId}/consultations",
@@ -336,9 +342,9 @@
     "permission": "CLINICAL_VALIDATE"
   },
   {
-    "operationId": "requestGeneration",
+    "operationId": "acknowledgeBrief",
     "method": "post",
-    "path": "/practices/{practiceId}/ai-tasks",
+    "path": "/practices/{practiceId}/document-versions/{documentVersionId}/acknowledge",
     "permission": "CLINICAL_WRITE"
   },
   {
@@ -346,6 +352,12 @@
     "method": "get",
     "path": "/practices/{practiceId}/tasks",
     "permission": "CLINICAL_READ"
+  },
+  {
+    "operationId": "requestGeneration",
+    "method": "post",
+    "path": "/practices/{practiceId}/tasks",
+    "permission": "CLINICAL_WRITE"
   },
   {
     "operationId": "getProcessingTask",
@@ -432,13 +444,13 @@
     "permission": "CLINICAL_WRITE"
   },
   {
-    "operationId": "submitreviewDocument",
+    "operationId": "submitDocumentForReview",
     "method": "post",
     "path": "/practices/{practiceId}/document-versions/{documentVersionId}/submit-review",
     "permission": "CLINICAL_WRITE_OR_REVIEWER"
   },
   {
-    "operationId": "requestchangesDocument",
+    "operationId": "requestDocumentChanges",
     "method": "post",
     "path": "/practices/{practiceId}/document-versions/{documentVersionId}/request-changes",
     "permission": "CLINICAL_WRITE_OR_REVIEWER"
