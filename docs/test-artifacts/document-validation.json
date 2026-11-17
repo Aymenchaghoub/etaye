@@ -3,8 +3,8 @@
   "date": "2026-11-17",
   "ok": true,
   "checks": {
-    "markdownFiles": 88,
-    "localLinks": 1026,
+    "markdownFiles": 89,
+    "localLinks": 1034,
     "apiOperations": 96,
     "apiSchemas": 87,
     "planningStories": 45,
@@ -15,7 +15,7 @@
     "screenInteractionMappings": 28,
     "syntheticObjects": 66,
     "verifiedFigmaExports": 15,
-    "projectFilesSecretScanned": 135
+    "projectFilesSecretScanned": 137
   },
   "errors": [],
   "applicationTestsExecuted": false,
