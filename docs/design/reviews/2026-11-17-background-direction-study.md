@@ -64,7 +64,7 @@ Limits: Chromium only; no Safari/WebKit, no Android WebView, no device scale fac
 
 ## 6. Open choices and access
 
-- Aymen's first reaction to the examples (screenshot of the review controls, grain slider at 12 %, he said he loves the result in light and dark): he prefers a visibly textured paper. Measured at 12 %, it fails: light `encre-3` text 4.06:1 and secondary-button border 2.51:1, dark `encre-3` text 4.11:1; dark at 9 % passes everything. Options awaiting his choice: (1) light 3 % and dark 9 %; (2) 12 % in margins and open areas with a calmer grain behind text and controls, not built; (3) 12 % uniform with small meta text moved off `encre-3` and an opaque halo for the secondary button. 
+- Aymen's first reaction to the examples (screenshot of the review controls, grain slider at 12 %, he said he loves the result in light and dark): he prefers a visibly textured paper. Measured at 12 %, it fails: light `encre-3` text 4.06:1 and secondary-button border 2.51:1, dark `encre-3` text 4.11:1; dark at 9 % passes everything. Options awaiting his choice: (1) light 3 % and dark 9 %; (2) 12 % in margins and open areas with a calmer grain behind text and controls, not built; (3) 12 % uniform with small meta text moved off `encre-3` and an opaque halo for the secondary button.
 - Aymen's choice among variant A, variant B or neither; the tuned opacities; the candidate screen scope; the tablet reference viewport (768×1024 used as requested, catalog says 1024×768). The single-letter message "a" received mid-session was not interpreted as a choice.
 - Access: Figma MCP quota (plan/seat limit) and REST tier-1 rate limit (until about 2026-11-22). Requesting more is a plan decision for Aymen; none was made.
 
