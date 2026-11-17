@@ -25,6 +25,10 @@ The initial public-repository main ruleset is active and recorded in [GitHub sec
 
 Planning/design evidence remains outside runtime packaging. Future backend/container contexts and frontend build inputs must allowlist application code, locked runtime dependencies and explicitly promoted assets; exclude docs/, the raw Figma snapshot/captures, tools/, _bmad/, .agents/, .claude/, Git metadata and personal settings. Promote only reviewed logo/token/font assets needed at runtime, with source hash and license attribution; do not copy the entire design evidence folder into a public web root. Inspect the actual built image/static artifact manifest before release (AT-036-D). This is a future build requirement, not a container configuration created now.
 
+## Mobile artifacts (increments 3 and 4)
+
+The installable web app is part of the validated web artifact. An Android package and an iOS archive are built only in increments 3 and 4, from the same validated commit; signing keys and store credentials never enter the repository or the logs, and no Apple or Google developer account is created or paid without Aymen's decision (D-15). Native smoke evidence is recorded only for runs that actually happened (an emulator is not a real device).
+
 ## Rollback and recovery
 
 Retain previous known-good image/static digest and release manifest. Prefer expand/contract migrations that permit old/new app versions during rollback window. On failure: stop promotion, inspect safe smoke/log evidence, choose compatible app rollback or forward fix. Never automatically reverse a destructive migration or edit an applied checksum. If data restore is necessary, restore into isolated database/store first, verify lineage/attachments, then switch deliberately; account for new writes since backup and document loss. Rehearse recovery against synthetic state. Proposed RPO/RTO are NFR targets, not measured guarantees.

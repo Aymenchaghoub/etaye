@@ -19,3 +19,22 @@ Consulted 2026-11-02. These observations support proposals, not installed depend
 | [Cloudflare R2 pricing](https://developers.cloudflare.com/r2/pricing/) | Standard free10GB-month,1M ClassA/10M ClassB requests monthly, free egress; additional usage charged | Private persistent byte-store candidate; account/billing/region/SDK suitability still to verify before activation. No public bucket for clinical content. |
 
 Other tool choices in ADR-002 (Radix, Flyway, JUnit/Testcontainers, Vitest/Playwright, PDFBox) are design candidates whose exact compatible patches will be locked only during authorized setup. Official references: [Radix](https://www.radix-ui.com/primitives/docs/overview/introduction), [Flyway](https://documentation.red-gate.com/fd), [Testcontainers](https://java.testcontainers.org/), [Vitest](https://vitest.dev/guide/), [Playwright](https://playwright.dev/docs/intro), [PDFBox](https://pdfbox.apache.org/). Their names are not a claim that each integration has been executed.
+
+## Additional observations consulted 2026-11-17
+
+Search-result summaries of the official pages, not full page reads; the Render, Neon and R2 figures match the 2026-11-02 table above.
+
+| Source | Observation | Planning implication / limitation |
+|---|---|---|
+| [Render FAQ](https://render.com/docs/faq) | Free web services spin down after 15 minutes without traffic and take about a minute to wake; 750 free instance hours per workspace per month; free Postgres expires after 30 days | Confirms option A limits; the free Render database stays unsuitable |
+| [Neon plans](https://neon.com/docs/introduction/plans) | Free plan: 100 CU-hours, 1 GB storage and 5 GB egress per project; compute scales to zero after 5 minutes | Confirms the 2026-11-02 observation |
+| [Cloudflare R2 pricing](https://developers.cloudflare.com/r2/pricing/) | Free tier 10 GB-month, 1 million Class A and 10 million Class B requests; free egress | A payment method may be required to enable R2 (To verify); deferred by UD-24 |
+| [OVHcloud VPS](https://www.ovhcloud.com/en/vps/cheap-vps/), [Hetzner cloud](https://www.hetzner.com/cloud/cost-optimized/) | OVHcloud VPS-1 from €3.81 per month excluding VAT; Hetzner CX23 between €3.49 and €6.49 per month excluding VAT depending on the page | Option D of the hosting assessment; price To verify at purchase |
+| [Apple Developer Program](https://developer.apple.com/programs/enroll/) | US$99 per year per membership | Needed for TestFlight and the App Store (D-15) |
+| [Google Play new personal accounts](https://support.google.com/googleplay/android-developer/answer/14151465) | Accounts created after 13 November 2023 need a closed test with at least 12 testers opted in for 14 days before production access; the registration fee was not confirmed | D-15; fee To verify |
+| [WebKit: Web Push for web apps on iOS](https://webkit.org/blog/13878/web-push-for-web-apps-on-ios-and-ipados/) | Web Push works for apps added to the Home Screen from iOS 16.4, in standalone display; no Apple Developer Program membership; silent pushes are not supported | Shapes the push design of ADR-008 and story 10.7 |
+| [App Review Guidelines](https://developer.apple.com/app-store/review/guidelines/) | 4.2: apps need more than a repackaged website; 1.4.1: medical apps may be reviewed with greater scrutiny; 5.1.1: a privacy-policy link is required | Store risks recorded in D-15; live text To verify before any submission |
+| [Capacitor repository](https://github.com/ionic-team/capacitor) | `server.url` and `allowNavigation` are documented as not intended for production; the license file could not be read in the search | ADR-008 rejects the remote-URL shell; license To verify |
+| [Gemini API pricing](https://ai.google.dev/gemini-api/docs/pricing) | For several models free-tier usage may be used to improve products; free quotas were reported reduced | Real providers stay optional and synthetic-data-only (D-26) |
+| [Spring Modulith 2.0 release](https://spring.io/blog/2025/11/21/spring-modulith-2-0-ga-1-4-5-and-1-3-11-released/) | 2.0 moved its baseline to Spring Boot 4; a 2.1 line follows Boot 4.1 | Module verification candidate (proposal P-6); exact compatibility To verify at the spike |
+| [axe-core](https://github.com/dequelabs/axe-core) | MPL-2.0 license | Accessibility checks in CI (proposal P-6); license file To verify |

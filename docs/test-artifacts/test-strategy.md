@@ -24,6 +24,7 @@ Highest risks: cross-practice exposure across API/files/jobs/citations/exports; 
 6. Invitation expiry/revoke/reuse/recipient mismatch and recovery enumeration; membership revocation mid-session/worker rechecks; patient path/body mismatch denied.
 7. Upload quarantine/failed scan/type spoof/pathname/oversize and malicious document instructions; no source fact ingestion. Patient export cannot bypass grant with task/export identifier.
 8. Audit/outbox failure rolls back required state; email retry not duplicate business effect. API/provider unavailability and reset/version boundary show honest status without data loss or fake success.
+9. Multi-client (UD-12): cookie and bearer transports never mix and bearer is refused from a web origin; the CORS allowlist rejects unknown origins; revocation, suspension and password reset end native sessions on the next request; the service worker and the device store hold no clinical body; push payloads carry no clinical text and are re-authorized at delivery; a client below the minimum version gets the update response; the generated client and the contract cannot drift.
 
 ## Evidence and quality gates
 

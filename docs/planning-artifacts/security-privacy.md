@@ -17,16 +17,21 @@ Browser input, uploaded files/record text, provider output and request practice 
 | AI instruction injection/data exfiltration | Minimized synthetic payload, data delimiters, no arbitrary tool/URL execution, schema/source support validation | Malicious source corpus, invented citation and boundary logs inspection |
 | Lost edits/double effects | Expected version + DB scheduling constraints + scoped idempotency/outbox/lease fence | Concurrent booking/edit/publication/job tests |
 | Secret theft through untrusted CI | Read-only PR token, no deployment secrets on forks, pinned actions, trusted promotion | Permissions review and fork negative simulation |
+| Lost or shared device, token reuse across transports | Session secret in platform secure storage only, per-device revocation, no offline clinical cache, no mixing of cookie and bearer, exact-origin CORS allowlist | Revocation, storage-inspection, transport-mixing and origin tests |
 
 ## Authentication and authorization
 
-One account authority with independently scoped memberships/portal links; separate entry copy does not determine privileges. Spring Security and opaque JDBC sessions proposed. Recheck current grants on every request/task/download. Force reauthentication/assurance for sensitive security changes. Proposed inactivity/absolute/recovery/invitation limits are in ADR-004. Rate limit login/recovery/invitation/generation and avoid account enumeration. Password encoder parameters require benchmark and current supported guidance at implementation; never store plaintext or reusable reset tokens.
+One account authority with independently scoped memberships/portal links; separate entry copy does not determine privileges. Spring Security and opaque JDBC sessions proposed; native clients use the same server-side session through a header transport (ADR-008, Proposed). Recheck current grants on every request/task/download. Force reauthentication/assurance for sensitive security changes. Proposed inactivity/absolute/recovery/invitation limits are in ADR-004. Rate limit login/recovery/invitation/generation and avoid account enumeration. Password encoder parameters require benchmark and current supported guidance at implementation; never store plaintext or reusable reset tokens.
 
 Use 401 missing/expired session; 404 for inaccessible resource existence across practice/record boundary; 403 for forbidden action on a visible resource; avoid timing/list/count disclosure. Server ignores client claims of role or ownership. Global account suspension affects all sessions; one membership suspension affects that practice only. No unrestricted clinical operator role by default.
 
 ## Files, transport and browser
 
 TLS all network paths; DB TLS verifies certificates for remote providers. Private/no-store protected responses and downloads; no clinical bodies in URLs/referrers/service-worker cache. Restrictive CSP, safe content disposition and media sniffing protections. Verify authorization for thumbnails/range requests/export snapshots, not only initial page. Patient grants are checked at delivery; even short-lived signed URLs require explicit revocation design and are not the default small-demo path. No clinical drafts in persistent shared-browser storage. Logs and screenshots contain only synthetic content and safe identifiers.
+
+## Installed and native clients
+
+The installed web app and the native shell (UD-12, [ADR-008](../decisions/ADR-008-multi-client-access.md)) add no new data path: the same server checks, projections and practice isolation apply. The device keeps the session secret in platform secure storage and nothing clinical: no offline clinical cache (UD-15), a service worker that caches the application shell only, no clinical text in notifications, crash reports or logs, and no clinical body in a URL. A bearer session is never accepted from a web origin, never mixed with the cookie transport, and is revoked on logout, suspension and password reset like any other session. Push payloads are content-free and re-authorized at delivery. Lost-device handling relies on revocation of the device registration; biometric lock, app-switcher privacy and remote wipe are optional later work (D-18). Store reviews add privacy-policy and health-app obligations (D-15). None of this is a security certification.
 
 ## Data inventory, retention and minimization
 
