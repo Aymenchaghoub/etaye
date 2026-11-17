@@ -1,6 +1,6 @@
 # Implementation tracking boundary
 
-No application implementation has started. All 37 stories in the planning epics remain backlog; none is ready-for-dev or in-progress. Design progress is independently tracked in `docs/design/coverage.csv`.
+No application implementation has started. All 45 stories in the planning epics remain backlog; none is ready-for-dev or in-progress. Design progress is independently tracked in `docs/design/coverage.csv`.
 
 No `sprint-status.yaml` is manufactured here. The installed BMAD sprint-planning workflow generates that file only after its implementation-readiness gate passes. Complete design/review and Aymen's explicit development authorization are still absent, so the gate cannot pass. Preserve the installed status schema when tracking is eventually generated; do not add design states to it.
 

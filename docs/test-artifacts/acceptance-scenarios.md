@@ -41,6 +41,14 @@ All entries are planned, not executed. Exact Given/When/Then conditions are in t
 | AT-035-A/B/C | [9.1](../planning-artifacts/epics/epic-9.md) | Enter and reset bounded synthetic journeys | Real assertions/report plus opened visual evidence; record commit/fixture/environment and limitations |
 | AT-036-A/B/C | [9.2](../planning-artifacts/epics/epic-9.md) | Produce real-stack quality and release evidence | Real assertions/report plus opened visual evidence; record commit/fixture/environment and limitations |
 | AT-037-A/B/C | [9.3](../planning-artifacts/epics/epic-9.md) | Recover unavailable services and releases | Real assertions/report plus opened visual evidence; record commit/fixture/environment and limitations |
+| AT-038-A/B/C | [10.1](../planning-artifacts/epics/epic-10.md) | Walking skeleton and secure request path | Real assertions and recorded reports; record commit/fixture/environment and limitations (no visual review) |
+| AT-039-A/B/C | [10.2](../planning-artifacts/epics/epic-10.md) | Generated client, token bridge and multi-client foundations | Real assertions and recorded reports; record commit/fixture/environment and limitations (no visual review) |
+| AT-040-A/B/C | [10.3](../planning-artifacts/epics/epic-10.md) | Hosting benchmark and decision | Real assertions and recorded reports; record commit/fixture/environment and limitations (no visual review) |
+| AT-041-A/B/C | [10.4](../planning-artifacts/epics/epic-10.md) | Installable web app (PWA) | Real assertions and recorded reports; record commit/fixture/environment and limitations (no visual review) |
+| AT-042-A/B/C | [10.5](../planning-artifacts/epics/epic-10.md) | Native session transport and device registry | Real assertions and recorded reports; record commit/fixture/environment and limitations (no visual review) |
+| AT-043-A/B/C | [10.6](../planning-artifacts/epics/epic-10.md) | Native Android shell | Real assertions and recorded reports; record commit/fixture/environment and limitations (no visual review) |
+| AT-044-A/B/C | [10.7](../planning-artifacts/epics/epic-10.md) | Content-free push notifications | Real assertions and recorded reports; record commit/fixture/environment and limitations (no visual review) |
+| AT-045-A/B/C | [10.8](../planning-artifacts/epics/epic-10.md) | iOS build and store-readiness gate | Real assertions and recorded reports; record commit/fixture/environment and limitations (no visual review) |
 
 ## Scheduling registration boundary (PD-001 proposal)
 
