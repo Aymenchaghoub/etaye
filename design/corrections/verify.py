@@ -62,7 +62,7 @@ snapshot = json.loads(snapshot_path.read_text())
 
 
 def snapshot_matches():
-    paths = {str(p.relative_to(root)) for p in site.rglob("*") if p.is_file()}
+    paths = {p.relative_to(root).as_posix() for p in site.rglob("*") if p.is_file()}
     return paths == {x["path"] for x in snapshot["files"]} and all(
         hashlib.file_digest((root / x["path"]).open("rb"), "sha256").hexdigest()
         == x["sha256"]

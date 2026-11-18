@@ -152,7 +152,7 @@ def verify_package(folder):
     manifest = json.loads(manifest_bytes)
     payload_names = set(manifest["files"])
     expected = payload_names | {"manifest.json", ARCHIVE, "SHA256SUMS"}
-    actual = {str(p.relative_to(folder)) for p in folder.rglob("*") if p.is_file()}
+    actual = {p.relative_to(folder).as_posix() for p in folder.rglob("*") if p.is_file()}
     if actual != expected:
         raise ValueError("Unexpected or missing package files")
     for name, details in manifest["files"].items():
@@ -185,7 +185,7 @@ def verify_package(folder):
 def export_package(output):
     """Create a new versioned child; never overwrite or ingest previous exports."""
     output = output.resolve()
-    if output.is_relative_to(ROOT):
+    if output.is_relative_to(ROOT.resolve()):
         raise ValueError("Use a folder outside the repository")
     payload, source_map, sources = build_payload()
     for name, content in payload.items():

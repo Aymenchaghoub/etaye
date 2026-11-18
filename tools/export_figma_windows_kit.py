@@ -75,7 +75,7 @@ def prepare_packets(work):
 
 def export(work, artifact, fonts, output):
     work, artifact, fonts, output = [p.resolve() for p in (work, artifact, fonts, output)]
-    if output.is_relative_to(ROOT):
+    if output.is_relative_to(ROOT.resolve()):
         raise ValueError('Generated kits must remain outside the repository')
     head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
     status = subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).splitlines()

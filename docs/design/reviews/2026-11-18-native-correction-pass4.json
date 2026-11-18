@@ -1,0 +1,5080 @@
+{
+  "kind": "native-visual-correction",
+  "fileKey": "vfh4BSnbRAbaDE1q0CyssL",
+  "pageId": "15:2",
+  "finalVersion": {
+    "id": "2423222524119712091"
+  },
+  "createdTextIds": [
+    "48:47"
+  ],
+  "observedAt": "2026-11-18T14:53:22.069Z",
+  "roots": [
+    {
+      "state": "S-06/annule",
+      "nodeId": "26:3",
+      "sectionId": "26:2",
+      "name": "S-06/annule · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 35,
+      "fingerprint": "3d1fd684c571cb27dbf514e2a576de8b6d8fb0d39dc1a8ad0b5a0b7b5d2ab17e"
+    },
+    {
+      "state": "S-06/chargement",
+      "nodeId": "26:222",
+      "sectionId": "26:2",
+      "name": "S-06/chargement · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 23,
+      "fingerprint": "ff5f572bf4b12d761da162efe88e46c23b7714ae91252f92b204e9da15b402fb"
+    },
+    {
+      "state": "S-06/echec-partiel",
+      "nodeId": "26:416",
+      "sectionId": "26:2",
+      "name": "S-06/echec-partiel · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 60,
+      "fingerprint": "2ffd002acb9c246fbe9db4eb19422c2450d8e97a6f1c96b559e0fea30eece390"
+    },
+    {
+      "state": "S-06/jour-vide",
+      "nodeId": "26:734",
+      "sectionId": "26:2",
+      "name": "S-06/jour-vide · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 41,
+      "fingerprint": "9cae6c3a338f843e4c8f841336890ae0874a8e6649e754749ec94ce0c9624f39"
+    },
+    {
+      "state": "S-06/minuit",
+      "nodeId": "26:987",
+      "sectionId": "26:2",
+      "name": "S-06/minuit · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 52,
+      "fingerprint": "0516332f77cec26eeebd98d8865efd5a37c12b8059782a7b5ee6fba9220b1bec"
+    },
+    {
+      "state": "S-06/nora",
+      "nodeId": "26:1282",
+      "sectionId": "26:2",
+      "name": "S-06/nora · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 63,
+      "fingerprint": "6aa0970bb6ef183cb58034b48accca01700db7417848c4b516d33108b7a65390"
+    },
+    {
+      "state": "S-06/perime",
+      "nodeId": "26:1610",
+      "sectionId": "26:2",
+      "name": "S-06/perime · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 51,
+      "fingerprint": "b85fe5fa55e832539695a667e5afb1c4c8795cc7d37104908eccd6a7298ec433"
+    },
+    {
+      "state": "S-06/sami-a",
+      "nodeId": "26:1898",
+      "sectionId": "26:2",
+      "name": "S-06/sami-a · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 19,
+      "fingerprint": "486d753f37d36a3f5a0fcf729427d5ec44f00e45a10013f5871a83018a8b2e7d"
+    },
+    {
+      "state": "S-01/accueil",
+      "nodeId": "30:3",
+      "sectionId": "30:2",
+      "name": "S-01/accueil · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 30,
+      "fingerprint": "711936a8f8de6ce887479dfca2a55904cdc8f1c32e052373445ea192ed0d5001"
+    },
+    {
+      "state": "S-01/indisponible",
+      "nodeId": "30:109",
+      "sectionId": "30:2",
+      "name": "S-01/indisponible · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 33,
+      "fingerprint": "0755cd030e2faa6a50ad0d7a567e3db25d87ef5c7eb71c99725c57d9629a6c11"
+    },
+    {
+      "state": "S-01/preparation",
+      "nodeId": "30:233",
+      "sectionId": "30:2",
+      "name": "S-01/preparation · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 32,
+      "fingerprint": "cb70493789a3933ac29caee080c097bc8d3d2f00360bb1f8a45a48d6b17fe7b9"
+    },
+    {
+      "state": "S-01/reinitialisation",
+      "nodeId": "30:348",
+      "sectionId": "30:2",
+      "name": "S-01/reinitialisation · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 32,
+      "fingerprint": "27d994c1afc3a1fd4225ed564327622d93a6d3dcd9497d0874abaa23e8816e83"
+    },
+    {
+      "state": "S-02/champ-vide",
+      "nodeId": "30:465",
+      "sectionId": "30:464",
+      "name": "S-02/champ-vide · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 18,
+      "fingerprint": "e42fea73a9e5cfb0f51fdcc36287c509b3b9bfe1ba82fb8c4ad9c0a8caaaf775"
+    },
+    {
+      "state": "S-02/connexion",
+      "nodeId": "30:525",
+      "sectionId": "30:464",
+      "name": "S-02/connexion · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 15,
+      "fingerprint": "e6d622d6223f4a6209229bb0085b141671ff5c8b14ff0a34f8dba3d9011c1643"
+    },
+    {
+      "state": "S-02/envoi",
+      "nodeId": "30:577",
+      "sectionId": "30:464",
+      "name": "S-02/envoi · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 17,
+      "fingerprint": "679728e2eb885d5095d0cd5612f1a0468e0d7d451e3a847ae721f8b4b5f905b7"
+    },
+    {
+      "state": "S-02/invalide",
+      "nodeId": "30:630",
+      "sectionId": "30:464",
+      "name": "S-02/invalide · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 20,
+      "fingerprint": "b7449b1c7e37a58673d31b257f3e5741bec7635dabd2c2ddcff62d3ccdb9fd06"
+    },
+    {
+      "state": "S-02/limite",
+      "nodeId": "30:692",
+      "sectionId": "30:464",
+      "name": "S-02/limite · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 22,
+      "fingerprint": "6e585d81cbeb55db7f67f66e3983a08f8b3dabede1f3459615f8a8dd4d301b47"
+    },
+    {
+      "state": "S-02/patient",
+      "nodeId": "30:759",
+      "sectionId": "30:464",
+      "name": "S-02/patient · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 15,
+      "fingerprint": "efb13bb2502ec0bf5b5bc8529c94469b8bfbc32eb1895c09960e7e5d0281817b"
+    },
+    {
+      "state": "S-02/patient-invalide",
+      "nodeId": "30:813",
+      "sectionId": "30:464",
+      "name": "S-02/patient-invalide · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 20,
+      "fingerprint": "4a14741fe4d2be886bc3f24db18e1161856602cc7fb1a1d18c49b5ae8801a1d0"
+    },
+    {
+      "state": "S-02/retour",
+      "nodeId": "30:877",
+      "sectionId": "30:464",
+      "name": "S-02/retour · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 20,
+      "fingerprint": "d1d51ec5d66bd561199c6f4667a5c3c0e27885017cc804c7461b144cbde4121e"
+    },
+    {
+      "state": "S-02/suspendu",
+      "nodeId": "30:942",
+      "sectionId": "30:941",
+      "name": "S-02/suspendu · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 20,
+      "fingerprint": "2399836f3608653764f4e021838c3dfd1507826d1441a0a9bb2f9e3e5940c14c"
+    },
+    {
+      "state": "S-03/deja-utilisee",
+      "nodeId": "30:1007",
+      "sectionId": "30:1006",
+      "name": "S-03/deja-utilisee · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 6,
+      "fingerprint": "6f804b0734b88737abd7981f2ab93a7e8c662576b5891a22af79ed38e7c91798"
+    },
+    {
+      "state": "S-03/equipe",
+      "nodeId": "30:1031",
+      "sectionId": "30:1006",
+      "name": "S-03/equipe · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 26,
+      "fingerprint": "48eb1e16583e93bcc5d8d223ff994c011723e7a0aa7d5d63c0800b3b617531d3"
+    },
+    {
+      "state": "S-03/erreur",
+      "nodeId": "30:1101",
+      "sectionId": "30:1006",
+      "name": "S-03/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1154,
+      "texts": 31,
+      "fingerprint": "bcd67a844aa0994afb674768cffa7c32472b6aeca38eedf2956642938d7e82b4"
+    },
+    {
+      "state": "S-03/expiree",
+      "nodeId": "30:1181",
+      "sectionId": "30:1006",
+      "name": "S-03/expiree · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 7,
+      "fingerprint": "2f2583d01ef33bafb044112839a784ca8762eb982f9bfa9092ab54043c062d7c"
+    },
+    {
+      "state": "S-03/invalide",
+      "nodeId": "30:1206",
+      "sectionId": "30:1006",
+      "name": "S-03/invalide · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 7,
+      "fingerprint": "63a546cc14411b0a193e1e36a33cadc1e5599ec4fa23c61c5a1395cc5899e66a"
+    },
+    {
+      "state": "S-03/revoquee",
+      "nodeId": "30:1231",
+      "sectionId": "30:1006",
+      "name": "S-03/revoquee · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 6,
+      "fingerprint": "019d82b67bab26afe394f4bd2d02ba2214bdaef9648db49035ff14f38aafa921"
+    },
+    {
+      "state": "S-04/demande",
+      "nodeId": "30:1256",
+      "sectionId": "30:1255",
+      "name": "S-04/demande · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 9,
+      "fingerprint": "5e948d32e7b7648dbaccfc87090e96c847735c9a78584483e69c963427c76078"
+    },
+    {
+      "state": "S-04/envoye",
+      "nodeId": "30:1290",
+      "sectionId": "30:1255",
+      "name": "S-04/envoye · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 12,
+      "fingerprint": "4adff5c895ab0717d8b28ffbe46e6c571f0586a280567dc50de5ca9cb5f6a79b"
+    },
+    {
+      "state": "S-04/lien-expire",
+      "nodeId": "30:1322",
+      "sectionId": "30:1255",
+      "name": "S-04/lien-expire · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 6,
+      "fingerprint": "f6649c88bdcb2727c25315134484d5265f40c73bfa23e06cbc4d2381a0ddff77"
+    },
+    {
+      "state": "S-04/limite",
+      "nodeId": "30:1346",
+      "sectionId": "30:1255",
+      "name": "S-04/limite · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 13,
+      "fingerprint": "e90111253f53e8ff7d3b0f371224e77682427d557045a0a3a648d42811daf684"
+    },
+    {
+      "state": "S-04/nouveau",
+      "nodeId": "30:1391",
+      "sectionId": "30:1255",
+      "name": "S-04/nouveau · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 11,
+      "fingerprint": "2b1233f46883e2568fe355f9e5b04e735a4555616bb62d212062a889d7cfa1ac"
+    },
+    {
+      "state": "S-04/nouveau-erreur",
+      "nodeId": "30:1431",
+      "sectionId": "30:1255",
+      "name": "S-04/nouveau-erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 13,
+      "fingerprint": "88cd605f8f9eacbfcd83ca04387a7eb43485f24e215317ec683b4141887d9630"
+    },
+    {
+      "state": "S-04/reseau",
+      "nodeId": "30:1477",
+      "sectionId": "30:1255",
+      "name": "S-04/reseau · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 14,
+      "fingerprint": "7a0e48ccc30b290b48eff578dce068175fe1c5949e415b552cc839f9646e86b1"
+    },
+    {
+      "state": "S-04/reussi",
+      "nodeId": "30:1530",
+      "sectionId": "30:1255",
+      "name": "S-04/reussi · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 6,
+      "fingerprint": "a684474eefcb4024d610386cafb7d97765f4600cbe86285645c511405aed645e"
+    },
+    {
+      "state": "S-05/choix",
+      "nodeId": "30:1555",
+      "sectionId": "30:1554",
+      "name": "S-05/choix · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 14,
+      "fingerprint": "bfa5a05ae3e937dba99ee7ca35a6e144f24a50a859bfa9cf2484c16b980e3493"
+    },
+    {
+      "state": "S-05/desactive",
+      "nodeId": "30:1616",
+      "sectionId": "30:1554",
+      "name": "S-05/desactive · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 13,
+      "fingerprint": "9d691f53766f22817d6165e4ff2d36c3143b7fd08cc52d7870498a3b6fb23b14"
+    },
+    {
+      "state": "S-05/retire",
+      "nodeId": "30:1676",
+      "sectionId": "30:1554",
+      "name": "S-05/retire · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 16,
+      "fingerprint": "f4e608e8a58759e4ef620d9aee1ff893bf1f46462cdb7b71af6308242734e6b8"
+    },
+    {
+      "state": "S-05/un-seul",
+      "nodeId": "30:1747",
+      "sectionId": "30:1554",
+      "name": "S-05/un-seul · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 7,
+      "fingerprint": "08e08499dcbf2f3fc92b31e942574cdc8b0fd437f915d415a8837c758574d315"
+    },
+    {
+      "state": "S-07/aucun-resultat",
+      "nodeId": "30:1773",
+      "sectionId": "30:1772",
+      "name": "S-07/aucun-resultat · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 26,
+      "fingerprint": "6d219822e4cfa5346cc437060a2f22bf1536197bc963a916b44a110693cac0db"
+    },
+    {
+      "state": "S-07/canal",
+      "nodeId": "30:1938",
+      "sectionId": "30:1772",
+      "name": "S-07/canal · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 17,
+      "fingerprint": "ed19c32ede0e6750f026ea9e611cfc8c1f8f35ff1b4b335a09c8bf496bff7b2b"
+    },
+    {
+      "state": "S-07/chargement",
+      "nodeId": "30:2073",
+      "sectionId": "30:1772",
+      "name": "S-07/chargement · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 23,
+      "fingerprint": "6ef792893605734cabfb0938740d8642c7ce5098a5f23e118acb09d1a00cd9c0"
+    },
+    {
+      "state": "S-07/erreur",
+      "nodeId": "30:2233",
+      "sectionId": "30:1772",
+      "name": "S-07/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 32,
+      "fingerprint": "f7bd8a7d21563c043820a326def13b415504f006ff405928a2748c85a51ac07d"
+    },
+    {
+      "state": "S-07/liste",
+      "nodeId": "30:2432",
+      "sectionId": "30:1772",
+      "name": "S-07/liste · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 35,
+      "fingerprint": "83147b27dfcd0584a380750bc2da210152e3914ba7ca0cef54fe48100cd5f6c4"
+    },
+    {
+      "state": "S-07/longs",
+      "nodeId": "30:2636",
+      "sectionId": "30:1772",
+      "name": "S-07/longs · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 40,
+      "fingerprint": "e571483a6c0a68dfc6539c1e1c0205748dbec6c934ca05392ee1e8b7dbe5776a"
+    },
+    {
+      "state": "S-07/perime",
+      "nodeId": "30:2859",
+      "sectionId": "30:1772",
+      "name": "S-07/perime · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 38,
+      "fingerprint": "459993c56b63bf7a63ea8b3af34284d8746763318d23a0f164c9356d0d1a964a"
+    },
+    {
+      "state": "S-07/planificateur",
+      "nodeId": "30:3081",
+      "sectionId": "30:1772",
+      "name": "S-07/planificateur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 22,
+      "fingerprint": "728ddb43ee175d1049734a3a0b79bcc03cecee22e2071511042251a537e0257d"
+    },
+    {
+      "state": "S-07/vide",
+      "nodeId": "30:3207",
+      "sectionId": "30:3206",
+      "name": "S-07/vide · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 25,
+      "fingerprint": "da9f8cee916d84795b735110320e6601e6c7a82d32ee10b9d3dbee46909cd086"
+    },
+    {
+      "state": "S-08/conflit",
+      "nodeId": "30:3372",
+      "sectionId": "30:3371",
+      "name": "S-08/conflit · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 56,
+      "fingerprint": "2db6e6c0bcac51d1ed42d162e6e7dc025a3d91e8e916838594bd8d29581c18d6"
+    },
+    {
+      "state": "S-08/doublon",
+      "nodeId": "30:3620",
+      "sectionId": "30:3371",
+      "name": "S-08/doublon · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 45,
+      "fingerprint": "13d56fcdf3cc85a69d01afafc2924321b15b26777b4b0064949428a23a965c5f"
+    },
+    {
+      "state": "S-08/enregistrement",
+      "nodeId": "30:3831",
+      "sectionId": "30:3371",
+      "name": "S-08/enregistrement · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 52,
+      "fingerprint": "8e4ac78a3da56e98e81c4fdd86cdb10b7b079d35ab84706b931aaf656c4bca9f"
+    },
+    {
+      "state": "S-08/erreur",
+      "nodeId": "30:4061",
+      "sectionId": "30:3371",
+      "name": "S-08/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 43,
+      "fingerprint": "8490576d1a80c2a7e7adc10db994a7e20903d918de9eb3b11bf4827ad13e0cd9"
+    },
+    {
+      "state": "S-08/modifier",
+      "nodeId": "30:4268",
+      "sectionId": "30:3371",
+      "name": "S-08/modifier · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 51,
+      "fingerprint": "faa534d81577e366216b8be739621aa6066a5399846fe21dd3e1b79554a82d7a"
+    },
+    {
+      "state": "S-08/nouveau",
+      "nodeId": "30:4496",
+      "sectionId": "30:3371",
+      "name": "S-08/nouveau · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 37,
+      "fingerprint": "0554bff50f23a7055028cfa7130614a72fb4a0fb6c5fecb411b7e7d1f51fb925"
+    },
+    {
+      "state": "S-08/planificateur",
+      "nodeId": "30:4689",
+      "sectionId": "30:3371",
+      "name": "S-08/planificateur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 33,
+      "fingerprint": "d6753987ed81fd5c82aee0e684d63a7358d3f095515f0e905dd2f70a3ae60f31"
+    },
+    {
+      "state": "S-08/sale",
+      "nodeId": "30:4841",
+      "sectionId": "30:3371",
+      "name": "S-08/sale · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 52,
+      "fingerprint": "16bd5c57ea1084e953dd3185ad7544b7797b2b1033d3dc080498a5d3db1b6788"
+    },
+    {
+      "state": "S-09/claire",
+      "nodeId": "30:5937",
+      "sectionId": "30:5936",
+      "name": "S-09/claire · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1608,
+      "texts": 164,
+      "fingerprint": "40c6c10a3a579e533f4d8e1ad894c9b7469cebf9df9933c52b634acbe249c4f6"
+    },
+    {
+      "state": "S-09/corrige",
+      "nodeId": "30:6514",
+      "sectionId": "30:5936",
+      "name": "S-09/corrige · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1171,
+      "texts": 110,
+      "fingerprint": "d2c22d4b608283dd31d3dcde814049712f689fe6fa9984d10266cadf6488cb5b"
+    },
+    {
+      "state": "S-09/date-inconnue",
+      "nodeId": "30:6937",
+      "sectionId": "30:5936",
+      "name": "S-09/date-inconnue · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1199,
+      "texts": 113,
+      "fingerprint": "1910eeaf39ea0671f539f22a3d0d0603408197ede62eb02cc30d10d8e8dd8024"
+    },
+    {
+      "state": "S-09/erreur-partielle",
+      "nodeId": "30:7366",
+      "sectionId": "30:5936",
+      "name": "S-09/erreur-partielle · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1468,
+      "texts": 143,
+      "fingerprint": "4cc6a47f8efbd93d571b26489870d7149386f041eedcf115e02fd2e80ceb472f"
+    },
+    {
+      "state": "S-09/hugo",
+      "nodeId": "30:7901",
+      "sectionId": "30:5936",
+      "name": "S-09/hugo · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 30,
+      "fingerprint": "b359362366cebac199d70a60d71bf888e057c001cfe5e315014a8c7deb5a322d"
+    },
+    {
+      "state": "S-09/lecture-seule",
+      "nodeId": "30:8066",
+      "sectionId": "30:5936",
+      "name": "S-09/lecture-seule · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1698,
+      "texts": 164,
+      "fingerprint": "147586379d453825364ab97879549a50e389fdd849bd97f68b16e6147abb8027"
+    },
+    {
+      "state": "S-09/long",
+      "nodeId": "30:8644",
+      "sectionId": "30:8643",
+      "name": "S-09/long · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 2320,
+      "texts": 229,
+      "fingerprint": "7ce5ebe764db78b211b7a74cd268a51b009451fccaf34a89c98c894a4e0fe78d"
+    },
+    {
+      "state": "S-09/louis",
+      "nodeId": "30:9394",
+      "sectionId": "30:8643",
+      "name": "S-09/louis · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 82,
+      "fingerprint": "fd761ff6085873085a435dd4d22559eea0076ef395c280c9d38771efdc795791"
+    },
+    {
+      "state": "S-10/claire",
+      "nodeId": "30:9751",
+      "sectionId": "30:9750",
+      "name": "S-10/claire · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1168,
+      "texts": 63,
+      "fingerprint": "5aa53cd9b2eeb1a6aadfb62a94edb5980ce947bed2064a45d788c907d1aaa2d5"
+    },
+    {
+      "state": "S-10/evaluation",
+      "nodeId": "30:10035",
+      "sectionId": "30:9750",
+      "name": "S-10/evaluation · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1285,
+      "texts": 67,
+      "fingerprint": "c3bb7afa5473d278a3c3a83f74afab82dcd20819b8708d5d3730907e5db6553b"
+    },
+    {
+      "state": "S-10/evaluation-erreur",
+      "nodeId": "30:10325",
+      "sectionId": "30:9750",
+      "name": "S-10/evaluation-erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1377,
+      "texts": 69,
+      "fingerprint": "804d7dbefd72d807c58aa92b157c942599957808917e5d0985eb98749698b958"
+    },
+    {
+      "state": "S-10/lecture-seule",
+      "nodeId": "30:10621",
+      "sectionId": "30:9750",
+      "name": "S-10/lecture-seule · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1178,
+      "texts": 63,
+      "fingerprint": "350fa7239a6c077ceffcf377292d891a201d5fb3726b0e5710cbefd6dbe4d1ed"
+    },
+    {
+      "state": "S-10/louis",
+      "nodeId": "30:10902",
+      "sectionId": "30:9750",
+      "name": "S-10/louis · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 47,
+      "fingerprint": "308d33f1bf27b133aeddb6d2b8f37b51a26ad64015eceea12e0a2af1cd37e5e6"
+    },
+    {
+      "state": "S-11/chargement",
+      "nodeId": "30:11133",
+      "sectionId": "30:11132",
+      "name": "S-11/chargement · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 35,
+      "fingerprint": "f071b3882cbcb77b7c7042fef3e2b086b77820cd3064312b4f5a5656f623e6fd"
+    },
+    {
+      "state": "S-11/claire",
+      "nodeId": "30:11333",
+      "sectionId": "30:11132",
+      "name": "S-11/claire · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1123,
+      "texts": 101,
+      "fingerprint": "fe8e35a0013853c42be10b672c97b0a951cfc484f895ded6f73e7b1039475622"
+    },
+    {
+      "state": "S-11/gabarits",
+      "nodeId": "30:11722",
+      "sectionId": "30:11132",
+      "name": "S-11/gabarits · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 57,
+      "fingerprint": "35ef6d2a05466c79850f28e987a02459a22e637aa58a27c1c57f842e410bde79"
+    },
+    {
+      "state": "S-11/louis",
+      "nodeId": "30:11982",
+      "sectionId": "30:11132",
+      "name": "S-11/louis · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 38,
+      "fingerprint": "56c13a4abda0af10e97031f606ce5ca28a9d88915e22e53e8615d2ee5c5c13de"
+    },
+    {
+      "state": "S-12/a-verifier",
+      "nodeId": "30:12174",
+      "sectionId": "30:12173",
+      "name": "S-12/a-verifier · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 30,
+      "fingerprint": "ef7dcb795ab738a022258da93610689b40d3c4309a6e8564a141a54ca17a074e"
+    },
+    {
+      "state": "S-12/claire",
+      "nodeId": "30:12347",
+      "sectionId": "30:12173",
+      "name": "S-12/claire · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1233,
+      "texts": 108,
+      "fingerprint": "4d64862c098d462e67bc38015dda525c81444aea0a2f4f868175adfede168bce"
+    },
+    {
+      "state": "S-12/corrige",
+      "nodeId": "30:12769",
+      "sectionId": "30:12173",
+      "name": "S-12/corrige · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 30,
+      "fingerprint": "8ec81d29be41000489efa817f91d0b65a5d7dc106940008fc102da012d5311f6"
+    },
+    {
+      "state": "S-12/hors-intervalle",
+      "nodeId": "30:12942",
+      "sectionId": "30:12173",
+      "name": "S-12/hors-intervalle · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 30,
+      "fingerprint": "3a97723c337c468b6a99a33c85659df79e6ea30e5a48ab94ab69bab793777b19"
+    },
+    {
+      "state": "S-12/louis",
+      "nodeId": "30:13115",
+      "sectionId": "30:12173",
+      "name": "S-12/louis · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 38,
+      "fingerprint": "e211258b7ef1552d70dc10c3e5c7cc8f55c4a1e6faf59facf6ebb2b4c162143d"
+    },
+    {
+      "state": "S-12/sans-intervalle",
+      "nodeId": "30:13306",
+      "sectionId": "30:12173",
+      "name": "S-12/sans-intervalle · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 93,
+      "fingerprint": "931ef2077af0ec8cdbe205d0fe111c9b3b4be388c524f036036dae981a3b93eb"
+    },
+    {
+      "state": "S-12/textuel",
+      "nodeId": "30:13706",
+      "sectionId": "30:12173",
+      "name": "S-12/textuel · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 30,
+      "fingerprint": "f61cf39200145df5c5b1e1d57bf112d3f42125c2e9286818965a9f83a3d0e2d0"
+    },
+    {
+      "state": "S-12/unites-incompatibles",
+      "nodeId": "30:13879",
+      "sectionId": "30:12173",
+      "name": "S-12/unites-incompatibles · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 30,
+      "fingerprint": "44cf0e88593bd9d37ab69454c66004078fc700bd483b5d6533d773739673bfab"
+    },
+    {
+      "state": "S-13/acces-expire",
+      "nodeId": "30:14053",
+      "sectionId": "30:14052",
+      "name": "S-13/acces-expire · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 65,
+      "fingerprint": "3ebf28424c92fed3912b4a2f3d35640d1e647c4bea0b71fc7e43e2c88cd2fa4e"
+    },
+    {
+      "state": "S-13/apercu-indisponible",
+      "nodeId": "30:14321",
+      "sectionId": "30:14052",
+      "name": "S-13/apercu-indisponible · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 64,
+      "fingerprint": "188a3ae1b9fbeae86320212894b123efc468231b4b6ae636b4e4081d52d26a89"
+    },
+    {
+      "state": "S-13/claire",
+      "nodeId": "30:14587",
+      "sectionId": "30:14052",
+      "name": "S-13/claire · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 45,
+      "fingerprint": "df712e52d42f880203ca9da8bfa94e0ae5d1c179fb6fd2da19d1ed6b868abe07"
+    },
+    {
+      "state": "S-13/file",
+      "nodeId": "30:14806",
+      "sectionId": "30:14052",
+      "name": "S-13/file · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 58,
+      "fingerprint": "229c2aba0ea7425f02ca3f0765640ff101a99bed2c3235c9b0e49b2840a00690"
+    },
+    {
+      "state": "S-13/louis",
+      "nodeId": "30:15092",
+      "sectionId": "30:14052",
+      "name": "S-13/louis · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 38,
+      "fingerprint": "1d9a226e5710ca53590c5397a02aa99a06e3912d39abbf44d0482ab082e331e9"
+    },
+    {
+      "state": "S-13/page-manquante",
+      "nodeId": "30:15283",
+      "sectionId": "30:14052",
+      "name": "S-13/page-manquante · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 66,
+      "fingerprint": "a2dfff3fd2aaa712ff8f40338c8f82975494febb5406431e7c4a26b44a626e33"
+    },
+    {
+      "state": "S-13/visionneuse",
+      "nodeId": "30:15549",
+      "sectionId": "30:14052",
+      "name": "S-13/visionneuse · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1290,
+      "texts": 70,
+      "fingerprint": "cad22e037140dcc37261b469f97d4614416d85022edbcfaa856a441878e931d7"
+    },
+    {
+      "state": "S-14/annule",
+      "nodeId": "30:15819",
+      "sectionId": "30:15818",
+      "name": "S-14/annule · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 43,
+      "fingerprint": "777e7ac63e2bee69c589588411c0ab4f15d1bb979e6892466ea07a9f46339232"
+    },
+    {
+      "state": "S-14/canal",
+      "nodeId": "30:16053",
+      "sectionId": "30:15818",
+      "name": "S-14/canal · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 17,
+      "fingerprint": "ac79dc33c764374e71eba802b9d1c632b150defe99e050b6e9c0c9d78337cdd9"
+    },
+    {
+      "state": "S-14/changement-heure",
+      "nodeId": "30:16188",
+      "sectionId": "30:15818",
+      "name": "S-14/changement-heure · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 45,
+      "fingerprint": "31d883fb65b21624d35dc5979fe59f188ec99e43faa785ec05656f479de99cac"
+    },
+    {
+      "state": "S-14/conflit",
+      "nodeId": "30:16432",
+      "sectionId": "30:15818",
+      "name": "S-14/conflit · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 48,
+      "fingerprint": "d099bf50179913c71e531e602c3da94a6e7386ea984c27319be69aa4922f8143"
+    },
+    {
+      "state": "S-14/erreur",
+      "nodeId": "30:16696",
+      "sectionId": "30:15818",
+      "name": "S-14/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 37,
+      "fingerprint": "35c5d14240a4681fd8fcbfdfdb949cd4d173b976b4d797eaec567ed2468c27f9"
+    },
+    {
+      "state": "S-14/jour",
+      "nodeId": "30:16900",
+      "sectionId": "30:15818",
+      "name": "S-14/jour · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 44,
+      "fingerprint": "4f224bdb620e08b45841479c27ead0adb87e095a7be46e4922f565a3994696b9"
+    },
+    {
+      "state": "S-14/lundi",
+      "nodeId": "30:17150",
+      "sectionId": "30:15818",
+      "name": "S-14/lundi · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 45,
+      "fingerprint": "339a937062a960433837568f89e913985ee549e8d2e905685580e10b9e6c242b"
+    },
+    {
+      "state": "S-14/non-honore",
+      "nodeId": "30:17402",
+      "sectionId": "30:15818",
+      "name": "S-14/non-honore · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 40,
+      "fingerprint": "9f64e95f45b4aecc5900b8cc2aa1ae12708e44ae3b5d3f317f8465d0a2c4a05c"
+    },
+    {
+      "state": "S-14/planificateur",
+      "nodeId": "30:17617",
+      "sectionId": "30:17616",
+      "name": "S-14/planificateur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 40,
+      "fingerprint": "4819c69ca651ce2e1e8175e19b657c62a7cd4ca4dea6efea9ff9dc5e1c71db5f"
+    },
+    {
+      "state": "S-14/vide",
+      "nodeId": "30:17826",
+      "sectionId": "30:17616",
+      "name": "S-14/vide · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 37,
+      "fingerprint": "93df761e56851b37f08954c9f620d57d7a924df6b4f5a37eaafa87bed4104b50"
+    },
+    {
+      "state": "S-15/canal",
+      "nodeId": "30:18013",
+      "sectionId": "30:18012",
+      "name": "S-15/canal · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 16,
+      "fingerprint": "0a7e6480fe726ff59689c3cbf95df17e5a87c981d570ff53526793dfcdb73a8f"
+    },
+    {
+      "state": "S-15/semaine",
+      "nodeId": "30:18146",
+      "sectionId": "30:18012",
+      "name": "S-15/semaine · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 33,
+      "fingerprint": "73332eed0e511ef6c5f6b31a4ba16c7357537267d927125abfe75fcff2b8a109"
+    },
+    {
+      "state": "S-15/vide",
+      "nodeId": "30:18338",
+      "sectionId": "30:18012",
+      "name": "S-15/vide · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 21,
+      "fingerprint": "db11a2c96bdd5f74784c2c909720b83fb7adfddbec102f51a0206d006079bec8"
+    },
+    {
+      "state": "S-16/annule",
+      "nodeId": "30:18490",
+      "sectionId": "30:18489",
+      "name": "S-16/annule · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 36,
+      "fingerprint": "2c4e987975cf77794553ffd502eb7f965f000563cd07157f97c42557c824243c"
+    },
+    {
+      "state": "S-16/claire",
+      "nodeId": "30:18671",
+      "sectionId": "30:18489",
+      "name": "S-16/claire · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 41,
+      "fingerprint": "b0047e550292d230bd820a4e8554f2a716c329cd28a4b8c3b99010627fe8274a"
+    },
+    {
+      "state": "S-16/hugo",
+      "nodeId": "30:18876",
+      "sectionId": "30:18489",
+      "name": "S-16/hugo · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 28,
+      "fingerprint": "af7c0adc9977f5eee07bf4e13b9d4ff7a993c9c8ff0d1b25d7c90a66fa703992"
+    },
+    {
+      "state": "S-16/louis",
+      "nodeId": "30:19037",
+      "sectionId": "30:18489",
+      "name": "S-16/louis · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 46,
+      "fingerprint": "32c0905d939641597092c051136f82b1db3c397849067be3bbdba13a1f66172c"
+    },
+    {
+      "state": "S-16/modifie",
+      "nodeId": "30:19244",
+      "sectionId": "30:18489",
+      "name": "S-16/modifie · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 47,
+      "fingerprint": "3833c2e093a1c9d010f04eeed66fd94e68291df3e88d2e5cf5dd14ca36636648"
+    },
+    {
+      "state": "S-16/non-honore",
+      "nodeId": "30:19460",
+      "sectionId": "30:18489",
+      "name": "S-16/non-honore · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 34,
+      "fingerprint": "347b3af99d38bb210f88f02f9a37755e589e9c8033b9e9811882ec89cb9e8120"
+    },
+    {
+      "state": "S-16/termine",
+      "nodeId": "30:19638",
+      "sectionId": "30:18489",
+      "name": "S-16/termine · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 40,
+      "fingerprint": "7050e13783aac726409a197c6a63e5968dee26d0bb408bd0a1f9c7ce214a269e"
+    },
+    {
+      "state": "S-17/brouillon-patient",
+      "nodeId": "30:19829",
+      "sectionId": "30:19828",
+      "name": "S-17/brouillon-patient · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 36,
+      "fingerprint": "9e9333d4f608d3b94dcb1d7f5df233069438a3a4ed62e6679fe28d7579355035"
+    },
+    {
+      "state": "S-17/claire",
+      "nodeId": "30:20012",
+      "sectionId": "30:19828",
+      "name": "S-17/claire · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 60,
+      "fingerprint": "050abd6cced1dc2b21454a10530a62305e33807129dc9255cd448486f9cdaf6e"
+    },
+    {
+      "state": "S-17/corrigee",
+      "nodeId": "30:20295",
+      "sectionId": "30:19828",
+      "name": "S-17/corrigee · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1146,
+      "texts": 64,
+      "fingerprint": "97544bfb6de4e1fe27256e45a5a5133ce64594166b15e67bb00ee27084aa56ad"
+    },
+    {
+      "state": "S-17/lien-perime",
+      "nodeId": "30:20592",
+      "sectionId": "30:19828",
+      "name": "S-17/lien-perime · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1114,
+      "texts": 64,
+      "fingerprint": "f93591714790ad2b57c487f74efc6f79a04ebd3dc15e92103d13d76e06b76a09"
+    },
+    {
+      "state": "S-17/longue",
+      "nodeId": "30:20889",
+      "sectionId": "30:19828",
+      "name": "S-17/longue · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 63,
+      "fingerprint": "54fd7317a7c105ea0a228ce6ff0daed82efcff4c7c0e118a0722df0e26f830a5"
+    },
+    {
+      "state": "S-17/lue",
+      "nodeId": "30:21177",
+      "sectionId": "30:19828",
+      "name": "S-17/lue · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 60,
+      "fingerprint": "37edc29f48408976aea712387785ae6a2a602ffa3b4c92f7df3d3a4c1a071471"
+    },
+    {
+      "state": "S-17/non-soumise",
+      "nodeId": "30:21460",
+      "sectionId": "30:19828",
+      "name": "S-17/non-soumise · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 36,
+      "fingerprint": "b1a228a9ed35b45246a9a117349ed3e8ae1efd55cb011e61fae4b5a9f3f5ea40"
+    },
+    {
+      "state": "S-18/brouillon",
+      "nodeId": "30:21641",
+      "sectionId": "30:21640",
+      "name": "S-18/brouillon · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1581,
+      "texts": 152,
+      "fingerprint": "2eca0507f22b47974d2c05570ec3751edb84ed629062869592feb5dc5bb3cc8a"
+    },
+    {
+      "state": "S-18/canal",
+      "nodeId": "30:22228",
+      "sectionId": "30:21640",
+      "name": "S-18/canal · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 16,
+      "fingerprint": "789a8fe7fefb57e43b8ef485119d20da165ed49b18c63033bc3d5210bf70c3a7"
+    },
+    {
+      "state": "S-18/echec",
+      "nodeId": "30:22361",
+      "sectionId": "30:21640",
+      "name": "S-18/echec · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 47,
+      "fingerprint": "a1ac41815980cb3be14b45c4f468614d3c7948840f5f9d58d499ec8bdf4602f5"
+    },
+    {
+      "state": "S-18/en-cours",
+      "nodeId": "30:22583",
+      "sectionId": "30:21640",
+      "name": "S-18/en-cours · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 78,
+      "fingerprint": "3db83f8ee5793d799ef18f25c81f6b96cef9b059384c46ea03bd9df10bac5c7f"
+    },
+    {
+      "state": "S-18/en-file",
+      "nodeId": "30:22918",
+      "sectionId": "30:21640",
+      "name": "S-18/en-file · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 78,
+      "fingerprint": "b7b93e134ecfe6c51f8030d9e5ef50ec1d97758619ba1c9f679579a336e4c52a"
+    },
+    {
+      "state": "S-18/louis",
+      "nodeId": "30:23251",
+      "sectionId": "30:21640",
+      "name": "S-18/louis · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 41,
+      "fingerprint": "d1827a8ff25aa0f97f1c27efaecaac892c7560fdb2c40cce9f9684a7802cc9fd"
+    },
+    {
+      "state": "S-18/perime",
+      "nodeId": "30:23462",
+      "sectionId": "30:21640",
+      "name": "S-18/perime · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1691,
+      "texts": 156,
+      "fingerprint": "63711d0d2c14b97076563c6cb4e0569f83a8005b5a8467a048debc042436f4fa"
+    },
+    {
+      "state": "S-18/relecture",
+      "nodeId": "30:24073",
+      "sectionId": "30:24072",
+      "name": "S-18/relecture · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1533,
+      "texts": 151,
+      "fingerprint": "b5a8b064ba8bfef4ac7155cbf98b526507f8f6187a0765aa39a6db59a9280318"
+    },
+    {
+      "state": "S-18/valide",
+      "nodeId": "30:24650",
+      "sectionId": "30:24072",
+      "name": "S-18/valide · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1663,
+      "texts": 156,
+      "fingerprint": "a7ec32a9e75bd20479b6ffc41ab8b9e56327aa9de06fc9f269764556278a40e7"
+    },
+    {
+      "state": "S-19/acces-revoque",
+      "nodeId": "30:25216",
+      "sectionId": "30:25215",
+      "name": "S-19/acces-revoque · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 6,
+      "fingerprint": "c4fde2edf0c4294e8ac430ff249d5eadb03fbc47a5f3b5af97872c82aead9ac2"
+    },
+    {
+      "state": "S-19/annulee",
+      "nodeId": "30:25238",
+      "sectionId": "30:25215",
+      "name": "S-19/annulee · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1332,
+      "texts": 98,
+      "fingerprint": "4f27a1a2c4fa7a005acc8c831e070ccb74630414e661984d1062361aec242e44"
+    },
+    {
+      "state": "S-19/conflit",
+      "nodeId": "30:25634",
+      "sectionId": "30:25215",
+      "name": "S-19/conflit · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1416,
+      "texts": 103,
+      "fingerprint": "54e29630ee2b0152d780b402b49a3b01a6d793edf463a536fa9306a9a2b010ca"
+    },
+    {
+      "state": "S-19/echec",
+      "nodeId": "30:26079",
+      "sectionId": "30:25215",
+      "name": "S-19/echec · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1436,
+      "texts": 104,
+      "fingerprint": "491936960898bb1c37b8dee13ac6e35b3e8ab0c08fc9ede69fbede6cee88d744"
+    },
+    {
+      "state": "S-19/en-cours",
+      "nodeId": "30:26525",
+      "sectionId": "30:25215",
+      "name": "S-19/en-cours · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1326,
+      "texts": 101,
+      "fingerprint": "e4a68282c117473414b3a933fbfe8371d18a06935ed274395294fb49673cdae1"
+    },
+    {
+      "state": "S-19/lecture-seule",
+      "nodeId": "30:26950",
+      "sectionId": "30:25215",
+      "name": "S-19/lecture-seule · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 6,
+      "fingerprint": "2153418897e25eebd6de8ac54c78a49b4c23db1db5a6d9f29415a35e4f067dd7"
+    },
+    {
+      "state": "S-19/longue",
+      "nodeId": "30:26972",
+      "sectionId": "30:25215",
+      "name": "S-19/longue · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1843,
+      "texts": 148,
+      "fingerprint": "6f829602714639fc53c6ba872818224605f1dff70aa0005d47e05b2974784358"
+    },
+    {
+      "state": "S-19/louis-terminee",
+      "nodeId": "30:27472",
+      "sectionId": "30:25215",
+      "name": "S-19/louis-terminee · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 30,
+      "fingerprint": "0999d6c6a8dd3b7a7535ec3bcb01467f70226c3dfcbcc505323ef3166057c357"
+    },
+    {
+      "state": "S-19/session",
+      "nodeId": "30:27641",
+      "sectionId": "30:27640",
+      "name": "S-19/session · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1416,
+      "texts": 103,
+      "fingerprint": "eaff68326bdb651537d4d602f052f275fde9c6b311887d49bb38bca94c30e73a"
+    },
+    {
+      "state": "S-19/termine",
+      "nodeId": "30:28081",
+      "sectionId": "30:27640",
+      "name": "S-19/termine · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1430,
+      "texts": 120,
+      "fingerprint": "55bdde79dfa2effd0ba369ba3bfcc66c6b564558c10d4e235a4494e2b68d88bc"
+    },
+    {
+      "state": "S-19/terminer",
+      "nodeId": "30:28517",
+      "sectionId": "30:27640",
+      "name": "S-19/terminer · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1326,
+      "texts": 118,
+      "fingerprint": "38867c740759d6593dd197244b6b1bcdbfa5438158e332fb737cb04a6857cb2b"
+    },
+    {
+      "state": "S-20/brouillon",
+      "nodeId": "30:29015",
+      "sectionId": "30:29014",
+      "name": "S-20/brouillon · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1165,
+      "texts": 103,
+      "fingerprint": "63cd0a90c90feeacc4e42bdfa59bc4e696559c989059f4d08fc51b8cdd634b6a"
+    },
+    {
+      "state": "S-20/canal",
+      "nodeId": "30:29381",
+      "sectionId": "30:29014",
+      "name": "S-20/canal · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 16,
+      "fingerprint": "6e820b415b470979a7c5ea67213634cb4e39394c46e68cb539ce2da6289c9a3d"
+    },
+    {
+      "state": "S-20/conflit",
+      "nodeId": "30:29514",
+      "sectionId": "30:29014",
+      "name": "S-20/conflit · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1275,
+      "texts": 106,
+      "fingerprint": "2e81f815309559bf81960bd34c8b51063eff0d8619bf348419b9142519c72862"
+    },
+    {
+      "state": "S-20/echec",
+      "nodeId": "30:29899",
+      "sectionId": "30:29014",
+      "name": "S-20/echec · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1255,
+      "texts": 105,
+      "fingerprint": "b754e58188059442b9fa7da8ff34c841955b53d9c2ac2195ca198a4862ca7585"
+    },
+    {
+      "state": "S-20/enregistre",
+      "nodeId": "30:30283",
+      "sectionId": "30:29014",
+      "name": "S-20/enregistre · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1165,
+      "texts": 102,
+      "fingerprint": "6d42896043e53a7d288e18bb77a598b2cae9fbda751ba55bbaa02a14a170943a"
+    },
+    {
+      "state": "S-20/enregistrement",
+      "nodeId": "30:30647",
+      "sectionId": "30:29014",
+      "name": "S-20/enregistrement · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1165,
+      "texts": 102,
+      "fingerprint": "af1e1e0e25fdfaf26e5362dec9c7e6bcc55b9cfef9532e51872a51f757053b23"
+    },
+    {
+      "state": "S-20/lecture-seule",
+      "nodeId": "30:31009",
+      "sectionId": "30:29014",
+      "name": "S-20/lecture-seule · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 93,
+      "fingerprint": "bb7d9e70e609ad19a7ceff84ec3ba21066a0babfe04ea2541053834f560205c1"
+    },
+    {
+      "state": "S-20/louis-enregistre",
+      "nodeId": "30:31336",
+      "sectionId": "30:29014",
+      "name": "S-20/louis-enregistre · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 61,
+      "fingerprint": "c419a2132132a2e987b8082b4743192449872978d5ef0b0bd4172daf329b065f"
+    },
+    {
+      "state": "S-20/non-soutenu",
+      "nodeId": "30:31592",
+      "sectionId": "30:31591",
+      "name": "S-20/non-soutenu · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1365,
+      "texts": 113,
+      "fingerprint": "3f50032630d8f7fc170dc3c9422e3c11ff02b5d60f02396bcdf0baa7165ab39d"
+    },
+    {
+      "state": "S-20/nouveau",
+      "nodeId": "30:31981",
+      "sectionId": "30:31591",
+      "name": "S-20/nouveau · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 61,
+      "fingerprint": "129718d0f312409dbec6704f1f0dd41f60e026e3c26391585cf8a1990b0cdca6"
+    },
+    {
+      "state": "S-20/sale",
+      "nodeId": "30:32236",
+      "sectionId": "30:31591",
+      "name": "S-20/sale · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1165,
+      "texts": 102,
+      "fingerprint": "02f110b836672e8d9fe415a5675eec4160af003c8c3f699383896e99d7e2f76e"
+    },
+    {
+      "state": "S-20/source-retiree",
+      "nodeId": "30:32599",
+      "sectionId": "30:31591",
+      "name": "S-20/source-retiree · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1321,
+      "texts": 109,
+      "fingerprint": "f224a33c44c0011734012ae5b325776615cbad684c492f9bfc6cf92863a9a29b"
+    },
+    {
+      "state": "S-21/citation-invalide",
+      "nodeId": "30:32984",
+      "sectionId": "30:32983",
+      "name": "S-21/citation-invalide · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 2096,
+      "texts": 124,
+      "fingerprint": "36dcd97c4baa09f91a0522c35abeef1aca5a46903ef75864f5cbe4edf0a826ad"
+    },
+    {
+      "state": "S-21/corrigee",
+      "nodeId": "30:33434",
+      "sectionId": "30:32983",
+      "name": "S-21/corrigee · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 51,
+      "fingerprint": "462a53c8c3920a236e6b9869e9e61046e195dbfe14fefc61929d67fddbf6b561"
+    },
+    {
+      "state": "S-21/delai",
+      "nodeId": "30:33681",
+      "sectionId": "30:32983",
+      "name": "S-21/delai · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 39,
+      "fingerprint": "9b15892e5bcac3956374cdc82ecfd8aa27407097fa475ab570821a48663f47f4"
+    },
+    {
+      "state": "S-21/doublon",
+      "nodeId": "30:33883",
+      "sectionId": "30:32983",
+      "name": "S-21/doublon · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 2096,
+      "texts": 124,
+      "fingerprint": "e54897915a6b2460ee095a4acb840e033db04d745f22ba39ef30254da047585d"
+    },
+    {
+      "state": "S-21/incomplet",
+      "nodeId": "30:34334",
+      "sectionId": "30:32983",
+      "name": "S-21/incomplet · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 2096,
+      "texts": 123,
+      "fingerprint": "5fe4f1b34ce267fe61b0357c79f593e9298f97ea08c93b5ab44252266dea8ee7"
+    },
+    {
+      "state": "S-21/non-soutenu",
+      "nodeId": "30:34782",
+      "sectionId": "30:32983",
+      "name": "S-21/non-soutenu · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1194,
+      "texts": 66,
+      "fingerprint": "f6989dcbe205f1cb22148fa5ec40647f10f435e05a4b238783d796ed37802147"
+    },
+    {
+      "state": "S-21/nouvelle-explication",
+      "nodeId": "30:35074",
+      "sectionId": "30:32983",
+      "name": "S-21/nouvelle-explication · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 32,
+      "fingerprint": "f94c4bb483666f0a686464aea62597e9303c6ecec00db11a8c28dd92f6fd9ba1"
+    },
+    {
+      "state": "S-21/nouvelle-relecture",
+      "nodeId": "30:35259",
+      "sectionId": "30:32983",
+      "name": "S-21/nouvelle-relecture · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 32,
+      "fingerprint": "e797c43a855ac2d163781984f38507b41a87c0ea3df00227b1266a61a7e1c6d3"
+    },
+    {
+      "state": "S-21/quota",
+      "nodeId": "30:35433",
+      "sectionId": "30:35432",
+      "name": "S-21/quota · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 2096,
+      "texts": 123,
+      "fingerprint": "6c71aa6d5382ba30748b23b3e16874d299b8108fc6adb8cfb1841d80ca51f8b6"
+    },
+    {
+      "state": "S-21/revue",
+      "nodeId": "30:35881",
+      "sectionId": "30:35432",
+      "name": "S-21/revue · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 2103,
+      "texts": 124,
+      "fingerprint": "1cbb8fd620a911ca40fdca904f808d11dc41ea7504fe2bbb2cf30b430680b1da"
+    },
+    {
+      "state": "S-21/source-modifiee",
+      "nodeId": "30:36326",
+      "sectionId": "30:35432",
+      "name": "S-21/source-modifiee · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 2116,
+      "texts": 125,
+      "fingerprint": "7966019343a3c5f68c49a0a15de1a4825cd4dd28aa076d30a476e1064e9dd617"
+    },
+    {
+      "state": "S-22/comparaison",
+      "nodeId": "30:36788",
+      "sectionId": "30:36787",
+      "name": "S-22/comparaison · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1595,
+      "texts": 120,
+      "fingerprint": "404b2de2dc016e6c710d319999f2b6fb9e4983bb3c5691ee1cca1d4338063c49"
+    },
+    {
+      "state": "S-22/generation",
+      "nodeId": "30:37209",
+      "sectionId": "30:36787",
+      "name": "S-22/generation · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1595,
+      "texts": 120,
+      "fingerprint": "89d59b7ee2e38d6ca87ffaa3706822f8cb04bcd87bcd4ae73c16e9ba931725a0"
+    },
+    {
+      "state": "S-22/lecture-seule",
+      "nodeId": "30:37630",
+      "sectionId": "30:36787",
+      "name": "S-22/lecture-seule · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1685,
+      "texts": 121,
+      "fingerprint": "453adadddb3014ad40813c0c7b19d64db32e4359547359818b33c08b2d51c245"
+    },
+    {
+      "state": "S-22/lien-remplace",
+      "nodeId": "30:38054",
+      "sectionId": "30:36787",
+      "name": "S-22/lien-remplace · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1705,
+      "texts": 126,
+      "fingerprint": "2e5624711afc46dace6eaa06396f9d8a818b1b679e0d7a7b44a54b6d47c909bd"
+    },
+    {
+      "state": "S-22/longue",
+      "nodeId": "30:38496",
+      "sectionId": "30:36787",
+      "name": "S-22/longue · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 2133,
+      "texts": 143,
+      "fingerprint": "bf04267069e9c6a897094061ad59a2aee0ac11788d0b27dd7ee8cf7ed0247beb"
+    },
+    {
+      "state": "S-22/nouvelle-version",
+      "nodeId": "30:38972",
+      "sectionId": "30:36787",
+      "name": "S-22/nouvelle-version · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1705,
+      "texts": 128,
+      "fingerprint": "c2485e4c3da64cc0d05105704ba563ca4cabb301a31367a156701d394453856f"
+    },
+    {
+      "state": "S-22/source-manquante",
+      "nodeId": "30:39426",
+      "sectionId": "30:39425",
+      "name": "S-22/source-manquante · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1705,
+      "texts": 124,
+      "fingerprint": "4d90b382c6a48a61e2adae875a8cbb80def63d003007c586815c73845607337c"
+    },
+    {
+      "state": "S-22/une-version",
+      "nodeId": "30:39866",
+      "sectionId": "30:39425",
+      "name": "S-22/une-version · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 47,
+      "fingerprint": "63b83fa8799556914d200a62d0e744bf7b7c5049e18eb66fb67f898fdd2810e0"
+    },
+    {
+      "state": "S-23/brief",
+      "nodeId": "30:40090",
+      "sectionId": "30:40089",
+      "name": "S-23/brief · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 67,
+      "fingerprint": "3d8d46247075fba37c471468cfa5d37eabaff869c044f47567c6ab8b0f6c1b21"
+    },
+    {
+      "state": "S-23/brouillon-modifie",
+      "nodeId": "30:40380",
+      "sectionId": "30:40089",
+      "name": "S-23/brouillon-modifie · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1464,
+      "texts": 84,
+      "fingerprint": "797c0dea3863e4dc1db6217ad3c3164b648a67ca1bd476a887b67d0999180b75"
+    },
+    {
+      "state": "S-23/contradiction",
+      "nodeId": "30:40717",
+      "sectionId": "30:40089",
+      "name": "S-23/contradiction · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1399,
+      "texts": 78,
+      "fingerprint": "3814175174d086eefd44588f2760d6bd0421782743bba4bd5b24a9511cb58c94"
+    },
+    {
+      "state": "S-23/echec-publication",
+      "nodeId": "30:41040",
+      "sectionId": "30:40089",
+      "name": "S-23/echec-publication · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1409,
+      "texts": 87,
+      "fingerprint": "9473596cf38ef617eba770afbe6cc04ea8579820da865f1e02f49f3f106a0f59"
+    },
+    {
+      "state": "S-23/perime",
+      "nodeId": "30:41384",
+      "sectionId": "30:40089",
+      "name": "S-23/perime · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1574,
+      "texts": 87,
+      "fingerprint": "7dc840e684aea86c50f4689fdfd5f990a03aba1d9147a4097b43f0dcbe9c9428"
+    },
+    {
+      "state": "S-23/publie",
+      "nodeId": "30:41736",
+      "sectionId": "30:40089",
+      "name": "S-23/publie · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1347,
+      "texts": 87,
+      "fingerprint": "2c71834c5e213457b6a0fdd34b340f078bf65dccca6882e7e3f1fa006fab69a3"
+    },
+    {
+      "state": "S-23/source-manquante",
+      "nodeId": "30:42068",
+      "sectionId": "30:40089",
+      "name": "S-23/source-manquante · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1379,
+      "texts": 83,
+      "fingerprint": "d2c5f95d98377c6e35f73225a68deb5c4653a2630752521c7683e3f608068133"
+    },
+    {
+      "state": "S-23/validation",
+      "nodeId": "30:42405",
+      "sectionId": "30:40089",
+      "name": "S-23/validation · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1327,
+      "texts": 79,
+      "fingerprint": "d43a45807b4f6e7d5c5559f47d373b366075dc7b09432271faa259c220853560"
+    },
+    {
+      "state": "S-23/valide",
+      "nodeId": "30:42727",
+      "sectionId": "30:42726",
+      "name": "S-23/valide · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1367,
+      "texts": 82,
+      "fingerprint": "f08410c252283952919e62fd66d03b1e793f4eab4849cff7e0f54fd8f981324d"
+    },
+    {
+      "state": "S-24/lien-ancien",
+      "nodeId": "30:43055",
+      "sectionId": "30:43054",
+      "name": "S-24/lien-ancien · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 81,
+      "fingerprint": "38a96627a7fa49a0838d74920bd800b13d810088b3cb29af8b085b9126988f4b"
+    },
+    {
+      "state": "S-24/perime",
+      "nodeId": "30:43372",
+      "sectionId": "30:43054",
+      "name": "S-24/perime · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 71,
+      "fingerprint": "8435164f9161235640450fdb424c03c2e0bf3c21573c7e7d87eea9151016ecd7"
+    },
+    {
+      "state": "S-24/piece-revoquee",
+      "nodeId": "30:43663",
+      "sectionId": "30:43054",
+      "name": "S-24/piece-revoquee · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 81,
+      "fingerprint": "3f737a974c93073c46b21ef31dccc4e4818ad7413a39e93609843a2050d98b4d"
+    },
+    {
+      "state": "S-24/remplace",
+      "nodeId": "30:43972",
+      "sectionId": "30:43054",
+      "name": "S-24/remplace · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 82,
+      "fingerprint": "1dbeb70192a12cddafef391a35251ae8d6559d944f439b3870ee4081c9eea03c"
+    },
+    {
+      "state": "S-24/retire",
+      "nodeId": "30:44298",
+      "sectionId": "30:43054",
+      "name": "S-24/retire · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 83,
+      "fingerprint": "89e862915944a18a7b3f8198bafa0a295b586b0004c693f8c4e9de5a2a725c95"
+    },
+    {
+      "state": "S-25/accueil",
+      "nodeId": "30:44610",
+      "sectionId": "30:44609",
+      "name": "S-25/accueil · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 25,
+      "fingerprint": "1751dc064cb67b86340fc61518fbfa058e4d0ecdce10f05f72ebda228d588dc6"
+    },
+    {
+      "state": "S-25/indisponible",
+      "nodeId": "30:44718",
+      "sectionId": "30:44609",
+      "name": "S-25/indisponible · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 14,
+      "fingerprint": "29799c9374714e95c66f4bcdc2177cf9dc17a913f5c8f057f3fe006f4c9d855f"
+    },
+    {
+      "state": "S-25/lien-retire",
+      "nodeId": "30:44776",
+      "sectionId": "30:44609",
+      "name": "S-25/lien-retire · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 13,
+      "fingerprint": "ae4ffac4149b2a52936c5a042ce33d5881adc8f6c153002d566b9a4da4028cdf"
+    },
+    {
+      "state": "S-25/remplacee",
+      "nodeId": "30:44825",
+      "sectionId": "30:44609",
+      "name": "S-25/remplacee · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 26,
+      "fingerprint": "8bcbae7d95fe536165811acc741bce796604f736471bd63828bf1843e493e63d"
+    },
+    {
+      "state": "S-25/retiree",
+      "nodeId": "30:44935",
+      "sectionId": "30:44609",
+      "name": "S-25/retiree · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 25,
+      "fingerprint": "114ce57ee73b9a4df2ed0e55fe151990b395a485ce38bdd9a2f3a1fda29ed438"
+    },
+    {
+      "state": "S-25/sans-publication",
+      "nodeId": "30:45033",
+      "sectionId": "30:44609",
+      "name": "S-25/sans-publication · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 24,
+      "fingerprint": "82d55be0dfd9bdb7737724e9e20913c42d3bf90f990322541dd639762620fc07"
+    },
+    {
+      "state": "S-25/sans-rdv",
+      "nodeId": "30:45123",
+      "sectionId": "30:44609",
+      "name": "S-25/sans-rdv · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 20,
+      "fingerprint": "42fb588b1d8b478ef1daffb1b9c51261a193b7cc807e044fa22fd4738870f456"
+    },
+    {
+      "state": "S-26/annule",
+      "nodeId": "32:46867",
+      "sectionId": "32:46866",
+      "name": "S-26/annule · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 13,
+      "fingerprint": "ca12e4834f833ed370d62b0055153376c3ffc962367be9052aa329bc4cd5fbad"
+    },
+    {
+      "state": "S-26/annuler",
+      "nodeId": "32:46919",
+      "sectionId": "32:46866",
+      "name": "S-26/annuler · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 16,
+      "fingerprint": "eb4d5be6107cdc202bdc89c007c15376cfa9b19b48a1617f81c0890faac1b386"
+    },
+    {
+      "state": "S-26/aucun",
+      "nodeId": "32:46974",
+      "sectionId": "32:46866",
+      "name": "S-26/aucun · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 11,
+      "fingerprint": "6f20e51b44689cf380a0b401474c21919a7c79885bf8d5bb3800daafb8ec1678"
+    },
+    {
+      "state": "S-26/conflit",
+      "nodeId": "32:47016",
+      "sectionId": "32:46866",
+      "name": "S-26/conflit · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 38,
+      "fingerprint": "41aba0f97b6e9d0705afa0058df228f109a8062456cb1e5acfc089712d578f9e"
+    },
+    {
+      "state": "S-26/creneaux",
+      "nodeId": "32:47121",
+      "sectionId": "32:46866",
+      "name": "S-26/creneaux · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 34,
+      "fingerprint": "5544e33e5c06dadda59e522ae6fac468988ab74ecf6158ca4d420b9703a0f0c5"
+    },
+    {
+      "state": "S-26/deplacer",
+      "nodeId": "32:47214",
+      "sectionId": "32:46866",
+      "name": "S-26/deplacer · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 22,
+      "fingerprint": "094d245122be3bd964084ace36afcf73d1fb98a259a1cd4fba64a931ab0146cd"
+    },
+    {
+      "state": "S-26/detail",
+      "nodeId": "32:47282",
+      "sectionId": "32:46866",
+      "name": "S-26/detail · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 24,
+      "fingerprint": "d633705119ea1989ebb9b97814fe2e505c4a7f90dbe438f6c82e64f1177e0655"
+    },
+    {
+      "state": "S-26/indisponible",
+      "nodeId": "32:47364",
+      "sectionId": "32:46866",
+      "name": "S-26/indisponible · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 13,
+      "fingerprint": "2cb9c268315d0493c56677bfcde48a9e9b03454ca588042fb8a169273deb6a58"
+    },
+    {
+      "state": "S-26/liste",
+      "nodeId": "32:47421",
+      "sectionId": "32:47420",
+      "name": "S-26/liste · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 24,
+      "fingerprint": "e05a5a78769534a9b4540131d09b6dd62ca141e2a57e1080f44593aa6022bc54"
+    },
+    {
+      "state": "S-27/brouillon",
+      "nodeId": "32:47554",
+      "sectionId": "32:47553",
+      "name": "S-27/brouillon · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1570,
+      "texts": 38,
+      "fingerprint": "9a5f600df66ae4670bdbfb8628c662399731d714c5772636da6299b98945e49d"
+    },
+    {
+      "state": "S-27/envoyee",
+      "nodeId": "32:47690",
+      "sectionId": "32:47553",
+      "name": "S-27/envoyee · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 24,
+      "fingerprint": "d5bee1832f250ad23a12f38b4df770ccfb9834798eb9bdab43ea283da035d0f0"
+    },
+    {
+      "state": "S-27/erreur",
+      "nodeId": "32:47763",
+      "sectionId": "32:47553",
+      "name": "S-27/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1687,
+      "texts": 40,
+      "fingerprint": "d7e16658fc7443804f656e7ef051b24c696f725f7a32c3360777d418b7b23a55"
+    },
+    {
+      "state": "S-27/rdv-change",
+      "nodeId": "32:47903",
+      "sectionId": "32:47553",
+      "name": "S-27/rdv-change · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1623,
+      "texts": 38,
+      "fingerprint": "b32bebc29256dc9834d175fe3119f2d382d8130e0d10bc66a9e893e7600cbb20"
+    },
+    {
+      "state": "S-27/revision",
+      "nodeId": "32:48040",
+      "sectionId": "32:47553",
+      "name": "S-27/revision · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1627,
+      "texts": 38,
+      "fingerprint": "f2c2166b6c81b16c26d6ad42a7808bb8d8c5f532968d2a16c9559f57c4bf76be"
+    },
+    {
+      "state": "S-27/session",
+      "nodeId": "32:48181",
+      "sectionId": "32:47553",
+      "name": "S-27/session · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1651,
+      "texts": 40,
+      "fingerprint": "be11c39e9660081c027c7b43ce5e3b26eb1d372fbc0921192beb3c0df48d5a80"
+    },
+    {
+      "state": "S-27/vide",
+      "nodeId": "32:48328",
+      "sectionId": "32:47553",
+      "name": "S-27/vide · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1490,
+      "texts": 33,
+      "fingerprint": "3b7b3aedb72d8acd06bfd44ff807d2f9d78843414e51b1ebf43fd52d3fbe780c"
+    },
+    {
+      "state": "S-28/erreur",
+      "nodeId": "32:48453",
+      "sectionId": "32:48452",
+      "name": "S-28/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 16,
+      "fingerprint": "75114f1e98e17980e1299ab25022724482bf5b919a32eccf01812429962fb5c6"
+    },
+    {
+      "state": "S-28/liste",
+      "nodeId": "32:48531",
+      "sectionId": "32:48452",
+      "name": "S-28/liste · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 18,
+      "fingerprint": "3ead5f8a97236e3e398d707c1eccd9d8053330753f6286945e305ff1f55dc590"
+    },
+    {
+      "state": "S-28/retiree",
+      "nodeId": "32:48621",
+      "sectionId": "32:48452",
+      "name": "S-28/retiree · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 13,
+      "fingerprint": "e6261a3b9af69cb740de3209a3b7bf5881eafa5252bb06a0dc1a1e1f31017783"
+    },
+    {
+      "state": "S-28/vide",
+      "nodeId": "32:48680",
+      "sectionId": "32:48452",
+      "name": "S-28/vide · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 13,
+      "fingerprint": "3eff03fbc7a66d97b7ef3a4437c7eb553ff347ec8ea4f4bcdbf5b06eabf63a9b"
+    },
+    {
+      "state": "S-29/a-jour",
+      "nodeId": "32:48726",
+      "sectionId": "32:48725",
+      "name": "S-29/a-jour · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1430,
+      "texts": 40,
+      "fingerprint": "d4c1965e9606d8485ae98f65846cb5f14e57f76b1ed1ca3551e88fd0080a6a93"
+    },
+    {
+      "state": "S-29/extrait",
+      "nodeId": "32:48848",
+      "sectionId": "32:48725",
+      "name": "S-29/extrait · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1308,
+      "texts": 48,
+      "fingerprint": "c275aa4342102fe5dc4e66cd8fffa5a1a5b33c572d19a20efbf4259b0214ed23"
+    },
+    {
+      "state": "S-29/extrait-src-a-001",
+      "nodeId": "32:48993",
+      "sectionId": "32:48725",
+      "name": "S-29/extrait-src-a-001 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1308,
+      "texts": 43,
+      "fingerprint": "0793cf98f0361ed5bcde0e3c185c01e003072b05526285f9c866d603e137e69c"
+    },
+    {
+      "state": "S-29/extrait-src-a-005",
+      "nodeId": "32:49128",
+      "sectionId": "32:48725",
+      "name": "S-29/extrait-src-a-005 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1308,
+      "texts": 43,
+      "fingerprint": "7489d5566366326b54a95815decef4350fed0cdf91caedbb5f75322e1b3bd490"
+    },
+    {
+      "state": "S-29/extrait-src-a-006",
+      "nodeId": "32:49263",
+      "sectionId": "32:48725",
+      "name": "S-29/extrait-src-a-006 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1308,
+      "texts": 44,
+      "fingerprint": "16ecb60cf6c737a5e5b6e6e8527492a88b9f2716e53c12bb1bcc2dc739f9daa9"
+    },
+    {
+      "state": "S-29/remplacee",
+      "nodeId": "32:49399",
+      "sectionId": "32:48725",
+      "name": "S-29/remplacee · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 12,
+      "fingerprint": "09def0c6c55e0cf6a16e871b2e5ffdb27c8b5cc42cca866c4553b0a6c4d7a9f8"
+    },
+    {
+      "state": "S-29/retiree",
+      "nodeId": "32:49443",
+      "sectionId": "32:48725",
+      "name": "S-29/retiree · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 12,
+      "fingerprint": "0d97656df9679fe43e3953070cf050677d6ebb0a058f0935c8dbc9c081115637"
+    },
+    {
+      "state": "S-29/source-indisponible",
+      "nodeId": "32:49486",
+      "sectionId": "32:48725",
+      "name": "S-29/source-indisponible · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 29,
+      "fingerprint": "a39fdbc32b6ae75b604fbd3e5700059a7d5e5239ce4e485f8df97045aa6de3b6"
+    },
+    {
+      "state": "S-29/v2",
+      "nodeId": "32:49583",
+      "sectionId": "32:49582",
+      "name": "S-29/v2 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1308,
+      "texts": 37,
+      "fingerprint": "8625f421fb1e2d8991e5579fc7186ec2ae3d9e29a2d88fd075adb2d939cac9d0"
+    },
+    {
+      "state": "S-30/apercu",
+      "nodeId": "32:49695",
+      "sectionId": "32:49694",
+      "name": "S-30/apercu · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1373,
+      "texts": 14,
+      "fingerprint": "7f3f124ffbe9ca258a32ce2629a86042499afae127754ed39a710d6cb0a36dbf"
+    },
+    {
+      "state": "S-30/chargement",
+      "nodeId": "32:49751",
+      "sectionId": "32:49694",
+      "name": "S-30/chargement · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 13,
+      "fingerprint": "c3e79076016f55ebe5ec0b7c3eff70070a2979b6acdd6c18959cc4bc826426ae"
+    },
+    {
+      "state": "S-30/echec",
+      "nodeId": "32:49802",
+      "sectionId": "32:49694",
+      "name": "S-30/echec · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 16,
+      "fingerprint": "b26e5fcb17f861038f377aefcfd6f0bfff63baac4123f6aaaa61e100ac109437"
+    },
+    {
+      "state": "S-30/indisponible",
+      "nodeId": "32:49866",
+      "sectionId": "32:49694",
+      "name": "S-30/indisponible · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 16,
+      "fingerprint": "5d9bd28ad6d5b7871b038324b4022f66b5417d1c691a7292b7dc0c4374f1bf6b"
+    },
+    {
+      "state": "S-30/lien-expire",
+      "nodeId": "32:49930",
+      "sectionId": "32:49694",
+      "name": "S-30/lien-expire · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 16,
+      "fingerprint": "a5e31f5c289a15757c4330282d7af7cf3aa32d56fade0d595c8bdf026e97ec4e"
+    },
+    {
+      "state": "S-30/non-pris-en-charge",
+      "nodeId": "32:49993",
+      "sectionId": "32:49694",
+      "name": "S-30/non-pris-en-charge · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 17,
+      "fingerprint": "474478d845e30d28232b211e29d4d2b4fc7ad7f815e91edeb46ffa4b2ee5294a"
+    },
+    {
+      "state": "S-30/retire",
+      "nodeId": "32:50058",
+      "sectionId": "32:49694",
+      "name": "S-30/retire · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 15,
+      "fingerprint": "5efff1441d4e5d782e1cb1e91aeecf686184a4957b882a95a9be2323518be3b2"
+    },
+    {
+      "state": "S-31/dernier-admin",
+      "nodeId": "32:50115",
+      "sectionId": "32:50114",
+      "name": "S-31/dernier-admin · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 81,
+      "fingerprint": "95db691764cc46678b886f8e493fefeaf8cf5eee24a26530180e5d0a1f64ced7"
+    },
+    {
+      "state": "S-31/equipe",
+      "nodeId": "32:50415",
+      "sectionId": "32:50114",
+      "name": "S-31/equipe · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 77,
+      "fingerprint": "3af801163e09cc6e3f13ca60b34461f4b36dbacd100420240d14b5032925cf95"
+    },
+    {
+      "state": "S-31/erreur",
+      "nodeId": "32:50701",
+      "sectionId": "32:50114",
+      "name": "S-31/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 15,
+      "fingerprint": "9c86e97962b3895c7e8381d14d324f2076ce2a4d036b9980fa3b63e37aae1066"
+    },
+    {
+      "state": "S-31/invitation-expiree",
+      "nodeId": "32:50814",
+      "sectionId": "32:50114",
+      "name": "S-31/invitation-expiree · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 76,
+      "fingerprint": "33d3ceb20c00261848e4fbf083a5bda2f0397cd3775aa9d9fbf46fb5b5a58d9e"
+    },
+    {
+      "state": "S-31/invitation-revoquee",
+      "nodeId": "32:51098",
+      "sectionId": "32:50114",
+      "name": "S-31/invitation-revoquee · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 74,
+      "fingerprint": "864cc8a568907e4cf8c573275894a3c854ab5f43576e35f4adc143123c84d7ac"
+    },
+    {
+      "state": "S-31/longs",
+      "nodeId": "32:51378",
+      "sectionId": "32:50114",
+      "name": "S-31/longs · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 79,
+      "fingerprint": "801cafb6bcec378f87f02c7b623b6f65d8e4fddb0f0cc4f55f5ed79075e83c99"
+    },
+    {
+      "state": "S-31/suspendu",
+      "nodeId": "32:51666",
+      "sectionId": "32:50114",
+      "name": "S-31/suspendu · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 79,
+      "fingerprint": "ef444a229e16887b88786c1fbb62205f38598552f4580bdf774849e285ae5b2f"
+    },
+    {
+      "state": "S-31/vide",
+      "nodeId": "32:51963",
+      "sectionId": "32:50114",
+      "name": "S-31/vide · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 13,
+      "fingerprint": "971b160ce101ffbefb8658f252acc87d42685137f256caae231acc0e7a860027"
+    },
+    {
+      "state": "S-32/conflit",
+      "nodeId": "32:52057",
+      "sectionId": "32:52056",
+      "name": "S-32/conflit · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1506,
+      "texts": 56,
+      "fingerprint": "186e78190b6f78d5521309b488e7881c96495fff644d3a30b32ae525bdd66d28"
+    },
+    {
+      "state": "S-32/dependances",
+      "nodeId": "32:52310",
+      "sectionId": "32:52056",
+      "name": "S-32/dependances · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1396,
+      "texts": 59,
+      "fingerprint": "b4fb2c982fa51a3b89fd8b079d961fedbbe1eea3376e85f5f5cfbc03fb681e71"
+    },
+    {
+      "state": "S-32/desactive",
+      "nodeId": "32:52554",
+      "sectionId": "32:52056",
+      "name": "S-32/desactive · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1506,
+      "texts": 56,
+      "fingerprint": "b4e8c84da83ba57fb30a9199190ef160d3ee2bda40acba16b50a58cf30e486e4"
+    },
+    {
+      "state": "S-32/invitation",
+      "nodeId": "32:52803",
+      "sectionId": "32:52056",
+      "name": "S-32/invitation · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 26,
+      "fingerprint": "868be3e0b0de2901f9fec2aff5734460a7a8b124d3273a05553075144169332b"
+    },
+    {
+      "state": "S-32/membre",
+      "nodeId": "32:52934",
+      "sectionId": "32:52056",
+      "name": "S-32/membre · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1396,
+      "texts": 52,
+      "fingerprint": "23c9484a2990c4bcf6689386d7d15c22f211f83ed2246c0dd2484e83296e13f5"
+    },
+    {
+      "state": "S-32/modifie",
+      "nodeId": "32:53168",
+      "sectionId": "32:52056",
+      "name": "S-32/modifie · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1396,
+      "texts": 52,
+      "fingerprint": "32d8034f5a3d9db3326160a1f80684ef6a9dd1b2e0f479b1b6a18f6cc5921103"
+    },
+    {
+      "state": "S-32/soi-meme",
+      "nodeId": "32:53400",
+      "sectionId": "32:52056",
+      "name": "S-32/soi-meme · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1506,
+      "texts": 55,
+      "fingerprint": "37db974d42878dc23973ec8a35d464265e37ef20bf08c499765bc44212d58614"
+    },
+    {
+      "state": "S-33/cabinet",
+      "nodeId": "32:53645",
+      "sectionId": "32:53644",
+      "name": "S-33/cabinet · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 37,
+      "fingerprint": "5a1f64a52621992f69f63c15132738c81047f10d1e4707972dc2b07ff5d3d728"
+    },
+    {
+      "state": "S-33/conflit",
+      "nodeId": "32:53804",
+      "sectionId": "32:53644",
+      "name": "S-33/conflit · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 39,
+      "fingerprint": "278ea98001fdb12287c9f4b965abd5f47e50698bb57d169ffa068b12361ef351"
+    },
+    {
+      "state": "S-33/enregistre",
+      "nodeId": "32:53981",
+      "sectionId": "32:53644",
+      "name": "S-33/enregistre · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 38,
+      "fingerprint": "7f4dbcc1346820a3795c2a4812fbf1097b36648f609a1ea42844dc38eba32757"
+    },
+    {
+      "state": "S-33/erreur",
+      "nodeId": "32:54145",
+      "sectionId": "32:53644",
+      "name": "S-33/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 37,
+      "fingerprint": "e827ef1c2771b77e5229db29f0b3deda680619e860a2e4982c72b7abb68ea9da"
+    },
+    {
+      "state": "S-33/fuseau",
+      "nodeId": "32:54307",
+      "sectionId": "32:53644",
+      "name": "S-33/fuseau · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 50,
+      "fingerprint": "3f80bb8fbbb8c623f9ee8229930c69324e2d5e0c5b6560225456ed569d9479b6"
+    },
+    {
+      "state": "S-33/sale",
+      "nodeId": "32:54518",
+      "sectionId": "32:53644",
+      "name": "S-33/sale · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 36,
+      "fingerprint": "38f44fb1c540ebea012e3664013df326ca5edda517e328d180a3db14b3c717c4"
+    },
+    {
+      "state": "S-34/admin",
+      "nodeId": "32:54675",
+      "sectionId": "32:54674",
+      "name": "S-34/admin · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 56,
+      "fingerprint": "a10697b0cda397c978dc58b10287f14e52275d2c2872de6f618ad2f9b2dd3397"
+    },
+    {
+      "state": "S-34/clinique",
+      "nodeId": "32:54920",
+      "sectionId": "32:54674",
+      "name": "S-34/clinique · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1413,
+      "texts": 137,
+      "fingerprint": "09387d6f25a819204d463147d55866f6926edcde429e100787f65608d0b1e274"
+    },
+    {
+      "state": "S-34/erreur-partielle",
+      "nodeId": "32:55466",
+      "sectionId": "32:54674",
+      "name": "S-34/erreur-partielle · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 60,
+      "fingerprint": "05fdd51b66374b64405b866f0a3b617331380cffefade6740fc51f5aebe9aae1"
+    },
+    {
+      "state": "S-34/export",
+      "nodeId": "32:55730",
+      "sectionId": "32:54674",
+      "name": "S-34/export · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 58,
+      "fingerprint": "f40ccf59a0b534f2b258df8876db81250cca2ca9c91a98eff601b13f304ea89e"
+    },
+    {
+      "state": "S-34/restreint",
+      "nodeId": "32:55985",
+      "sectionId": "32:54674",
+      "name": "S-34/restreint · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 59,
+      "fingerprint": "590c01d677b424d50c0ef582d296351208085ae75721b07f39f405c2373b0c5a"
+    },
+    {
+      "state": "S-34/vide",
+      "nodeId": "32:56240",
+      "sectionId": "32:54674",
+      "name": "S-34/vide · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 20,
+      "fingerprint": "cc2c1ce7a2e079315880d7a6c9cce77bb06f8816d6b2c426516a7929ad6c32c4"
+    },
+    {
+      "state": "S-35/admin",
+      "nodeId": "32:56349",
+      "sectionId": "32:56348",
+      "name": "S-35/admin · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 37,
+      "fingerprint": "b7e1c8a6015b790a4d609e4d5246d30974dd5a4217842446ab4db9cc34341d1c"
+    },
+    {
+      "state": "S-35/canal",
+      "nodeId": "32:56523",
+      "sectionId": "32:56348",
+      "name": "S-35/canal · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 16,
+      "fingerprint": "4f3ff2d26a7fd3e29e6bc4b36ef7cdc8b4bb2a2027f2b6c9b0307c6adfcf12c2"
+    },
+    {
+      "state": "S-35/enregistre",
+      "nodeId": "32:56656",
+      "sectionId": "32:56348",
+      "name": "S-35/enregistre · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 44,
+      "fingerprint": "9fbd39406f22b3ae951ad4e9fb71250cba7186c75f50d4ad9b7dc8d1af52aaca"
+    },
+    {
+      "state": "S-35/erreur",
+      "nodeId": "32:56885",
+      "sectionId": "32:56348",
+      "name": "S-35/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 45,
+      "fingerprint": "92b4fdfe5adb8a8c777db65998e2035fb547152d8de55da06b609d420a768503"
+    },
+    {
+      "state": "S-35/patient",
+      "nodeId": "32:57127",
+      "sectionId": "32:56348",
+      "name": "S-35/patient · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 22,
+      "fingerprint": "a4154c3d4571dfe391305d151a3fd573cf6f0b446bf0224e067170d046297e78"
+    },
+    {
+      "state": "S-35/pro",
+      "nodeId": "32:57208",
+      "sectionId": "32:56348",
+      "name": "S-35/pro · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 43,
+      "fingerprint": "7c8bd2b56637a90874dfb5c992abd11457013795c19fbe02c273eba5bfb8f2e9"
+    },
+    {
+      "state": "S-35/sale",
+      "nodeId": "32:57432",
+      "sectionId": "32:56348",
+      "name": "S-35/sale · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 42,
+      "fingerprint": "c083dce8a766c54560616c30fc9a7e82471bcdb3f37f63b7b77375074aec1622"
+    },
+    {
+      "state": "S-35/session",
+      "nodeId": "32:57653",
+      "sectionId": "32:56348",
+      "name": "S-35/session · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 45,
+      "fingerprint": "b429fd2fdf907024158d998e9d176a263fbf23d0d8cf39504ad225096e402b92"
+    },
+    {
+      "state": "S-36/interdit",
+      "nodeId": "32:57888",
+      "sectionId": "32:57887",
+      "name": "S-36/interdit · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 14,
+      "fingerprint": "1d981138aaf91570641d85a25909111827f2ae16144cbe9316d3da083f06f70c"
+    },
+    {
+      "state": "S-36/introuvable",
+      "nodeId": "32:57978",
+      "sectionId": "32:57887",
+      "name": "S-36/introuvable · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 21,
+      "fingerprint": "98b602fcdeaae06e00ecc98a795e7dff855c2f47365be6d4de498b182cec4fd7"
+    },
+    {
+      "state": "S-36/lien-obsolete",
+      "nodeId": "32:58120",
+      "sectionId": "32:57887",
+      "name": "S-36/lien-obsolete · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 20,
+      "fingerprint": "794856000dfef9883af7bbd907863f4f236d523c6cd86b3832937cc1cc03588d"
+    },
+    {
+      "state": "S-36/patient",
+      "nodeId": "32:58260",
+      "sectionId": "32:57887",
+      "name": "S-36/patient · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 12,
+      "fingerprint": "07eceb5d45c4d3c070cdf1721fdec6abe13e97d8675d1ebacae5e43657d1d8f8"
+    },
+    {
+      "state": "S-37/delai",
+      "nodeId": "32:58304",
+      "sectionId": "32:58303",
+      "name": "S-37/delai · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 22,
+      "fingerprint": "dcedeb25aecb443bbc25738e1a2f32122f7c6538d19d572e96c4696e4753bfc5"
+    },
+    {
+      "state": "S-37/hors-ligne",
+      "nodeId": "32:58459",
+      "sectionId": "32:58303",
+      "name": "S-37/hors-ligne · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 49,
+      "fingerprint": "72f2c2522d1636b2452aa76e971311d2bfe7ba4af21bea7243467033e6c9700a"
+    },
+    {
+      "state": "S-37/ia",
+      "nodeId": "32:58717",
+      "sectionId": "32:58303",
+      "name": "S-37/ia · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 38,
+      "fingerprint": "c56c12d1c4d2911645e5238e17c2953f712aed3de59441ee77b3e8db690e7f02"
+    },
+    {
+      "state": "S-37/indisponible",
+      "nodeId": "32:58916",
+      "sectionId": "32:58303",
+      "name": "S-37/indisponible · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 22,
+      "fingerprint": "1c5b9f2043eb135359a58955b3d876e06fe50d04f8ae1e23923c8d8a060e5e84"
+    },
+    {
+      "state": "S-37/limite",
+      "nodeId": "32:59073",
+      "sectionId": "32:58303",
+      "name": "S-37/limite · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 22,
+      "fingerprint": "0e7aef6ba72eb98025b097d9af838ea1a57ad26df58664c8cc7f2b8114eb5818"
+    },
+    {
+      "state": "S-37/maintenance",
+      "nodeId": "32:59230",
+      "sectionId": "32:58303",
+      "name": "S-37/maintenance · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 9,
+      "fingerprint": "460e5a2460170d7b685dd1dba79d4aafe2bf3282a3ce7ee8cb5c21e8a19c8293"
+    },
+    {
+      "state": "S-37/partiel",
+      "nodeId": "32:59264",
+      "sectionId": "32:58303",
+      "name": "S-37/partiel · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 50,
+      "fingerprint": "4b408919d8d93c1c4d09c9036ae346bf1d7b34f8c4907b3a5d3fe30c3d50b4e0"
+    },
+    {
+      "state": "S-37/reconnexion",
+      "nodeId": "32:59528",
+      "sectionId": "32:58303",
+      "name": "S-37/reconnexion · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 46,
+      "fingerprint": "1db297b2fa5b316f9cfe810121a6692c5a21c60da1d694e7c529310a8e352b73"
+    },
+    {
+      "state": "S-38/autre-compte",
+      "nodeId": "32:59782",
+      "sectionId": "32:59781",
+      "name": "S-38/autre-compte · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1285,
+      "texts": 72,
+      "fingerprint": "58fb71cb0781695efb8e6e522ca4e24c193013774f2947ff517bbd8eb02f5a88"
+    },
+    {
+      "state": "S-38/droits-modifies",
+      "nodeId": "32:60091",
+      "sectionId": "32:59781",
+      "name": "S-38/droits-modifies · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1285,
+      "texts": 72,
+      "fingerprint": "bc91a2f2a4620b2bda13eff9d5752369c71ed92108c4d096a641944e71f2c4fa"
+    },
+    {
+      "state": "S-38/enregistrement",
+      "nodeId": "32:60400",
+      "sectionId": "32:59781",
+      "name": "S-38/enregistrement · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1333,
+      "texts": 76,
+      "fingerprint": "9fb79b2ce95150a8866ccc6e125d90a40b267e30545d5a29c9a173e525dcaf93"
+    },
+    {
+      "state": "S-38/expiree",
+      "nodeId": "32:60714",
+      "sectionId": "32:59781",
+      "name": "S-38/expiree · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1285,
+      "texts": 73,
+      "fingerprint": "542be2ac5adcc4760153af09f18d9857d944aaeb146e29f6ef53424ad8cb5956"
+    },
+    {
+      "state": "S-38/publication",
+      "nodeId": "32:61025",
+      "sectionId": "32:59781",
+      "name": "S-38/publication · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1285,
+      "texts": 72,
+      "fingerprint": "8766385ca9ff1798baf9d3a644a86beb2db62f145f232e01201654f85303b9c1"
+    },
+    {
+      "state": "S-39/echec",
+      "nodeId": "32:61336",
+      "sectionId": "32:61335",
+      "name": "S-39/echec · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 59,
+      "fingerprint": "bc1ab48c9455505ce65f8dd7fddb400892f3fa4ebe5980a8886de3610a1f2a98"
+    },
+    {
+      "state": "S-39/generation",
+      "nodeId": "32:61618",
+      "sectionId": "32:61335",
+      "name": "S-39/generation · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 58,
+      "fingerprint": "85c1d9505b7059db6d174931fdaddb8f0f47b46d2db6c99f38bc94a03542eb61"
+    },
+    {
+      "state": "S-39/long",
+      "nodeId": "32:61891",
+      "sectionId": "32:61335",
+      "name": "S-39/long · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1451,
+      "texts": 63,
+      "fingerprint": "70cf6e774e94e256699de9400a7c1f31cb0c86638ab426ecd273d3141509165c"
+    },
+    {
+      "state": "S-39/non-autorise",
+      "nodeId": "32:62178",
+      "sectionId": "32:61335",
+      "name": "S-39/non-autorise · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 13,
+      "fingerprint": "557a1959b63f2c212ae1c64db45b09e9ee3c5cff004109de59d2b22fcc17d0d8"
+    },
+    {
+      "state": "S-39/options",
+      "nodeId": "32:62227",
+      "sectionId": "32:61335",
+      "name": "S-39/options · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 56,
+      "fingerprint": "0ddbe923870110640a61643548a329c072c77cfca43b46856974aa601ba8c450"
+    },
+    {
+      "state": "S-39/perime",
+      "nodeId": "32:62491",
+      "sectionId": "32:61335",
+      "name": "S-39/perime · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 60,
+      "fingerprint": "1c96b019eecb0ba841a8576e54d97301d587f326ac7fd240155ae56df632f2cb"
+    },
+    {
+      "state": "S-39/police",
+      "nodeId": "32:62770",
+      "sectionId": "32:61335",
+      "name": "S-39/police · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 60,
+      "fingerprint": "492c6ce454f701b7fa672dad2c534bf6e2910afd54c88088bb0960224fa6c81d"
+    },
+    {
+      "state": "S-40/annule",
+      "nodeId": "32:63054",
+      "sectionId": "32:63053",
+      "name": "S-40/annule · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1212,
+      "texts": 72,
+      "fingerprint": "274943f72cdfcf9f67c5275f572d1c20020f564be338ed00486652e8f3358ef5"
+    },
+    {
+      "state": "S-40/canal",
+      "nodeId": "32:63368",
+      "sectionId": "32:63053",
+      "name": "S-40/canal · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 16,
+      "fingerprint": "2c25aad8ad8f2a06fea8938634085f657059426f7ad9121e2a56d5dd62fb1632"
+    },
+    {
+      "state": "S-40/detail",
+      "nodeId": "32:63501",
+      "sectionId": "32:63053",
+      "name": "S-40/detail · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1175,
+      "texts": 90,
+      "fingerprint": "7a7638c5b29251394a5e6f131ff7f207591f19bd510efb1eb2d20a06c85a1631"
+    },
+    {
+      "state": "S-40/doublon",
+      "nodeId": "32:63883",
+      "sectionId": "32:63053",
+      "name": "S-40/doublon · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1212,
+      "texts": 72,
+      "fingerprint": "25e1e4c0ee746fb53184a90fed4f2bad65a85b8874136e04e73b666f3601d083"
+    },
+    {
+      "state": "S-40/echec",
+      "nodeId": "32:64200",
+      "sectionId": "32:63053",
+      "name": "S-40/echec · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 40,
+      "fingerprint": "ba5a080b379c7bcae94ee476fec903764819f44cc8302d7b59b77aad4fdcc808"
+    },
+    {
+      "state": "S-40/en-cours",
+      "nodeId": "32:64405",
+      "sectionId": "32:63053",
+      "name": "S-40/en-cours · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1212,
+      "texts": 72,
+      "fingerprint": "5e0299a6ffd3193cbca9fc2b4412268285173e07c0ce34024e7dc16c54a5ff67"
+    },
+    {
+      "state": "S-40/en-file",
+      "nodeId": "32:64721",
+      "sectionId": "32:63053",
+      "name": "S-40/en-file · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1212,
+      "texts": 73,
+      "fingerprint": "27f332803f07a6193acbb9cd4369adeb75e2cb27a201185dbb6257852ba8337a"
+    },
+    {
+      "state": "S-40/liste",
+      "nodeId": "32:65041",
+      "sectionId": "32:63053",
+      "name": "S-40/liste · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 40,
+      "fingerprint": "0b776a209ec44e668e4437bbbbd504659590fb3b7f86bcf905dcd956a5ef4115"
+    },
+    {
+      "state": "S-40/louis-en-file",
+      "nodeId": "32:65272",
+      "sectionId": "32:65271",
+      "name": "S-40/louis-en-file · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 30,
+      "fingerprint": "01d50cf8df0c4f9c337ecddb77207a797d080a0f59f9a000dd4456211b4395ad"
+    },
+    {
+      "state": "S-40/quota",
+      "nodeId": "32:65440",
+      "sectionId": "32:65271",
+      "name": "S-40/quota · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 40,
+      "fingerprint": "e0f182a04f582bf49542162a2e4aba6b64753e8d20c410ff19ca5258fa9d4043"
+    },
+    {
+      "state": "S-40/source-modifiee",
+      "nodeId": "32:65676",
+      "sectionId": "32:65271",
+      "name": "S-40/source-modifiee · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1224,
+      "texts": 92,
+      "fingerprint": "e58cada3b88a2f0e3053d05eab60c02a258798f3398950302e61ad9fbdec487b"
+    },
+    {
+      "state": "S-40/termine",
+      "nodeId": "32:66073",
+      "sectionId": "32:65271",
+      "name": "S-40/termine · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1132,
+      "texts": 42,
+      "fingerprint": "023c54a5034758b6dbfa7ebcc1395acb820eefabf326d8bbd49d0c6382c295b8"
+    },
+    {
+      "state": "I-01/combinaison",
+      "nodeId": "32:66311",
+      "sectionId": "32:66310",
+      "name": "I-01/combinaison · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 110,
+      "fingerprint": "d4846618ba45e27fdd9282f2ca3f510980b63f376d83f3af1bacf73f270af4ed"
+    },
+    {
+      "state": "I-01/envoye",
+      "nodeId": "32:66721",
+      "sectionId": "32:66310",
+      "name": "I-01/envoye · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 91,
+      "fingerprint": "d46bb91ef7193590543051f83687600bb71cb00a95c12c4699169384c2a5fcb4"
+    },
+    {
+      "state": "I-01/erreur",
+      "nodeId": "32:67056",
+      "sectionId": "32:66310",
+      "name": "I-01/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 110,
+      "fingerprint": "e2d909f85d68a89a7dcea7920948ba5bb85b72e2bf2d9495d8d9b79c97ba8d27"
+    },
+    {
+      "state": "I-01/existant",
+      "nodeId": "32:67467",
+      "sectionId": "32:66310",
+      "name": "I-01/existant · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 111,
+      "fingerprint": "62e702a7dd14588b27c7cffb3c0ca961948ca20db08844a06cb6391a3cda2f00"
+    },
+    {
+      "state": "I-01/ouvert",
+      "nodeId": "32:67885",
+      "sectionId": "32:66310",
+      "name": "I-01/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 105,
+      "fingerprint": "f0631eaefe27e47656a0e98d684083676f8e42f9cc4fea557802c9b3e6f22e5e"
+    },
+    {
+      "state": "I-01/renvoyer",
+      "nodeId": "32:68284",
+      "sectionId": "32:66310",
+      "name": "I-01/renvoyer · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 88,
+      "fingerprint": "98087bc5a9ffe796a2502eca8afb5540448a672e8a4d53dbc588d56b9d3bada1"
+    },
+    {
+      "state": "I-02/conflit",
+      "nodeId": "32:68613",
+      "sectionId": "32:68612",
+      "name": "I-02/conflit · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1396,
+      "texts": 80,
+      "fingerprint": "81f40f8d4b0e921947184650028e0064f9f761b9b9df08d1141b2ca2277fc90d"
+    },
+    {
+      "state": "I-02/dependances",
+      "nodeId": "32:68939",
+      "sectionId": "32:68612",
+      "name": "I-02/dependances · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1396,
+      "texts": 89,
+      "fingerprint": "87b7962721285d67fbbda5246c6ca4adaca63cb7d7aaee16a9f4e618ef1ce375"
+    },
+    {
+      "state": "I-02/dernier-admin",
+      "nodeId": "32:69271",
+      "sectionId": "32:68612",
+      "name": "I-02/dernier-admin · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1506,
+      "texts": 72,
+      "fingerprint": "84216df19bd48b0b00e58184e1fbd5d82e95c48844155562fbc0d0a5a847ae52"
+    },
+    {
+      "state": "I-02/erreur",
+      "nodeId": "32:69573",
+      "sectionId": "32:68612",
+      "name": "I-02/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1396,
+      "texts": 78,
+      "fingerprint": "7d119d8c15826987c9767545995301a990fa87ae45f3b4daa1b829ff09239854"
+    },
+    {
+      "state": "I-02/ouvert",
+      "nodeId": "32:69887",
+      "sectionId": "32:68612",
+      "name": "I-02/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1396,
+      "texts": 76,
+      "fingerprint": "01de978c761dd5bdf62ab0b11ea3b83528756934f6a280124f83b446e5dcbbe3"
+    },
+    {
+      "state": "I-03/deja-active",
+      "nodeId": "32:70195",
+      "sectionId": "32:70194",
+      "name": "I-03/deja-active · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 6,
+      "fingerprint": "2b2f45e6c507861de5b65478e028234d4117ef93a81fecb7382cd9538fbe6da3"
+    },
+    {
+      "state": "I-03/erreur",
+      "nodeId": "32:70221",
+      "sectionId": "32:70194",
+      "name": "I-03/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1243,
+      "texts": 29,
+      "fingerprint": "66d51670f8b329ff19192e3782e5a09346ffd3045332dc8c77777f5545db4344"
+    },
+    {
+      "state": "I-03/expiree",
+      "nodeId": "32:70301",
+      "sectionId": "32:70194",
+      "name": "I-03/expiree · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 9,
+      "fingerprint": "85ba31ed0f64a158fe8c9644e2dbf6ae86898192666ab5909d4e3e5ae3d466d3"
+    },
+    {
+      "state": "I-03/ouvert",
+      "nodeId": "32:70332",
+      "sectionId": "32:70194",
+      "name": "I-03/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 25,
+      "fingerprint": "b8ac40aaa263606bbe8655a184cf0138cd7d9bbf93e38ff07eb943a66b6337e0"
+    },
+    {
+      "state": "I-04/doublon",
+      "nodeId": "32:70402",
+      "sectionId": "32:70401",
+      "name": "I-04/doublon · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 45,
+      "fingerprint": "ed7384fd4c61cc2ab6a71d69dd0534a460d6ffaf668d6729ab5a711c3c3dd51c"
+    },
+    {
+      "state": "I-04/ouvert",
+      "nodeId": "32:70613",
+      "sectionId": "32:70401",
+      "name": "I-04/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 37,
+      "fingerprint": "52fd7f4c6511050d33ddd4599235453f115080bf4875c408f03c27510661fe5c"
+    },
+    {
+      "state": "I-04/planificateur",
+      "nodeId": "32:70806",
+      "sectionId": "32:70401",
+      "name": "I-04/planificateur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 33,
+      "fingerprint": "8e950e8c8e2f0f562fc29f8947039e49136c663be9ba6e8a4c666b2095cad8c7"
+    },
+    {
+      "state": "I-05/annuler",
+      "nodeId": "32:70959",
+      "sectionId": "32:70958",
+      "name": "I-05/annuler · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1278,
+      "texts": 94,
+      "fingerprint": "80342b809a63f0eda42225ac9bdd3c5d7a2796d5a8149e2dee81be95bb89a45a"
+    },
+    {
+      "state": "I-05/echec",
+      "nodeId": "32:71356",
+      "sectionId": "32:70958",
+      "name": "I-05/echec · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1278,
+      "texts": 96,
+      "fingerprint": "6677b06fdf9f518fa6c2ea9e7102607aab6f1470642924ee54e254b6109164f4"
+    },
+    {
+      "state": "I-05/enregistre",
+      "nodeId": "32:71764",
+      "sectionId": "32:70958",
+      "name": "I-05/enregistre · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1278,
+      "texts": 92,
+      "fingerprint": "3ec6570bdad9f0a37692c6711c7c59dd47220961bb8f06809277c8b79886dc6c"
+    },
+    {
+      "state": "I-05/erreur",
+      "nodeId": "32:72150",
+      "sectionId": "32:70958",
+      "name": "I-05/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1767,
+      "texts": 115,
+      "fingerprint": "5dacd2b7558da7ad9704393ce35127fd3a1168e9478fd5585844af23939fe541"
+    },
+    {
+      "state": "I-05/motif",
+      "nodeId": "32:72623",
+      "sectionId": "32:70958",
+      "name": "I-05/motif · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 32,
+      "fingerprint": "3ed56670abd9c48a5c05e6a7352a9329d273aee1fdaa7ac2104be6bd8b628d3e"
+    },
+    {
+      "state": "I-05/ouvert",
+      "nodeId": "32:72796",
+      "sectionId": "32:70958",
+      "name": "I-05/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1659,
+      "texts": 112,
+      "fingerprint": "8a87034332f4e9bc5f699590e0314797310c9e90d16c182fc52acfa63e9ca325"
+    },
+    {
+      "state": "I-06/conflit",
+      "nodeId": "32:73259",
+      "sectionId": "32:73258",
+      "name": "I-06/conflit · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1123,
+      "texts": 123,
+      "fingerprint": "d517a1712d4adc5cb3d9595359fc932b34d27164a40c5645dc6323a160892d0c"
+    },
+    {
+      "state": "I-06/correction",
+      "nodeId": "32:73722",
+      "sectionId": "32:73258",
+      "name": "I-06/correction · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1123,
+      "texts": 116,
+      "fingerprint": "650354962d6dafd0aac94fc7ad31042bd14dc3310ae53f2bcea327bf626c17db"
+    },
+    {
+      "state": "I-06/erreur",
+      "nodeId": "32:74166",
+      "sectionId": "32:73258",
+      "name": "I-06/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1123,
+      "texts": 132,
+      "fingerprint": "e576b7fb4b74316b1ec8356c59b510da9a32016fefe1e22a4ea3bbd4c8da66ba"
+    },
+    {
+      "state": "I-06/ouvert",
+      "nodeId": "32:74642",
+      "sectionId": "32:73258",
+      "name": "I-06/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1123,
+      "texts": 121,
+      "fingerprint": "45ce08215b7e0676c3b9469b657498e24963625936500fb7ce473933fcced2c0"
+    },
+    {
+      "state": "I-07/correction",
+      "nodeId": "32:75100",
+      "sectionId": "32:75099",
+      "name": "I-07/correction · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1233,
+      "texts": 121,
+      "fingerprint": "8d071d520644183f5b6cfdebacb8ec51efe1aba173a4cb225d52c959d6b70282"
+    },
+    {
+      "state": "I-07/correction-revue",
+      "nodeId": "32:75565",
+      "sectionId": "32:75099",
+      "name": "I-07/correction-revue · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 30,
+      "fingerprint": "97d02233ef363c441e6989242151aad05dca391aa0a2117b1fbd84642a53d4a2"
+    },
+    {
+      "state": "I-07/erreur",
+      "nodeId": "32:75736",
+      "sectionId": "32:75099",
+      "name": "I-07/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1233,
+      "texts": 146,
+      "fingerprint": "41d6be39cd6aa2591e86f3604b53dcba1551a4a61648318afc524dc36ab3ff6b"
+    },
+    {
+      "state": "I-07/ouvert",
+      "nodeId": "32:76281",
+      "sectionId": "32:75099",
+      "name": "I-07/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1233,
+      "texts": 138,
+      "fingerprint": "96511d90405c227e85da4ee69123b7007e2c8f43d20b86d72c5ca60f07886773"
+    },
+    {
+      "state": "I-07/qualitatif",
+      "nodeId": "32:76810",
+      "sectionId": "32:75099",
+      "name": "I-07/qualitatif · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1233,
+      "texts": 121,
+      "fingerprint": "ba7e058761825fa52100fc38212eda669be5a11e4152c46c4bc1dab9911f8988"
+    },
+    {
+      "state": "I-07/qualitatif-revue",
+      "nodeId": "32:77278",
+      "sectionId": "32:75099",
+      "name": "I-07/qualitatif-revue · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 29,
+      "fingerprint": "16d6a1f16c540caf172ab1a706d516eab686c6f35ce982c24738b6bfaaee2af1"
+    },
+    {
+      "state": "I-08/envoi",
+      "nodeId": "32:77448",
+      "sectionId": "32:77447",
+      "name": "I-08/envoi · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 64,
+      "fingerprint": "46ee5bf27554e650161eed4b831842af450eceec959cc2d490711fdcf15ef80b"
+    },
+    {
+      "state": "I-08/erreur",
+      "nodeId": "32:77739",
+      "sectionId": "32:77447",
+      "name": "I-08/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 69,
+      "fingerprint": "bb8cb7d6f39c0c3f53a281f02a5ccafd44c25f94168f50641066c876e7ad21ca"
+    },
+    {
+      "state": "I-08/ouvert",
+      "nodeId": "32:78040",
+      "sectionId": "32:77447",
+      "name": "I-08/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 64,
+      "fingerprint": "a2afe60e84257906065629982884568518112aa8bbd1143d1720f596cf059bc4"
+    },
+    {
+      "state": "I-09/allergie",
+      "nodeId": "32:78326",
+      "sectionId": "32:78325",
+      "name": "I-09/allergie · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1168,
+      "texts": 82,
+      "fingerprint": "cc11e1917837a047eef3e0c09016af9d58ef57c9b6b7ec6a72ce6f98cd73bdb2"
+    },
+    {
+      "state": "I-09/indisponible",
+      "nodeId": "32:78664",
+      "sectionId": "32:78325",
+      "name": "I-09/indisponible · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1233,
+      "texts": 116,
+      "fingerprint": "f397d0bc9fd14af8a8e85537b757b24ff6a8352188cde590a4bc93f8dda17732"
+    },
+    {
+      "state": "I-09/ouvert",
+      "nodeId": "32:79128",
+      "sectionId": "32:78325",
+      "name": "I-09/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1233,
+      "texts": 128,
+      "fingerprint": "07ca4f3c80dc4d465093aee6f104ac710813e76eede28cbd3725e2f8005ddefa"
+    },
+    {
+      "state": "I-09/source-src-a-001",
+      "nodeId": "32:79606",
+      "sectionId": "32:78325",
+      "name": "I-09/source-src-a-001 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 41,
+      "fingerprint": "1ecf0947b7b905ead28fa11f625d77a4703bac065cd3e491f27b96f6af7faa88"
+    },
+    {
+      "state": "I-09/source-src-a-002",
+      "nodeId": "32:79814",
+      "sectionId": "32:78325",
+      "name": "I-09/source-src-a-002 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 41,
+      "fingerprint": "0c9051b387ab63f9f13e77525214ea46d9a7ed402492eab4ca652ecf87024b53"
+    },
+    {
+      "state": "I-09/source-src-a-003",
+      "nodeId": "32:80022",
+      "sectionId": "32:78325",
+      "name": "I-09/source-src-a-003 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 41,
+      "fingerprint": "f6fc5d3597be9a5891964671206014d6a0adf505eda73bac638e9741a2f45b01"
+    },
+    {
+      "state": "I-09/source-src-a-004",
+      "nodeId": "32:80230",
+      "sectionId": "32:78325",
+      "name": "I-09/source-src-a-004 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 41,
+      "fingerprint": "a7c0e3c57eefb5722f816a277b4cb1777f3bf19e7882fc7553ac550b2716aff2"
+    },
+    {
+      "state": "I-09/source-src-a-005",
+      "nodeId": "32:80438",
+      "sectionId": "32:78325",
+      "name": "I-09/source-src-a-005 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 38,
+      "fingerprint": "c29f9a173d008c87a59a98343829342f6e289cfec49ee7f9d75380313650a3af"
+    },
+    {
+      "state": "I-09/source-src-a-006",
+      "nodeId": "32:80643",
+      "sectionId": "32:80642",
+      "name": "I-09/source-src-a-006 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 42,
+      "fingerprint": "72f411d7d062fd34613820600626d90082d6e6a86d605fc6f66138217f6ef5e9"
+    },
+    {
+      "state": "I-09/source-src-a-007-v1",
+      "nodeId": "32:80852",
+      "sectionId": "32:80642",
+      "name": "I-09/source-src-a-007-v1 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 41,
+      "fingerprint": "85e1c21e953f33aae70be8b8c05728ca2852a252a86e460a38a4331c882b2c6e"
+    },
+    {
+      "state": "I-09/source-src-a-007-v2",
+      "nodeId": "32:81060",
+      "sectionId": "32:80642",
+      "name": "I-09/source-src-a-007-v2 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 42,
+      "fingerprint": "4d7cf47ca1baab24da853d3be35be8208c1b18397197b11a0f77147c5b86d435"
+    },
+    {
+      "state": "I-09/source-src-a-008",
+      "nodeId": "32:81270",
+      "sectionId": "32:80642",
+      "name": "I-09/source-src-a-008 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 40,
+      "fingerprint": "a646dcdb6ad5a5626f0dedfa0b483f43fd7f7ed4941460a8524509108b8ec652"
+    },
+    {
+      "state": "I-09/source-src-b-001",
+      "nodeId": "32:81477",
+      "sectionId": "32:80642",
+      "name": "I-09/source-src-b-001 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 39,
+      "fingerprint": "0a8e1dd2d258b9d8083fdeb9973d45b01c436511be34904b9457984223348278"
+    },
+    {
+      "state": "I-10/claire",
+      "nodeId": "32:81677",
+      "sectionId": "32:81676",
+      "name": "I-10/claire · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 30,
+      "fingerprint": "7807cee8a9819c0307162d9bed24781f31325395d0f23560edd0a813920650b3"
+    },
+    {
+      "state": "I-10/conflit",
+      "nodeId": "32:81848",
+      "sectionId": "32:81676",
+      "name": "I-10/conflit · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 68,
+      "fingerprint": "0d7a5be973e7f77a115030eb0848cfa4e0a7f95a402b490fc23b5d26b4f553ba"
+    },
+    {
+      "state": "I-10/conflit-claire",
+      "nodeId": "32:82171",
+      "sectionId": "32:81676",
+      "name": "I-10/conflit-claire · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 30,
+      "fingerprint": "ce1b0b26238e8a27f6f3b9cf6ebff6154106a16270901b5761038285a8010e12"
+    },
+    {
+      "state": "I-10/erreur",
+      "nodeId": "32:82341",
+      "sectionId": "32:81676",
+      "name": "I-10/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 66,
+      "fingerprint": "c6fabff2dfaf551d99f24183a541aa62b1ccec7adf44165248d0b8a4f0752164"
+    },
+    {
+      "state": "I-10/ouvert",
+      "nodeId": "32:82659",
+      "sectionId": "32:81676",
+      "name": "I-10/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 64,
+      "fingerprint": "5199bef3549c61fb89a3adb9c9631a54a503049e186ac62548327323c116a220"
+    },
+    {
+      "state": "I-10/recherche",
+      "nodeId": "32:82970",
+      "sectionId": "32:81676",
+      "name": "I-10/recherche · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 70,
+      "fingerprint": "ca86fc1b965ff4c94e81ac1dff7ff381087fa3b68c811af193bf0bb9f739eecf"
+    },
+    {
+      "state": "I-11/claire",
+      "nodeId": "32:83304",
+      "sectionId": "32:83303",
+      "name": "I-11/claire · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 59,
+      "fingerprint": "b775f2713c4d439d422c39e37749fef5ff2e005ecbde6e1bc4661bbc91b12ecc"
+    },
+    {
+      "state": "I-11/conflit",
+      "nodeId": "32:83564",
+      "sectionId": "32:83303",
+      "name": "I-11/conflit · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 63,
+      "fingerprint": "89f01b3c1f7980610f6bf3903b44136c47e9936762f0352da07b9bcaedcb77e3"
+    },
+    {
+      "state": "I-11/ouvert",
+      "nodeId": "32:83843",
+      "sectionId": "32:83303",
+      "name": "I-11/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 59,
+      "fingerprint": "32ef5dedc41360ca749da9dec5b848e7666d472cce9f359cfaf97f7f1b04d61a"
+    },
+    {
+      "state": "I-12/erreur",
+      "nodeId": "32:84104",
+      "sectionId": "32:84103",
+      "name": "I-12/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 53,
+      "fingerprint": "5eb6021b465686207ee7e02171a692776f7114aa9c149b1d19fd20abc0a9cffe"
+    },
+    {
+      "state": "I-12/ouvert",
+      "nodeId": "32:84354",
+      "sectionId": "32:84103",
+      "name": "I-12/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 50,
+      "fingerprint": "ddf50280c77816986b371f27aed7629baf30a1f65caf95ef2c3a2960b92473d2"
+    },
+    {
+      "state": "I-13/enregistre",
+      "nodeId": "32:84596",
+      "sectionId": "32:84595",
+      "name": "I-13/enregistre · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 46,
+      "fingerprint": "3f7bc88b1b7886ce5f5d9b986d9bcc7e9079eb34e4099099ea3c912caf4c0346"
+    },
+    {
+      "state": "I-13/ouvert",
+      "nodeId": "32:84807",
+      "sectionId": "32:84595",
+      "name": "I-13/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 54,
+      "fingerprint": "48df7041600d50aaf5e708a7c865bf869a5b7260889b43787d43922bc12a1d79"
+    },
+    {
+      "state": "I-14/doublon",
+      "nodeId": "32:85049",
+      "sectionId": "32:85048",
+      "name": "I-14/doublon · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1581,
+      "texts": 158,
+      "fingerprint": "fcca6c54b066fbb479086d7a5c58ab8ed520af0df012d1f21e61998bc8656cdc"
+    },
+    {
+      "state": "I-14/erreur",
+      "nodeId": "32:85678",
+      "sectionId": "32:85048",
+      "name": "I-14/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1581,
+      "texts": 179,
+      "fingerprint": "3b38ee1e4d7567831af0e992485712c0beb26e869e0b0c4b8c5829686f8e91e1"
+    },
+    {
+      "state": "I-14/existant",
+      "nodeId": "32:86345",
+      "sectionId": "32:85048",
+      "name": "I-14/existant · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1581,
+      "texts": 187,
+      "fingerprint": "5d714b71d75729a27e4bdae17222fadf53aaccbf4c5148b07fad748f0ded8aaa"
+    },
+    {
+      "state": "I-14/louis",
+      "nodeId": "32:87035",
+      "sectionId": "32:85048",
+      "name": "I-14/louis · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 52,
+      "fingerprint": "9990ba922640ac543aefef15e606da1b178cd2123f4695f5c8b24a504250ed8f"
+    },
+    {
+      "state": "I-14/ouvert",
+      "nodeId": "32:87296",
+      "sectionId": "32:85048",
+      "name": "I-14/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 72,
+      "fingerprint": "2e75447808135bc408fe585eefd252364195e107ed8feea8294825080b7dee26"
+    },
+    {
+      "state": "I-14/quota",
+      "nodeId": "32:87590",
+      "sectionId": "32:87589",
+      "name": "I-14/quota · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1581,
+      "texts": 159,
+      "fingerprint": "28d9b5dfa2a0c7d37ee7d6f49055994ff3bf5888854947ec089c7858d0c00183"
+    },
+    {
+      "state": "I-15/echec",
+      "nodeId": "32:88221",
+      "sectionId": "32:88220",
+      "name": "I-15/echec · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 77,
+      "fingerprint": "4d7629ba033785fbd4cbb3fa3dd6fc02b066d0faae485902b31e134d049c24f2"
+    },
+    {
+      "state": "I-15/enregistre",
+      "nodeId": "32:88524",
+      "sectionId": "32:88220",
+      "name": "I-15/enregistre · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 75,
+      "fingerprint": "4073efc7ed747ad8eecdc914eb8ffff7655c46ba6f1adfc72b46919944031010"
+    },
+    {
+      "state": "I-15/non-soutenu",
+      "nodeId": "32:88813",
+      "sectionId": "32:88220",
+      "name": "I-15/non-soutenu · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 72,
+      "fingerprint": "4f72c35c8cedfe267727e9d0bdf27002a87b332a3d1e2cac1ed6d3f961c36f6d"
+    },
+    {
+      "state": "I-15/ouvert",
+      "nodeId": "32:89092",
+      "sectionId": "32:88220",
+      "name": "I-15/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 73,
+      "fingerprint": "b61d7f155b30324c7c581e55ee73cb40e2d8bd8d74baf11ade29c66976ae83aa"
+    },
+    {
+      "state": "I-15/sale",
+      "nodeId": "32:89376",
+      "sectionId": "32:88220",
+      "name": "I-15/sale · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 73,
+      "fingerprint": "cc8f9403c49d6ae97a4177da66808a633ca265902d2dbbeffc4edac602569b98"
+    },
+    {
+      "state": "I-16/bloque",
+      "nodeId": "32:89658",
+      "sectionId": "32:89657",
+      "name": "I-16/bloque · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1399,
+      "texts": 104,
+      "fingerprint": "00f9dc9e629fb078f2874b369165d7d8a26d72c5fa32c786e64d7607d697fa25"
+    },
+    {
+      "state": "I-16/envoi",
+      "nodeId": "32:90064",
+      "sectionId": "32:89657",
+      "name": "I-16/envoi · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1327,
+      "texts": 101,
+      "fingerprint": "c677c12fb62ca538fa1e332871b58040d67c4f44fe93983499bf09db728d0640"
+    },
+    {
+      "state": "I-16/erreur",
+      "nodeId": "32:90455",
+      "sectionId": "32:89657",
+      "name": "I-16/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1327,
+      "texts": 104,
+      "fingerprint": "c6459c7f47ef3004182b11badaad774733e88e51c0aa1533ef3ce6539a04a12e"
+    },
+    {
+      "state": "I-16/ouvert",
+      "nodeId": "32:90857",
+      "sectionId": "32:89657",
+      "name": "I-16/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1327,
+      "texts": 101,
+      "fingerprint": "189fa1d487de70e321eb85cedd066dccb64fe203ca9c211885d705711105e43b"
+    },
+    {
+      "state": "I-17/brief",
+      "nodeId": "32:91248",
+      "sectionId": "32:91247",
+      "name": "I-17/brief · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 73,
+      "fingerprint": "e3beb4b53cfccd93cc23e8cd01e683c27ec69fd5dedb02f7dd37ae51eba7a63f"
+    },
+    {
+      "state": "I-17/envoi",
+      "nodeId": "32:91568",
+      "sectionId": "32:91247",
+      "name": "I-17/envoi · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1367,
+      "texts": 126,
+      "fingerprint": "e5c7207bf172aa10b2945bab1c6293aaf71e47ab4a6afe2a7ee1e1d7c0561103"
+    },
+    {
+      "state": "I-17/erreur",
+      "nodeId": "32:92042",
+      "sectionId": "32:91247",
+      "name": "I-17/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1367,
+      "texts": 129,
+      "fingerprint": "145ffd4ff9efd1d00c1e746033be3a4cda2f5e45b575794c2f09cfaa93dcfed1"
+    },
+    {
+      "state": "I-17/ouvert",
+      "nodeId": "32:92527",
+      "sectionId": "32:91247",
+      "name": "I-17/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1367,
+      "texts": 126,
+      "fingerprint": "e97c1496b16b23cf55039954b78c101e64f45e7a21d150094662066e0aec39d5"
+    },
+    {
+      "state": "I-17/perime",
+      "nodeId": "32:93001",
+      "sectionId": "32:91247",
+      "name": "I-17/perime · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 83,
+      "fingerprint": "7feeac37f33a693ed3bdedfe000747c0e84cdc0d7a5169d8edc918f0dc5bfa86"
+    },
+    {
+      "state": "I-18/conflit",
+      "nodeId": "32:93337",
+      "sectionId": "32:93336",
+      "name": "I-18/conflit · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1241,
+      "texts": 69,
+      "fingerprint": "d2429814941fb05f61ec5652fcc81b7104fcd958eade9dd3d9737cc77833f1e4"
+    },
+    {
+      "state": "I-18/erreur",
+      "nodeId": "32:93631",
+      "sectionId": "32:93336",
+      "name": "I-18/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1164,
+      "texts": 59,
+      "fingerprint": "85596f1a17cdba3b4c170aa9b9a4aa19b34867ebbf3de00690a1068bcdd2e133"
+    },
+    {
+      "state": "I-18/ouvert",
+      "nodeId": "32:93891",
+      "sectionId": "32:93336",
+      "name": "I-18/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 61,
+      "fingerprint": "75fe1ab2d6651a22b4edfb867701227f7683a8e2af417fb04e9cfba7c4ff07a9"
+    },
+    {
+      "state": "I-18/remplacer",
+      "nodeId": "32:94157",
+      "sectionId": "32:93336",
+      "name": "I-18/remplacer · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1143,
+      "texts": 65,
+      "fingerprint": "d9e15cca03ce82ab92700494733ef17baaee5033913fe7b0eb51e5b9759100e9"
+    },
+    {
+      "state": "I-18/retrait",
+      "nodeId": "32:94432",
+      "sectionId": "32:93336",
+      "name": "I-18/retrait · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 57,
+      "fingerprint": "2cd0490baf1bb097aec5cbc3afcba5d073021aef196532c841bacc0aaf6758c9"
+    },
+    {
+      "state": "I-18/termine",
+      "nodeId": "32:94684",
+      "sectionId": "32:93336",
+      "name": "I-18/termine · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 47,
+      "fingerprint": "16154400d1e7ba1a0ac3ac6cda8078342e3b12b53fa2ed5ab9b51ffa126c38f3"
+    },
+    {
+      "state": "I-19/brouillon",
+      "nodeId": "32:94910",
+      "sectionId": "32:94909",
+      "name": "I-19/brouillon · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 78,
+      "fingerprint": "c73b74629fc639113e0cdeb255fc1b96bbacfff9e752a39f5f18e2ea50fb8979"
+    },
+    {
+      "state": "I-19/erreur",
+      "nodeId": "32:95265",
+      "sectionId": "32:94909",
+      "name": "I-19/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 79,
+      "fingerprint": "d5886c01c4953411a12728d14f24fbfdd0af84692423fd3b5bd9c29e59e84f60"
+    },
+    {
+      "state": "I-19/louis",
+      "nodeId": "32:95628",
+      "sectionId": "32:94909",
+      "name": "I-19/louis · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 66,
+      "fingerprint": "64c0b45a1044311543d6cde9cfdd9993d4c44a336116ca9d9af511372f224b18"
+    },
+    {
+      "state": "I-19/ouvert",
+      "nodeId": "32:95906",
+      "sectionId": "32:94909",
+      "name": "I-19/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 75,
+      "fingerprint": "e052ddc53036bbbab4d15d85fe33e30a624c733c02935a93760949bdcb5d3e37"
+    },
+    {
+      "state": "I-19/patient",
+      "nodeId": "32:96250",
+      "sectionId": "32:94909",
+      "name": "I-19/patient · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 20,
+      "fingerprint": "1ef99d643e6705fddf313f521a70c0e3996e7aafa4121f252935248b624aa4ad"
+    },
+    {
+      "state": "I-20/ouvert",
+      "nodeId": "32:96326",
+      "sectionId": "32:96325",
+      "name": "I-20/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 59,
+      "fingerprint": "ad46eaee38960566f06072cad14c051dceb836e4b1c31e997f0058f41a765638"
+    },
+    {
+      "state": "I-21/comparaison",
+      "nodeId": "32:96585",
+      "sectionId": "32:96584",
+      "name": "I-21/comparaison · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 66,
+      "fingerprint": "486b6aaa2a82c6f22f20f9379524707d973ca638a4ac5d6c29eae7481022193f"
+    },
+    {
+      "state": "I-21/copie",
+      "nodeId": "32:96870",
+      "sectionId": "32:96584",
+      "name": "I-21/copie · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 67,
+      "fingerprint": "a4ed4b34ad155161c3919fbba5ca36c16c9f1dfe422a481966d89e68effbbd7d"
+    },
+    {
+      "state": "I-21/disponibilite",
+      "nodeId": "32:97160",
+      "sectionId": "32:96584",
+      "name": "I-21/disponibilite · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 43,
+      "fingerprint": "2f8c970174340f54be9159a8a7fe77b4fad30dceebc4771169f302d6a323fd05"
+    },
+    {
+      "state": "I-21/identite",
+      "nodeId": "32:97375",
+      "sectionId": "32:96584",
+      "name": "I-21/identite · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 46,
+      "fingerprint": "ac876a7702ef5f5c89092e27089ac6356bd39bb14aa1f6324bf2fe3c5167a67a"
+    },
+    {
+      "state": "I-21/mesure",
+      "nodeId": "32:97600",
+      "sectionId": "32:96584",
+      "name": "I-21/mesure · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 46,
+      "fingerprint": "7b304e1adde97fbe06310ef8e70e7e57cf8135198c613b85b9329a8f90948730"
+    },
+    {
+      "state": "I-21/ouvert",
+      "nodeId": "32:97825",
+      "sectionId": "32:96584",
+      "name": "I-21/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 49,
+      "fingerprint": "45cf6469e0cff28262216c57b720938af17b4b9ffdeeb3ce98440f923514d12e"
+    },
+    {
+      "state": "I-22/ouvert",
+      "nodeId": "32:98064",
+      "sectionId": "32:98063",
+      "name": "I-22/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 11,
+      "fingerprint": "94a898d49b6b0e64e74104de303e5c354b87091ccbfc3bf70b122685b8d1bc93"
+    },
+    {
+      "state": "I-22/publication",
+      "nodeId": "32:98096",
+      "sectionId": "32:98063",
+      "name": "I-22/publication · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 10,
+      "fingerprint": "b6e91301fb2336736e975c82eb30b4a080bfa39f52b7da23e502b65c14e4aeb8"
+    },
+    {
+      "state": "I-23/ambigu",
+      "nodeId": "32:98128",
+      "sectionId": "32:98127",
+      "name": "I-23/ambigu · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 37,
+      "fingerprint": "172839115beccdc1db1003cea5a4bf468e4a6f2a33db1b0c9c5148efcc21eb54"
+    },
+    {
+      "state": "I-23/limite",
+      "nodeId": "32:98320",
+      "sectionId": "32:98127",
+      "name": "I-23/limite · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 38,
+      "fingerprint": "de5234dc26eba200428dd473aa515d49247a9cbbc6451d86eeb7d407b4e0c0c9"
+    },
+    {
+      "state": "I-23/ouvert",
+      "nodeId": "32:98516",
+      "sectionId": "32:98127",
+      "name": "I-23/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 41,
+      "fingerprint": "e04acee66a1b74a188348594c60bc2513cdcd88104ba310f75d1f2d8cd75f4f7"
+    },
+    {
+      "state": "I-23/relance",
+      "nodeId": "32:98722",
+      "sectionId": "32:98127",
+      "name": "I-23/relance · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 38,
+      "fingerprint": "2fb9655f500f81c19e172101e6d90a6d0000403c01077f283ad2baeac69f20e1"
+    },
+    {
+      "state": "I-24/conflit",
+      "nodeId": "32:98917",
+      "sectionId": "32:98916",
+      "name": "I-24/conflit · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 56,
+      "fingerprint": "bf695d7948c1d92e562181fe0501d6fd8fc372035249a393366e1762126e1416"
+    },
+    {
+      "state": "I-24/erreur",
+      "nodeId": "32:99185",
+      "sectionId": "32:98916",
+      "name": "I-24/erreur · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 56,
+      "fingerprint": "4d92b16fa99c900f4605f3da0d97f234bbe3c6a2d8e2e44d26c1213f574215ad"
+    },
+    {
+      "state": "I-24/impact",
+      "nodeId": "32:99449",
+      "sectionId": "32:98916",
+      "name": "I-24/impact · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 58,
+      "fingerprint": "8bd41df0070406b1c3763f1bbcca90e27551969c91aa409009d3f583888b031d"
+    },
+    {
+      "state": "I-24/ouvert",
+      "nodeId": "32:99719",
+      "sectionId": "32:98916",
+      "name": "I-24/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 52,
+      "fingerprint": "0db898dfc6b38bbf70dfed063ec651e36117bce4d35e651cd9ffa87eee1989f6"
+    },
+    {
+      "state": "I-25/admin",
+      "nodeId": "32:99975",
+      "sectionId": "32:99974",
+      "name": "I-25/admin · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 72,
+      "fingerprint": "85a480619eca45383138c5099d323e849e9cf481bfa89c9879ad73daaadb349c"
+    },
+    {
+      "state": "I-25/aucun",
+      "nodeId": "32:100272",
+      "sectionId": "32:99974",
+      "name": "I-25/aucun · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 37,
+      "fingerprint": "51f68875f9fa9ae7ca4ee21d77811ef20cd6190260a63c4e4d9b4ba401f7ec54"
+    },
+    {
+      "state": "I-25/evenement-0",
+      "nodeId": "32:100462",
+      "sectionId": "32:99974",
+      "name": "I-25/evenement-0 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1413,
+      "texts": 151,
+      "fingerprint": "d7debac59763e5605e8e9972f02b46e50eade1fe6aef707f9c115c995f7f5eaf"
+    },
+    {
+      "state": "I-25/evenement-1",
+      "nodeId": "32:101051",
+      "sectionId": "32:99974",
+      "name": "I-25/evenement-1 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1413,
+      "texts": 151,
+      "fingerprint": "4d931a36668a5e15fb77cb202f4dd60a4f8fbae1e48cf5149763cffd02b54c15"
+    },
+    {
+      "state": "I-25/evenement-10",
+      "nodeId": "32:101640",
+      "sectionId": "32:99974",
+      "name": "I-25/evenement-10 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1413,
+      "texts": 151,
+      "fingerprint": "082cedd948c1a9e965d3ea48f06872b0c07522ed1384f78f4f7abd5435c81928"
+    },
+    {
+      "state": "I-25/evenement-11",
+      "nodeId": "32:102230",
+      "sectionId": "32:102229",
+      "name": "I-25/evenement-11 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1413,
+      "texts": 151,
+      "fingerprint": "00ed50d3546d06159130d083704d85448258f4b925394c03e82e9991003ce81a"
+    },
+    {
+      "state": "I-25/evenement-2",
+      "nodeId": "32:102819",
+      "sectionId": "32:102229",
+      "name": "I-25/evenement-2 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1413,
+      "texts": 151,
+      "fingerprint": "c0ed3fcfc306ca505bf803fe441acce7a34b165217cd5d3c05a6bfb3a9a6fbd3"
+    },
+    {
+      "state": "I-25/evenement-3",
+      "nodeId": "32:103408",
+      "sectionId": "32:102229",
+      "name": "I-25/evenement-3 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1413,
+      "texts": 151,
+      "fingerprint": "080f235c39f0d9906a8ec71c769e1c0b00e7717b611b89c7563c0e3444a04339"
+    },
+    {
+      "state": "I-25/evenement-4",
+      "nodeId": "32:103997",
+      "sectionId": "32:102229",
+      "name": "I-25/evenement-4 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1413,
+      "texts": 151,
+      "fingerprint": "1eee8d005c3f29a5583037f056cc656869c438de11ea129efe9b9fa181d44135"
+    },
+    {
+      "state": "I-25/evenement-5",
+      "nodeId": "32:104587",
+      "sectionId": "32:104586",
+      "name": "I-25/evenement-5 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1413,
+      "texts": 151,
+      "fingerprint": "12a912dcb0bf5c33a8e31e25084fb22a02510f2a82af60cd754c9b73a9b5f626"
+    },
+    {
+      "state": "I-25/evenement-6",
+      "nodeId": "32:105176",
+      "sectionId": "32:104586",
+      "name": "I-25/evenement-6 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1413,
+      "texts": 151,
+      "fingerprint": "ab865863d58dacbfb12484b5c0faf9b637b06ffb24f12659531a0572c67bcd3b"
+    },
+    {
+      "state": "I-25/evenement-7",
+      "nodeId": "32:105765",
+      "sectionId": "32:104586",
+      "name": "I-25/evenement-7 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1413,
+      "texts": 151,
+      "fingerprint": "5a26e49ed6f0cd012ee0385b8514391e25308b76d62e08cc850808d95b889ee6"
+    },
+    {
+      "state": "I-25/evenement-8",
+      "nodeId": "32:106354",
+      "sectionId": "32:104586",
+      "name": "I-25/evenement-8 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1413,
+      "texts": 151,
+      "fingerprint": "146e32a3a07c643680f6f1f14027ab66e74550ee623d698e12f0815a945dbfb5"
+    },
+    {
+      "state": "I-25/evenement-9",
+      "nodeId": "32:106944",
+      "sectionId": "32:106943",
+      "name": "I-25/evenement-9 · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1413,
+      "texts": 152,
+      "fingerprint": "34926d980d58d7290d60660ec19eebee9ceb362892128477d125436f37e8e7a3"
+    },
+    {
+      "state": "I-25/filtres",
+      "nodeId": "32:107534",
+      "sectionId": "32:106943",
+      "name": "I-25/filtres · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 55,
+      "fingerprint": "e74f114229092d8ab987f8675492b1ef552cea5994d8364d4c6f5158f6b7f7fd"
+    },
+    {
+      "state": "I-25/ouvert",
+      "nodeId": "32:107800",
+      "sectionId": "32:106943",
+      "name": "I-25/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1413,
+      "texts": 161,
+      "fingerprint": "c18c62984ac68659f4900df28407e2949dc1fc5fd29011170a8265bcb6b78d1b"
+    },
+    {
+      "state": "I-26/ouvert",
+      "nodeId": "32:108413",
+      "sectionId": "32:108412",
+      "name": "I-26/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 20,
+      "fingerprint": "5b40893000c072c1f9bc0c97e359f22745fd2628cec9ad1b7de8137b4f4d484f"
+    },
+    {
+      "state": "I-26/reinitialiser",
+      "nodeId": "32:108465",
+      "sectionId": "32:108412",
+      "name": "I-26/reinitialiser · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 8,
+      "fingerprint": "0fff3e1f178e002cb4d15a2de1b05d963ab32de1208c1fbcb5b22123210fa664"
+    },
+    {
+      "state": "I-27/conserve",
+      "nodeId": "32:108501",
+      "sectionId": "32:108500",
+      "name": "I-27/conserve · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 51,
+      "fingerprint": "66423f41ab10c5cc55c8a6ccefa806efde4a2275d364cce9a7db08f8a03a26fe"
+    },
+    {
+      "state": "I-27/ouvert",
+      "nodeId": "32:108742",
+      "sectionId": "32:108500",
+      "name": "I-27/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1113,
+      "texts": 62,
+      "fingerprint": "c69d1ea166d01429dad3bc0fc2da6942170ba312c2930c9137f4ca81eb6f49a3"
+    },
+    {
+      "state": "I-28/ouvert",
+      "nodeId": "32:109019",
+      "sectionId": "32:109018",
+      "name": "I-28/ouvert · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1634,
+      "texts": 51,
+      "fingerprint": "723f4a0154b134e6f34e5ff766266547bc308478099e12ce43215965379370ca"
+    },
+    {
+      "state": "I-28/refuse",
+      "nodeId": "32:109166",
+      "sectionId": "32:109018",
+      "name": "I-28/refuse · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1406,
+      "texts": 41,
+      "fingerprint": "fea22df2d5add5c3633a6a26e4bb6b05028cb8bcc9794889c219889326ad9445"
+    },
+    {
+      "state": "I-28/termine",
+      "nodeId": "32:109292",
+      "sectionId": "32:109018",
+      "name": "I-28/termine · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1456,
+      "texts": 42,
+      "fingerprint": "2892e218fa36a8483d49be539feba96a3f6b5ad8c08cb56c4572fab0ee2bf58c"
+    },
+    {
+      "state": "M-01/html",
+      "nodeId": "32:109417",
+      "sectionId": "32:109416",
+      "name": "M-01/html · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 22,
+      "fingerprint": "944ba98dc3940ea4232406afb7cacbdd261803a11360a82ac1d04fda8a9a899d"
+    },
+    {
+      "state": "M-01/sombre",
+      "nodeId": "32:109467",
+      "sectionId": "32:109416",
+      "name": "M-01/sombre · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 22,
+      "fingerprint": "bd063125161c9f9ee295086df4130584cd085a865c0c24d79db3314acb75e5c1"
+    },
+    {
+      "state": "M-01/texte",
+      "nodeId": "32:109517",
+      "sectionId": "32:109416",
+      "name": "M-01/texte · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 19,
+      "fingerprint": "8d158ba657d01684922c3831759f8807336bb95ff142cf530ba9c0d676c49025"
+    },
+    {
+      "state": "M-02/html",
+      "nodeId": "32:109543",
+      "sectionId": "32:109542",
+      "name": "M-02/html · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 20,
+      "fingerprint": "59fa4a34551b4f0051ec7414df0daba35c22f271f0577d606777ba8ee9fb40ab"
+    },
+    {
+      "state": "M-02/sombre",
+      "nodeId": "32:109590",
+      "sectionId": "32:109542",
+      "name": "M-02/sombre · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 20,
+      "fingerprint": "44ebcd9e7af32e3138de6dbf25621efb25d84c12696844cd6de7e9ebfd4abeca"
+    },
+    {
+      "state": "M-02/texte",
+      "nodeId": "32:109637",
+      "sectionId": "32:109542",
+      "name": "M-02/texte · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 19,
+      "fingerprint": "7b36c16a4073e448815b7ecb0c28f733e10b12cbc0ab38473cbf9c6562182444"
+    },
+    {
+      "state": "M-03/html",
+      "nodeId": "32:109663",
+      "sectionId": "32:109662",
+      "name": "M-03/html · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 22,
+      "fingerprint": "7d179ac5333fa8afc8721dcdf177b0061a77145594a2a31c77e1d1174999f884"
+    },
+    {
+      "state": "M-03/sombre",
+      "nodeId": "32:109713",
+      "sectionId": "32:109662",
+      "name": "M-03/sombre · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 22,
+      "fingerprint": "296f94081af857edb1637a6653de08219c09e1650ba8725a68aa2ae0a4fa4962"
+    },
+    {
+      "state": "M-03/texte",
+      "nodeId": "32:109763",
+      "sectionId": "32:109662",
+      "name": "M-03/texte · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 20,
+      "fingerprint": "f648a021e02e720f8addaf7d9c340b97ba5d508b83178949175cb7d711aade8d"
+    },
+    {
+      "state": "M-04/annule",
+      "nodeId": "32:109791",
+      "sectionId": "32:109790",
+      "name": "M-04/annule · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 18,
+      "fingerprint": "95d3121d5c8b7ec1b7426636067684ed17302356370f51a564a852fc951a071f"
+    },
+    {
+      "state": "M-04/html",
+      "nodeId": "32:109837",
+      "sectionId": "32:109790",
+      "name": "M-04/html · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 18,
+      "fingerprint": "ae147bf7f29cfe7d90c18ee88cfcaebad2bb93e440400ab6a37cccd0bd55ed3c"
+    },
+    {
+      "state": "M-04/modifie",
+      "nodeId": "32:109883",
+      "sectionId": "32:109790",
+      "name": "M-04/modifie · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 18,
+      "fingerprint": "2676100b7c3e61c6a7f41e29ab4261084f48d6ad8509f760636d8008869e7ae4"
+    },
+    {
+      "state": "M-04/sombre",
+      "nodeId": "32:109929",
+      "sectionId": "32:109790",
+      "name": "M-04/sombre · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 18,
+      "fingerprint": "03843eb5ef6d27890bbf3a99269c1faf4e61385a98d7e9b193081c576eab6b42"
+    },
+    {
+      "state": "M-04/texte",
+      "nodeId": "32:109975",
+      "sectionId": "32:109790",
+      "name": "M-04/texte · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 17,
+      "fingerprint": "06a29781d8549f5f0473797d0c2359212823f02b00dca1ef27f1f4bbc737803d"
+    },
+    {
+      "state": "M-05/disponible",
+      "nodeId": "32:110000",
+      "sectionId": "32:109999",
+      "name": "M-05/disponible · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 18,
+      "fingerprint": "784ae55e9663a69935c73fc05e21585c72138dca0329c4eaabc5d423e908300a"
+    },
+    {
+      "state": "M-05/html",
+      "nodeId": "32:110046",
+      "sectionId": "32:109999",
+      "name": "M-05/html · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 18,
+      "fingerprint": "af2d48cfaefc492bfe816d8f9867925e92392ae39ca1b896794269b0e59115b2"
+    },
+    {
+      "state": "M-05/retrait",
+      "nodeId": "32:110092",
+      "sectionId": "32:109999",
+      "name": "M-05/retrait · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 18,
+      "fingerprint": "36ff96e46076464b9f9a193841b423c6f8197fb7da2157c102e4259eb66d847d"
+    },
+    {
+      "state": "M-05/sombre",
+      "nodeId": "32:110138",
+      "sectionId": "32:109999",
+      "name": "M-05/sombre · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 18,
+      "fingerprint": "0f64cb14d7bfd72a8f6688b0e93c284ac7fcfffaf7f134cd7ca7c00faa85fc37"
+    },
+    {
+      "state": "M-05/texte",
+      "nodeId": "32:110184",
+      "sectionId": "32:109999",
+      "name": "M-05/texte · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 18,
+      "fingerprint": "f8f7364d2b1e36115e3e1a0d56c9b9fd3168551fbe0178ff84a18ece14a0cc01"
+    },
+    {
+      "state": "P-01/court",
+      "nodeId": "32:110210",
+      "sectionId": "32:110209",
+      "name": "P-01/court · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1288,
+      "texts": 109,
+      "fingerprint": "85a92de09460ba2d151934d357c49dc703e789a86b33aa170ce104dc02edfea7"
+    },
+    {
+      "state": "P-01/incomplet",
+      "nodeId": "32:110464",
+      "sectionId": "32:110209",
+      "name": "P-01/incomplet · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 45,
+      "fingerprint": "b95a32fb866384a133bb4fe2d116d55a5726408a2f1ea6a6536d10c21e01b17e"
+    },
+    {
+      "state": "P-01/long",
+      "nodeId": "32:110591",
+      "sectionId": "32:110209",
+      "name": "P-01/long · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 4781,
+      "texts": 557,
+      "fingerprint": "99f7a17e9df7bdb205f610c75e8d9922705641aca2d64a49db0a691d62921566"
+    },
+    {
+      "state": "P-02/court",
+      "nodeId": "32:111899",
+      "sectionId": "32:111898",
+      "name": "P-02/court · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 82,
+      "fingerprint": "3edca476fb66febc1301b57c6e31c00e94fcb9fe9f853089837501871458b27c"
+    },
+    {
+      "state": "P-02/incomplet",
+      "nodeId": "32:112093",
+      "sectionId": "32:111898",
+      "name": "P-02/incomplet · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 36,
+      "fingerprint": "5a50b9df85e281b51a716c2fd4c7a2c859cc5fe2fe258a24c3c69301dab154a0"
+    },
+    {
+      "state": "P-02/long",
+      "nodeId": "32:112182",
+      "sectionId": "32:111898",
+      "name": "P-02/long · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 5620,
+      "texts": 698,
+      "fingerprint": "b1319c2e46299f7d5aa5a0838830334e28929117bdf631f9b3b4bb888aae0355"
+    },
+    {
+      "state": "P-03/court",
+      "nodeId": "32:113799",
+      "sectionId": "32:113798",
+      "name": "P-03/court · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 43,
+      "fingerprint": "8e7bddb8c3a64d8e0df1da70863c7b4c3e645487e3d8a66ac42da697c2f7b61b"
+    },
+    {
+      "state": "P-03/incomplet",
+      "nodeId": "32:113911",
+      "sectionId": "32:113798",
+      "name": "P-03/incomplet · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 1024,
+      "texts": 20,
+      "fingerprint": "f88e67485b797209353ec78be70e38c5d4ddda73102749c8942a04b0aa6c3eef"
+    },
+    {
+      "state": "P-03/long",
+      "nodeId": "32:113963",
+      "sectionId": "32:113798",
+      "name": "P-03/long · desktop1440 · à revoir",
+      "width": 1440,
+      "height": 2460,
+      "texts": 148,
+      "fingerprint": "7dd3bcbfa3f6a327aa0dd7ff29aaa38ba469dda8e77d0302156b4ed9f6d52792"
+    }
+  ],
+  "protectedPages": [
+    {
+      "id": "2:74",
+      "fingerprint": "53d8f99698e00268f4f8036778c58a0a08a23dec8be0f5f577091a9217537d08"
+    },
+    {
+      "id": "2:75",
+      "fingerprint": "24dd0f2ba34f058be063d5bb641b70a301d2eef57af091d538e52c6cfaaa091e"
+    }
+  ],
+  "pages": [
+    {
+      "id": "0:1",
+      "name": "Couverture"
+    },
+    {
+      "id": "15:2",
+      "name": "Étaye — Import HTML"
+    },
+    {
+      "id": "2:74",
+      "name": "Fondations"
+    },
+    {
+      "id": "2:75",
+      "name": "Composants"
+    }
+  ],
+  "topLevel": [
+    {
+      "id": "26:2",
+      "name": "Étaye · S-06 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:2",
+      "name": "Étaye · S-01 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:464",
+      "name": "Étaye · S-02 · import complet à revoir · 2026-11-17 · 1/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:941",
+      "name": "Étaye · S-02 · import complet à revoir · 2026-11-17 · 2/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:1006",
+      "name": "Étaye · S-03 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:1255",
+      "name": "Étaye · S-04 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:1554",
+      "name": "Étaye · S-05 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:1772",
+      "name": "Étaye · S-07 · import complet à revoir · 2026-11-17 · 1/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:3206",
+      "name": "Étaye · S-07 · import complet à revoir · 2026-11-17 · 2/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:3371",
+      "name": "Étaye · S-08 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:5936",
+      "name": "Étaye · S-09 · import complet à revoir · 2026-11-17 · 1/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:8643",
+      "name": "Étaye · S-09 · import complet à revoir · 2026-11-17 · 2/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:9750",
+      "name": "Étaye · S-10 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:11132",
+      "name": "Étaye · S-11 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:12173",
+      "name": "Étaye · S-12 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:14052",
+      "name": "Étaye · S-13 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:15818",
+      "name": "Étaye · S-14 · import complet à revoir · 2026-11-17 · 1/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:17616",
+      "name": "Étaye · S-14 · import complet à revoir · 2026-11-17 · 2/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:18012",
+      "name": "Étaye · S-15 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:18489",
+      "name": "Étaye · S-16 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:19828",
+      "name": "Étaye · S-17 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:21640",
+      "name": "Étaye · S-18 · import complet à revoir · 2026-11-17 · 1/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:24072",
+      "name": "Étaye · S-18 · import complet à revoir · 2026-11-17 · 2/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:25215",
+      "name": "Étaye · S-19 · import complet à revoir · 2026-11-17 · 1/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:27640",
+      "name": "Étaye · S-19 · import complet à revoir · 2026-11-17 · 2/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:29014",
+      "name": "Étaye · S-20 · import complet à revoir · 2026-11-17 · 1/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:31591",
+      "name": "Étaye · S-20 · import complet à revoir · 2026-11-17 · 2/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:32983",
+      "name": "Étaye · S-21 · import complet à revoir · 2026-11-17 · 1/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:35432",
+      "name": "Étaye · S-21 · import complet à revoir · 2026-11-17 · 2/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:36787",
+      "name": "Étaye · S-22 · import complet à revoir · 2026-11-17 · 1/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:39425",
+      "name": "Étaye · S-22 · import complet à revoir · 2026-11-17 · 2/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:40089",
+      "name": "Étaye · S-23 · import complet à revoir · 2026-11-17 · 1/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:42726",
+      "name": "Étaye · S-23 · import complet à revoir · 2026-11-17 · 2/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:43054",
+      "name": "Étaye · S-24 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "30:44609",
+      "name": "Étaye · S-25 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:46866",
+      "name": "Étaye · S-26 · import complet à revoir · 2026-11-17 · 1/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:47420",
+      "name": "Étaye · S-26 · import complet à revoir · 2026-11-17 · 2/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:47553",
+      "name": "Étaye · S-27 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:48452",
+      "name": "Étaye · S-28 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:48725",
+      "name": "Étaye · S-29 · import complet à revoir · 2026-11-17 · 1/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:49582",
+      "name": "Étaye · S-29 · import complet à revoir · 2026-11-17 · 2/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:49694",
+      "name": "Étaye · S-30 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:50114",
+      "name": "Étaye · S-31 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:52056",
+      "name": "Étaye · S-32 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:53644",
+      "name": "Étaye · S-33 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:54674",
+      "name": "Étaye · S-34 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:56348",
+      "name": "Étaye · S-35 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:57887",
+      "name": "Étaye · S-36 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:58303",
+      "name": "Étaye · S-37 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:59781",
+      "name": "Étaye · S-38 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:61335",
+      "name": "Étaye · S-39 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:63053",
+      "name": "Étaye · S-40 · import complet à revoir · 2026-11-17 · 1/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:65271",
+      "name": "Étaye · S-40 · import complet à revoir · 2026-11-17 · 2/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:66310",
+      "name": "Étaye · I-01 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:68612",
+      "name": "Étaye · I-02 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:70194",
+      "name": "Étaye · I-03 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:70401",
+      "name": "Étaye · I-04 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:70958",
+      "name": "Étaye · I-05 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:73258",
+      "name": "Étaye · I-06 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:75099",
+      "name": "Étaye · I-07 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:77447",
+      "name": "Étaye · I-08 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:78325",
+      "name": "Étaye · I-09 · import complet à revoir · 2026-11-17 · 1/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:80642",
+      "name": "Étaye · I-09 · import complet à revoir · 2026-11-17 · 2/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:81676",
+      "name": "Étaye · I-10 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:83303",
+      "name": "Étaye · I-11 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:84103",
+      "name": "Étaye · I-12 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:84595",
+      "name": "Étaye · I-13 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:85048",
+      "name": "Étaye · I-14 · import complet à revoir · 2026-11-17 · 1/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:87589",
+      "name": "Étaye · I-14 · import complet à revoir · 2026-11-17 · 2/2",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:88220",
+      "name": "Étaye · I-15 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:89657",
+      "name": "Étaye · I-16 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:91247",
+      "name": "Étaye · I-17 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:93336",
+      "name": "Étaye · I-18 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:94909",
+      "name": "Étaye · I-19 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:96325",
+      "name": "Étaye · I-20 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:96584",
+      "name": "Étaye · I-21 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:98063",
+      "name": "Étaye · I-22 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:98127",
+      "name": "Étaye · I-23 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:98916",
+      "name": "Étaye · I-24 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:99974",
+      "name": "Étaye · I-25 · import complet à revoir · 2026-11-17 · 1/4",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:102229",
+      "name": "Étaye · I-25 · import complet à revoir · 2026-11-17 · 2/4",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:104586",
+      "name": "Étaye · I-25 · import complet à revoir · 2026-11-17 · 3/4",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:106943",
+      "name": "Étaye · I-25 · import complet à revoir · 2026-11-17 · 4/4",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:108412",
+      "name": "Étaye · I-26 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:108500",
+      "name": "Étaye · I-27 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:109018",
+      "name": "Étaye · I-28 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:109416",
+      "name": "Étaye · M-01 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:109542",
+      "name": "Étaye · M-02 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:109662",
+      "name": "Étaye · M-03 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:109790",
+      "name": "Étaye · M-04 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:109999",
+      "name": "Étaye · M-05 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:110209",
+      "name": "Étaye · P-01 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:111898",
+      "name": "Étaye · P-02 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "32:113798",
+      "name": "Étaye · P-03 · import complet à revoir · 2026-11-17 · 1/1",
+      "type": "SECTION"
+    },
+    {
+      "id": "48:47",
+      "name": "liste actuelle de vos traitements reste à compléter.",
+      "type": "TEXT"
+    }
+  ],
+  "rawLocalEvidenceSha256": "e32edf9f4fc1fe49ad12555c4a59f27bc7c668e9d2772651c7e1f897ecd9d127"
+}
