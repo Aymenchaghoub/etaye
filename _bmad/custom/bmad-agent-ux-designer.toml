@@ -1,0 +1,8 @@
+# Étaye team override (committed): every run of this skill carries the design rules and the expected rendering.
+# Rationale and the list of overridden skills: docs/agent-setup.md.
+[agent]
+persistent_facts = [
+  "Before any visual decision, UI story or review, read docs/design/design-system.md: it holds the Étaye tokens, layout, component recipes and expected rendering. Figma is often unreadable (Starter quota), so never estimate a value or inherit a generic UI theme; use only the Étaye CSS custom properties and the .etaye-* recipes, in both themes, with French interface copy, synthetic data and the original logo files.",
+  "Do not scaffold or implement the application while [etaye] development_authorized in _bmad/custom/config.toml is false. Design approval is recorded per surface in docs/design/coverage.csv, and the named exception for working without Figma replaces only the exact Figma node requirement: it waives no review or approval.",
+  "docs/planning-artifacts/ux/DESIGN.md already exists and was aligned with docs/design/design-system.md: update it, never regenerate it or change an existing token value, and keep its draft status and user_approval until Aymen approves.",
+]

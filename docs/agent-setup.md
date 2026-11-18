@@ -22,6 +22,15 @@ Aymen requested a project-local installation for Claude Code and Codex from `mul
 
 Filesystem discovery paths were verified for both tools. Native discovery was not rerun for this addition; the earlier 30-skill observations below are dated evidence. The skill will be available on the next turn; open a fresh session if a running client retains its previous inventory. Project policy and the development authorization gate still apply.
 
+## Design context in BMAD workflows
+
+Aymen works with BMAD and Figma is often unreadable (Starter quota), so the workflows load the design rules and the expected rendering themselves. Team overrides in `_bmad/custom/` (committed, written with the `bmad-customize` procedure) append `persistent_facts` to:
+
+- the workflows `bmad-ux`, `bmad-build`, `bmad-build-auto`, `bmad-code-review`, `bmad-review`, `bmad-qa-generate-e2e-tests`, `bmad-create-epics-and-stories`, `bmad-sprint-planning` and `bmad-walkthrough`: the whole [design-system reference](design/design-system.md), a short rule summary and the development gate (`bmad-ux` also protects the existing DESIGN.md from regeneration);
+- the agents `bmad-agent-dev` and `bmad-agent-ux-designer`: the rule summary, the gate and an instruction to read the reference before any visual work, so the file is not loaded twice when an agent runs one of the workflows above.
+
+Other BMAD skills carry no design facts; read the reference when their work touches visuals. The gate sentence points to `[etaye] development_authorized` in `_bmad/custom/config.toml`, currently `false`; changing it is Aymen's decision. Verified on 2026-11-18 with `resolve_customization.py` for the eleven skills; `tools/test_bmad_design_context.py` checks the files. To cover another skill, use `bmad-customize` and copy the same entries; the test discovers every `_bmad/custom/bmad-*.toml`.
+
 ## Effective configuration
 
 `_bmad/custom/config.toml` pins Étaye/Aymen, French conversation, English documents, planning/implementation/project knowledge paths and the project test-artifact path. User-scope installer answers in ignored `_bmad/config.user.toml` do not by themselves configure a fresh clone; the committed team override makes required defaults portable. Personal customization belongs in ignored `*.user.toml`/settings.local.json, never in shared rules.

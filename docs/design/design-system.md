@@ -263,6 +263,8 @@ Change the sources first (Figma, then `tokens.css`, `resolved-tokens.json` or th
 
 **What still blocks development (verified 2026-11-18):** the explicit development authorization (not given); design approval (`coverage.csv`: 76 of 76 "Not approved"; `html-reception.csv`: 76 of 76 "No approval recorded"); and the design reviews of the coverage guide (desktop, tablet, mobile, A4 and functional). Figma access is not one of the blockers.
 
+**In BMAD.** Team overrides in `_bmad/custom/` load this file, a short rule summary and the development gate into the UX, build, review, test, story and sprint-planning workflows and into the dev and UX agents (list and verification in [agent-setup.md](../agent-setup.md)). The gate is `[etaye] development_authorized` in `_bmad/custom/config.toml`, currently `false`: while it is false the build workflows are told to refuse implementation.
+
 **Per-surface procedure, once development is authorized:**
 
 1. Read the surface's tracker row, its catalog entries, stories and the other required sources of [AGENTS.md](../../AGENTS.md).
