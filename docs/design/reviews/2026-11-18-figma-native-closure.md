@@ -1,5 +1,13 @@
 # Native import closure — 2026-11-18
 
+## Latest handoff
+
+Aymen saved the pending native download. The [current observation](2026-11-18-native-closure-before.json) verifies all 456 unique root IDs, 94 sections and 28,001 editable text nodes, with protected-page fingerprints and ten native export hashes. Its complete raw inventory and PNG data remain in local `winfig/closure/before.json`, pinned by SHA-256 in the committed observation. No visual correction has been applied yet.
+
+Aymen recreated `.agents/skills` from an administrator shell with Python `os.symlink('../.claude/skills', '.agents/skills', target_is_directory=True)`. The exact relative link and its resolved `.claude/skills` destination are verified. `python tools/validate_docs.py` now passes on Windows with no errors; the validator remains unchanged in scope. PowerShell 5.1 had interpreted the earlier New-Item target relative to the working directory, explaining the failed repair. No shared skill content was removed. Missing-link and pending-download statements below are historical and resolved.
+
+[Planning package checks](https://github.com/Aymenchaghoub/etaye/actions/runs/44277399949) and [CodeQL](https://github.com/Aymenchaghoub/etaye/actions/runs/44277400072) passed on `d589fb581b58e81f7d484766ca13ca8aa9f2f22e`. The final native Gitleaks scan covered 26 commits without findings. Computer Use then reported a physical Escape stop; no further UI input was issued in that turn. Aymen requested preserving the PR trace and returning to computer mode afterward. PR19 remains a draft until the documented native visual corrections and their export comparisons are complete. Application development remains unauthorized.
+
 Status: integration and Windows tooling verified; targeted visual corrections still pending. This report supersedes the earlier native-run report's access and delivery statements. It does not supersede its dated import/cleanup evidence.
 
 Delivery: [PR19](https://github.com/Aymenchaghoub/etaye/pull/19), branch `docs/figma-native-closure`, is pushed as a **draft**. It is not ready for completed visual-closure review. GitHub Planning package checks passed on `b3511e1`; the final follow-up head must be checked independently. CodeRabbit explicitly skipped review because the PR is a draft; no independent review is claimed.

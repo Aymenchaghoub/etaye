@@ -1,10 +1,10 @@
 {
   "kind": "documentary-validation-only",
-  "date": "2026-11-17",
+  "date": "2026-11-18",
   "ok": true,
   "checks": {
-    "markdownFiles": 89,
-    "localLinks": 1034,
+    "markdownFiles": 91,
+    "localLinks": 1057,
     "apiOperations": 96,
     "apiSchemas": 87,
     "planningStories": 45,
@@ -15,9 +15,9 @@
     "screenInteractionMappings": 28,
     "syntheticObjects": 66,
     "verifiedFigmaExports": 15,
-    "projectFilesSecretScanned": 137
+    "projectFilesSecretScanned": 142
   },
   "errors": [],
   "applicationTestsExecuted": false,
-  "independentReview": "Authoring subagents stopped at usage limit; final checks performed by coordinator"
+  "independentReview": "Automated documentary checks; not independent design approval"
 }

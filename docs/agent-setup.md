@@ -60,6 +60,8 @@ These documentary commands were run; results are recorded in review-report.md. `
 
 ## Windows checkout integrity
 
+Resolved later on 2026-11-18: Aymen created the exact relative link using Python `os.symlink('../.claude/skills', '.agents/skills', target_is_directory=True)` in an administrator PowerShell. Its target and resolved source were verified, and the documentary validator passed on Windows. PowerShell 5.1 resolves the earlier New-Item relative target against the current working directory; use the Python form to preserve the Git link bytes. The failed repair below is historical.
+
 Original Figma SVG exports are byte-exact provenance inputs. `.gitattributes` marks `docs/design/figma/assets/*.svg` as `-text`; do not change manifest hashes to accept checkout conversion. On 2026-11-18, all eight restored working files matched both their Git blobs and the manifest SHA-256 values. The local checkout uses `core.autocrlf=input`.
 
 Git must materialize `.agents/skills` as the existing symbolic link to `../.claude/skills`, rather than an ordinary text file. Set `git config --local core.symlinks true` when Windows grants symbolic-link creation. This session received WinError 1314 even outside the sandbox; the exact repair was requested from Aymen in an administrator PowerShell. The validator retains its real resolved-link check.

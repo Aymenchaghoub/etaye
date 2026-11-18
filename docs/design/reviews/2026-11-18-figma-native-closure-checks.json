@@ -22,10 +22,10 @@
   "documentaryValidation": {
     "kind": "documentary-validation-only",
     "date": "2026-11-18",
-    "ok": false,
+    "ok": true,
     "checks": {
       "markdownFiles": 91,
-      "localLinks": 1055,
+      "localLinks": 1057,
       "apiOperations": 96,
       "apiSchemas": 87,
       "planningStories": 45,
@@ -36,11 +36,9 @@
       "screenInteractionMappings": 28,
       "syntheticObjects": 66,
       "verifiedFigmaExports": 15,
-      "projectFilesSecretScanned": 141
+      "projectFilesSecretScanned": 142
     },
-    "errors": [
-      "Shared skills discovery link broken"
-    ],
+    "errors": [],
     "applicationTestsExecuted": false,
     "independentReview": "Automated documentary checks; not independent design approval"
   },
@@ -58,7 +56,7 @@
   },
   "historySecretScan": {
     "tool": "Gitleaks 8.30.1 Windows x64",
-    "commitsScanned": 25,
+    "commitsScanned": 26,
     "findings": 0,
     "archiveSha256": "d29144deff3a68aa93ced33dddf84b7fdc26070add4aa0f4513094c8332afc4e"
   },
@@ -66,5 +64,16 @@
     "pullRequest": "https://github.com/Aymenchaghoub/etaye/pull/19",
     "draft": true,
     "reviewReady": false
-  }
+  },
+  "sharedSkillsLink": {
+    "target": "../.claude/skills",
+    "resolvedSourceVerified": true
+  },
+  "nativeObservationReceived": true,
+  "githubChecks": {
+    "sourceCommit": "d589fb581b58e81f7d484766ca13ca8aa9f2f22e",
+    "documentation": "passed",
+    "codeql": "passed"
+  },
+  "computerUse": "Stopped by physical Escape; user requested resumption after preserving PR trace"
 }
