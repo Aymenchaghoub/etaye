@@ -1,6 +1,6 @@
 # Background direction study — paper texture with a blueprint touch
 
-Status: **Proposal. On 2026-11-17 Aymen accepted the recommended working direction (variant B with calm zones) and on 2026-11-18 chose its paper tone (dark base `--fond`, section 3.1); this is not a design approval.** Nothing here changes [DESIGN](../../planning-artifacts/ux/DESIGN.md), the [token reference](../token-reference.md), the [coverage tracker](../coverage.csv) or any Figma node. No application code exists or is authorized. All people and data in the examples are the fictional ones of the [synthetic dataset](../synthetic-data.md).
+Status: **Proposal. On 2026-11-17 Aymen accepted the recommended working direction (variant B with calm zones) and on 2026-11-18 chose its paper tone (dark base `--fond`, section 3.1) and confirmed variant B definitively after viewing the captures; this is not a design approval.** Nothing here changes [DESIGN](../../planning-artifacts/ux/DESIGN.md), the [token reference](../token-reference.md), the [coverage tracker](../coverage.csv) or any Figma node. No application code exists or is authorized. All people and data in the examples are the fictional ones of the [synthetic dataset](../synthetic-data.md).
 
 Evidence labels: **User decision**, **Verified observation**, **Proposal**, **[ASSUMPTION]**, **To verify**.
 
@@ -242,7 +242,7 @@ Query options: `v=a|b`, `t=clair|sombre`, `grain=0.12`, `tick=0.32`, `calm=off`,
 **User decision (2026-11-17):** "je prends tes recommandations sur les points ouverts". Only the first item had been recommended explicitly before; the others were formulated at that moment and are applied provisionally, each reversible.
 
 1. **Grain:** option 2, strong grain in open areas and calm plates behind text and controls (this document). The flat fallback stays documented.
-2. **Variant:** **B** (paper + blueprint touch), the variant Aymen's screenshot showed; A remains one attribute away (`data-blueprint="off"`).
+2. **Variant: B (User decision, confirmed definitively on 2026-11-18)** (paper + blueprint touch), after Aymen viewed the adopted-tone captures in light and dark (desktop 1440×1024 and the contact sheet of every viewport) and answered "oui je confirme". It had been applied provisionally on 2026-11-17 because his screenshot showed it. A remains one attribute away (`data-blueprint="off"`).
 3. **Scope:** the allow and deny lists of section 4.
 4. **Tablet:** both 768×1024 (as requested) and 1024×768 (screen catalog) are measured here; Figma frames, when built, should use 768 as requested and 1024×768 for the catalog review.
 

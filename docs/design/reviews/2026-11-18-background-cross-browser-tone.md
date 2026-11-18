@@ -8,6 +8,8 @@ Date: 2026-11-18. Author: Claude (Claude Code session). Status: **proposal evide
 
 **User decision (2026-11-18, after the measurements):** "je prends neutral-dark, commite et ouvre la PR". Recorded as: the dark theme starts its grain from `--fond`, the light theme keeps `--papier`; commit and open the PR (not merge).
 
+**User decision (2026-11-18, PR 20 open):** Aymen asked to see variant B in captures "juste pour la valider définitivement", I opened the desktop light and dark captures and the all-viewport contact sheet of the adopted tone, and he answered "oui je confirme": **variant B (paper + blueprint touch) is confirmed definitively.** This confirms the variant only; it is not a design approval.
+
 **Verified observation:** before this round the only evidence was Chromium 156 at display scale 1, and the 12 % grain left the open areas 2.5 to 3.3 L\* away from the `papier` token, which stretched the original "no color shift" brief.
 
 ## 2. What changed
@@ -81,7 +83,7 @@ The three engines give the same layout and all checks pass at display scale 1 an
 Effects on this study: the guarded cleanup listed as pending in earlier notes is reported done there (not verified by me); any Phase 2 work on S-01, S-02 and S-25 must leave the 456 imported roots and the protected pages intact and go on new exploration frames; and item 3 should build on that state.
 
 - **Item 3, to discuss:** preparing offline the Figma scripts and call plan for when MCP access returns and the REST limit ends (about 2026-11-22). Nothing was run against Figma in this round.
-- Still open from before: whether the other provisional choices (variant B, scope, both tablets) stand.
+- Still open from before: whether the other provisional choices (the allow and deny scope list, both tablets) stand. Variant B is confirmed.
 - Access unchanged: no plan change was made. The explicit development authorization has **not** been given and all planning stories stay in backlog.
 
 ## 7. Next actions
