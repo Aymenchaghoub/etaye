@@ -1,5 +1,7 @@
 # Étaye — resume the native import on Windows
 
+**2026-11-18 execution update:** the existing file now contains all 456 verified desktop states. Authorized old trials have been cleaned, and a named final version is saved. Read the [native Windows run report](../reviews/2026-11-17-windows-native-run.md) for the current node IDs, visual findings and delivery limits. The dated preparation instructions below retain the original handoff context. Use the current checkout’s importer files for future verification. The immutable release packets keep their original hashes.
+
 This handoff targets **Windows with Figma Desktop already installed**, as Aymen confirmed. It prepares the next client; it does not claim that the native Windows plugin has already run.
 
 ## Current state

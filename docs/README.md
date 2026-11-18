@@ -30,7 +30,7 @@ Status: Planning package ready for complete design work. Documents are reviewed 
 | Received and corrected HTML design | [Codex corrections/evidence](design/reviews/2026-11-03-corrections.md), [original reception](design/reviews/2026-11-03-reception.md), [decisions](design/reviews/2026-11-03-decisions.md), [separate HTML tracker](design/html-reception.csv), [preserved sources](../design/received/2026-11-03/README.md), [reconstruction/verification](../design/corrections/README.md) |
 | Free local editable Figma import | [Plugin/export guide](../design/figma-local-import/README.md); native execution and synchronized review pending |
 | Isolated native MCP import test | [2026-11-17 pilot](design/reviews/2026-11-17-figma-mcp-import.md); one editable S-06/nora state, fidelity reconciliation pending |
-| Windows Figma Desktop continuation | [Ready kit and Windows steps](design/windows-handoff/START-HERE.md), [current native import report](design/reviews/2026-11-17-windows-handoff.md), [queue plugin](../design/figma-windows-import/README.md); 8/456 imported, remaining import and native Windows execution pending |
+| Windows Figma Desktop import | [Native run](design/reviews/2026-11-17-windows-native-run.md), [closure](design/reviews/2026-11-18-figma-native-closure.md), [queue plugin](../design/figma-windows-import/README.md); 456 desktop states imported, targeted visual corrections and approval pending |
 | End-to-end mapping | [Traceability](traceability.md), [review](review-report.md), [documentary validation](test-artifacts/document-validation.json) |
 | Agent installation and policy | [Setup/troubleshooting](agent-setup.md), [workflow execution record](workflow-record.md), [AGENTS](../AGENTS.md), [CLAUDE](../CLAUDE.md) |
 

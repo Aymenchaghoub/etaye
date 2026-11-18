@@ -1,0 +1,53 @@
+{
+  "kind": "native-closure-tooling-checks",
+  "date": "2026-11-18",
+  "pythonToolingTests": {
+    "executed": 15,
+    "passed": 15
+  },
+  "windowsImporterFixtures": {
+    "executed": 25,
+    "passed": 25
+  },
+  "legacyImporterFixtures": {
+    "executed": 4,
+    "passed": 4
+  },
+  "javascriptSyntax": "passed",
+  "ruff": "passed",
+  "openapi": "passed",
+  "architectureLint": "passed",
+  "workflowPolicy": "passed",
+  "gitDiffCheck": "passed",
+  "documentaryValidation": {
+    "kind": "documentary-validation-only",
+    "date": "2026-11-18",
+    "ok": false,
+    "checks": {
+      "markdownFiles": 91,
+      "localLinks": 1055,
+      "apiOperations": 96,
+      "apiSchemas": 87,
+      "planningStories": 45,
+      "roadmapStories": 45,
+      "requiredDesignFamilies": 76,
+      "roadmapSurfaces": 76,
+      "roadmapOperations": 101,
+      "screenInteractionMappings": 28,
+      "syntheticObjects": 66,
+      "verifiedFigmaExports": 15,
+      "projectFilesSecretScanned": 140
+    },
+    "errors": [
+      "Shared skills discovery link broken"
+    ],
+    "applicationTestsExecuted": false,
+    "independentReview": "Automated documentary checks; not independent design approval"
+  },
+  "negativeControls": {
+    "tamperedOriginalSvgRejected": true
+  },
+  "applicationTestsExecuted": false,
+  "visualCorrectionsApplied": false,
+  "aymenApproval": false
+}
