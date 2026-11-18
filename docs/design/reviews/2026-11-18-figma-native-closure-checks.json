@@ -63,9 +63,20 @@
   },
   "historySecretScan": {
     "tool": "Gitleaks 8.30.1 Windows x64",
-    "commitsScanned": 26,
+    "commitsScanned": 32,
     "findings": 0,
-    "archiveSha256": "d29144deff3a68aa93ced33dddf84b7fdc26070add4aa0f4513094c8332afc4e"
+    "archiveSha256": "d29144deff3a68aa93ced33dddf84b7fdc26070add4aa0f4513094c8332afc4e",
+    "scope": "all local and fetched remote refs",
+    "sourceHead": "67cd141cc994969131e52c7334d47ece891c9a4a",
+    "closureHeadHistoryCommits": 21,
+    "closureHeadFindings": 0,
+    "verifiedMetadataExceptions": {
+      "sourceCommit": "c0ae5019e2f6e9f79a6601ea5c9e948720614c09",
+      "publicFigmaIdentifierMatches": 3,
+      "tokensCssDigestMatches": 1,
+      "tokensCssSha256": "792cad4362d5f2a9c8bf43eabbb73676a1ade40743f3ad6e5a51089abe7d2bde",
+      "remoteBranchPreserved": "origin/docs/figma-background-kit"
+    }
   },
   "delivery": {
     "pullRequest": "https://github.com/Aymenchaghoub/etaye/pull/19",
