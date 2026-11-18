@@ -63,11 +63,11 @@
   },
   "historySecretScan": {
     "tool": "Gitleaks 8.30.1 Windows x64",
-    "commitsScanned": 33,
+    "commitsScanned": 34,
     "findings": 0,
     "archiveSha256": "d29144deff3a68aa93ced33dddf84b7fdc26070add4aa0f4513094c8332afc4e",
     "scope": "all local and fetched remote refs",
-    "sourceHead": "876252297632d791cf171a7bc35aec2c0669825e",
+    "sourceHead": "e6aa187f9d7d35994335a32a7f0000bd74a1b4d9",
     "closureHeadHistoryCommits": 21,
     "closureHeadFindings": 0,
     "verifiedMetadataExceptions": {
@@ -89,10 +89,20 @@
   },
   "nativeObservationReceived": true,
   "githubChecks": {
-    "sourceCommit": "876252297632d791cf171a7bc35aec2c0669825e",
-    "documentation": "failed on verified tokens.css digest repeated in this record; exact-value/path allowlist corrected",
-    "run": "https://github.com/Aymenchaghoub/etaye/actions/runs/44332755355",
-    "finalHeadMustBeRechecked": true
+    "sourceCommit": "e6aa187f9d7d35994335a32a7f0000bd74a1b4d9",
+    "documentation": "passed",
+    "documentationRun": "https://github.com/Aymenchaghoub/etaye/actions/runs/44333186862",
+    "codeql": "passed",
+    "codeqlRun": "https://github.com/Aymenchaghoub/etaye/actions/runs/44333187268",
+    "scope": "Verified source/tooling head before this documentation-only result record; final head verification is linked in PR19 body",
+    "previousFailures": [
+      {
+        "sourceCommit": "876252297632d791cf171a7bc35aec2c0669825e",
+        "run": "https://github.com/Aymenchaghoub/etaye/actions/runs/44332755355",
+        "reason": "Verified original tokens.css SHA-256 repeated in this check record triggered the generic-api-key rule",
+        "resolution": "Exact verified digest and exact metadata paths only; credential rules retained"
+      }
+    ]
   },
   "computerUse": "Native corrections, exports, final version saving and downloads completed; plugin closed after evidence recovery",
   "nativeCorrectionFixtures": {

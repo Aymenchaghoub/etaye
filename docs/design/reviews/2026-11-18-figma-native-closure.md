@@ -2,7 +2,7 @@
 
 Status: desktop import and the documented targeted corrections are complete and evidenced. This is design/proof/tooling work. Aymen's design approval and explicit application-development authorization remain pending.
 
-Delivery: [PR19](https://github.com/Aymenchaghoub/etaye/pull/19), branch `docs/figma-native-closure`, targets `main`. The PR retains the import run, Windows repairs, guarded correction tooling and final native evidence. Read the exact current GitHub head/checks independently from the dated local verification below.
+Delivery: [PR19](https://github.com/Aymenchaghoub/etaye/pull/19), branch `docs/figma-native-closure`, is pushed and ready for human review against `main`. The PR retains the import run, Windows repairs, guarded correction tooling and final native evidence. Read the exact current GitHub head/checks independently from the dated local verification below.
 
 ## Actual final Figma state
 
@@ -48,6 +48,10 @@ Git/gh authentication as Aymenchaghoub, repository ADMIN rights, remote reads an
 Actual checks are recorded in the [check record](2026-11-18-figma-native-closure-checks.json): 19 Python tooling tests, 25 Windows importer fixtures, four legacy importer fixtures and nine native-correction fixtures pass with nonzero assertions. JavaScript syntax, Ruff E9/F, documentary OpenAPI, architecture lint, workflow policy, `python tools/validate_docs.py` and `git diff --check` pass. The validator covers 45 backlog stories, 96 operations, 87 schemas and 76 design families. No application tests ran.
 
 Windows Gitleaks 8.30.1 uses the verified official archive digest `d29144deff3a68aa93ced33dddf84b7fdc26070add4aa0f4513094c8332afc4e`; its final redacted committed-history result is recorded separately from documentary fixture scanning. Existing default-branch Dependabot alert 54 (SoupSieve 3.0.4, high severity, fix 4.0.0) was observed before this closure and remains outside this change.
+
+The all-ref scan also inspected the preserved background-study branch. Three matches are the established public Figma file ID; the fourth is a source `tokens.css` SHA-256, verified against that branch's original Git blob. Narrow exact-value/path exceptions cover that metadata and its repetition in the check record. No credential rule or validator requirement was disabled. The first new CI run rejected the repeated digest before that last exception was added; its actual failure and later outcomes are retained in the check record.
+
+Copilot could not review because the requester quota was exhausted, CodeRabbit skipped automatic review for this repository, and Qodo reported paused reviews. No inline review findings were returned. No independent review, subscription change or design approval is claimed; the PR is ready for human review.
 
 ## Open design gates
 

@@ -2,6 +2,8 @@
 
 This local development plugin continues the corrected desktop import in the original Étaye file. It is design tooling only. It uses prepared native JSON, the exact local fonts and embedded PNG bytes; it needs no token, account-wide MCP call, network access, Node installation or Linux path on the destination PC. Native Windows execution, all 456 desktop states and authorized cleanup were verified on 2026-11-18. The [run report](../../docs/design/reviews/2026-11-17-windows-native-run.md) records the final version and remaining visual findings.
 
+The [subsequent closure](../../docs/design/reviews/2026-11-18-figma-native-closure.md) corrects the targeted findings in 52 existing states and records their final native evidence. Those intentional later edits retain the original immutable import fingerprints. Do not rerun the queue over the delivered final file or reset its fingerprints to bypass drift refusal; inspect the current closure observation before further design work.
+
 The plugin is separate from the older [local importer](../figma-local-import/README.md). Its renderer follows the corrected native scene renderer exercised on 2026-11-17, including text decoration and color, SVG paths, measured coordinates, borders, shadows and zero-blur outline correction. Asymmetric dashed/dotted edges use editable rectangular segments with explicit gaps and bounded edge geometry. Text remains native editable text; SVG content becomes native vectors. Only discrete synthetic PDF preview content uses image fills. It does not create reusable components, token bindings, responsive designs or prototype navigation; source link targets are recorded in evidence.
 
 ## Run on Windows
