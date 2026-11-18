@@ -7,6 +7,7 @@ user_approval: not-approved
 sources:
   - ../../design/figma/file-snapshot.json
   - ../../design/token-reference.md
+  - ../../design/design-system.md
 colors:
   surface-fond: '#efeeea'
   surface-surface: '#ffffff'
@@ -156,21 +157,25 @@ components:
 
 Étaye is calm, attentive and rigorous. Its material is the dated note: chronology, annotation and identifiable evidence. The signature is the original insertion/reference sign paired with a source number. Meaningful content carries detail; navigation and framing stay quiet. Existing Figma foundations and original logo are retained. This spine captures the user-supplied direction; it is not approval of new screens. Where a future mock conflicts, reconcile its behavior against EXPERIENCE.md and its existing token values against the verified source, recording any intentional change.
 
+# Working without Figma
+
+Figma access is limited (Starter plan, View seat: the MCP quota reads "Out of calls" and REST tier-1 reads are rate-limited), and Aymen expects to work without it (User statement, 2026-11-18). The [offline design-system reference](../../design/design-system.md) is therefore the working source for rendering: it restates the verified Figma values (tables generated and checked against the resolved Figma properties), the received HTML component recipes and the layout rules. Values owned by verified Figma evidence stay as recorded (version `2417265104370398313` of 2026-11-02 and the corrected state of 2026-11-18). Values that exist only in the received export (stroke widths, touch targets, motion, floating shadow, shell and component dimensions) are working values, a Proposal until Aymen approves them. A deliberate change is recorded with its date and reason, and Figma is reconciled when access returns. No value is estimated or taken from a generic theme.
+
 # Colors
 
-The frontmatter maps existing French Figma role names to flat machine-readable keys; [token reference](../../design/token-reference.md) owns node evidence. Use `{colors.surface-fond}` for quiet framing, `{colors.surface-surface}` for work areas and `{colors.surface-papier}` for reading. Accent is restrained and meaningful. Clinical warning/critical colors cannot imply a computed risk category. Missing and contradictory data need explicit language. Contrast must be measured on actual rendered pairs, including dark mode, focus and disabled/read-only distinctions.
+The frontmatter maps existing French Figma role names to flat machine-readable keys; [token reference](../../design/token-reference.md) owns node evidence. Use `{colors.surface-fond}` for quiet framing, `{colors.surface-surface}` for work areas and `{colors.surface-papier}` for reading. Accent is restrained and meaningful. Clinical warning/critical colors cannot imply a computed risk category. Missing and contradictory data need explicit language. Contrast must be measured on actual rendered pairs, including dark mode, focus and disabled/read-only distinctions. Exact values for both themes, with their uses, are in the [design system reference](../../design/design-system.md).
 
 # Typography
 
-Use Atkinson Hyperlegible Next for the workspace and patient portal, Mono for comparable measurements and source numbers, Source Serif 4 for reading/report hierarchy. Preserve exact role values in the frontmatter. Use French locale formatting, nonbreaking spacing around units where appropriate, tabular alignment for comparable figures and complete dates in source panels. Dense professional labels must remain legible; patient body/action roles are larger. Print sizes are specified separately rather than copying CSS pixels to A4 blindly.
+Use Atkinson Hyperlegible Next for the workspace and patient portal, Mono for comparable measurements and source numbers, Source Serif 4 for reading/report hierarchy. Preserve exact role values in the frontmatter. Use French locale formatting, nonbreaking spacing around units where appropriate, tabular alignment for comparable figures and complete dates in source panels. Dense professional labels must remain legible; patient body/action roles are larger. Print sizes are specified separately rather than copying CSS pixels to A4 blindly. The exact role table is generated and checked in the [design system reference](../../design/design-system.md).
 
 # Layout & Spacing
 
-Use the verified 4px-based scale. [ASSUMPTION] Professional desktop uses a persistent practice/identity header, compact navigation, chronology/content region and an optional source pane. Tablet rearranges the pane sequentially; mobile is a focused single-column task view, not a shrunken three-column desktop. The patient portal starts from a simple home, appointments, preparation and published information. At 1440×1024, 1024×768, 390×844 and 320 CSS px reflow, preserve identity, date, source and action hierarchy. Avoid repetitive cards when a chronology, list or table expresses relationships more clearly.
+Use the verified 4px-based scale. Professional desktop uses a persistent practice/identity header, compact navigation, chronology/content region and an optional source pane (originally an [ASSUMPTION]); the received reference implements this shell (56 px top bar, 248 px navigation, up to three columns) with its responsive breakpoints, recorded in the [design system reference](../../design/design-system.md) as a Proposal, not approved. Tablet rearranges the pane sequentially; mobile is a focused single-column task view, not a shrunken three-column desktop. The patient portal starts from a simple home, appointments, preparation and published information. At 1440×1024, 1024×768, 390×844 and 320 CSS px reflow, preserve identity, date, source and action hierarchy. Avoid repetitive cards when a chronology, list or table expresses relationships more clearly.
 
 # Elevation & Depth
 
-Prefer surfaces and meaningful dividers. Existing effect style `2:73` names floating menus/source previews; full effect values are not established by style metadata alone. Claude must inspect it before applying exact shadows. No decorative glows or gradients. Use overlays only for bounded work; source context remains readable without obscuring the originating statement.
+Prefer surfaces and meaningful dividers. Existing effect style `2:73` names floating menus/source previews; its values were never read from Figma. Inspect it first when Figma is readable; otherwise use the working value `--ombre-flottant` of the received tokens (light and dark, in the [design system reference](../../design/design-system.md)), labelled as not read from Figma. No decorative glows or gradients. Use overlays only for bounded work; source context remains readable without obscuring the originating statement.
 
 # Shapes
 
@@ -180,7 +185,7 @@ Existing radii are 0/4/8/12px. Preserve small control/document corners and reser
 
 Existing: logos/signs/icons, button set 5:22, status set 5:46, marker 5:47. Required completion: navigation/practice selector; field/textarea/select/checkbox; date/time/calendar; paginated table and search filters; chronology event; assertion/provenance row; measurement/lab table and accessible trend; source drawer/viewer; task status; version comparison; review checklist; publication audience preview; upload/quarantine panel; toast/banner; dialog/drawer; empty/error/forbidden/session states; print/email blocks.
 
-Each requires interactive, focus, disabled, read-only, loading, error, restricted and long-content variants as relevant. Distinct status components represent processing, review, freshness and publication. Existing sample status labels must be completed deliberately. Button meanings include saving notes, validating a version and publishing to a named patient; never collapse these to a vague “Confirm”. Use one consistent icon family [ASSUMPTION: Lucide candidate], accessible names and text for consequential actions. Exact future component dimensions are design work, not invented verified tokens.
+Each requires interactive, focus, disabled, read-only, loading, error, restricted and long-content variants as relevant. Distinct status components represent processing, review, freshness and publication. Existing sample status labels must be completed deliberately. Button meanings include saving notes, validating a version and publishing to a named patient; never collapse these to a vague “Confirm”. Use one consistent icon family [ASSUMPTION: Lucide candidate], accessible names and text for consequential actions. Exact future component dimensions are design work, not invented verified tokens. The received HTML reference supplies recipes for most of the required components, built only from tokens ([design system reference](../../design/design-system.md), section 6.2): working references (Proposal, not approved), so using them invents no token. Figma component sets exist only for button, status and marker. Where no recipe exists, record a design gap.
 
 Charts retain axis/unit/date context, missing periods and original measurements. No unsupported score gauge. Timelines group events by meaningful date without losing source type or correction lineage. Source reference numbers work in text and A4; keyboard focus and selected statement/source relationship must remain visible.
 
