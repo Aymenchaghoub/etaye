@@ -10,6 +10,9 @@ The worst pixel under each element is compared with the element's real colour (W
 Usage (from anywhere, Chromium and Pillow/NumPy required):
     python3 measure.py --out DIR --json results/contrast.json
     python3 measure.py --sweep --out DIR              # calm-plate opacity sensitivity only
+    python3 measure.py --out DIR --engine firefox --dsf 2 --variants b   # other engine / pixel ratio
+    python3 measure.py --out DIR --zoom 2 --viewports desktop,tablet     # 200 % browser zoom
+Other engines and settings are driven by engines.py; crossbrowser.py runs the whole matrix.
 
 This script measures a design proposal rendered from static HTML. It is not an application
 test and no clinical, accessibility-audit or compliance claim follows from it.
@@ -22,20 +25,20 @@ import json
 import math
 import re
 import socket
-import subprocess
 import threading
 from functools import partial
-from urllib.parse import quote
 from pathlib import Path
 
 import numpy as np
 from PIL import Image
 
+import engines
+
 ROOT = Path(__file__).resolve().parents[3]
-FRAME = "docs/design/background-study/frame.html"
-MIN_WINDOW = 500  # headless Chromium refuses narrower windows
-CHROMIUM = "chromium-browser"
 VIEWPORTS = {"desktop": (1440, 1024), "tablet": (768, 1024), "tablet-landscape": (1024, 768), "mobile": (390, 844)}
+# Window sizes in device-independent px. With a browser zoom the page sees window / zoom (CSS viewport).
+# Extra viewports are never part of the default run; crossbrowser.py asks for them by name.
+EXTRA_VIEWPORTS = {"narrow-320": (320, 568)}  # smallest CSS width of WCAG 2.2 reflow (1.4.10)
 THEMES = {"light": "clair", "dark": "sombre"}
 TOKENS_CSS = ROOT / "design/received/2026-11-03/export/etaye-design-system/tokens/tokens.css"
 # Blueprint geometry (CSS px), kept in sync with background.css / study.html.
@@ -56,42 +59,6 @@ def serve() -> tuple[http.server.ThreadingHTTPServer, int]:
 class _Quiet(http.server.SimpleHTTPRequestHandler):
     def log_message(self, *args):  # noqa: D401 - silence request logging
         pass
-
-
-def chromium(args: list[str]) -> str:
-    base = [CHROMIUM, "--headless=new", "--disable-gpu", "--hide-scrollbars",
-            "--force-device-scale-factor=1", "--virtual-time-budget=4000"]
-    return subprocess.run(base + args, capture_output=True, text=True, check=True).stdout
-
-
-def page_url(port: int, variant: str, theme: str, width: int, height: int, extra: str = "") -> str:
-    """URL of frame.html, which hosts the study in an iframe of exactly width x height CSS px."""
-    query = quote(f"v={variant}&t={THEMES[theme]}{extra}")
-    return f"http://127.0.0.1:{port}/{FRAME}?w={width}&h={height}&q={query}"
-
-
-def read_layout(port: int, variant: str, theme: str, width: int, height: int) -> dict:
-    """Layout facts measured inside the iframe, at a viewport of exactly width x height CSS px."""
-    win = [f"--window-size={max(width, MIN_WINDOW)},{height}", "--dump-dom"]
-    out = chromium(win + [page_url(port, variant, theme, width, height)])
-    found = re.search(r'<script type="application/json" id="measure-data">(.*?)</script>', out, re.S)
-    if not found:
-        raise RuntimeError("layout data missing: the page did not finish loading")
-    data = json.loads(found.group(1))
-    if (data["vw"], data["vh"]) != (width, height):
-        raise RuntimeError(f"viewport is {data['vw']}x{data['vh']}, expected {width}x{height}")
-    return data
-
-
-def shoot(port: int, variant: str, theme: str, width: int, height: int, path: Path, extra: str = "") -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    chromium([f"--window-size={max(width, MIN_WINDOW)},{height}", f"--screenshot={path}",
-              page_url(port, variant, theme, width, height, extra)])
-    img = Image.open(path)
-    if img.size[1] != height or img.size[0] < width:
-        raise RuntimeError(f"{path.name}: expected at least {(width, height)}, got {img.size}")
-    if img.size[0] != width:
-        img.crop((0, 0, width, height)).save(path)  # window wider than the iframe: keep the iframe only
 
 
 def srgb_to_linear(c: np.ndarray) -> np.ndarray:
@@ -162,24 +129,46 @@ def overlaps(a: tuple, b: tuple) -> bool:
     return a[0] < b[2] and b[0] < a[2] and a[1] < b[3] and b[1] < a[3]
 
 
-def measure_config(port: int, variant: str, theme: str, vp: str, out: Path, extra: str = "",
-                   keep_png: bool = True) -> dict:
-    vw, vh = VIEWPORTS[vp]
-    first = read_layout(port, variant, theme, vw, vh)
-    height = max(vh, first["pageH"])
-    layout = read_layout(port, variant, theme, vw, height) if height != vh else first
-    name = f"{variant.upper()}-{vp}-{theme}"
+def measure_config(eng: engines.Engine, variant: str, theme: str, vp: str, out: Path, extra: str = "",
+                   keep_png: bool = True, keep_bg: bool = True, dsf: float = 1, zoom: float = 1,
+                   tag: str = "") -> dict:
+    """Render one configuration and measure it. Layout facts are in CSS px; every pixel index is
+    CSS px x S, where S = dsf x zoom is the number of device pixels per CSS px."""
+    ww, wh = {**VIEWPORTS, **EXTRA_VIEWPORTS}[vp]  # window, device-independent px
+    cw, ch = round(ww / zoom), round(wh / zoom)  # CSS viewport the page sees
+    S = dsf * zoom
+    q = f"v={variant}&t={THEMES[theme]}{extra}"
+
+    def facts(h: int) -> dict:
+        data = eng.layout(q, cw, h, dsf, zoom)
+        if (data["vw"], data["vh"]) != (cw, h):
+            raise RuntimeError(f"viewport is {data['vw']}x{data['vh']}, expected {cw}x{h}")
+        if abs(data["dpr"] - S) > 0.01:
+            raise RuntimeError(f"devicePixelRatio is {data['dpr']}, expected {S}")
+        return data
+
+    first = facts(ch)
+    height = max(ch, first["pageH"])
+    layout = facts(height) if height != ch else first
+    name = f"{variant.upper()}-{vp}-{theme}{tag}"
     normal, bgonly = out / f"{name}.png", out / f"{name}-bg-only.png"
     if keep_png:
-        shoot(port, variant, theme, vw, height, normal, extra)
-    shoot(port, variant, theme, vw, height, bgonly, extra + "&m=1")
+        eng.shoot(q, cw, height, dsf, zoom, normal)
+    eng.shoot(q + "&m=1", cw, height, dsf, zoom, bgonly)
     img = np.asarray(Image.open(bgonly).convert("RGB"))
+    if not keep_bg:
+        bgonly.unlink()
+    if img.shape[:2] != (round(height * S), round(cw * S)):
+        raise RuntimeError(f"{name}: render is {img.shape[1]}x{img.shape[0]} px, expected {round(cw * S)}x{round(height * S)}")
     anchor = next(i for i in layout["items"] if i["id"] == "primary")
-    centre = img[int(anchor["y"] + anchor["h"] / 2), int(anchor["x"] + anchor["w"] / 2)]
+    centre = img[int((anchor["y"] + anchor["h"] / 2) * S), int((anchor["x"] + anchor["w"] / 2) * S)]
     if np.abs(centre.astype(float) - parse_rgb(anchor["bg"])).max() > 2:
         raise RuntimeError(f"{name}: layout facts and screenshot are misaligned (primary button check)")
 
-    items, rects = [], []
+    def px(r: tuple) -> tuple:
+        return tuple(v * S for v in r)
+
+    items, rects = [], []                        # rects: CSS px
     for it in layout["items"]:
         if it["w"] > 0 and it["h"] > 0:
             rects.append((it["x"], it["y"], it["x"] + it["w"], it["y"] + it["h"]))
@@ -187,7 +176,7 @@ def measure_config(port: int, variant: str, theme: str, vp: str, out: Path, extr
             items.append({"id": it["id"], "kind": "logo", "note": "logotype, exempt from contrast criteria"})
             continue
         fg = parse_rgb(it["color"])
-        pix = region(img, it["x"], it["y"], it["w"], it["h"], it["inset"])
+        pix = region(img, it["x"] * S, it["y"] * S, it["w"] * S, it["h"] * S, it["inset"] * S)
         large = it["fs"] >= 24 or (it["fs"] >= 18.66 and it["fw"] >= 700)
         need = 3.0 if large else 4.5
         c = ratio(luminance(fg), luminance(pix))
@@ -197,7 +186,7 @@ def measure_config(port: int, variant: str, theme: str, vp: str, out: Path, extr
                       "meets_4_5": bool(c.min() >= 4.5), "on_opaque_panel": it["panel"]})
         if it["id"] in ("primary", "secondary"):
             edge = parse_rgb(it["bg"] if it["id"] == "primary" else it["border"])
-            cb = ratio(luminance(edge), luminance(ring(img, it["x"], it["y"], it["w"], it["h"])))
+            cb = ratio(luminance(edge), luminance(ring(img, it["x"] * S, it["y"] * S, it["w"] * S, it["h"] * S, 4 * S)))
             items.append({"id": it["id"] + "-boundary", "kind": "control", "required": 3.0,
                           "min": round(float(cb.min()), 2), "median": round(float(np.median(cb)), 2),
                           "meets_required": bool(cb.min() >= 3.0)})
@@ -209,34 +198,48 @@ def measure_config(port: int, variant: str, theme: str, vp: str, out: Path, extr
     reach = (plate_rect[0] - pl["inflate"], plate_rect[1] - pl["inflate"],
              plate_rect[2] + pl["inflate"], plate_rect[3] + pl["inflate"])  # plate plus its feather
     rects.append(reach)
-    zones = blueprint_zones(vw, height)
+    zones = blueprint_zones(cw, height)
     gaps = [rect_gap(r, z) for r in rects for z in zones] if variant == "b" else []
     crossings = sum(overlaps(r, z) for r in rects for z in zones) if variant == "b" else 0
 
+    def clip(r: tuple, pad: float) -> tuple[slice, slice]:
+        x0, y0, x1, y1 = px(r)
+        return (slice(max(0, math.floor(y0 - pad * S)), math.ceil(y1 + pad * S)),
+                slice(max(0, math.floor(x0 - pad * S)), math.ceil(x1 + pad * S)))
+
     keep = np.ones(img.shape[:2], bool)
-    for x0, y0, x1, y1 in rects:
-        keep[max(0, math.floor(y0 - 6)):math.ceil(y1 + 6), max(0, math.floor(x0 - 6)):math.ceil(x1 + 6)] = False
-    for x0, y0, x1, y1 in blueprint_zones(vw, height):
-        keep[max(0, math.floor(y0 - 2)):math.ceil(y1 + 2), max(0, math.floor(x0 - 2)):math.ceil(x1 + 2)] = False
+    for r in rects:
+        keep[clip(r, 6)] = False
+    for z in zones:
+        keep[clip(z, 2)] = False
     open_keep = keep.copy()
-    open_keep[max(0, math.floor(reach[1])):math.ceil(reach[3]), max(0, math.floor(reach[0])):math.ceil(reach[2])] = False
+    open_keep[clip(reach, 0)] = False
     bg = img[open_keep].astype(float)
     calm_keep = np.zeros(img.shape[:2], bool)
-    calm_keep[math.floor(plate_rect[1]):math.ceil(plate_rect[3]), math.floor(plate_rect[0]):math.ceil(plate_rect[2])] = True
-    for x0, y0, x1, y1 in rects[:-1]:  # drop text and panel boxes (the last rect is the plate reach)
-        calm_keep[max(0, math.floor(y0 - 3)):math.ceil(y1 + 3), max(0, math.floor(x0 - 3)):math.ceil(x1 + 3)] = False
+    calm_keep[clip(plate_rect, 0)] = True
+    for r in rects[:-1]:  # drop text and panel boxes (the last rect is the plate reach)
+        calm_keep[clip(r, 3)] = False
     calm = img[calm_keep].astype(float)
     token = hex_rgb("#f6f4ee" if theme == "light" else "#17181a")
     luma = luminance(bg)
+
+    def tone(mean_rgb: np.ndarray) -> dict:
+        d = lab(mean_rgb) - lab(token)
+        return {"delta_l_star": round(float(d[0]), 2), "delta_a_star": round(float(d[1]), 2),
+                "delta_b_star": round(float(d[2]), 2), "delta_e_ab": round(float(np.linalg.norm(d)), 2)}
+
     return {
         "config": name, "variant": variant, "theme": theme, "viewport": vp,
-        "window": [vw, height], "items": items,
+        "window": [cw, height], "dsf": dsf, "zoom": zoom, "items": items,
         "blueprint": ({"overlaps": int(crossings), "min_clearance_px": round(min(gaps), 1)} if gaps else None),
-        "calm": ({"mean_rgb": [round(v, 2) for v in calm.mean(0)], "delta_l_star": round(float(lab(calm.mean(0))[0] - lab(token)[0]), 2),
+        "calm": ({"mean_rgb": [round(v, 2) for v in calm.mean(0)], **tone(calm.mean(0)),
                   "rgb_min": calm.min(0).tolist(), "rgb_max": calm.max(0).tolist(), "samples": int(len(calm))}
                  if len(calm) else None),
-        "paper": {"mean_rgb": [round(v, 2) for v in bg.mean(0)], "token_rgb": token.tolist(),
-                  "delta_l_star": round(float(lab(bg.mean(0))[0] - lab(token)[0]), 2),
+        "plate_step": ({k: round(float(v), 2) for k, v in zip(
+            ("delta_l_star", "delta_a_star", "delta_b_star"), lab(bg.mean(0)) - lab(calm.mean(0)))}
+            | {"delta_e_ab": round(float(np.linalg.norm(lab(bg.mean(0)) - lab(calm.mean(0)))), 2)}
+            if len(calm) else None),  # tone step between the open area and the calm plate (CIELAB)
+        "paper": {"mean_rgb": [round(v, 2) for v in bg.mean(0)], "token_rgb": token.tolist(), **tone(bg.mean(0)),
                   "luminance_min": round(float(luma.min()), 4), "luminance_max": round(float(luma.max()), 4),
                   "rgb_min": bg.min(0).tolist(), "rgb_max": bg.max(0).tolist(),
                   "samples": int(len(bg))},
@@ -262,14 +265,14 @@ def token_pairs() -> dict:
     return out
 
 
-def sweep(port: int, out: Path) -> list[dict]:
+def sweep(eng: engines.Engine, out: Path) -> list[dict]:
     """Calm-plate opacity sensitivity at the working grain (12 %), plus the no-plate baseline."""
     rows = []
     for theme in ("light", "dark"):
         for label, extra in (("no plates", "&calm=off"), ("0.5", "&calmop=0.5"), ("0.6", "&calmop=0.6"),
                              ("0.7", "&calmop=0.7"), ("0.75", "&calmop=0.75"), ("0.8", "&calmop=0.8"),
                              ("0.9", "&calmop=0.9")):
-            r = measure_config(port, "b", theme, "desktop", out / "sweep", extra=extra, keep_png=False)
+            r = measure_config(eng, "b", theme, "desktop", out / "sweep", extra=extra, keep_png=False)
             worst = {i["id"]: i["min"] for i in r["items"] if i["kind"] in ("text", "control")}
             rows.append({"theme": theme, "plate_opacity": label, "open_dl_star": r["paper"]["delta_l_star"],
                          "calm_dl_star": (r["calm"] or {}).get("delta_l_star"),
@@ -278,28 +281,42 @@ def sweep(port: int, out: Path) -> list[dict]:
     return rows
 
 
+def failures(results: list[dict]) -> list[tuple]:
+    return [(r["config"], i["id"], i["min"], i["required"]) for r in results for i in r["items"]
+            if i.get("meets_required") is False]
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--out", required=True, type=Path, help="directory for PNG renders (kept outside Git)")
     ap.add_argument("--json", type=Path, help="write the measurements here")
     ap.add_argument("--sweep", action="store_true", help="only run the calm-plate opacity sensitivity table")
+    ap.add_argument("--engine", choices=sorted(engines.ENGINES), default="chromium")
+    ap.add_argument("--dsf", type=float, default=1, help="display scale factor (1 or 2)")
+    ap.add_argument("--zoom", type=float, default=1, help="browser page zoom (2 = 200 %%)")
+    ap.add_argument("--variants", default="a,b")
+    ap.add_argument("--viewports", default=",".join(VIEWPORTS))
+    ap.add_argument("--themes", default="light,dark")
+    ap.add_argument("--extra", default="", help="extra study query, for example &tone=neutral")
+    ap.add_argument("--tag", default="", help="suffix for PNG names")
+    ap.add_argument("--no-bg-png", action="store_true", help="do not keep the background-only renders")
     args = ap.parse_args()
     server, port = serve()
     try:
-        if args.sweep:
-            print(json.dumps(sweep(port, args.out), indent=1))
-            return
-        results = [measure_config(port, v, t, vp, args.out)
-                   for v in ("a", "b") for t in ("light", "dark") for vp in VIEWPORTS]
-        report = {"tool": "measure.py", "browser": subprocess.run([CHROMIUM, "--version"], capture_output=True,
-                  text=True).stdout.strip(), "device_scale_factor": 1, "token_pairs": token_pairs(),
-                  "configs": results}
+        with engines.ENGINES[args.engine](f"http://127.0.0.1:{port}") as eng:
+            if args.sweep:
+                print(json.dumps(sweep(eng, args.out), indent=1))
+                return
+            results = [measure_config(eng, v, t, vp, args.out, extra=args.extra, dsf=args.dsf, zoom=args.zoom,
+                                      tag=args.tag, keep_bg=not args.no_bg_png)
+                       for v in args.variants.split(",") for t in args.themes.split(",")
+                       for vp in args.viewports.split(",")]
+            report = {"tool": "measure.py", "browser": eng.version(), "device_scale_factor": args.dsf,
+                      "zoom": args.zoom, "extra_query": args.extra, "token_pairs": token_pairs(), "configs": results}
         if args.json:
             args.json.parent.mkdir(parents=True, exist_ok=True)
             args.json.write_text(json.dumps(report, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
-        fails = [(r["config"], i["id"], i["min"], i["required"]) for r in results for i in r["items"]
-                 if i.get("meets_required") is False]
-        print(f"{len(results)} configurations measured; failures: {fails or 'none'}")
+        print(f"{len(results)} configurations measured; failures: {failures(results) or 'none'}")
     finally:
         server.shutdown()
 

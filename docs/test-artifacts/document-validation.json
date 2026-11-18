@@ -1,10 +1,10 @@
 {
   "kind": "documentary-validation-only",
-  "date": "2026-11-17",
+  "date": "2026-11-18",
   "ok": true,
   "checks": {
-    "markdownFiles": 89,
-    "localLinks": 1034,
+    "markdownFiles": 90,
+    "localLinks": 1042,
     "apiOperations": 96,
     "apiSchemas": 87,
     "planningStories": 45,
@@ -15,7 +15,7 @@
     "screenInteractionMappings": 28,
     "syntheticObjects": 66,
     "verifiedFigmaExports": 15,
-    "projectFilesSecretScanned": 137
+    "projectFilesSecretScanned": 150
   },
   "errors": [],
   "applicationTestsExecuted": false,
