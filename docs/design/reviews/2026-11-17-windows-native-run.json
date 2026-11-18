@@ -8521,9 +8521,11 @@
       "htmlSha256": "a256cb668af6cafc938429f71839db9e9c1b880d893e4d7e081b614ef3be0d82",
       "nativeSha256": "2ab118848ef48cea7008dea82a0fcc112b0a1408688915b4a8c151511434c95f",
       "comparisonSha256": "07bc577bd90911fb70ec423df4bcc6c796fd620d5263ade69d15e49124686ede",
-      "openedComparison": "2026-11-17-windows-native/S-06-nora.png",
+      "openedComparison": "2026-11-18-windows-native/S-06-nora.png",
       "firstOpened": "2026-11-17",
-      "revalidatedUnchanged": "2026-11-18"
+      "revalidatedUnchanged": "2026-11-18",
+      "originalOpenedComparison": "2026-11-17-windows-native/S-06-nora.png",
+      "originalOpenedComparisonSha256": "d2b9ef3e2c6da67bc02d910725e471699a227722c4c24635354730d14768863e"
     },
     {
       "state": "S-02/patient-invalide",
@@ -8544,9 +8546,11 @@
       "htmlSha256": "fc0b6621fe9b2f83718f8a67de5a8f4e0c2d66fdddd3aacbfe6da0683da32920",
       "nativeSha256": "32d28c21040f0b9da2b65618fcbd148a6b72567f85c40d034fde922b7e0fa0ba",
       "comparisonSha256": "40ae6684317feb9af621701f0fa468be72c581832eb019207caf5556ef42136f",
-      "openedComparison": "2026-11-17-windows-native/S-02-patient-invalide.png",
+      "openedComparison": "2026-11-18-windows-native/S-02-patient-invalide.png",
       "firstOpened": "2026-11-17",
-      "revalidatedUnchanged": "2026-11-18"
+      "revalidatedUnchanged": "2026-11-18",
+      "originalOpenedComparison": "2026-11-17-windows-native/S-02-patient-invalide.png",
+      "originalOpenedComparisonSha256": "8fb2931cf9af6b026c8b32c417d3f36ae6e6dc15013ed09e123f7ed09c925ed5"
     },
     {
       "state": "S-09/long",
@@ -8567,9 +8571,11 @@
       "htmlSha256": "341b82074b04e2a81d1edae2e3a4406636b2cc4abdcb2933bad75e6101204eaa",
       "nativeSha256": "fbf7141f8e6617419c04846ceb7ea1d28199fa167ff5471b1ccd88b8978f0d7e",
       "comparisonSha256": "3205518cdbad65f68cd6692bf9e74711c8676090f019dbf4366292d9dd3a20d3",
-      "openedComparison": "2026-11-17-windows-native/S-09-long.png",
+      "openedComparison": "2026-11-18-windows-native/S-09-long.png",
       "firstOpened": "2026-11-17",
-      "revalidatedUnchanged": "2026-11-18"
+      "revalidatedUnchanged": "2026-11-18",
+      "originalOpenedComparison": "2026-11-17-windows-native/S-09-long.png",
+      "originalOpenedComparisonSha256": "950536d9078d24d0882f158590f6c5f864fbb66656bad24165bcaa625b8b1302"
     },
     {
       "state": "S-09/louis",
@@ -8590,9 +8596,11 @@
       "htmlSha256": "afd5b67e6912b143df8aa26102f715b36b1f614c0cb19dbba185ed8534cf0927",
       "nativeSha256": "00425585fd3fd0c06a425bbf5ee3a34ef9ed5ec5852d5d4b4423fd08e6a4da80",
       "comparisonSha256": "531692bed7ccb609eca732d6b264233f1681efbb64379029722f6f31ffe313be",
-      "openedComparison": "2026-11-17-windows-native/S-09-louis.png",
+      "openedComparison": "2026-11-18-windows-native/S-09-louis.png",
       "firstOpened": "2026-11-17",
-      "revalidatedUnchanged": "2026-11-18"
+      "revalidatedUnchanged": "2026-11-18",
+      "originalOpenedComparison": "2026-11-17-windows-native/S-09-louis.png",
+      "originalOpenedComparisonSha256": "654d92fb5b196dbc9331795a289aa2fbbb59c80321cfdd10b6de222ad41aef18"
     },
     {
       "state": "S-18/valide",
@@ -8613,9 +8621,11 @@
       "htmlSha256": "7b0807d1e006d3b1f3c2f7823682ff4810ee96dc5534d469be4ab7fd5ffb09e0",
       "nativeSha256": "7a80b65759b7a4a318502d1acc2ddee6d6f725d69e3bd3224d1ed778dbc6f8da",
       "comparisonSha256": "ef37f39d2fd5c90ca831fdc53bab7efaffbe03d47720f81b70bec9dcdb0f0096",
-      "openedComparison": "2026-11-17-windows-native/S-18-valide.png",
+      "openedComparison": "2026-11-18-windows-native/S-18-valide.png",
       "firstOpened": "2026-11-17",
-      "revalidatedUnchanged": "2026-11-18"
+      "revalidatedUnchanged": "2026-11-18",
+      "originalOpenedComparison": "2026-11-17-windows-native/S-18-valide.png",
+      "originalOpenedComparisonSha256": "5dcb9ee49ec3bb70d28626e940aa89eac77b2c099478c273e7824aad8fc9b792"
     },
     {
       "state": "S-22/lecture-seule",
@@ -8636,9 +8646,11 @@
       "htmlSha256": "0d011b733503dfea597adb8d2b3d8c23287b122403dcad863c86ddd74fe8ff73",
       "nativeSha256": "e24de86bca6be130c2c15e01ce6cec05ba9e6f1ed7c57c68bba948f42d91239a",
       "comparisonSha256": "d6188393a371089b608d18d0abef6368b5a2aac44ab10fe5b938fb7508498a36",
-      "openedComparison": "2026-11-17-windows-native/S-22-lecture-seule.png",
+      "openedComparison": "2026-11-18-windows-native/S-22-lecture-seule.png",
       "firstOpened": "2026-11-17",
-      "revalidatedUnchanged": "2026-11-18"
+      "revalidatedUnchanged": "2026-11-18",
+      "originalOpenedComparison": "2026-11-17-windows-native/S-22-lecture-seule.png",
+      "originalOpenedComparisonSha256": "af778550cd4fe4d2bd7410a3ba368ad698123cff4f865c89fcdb77e32ca02618"
     },
     {
       "state": "S-22/longue",
@@ -8659,9 +8671,11 @@
       "htmlSha256": "8f9b4c3d6a597171c1afbb7906d1ca66e93a84a7b5a75c7458fc61b52d8914ad",
       "nativeSha256": "132ff62ada740daf90fb2aabb9d25f0938f42a31e9f26e9db5fd181c5e49069f",
       "comparisonSha256": "54bed861813e1c7effce54bb863fd0ff492815f40b11a0a4a81b48325f3e18ab",
-      "openedComparison": "2026-11-17-windows-native/S-22-longue.png",
+      "openedComparison": "2026-11-18-windows-native/S-22-longue.png",
       "firstOpened": "2026-11-17",
-      "revalidatedUnchanged": "2026-11-18"
+      "revalidatedUnchanged": "2026-11-18",
+      "originalOpenedComparison": "2026-11-17-windows-native/S-22-longue.png",
+      "originalOpenedComparisonSha256": "bc19910cc908151acfe96cfaf47af4ba711e8f3e40042ec44ddff55d018e9ba9"
     },
     {
       "state": "S-23/echec-publication",
@@ -8682,9 +8696,11 @@
       "htmlSha256": "57850195387eaedcc2864ed6fc88c0844fc9f7dcdd45d18779d69f46b0af5465",
       "nativeSha256": "014028123afe868985ab7cb53cd21328a8ed26af5c9ce6e6f7b7ec4f571a7db9",
       "comparisonSha256": "c374615e0629aec595b70589121b809e28773e5e1d5e075afe7febf4b3383b16",
-      "openedComparison": "2026-11-17-windows-native/S-23-echec-publication.png",
+      "openedComparison": "2026-11-18-windows-native/S-23-echec-publication.png",
       "firstOpened": "2026-11-17",
-      "revalidatedUnchanged": "2026-11-18"
+      "revalidatedUnchanged": "2026-11-18",
+      "originalOpenedComparison": "2026-11-17-windows-native/S-23-echec-publication.png",
+      "originalOpenedComparisonSha256": "10686aa884e8d73d3b9aefeec923021daae91637198fb3158130335d99eaed41"
     },
     {
       "state": "S-25/lien-retire",
@@ -8705,9 +8721,11 @@
       "htmlSha256": "7216bfdddab6a573a516f7f405df8574868acbea08e44c74c05e2283664f214c",
       "nativeSha256": "a4a176fcbc253be474ef2f76fec53e52ddb8a6c73c0ebda688ab54429c095352",
       "comparisonSha256": "11f1005e118fa00c0da0150230f7f977047df8d119567a6e673579cf406fa801",
-      "openedComparison": "2026-11-17-windows-native/S-25-lien-retire.png",
+      "openedComparison": "2026-11-18-windows-native/S-25-lien-retire.png",
       "firstOpened": "2026-11-17",
-      "revalidatedUnchanged": "2026-11-18"
+      "revalidatedUnchanged": "2026-11-18",
+      "originalOpenedComparison": "2026-11-17-windows-native/S-25-lien-retire.png",
+      "originalOpenedComparisonSha256": "cf3765dc4abbef6efc8b6c720dc5bf93decd882dbe7d4dceb4122e1470faccf4"
     },
     {
       "state": "S-30/apercu",

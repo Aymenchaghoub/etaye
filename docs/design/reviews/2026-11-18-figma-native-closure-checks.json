@@ -36,7 +36,7 @@
       "screenInteractionMappings": 28,
       "syntheticObjects": 66,
       "verifiedFigmaExports": 15,
-      "projectFilesSecretScanned": 140
+      "projectFilesSecretScanned": 141
     },
     "errors": [
       "Shared skills discovery link broken"
@@ -49,5 +49,22 @@
   },
   "applicationTestsExecuted": false,
   "visualCorrectionsApplied": false,
-  "aymenApproval": false
+  "aymenApproval": false,
+  "evidenceIntegrity": {
+    "matchingComparisonHashes": 42,
+    "uniqueNativeRootIds": 456,
+    "summedEditableTextNodes": 28001,
+    "staleComparisonPathsReconciled": 9
+  },
+  "historySecretScan": {
+    "tool": "Gitleaks 8.30.1 Windows x64",
+    "commitsScanned": 25,
+    "findings": 0,
+    "archiveSha256": "d29144deff3a68aa93ced33dddf84b7fdc26070add4aa0f4513094c8332afc4e"
+  },
+  "delivery": {
+    "pullRequest": "https://github.com/Aymenchaghoub/etaye/pull/19",
+    "draft": true,
+    "reviewReady": false
+  }
 }
