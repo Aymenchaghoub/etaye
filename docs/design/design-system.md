@@ -254,7 +254,7 @@ Change the sources first (Figma, then `tokens.css`, `resolved-tokens.json` or th
 
 | Element | Record |
 |---|---|
-| Dated acceptance | 2026-11-18, Aymen's message above. To confirm: naming it explicitly in the tracker's `exceptions` column, which has not been edited |
+| Dated acceptance | 2026-11-18, Aymen's message above; he then accepted the recorded wording the same day, and it is written in the `exceptions` column of the 76 [tracker](coverage.csv) rows (existing text kept) |
 | Affected rows | All 76 families, for the requirement of exact Figma nodes only |
 | What replaces the Figma node | The reference snapshot of the surface (HTML states, identity above), the tokens and recipes of this file, and the surface's entries in the [screen](screen-catalog.md), [interaction](interaction-catalog.md) and [PDF and e-mail](pdf-email-specifications.md) catalogs |
 | Impact | The visual contract is the HTML reference, not Figma. The Figma file is left as it is and differences are reconciled later |
