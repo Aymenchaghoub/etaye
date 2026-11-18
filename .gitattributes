@@ -1,6 +1,8 @@
 # Keep the editable design tracker consistent with committed-diff checks.
 docs/design/coverage.csv text eol=lf
 docs/design/html-reception.csv text eol=lf
+# Preserve original Figma export bytes used by the provenance manifest.
+docs/design/figma/assets/*.svg -text
 # Byte-exact third-party receipt; provenance is checked before reconstruction.
 design/received/2026-11-03/** -text
 design/received/2026-11-03/gen/overflow_check.py -whitespace

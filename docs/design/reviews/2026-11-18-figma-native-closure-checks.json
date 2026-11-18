@@ -1,0 +1,134 @@
+{
+  "kind": "native-closure-tooling-checks",
+  "date": "2026-11-18",
+  "pythonToolingTests": {
+    "executed": 19,
+    "passed": 19
+  },
+  "windowsImporterFixtures": {
+    "executed": 25,
+    "passed": 25
+  },
+  "legacyImporterFixtures": {
+    "executed": 4,
+    "passed": 4
+  },
+  "javascriptSyntax": "passed",
+  "ruff": "passed",
+  "openapi": "passed",
+  "architectureLint": "passed",
+  "workflowPolicy": "passed",
+  "gitDiffCheck": "passed",
+  "documentaryValidation": {
+    "kind": "documentary-validation-only",
+    "date": "2026-11-18",
+    "ok": true,
+    "checks": {
+      "markdownFiles": 91,
+      "localLinks": 1079,
+      "apiOperations": 96,
+      "apiSchemas": 87,
+      "planningStories": 45,
+      "roadmapStories": 45,
+      "requiredDesignFamilies": 76,
+      "roadmapSurfaces": 76,
+      "roadmapOperations": 101,
+      "screenInteractionMappings": 28,
+      "syntheticObjects": 66,
+      "verifiedFigmaExports": 15,
+      "projectFilesSecretScanned": 148
+    },
+    "errors": [],
+    "applicationTestsExecuted": false,
+    "independentReview": "Automated documentary checks; not independent design approval"
+  },
+  "negativeControls": {
+    "tamperedOriginalSvgRejected": true
+  },
+  "applicationTestsExecuted": false,
+  "visualCorrectionsApplied": true,
+  "aymenApproval": false,
+  "evidenceIntegrity": {
+    "matchingComparisonHashes": 42,
+    "uniqueNativeRootIds": 456,
+    "summedEditableTextNodes": 28002,
+    "staleComparisonPathsReconciled": 9,
+    "matchingFinalNativeHashes": 52,
+    "matchingFinalHtmlHashes": 52,
+    "matchingFinalPairHashes": 13,
+    "matchingFinalContactHashes": 7,
+    "originalEditableTextIdsPreserved": 28001,
+    "addedMeasuredTextLines": 1,
+    "allDeliveredToolingHashesMatched": true
+  },
+  "historySecretScan": {
+    "tool": "Gitleaks 8.30.1 Windows x64",
+    "commitsScanned": 34,
+    "findings": 0,
+    "archiveSha256": "d29144deff3a68aa93ced33dddf84b7fdc26070add4aa0f4513094c8332afc4e",
+    "scope": "all local and fetched remote refs",
+    "sourceHead": "e6aa187f9d7d35994335a32a7f0000bd74a1b4d9",
+    "closureHeadHistoryCommits": 21,
+    "closureHeadFindings": 0,
+    "verifiedMetadataExceptions": {
+      "sourceCommit": "c0ae5019e2f6e9f79a6601ea5c9e948720614c09",
+      "publicFigmaIdentifierMatches": 3,
+      "tokensCssDigestMatches": 1,
+      "tokensCssSha256": "792cad4362d5f2a9c8bf43eabbb73676a1ade40743f3ad6e5a51089abe7d2bde",
+      "remoteBranchPreserved": "origin/docs/figma-background-kit"
+    }
+  },
+  "delivery": {
+    "pullRequest": "https://github.com/Aymenchaghoub/etaye/pull/19",
+    "draft": false,
+    "reviewReady": true
+  },
+  "sharedSkillsLink": {
+    "target": "../.claude/skills",
+    "resolvedSourceVerified": true
+  },
+  "nativeObservationReceived": true,
+  "githubChecks": {
+    "sourceCommit": "e6aa187f9d7d35994335a32a7f0000bd74a1b4d9",
+    "documentation": "passed",
+    "documentationRun": "https://github.com/Aymenchaghoub/etaye/actions/runs/44333186862",
+    "codeql": "passed",
+    "codeqlRun": "https://github.com/Aymenchaghoub/etaye/actions/runs/44333187268",
+    "scope": "Verified source/tooling head before this documentation-only result record; final head verification is linked in PR19 body",
+    "previousFailures": [
+      {
+        "sourceCommit": "876252297632d791cf171a7bc35aec2c0669825e",
+        "run": "https://github.com/Aymenchaghoub/etaye/actions/runs/44332755355",
+        "reason": "Verified original tokens.css SHA-256 repeated in this check record triggered the generic-api-key rule",
+        "resolution": "Exact verified digest and exact metadata paths only; credential rules retained"
+      }
+    ]
+  },
+  "computerUse": "Native corrections, exports, final version saving and downloads completed; plugin closed after evidence recovery",
+  "nativeCorrectionFixtures": {
+    "executed": 9,
+    "passed": 9
+  },
+  "finalNativeVersion": "2423224260331333575",
+  "nativeEvidenceSummary": {
+    "roots": 456,
+    "sections": 94,
+    "editableTexts": 28002,
+    "originalTextIdsPreserved": 28001,
+    "addedMeasuredTextLines": 1,
+    "targetedStates": 52,
+    "untouchedFingerprintsVerified": 404,
+    "matchingExportDimensions": 52
+  },
+  "nativeRuntimeScope": {
+    "executedPluginProvenance": "2026-11-18-native-closure-final.json#generatedPluginProvenance",
+    "finalSourceAdditionalGuard": "Incomplete repeat export invalidates version-save eligibility; fixture verified after the completed native export"
+  },
+  "reviewServices": {
+    "copilot": "No review: requester quota exhausted",
+    "coderabbit": "Skipped: repository has fewer than ten stars; no automatic review",
+    "qodo": "Reviews paused for user; no subscription changed",
+    "independentReviewCompleted": false,
+    "inlineFindingsReceived": 0
+  }
+}

@@ -58,6 +58,18 @@ python3 tools/export_claude_chat_kit.py --output /path/outside/repository/Etaye-
 
 These documentary commands were run; results are recorded in review-report.md. `uvx` resolves a validation tool in its isolated cache, not app dependencies. The chat kit is a derived distribution outside Git, as requested; source documents remain authoritative. See [Resume kit export](#resume-kit-export) for the current versioned-folder contents; do not use an older parent-level inventory. Do not put tokens into exports.
 
+## Windows checkout integrity
+
+Resolved later on 2026-11-18: Aymen created the exact relative link using Python `os.symlink('../.claude/skills', '.agents/skills', target_is_directory=True)` in an administrator PowerShell. Its target and resolved source were verified, and the documentary validator passed on Windows. PowerShell 5.1 resolves the earlier New-Item relative target against the current working directory; use the Python form to preserve the Git link bytes. The failed repair below is historical.
+
+Original Figma SVG exports are byte-exact provenance inputs. `.gitattributes` marks `docs/design/figma/assets/*.svg` as `-text`; do not change manifest hashes to accept checkout conversion. On 2026-11-18, all eight restored working files matched both their Git blobs and the manifest SHA-256 values. The local checkout uses `core.autocrlf=input`.
+
+Git must materialize `.agents/skills` as the existing symbolic link to `../.claude/skills`, rather than an ordinary text file. Set `git config --local core.symlinks true` when Windows grants symbolic-link creation. This session received WinError 1314 even outside the sandbox; the exact repair was requested from Aymen in an administrator PowerShell. The validator retains its real resolved-link check.
+
+Portable kit manifests use POSIX member names on every operating system. Destination guards resolve both sides before comparison, including Windows 8.3 TEMP aliases. HTML audits explicitly decode UTF-8 so invalid input fails before any browser starts. These are design-tooling checks, without application execution.
+
+GitHub CLI was found at `C:/Program Files/GitHub CLI/gh.exe`. Authentication, repository ADMIN permission and a dry-run push succeeded outside the restricted sandbox on 2026-11-18. The connector's earlier 403 does not describe CLI permissions; no replacement credential was needed. Machine-specific `.codex/config.toml`, extracted `winfig/` workspace and the backup under `.cache/figma-closure-backup/` stay local.
+
 ## Access troubleshooting
 
 GitHub CLI authenticated as Aymenchaghoub and repository created private, without changing global identity. Local commits use the GitHub noreply address. Aymen subsequently explicitly authorized public visibility and initial free repository security/CI setup. If an operation fails, distinguish auth from network and inspect current connection before requesting a new credential.

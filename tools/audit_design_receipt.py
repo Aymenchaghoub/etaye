@@ -28,7 +28,7 @@ class Page(HTMLParser):
 
 def inspect(site):
     site = site.resolve()
-    pages = {p: Page(p.read_text()) for p in sorted(site.rglob("*.html"))}
+    pages = {p: Page(p.read_text(encoding="utf-8")) for p in sorted(site.rglob("*.html"))}
     missing, fragments, duplicate_ids, escapes = [], [], [], []
     placeholders = 0
     checked = 0
@@ -57,7 +57,7 @@ def inspect(site):
             ):
                 fragments.append([relative, link])
     for path in site.rglob("*.css"):
-        for link in re.findall(r"url\(['\"]?([^\)'\"]+)", path.read_text()):
+        for link in re.findall(r"url\(['\"]?([^\)'\"]+)", path.read_text(encoding="utf-8")):
             url = urlsplit(link)
             if url.scheme or url.netloc:
                 continue

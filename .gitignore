@@ -4,12 +4,16 @@
 *.user.toml
 .claude/settings.local.json
 .codex/config.local.toml
+# Machine-specific Computer Use hook and extracted native-import workspace.
+.codex/config.toml
+winfig/
 .DS_Store
 node_modules/
 target/
 dist/
 .cache/
 .venv-docs/
+.venv-visual/
 reports/
 __pycache__/
 local-reference/

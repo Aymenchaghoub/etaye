@@ -3,8 +3,8 @@
   "date": "2026-11-18",
   "ok": true,
   "checks": {
-    "markdownFiles": 90,
-    "localLinks": 1042,
+    "markdownFiles": 92,
+    "localLinks": 1087,
     "apiOperations": 96,
     "apiSchemas": 87,
     "planningStories": 45,
@@ -15,9 +15,9 @@
     "screenInteractionMappings": 28,
     "syntheticObjects": 66,
     "verifiedFigmaExports": 15,
-    "projectFilesSecretScanned": 150
+    "projectFilesSecretScanned": 161
   },
   "errors": [],
   "applicationTestsExecuted": false,
-  "independentReview": "Authoring subagents stopped at usage limit; final checks performed by coordinator"
+  "independentReview": "Automated documentary checks; not independent design approval"
 }

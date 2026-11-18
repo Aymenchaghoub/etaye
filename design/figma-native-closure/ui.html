@@ -1,0 +1,10 @@
+<!doctype html><html lang="fr"><meta charset="utf-8"><title>Clôture native Étaye</title>
+<style>body{font:14px system-ui;padding:16px;background:#efeeea}button{display:block;margin:8px 0;padding:8px}#status{white-space:pre-wrap}</style>
+<h2>Clôture visuelle Étaye</h2><p>Corrections ciblées sur les 52 états vérifiés. Identifiants et pages protégées conservés.</p>
+<button id="apply">Appliquer les corrections vérifiées</button><button id="export">Revérifier et exporter les 52 états</button><button id="save">Enregistrer la version finale</button>
+<p id="status" role="status">Prêt pour la vérification des empreintes.</p><a id="download" hidden>Télécharger les preuves</a>
+<script>
+for(const type of ['apply','export','save'])document.getElementById(type).onclick=()=>{for(const b of document.querySelectorAll('button'))b.disabled=true;parent.postMessage({pluginMessage:{type}},'*');};
+let url;
+onmessage=e=>{if(!e.source||(e.source!==parent&&e.source!==parent.parent?.parent))return;const m=e.data?.pluginMessage;if(!m)return;document.getElementById('status').textContent=m.status;if(m.evidence){if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(new Blob([JSON.stringify(m.evidence)],{type:'application/json'}));const a=document.getElementById('download');a.href=url;a.download='etaye-native-visual-corrections.json';a.hidden=false;}if(m.evidence||m.failed)for(const b of document.querySelectorAll('button'))b.disabled=false;};
+</script></html>

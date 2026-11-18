@@ -95,6 +95,12 @@ test('new-section fingerprints detect moved or cleared text and changed vector p
 });
 test('fingerprint SHA-256 matches standard UTF-8 vectors and canonical literal matches its source', () => {
   const context = {figma: {showUI() {}, ui: {}}, __html__: ''}; vm.createContext(context); vm.runInContext(script, context);
+  assert.equal(context.textSignature('complet', FONT, Math.fround(11.6667)), context.textSignature('complet', FONT, 11.6667));
+  assert.notEqual(context.textSignature('complet', FONT, 11.6668), context.textSignature('complet', FONT, 11.6667));
+  const reconciliation = vm.runInContext('RECONCILED_SECTION', context);
+  assert.equal(context.acceptsNativeFingerprint(reconciliation.id, reconciliation.packetIndex, reconciliation.stored, reconciliation.rebuilt), true);
+  assert.equal(context.acceptsNativeFingerprint('other', reconciliation.packetIndex, reconciliation.stored, reconciliation.rebuilt), false);
+  assert.equal(context.acceptsNativeFingerprint(reconciliation.id, reconciliation.packetIndex, reconciliation.stored, 'changed'), false);
   for (const value of ['', 'abc', 'Étaye — preuve 🧭', 'x'.repeat(10000)]) assert.equal(context.sha256(value), require('node:crypto').createHash('sha256').update(value).digest('hex'));
   assert.deepEqual(JSON.parse(vm.runInContext('JSON.stringify(CANONICAL)', context)), CANONICAL);
 });
@@ -111,6 +117,17 @@ test('observed REST baseline records round-trip through the native common-proper
     for (const row of rows) {const node = nodes.get(row.id); node.parent = nodes.get(row.parentId) || {id: row.parentId}; if (node.parent.children) node.parent.children.push(node);}
     const root = nodes.get(rows[0].id), walk = node => node.children.flatMap(child => [child, ...walk(child)]); root.findAll = predicate => walk(root).filter(predicate);
     assert.deepEqual(JSON.parse(JSON.stringify(context.nativeInventory(root))), rows); count += rows.length;
+    assert.equal(context.matchesCapturedInventory(root, rows), true);
+    const vector = rows.find(row => row.type === 'FRAME' && row.box) || rows.find(row => row.box);
+    if (vector) {
+      const box = nodes.get(vector.id).absoluteBoundingBox;
+      const width = box.width;
+      box.width = width + 0.001;
+      assert.equal(context.matchesCapturedInventory(root, rows), true);
+      box.width = width + 0.002;
+      assert.equal(context.matchesCapturedInventory(root, rows), false);
+      box.width = width;
+    }
   }
   assert.equal(count, 5527);
 });
@@ -161,10 +178,14 @@ test('corrected native renderer preserves multiline decoration, editable vectors
   packet.nodes = [
     [1, 12, 18, 200, 44, 'Line one\nLine two', 0, 14, 22, 0, 0, {line: 'underline', style: 'wavy', color: {r: 1, g: 0.25, b: 0, a: 0.75}, thickness: 1.5, offset: 3}, true],
     [2, 240, 20, 20, 20, 'Editable icon', 0, 1, 'S-06/nora', []],
-    [0, 10, 20, 400, 300, 'Measured scroll body', 0, 8, true, 1, [], null, [0, 1], null, [{type: 'DROP_SHADOW', color: packet.colors[0], offset: {x: 0, y: 0}, radius: 0, spread: 1, visible: true, blendMode: 'NORMAL'}]]];
-  packet.frames.forEach(frame => frame.node = 2); await h.send({type: 'import', packets}); assert.equal(h.last().evidence.status, 'complete');
+    [1, 12, 70, 200, 20, 'Editable strikethrough', 0, 14, 22, 0, 0, {line: 'line-through', style: 'solid', color: packet.colors[0], thickness: 1.5, offset: 0}, false],
+    [0, 10, 20, 400, 300, 'Measured scroll body', 0, 8, true, 1, [], null, [0, 1, 2], null, [{type: 'DROP_SHADOW', color: packet.colors[0], offset: {x: 0, y: 0}, radius: 0, spread: 1, visible: true, blendMode: 'NORMAL'}]]];
+  packet.frames.forEach(frame => {frame.node = 3; frame.texts = 2;}); await h.send({type: 'import', packets}); assert.equal(h.last().evidence.status, 'complete');
   const body = [...h.nodes.values()].find(node => node.name === 'Measured scroll body'), text = body.children.find(node => node.type === 'TEXT'), icon = body.children.find(node => node.name === 'Editable icon');
   assert.equal(body.clipsContent, true); assert.equal(body.strokeWeight, 1); assert.equal(body.strokeAlign, 'OUTSIDE'); assert.equal(body.effects.length, 0); assert.equal(text.characters, 'Line one\nLine two'); assert.equal(text.lineHeight.value, 22); assert.equal(text.textAutoResize, 'HEIGHT'); assert.equal(text.textDecorationStyle, 'WAVY'); assert.equal(text.textDecorationThickness.value, 1.5); assert.equal(text.textDecorationColor.value.type, 'SOLID'); assert.equal(text.textDecorationColor.value.color.r, 1); assert.equal(text.textDecorationColor.value.opacity, 0.75); assert.equal(icon.children[0].type, 'VECTOR'); assert.equal(h.last().evidence.packets[93].links[0].target, 'S-06/nora'); assert.deepEqual(h.nodes.get('26:2').data, {});
+  const strike = body.children.find(node => node.characters === 'Editable strikethrough');
+  assert.equal(strike.textDecoration, 'STRIKETHROUGH');
+  for (const property of ['textDecorationStyle', 'textDecorationColor', 'textDecorationThickness', 'textDecorationOffset']) assert.equal(strike[property], undefined);
   const links = h.last().evidence.packets[93].links; await h.send({type: 'import', packets}); const reused = h.last().evidence.packets[93].links; assert.equal(reused.length, links.length); assert.equal(reused[0].state, links[0].state); assert.equal(reused[0].target, links[0].target); assert.deepEqual(reused[0].tuplePath, links[0].tuplePath); assert.deepEqual(reused[0].childPath, links[0].childPath); assert.equal(reused[0].nativeNodeResolution, 'source-only-on-reuse');
 });
 test('cleanup refuses before complete set and revalidates actual roots before deleting anything', async () => {
@@ -194,6 +215,19 @@ test('asymmetric dashed borders preserve gaps, edge position, width and final se
   await h.send({type: 'import', packets}); assert.equal(h.last().evidence.status, 'complete'); const body = [...h.nodes.values()].find(node => node.name === 'Asymmetric dashed boundary'), top = body.children.filter(node => node.name.startsWith('Border 0')), bottom = body.children.filter(node => node.name.startsWith('Border 2'));
   assert.deepEqual(top.map(node => [node.x, node.y, node.width, node.height]), [[0, 0, 6, 2], [12, 0, 6, 2]]); assert.deepEqual(bottom.map(node => [node.x, node.y, node.width, node.height]), [[0, 28, 9, 3], [18, 28, 5, 3]]); assert.ok(top[1].x > top[0].x + top[0].width); const right = body.children.find(node => node.name === 'Border 1'); assert.equal(right.x, 22); assert.equal(right.height, 31);
 });
+test('cleanup reconciles missing captured image hash only against the exact authorized hash', async () => {
+  for (const changed of [false, true]) {
+    const packets = queue(), h = harness(packets);
+    const candidate = packets[0].cleanupCandidates.find(item => item.id === '22:2');
+    const reference = candidate.nativeInventory.find(item => item.fills.some(fill => fill[0] === 'IMAGE'));
+    reference.fills[0][6] = null;
+    await h.send({type: 'import', packets});
+    if (changed) h.nodes.get(reference.id).fills[0].imageHash = 'changed-image';
+    await h.send({type: 'cleanup'});
+    assert.equal(h.nodes.get('22:2').removed, !changed);
+    assert.equal(h.original.removed, false);
+  }
+});
 test('eligible cleanup deletes only authorized old trees after all 456 states verify', async () => {
   const packets = queue(), h = harness(packets); await h.send({type: 'import', packets}); const sections = h.last().evidence.packets.map(packet => packet.sectionId); await h.send({type: 'cleanup'});
   assert.equal(h.last().evidence.cleanup.executed, true); assert.equal(h.last().evidence.completeExpectedStateSet, true); assert.ok(CLEANUP.every(candidate => h.nodes.get(candidate.id).removed)); assert.ok(sections.every(id => !h.nodes.get(id).removed)); assert.equal(h.original.removed, false); assert.equal(h.foundations.removed, false); assert.equal(h.components.removed, false);
@@ -202,9 +236,9 @@ test('eligible cleanup deletes only authorized old trees after all 456 states ve
 test('UI accepts multiple packets and exposes actual downloadable JSON evidence', async () => {
   const html = fs.readFileSync(__dirname + '/ui.html', 'utf8'), source = html.match(/<script>([\s\S]*?)<\/script>/)[1], elements = {}, sent = [], revoked = [], blobs = [];
   const get = id => elements[id] ||= {disabled: false, hidden: true, removeAttribute(key) {delete this[key];}};
-  const parent = {postMessage: message => sent.push(message)}, context = {document: {getElementById: get}, parent, Blob,
+  const editor = {}, parent = {parent: {parent: editor}, postMessage: message => sent.push(message)}, context = {document: {getElementById: get}, parent, Blob,
     URL: {createObjectURL(blob) {blobs.push(blob); return 'blob:' + blobs.length;}, revokeObjectURL(url) {revoked.push(url);}}};
   vm.createContext(context); vm.runInContext(source, context); get('files').files = queue().map(packet => ({text: async () => JSON.stringify(packet)})); await get('files').onchange(); assert.equal(get('import').disabled, false); get('import').onclick(); assert.equal(sent[0].pluginMessage.packets.length, 94);
-  const evidence = {status: 'complete', roots: [{state: 'S-06/nora', nodeId: '26:1282'}]}; context.onmessage({source: parent, data: {pluginMessage: {message: 'Actual evidence', done: true, evidence, cleanupReady: true}}}); assert.equal(get('evidence').hidden, false); assert.match(get('evidence').download, /\.json$/); assert.deepEqual(JSON.parse(await blobs[0].text()), evidence); assert.equal(get('cleanup').disabled, false);
+  const evidence = {status: 'complete', roots: [{state: 'S-06/nora', nodeId: '26:1282'}]}; const response = {pluginMessage: {message: 'Actual evidence', done: true, evidence, cleanupReady: true}}; context.onmessage({source: {}, data: response}); assert.equal(get('evidence').hidden, true); context.onmessage({source: editor, data: response}); assert.equal(get('evidence').hidden, false); assert.match(get('evidence').download, /\.json$/); assert.deepEqual(JSON.parse(await blobs[0].text()), evidence); assert.equal(get('cleanup').disabled, false);
   get('files').files = []; await get('files').onchange(); assert.deepEqual(revoked, ['blob:1']); assert.equal(get('evidence').hidden, true); assert.equal(get('import').disabled, true); assert.equal(get('cleanup').disabled, true);
 });

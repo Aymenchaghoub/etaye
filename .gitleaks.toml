@@ -9,11 +9,24 @@ targetRules = ["generic-api-key"]
 condition = "AND"
 paths = [
   '''^(docs/design/figma/(manifest|resolved-tokens)\.json|tools/inspect_figma\.py)$''',
-  '''^docs/design/reviews/2026-11-17-(windows-handoff|figma-mcp-import)\.json$''',
+  '''^docs/design/reviews/2026-11-17-(windows-handoff|figma-mcp-import|windows-native-run)\.json$''',
+  '''^docs/design/reviews/2026-11-18-native-closure-before\.json$''',
+  '''^docs/design/reviews/2026-11-18-native-(correction-pass[134]|closure-final)\.json$''',
   '''^docs/design/windows-handoff/EXISTING-FIGMA-STATE\.json$''',
   '''^design/figma-windows-import/(code\.js|test-plugin\.cjs)$''',
+  '''^design/figma-background-study/(code\.js|export_batch\.py|batches/background-study-v1\.json)$''',
 ]
 regexes = ['''^vfh4BSnbRAbaDE1q0CyssL$''']
+
+[[allowlists]]
+description = "Verified SHA-256 of original tokens.css in background-study sourceFiles metadata"
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = [
+  '''^design/figma-background-study/batches/background-study-v1\.json$''',
+  '''^docs/design/reviews/2026-11-18-figma-native-closure-checks\.json$''',
+]
+regexes = ['''^792cad4362d5f2a9c8bf43eabbb73676a1ade40743f3ad6e5a51089abe7d2bde$''']
 
 [[allowlists]]
 description = "Verified Figma component/style publishing identifiers from the recorded snapshot"

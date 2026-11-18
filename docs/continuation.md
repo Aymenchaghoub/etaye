@@ -1,6 +1,38 @@
 # Session continuation
 
-Updated: 2026-11-17. Owner: Aymen Chaghoub.
+Updated: 2026-11-18. Owner: Aymen Chaghoub.
+
+## Native closure integration — 2026-11-18
+
+**Current phase:** design/proof/tooling delivery; application development remains unauthorized. [PR19](https://github.com/Aymenchaghoub/etaye/pull/19) is pushed and ready for human review, targeting `main` from `docs/figma-native-closure`. The branch preserves main `eb58c81b3be3b91819dd2ca31a4f2412b509b5e3` and its later planning/background work. The local pre-sync backup and tracked stash remain retained. Machine-local `.codex/config.toml` and `winfig/` remain excluded.
+
+**Completed:** all 456 original desktop root IDs / 94 sections are retained. The 52 states in S-02/S-09/S-18/S-22/S-23/S-39/I-13 have targeted corrections and 1440px native exports: S-22 badges, error-list markers, I-13 and two S-02 focus outlines, S-39 preview borders, S-18/valide height 1663px, wrapping/citations and one wrapped S-23 alert. All 28,001 original text IDs survive; one new measured line brings the total to 28,002. The 404 untouched state fingerprints and protected foundations/components match the original before-observation. Final named Figma version: `2423224260331333575`. The [closure report](design/reviews/2026-11-18-figma-native-closure.md) and [final evidence](design/reviews/2026-11-18-native-closure-final.json) retain changed IDs, pass history, native version identities, 52 matching dimensions, source/export hashes, 13 opened pairs and seven family contact sheets. Earlier visual/missing-link/download blockers below are historical and resolved.
+
+**Access and Windows:** authenticated local Git/gh works outside the session sandbox; connector 403 is separate and no credential change is needed. Figma MCP remains quota-limited, so the registered offline Desktop plugin executed the corrections. Figma returned saved-version IDs despite its persistent reconnect warning; independent REST/cloud read-back is not claimed. Eight SVG original bytes are restored/protected against CRLF conversion. Aymen restored the exact `.agents/skills -> ../.claude/skills` symbolic link. Documentary validation now passes without weakening byte/link requirements.
+
+**Actual local verification:** 19 Python tooling tests; 25 Windows, four legacy and nine correction fixtures; JavaScript syntax; Ruff; documentary OpenAPI; architecture lint; workflow policy; `python tools/validate_docs.py`; and Git whitespace checks pass. Final committed-history secret scan and exact GitHub head/check/review outcomes belong in the [check record](design/reviews/2026-11-18-figma-native-closure-checks.json). These are design/tooling/documentary results, with no application tests or clinical validation.
+
+**Remaining and next action:** review PR19 and the final scoped visual evidence. Full responsive/component/token/prototype reconciliation and Aymen's design approval remain open; all 45 stories stay backlog, and explicit later development authorization is required. Do not rerun the immutable importer over intentionally corrected roots. Keep the original IDs and inspect current fingerprints before any further edit. Existing unrelated Dependabot alert 54 remains recorded outside this closure. No merge or branch deletion is authorized by this delivery.
+
+Automated independent review was unavailable: Copilot reported exhausted requester quota, CodeRabbit skipped automatic review for this repository, and Qodo reported paused reviews. No inline design/tooling findings were returned and no subscription or review permission changed. Exact-head CI results and the narrowly reconciled non-secret metadata scan findings are recorded in the check record; do not treat unavailable review as approval.
+
+## Native desktop verification — 2026-11-18
+
+All 456 desktop states in 94 sections passed native text, font, dimensions, duplicate and fingerprint checks in Figma Desktop. The final observation records 28,001 editable text nodes. The eight S-06 roots retain their original `26:*` IDs. Foundations `2:74` and components `2:75` remain present. The named final version is `2423132943961499284`, “Etaye desktop import — 456 states verified — 2026-11-18”. The [run report](design/reviews/2026-11-17-windows-native-run.md) and [actual evidence](design/reviews/2026-11-17-windows-native-run.json) record exact node IDs and source hashes.
+
+After all replacement states were revalidated, the authorized twelve old roots (`15:3`, `19:2`, `22:2`–`22:11`) and their 3,492 recorded nodes were removed. The post-cleanup observation contains exactly the 94 replacement sections and none of those old roots. Bounding-box rounding and absent REST image hashes were reconciled against the dated inventory and exact image allowlist. The protected design pages and unrelated work were outside the cleanup set.
+
+Forty-two states have targeted visual comparison evidence, including all nine short/long/incomplete PDF previews, the 19 email states and 14 screen/interaction states. All 22 source PDF pages were opened. Text wrapping/citations, S-22 inline addition/deletion badges, an S-02 error list marker, the I-13 input focus ring, S-39 page preview borders and a 20px S-18 frame-height difference remain findings. The desktop import is complete. Full responsive/component/token/prototype reconciliation and Aymen’s approval remain open. Continue with those visual corrections and the remaining design review before development.
+
+Twenty-five importer fixture tests and JavaScript syntax checks pass. The Windows documentary validator still reports the eight CRLF-converted SVGs and the shared-skills symlink represented as text. The committed asset bytes and symlink identity were checked. The final report records these limits.
+
+The original handoff PR16 is now merged and its remote branch is absent. Current remote `main` was observed at `eb58c81b3be3b91819dd2ca31a4f2412b509b5e3`, including later planning and background-study work. Its full continuation was saved for integration. The local checkout remains at `0cd9b96` with the native-run changes uncommitted. GitHub connector writes returned `403 Resource not accessible by integration`, and this runtime cannot write the local Git metadata. Integrate these design-only changes with current `main` and push them on a new documentation branch through the user’s authenticated terminal. Preserve the later remote continuation and all approval gates.
+
+## Windows Figma Desktop execution — 2026-11-17
+
+The project is in native desktop design import. The published Windows archive and all 1,694 declared payloads matched the release. The original Figma file is open on page `15:2` with a named recovery version. The [run report](design/reviews/2026-11-17-windows-native-run.md) and [downloaded checkpoint summary](design/reviews/2026-11-17-windows-native-run.json) record 187 verified states, including the eight reused S-06 roots in `26:2`. The remaining queue has resumed after four Desktop compatibility fixes. The status below records the earlier handoff.
+
+The 24 importer fixtures passed. Windows checkout effects on the documentary validator are recorded in the report. Collect the final structural evidence, compare native renders with the frozen HTML and all nine PDF variants, then run guarded cleanup after full verification. Keep the foundations and components, and leave the application stories in backlog.
 
 ## Windows Figma Desktop handoff — 2026-11-17
 
