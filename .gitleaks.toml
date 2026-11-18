@@ -63,3 +63,17 @@ targetRules = ["generic-api-key"]
 condition = "AND"
 paths = ['''^_bmad/_config/files-manifest\.csv$''']
 regexes = ['''^ff1c5060673dd595edd61e76806bae876264ec6895c2eaadf8a6190785bf5f7b$''']
+
+[[allowlists]]
+description = "Public Figma file identifier in the background-study plugin kit, not the REST authentication token"
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^design/figma-background-study/(code\.js|export_batch\.py|batches/background-study-v1\.json)$''']
+regexes = ['''^vfh4BSnbRAbaDE1q0CyssL$''']
+
+[[allowlists]]
+description = "SHA-256 file digests recorded as provenance in the generated background-study batch, not secrets"
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''^design/figma-background-study/batches/background-study-v1\.json$''']
+regexes = ['''^[a-f0-9]{64}$''']
