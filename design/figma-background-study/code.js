@@ -163,7 +163,12 @@ async function buildRun(batch, context) {
         node = add(figma.createFrame(), parent); node.resize(Math.max(1, item.w), Math.max(1, item.h)); node.clipsContent = Boolean(item.clip);
         const paint = contentPaint(theme, item.fill, FILL_PREFERENCE); node.fills = paint ? [paint] : [];
         node.cornerRadius = Math.min(item.radius || 0, Math.min(item.w, item.h) / 2);
-        (item.borders || []).forEach((edge, i) => {
+        const edges = item.borders || [], shown = edges.filter(edge => edge.width > 0 && edge.color?.a);
+        const same = (a, b) => a.r === b.r && a.g === b.g && a.b === b.b && a.a === b.a;
+        if (edges.length === 4 && shown.length === 4 && shown.every(edge => edge.width === shown[0].width && same(edge.color, shown[0].color))) {
+          // A uniform CSS border is an inside stroke: it follows the corner radius, as the verified native import does.
+          node.strokes = [contentPaint(theme, shown[0].color, STROKE_PREFERENCE)]; node.strokeWeight = shown[0].width; node.strokeAlign = 'INSIDE';
+        } else edges.forEach((edge, i) => {
           if (!(edge.width > 0 && edge.color?.a)) return;
           const border = rect(node, 'Bordure ' + i, i === 1 ? item.w - edge.width : 0, i === 2 ? item.h - edge.width : 0, i % 2 ? edge.width : item.w, i % 2 ? item.h : edge.width, []);
           border.fills = [contentPaint(theme, edge.color, STROKE_PREFERENCE)];

@@ -105,6 +105,14 @@ test('happy path: one new section, eight frames, layers in the specified order a
     assert.equal(tr.opacity, theme === 'light' ? 0.32 : 0.38);
     assert.equal(content.type, 'FRAME'); const logo = content.children.flatMap(function find(n) {return [n, ...n.children.flatMap(find)];}).find(n => n.type === 'INSTANCE');
     assert.equal(logo.mainComponent.id, theme === 'light' ? '4:13' : '4:33', 'the original logo component is reused');
+    const all = content.children.flatMap(function find(n) {return [n, ...n.children.flatMap(find)];});
+    const bordered = all.filter(n => n.type === 'FRAME' && n.strokes.length === 1);
+    assert.ok(bordered.length >= 2, 'the secondary button and the preview panel carry a native border');
+    for (const n of bordered) {
+      assert.deepEqual([n.strokeAlign, n.strokes[0].type], ['INSIDE', 'SOLID'], 'a uniform CSS border is an inside stroke that follows the corner radius');
+      assert.ok(n.strokes[0].boundVariables?.color, 'the border is bound to an existing color variable'); assert.ok(n.strokeWeight > 0);
+      assert.equal(n.children.filter(c => /^Bordure /.test(c.name)).length, 0, 'no loose edge rectangles that would stick out of rounded corners');
+    }
   }
   const evidence = h.last().evidence; assert.equal(evidence.frames.length, 8); assert.ok(evidence.colorBinding.bound > 100 && evidence.colorBinding.bound > evidence.colorBinding.raw, JSON.stringify(evidence.colorBinding));
   assert.equal(evidence.createdNodeCount, evidence.createdNodeIds.length); assert.equal(new Set(evidence.createdNodeIds).size, evidence.createdNodeCount);
