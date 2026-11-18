@@ -1,0 +1,508 @@
+{
+  "plans": [
+    {
+      "state": "S-02/champ-vide",
+      "rootId": "30:465",
+      "beforeFingerprint": "e42fea73a9e5cfb0f51fdcc36287c509b3b9bfe1ba82fb8c4ad9c0a8caaaf775",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-02/connexion",
+      "rootId": "30:525",
+      "beforeFingerprint": "296406da3f6d2a7e0d6a8f743d5adb62aac59c288dbdab7d3a9289edc22f6600",
+      "edits": [
+        {
+          "id": "30:547",
+          "name": "input#l-mail",
+          "type": "FRAME",
+          "props": {
+            "clipsContent": false
+          }
+        }
+      ],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-02/envoi",
+      "rootId": "30:577",
+      "beforeFingerprint": "679728e2eb885d5095d0cd5612f1a0468e0d7d451e3a847ae721f8b4b5f905b7",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-02/invalide",
+      "rootId": "30:630",
+      "beforeFingerprint": "b7449b1c7e37a58673d31b257f3e5741bec7635dabd2c2ddcff62d3ccdb9fd06",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-02/limite",
+      "rootId": "30:692",
+      "beforeFingerprint": "6e585d81cbeb55db7f67f66e3983a08f8b3dabede1f3459615f8a8dd4d301b47",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-02/patient",
+      "rootId": "30:759",
+      "beforeFingerprint": "845bd89d8bbb524ebcc755830a97568bf0ff63b9f29a30dac2b94968037c803f",
+      "edits": [
+        {
+          "id": "30:783",
+          "name": "input#l-mail",
+          "type": "FRAME",
+          "props": {
+            "clipsContent": false
+          }
+        }
+      ],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-02/patient-invalide",
+      "rootId": "30:813",
+      "beforeFingerprint": "4a14741fe4d2be886bc3f24db18e1161856602cc7fb1a1d18c49b5ae8801a1d0",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-02/retour",
+      "rootId": "30:877",
+      "beforeFingerprint": "d1d51ec5d66bd561199c6f4667a5c3c0e27885017cc804c7461b144cbde4121e",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-02/suspendu",
+      "rootId": "30:942",
+      "beforeFingerprint": "2399836f3608653764f4e021838c3dfd1507826d1441a0a9bb2f9e3e5940c14c",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-09/claire",
+      "rootId": "30:5937",
+      "beforeFingerprint": "40c6c10a3a579e533f4d8e1ad894c9b7469cebf9df9933c52b634acbe249c4f6",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-09/corrige",
+      "rootId": "30:6514",
+      "beforeFingerprint": "d2c22d4b608283dd31d3dcde814049712f689fe6fa9984d10266cadf6488cb5b",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-09/date-inconnue",
+      "rootId": "30:6937",
+      "beforeFingerprint": "1910eeaf39ea0671f539f22a3d0d0603408197ede62eb02cc30d10d8e8dd8024",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-09/erreur-partielle",
+      "rootId": "30:7366",
+      "beforeFingerprint": "4cc6a47f8efbd93d571b26489870d7149386f041eedcf115e02fd2e80ceb472f",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-09/hugo",
+      "rootId": "30:7901",
+      "beforeFingerprint": "b359362366cebac199d70a60d71bf888e057c001cfe5e315014a8c7deb5a322d",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-09/lecture-seule",
+      "rootId": "30:8066",
+      "beforeFingerprint": "147586379d453825364ab97879549a50e389fdd849bd97f68b16e6147abb8027",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-09/long",
+      "rootId": "30:8644",
+      "beforeFingerprint": "7ce5ebe764db78b211b7a74cd268a51b009451fccaf34a89c98c894a4e0fe78d",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-09/louis",
+      "rootId": "30:9394",
+      "beforeFingerprint": "fd761ff6085873085a435dd4d22559eea0076ef395c280c9d38771efdc795791",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-18/brouillon",
+      "rootId": "30:21641",
+      "beforeFingerprint": "2eca0507f22b47974d2c05570ec3751edb84ed629062869592feb5dc5bb3cc8a",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-18/canal",
+      "rootId": "30:22228",
+      "beforeFingerprint": "789a8fe7fefb57e43b8ef485119d20da165ed49b18c63033bc3d5210bf70c3a7",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-18/echec",
+      "rootId": "30:22361",
+      "beforeFingerprint": "a1ac41815980cb3be14b45c4f468614d3c7948840f5f9d58d499ec8bdf4602f5",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-18/en-cours",
+      "rootId": "30:22583",
+      "beforeFingerprint": "3db83f8ee5793d799ef18f25c81f6b96cef9b059384c46ea03bd9df10bac5c7f",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-18/en-file",
+      "rootId": "30:22918",
+      "beforeFingerprint": "b7b93e134ecfe6c51f8030d9e5ef50ec1d97758619ba1c9f679579a336e4c52a",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-18/louis",
+      "rootId": "30:23251",
+      "beforeFingerprint": "d1827a8ff25aa0f97f1c27efaecaac892c7560fdb2c40cce9f9684a7802cc9fd",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-18/perime",
+      "rootId": "30:23462",
+      "beforeFingerprint": "63711d0d2c14b97076563c6cb4e0569f83a8005b5a8467a048debc042436f4fa",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-18/relecture",
+      "rootId": "30:24073",
+      "beforeFingerprint": "b5a8b064ba8bfef4ac7155cbf98b526507f8f6187a0765aa39a6db59a9280318",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-18/valide",
+      "rootId": "30:24650",
+      "beforeFingerprint": "a7ec32a9e75bd20479b6ffc41ab8b9e56327aa9de06fc9f269764556278a40e7",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-22/comparaison",
+      "rootId": "30:36788",
+      "beforeFingerprint": "404b2de2dc016e6c710d319999f2b6fb9e4983bb3c5691ee1cca1d4338063c49",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-22/generation",
+      "rootId": "30:37209",
+      "beforeFingerprint": "89d59b7ee2e38d6ca87ffaa3706822f8cb04bcd87bcd4ae73c16e9ba931725a0",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-22/lecture-seule",
+      "rootId": "30:37630",
+      "beforeFingerprint": "453adadddb3014ad40813c0c7b19d64db32e4359547359818b33c08b2d51c245",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-22/lien-remplace",
+      "rootId": "30:38054",
+      "beforeFingerprint": "2e5624711afc46dace6eaa06396f9d8a818b1b679e0d7a7b44a54b6d47c909bd",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-22/longue",
+      "rootId": "30:38496",
+      "beforeFingerprint": "bf04267069e9c6a897094061ad59a2aee0ac11788d0b27dd7ee8cf7ed0247beb",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-22/nouvelle-version",
+      "rootId": "30:38972",
+      "beforeFingerprint": "c2485e4c3da64cc0d05105704ba563ca4cabb301a31367a156701d394453856f",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-22/source-manquante",
+      "rootId": "30:39426",
+      "beforeFingerprint": "4d90b382c6a48a61e2adae875a8cbb80def63d003007c586815c73845607337c",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-22/une-version",
+      "rootId": "30:39866",
+      "beforeFingerprint": "63b83fa8799556914d200a62d0e744bf7b7c5049e18eb66fb67f898fdd2810e0",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-23/brief",
+      "rootId": "30:40090",
+      "beforeFingerprint": "3d8d46247075fba37c471468cfa5d37eabaff869c044f47567c6ab8b0f6c1b21",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-23/brouillon-modifie",
+      "rootId": "30:40380",
+      "beforeFingerprint": "797c0dea3863e4dc1db6217ad3c3164b648a67ca1bd476a887b67d0999180b75",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-23/contradiction",
+      "rootId": "30:40717",
+      "beforeFingerprint": "3814175174d086eefd44588f2760d6bd0421782743bba4bd5b24a9511cb58c94",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-23/echec-publication",
+      "rootId": "30:41040",
+      "beforeFingerprint": "9473596cf38ef617eba770afbe6cc04ea8579820da865f1e02f49f3f106a0f59",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-23/perime",
+      "rootId": "30:41384",
+      "beforeFingerprint": "7dc840e684aea86c50f4689fdfd5f990a03aba1d9147a4097b43f0dcbe9c9428",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-23/publie",
+      "rootId": "30:41736",
+      "beforeFingerprint": "2c71834c5e213457b6a0fdd34b340f078bf65dccca6882e7e3f1fa006fab69a3",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-23/source-manquante",
+      "rootId": "30:42068",
+      "beforeFingerprint": "7f9535f0c481daa3272e5aa75ee27bb0e3f3725b829a459afba3d1e455a6d3bd",
+      "edits": [
+        {
+          "id": "30:42317",
+          "name": "La liste actuelle de vos traitements reste à compléter.",
+          "type": "TEXT",
+          "props": {
+            "characters": "La"
+          }
+        }
+      ],
+      "reorder": [],
+      "markers": [],
+      "splits": [
+        {
+          "sourceId": "30:42317",
+          "parentId": "30:42316",
+          "characters": "liste actuelle de vos traitements reste à compléter.",
+          "x": 0,
+          "y": 30
+        }
+      ]
+    },
+    {
+      "state": "S-23/validation",
+      "rootId": "30:42405",
+      "beforeFingerprint": "d43a45807b4f6e7d5c5559f47d373b366075dc7b09432271faa259c220853560",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-23/valide",
+      "rootId": "30:42727",
+      "beforeFingerprint": "f08410c252283952919e62fd66d03b1e793f4eab4849cff7e0f54fd8f981324d",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-39/echec",
+      "rootId": "32:61336",
+      "beforeFingerprint": "bc1ab48c9455505ce65f8dd7fddb400892f3fa4ebe5980a8886de3610a1f2a98",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-39/generation",
+      "rootId": "32:61618",
+      "beforeFingerprint": "85c1d9505b7059db6d174931fdaddb8f0f47b46d2db6c99f38bc94a03542eb61",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-39/long",
+      "rootId": "32:61891",
+      "beforeFingerprint": "70cf6e774e94e256699de9400a7c1f31cb0c86638ab426ecd273d3141509165c",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-39/non-autorise",
+      "rootId": "32:62178",
+      "beforeFingerprint": "557a1959b63f2c212ae1c64db45b09e9ee3c5cff004109de59d2b22fcc17d0d8",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-39/options",
+      "rootId": "32:62227",
+      "beforeFingerprint": "0ddbe923870110640a61643548a329c072c77cfca43b46856974aa601ba8c450",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-39/perime",
+      "rootId": "32:62491",
+      "beforeFingerprint": "1c96b019eecb0ba841a8576e54d97301d587f326ac7fd240155ae56df632f2cb",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "S-39/police",
+      "rootId": "32:62770",
+      "beforeFingerprint": "492c6ce454f701b7fa672dad2c534bf6e2910afd54c88088bb0960224fa6c81d",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "I-13/enregistre",
+      "rootId": "32:84596",
+      "beforeFingerprint": "3f7bc88b1b7886ce5f5d9b986d9bcc7e9079eb34e4099099ea3c912caf4c0346",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    },
+    {
+      "state": "I-13/ouvert",
+      "rootId": "32:84807",
+      "beforeFingerprint": "48df7041600d50aaf5e708a7c865bf869a5b7260889b43787d43922bc12a1d79",
+      "edits": [],
+      "reorder": [],
+      "markers": [],
+      "splits": []
+    }
+  ],
+  "issues": []
+}

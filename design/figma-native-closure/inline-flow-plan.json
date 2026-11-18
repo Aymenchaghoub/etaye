@@ -1,0 +1,1346 @@
+[
+  {
+    "state": "S-18/brouillon",
+    "rootId": "30:21641",
+    "chains": [
+      {
+        "parentId": "30:21874",
+        "segments": [
+          {
+            "id": "30:21875",
+            "sourceX": 0,
+            "sourceY": 3,
+            "sourceWidth": 755.421875,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:21876",
+            "sourceX": 757.421875,
+            "sourceY": 4.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:21880",
+            "sourceX": 778.375,
+            "sourceY": 3,
+            "sourceWidth": 4.84375,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:21874",
+        "segments": [
+          {
+            "id": "30:21881",
+            "sourceX": 0,
+            "sourceY": 31,
+            "sourceWidth": 420.453125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:21882",
+            "sourceX": 422.453125,
+            "sourceY": 32.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:21886",
+            "sourceX": 443.40625,
+            "sourceY": 31,
+            "sourceWidth": 316.09375,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:21874",
+        "segments": [
+          {
+            "id": "30:21887",
+            "sourceX": 0,
+            "sourceY": 59,
+            "sourceWidth": 87.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:21888",
+            "sourceX": 91.953125,
+            "sourceY": 60,
+            "sourceWidth": 149.53125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:21890",
+            "sourceX": 245.484375,
+            "sourceY": 59,
+            "sourceWidth": 357.453125,
+            "trailingSpaceAdvance": 3.7919921875
+          },
+          {
+            "id": "30:21891",
+            "sourceX": 602.9375,
+            "sourceY": 60,
+            "sourceWidth": 20.234375,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:21893",
+            "sourceX": 623.171875,
+            "sourceY": 59,
+            "sourceWidth": 40.21875,
+            "trailingSpaceAdvance": 3.7919921875
+          },
+          {
+            "id": "30:21894",
+            "sourceX": 663.390625,
+            "sourceY": 60,
+            "sourceWidth": 99.8125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:21896",
+            "sourceX": 765.203125,
+            "sourceY": 60.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:21900",
+            "sourceX": 788.15625,
+            "sourceY": 60.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:21904",
+            "sourceX": 809.109375,
+            "sourceY": 59,
+            "sourceWidth": 4.84375,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "state": "S-18/perime",
+    "rootId": "30:23462",
+    "chains": [
+      {
+        "parentId": "30:23718",
+        "segments": [
+          {
+            "id": "30:23719",
+            "sourceX": 0,
+            "sourceY": 3,
+            "sourceWidth": 755.421875,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:23720",
+            "sourceX": 757.421875,
+            "sourceY": 4.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:23724",
+            "sourceX": 778.375,
+            "sourceY": 3,
+            "sourceWidth": 4.84375,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:23718",
+        "segments": [
+          {
+            "id": "30:23725",
+            "sourceX": 0,
+            "sourceY": 31,
+            "sourceWidth": 420.453125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:23726",
+            "sourceX": 422.453125,
+            "sourceY": 32.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:23730",
+            "sourceX": 443.40625,
+            "sourceY": 31,
+            "sourceWidth": 316.09375,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:23718",
+        "segments": [
+          {
+            "id": "30:23731",
+            "sourceX": 0,
+            "sourceY": 59,
+            "sourceWidth": 87.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:23732",
+            "sourceX": 91.953125,
+            "sourceY": 60,
+            "sourceWidth": 149.53125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:23734",
+            "sourceX": 245.484375,
+            "sourceY": 59,
+            "sourceWidth": 357.453125,
+            "trailingSpaceAdvance": 3.7919921875
+          },
+          {
+            "id": "30:23735",
+            "sourceX": 602.9375,
+            "sourceY": 60,
+            "sourceWidth": 20.234375,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:23737",
+            "sourceX": 623.171875,
+            "sourceY": 59,
+            "sourceWidth": 40.21875,
+            "trailingSpaceAdvance": 3.7919921875
+          },
+          {
+            "id": "30:23738",
+            "sourceX": 663.390625,
+            "sourceY": 60,
+            "sourceWidth": 99.8125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:23740",
+            "sourceX": 765.203125,
+            "sourceY": 60.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:23744",
+            "sourceX": 788.15625,
+            "sourceY": 60.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:23748",
+            "sourceX": 809.109375,
+            "sourceY": 59,
+            "sourceWidth": 4.84375,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "state": "S-18/relecture",
+    "rootId": "30:24073",
+    "chains": [
+      {
+        "parentId": "30:24296",
+        "segments": [
+          {
+            "id": "30:24297",
+            "sourceX": 0,
+            "sourceY": 3,
+            "sourceWidth": 755.421875,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:24298",
+            "sourceX": 757.421875,
+            "sourceY": 4.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:24302",
+            "sourceX": 778.375,
+            "sourceY": 3,
+            "sourceWidth": 4.84375,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:24296",
+        "segments": [
+          {
+            "id": "30:24303",
+            "sourceX": 0,
+            "sourceY": 31,
+            "sourceWidth": 420.453125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:24304",
+            "sourceX": 422.453125,
+            "sourceY": 32.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:24308",
+            "sourceX": 443.40625,
+            "sourceY": 31,
+            "sourceWidth": 316.09375,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:24296",
+        "segments": [
+          {
+            "id": "30:24309",
+            "sourceX": 0,
+            "sourceY": 59,
+            "sourceWidth": 87.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:24310",
+            "sourceX": 91.953125,
+            "sourceY": 60,
+            "sourceWidth": 149.53125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:24312",
+            "sourceX": 245.484375,
+            "sourceY": 59,
+            "sourceWidth": 357.453125,
+            "trailingSpaceAdvance": 3.7919921875
+          },
+          {
+            "id": "30:24313",
+            "sourceX": 602.9375,
+            "sourceY": 60,
+            "sourceWidth": 20.234375,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:24315",
+            "sourceX": 623.171875,
+            "sourceY": 59,
+            "sourceWidth": 40.21875,
+            "trailingSpaceAdvance": 3.7919921875
+          },
+          {
+            "id": "30:24316",
+            "sourceX": 663.390625,
+            "sourceY": 60,
+            "sourceWidth": 99.8125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:24318",
+            "sourceX": 765.203125,
+            "sourceY": 60.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:24322",
+            "sourceX": 788.15625,
+            "sourceY": 60.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:24326",
+            "sourceX": 809.109375,
+            "sourceY": 59,
+            "sourceWidth": 4.84375,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "state": "S-18/valide",
+    "rootId": "30:24650",
+    "chains": [
+      {
+        "parentId": "30:24876",
+        "segments": [
+          {
+            "id": "30:24877",
+            "sourceX": 0,
+            "sourceY": 3,
+            "sourceWidth": 755.421875,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:24878",
+            "sourceX": 757.421875,
+            "sourceY": 4.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:24882",
+            "sourceX": 778.375,
+            "sourceY": 3,
+            "sourceWidth": 4.84375,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:24876",
+        "segments": [
+          {
+            "id": "30:24883",
+            "sourceX": 0,
+            "sourceY": 31,
+            "sourceWidth": 420.453125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:24884",
+            "sourceX": 422.453125,
+            "sourceY": 32.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:24888",
+            "sourceX": 443.40625,
+            "sourceY": 31,
+            "sourceWidth": 316.09375,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:24876",
+        "segments": [
+          {
+            "id": "30:24889",
+            "sourceX": 0,
+            "sourceY": 59,
+            "sourceWidth": 87.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:24890",
+            "sourceX": 91.953125,
+            "sourceY": 60,
+            "sourceWidth": 149.53125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:24892",
+            "sourceX": 245.484375,
+            "sourceY": 59,
+            "sourceWidth": 357.453125,
+            "trailingSpaceAdvance": 3.7919921875
+          },
+          {
+            "id": "30:24893",
+            "sourceX": 602.9375,
+            "sourceY": 60,
+            "sourceWidth": 20.234375,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:24895",
+            "sourceX": 623.171875,
+            "sourceY": 59,
+            "sourceWidth": 40.21875,
+            "trailingSpaceAdvance": 3.7919921875
+          },
+          {
+            "id": "30:24896",
+            "sourceX": 663.390625,
+            "sourceY": 60,
+            "sourceWidth": 99.8125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:24898",
+            "sourceX": 765.203125,
+            "sourceY": 60.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:24902",
+            "sourceX": 788.15625,
+            "sourceY": 60.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:24906",
+            "sourceX": 809.109375,
+            "sourceY": 59,
+            "sourceWidth": 4.84375,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "state": "S-22/comparaison",
+    "rootId": "30:36788",
+    "chains": [
+      {
+        "parentId": "30:37157",
+        "segments": [
+          {
+            "id": "30:37158",
+            "sourceX": 0,
+            "sourceY": 2,
+            "sourceWidth": 465.453125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:37159",
+            "sourceX": 467.453125,
+            "sourceY": 2.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:37167",
+        "segments": [
+          {
+            "id": "30:37169",
+            "sourceX": 0,
+            "sourceY": 28,
+            "sourceWidth": 137.25,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:37170",
+            "sourceX": 139.25,
+            "sourceY": 28.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "state": "S-22/generation",
+    "rootId": "30:37209",
+    "chains": [
+      {
+        "parentId": "30:37484",
+        "segments": [
+          {
+            "id": "30:37485",
+            "sourceX": 0,
+            "sourceY": 2,
+            "sourceWidth": 465.453125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:37486",
+            "sourceX": 467.453125,
+            "sourceY": 2.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:37494",
+        "segments": [
+          {
+            "id": "30:37496",
+            "sourceX": 0,
+            "sourceY": 28,
+            "sourceWidth": 137.25,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:37497",
+            "sourceX": 139.25,
+            "sourceY": 28.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "state": "S-22/lecture-seule",
+    "rootId": "30:37630",
+    "chains": [
+      {
+        "parentId": "30:38002",
+        "segments": [
+          {
+            "id": "30:38003",
+            "sourceX": 0,
+            "sourceY": 2,
+            "sourceWidth": 465.453125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:38004",
+            "sourceX": 467.453125,
+            "sourceY": 2.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:38012",
+        "segments": [
+          {
+            "id": "30:38014",
+            "sourceX": 0,
+            "sourceY": 28,
+            "sourceWidth": 137.25,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:38015",
+            "sourceX": 139.25,
+            "sourceY": 28.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "state": "S-22/lien-remplace",
+    "rootId": "30:38054",
+    "chains": [
+      {
+        "parentId": "30:38444",
+        "segments": [
+          {
+            "id": "30:38445",
+            "sourceX": 0,
+            "sourceY": 2,
+            "sourceWidth": 465.453125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:38446",
+            "sourceX": 467.453125,
+            "sourceY": 2.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:38454",
+        "segments": [
+          {
+            "id": "30:38456",
+            "sourceX": 0,
+            "sourceY": 28,
+            "sourceWidth": 137.25,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:38457",
+            "sourceX": 139.25,
+            "sourceY": 28.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "state": "S-22/longue",
+    "rootId": "30:38496",
+    "chains": [
+      {
+        "parentId": "30:38920",
+        "segments": [
+          {
+            "id": "30:38921",
+            "sourceX": 0,
+            "sourceY": 2,
+            "sourceWidth": 465.453125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:38922",
+            "sourceX": 467.453125,
+            "sourceY": 2.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:38930",
+        "segments": [
+          {
+            "id": "30:38932",
+            "sourceX": 0,
+            "sourceY": 28,
+            "sourceWidth": 137.25,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:38933",
+            "sourceX": 139.25,
+            "sourceY": 28.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "state": "S-22/nouvelle-version",
+    "rootId": "30:38972",
+    "chains": [
+      {
+        "parentId": "30:39373",
+        "segments": [
+          {
+            "id": "30:39374",
+            "sourceX": 0,
+            "sourceY": 2,
+            "sourceWidth": 465.453125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:39375",
+            "sourceX": 467.453125,
+            "sourceY": 2.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:39383",
+        "segments": [
+          {
+            "id": "30:39385",
+            "sourceX": 0,
+            "sourceY": 28,
+            "sourceWidth": 137.25,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:39386",
+            "sourceX": 139.25,
+            "sourceY": 28.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "state": "S-22/source-manquante",
+    "rootId": "30:39426",
+    "chains": [
+      {
+        "parentId": "30:39814",
+        "segments": [
+          {
+            "id": "30:39815",
+            "sourceX": 0,
+            "sourceY": 2,
+            "sourceWidth": 465.453125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:39816",
+            "sourceX": 467.453125,
+            "sourceY": 2.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:39824",
+        "segments": [
+          {
+            "id": "30:39826",
+            "sourceX": 0,
+            "sourceY": 28,
+            "sourceWidth": 137.25,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:39827",
+            "sourceX": 139.25,
+            "sourceY": 28.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "state": "S-23/brief",
+    "rootId": "30:40090",
+    "chains": [
+      {
+        "parentId": "30:40325",
+        "segments": [
+          {
+            "id": "30:40327",
+            "sourceX": 0,
+            "sourceY": 34,
+            "sourceWidth": 179.0625,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:40328",
+            "sourceX": 181.0625,
+            "sourceY": 35.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:40332",
+            "sourceX": 202.015625,
+            "sourceY": 34,
+            "sourceWidth": 344.484375,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:40325",
+        "segments": [
+          {
+            "id": "30:40333",
+            "sourceX": 0,
+            "sourceY": 64,
+            "sourceWidth": 80.8125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:40334",
+            "sourceX": 82.8125,
+            "sourceY": 65.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:40338",
+            "sourceX": 103.765625,
+            "sourceY": 64,
+            "sourceWidth": 437.484375,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:40325",
+        "segments": [
+          {
+            "id": "30:40339",
+            "sourceX": 0,
+            "sourceY": 94,
+            "sourceWidth": 465.1875,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:40341",
+            "sourceX": 467.1875,
+            "sourceY": 95.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:40345",
+            "sourceX": 490.140625,
+            "sourceY": 95.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:40349",
+            "sourceX": 511.09375,
+            "sourceY": 94,
+            "sourceWidth": 4.84375,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "state": "S-23/brouillon-modifie",
+    "rootId": "30:40380",
+    "chains": [
+      {
+        "parentId": "30:40617",
+        "segments": [
+          {
+            "id": "30:40618",
+            "sourceX": 4,
+            "sourceY": 5,
+            "sourceWidth": 115.828125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:40620",
+            "sourceX": 123.828125,
+            "sourceY": 4,
+            "sourceWidth": 436.5,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:40617",
+        "segments": [
+          {
+            "id": "30:40622",
+            "sourceX": 2,
+            "sourceY": 35.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:40626",
+            "sourceX": 22.953125,
+            "sourceY": 34,
+            "sourceWidth": 548.53125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:40617",
+        "segments": [
+          {
+            "id": "30:40627",
+            "sourceX": 0,
+            "sourceY": 64,
+            "sourceWidth": 378.5,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:40628",
+            "sourceX": 380.5,
+            "sourceY": 65.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "state": "S-23/echec-publication",
+    "rootId": "30:41040",
+    "chains": [
+      {
+        "parentId": "30:41300",
+        "segments": [
+          {
+            "id": "30:41301",
+            "sourceX": 4,
+            "sourceY": 5,
+            "sourceWidth": 115.828125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:41303",
+            "sourceX": 123.828125,
+            "sourceY": 4,
+            "sourceWidth": 436.5,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:41300",
+        "segments": [
+          {
+            "id": "30:41305",
+            "sourceX": 2,
+            "sourceY": 35.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:41309",
+            "sourceX": 22.953125,
+            "sourceY": 34,
+            "sourceWidth": 548.53125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:41300",
+        "segments": [
+          {
+            "id": "30:41310",
+            "sourceX": 0,
+            "sourceY": 64,
+            "sourceWidth": 378.5,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:41311",
+            "sourceX": 380.5,
+            "sourceY": 65.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "state": "S-23/perime",
+    "rootId": "30:41384",
+    "chains": [
+      {
+        "parentId": "30:41635",
+        "segments": [
+          {
+            "id": "30:41636",
+            "sourceX": 4,
+            "sourceY": 5,
+            "sourceWidth": 115.828125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:41638",
+            "sourceX": 123.828125,
+            "sourceY": 4,
+            "sourceWidth": 436.5,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:41635",
+        "segments": [
+          {
+            "id": "30:41640",
+            "sourceX": 2,
+            "sourceY": 35.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:41644",
+            "sourceX": 22.953125,
+            "sourceY": 34,
+            "sourceWidth": 548.53125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:41635",
+        "segments": [
+          {
+            "id": "30:41645",
+            "sourceX": 0,
+            "sourceY": 64,
+            "sourceWidth": 378.5,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:41646",
+            "sourceX": 380.5,
+            "sourceY": 65.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "state": "S-23/publie",
+    "rootId": "30:41736",
+    "chains": [
+      {
+        "parentId": "30:41984",
+        "segments": [
+          {
+            "id": "30:41985",
+            "sourceX": 4,
+            "sourceY": 5,
+            "sourceWidth": 115.828125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:41987",
+            "sourceX": 123.828125,
+            "sourceY": 4,
+            "sourceWidth": 436.5,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:41984",
+        "segments": [
+          {
+            "id": "30:41989",
+            "sourceX": 2,
+            "sourceY": 35.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:41993",
+            "sourceX": 22.953125,
+            "sourceY": 34,
+            "sourceWidth": 548.53125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:41984",
+        "segments": [
+          {
+            "id": "30:41994",
+            "sourceX": 0,
+            "sourceY": 64,
+            "sourceWidth": 378.5,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:41995",
+            "sourceX": 380.5,
+            "sourceY": 65.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "state": "S-23/source-manquante",
+    "rootId": "30:42068",
+    "chains": [
+      {
+        "parentId": "30:42305",
+        "segments": [
+          {
+            "id": "30:42306",
+            "sourceX": 4,
+            "sourceY": 5,
+            "sourceWidth": 115.828125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:42308",
+            "sourceX": 123.828125,
+            "sourceY": 4,
+            "sourceWidth": 436.5,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:42305",
+        "segments": [
+          {
+            "id": "30:42310",
+            "sourceX": 2,
+            "sourceY": 35.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:42314",
+            "sourceX": 22.953125,
+            "sourceY": 34,
+            "sourceWidth": 529.984375,
+            "trailingSpaceAdvance": 3.7919921875
+          }
+        ]
+      },
+      {
+        "parentId": "30:42305",
+        "segments": [
+          {
+            "id": "30:42318",
+            "sourceX": 380.5,
+            "sourceY": 65.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:42322",
+            "sourceX": 405.453125,
+            "sourceY": 65,
+            "sourceWidth": 126.828125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "state": "S-23/validation",
+    "rootId": "30:42405",
+    "chains": [
+      {
+        "parentId": "30:42642",
+        "segments": [
+          {
+            "id": "30:42643",
+            "sourceX": 4,
+            "sourceY": 5,
+            "sourceWidth": 115.828125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:42645",
+            "sourceX": 123.828125,
+            "sourceY": 4,
+            "sourceWidth": 436.5,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:42642",
+        "segments": [
+          {
+            "id": "30:42647",
+            "sourceX": 2,
+            "sourceY": 35.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:42651",
+            "sourceX": 22.953125,
+            "sourceY": 34,
+            "sourceWidth": 548.53125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:42642",
+        "segments": [
+          {
+            "id": "30:42652",
+            "sourceX": 0,
+            "sourceY": 64,
+            "sourceWidth": 378.5,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:42653",
+            "sourceX": 380.5,
+            "sourceY": 65.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "state": "S-23/valide",
+    "rootId": "30:42727",
+    "chains": [
+      {
+        "parentId": "30:42970",
+        "segments": [
+          {
+            "id": "30:42971",
+            "sourceX": 4,
+            "sourceY": 5,
+            "sourceWidth": 115.828125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:42973",
+            "sourceX": 123.828125,
+            "sourceY": 4,
+            "sourceWidth": 436.5,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:42970",
+        "segments": [
+          {
+            "id": "30:42975",
+            "sourceX": 2,
+            "sourceY": 35.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:42979",
+            "sourceX": 22.953125,
+            "sourceY": 34,
+            "sourceWidth": 548.53125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      },
+      {
+        "parentId": "30:42970",
+        "segments": [
+          {
+            "id": "30:42980",
+            "sourceX": 0,
+            "sourceY": 64,
+            "sourceWidth": 378.5,
+            "trailingSpaceAdvance": 0
+          },
+          {
+            "id": "30:42981",
+            "sourceX": 380.5,
+            "sourceY": 65.0625,
+            "sourceWidth": 19.953125,
+            "trailingSpaceAdvance": 0
+          }
+        ]
+      }
+    ]
+  }
+]

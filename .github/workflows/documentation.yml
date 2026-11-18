@@ -45,6 +45,8 @@ jobs:
           node --test design/figma-local-import/test-plugin.cjs
           node --check design/figma-windows-import/code.js
           node design/figma-windows-import/test-plugin.cjs
+          node --check design/figma-native-closure/runtime.js
+          node --test design/figma-native-closure/test-runtime.cjs
       - name: Verify the background-study Figma plugin
         run: |
           node --check design/figma-background-study/code.js

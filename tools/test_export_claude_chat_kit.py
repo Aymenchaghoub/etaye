@@ -15,7 +15,8 @@ class ResumeKitTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="etaye-resume-check-")
         self.addCleanup(self.temp.cleanup)
-        self.output = Path(self.temp.name)
+        # Windows may expose TEMP through an 8.3 alias; compare canonical paths.
+        self.output = Path(self.temp.name).resolve()
 
     def test_repeated_exports_preserve_user_files_and_prior_kits(self):
         user_file = self.output / "attachments/06-design-coverage.csv"
@@ -62,7 +63,14 @@ class ResumeKitTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "outside the repository"):
                 exporter.export_package(output)
         link = self.output / "repo-link"
-        link.symlink_to(exporter.ROOT, target_is_directory=True)
+        try:
+            link.symlink_to(exporter.ROOT, target_is_directory=True)
+        except OSError as error:
+            if getattr(error, "winerror", None) != 1314:
+                raise
+            # Junctions exercise the same containment guard without Windows symlink privilege.
+            import _winapi
+            _winapi.CreateJunction(str(exporter.ROOT), str(link))
         with self.assertRaisesRegex(ValueError, "outside the repository"):
             exporter.export_package(link)
 

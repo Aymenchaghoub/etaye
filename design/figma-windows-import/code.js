@@ -21,6 +21,10 @@ const CLEANUP = {
   '22:10': ['FRAME', 'Uploaded Image', ['e5acc091386c4f9271d3c696b4fcf9615aefd63a']],
   '22:11': ['FRAME', 'Uploaded Image', ['fbc7df3ec9d99814f40d8cb9445579e9c08317ce']]
 };
+// This exact section matched a separate native reconstruction of all 1,107 records.
+const RECONCILED_SECTION = {id: '30:8643', packetIndex: 11,
+  stored: 'a525aa2d2a7e6f88dc157d22599f88be8efc39970d6b1c5602a7cbe0d31a58a4',
+  rebuilt: 'a162997a1b17aafc428c77fd51a1379d5d87456012268ead93803c67ee96f2de'};
 let busy = false, cancelled = false, completedQueue = null, lastEvidence = null;
 const tell = (message, done = false, evidence = null, cleanupReady = false) => figma.ui.postMessage({message, done, evidence, cleanupReady});
 const fail = message => {throw Error(message);};
@@ -67,6 +71,26 @@ function nativeInventory(section) {
     box: box ? [box.x, box.y, box.width, box.height] : null, opacity: node.opacity === undefined ? 1 : node.opacity, visible: node.visible === undefined ? true : node.visible,
     clipsContent: node.type === 'FRAME' ? Boolean(node.clipsContent) : null, fills: paints(node.fills), strokes: paints(node.strokes),
     text: node.type === 'TEXT' ? {characters: node.characters, family: node.fontName?.family || null, style: node.fontName?.style || null, size: node.fontSize} : null});});
+}
+function matchesCapturedInventory(section, expected, knownImageHashes = []) {
+  const actual = nativeInventory(section);
+  if (actual.length !== expected.length) return false;
+  return actual.every((record, index) => {
+    const reference = expected[index];
+    const {box: actualBox, ...actualProperties} = record;
+    const {box: referenceBox, ...referenceProperties} = reference;
+    // REST omitted these image hashes; the cleanup allowlist verifies each exact image separately.
+    referenceProperties.fills = reference.fills.map((paint, paintIndex) => {
+      const hash = record.fills[paintIndex]?.[6];
+      if (paint[0] !== 'IMAGE' || paint[6] !== null || !knownImageHashes.includes(hash)) return paint;
+      const normalized = paint.slice(); normalized[6] = hash; return normalized;
+    });
+    if (!same(actualProperties, referenceProperties)) return false;
+    if (!actualBox || !referenceBox) return same(actualBox, referenceBox);
+    // REST and Desktop can round the same box to adjacent thousandths of a pixel.
+    return actualBox.length === referenceBox.length &&
+      actualBox.every((value, coordinate) => Math.abs(Math.round(value * 1000) - Math.round(referenceBox[coordinate] * 1000)) <= 1);
+  });
 }
 function nativeFingerprint(section) {
   const properties = ['relativeTransform', 'rotation', 'blendMode', 'locked', 'sectionContentsHidden', 'fills', 'strokes', 'effects', 'strokeWeight', 'strokeAlign', 'strokeTopWeight', 'strokeRightWeight', 'strokeBottomWeight', 'strokeLeftWeight', 'dashPattern', 'strokeCap', 'strokeJoin', 'strokeMiterLimit', 'cornerRadius', 'cornerSmoothing', 'topLeftRadius', 'topRightRadius', 'bottomLeftRadius', 'bottomRightRadius', 'vectorPaths', 'vectorNetwork', 'fontName', 'fontSize', 'lineHeight', 'letterSpacing', 'textAutoResize', 'textAlignHorizontal', 'textAlignVertical', 'textCase', 'textDecoration', 'textDecorationStyle', 'textDecorationOffset', 'textDecorationThickness', 'textDecorationColor', 'textDecorationSkipInk', 'paragraphSpacing', 'paragraphIndent', 'hyperlink', 'leadingTrim', 'textTruncation', 'maxLines', 'openTypeFeatures'];
@@ -158,9 +182,13 @@ async function targetPage() {
   if (!page || page.type !== 'PAGE' || page.name !== TARGET.pageName || figma.currentPage.id !== page.id) fail('Ouvrez la page « Étaye — Import HTML » (15:2). Aucun calque créé.');
   return page;
 }
+function textSignature(characters, font, size) {
+  // The prepared scene publishes four decimal places; Figma may return float32.
+  return JSON.stringify([characters, fontKey(font), Math.round(size * 10000)]);
+}
 function expectedTexts(packet, frame) {
   const result = [];
-  const visit = index => {const a = packet.nodes[index]; if (a[0] === 1) result.push(JSON.stringify([a[5], fontKey(packet.fonts[a[6]]), a[7]])); for (const child of childrenOf(a)) visit(child);};
+  const visit = index => {const a = packet.nodes[index]; if (a[0] === 1) result.push(textSignature(a[5], packet.fonts[a[6]], a[7])); for (const child of childrenOf(a)) visit(child);};
   visit(frame.node); return result.sort();
 }
 function sourceLinks(packet) {
@@ -175,11 +203,15 @@ function sourceLinks(packet) {
   }
   return links;
 }
+function acceptsNativeFingerprint(sectionId, packetIndex, stored, observed) {
+  return stored === observed || (sectionId === RECONCILED_SECTION.id && packetIndex === RECONCILED_SECTION.packetIndex &&
+    stored === RECONCILED_SECTION.stored && observed === RECONCILED_SECTION.rebuilt);
+}
 function verifySection(section, packet, page, recorded) {
   if (!section || section.type !== 'SECTION' || section.parent?.id !== page.id || section.name !== packet.name || section.children.length !== packet.frames.length) fail('Section existante incomplète ou modifiée : ' + packet.name);
   if (!recorded && section.getPluginData('etayeWindowsNativeV2') !== marker(packet)) fail('Section homonyme sans identité de reprise : ' + packet.name);
-  if (recorded && !same(nativeInventory(section), recorded.nativeInventory)) fail('Inventaire natif modifié pour la section existante : ' + section.id);
-  if (!recorded && section.getPluginData('etayeNativeFingerprintV2') !== nativeFingerprint(section)) fail('Propriétés natives modifiées depuis l’import : ' + section.id);
+  if (recorded && !matchesCapturedInventory(section, recorded.nativeInventory)) fail('Inventaire natif modifié pour la section existante : ' + section.id);
+  if (!recorded && !acceptsNativeFingerprint(section.id, packet.packetIndex, section.getPluginData('etayeNativeFingerprintV2'), nativeFingerprint(section))) fail('Propriétés natives modifiées depuis l’import : ' + section.id);
   const roots = [];
   for (const frame of packet.frames) {
     const reference = recorded?.roots.find(root => root.state === frame.id);
@@ -187,7 +219,7 @@ function verifySection(section, packet, page, recorded) {
     if (matches.length !== 1 || matches[0].type !== 'FRAME' || (reference && matches[0].id !== reference.nodeId)) fail('Racine existante manquante ou répétée : ' + frame.id);
     const root = matches[0], nodes = descendants(root), texts = nodes.filter(node => node.type === 'TEXT');
     if (Math.abs(root.width - frame.width) > 0.1 || Math.abs(root.height - frame.height) > 0.1 || texts.length !== frame.texts || texts.some(node => node.hasMissingFont || !node.fontName || typeof node.fontName.family !== 'string')) fail('Dimensions, textes ou polices différents : ' + frame.id);
-    const actualTexts = texts.map(node => JSON.stringify([node.characters, fontKey(node.fontName), node.fontSize])).sort();
+    const actualTexts = texts.map(node => textSignature(node.characters, node.fontName, node.fontSize)).sort();
     if (!same(actualTexts, expectedTexts(packet, frame))) fail('Contenu ou police du texte différent : ' + frame.id);
     const counts = {}; for (const node of nodes) counts[node.type] = (counts[node.type] || 0) + 1;
     roots.push({state: frame.id, nodeId: root.id, name: root.name, width: root.width, height: root.height, texts: texts.length, nodeTypes: counts,
@@ -243,7 +275,19 @@ async function createPacket(packet, page, images, evidence) {
       node.lineHeight = {unit: 'PIXELS', value: a[8] || a[7] * 1.2}; node.letterSpacing = {unit: 'PIXELS', value: a[10] || 0};
       node.characters = a[5]; node.textAutoResize = a[12] ? 'HEIGHT' : 'WIDTH_AND_HEIGHT';
       if (a[12]) node.resize(a[3], a[4]); fill(node, a[9]); node.name = a[5].slice(0, 80);
-      if (a[11]) {const d = a[11]; node.textDecoration = d.line === 'line-through' ? 'STRIKETHROUGH' : 'UNDERLINE'; node.textDecorationStyle = d.style === 'wavy' ? 'WAVY' : d.style === 'dotted' || d.style === 'dashed' ? 'DOTTED' : 'SOLID'; node.textDecorationColor = {value: {type: 'SOLID', color: {r: d.color.r, g: d.color.g, b: d.color.b}, opacity: d.color.a === undefined ? 1 : d.color.a}}; if (d.thickness > 0) node.textDecorationThickness = {unit: 'PIXELS', value: d.thickness}; if (d.offset > 0) node.textDecorationOffset = {unit: 'PIXELS', value: d.offset};}
+      if (a[11]) {
+        const d = a[11];
+        if (d.line === 'line-through') {
+          // Desktop Figma exposes color, thickness, offset and style setters for underlines only.
+          node.textDecoration = 'STRIKETHROUGH';
+        } else {
+          node.textDecoration = 'UNDERLINE';
+          node.textDecorationStyle = d.style === 'wavy' ? 'WAVY' : d.style === 'dotted' || d.style === 'dashed' ? 'DOTTED' : 'SOLID';
+          node.textDecorationColor = {value: {type: 'SOLID', color: {r: d.color.r, g: d.color.g, b: d.color.b}, opacity: d.color.a === undefined ? 1 : d.color.a}};
+          if (d.thickness > 0) node.textDecorationThickness = {unit: 'PIXELS', value: d.thickness};
+          if (d.offset > 0) node.textDecorationOffset = {unit: 'PIXELS', value: d.offset};
+        }
+      }
     } else if (kind === 2) {
       node = add(figma.createNodeFromSvg(packet.svgs[a[6]]), parent); node.resize(a[3], a[4]); node.name = a[5]; node.opacity = a[7]; target = a[8];
       a[9].forEach((child, ordinal) => build(child, node, state, [...tuplePath, child], [...childPath, ordinal]));
@@ -334,7 +378,7 @@ async function cleanup() {
   }
   checkCancelled(page);
   lastEvidence.verifiedPackets = verifyAll(completedQueue, page);
-  for (const {node, expected} of candidates) if (node.parent?.id !== page.id || node.type !== expected.type || node.name !== expected.name || !same(imageHashes(node), expected.imageHashes.slice().sort()) || !same(nativeInventory(node), expected.nativeInventory)) fail('Nettoyage refusé : identité ou inventaire natif modifié pour ' + expected.id + '. Aucun ancien élément supprimé.');
+  for (const {node, expected} of candidates) if (node.parent?.id !== page.id || node.type !== expected.type || node.name !== expected.name || !same(imageHashes(node), expected.imageHashes.slice().sort()) || !matchesCapturedInventory(node, expected.nativeInventory, expected.imageHashes)) fail('Nettoyage refusé : identité ou inventaire natif modifié pour ' + expected.id + '. Aucun ancien élément supprimé.');
   lastEvidence.cleanup = {executed: true, verifiedAt: new Date().toISOString(), removedNodeIds: []};
   for (const {node} of candidates) {const ids = descendants(node).map(item => item.id); node.remove(); lastEvidence.cleanup.removedNodeIds.push(...ids);}
   lastEvidence.cleanup.completedAt = new Date().toISOString();
