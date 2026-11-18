@@ -13,6 +13,7 @@ target/
 dist/
 .cache/
 .venv-docs/
+.venv-visual/
 reports/
 __pycache__/
 local-reference/
