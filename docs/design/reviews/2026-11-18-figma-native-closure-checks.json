@@ -63,11 +63,11 @@
   },
   "historySecretScan": {
     "tool": "Gitleaks 8.30.1 Windows x64",
-    "commitsScanned": 32,
+    "commitsScanned": 33,
     "findings": 0,
     "archiveSha256": "d29144deff3a68aa93ced33dddf84b7fdc26070add4aa0f4513094c8332afc4e",
     "scope": "all local and fetched remote refs",
-    "sourceHead": "67cd141cc994969131e52c7334d47ece891c9a4a",
+    "sourceHead": "876252297632d791cf171a7bc35aec2c0669825e",
     "closureHeadHistoryCommits": 21,
     "closureHeadFindings": 0,
     "verifiedMetadataExceptions": {
@@ -80,8 +80,8 @@
   },
   "delivery": {
     "pullRequest": "https://github.com/Aymenchaghoub/etaye/pull/19",
-    "draft": true,
-    "reviewReady": false
+    "draft": false,
+    "reviewReady": true
   },
   "sharedSkillsLink": {
     "target": "../.claude/skills",
@@ -89,9 +89,10 @@
   },
   "nativeObservationReceived": true,
   "githubChecks": {
-    "sourceCommit": "d589fb581b58e81f7d484766ca13ca8aa9f2f22e",
-    "documentation": "passed",
-    "codeql": "passed"
+    "sourceCommit": "876252297632d791cf171a7bc35aec2c0669825e",
+    "documentation": "failed on verified tokens.css digest repeated in this record; exact-value/path allowlist corrected",
+    "run": "https://github.com/Aymenchaghoub/etaye/actions/runs/44332755355",
+    "finalHeadMustBeRechecked": true
   },
   "computerUse": "Native corrections, exports, final version saving and downloads completed; plugin closed after evidence recovery",
   "nativeCorrectionFixtures": {
@@ -112,5 +113,12 @@
   "nativeRuntimeScope": {
     "executedPluginProvenance": "2026-11-18-native-closure-final.json#generatedPluginProvenance",
     "finalSourceAdditionalGuard": "Incomplete repeat export invalidates version-save eligibility; fixture verified after the completed native export"
+  },
+  "reviewServices": {
+    "copilot": "No review: requester quota exhausted",
+    "coderabbit": "Skipped: repository has fewer than ten stars; no automatic review",
+    "qodo": "Reviews paused for user; no subscription changed",
+    "independentReviewCompleted": false,
+    "inlineFindingsReceived": 0
   }
 }
