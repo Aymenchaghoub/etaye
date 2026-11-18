@@ -304,7 +304,7 @@ for path in list((ROOT / "docs").rglob("*")) + list((ROOT / "tools").glob("*.py"
 checks["projectFilesSecretScanned"] = scanned
 result = {"kind": "documentary-validation-only", "date": datetime.now(timezone.utc).date().isoformat(), "ok": not errors,
           "checks": checks, "errors": errors, "applicationTestsExecuted": False,
-          "independentReview": "Authoring subagents stopped at usage limit; final checks performed by coordinator"}
+          "independentReview": "Automated documentary checks; not independent design approval"}
 report_path.parent.mkdir(parents=True, exist_ok=True)
 report_path.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
 print(json.dumps(result, indent=2))
