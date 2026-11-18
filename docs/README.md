@@ -23,7 +23,7 @@ Status: Planning package ready for complete design work. Documents are reviewed 
 | Verification design | [Test strategy](test-artifacts/test-strategy.md), [acceptance scenarios](test-artifacts/acceptance-scenarios.md) |
 | Planning backlog and roadmap | [10 epics / 45 stories](planning-artifacts/epics/README.md), [roadmap by increment](planning-artifacts/roadmap.md), [implementation stopping point](implementation-artifacts/README.md) |
 | UX spines | [DESIGN](planning-artifacts/ux/DESIGN.md), [EXPERIENCE](planning-artifacts/ux/EXPERIENCE.md) |
-| Existing visual source and assets | [Figma inventory](design/figma-inventory.md), [tokens/assets](design/token-reference.md), [snapshot/export manifest](design/figma/manifest.json) |
+| Existing visual source and assets | [Figma inventory](design/figma-inventory.md), [tokens/assets](design/token-reference.md), [snapshot/export manifest](design/figma/manifest.json), [offline design-system reference](design/design-system.md) |
 | Design surfaces | [Screens](design/screen-catalog.md), [interactions/modals](design/interaction-catalog.md), [PDFs/emails](design/pdf-email-specifications.md) |
 | Shared fictional content | [Narrative](design/synthetic-data.md), [dataset](design/synthetic-data.json) |
 | Design progress and next phase | [Coverage](design/coverage.csv), [tracking guide](design/coverage-guide.md), [Claude handoff](design/handoff-claude.md), [session recovery](design/session-recovery.md), [short continuation prompt](design/continuation-prompt.md) |
