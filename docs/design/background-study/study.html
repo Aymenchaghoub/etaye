@@ -147,6 +147,7 @@
   if (q.get('t')) root.setAttribute('data-theme', q.get('t'));
   if (q.get('v') === 'a' || q.get('bp') === 'off') bg.setAttribute('data-blueprint', 'off');
   if (q.get('paper') === 'off') bg.setAttribute('data-paper', 'off');
+  if (q.get('tone') === 'papier' || q.get('tone') === 'neutral') bg.setAttribute('data-tone', q.get('tone'));
   if (q.get('grain') !== null) bg.style.setProperty('--bg-grain-opacity', q.get('grain'));
   var host = document.querySelector('.etaye-bg-host');
   if (q.get('calm') === 'off') host.setAttribute('data-calm', 'off');
@@ -159,6 +160,7 @@
     ui.innerHTML = '<label><input type="checkbox" id="u-paper" checked> Paper</label>' +
       '<label><input type="checkbox" id="u-bp" checked> Blueprint touch</label>' +
       '<label><input type="checkbox" id="u-calm" checked> Calm plates</label>' +
+      '<label>Tone <select id="u-tone"><option value="">Adopted (dark base fond)</option><option value="papier">Papier base (previous)</option><option value="neutral">Neutral, both (rejected)</option></select></label>' +
       '<label><input type="checkbox" id="u-dark"> Sombre</label>' +
       '<label>Grain <input type="range" id="u-grain" min="0" max="0.12" step="0.005" style="width:110px"> <output id="u-gv"></output></label>';
     document.body.appendChild(ui);
@@ -170,6 +172,8 @@
     document.getElementById('u-dark').checked = root.getAttribute('data-theme') === 'sombre';
     sync();
     document.getElementById('u-paper').onchange = function (e) { e.target.checked ? bg.removeAttribute('data-paper') : bg.setAttribute('data-paper', 'off'); };
+    document.getElementById('u-tone').value = bg.getAttribute('data-tone') || '';
+    document.getElementById('u-tone').onchange = function (e) { e.target.value ? bg.setAttribute('data-tone', e.target.value) : bg.removeAttribute('data-tone'); };
     document.getElementById('u-calm').checked = host.getAttribute('data-calm') !== 'off';
     document.getElementById('u-calm').onchange = function (e) { e.target.checked ? host.removeAttribute('data-calm') : host.setAttribute('data-calm', 'off'); };
     document.getElementById('u-bp').onchange = function (e) { e.target.checked ? bg.removeAttribute('data-blueprint') : bg.setAttribute('data-blueprint', 'off'); };

@@ -72,71 +72,71 @@
  {
   "theme": "dark",
   "plate_opacity": "no plates",
-  "open_dl_star": 3.32,
-  "calm_dl_star": 3.32,
-  "notice_encre3_min": 4.11,
-  "lead_encre2_min": 5.3,
-  "tok_accent_min": 5.48,
-  "secondary_border_min": 3.02
+  "open_dl_star": -0.57,
+  "calm_dl_star": -0.56,
+  "notice_encre3_min": 4.54,
+  "lead_encre2_min": 5.86,
+  "tok_accent_min": 6.05,
+  "secondary_border_min": 3.33
  },
  {
   "theme": "dark",
   "plate_opacity": "0.5",
-  "open_dl_star": 3.32,
-  "calm_dl_star": 1.42,
-  "notice_encre3_min": 4.97,
-  "lead_encre2_min": 6.41,
-  "tok_accent_min": 6.62,
-  "secondary_border_min": 3.65
+  "open_dl_star": -0.57,
+  "calm_dl_star": -0.45,
+  "notice_encre3_min": 5.15,
+  "lead_encre2_min": 6.65,
+  "tok_accent_min": 6.87,
+  "secondary_border_min": 3.78
  },
  {
   "theme": "dark",
   "plate_opacity": "0.6",
-  "open_dl_star": 3.32,
-  "calm_dl_star": 1.14,
-  "notice_encre3_min": 5.09,
-  "lead_encre2_min": 6.57,
-  "tok_accent_min": 6.78,
-  "secondary_border_min": 3.74
- },
- {
-  "theme": "dark",
-  "plate_opacity": "0.7",
-  "open_dl_star": 3.32,
-  "calm_dl_star": 0.82,
+  "open_dl_star": -0.57,
+  "calm_dl_star": -0.51,
   "notice_encre3_min": 5.27,
-  "lead_encre2_min": 6.8,
-  "tok_accent_min": 7.02,
+  "lead_encre2_min": 6.81,
+  "tok_accent_min": 7.03,
   "secondary_border_min": 3.87
  },
  {
   "theme": "dark",
-  "plate_opacity": "0.75",
-  "open_dl_star": 3.32,
-  "calm_dl_star": 0.71,
-  "notice_encre3_min": 5.33,
-  "lead_encre2_min": 6.88,
-  "tok_accent_min": 7.1,
-  "secondary_border_min": 3.91
- },
- {
-  "theme": "dark",
-  "plate_opacity": "0.8",
-  "open_dl_star": 3.32,
-  "calm_dl_star": 0.48,
+  "plate_opacity": "0.7",
+  "open_dl_star": -0.57,
+  "calm_dl_star": -0.44,
   "notice_encre3_min": 5.39,
   "lead_encre2_min": 6.96,
-  "tok_accent_min": 7.19,
+  "tok_accent_min": 7.18,
   "secondary_border_min": 3.96
  },
  {
   "theme": "dark",
+  "plate_opacity": "0.75",
+  "open_dl_star": -0.57,
+  "calm_dl_star": -0.28,
+  "notice_encre3_min": 5.45,
+  "lead_encre2_min": 7.03,
+  "tok_accent_min": 7.26,
+  "secondary_border_min": 4.0
+ },
+ {
+  "theme": "dark",
+  "plate_opacity": "0.8",
+  "open_dl_star": -0.57,
+  "calm_dl_star": -0.35,
+  "notice_encre3_min": 5.51,
+  "lead_encre2_min": 7.11,
+  "tok_accent_min": 7.34,
+  "secondary_border_min": 4.04
+ },
+ {
+  "theme": "dark",
   "plate_opacity": "0.9",
-  "open_dl_star": 3.32,
-  "calm_dl_star": 0.17,
-  "notice_encre3_min": 5.56,
-  "lead_encre2_min": 7.18,
-  "tok_accent_min": 7.41,
-  "secondary_border_min": 4.08
+  "open_dl_star": -0.57,
+  "calm_dl_star": -0.27,
+  "notice_encre3_min": 5.62,
+  "lead_encre2_min": 7.25,
+  "tok_accent_min": 7.49,
+  "secondary_border_min": 4.13
  }
 ]

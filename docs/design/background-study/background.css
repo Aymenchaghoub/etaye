@@ -16,11 +16,12 @@
   background: var(--fond);               /* today's plain surface: what remains when the layers are off */
   --bg-grain-opacity: .12;               /* ink grain strength in open areas, both themes */
   --bg-tick-opacity: .32;                /* blueprint ticks and registration marks */
+  --bg-paper-base: var(--papier);        /* fill under the grain (dark theme: --fond, see "Paper tone" below) */
 }
 [data-theme="sombre"] .etaye-bg { --bg-tick-opacity: .38; }
 
 /* Layer 1 — paper: --papier fill + one tiled ink-grain mask. */
-.etaye-bg__paper { position: absolute; inset: 0; background: var(--papier); }
+.etaye-bg__paper { position: absolute; inset: 0; background: var(--bg-paper-base); }
 .etaye-bg__paper::after {
   content: ""; position: absolute; inset: 0;
   background: var(--encre);
@@ -28,6 +29,21 @@
   -webkit-mask: url("assets/paper-grain.svg") 0 0 / 256px 256px repeat;
           mask: url("assets/paper-grain.svg") 0 0 / 256px 256px repeat;
 }
+
+/* Paper tone (chosen by Aymen on 2026-11-18: "neutral-dark"). The ink grain only ever pushes the paper away
+   from its fill: darker in the light theme, lighter in the dark theme, by 2.5 to 3.3 L* on average at 12 %.
+   In the dark theme the fill therefore starts from --fond, the existing token just below --papier, and the grain
+   brings the mean back to the --papier tone (within 0.8 L* and 0.8 deltaE; it was 3.3 deltaE from --papier).
+   In the light theme the base stays --papier: the only lighter token is --surface, a cool white, while --papier
+   is a warm cream, so it would correct the lightness but move the hue by as much (deltaE stays 3.3).
+   Nothing is mixed or invented, and the grain itself is unchanged. Measured values: README.md.
+     (no attribute)         light --papier, dark --fond: the adopted tone
+     data-tone="papier"     --papier in both themes: the previous rendering, kept to compare
+     data-tone="neutral"    --surface in light, --fond in dark: rejected, kept to compare */
+[data-theme="sombre"] .etaye-bg { --bg-paper-base: var(--fond); }
+.etaye-bg[data-tone="papier"], [data-theme="sombre"] .etaye-bg[data-tone="papier"] { --bg-paper-base: var(--papier); }
+.etaye-bg[data-tone="neutral"] { --bg-paper-base: var(--surface); }
+[data-theme="sombre"] .etaye-bg[data-tone="neutral"] { --bg-paper-base: var(--fond); }
 
 /* Layer 2 — blueprint touch: two L-shaped survey rulers (top-left, bottom-right) and two
    registration marks (top-right, bottom-left). Everything sits in the outer 24px margin
@@ -75,4 +91,6 @@
 /* Never in high-contrast, reduced-transparency or print contexts. */
 @media (forced-colors: active), (prefers-contrast: more), (prefers-reduced-transparency: reduce), print {
   .etaye-bg__paper::after, .etaye-bg__blueprint, .etaye-calm::before { display: none; }
+  /* With the grain gone a base other than --papier would be a flat tone shift: fall back to --papier. */
+  .etaye-bg, [data-theme="sombre"] .etaye-bg, .etaye-bg[data-tone], [data-theme="sombre"] .etaye-bg[data-tone] { --bg-paper-base: var(--papier); }
 }
