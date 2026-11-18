@@ -1,17 +1,17 @@
 # Étaye design system: offline reference
 
-Status: **Proposal, written 2026-11-18 as an offline fallback for agents. Not a design approval and not a development authorization.** It restates existing verified values and the received HTML design reference so that work can continue, with the same rendering, when Figma cannot be read. It was written from files in this repository only; no Figma call was made. It creates no token, no color and no component: everything below points to a source. Evidence labels follow [AGENTS.md](../../AGENTS.md): **User decision**, **Verified observation**, **Proposal**, **[ASSUMPTION]**, **To verify**.
+Status: **Proposal, written 2026-11-18 as the offline working reference for agents. Not a design approval and not a development authorization.** It restates existing verified values and the received HTML design reference so that work can continue, with the same rendering, when Figma cannot be read. It was written from files in this repository only; no Figma call was made. It creates no token, no color and no component: everything below points to a source. Evidence labels follow [AGENTS.md](../../AGENTS.md): **User decision**, **Verified observation**, **Proposal**, **[ASSUMPTION]**, **To verify**.
 
 ## 1. Purpose and precedence
 
-**Purpose.** Figma is the visual source of truth, but access is limited (Starter plan, View seat): the MCP quota reads "Out of calls", REST tier-1 reads return 429 until about 2026-11-22, and development plugins need Figma Desktop. When an agent cannot read Figma, it builds and reviews from this file and the sources it links, and records the limit instead of guessing.
+**Purpose.** Figma is the visual source of truth, but access is limited (Starter plan, View seat): the MCP quota reads "Out of calls", REST tier-1 reads return 429 until about 2026-11-22, and development plugins need Figma Desktop. **User statement (2026-11-18):** Aymen expects to work without Figma because of the quota, so this file is the working reference, not only a fallback. An agent builds and reviews from it and the sources it links, and records the limit instead of guessing. The result must be the same with or without Figma: clear, homogeneous, built from the same tokens and recipes.
 
 **Precedence when sources disagree** (highest first). Stop and surface a conflict; never pick silently.
 
 | Rank | Source | Owns |
 |---|---|---|
 | 1 | Aymen's decisions | Scope, approvals, development authorization. |
-| 2 | Verified Figma properties: [resolved-tokens.json](figma/resolved-tokens.json), [file-snapshot.json](figma/file-snapshot.json), [manifest](figma/manifest.json) | Existing colors, typography, spacing, radii, logos, and the button, status and marker components. |
+| 2 | Verified Figma properties (without Figma access this is a frozen record: the 2026-11-02 resolved values and the 2026-11-18 corrected state, never re-measured by guessing): [resolved-tokens.json](figma/resolved-tokens.json), [file-snapshot.json](figma/file-snapshot.json), [manifest](figma/manifest.json) | Existing colors, typography, spacing, radii, logos, and the button, status and marker components. |
 | 3 | [DESIGN.md](../planning-artifacts/ux/DESIGN.md) and [EXPERIENCE.md](../planning-artifacts/ux/EXPERIENCE.md) (drafts, not approved) | Brand spine, behavior, accessibility floor, responsive and content rules. |
 | 4 | Received HTML design reference: [tokens.css](../../design/received/2026-11-03/export/etaye-design-system/tokens/tokens.css) and the component CSS in [ds/](../../design/received/2026-11-03/ds/) (not approved) | The CSS form of everything the Figma import was generated from. |
 | 5 | This file | Nothing of its own: it restates ranks 2 to 4. |
@@ -28,6 +28,16 @@ Status: **Proposal, written 2026-11-18 as an offline fallback for agents. Not a 
 6. **Measure contrast on rendered pairs**, in both themes, for text, control borders and focus. A palette entry does not prove a combination accessible.
 7. **Label the result** "built without Figma access, to reconcile against Figma when available".
 
+### Consistency checklist
+
+1. Only `var(--…)` custom properties of `tokens.css`; no literal color or size, except in e-mail and print, where the reference uses literal values.
+2. One shell per audience: practitioner and administration (`.etaye-app`), sign-in (`.etaye-auth`), patient (`.etaye-papp`), A4 documents (`doc-a4`), e-mail (`.mail`).
+3. Text only from the 14 roles of section 4.3; spacing only from the 10 steps and radii only from the 4 values of section 4.4.
+4. Every state in both themes, with the focus ring, and never meaning by color alone.
+5. French interface copy, synthetic data, original logo files.
+6. Compare at 1440×1024, 1024×768, 768×1024, 390×844 and a 320 px reflow check, both themes.
+7. Anything outside these rules is a recorded design gap, not an improvisation.
+
 ## 3. Sources of truth
 
 | Source | What it gives | Status |
@@ -42,6 +52,8 @@ Status: **Proposal, written 2026-11-18 as an offline fallback for agents. Not a 
 Figma file: see [figma-inventory.md](figma-inventory.md) for its identifier and the nodes. Pages: Couverture, Étaye — Import HTML (`15:2`, the 456 imported states), Fondations (`2:74`), Composants (`2:75`). The two last pages and the imported roots are protected: never modify them to "fix" an offline mismatch. Saved versions: desktop import `2423132943961499284`; final corrected state `2423224260331333575`.
 
 **Generated tables.** The token tables in section 4 are produced by [tools/design_system_reference.py](../../tools/design_system_reference.py) from `tokens.css` and cross-checked against `resolved-tokens.json` (34 color values, 14 text styles, 10 spacing steps, 4 radii). `python3 tools/design_system_reference.py --check` fails if the file is stale or if the two sources disagree; `--write` regenerates the blocks. A repository test runs the check.
+
+**Reference snapshot identity.** The corrected HTML reference (398 delivered states plus the reviewed overlay, 523 files) is identified by SHA-256 `d2f0800e275c4b156fedbcf23656ffe2bf435f9b6a72faf0f86fc293e2a82ad6` in [html-reception.csv](html-reception.csv) (the same value for all 76 families); its generator and CSS are in `design/received/2026-11-03`. It was matched again on 2026-11-18 by the [closure report](reviews/2026-11-18-figma-native-closure.md); this session did not rebuild it.
 
 ## 4. Tokens
 
@@ -234,4 +246,31 @@ Compare a rebuilt screen and your implementation at the same viewport and theme,
 
 ## 13. Maintenance
 
-Change the sources first (Figma, then `tokens.css`, `resolved-tokens.json` or the component CSS), then run `python3 tools/design_system_reference.py --write` and review the diff; the token tables are never edited by hand. Hand-written sections change only with Aymen's validation. Update the status line and [continuation.md](../continuation.md) when a limit in section 12 is lifted.
+Change the sources first (Figma, then `tokens.css`, `resolved-tokens.json` or the component CSS), then run `python3 tools/design_system_reference.py --write` and review the diff; the token tables are never edited by hand. Hand-written sections change only with Aymen's validation. Without Figma, a deliberate change of an existing value needs Aymen's decision; it is made in `tokens.css` or the component CSS, recorded with its date and reason, and listed in [continuation.md](../continuation.md) as "Figma to reconcile". The check fails on purpose until a recorded deviation is supported by the tool, so an unrecorded change cannot slip in. Update the status line and [continuation.md](../continuation.md) when a limit in section 12 is lifted.
+
+## 14. Implementing the mockups without Figma
+
+**User decision (2026-11-18):** "ok donc en general on doit etre capable de faire les maquettes qu'on a travaillé sur en dev meme sans figma, fait tout le necessaire". The mockups worked on must be implementable from this offline reference. This section is the exception record that the [coverage guide](coverage-guide.md) asks for ("Aymen's dated acceptance, affected row IDs, impact, fallback and explicit resumption trigger"), written for Aymen's confirmation. **It does not authorize development and does not replace design approval.**
+
+| Element | Record |
+|---|---|
+| Dated acceptance | 2026-11-18, Aymen's message above. To confirm: naming it explicitly in the tracker's `exceptions` column, which has not been edited |
+| Affected rows | All 76 families, for the requirement of exact Figma nodes only |
+| What replaces the Figma node | The reference snapshot of the surface (HTML states, identity above), the tokens and recipes of this file, and the surface's entries in the [screen](screen-catalog.md), [interaction](interaction-catalog.md) and [PDF and e-mail](pdf-email-specifications.md) catalogs |
+| Impact | The visual contract is the HTML reference, not Figma. The Figma file is left as it is and differences are reconciled later |
+| Fallback | When Figma is readable again, compare the implemented surfaces with the corrected Figma frames and record node IDs in the tracker |
+| Resumption trigger | Figma read access returns (MCP quota or REST window), or Aymen asks for the reconciliation |
+
+**What still blocks development (verified 2026-11-18):** the explicit development authorization (not given); design approval (`coverage.csv`: 76 of 76 "Not approved"; `html-reception.csv`: 76 of 76 "No approval recorded"); and the design reviews of the coverage guide (desktop, tablet, mobile, A4 and functional). Figma access is not one of the blockers.
+
+**Per-surface procedure, once development is authorized:**
+
+1. Read the surface's tracker row, its catalog entries, stories and the other required sources of [AGENTS.md](../../AGENTS.md).
+2. Open the reference state at the matching viewport and theme (rebuild with `tools/rebuild_design_receipt.py` if the external copy is missing).
+3. Implement with the `.etaye-*` classes and the custom properties as the style contract: reuse `tokens.css`, the component CSS and `icons.css`; do not inherit a generic component theme or re-theme.
+4. Capture the running UI at 1440×1024, 1024×768, 390×844 and the 320 px reflow check, in both themes, including empty, error, long, restricted and focus states.
+5. Open the reference and the implementation at the same width and compare them as matching pairs (the method of the closure report); record every difference.
+6. Measure contrast on rendered pairs; test keyboard, focus and 200 % zoom.
+7. Record the evidence in the tracker (`visual_evidence`, `exceptions`); never mark a row approved without Aymen.
+
+**Ready:** generated and checked tokens, component recipes, shells and breakpoints, the snapshot identity, this procedure. **Missing before a first screen can be built:** design approval, the development authorization, the frontend scaffolding (not authorized), a decision on how the tokens reach the React code (the proposal is to reuse `tokens.css` unchanged) and a harness that compares running-UI screenshots with the reference (the measurement tools of the [background study](background-study/README.md) show a workable method). **Not verified:** that the full reference rebuilds in this environment today.

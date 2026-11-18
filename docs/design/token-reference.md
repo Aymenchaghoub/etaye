@@ -2,6 +2,8 @@
 
 Status: Reviewed evidence for existing values; new semantic mappings remain proposed. Source: Figma version `2417265104370398313`, 2026-11-02. Authoritative machine-readable resolved property evidence: [resolved-tokens.json](figma/resolved-tokens.json). Full node evidence: [file-snapshot.json](figma/file-snapshot.json). The export is not a claim that all variable collections were retrieved.
 
+Without Figma access, work from the [offline design-system reference](design-system.md): its token tables are generated from the received `tokens.css` and checked against the resolved values above (colors, text styles, spacing and radii agree). Stroke widths, touch targets, motion and the floating shadow exist only in that received export, not in the resolved Figma evidence.
+
 ## Colors
 
 The [exact color table](figma/color-table.md) records 17 roles in each mode with source node IDs. The actual values of `surface/fond`, `texte/encre` and `accent/accent` are respectively `#efeeea`, `#1b1b18` and `#2b4c7e` in light mode; labels were not used as the sole evidence. Preserve the original French token names when binding existing Figma variables. An implementation mapping may use English identifiers with an explicit reversible mapping.
