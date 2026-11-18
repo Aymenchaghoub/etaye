@@ -2,8 +2,8 @@
   "kind": "native-closure-tooling-checks",
   "date": "2026-11-18",
   "pythonToolingTests": {
-    "executed": 15,
-    "passed": 15
+    "executed": 19,
+    "passed": 19
   },
   "windowsImporterFixtures": {
     "executed": 25,
@@ -25,7 +25,7 @@
     "ok": true,
     "checks": {
       "markdownFiles": 91,
-      "localLinks": 1057,
+      "localLinks": 1079,
       "apiOperations": 96,
       "apiSchemas": 87,
       "planningStories": 45,
@@ -36,7 +36,7 @@
       "screenInteractionMappings": 28,
       "syntheticObjects": 66,
       "verifiedFigmaExports": 15,
-      "projectFilesSecretScanned": 142
+      "projectFilesSecretScanned": 148
     },
     "errors": [],
     "applicationTestsExecuted": false,
@@ -46,13 +46,20 @@
     "tamperedOriginalSvgRejected": true
   },
   "applicationTestsExecuted": false,
-  "visualCorrectionsApplied": false,
+  "visualCorrectionsApplied": true,
   "aymenApproval": false,
   "evidenceIntegrity": {
     "matchingComparisonHashes": 42,
     "uniqueNativeRootIds": 456,
-    "summedEditableTextNodes": 28001,
-    "staleComparisonPathsReconciled": 9
+    "summedEditableTextNodes": 28002,
+    "staleComparisonPathsReconciled": 9,
+    "matchingFinalNativeHashes": 52,
+    "matchingFinalHtmlHashes": 52,
+    "matchingFinalPairHashes": 13,
+    "matchingFinalContactHashes": 7,
+    "originalEditableTextIdsPreserved": 28001,
+    "addedMeasuredTextLines": 1,
+    "allDeliveredToolingHashesMatched": true
   },
   "historySecretScan": {
     "tool": "Gitleaks 8.30.1 Windows x64",
@@ -75,5 +82,24 @@
     "documentation": "passed",
     "codeql": "passed"
   },
-  "computerUse": "Stopped by physical Escape; user requested resumption after preserving PR trace"
+  "computerUse": "Native corrections, exports, final version saving and downloads completed; plugin closed after evidence recovery",
+  "nativeCorrectionFixtures": {
+    "executed": 9,
+    "passed": 9
+  },
+  "finalNativeVersion": "2423224260331333575",
+  "nativeEvidenceSummary": {
+    "roots": 456,
+    "sections": 94,
+    "editableTexts": 28002,
+    "originalTextIdsPreserved": 28001,
+    "addedMeasuredTextLines": 1,
+    "targetedStates": 52,
+    "untouchedFingerprintsVerified": 404,
+    "matchingExportDimensions": 52
+  },
+  "nativeRuntimeScope": {
+    "executedPluginProvenance": "2026-11-18-native-closure-final.json#generatedPluginProvenance",
+    "finalSourceAdditionalGuard": "Incomplete repeat export invalidates version-save eligibility; fixture verified after the completed native export"
+  }
 }

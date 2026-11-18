@@ -13,6 +13,8 @@ def build(before_path, plan_path, output, flow_path=None):
     plan = json.loads(plan_path.read_text(encoding="utf-8"))
     if plan.get("issues") or len(plan["plans"]) != 52:
         raise ValueError("Expected the complete reviewed 52-state correction plan")
+    if len({p["rootId"] for p in plan["plans"]}) != 52 or len({p["state"] for p in plan["plans"]}) != 52:
+        raise ValueError("Correction targets must be unique")
     roots = {r["nodeId"]: r for r in before["roots"]}
     original_file = json.loads((ROOT / "docs/design/figma/manifest.json").read_text(encoding="utf-8"))["fileKey"]
     if len(roots) != 456 or before["pageId"] != "15:2" or before["fileKey"] != original_file:
@@ -24,6 +26,7 @@ def build(before_path, plan_path, output, flow_path=None):
     source = (ROOT / "design/figma-windows-import/code.js").read_text(encoding="utf-8")
     helpers = source[source.index("const stable ="):source.index("\n}", source.index("function nativeFingerprint(")) + 2]
     scope = {key: before[key] for key in ("fileKey", "pageId", "roots", "protectedPages")}
+    scope["adoptableTextIds"] = before.get("createdTextIds", [])
     runtime = (ROOT / "design/figma-native-closure/runtime.js").read_text(encoding="utf-8")
     code = "const SCOPE=" + json.dumps(scope, ensure_ascii=False) + ";\nconst PLAN=" + json.dumps(plan, ensure_ascii=False) + ";\n" + helpers + "\n" + runtime
     if flow_path:
@@ -36,6 +39,7 @@ def build(before_path, plan_path, output, flow_path=None):
     (output / "provenance.json").write_text(json.dumps({
         "beforeSha256": hashlib.sha256(before_path.read_bytes()).hexdigest(),
         "planSha256": hashlib.sha256(plan_path.read_bytes()).hexdigest(),
+        "inlineFlowSha256": hashlib.sha256(flow_path.read_bytes()).hexdigest() if flow_path else None,
         "generatedCodeSha256": hashlib.sha256((output / "code.js").read_bytes()).hexdigest(),
         "applicationImplemented": False,
     }, indent=2) + "\n", encoding="utf-8")

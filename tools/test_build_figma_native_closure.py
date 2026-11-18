@@ -41,3 +41,11 @@ class NativeCorrectionBuildTests(unittest.TestCase):
         path.write_text(json.dumps(data), encoding="utf-8")
         with self.assertRaisesRegex(ValueError, "Incomplete native baseline"):
             build(path, self.plan, self.folder / "must-not-exist")
+
+    def test_duplicate_state_plan_is_rejected(self):
+        data = json.loads(self.plan.read_text(encoding="utf-8"))
+        data["plans"][-1] = data["plans"][0]
+        path = self.folder / "duplicate.json"
+        path.write_text(json.dumps(data), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "must be unique"):
+            build(self.before, path, self.folder / "must-not-exist")

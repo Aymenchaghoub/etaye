@@ -11,6 +11,7 @@ paths = [
   '''^(docs/design/figma/(manifest|resolved-tokens)\.json|tools/inspect_figma\.py)$''',
   '''^docs/design/reviews/2026-11-17-(windows-handoff|figma-mcp-import|windows-native-run)\.json$''',
   '''^docs/design/reviews/2026-11-18-native-closure-before\.json$''',
+  '''^docs/design/reviews/2026-11-18-native-(correction-pass[134]|closure-final)\.json$''',
   '''^docs/design/windows-handoff/EXISTING-FIGMA-STATE\.json$''',
   '''^design/figma-windows-import/(code\.js|test-plugin\.cjs)$''',
 ]

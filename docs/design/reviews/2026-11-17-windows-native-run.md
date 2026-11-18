@@ -3,7 +3,7 @@
 
 All 456 desktop states in 94 sections passed native structural revalidation on 2026-11-18. The final file contains 28,001 editable text nodes. The authorized twelve old trial roots and their 3,492 nodes were removed after revalidation. A post-cleanup observation confirms exactly 94 replacement sections and no old targets. Foundations `2:74`, components `2:75` and the original eight S-06 root IDs are present. The named final version is `2423132943961499284`, “Etaye desktop import — 456 states verified — 2026-11-18”.
 
-The [actual run evidence](2026-11-17-windows-native-run.json) records the final node IDs, fonts, source digests, deleted IDs, version and opened visual comparisons. The import is complete. Targeted visual findings remain for design review.
+The [actual run evidence](2026-11-17-windows-native-run.json) records the final node IDs, fonts, source digests, deleted IDs, version and opened visual comparisons. The import is complete. The [final closure report](2026-11-18-figma-native-closure.md) resolves the targeted findings below with corrected native evidence; this dated run retains its historical observations.
 
 Figma Desktop opened the original Étaye file on page `15:2`. The named recovery version `Before Windows native import — 2026-11-17` is visible in the file’s version history. The official Windows archive and all 1,694 listed payloads matched their SHA-256 digests. The Figma-generated development plugin ID was retained. The import selected the 94 original release packets and used the exact native fonts discovered on this PC.
 
@@ -51,7 +51,7 @@ The original guarded cleanup revalidated all 456 replacements and all twelve can
 
 ## Delivery state
 
-Historical checkpoint below. The [2026-11-18 closure report](2026-11-18-figma-native-closure.md) supersedes its access/delivery limitations. Git/gh access now works outside the sandbox; integration preserves later remote planning and background studies. The visual findings above remain open until native corrections and before/after evidence are recorded.
+Historical checkpoint below. The [2026-11-18 closure report](2026-11-18-figma-native-closure.md) supersedes its access/delivery limitations. Git/gh access now works outside the sandbox; integration preserves later remote planning and background studies. The visual findings above were subsequently corrected and evidenced in that closure report.
 
 All code, tracking, reports and opened evidence are saved in the local checkout. PR16 is now merged, and its original remote branch is absent. Current remote `main` was observed at `eb58c81b3be3b91819dd2ca31a4f2412b509b5e3`, which includes later planning and background-study changes. The full current remote continuation was saved in `winfig/remote-main-continuation.md` for integration. The frozen release design was used for this import. The later background study was not applied to these frames.
 

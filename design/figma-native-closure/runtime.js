@@ -15,7 +15,11 @@ async function populateInlineFlowEdits(scope, plan, flows) {
         const a = members.get(previous.id), b = members.get(next.id);
         const gap = next.sourceX - previous.sourceX - previous.sourceWidth;
         if (!Number.isFinite(gap) || gap < -1 || gap > 20) throw Error('Invalid measured inline gap');
-        const x = (positions.get(a.id) ?? a.x) + a.width + gap;
+        // Auto-width text excludes trailing spaces; inline wrappers may be narrower than their text.
+        const contentWidth = 'children' in a ? Math.max(a.width, ...a.children.map(c => c.x + c.width)) : a.width;
+        const trailing = previous.trailingSpaceAdvance ?? 0;
+        if (!Number.isFinite(trailing) || trailing < 0 || trailing > 20) throw Error('Invalid measured trailing space');
+        const x = (positions.get(a.id) ?? a.x) + contentWidth + trailing + gap;
         positions.set(b.id, x);
       }
     }
@@ -63,12 +67,27 @@ async function applyCorrections(scope, plans) {
       const parent = members.get(marker.parentId);
       if (!parent || !('children' in parent) || parent.children.some(n => n.name === marker.name)) throw Error('Invalid/duplicate marker');
     }
-    prepared.push({plan, root, edits, orders, members});
+    for (const split of plan.splits ?? []) {
+      const source = members.get(split.sourceId);
+      if (!source || source.type !== 'TEXT' || source.parent.id !== split.parentId ||
+          typeof split.characters !== 'string' || !Number.isFinite(split.x) || !Number.isFinite(split.y)) throw Error('Invalid text-line split');
+    }
+    const adoptions = [];
+    for (const adoption of plan.adoptions ?? []) {
+      const node = await figma.getNodeByIdAsync(adoption.id), source = members.get(adoption.sourceId), parent = members.get(adoption.parentId);
+      if (!scope.adoptableTextIds?.includes(adoption.id) || !node || node.type !== 'TEXT' || node.parent !== figma.currentPage ||
+          !source || source.type !== 'TEXT' || !parent || source.parent !== parent || node.characters !== adoption.characters ||
+          node.name !== adoption.characters || node.x !== adoption.x || node.y !== adoption.y ||
+          fontKey(node.fontName) !== fontKey(source.fontName) || node.fontSize !== source.fontSize) throw Error('Unverified created text adoption');
+      adoptions.push({node, parent, x: adoption.x, y: adoption.y, fingerprint: nativeFingerprint(node), oldParent: node.parent, oldIndex: node.parent.children.indexOf(node)});
+    }
+    prepared.push({plan, root, edits, orders, members, adoptions});
   }
   for (const font of fonts.values()) await figma.loadFontAsync(font);
   // Font loading yields to the editor; recheck every target before the first write.
   for (const item of prepared) if (nativeFingerprint(item.root) !== item.plan.beforeFingerprint) throw Error('Concurrent target change');
-  const made = [], changed = [];
+  for (const item of prepared) for (const adoption of item.adoptions) if (adoption.node.parent !== adoption.oldParent || nativeFingerprint(adoption.node) !== adoption.fingerprint) throw Error('Concurrent created text change');
+  const made = [], madeTexts = [], changed = [], adopted = [];
   const assign = (node, props) => {
     const {width, height, ...other} = props;
     if (width !== undefined || height !== undefined) node.resizeWithoutConstraints(width ?? node.width, height ?? node.height);
@@ -85,6 +104,15 @@ async function applyCorrections(scope, plans) {
         node.name = marker.name; node.resize(marker.width, marker.height); node.x = marker.x; node.y = marker.y;
         node.fills = [{type: 'SOLID', color: marker.color}]; node.strokes = [];
       }
+      for (const split of item.plan.splits ?? []) {
+        const node = item.members.get(split.sourceId).clone(); made.push(node); madeTexts.push(node);
+        item.members.get(split.parentId).appendChild(node);
+        node.characters = split.characters; node.x = split.x; node.y = split.y;
+        node.name = split.characters;
+      }
+      for (const adoption of item.adoptions) {
+        adopted.push(adoption); adoption.parent.appendChild(adoption.node); adoption.node.x = adoption.x; adoption.node.y = adoption.y;
+      }
       evidence.states.push({state: item.plan.state, rootId: item.root.id, beforeFingerprint: item.plan.beforeFingerprint,
         afterFingerprint: nativeFingerprint(item.root), editedNodeIds: item.edits.map(e => e.node.id), reorderedNodeIds: item.plan.reorder.map(r => r.nodeId),
         width: item.root.width, height: item.root.height});
@@ -95,11 +123,16 @@ async function applyCorrections(scope, plans) {
       if (fingerprint !== expected.fingerprint) throw Error('Protected page changed during correction');
       evidence.protectedAfter.push({id: page.id, fingerprint});
     }
-    evidence.createdMarkerIds = made.map(n => n.id);
+    evidence.createdMarkerIds = made.filter(n => n.type === 'ELLIPSE').map(n => n.id);
+    evidence.createdTextIds = madeTexts.map(n => n.id);
+    evidence.adoptedTextIds = adopted.map(a => a.node.id);
     evidence.status = 'corrected'; evidence.completedAt = new Date().toISOString();
     figma.commitUndo();
     return evidence;
   } catch (error) {
+    for (const adoption of adopted.reverse()) {
+      adoption.oldParent.insertChild(adoption.oldIndex, adoption.node); adoption.node.x = adoption.x; adoption.node.y = adoption.y;
+    }
     for (const node of made) node.remove();
     for (const edit of changed.reverse()) assign(edit.node, edit.before);
     for (const item of prepared) for (const [parent, order] of item.orders) for (const node of order) parent.appendChild(node);
@@ -119,6 +152,7 @@ figma.ui.onmessage = async message => {
       figma.ui.postMessage({status: 'Corrections appliquées. Exportez les preuves.', evidence: result});
     } else if (message.type === 'export') {
       if (!result) throw Error('Apply the guarded correction first');
+      result.exportComplete = false;
       result.observation = {observedAt: new Date().toISOString(), roots: [], protectedPages: result.protectedAfter,
         pages: figma.root.children.map(p => ({id: p.id, name: p.name})), topLevel: figma.currentPage.children.map(n => ({id: n.id, name: n.name, type: n.type}))};
       for (const expected of SCOPE.roots) {
@@ -127,6 +161,7 @@ figma.ui.onmessage = async message => {
         const nodes = descendants(root), fingerprint = nativeFingerprint(root);
         const target = PLAN.plans.find(p => p.rootId === root.id);
         if (!target && fingerprint !== expected.fingerprint) throw Error('Untouched state drift: ' + expected.state);
+        if (target && fingerprint !== result.states.find(s => s.rootId === root.id)?.afterFingerprint) throw Error('Corrected state drift since apply: ' + expected.state);
         result.observation.roots.push({state: expected.state, nodeId: root.id, sectionId: root.parent.id, name: root.name,
           width: root.width, height: root.height, texts: nodes.filter(n => n.type === 'TEXT').length, fingerprint});
         figma.ui.postMessage({status: result.observation.roots.length + '/456 revérifiés : ' + expected.state});
@@ -138,9 +173,10 @@ figma.ui.onmessage = async message => {
         result.renders.push({state: plan.state, nodeId: root.id, png: figma.base64Encode(png)});
         figma.ui.postMessage({status: result.renders.length + '/52 exports natifs : ' + plan.state});
       }
+      result.exportComplete = true;
       figma.ui.postMessage({status: '52 exports et 456 états revérifiés.', evidence: result});
     } else {
-      if (!result?.observation || result.renders?.length !== 52) throw Error('Export before saving final version');
+      if (!result?.exportComplete || result.observation?.roots.length !== 456 || result.renders?.length !== 52) throw Error('Export before saving final version');
       result.finalVersion = await figma.saveVersionHistoryAsync('Etaye native visual corrections — 52 states — 2026-11-18');
       figma.ui.postMessage({status: 'Version enregistrée.', evidence: result});
     }
