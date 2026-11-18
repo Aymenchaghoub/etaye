@@ -24,7 +24,7 @@ def require(condition, message):
 
 
 def read_json(relative):
-    return json.loads((ROOT / relative).read_text())
+    return json.loads((ROOT / relative).read_text(encoding="utf-8"))
 
 
 def slug(text):
@@ -35,7 +35,7 @@ docs = list((ROOT / "docs").rglob("*.md")) + [ROOT / p for p in
         ("README.md", "AGENTS.md", "CLAUDE.md", "THIRD_PARTY_NOTICES.md")]
 link_count = 0
 for path in docs:
-    text = path.read_text()
+    text = path.read_text(encoding="utf-8")
     require(not re.search(r"\{(?:i:03d|title|br|j|aid|sid)\}", text),
             "Unresolved authoring placeholder in: " + str(path.relative_to(ROOT)))
     # Code examples are not navigable prose links.
@@ -54,7 +54,7 @@ for path in docs:
         link_count += 1
         require(resolved.exists(), f"Broken link in {path.relative_to(ROOT)}: {target}")
         if resolved.is_file() and resolved.suffix == ".md" and anchor:
-            content = resolved.read_text()
+            content = resolved.read_text(encoding="utf-8")
             anchors = {slug(h) for h in re.findall(r"^#{1,6} (.+)$", content, re.M)}
             anchors.update(re.findall(r'<a id="([^"]+)"', content))
             require(unquote(anchor) in anchors,
@@ -136,7 +136,7 @@ require(len({s["id"] for s in stories}) == len(stories), "Duplicate story IDs")
 for s in stories:
     require(s["status"] == "backlog", "Premature implementation status: " + s["id"])
     require((ROOT / s["path"]).exists(), "Story source missing: " + s["id"])
-    require(s["test"] in (ROOT / s["path"]).read_text(), "Unlinked AT design: " + s["id"])
+    require(s["test"] in (ROOT / s["path"]).read_text(encoding="utf-8"), "Unlinked AT design: " + s["id"])
 checks["planningStories"] = len(stories)
 by_story = {s["id"]: s for s in stories}
 roadmap = read_json("docs/planning-artifacts/roadmap-assignments.json")
@@ -175,7 +175,7 @@ for sid in by_story:
     visit_story(sid)
 checks["roadmapStories"] = len(roadmap["stories"])
 
-with (ROOT / "docs/design/coverage.csv").open() as stream:
+with (ROOT / "docs/design/coverage.csv").open(encoding="utf-8", newline="") as stream:
     rows = list(csv.DictReader(stream))
 expected = {f"S-{i:02d}" for i in range(1, 41)} | {f"I-{i:02d}" for i in range(1, 29)} | {
     f"P-{i:02d}" for i in range(1, 4)} | {f"M-{i:02d}" for i in range(1, 6)}
@@ -194,7 +194,7 @@ for row in rows:
                 "Approved design lacks explicit user approval reference: " + row["id"])
     spec = ROOT / "docs/design" / row["specification"].split("#")[0]
     require(spec.exists(), "Missing surface specification: " + row["id"])
-    require(row["id"] in spec.read_text(), "Unspecified surface: " + row["id"])
+    require(row["id"] in spec.read_text(encoding="utf-8"), "Unspecified surface: " + row["id"])
 checks["requiredDesignFamilies"] = len(rows)
 require(set(roadmap["surfaces"]) == expected, "Roadmap design families differ from the design inventory")
 for sid, item in roadmap["surfaces"].items():
@@ -211,8 +211,8 @@ for name, item in roadmap["operations"].items():
 checks["roadmapSurfaces"] = len(roadmap["surfaces"])
 checks["roadmapOperations"] = len(roadmap["operations"])
 
-screen_text = (ROOT / "docs/design/screen-catalog.md").read_text()
-interaction_text = (ROOT / "docs/design/interaction-catalog.md").read_text()
+screen_text = (ROOT / "docs/design/screen-catalog.md").read_text(encoding="utf-8")
+interaction_text = (ROOT / "docs/design/interaction-catalog.md").read_text(encoding="utf-8")
 interaction_surfaces = {}
 for iid, surfaces in re.findall(r"^\| \[(I-\d+)\].*?\| ([^|]+) \|$", interaction_text, re.M):
     interaction_surfaces[iid] = set(re.findall(r"S-\d+", surfaces))
@@ -285,7 +285,7 @@ for asset in manifest["assets"]:
             "Changed/missing original Figma export: " + asset["file"])
 checks["verifiedFigmaExports"] = len(manifest["assets"])
 require((ROOT / ".agents/skills").resolve() == (ROOT / ".claude/skills").resolve(), "Shared skills discovery link broken")
-require((ROOT / "CLAUDE.md").read_text().startswith("@AGENTS.md"), "Claude shared-policy import missing")
+require((ROOT / "CLAUDE.md").read_text(encoding="utf-8").startswith("@AGENTS.md"), "Claude shared-policy import missing")
 require(not (ROOT / "docs/design/claude-chat-kit").exists(), "Redundant chat export should remain outside repository")
 workflow_dir = ROOT / ".github/workflows"
 if workflow_dir.exists():
@@ -300,12 +300,12 @@ scanned = 0
 for path in list((ROOT / "docs").rglob("*")) + list((ROOT / "tools").glob("*.py")):
     if path.is_file() and path.suffix in {".md", ".json", ".yaml", ".csv", ".py", ".svg"}:
         scanned += 1
-        require(not secret.search(path.read_text()), "Potential credential found in: " + str(path.relative_to(ROOT)))
+        require(not secret.search(path.read_text(encoding="utf-8")), "Potential credential found in: " + str(path.relative_to(ROOT)))
 checks["projectFilesSecretScanned"] = scanned
 result = {"kind": "documentary-validation-only", "date": datetime.now(timezone.utc).date().isoformat(), "ok": not errors,
           "checks": checks, "errors": errors, "applicationTestsExecuted": False,
           "independentReview": "Authoring subagents stopped at usage limit; final checks performed by coordinator"}
 report_path.parent.mkdir(parents=True, exist_ok=True)
-report_path.write_text(json.dumps(result, indent=2) + "\n")
+report_path.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
 print(json.dumps(result, indent=2))
 sys.exit(1 if errors else 0)
