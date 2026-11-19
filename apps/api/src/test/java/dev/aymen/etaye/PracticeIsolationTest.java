@@ -310,8 +310,8 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
         // Direct SQL insert for practice A
         UUID directPatientA = UUID.randomUUID();
         practiceTransaction.executeVoid(practiceAId, () -> {
-            jdbcTemplate.update("INSERT INTO patient (id, practice_id, first_name, last_name, date_of_birth) VALUES (?, ?, 'Direct', 'A', '1980-01-01')",
-                    directPatientA, practiceAId);
+            jdbcTemplate.update("INSERT INTO patient (id, practice_id, first_name, last_name, date_of_birth) VALUES (?, ?, 'Direct', 'A', ?)",
+                    directPatientA, practiceAId, java.time.LocalDate.of(1980, 1, 1));
         });
 
         // Direct SQL read from Practice B context must return empty

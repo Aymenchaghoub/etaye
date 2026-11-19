@@ -108,6 +108,49 @@ public abstract class AbstractPostgresTest {
         }
     }
 
+    protected static UUID createAccountAsOwner(String email, String displayName, String passwordHash) {
+        try (Connection conn = DriverManager.getConnection(
+                POSTGRES_CONTAINER.getJdbcUrl(),
+                OWNER_USER,
+                OWNER_PASSWORD);
+             PreparedStatement ps = conn.prepareStatement(
+                     "INSERT INTO account (normalized_email, display_name, password_hash) VALUES (?, ?, ?) RETURNING id")) {
+            ps.setString(1, email);
+            ps.setString(2, displayName);
+            ps.setString(3, passwordHash);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return (UUID) rs.getObject("id");
+                }
+            }
+            throw new IllegalStateException("Failed to retrieve generated account id");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to insert account fixture as owner", e);
+        }
+    }
+
+    protected static UUID createMembershipAsOwner(UUID accountId, UUID practiceId, String state, String[] capabilities) {
+        try (Connection conn = DriverManager.getConnection(
+                POSTGRES_CONTAINER.getJdbcUrl(),
+                OWNER_USER,
+                OWNER_PASSWORD);
+             PreparedStatement ps = conn.prepareStatement(
+                     "INSERT INTO membership (account_id, practice_id, state, capabilities) VALUES (?, ?, ?, ?) RETURNING id")) {
+            ps.setObject(1, accountId);
+            ps.setObject(2, practiceId);
+            ps.setString(3, state);
+            ps.setArray(4, conn.createArrayOf("text", capabilities));
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return (UUID) rs.getObject("id");
+                }
+            }
+            throw new IllegalStateException("Failed to retrieve generated membership id");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to insert membership fixture as owner", e);
+        }
+    }
+
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
         // HTTP application datasource connects strictly under the non-owner runtime role
@@ -117,5 +160,9 @@ public abstract class AbstractPostgresTest {
         registry.add("spring.datasource.hikari.maximum-pool-size", () -> "1");
         registry.add("spring.datasource.hikari.minimum-idle", () -> "1");
         registry.add("spring.flyway.enabled", () -> "false");
+
+        // Identity datasource connects strictly under the restricted etaye_identity role
+        registry.add("etaye.identity.datasource.username", () -> IDENTITY_USER);
+        registry.add("etaye.identity.datasource.password", () -> IDENTITY_PASSWORD);
     }
 }
