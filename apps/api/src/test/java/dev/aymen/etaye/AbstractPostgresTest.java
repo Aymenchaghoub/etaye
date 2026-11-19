@@ -157,8 +157,6 @@ public abstract class AbstractPostgresTest {
         registry.add("spring.datasource.url", POSTGRES_CONTAINER::getJdbcUrl);
         registry.add("spring.datasource.username", () -> RUNTIME_USER);
         registry.add("spring.datasource.password", () -> RUNTIME_PASSWORD);
-        registry.add("spring.datasource.hikari.maximum-pool-size", () -> "1");
-        registry.add("spring.datasource.hikari.minimum-idle", () -> "1");
         registry.add("spring.flyway.enabled", () -> "false");
 
         // Identity datasource connects strictly under the restricted etaye_identity role

@@ -17,22 +17,30 @@ import org.springframework.transaction.support.ResourceTransactionManager;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Test-only failure injection mechanism for verifying transaction rollback
- * across all five domain tables (C2).
+ * Test-only failure injection and pause mechanism for verifying transaction rollback
+ * across all five domain tables (C2) and deterministic concurrency overlap (CO-1).
  *
  * Registers a TransactionSynchronization during beforeCommit of a practice-scoped transaction
  * that calls entityManager.flush() (ensuring all 5 writes are pushed to PostgreSQL)
- * and then throws an exception, with a counter proving the synchronization was reached.
+ * and then throws an exception or pauses until released by the test.
  */
 @Component
 public class TestTransactionFailureHelper {
 
     private final AtomicBoolean failInBeforeCommit = new AtomicBoolean(false);
     private final AtomicInteger reachedCount = new AtomicInteger(0);
+
+    private final AtomicBoolean pauseInBeforeCommit = new AtomicBoolean(false);
+    private final AtomicBoolean firstPaused = new AtomicBoolean(false);
+    private volatile CountDownLatch reachedLatch;
+    private volatile CountDownLatch releaseLatch;
+
     private final PracticeTransaction practiceTransaction;
 
     @PersistenceContext
@@ -55,21 +63,75 @@ public class TestTransactionFailureHelper {
         return reachedCount.get();
     }
 
+    public void enablePauseInBeforeCommit(CountDownLatch reachedLatch, CountDownLatch releaseLatch) {
+        this.reachedLatch = reachedLatch;
+        this.releaseLatch = releaseLatch;
+        this.firstPaused.set(false);
+        this.pauseInBeforeCommit.set(true);
+    }
+
+    public void disablePauseInBeforeCommit() {
+        this.pauseInBeforeCommit.set(false);
+        this.firstPaused.set(false);
+        this.reachedLatch = null;
+        this.releaseLatch = null;
+    }
+
     public void registerSynchronizationIfEnabled() {
-        if (failInBeforeCommit.get()
-                && practiceTransaction.getActivePracticeId() != null
-                && TransactionSynchronizationManager.isSynchronizationActive()) {
-            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-                @Override
-                public void beforeCommit(boolean readOnly) {
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            return;
+        }
+        if (practiceTransaction.getActivePracticeId() == null) {
+            return;
+        }
+        if (!failInBeforeCommit.get() && !pauseInBeforeCommit.get()) {
+            return;
+        }
+        if (TransactionSynchronizationManager.hasResource(this)) {
+            return;
+        }
+        TransactionSynchronizationManager.bindResource(this, Boolean.TRUE);
+
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void beforeCommit(boolean readOnly) {
+                if (failInBeforeCommit.get() && practiceTransaction.getActivePracticeId() != null) {
                     reachedCount.incrementAndGet();
                     if (entityManager != null) {
                         entityManager.flush();
                     }
                     throw new RuntimeException("Simulated commit failure in beforeCommit after flushing domain writes");
                 }
-            });
-        }
+                if (pauseInBeforeCommit.get() && practiceTransaction.getActivePracticeId() != null) {
+                    if (firstPaused.compareAndSet(false, true)) {
+                        if (entityManager != null) {
+                            entityManager.flush();
+                        }
+                        if (reachedLatch != null) {
+                            reachedLatch.countDown();
+                        }
+                        if (releaseLatch != null) {
+                            try {
+                                boolean released = releaseLatch.await(15, TimeUnit.SECONDS);
+                                if (!released) {
+                                    throw new IllegalStateException("TestTransactionFailureHelper: release latch timed out after 15 seconds");
+                                }
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                                throw new RuntimeException("Interrupted while paused in beforeCommit", e);
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void afterCompletion(int status) {
+                if (TransactionSynchronizationManager.hasResource(TestTransactionFailureHelper.this)) {
+                    TransactionSynchronizationManager.unbindResource(TestTransactionFailureHelper.this);
+                }
+            }
+        });
     }
 
     @Configuration

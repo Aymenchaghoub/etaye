@@ -24,6 +24,7 @@ import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -129,6 +130,34 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         } catch (Exception e) {
             throw new RuntimeException("Error counting rows in " + table, e);
         }
+    }
+
+    private boolean waitForRuntimeBackendLock(long timeoutSeconds) {
+        long deadline = System.currentTimeMillis() + (timeoutSeconds * 1000);
+        while (System.currentTimeMillis() < deadline) {
+            try (Connection conn = DriverManager.getConnection(
+                    POSTGRES_CONTAINER.getJdbcUrl(),
+                    POSTGRES_CONTAINER.getUsername(),
+                    POSTGRES_CONTAINER.getPassword());
+                 PreparedStatement ps = conn.prepareStatement(
+                         "SELECT count(*) FROM pg_stat_activity WHERE usename = ? AND wait_event_type = 'Lock'")) {
+                ps.setString(1, RUNTIME_USER);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        return true;
+                    }
+                }
+            } catch (Exception e) {
+                // Ignore transient observation connection errors during polling
+            }
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return false;
+            }
+        }
+        return false;
     }
 
     @Test
@@ -449,7 +478,7 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("A2: Real concurrent HTTP requests with same key across distinct pooled connections give one patient and no duplicates")
+    @DisplayName("CO-1: Concurrent requests with same key give consistent outcome and zero duplicates with deterministic overlap")
     void concurrentRequestsWithSameKey_giveConsistentOutcomeAndZeroDuplicates() throws Exception {
         String csrfToken = fetchCsrfToken(sessionCookieClinicalA);
         String idempotencyKey = "key-concurrent-" + UUID.randomUUID();
@@ -468,43 +497,76 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         int outboxCountBefore = countRowsInTableDirectly("outbox_event", "practice_id", practiceA);
         int receiptCountBefore = countRowsInTableDirectly("idempotency_receipt", "practice_id", practiceA);
 
-        java.util.concurrent.CyclicBarrier barrier = new java.util.concurrent.CyclicBarrier(2);
+        CountDownLatch reachedLatch = new CountDownLatch(1);
+        CountDownLatch releaseLatch = new CountDownLatch(1);
+        testFailureHelper.enablePauseInBeforeCommit(reachedLatch, releaseLatch);
+
         java.util.concurrent.ExecutorService executor = java.util.concurrent.Executors.newFixedThreadPool(2);
 
-        java.util.concurrent.Callable<ResponseEntity<PatientResponse>> requestTask = () -> {
-            barrier.await();
-            return client().post()
-                    .uri("/api/v1/practices/" + practiceA + "/patients")
-                    .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
-                    .header("X-CSRF-TOKEN", csrfToken)
-                    .header("Idempotency-Key", idempotencyKey)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(edit)
-                    .retrieve()
-                    .toEntity(PatientResponse.class);
-        };
+        try {
+            java.util.concurrent.Callable<ResponseEntity<PatientResponse>> requestTask = () -> {
+                return client().post()
+                        .uri("/api/v1/practices/" + practiceA + "/patients")
+                        .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                        .header("X-CSRF-TOKEN", csrfToken)
+                        .header("Idempotency-Key", idempotencyKey)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(edit)
+                        .retrieve()
+                        .onStatus(status -> status.is5xxServerError() || status.is4xxClientError(), (req, res) -> {})
+                        .toEntity(PatientResponse.class);
+            };
 
-        java.util.concurrent.Future<ResponseEntity<PatientResponse>> future1 = executor.submit(requestTask);
-        java.util.concurrent.Future<ResponseEntity<PatientResponse>> future2 = executor.submit(requestTask);
+            // 1. Start request 1 on its own thread
+            java.util.concurrent.Future<ResponseEntity<PatientResponse>> future1 = executor.submit(requestTask);
 
-        ResponseEntity<PatientResponse> res1 = future1.get();
-        ResponseEntity<PatientResponse> res2 = future2.get();
-        executor.shutdown();
+            // 2. Wait for its "reached beforeCommit" latch (bounded 15s)
+            boolean reached = reachedLatch.await(15, java.util.concurrent.TimeUnit.SECONDS);
+            assertThat(reached).as("Request 1 must reach beforeCommit within 15 seconds").isTrue();
 
-        assertThat(res1.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(res2.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(res1.getBody().id()).isEqualTo(res2.getBody().id());
-        assertThat(res1.getBody().recordId()).isEqualTo(res2.getBody().recordId());
+            // 3. Start request 2
+            java.util.concurrent.Future<ResponseEntity<PatientResponse>> future2 = executor.submit(requestTask);
 
-        UUID createdPatientId = res1.getBody().id();
+            // 4. Poll pg_stat_activity until at least one runtime backend has wait_event_type = 'Lock' (bounded 10s)
+            boolean lockObserved = waitForRuntimeBackendLock(10);
+            assertThat(lockObserved).as("At least one runtime backend must have wait_event_type = 'Lock' in pg_stat_activity").isTrue();
 
-        assertThat(countRowsInTableDirectly("patient", "practice_id", practiceA)).isEqualTo(patientCountBefore + 1);
-        assertThat(countRowsInTableDirectly("patient_record", "practice_id", practiceA)).isEqualTo(recordCountBefore + 1);
-        assertThat(countRowsInTableDirectly("audit_event", "practice_id", practiceA)).isEqualTo(auditCountBefore + 1);
-        assertThat(countRowsInTableDirectly("outbox_event", "practice_id", practiceA)).isEqualTo(outboxCountBefore + 1);
-        assertThat(countRowsInTableDirectly("idempotency_receipt", "practice_id", practiceA)).isEqualTo(receiptCountBefore + 1);
+            // 5. Only then release request 1
+            releaseLatch.countDown();
 
-        assertThat(countRowsInTableDirectly("patient", "id", createdPatientId)).isEqualTo(1);
+            // 6. Collect both
+            ResponseEntity<PatientResponse> res1 = future1.get(15, java.util.concurrent.TimeUnit.SECONDS);
+            ResponseEntity<PatientResponse> res2 = future2.get(15, java.util.concurrent.TimeUnit.SECONDS);
+
+            // Assert: never a 500, two 201 with the same patient id and recordId (or one 201 and one 409)
+            assertThat(res1.getStatusCode()).isNotEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+            assertThat(res2.getStatusCode()).isNotEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+
+            assertThat(res1.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+            if (res2.getStatusCode() == HttpStatus.CREATED) {
+                assertThat(res1.getBody()).isNotNull();
+                assertThat(res2.getBody()).isNotNull();
+                assertThat(res1.getBody().id()).isEqualTo(res2.getBody().id());
+                assertThat(res1.getBody().recordId()).isEqualTo(res2.getBody().recordId());
+            } else {
+                assertThat(res2.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+            }
+
+            UUID createdPatientId = res1.getBody().id();
+
+            // Exactly one more patient/record/audit/outbox/receipt row for practice A
+            assertThat(countRowsInTableDirectly("patient", "practice_id", practiceA)).isEqualTo(patientCountBefore + 1);
+            assertThat(countRowsInTableDirectly("patient_record", "practice_id", practiceA)).isEqualTo(recordCountBefore + 1);
+            assertThat(countRowsInTableDirectly("audit_event", "practice_id", practiceA)).isEqualTo(auditCountBefore + 1);
+            assertThat(countRowsInTableDirectly("outbox_event", "practice_id", practiceA)).isEqualTo(outboxCountBefore + 1);
+            assertThat(countRowsInTableDirectly("idempotency_receipt", "practice_id", practiceA)).isEqualTo(receiptCountBefore + 1);
+
+            assertThat(countRowsInTableDirectly("patient", "id", createdPatientId)).isEqualTo(1);
+        } finally {
+            testFailureHelper.disablePauseInBeforeCommit();
+            releaseLatch.countDown();
+            executor.shutdownNow();
+        }
     }
 
     @Test
