@@ -2,6 +2,14 @@
 
 Updated: 2026-11-19. Owner: Aymen Chaghoub.
 
+## Windows native entry background review — 2026-11-19
+
+**Phase:** design review. One native creation run saved all 20 light desktop review states (S-25: 7, S-02: 9, S-01: 4), section `54:34`, named version `2423528717189287238`, from verified history version `2423224260331333575`. A read-only recovery downloaded `etaye-entry-background-native-evidence.json` after the original UI failed to expose the link. The download is stored locally and its SHA-256 is `2f8f5252678a2115013fe187ff857f4c1d278b2b12b2eabff12416093abf005e`.
+
+**Verified:** all 20 source fingerprints and both protected page fingerprints matched. The 20 distinct native PNGs decoded at 1440 × 1113. All 20 product-area pairs and nine detail crops were opened against the frozen overlay. The [review](design/reviews/2026-11-19-entry-background.md) records the remaining alert and quotation line wraps, the two S-25 footer offsets, and minor rendering differences. The [scoped index](design/reviews/2026-11-19-entry-background/native/evidence.json) records actual review, source and artwork IDs, version IDs, dimensions and hashes. The four offline runtime fixtures passed separately. Documentary validation passed in the isolated Windows worktree with a temporary junction for the shared skills path. The scoped evidence file scan passed with the existing rules.
+
+**Next action:** Aymen reviews the saved Figma section and the recorded differences. Aymen authorized the batch execution. Native visual approval and development authorization remain pending. All 45 application stories remain in backlog.
+
 ## Native client decision: React Native with Expo, demo-only — 2026-11-19
 
 **Phase:** design review; development remains unauthorized (UD-28). **User decisions (this session):** the portfolio must show an API, a web app and a mobile app, with fluid, modern phone screens on the real API and an identity consistent with the web app; the mobile apps will not be published; Aymen chose React Native with Expo. Recorded as UD-38 and UD-39 and in the one-page mini-ADR [ADR-010](decisions/ADR-010-native-client-react-native-expo.md) (UD-27). It supersedes the Capacitor shell of UD-14 and ADR-008 point 5; ADR-008 is amended, not rewritten.
@@ -13,18 +21,6 @@ Updated: 2026-11-19. Owner: Aymen Chaghoub.
 **Verification (actual):** `python3 tools/validate_docs.py` passed with zero errors before the second commit (documentary only). Archify 3.2.0: all five views passed validate, deliver, strict provenance check and real-browser check; evidence ranges were remapped from `eb58c81` and the sources pinned to `f05b30b`. Captures at 1440×900 and 2048×1320, light and dark, were generated for the access, system and delivery views and three were opened (access light 1440, system light 1440, delivery dark 2048); below-fold cards, the modules and documents captures, the exported `overview.svg` rendering and interactions were not visually reviewed. The SVG came from the viewer's "SVG · Auto" export driven by Playwright 1.63.0 in Chromium. No application test exists. The HawkScan hook asked for a scan of the commit; none was run because the change is documentation-only, no application runs and no API key is configured.
 
 **Open choices and access:** Aymen can borrow an Android phone and a Mac from friends (A-17, his statement of 2026-11-19), which settles real-device evidence on Android and the iOS Simulator; a physical iPhone build still needs the Apple program (story 10.8 gate), and the Xcode version the Mac can run must support the chosen Expo SDK (To verify); DF-19, the native patient screens, to design and review before story 10.6; spike checks (bearer-versus-browser header rule, React version alignment, FCM cost, exact SDK lock, React Native and Expo licenses). No account, credential or paid service was requested. **Next action:** Aymen reviews the pull request; merge only after the required checks pass; the Pages workflow republishes the architecture site from `main`, then check the public pages. The background study line about a Capacitor tile precache in `docs/design/` was left for the design owner (DF-19).
-
-## Figma Desktop handoff for entry backgrounds — 2026-11-19
-
-The [offline entry previews](../design/entry-background/README.md) and the mockup baseline were integrated in PR26 at `873452b`. The [one-run Figma Desktop kit](../design/entry-background/figma/README.md) packages all 20 source desktop light-theme states and the 9 deduplicated decorative PNGs. Native source layout checks passed against the 20 archived scenes, the three representative decorative renders were opened, and 4 offline runtime tests passed for preflight, duplicate refusal, creation, export evidence and rollback.
-
-The Starter MCP quota still blocks a remote write. This Linux environment cannot run the supported Figma Desktop plugin. The next required event is a single Desktop run and receipt of the exported 20 native PNGs and identifiers. Open comparisons before recording native acceptance. No Figma version, native review completion or application authorization is asserted.
-
-## Entry background review — 2026-11-19
-
-Aymen requested the approved paper and blueprint background on S-25, S-02 and S-01, with one Figma write if access permits. The [preview](../design/entry-background/README.md) covers 20 HTML states using the frozen corrected mockups. Chromium passed 200 rendered configurations with both themes, and the [review](design/reviews/2026-11-19-entry-background.md) records opened comparison sheets and measured contrast.
-
-Figma read the S-25 source section; the next call hit the Starter quota. Native writes are pending. When access returns, preflight the existing nodes, batch the three review variants in one write and inspect the native result. Product design approval and explicit development authorization remain open.
 
 ## Offline mockups and latest design evidence — 2026-11-19
 
