@@ -1,0 +1,90 @@
+/* Étaye — généré depuis tokens.json. Thème : <html data-theme="clair"> ou "sombre". */
+@font-face { font-family: "Atkinson Hyperlegible Next"; src: url("../fonts/AtkinsonHyperlegibleNext-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Atkinson Hyperlegible Next"; src: url("../fonts/AtkinsonHyperlegibleNext-Medium.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "Atkinson Hyperlegible Next"; src: url("../fonts/AtkinsonHyperlegibleNext-SemiBold.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "Atkinson Hyperlegible Mono"; src: url("../fonts/AtkinsonHyperlegibleMono-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Atkinson Hyperlegible Mono"; src: url("../fonts/AtkinsonHyperlegibleMono-SemiBold.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "Source Serif 4"; src: url("../fonts/SourceSerif4-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Source Serif 4"; src: url("../fonts/SourceSerif4-Medium.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+:root, [data-theme="clair"] {
+  --fond: #efeeea;
+  --surface: #ffffff;
+  --surface-2: #f7f6f3;
+  --papier: #f6f4ee;
+  --encre: #1b1b18;
+  --encre-2: #57534a;
+  --encre-3: #6b655a;
+  --encre-inverse: #f6f4ee;
+  --filet: #dedad0;
+  --filet-controle: #8c877c;
+  --accent: #2b4c7e;
+  --accent-fond: #e8edf5;
+  --sur-accent: #ffffff;
+  --critique: #b42318;
+  --critique-fond: #fcebe9;
+  --attention: #a6470a;
+  --attention-fond: #fdf1e3;
+  --ombre-flottant: 0 8px 24px rgba(27,27,24,0.08), 0 0 0 1px rgba(27,27,24,0.10);
+}
+[data-theme="sombre"] {
+  --fond: #0f1012;
+  --surface: #1a1c1f;
+  --surface-2: #222529;
+  --papier: #17181a;
+  --encre: #ece9e1;
+  --encre-2: #aba69b;
+  --encre-3: #969189;
+  --encre-inverse: #1b1b18;
+  --filet: #2e3136;
+  --filet-controle: #767b82;
+  --accent: #8faadb;
+  --accent-fond: #1d2738;
+  --sur-accent: #0f1012;
+  --critique: #ff8f85;
+  --critique-fond: #3b1613;
+  --attention: #f5a524;
+  --attention-fond: #36260e;
+  --ombre-flottant: 0 8px 24px rgba(0,0,0,0.40), 0 0 0 1px rgba(236,233,225,0.10);
+}
+:root {
+  --espace-1: 4px;
+  --espace-2: 8px;
+  --espace-3: 12px;
+  --espace-4: 16px;
+  --espace-5: 20px;
+  --espace-6: 24px;
+  --espace-8: 32px;
+  --espace-10: 40px;
+  --espace-12: 48px;
+  --espace-16: 64px;
+  --rayon-0: 0px;
+  --rayon-1: 4px;
+  --rayon-2: 8px;
+  --rayon-3: 12px;
+  --trait-filet: 1px;
+  --trait-focus: 2px;
+  --trait-erreur: 2px;
+  --cible-soignant: 32px;
+  --cible-patient: 48px;
+  --courbe: cubic-bezier(0.22, 1, 0.36, 1);
+  --duree-retour: 140ms;
+  --duree-flottant: 180ms;
+  --duree-entree: 320ms;
+  --font-texte: "Atkinson Hyperlegible Next", system-ui, sans-serif;
+  --font-donnee: "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+  --font-document: "Source Serif 4", Georgia, serif;
+}
+.ui-titre { font-family: var(--font-texte); font-size: 22px; line-height: 28px; font-weight: 500; }
+.ui-section { font-family: var(--font-texte); font-size: 16px; line-height: 24px; font-weight: 500; }
+.ui-corps { font-family: var(--font-texte); font-size: 15px; line-height: 22px; font-weight: 400; }
+.ui-dense { font-family: var(--font-texte); font-size: 14px; line-height: 20px; font-weight: 400; }
+.ui-libelle { font-family: var(--font-texte); font-size: 13px; line-height: 20px; font-weight: 500; letter-spacing: 0.01em; }
+.meta { font-family: var(--font-texte); font-size: 12px; line-height: 16px; font-weight: 400; }
+.donnee { font-family: var(--font-donnee); font-size: 14px; line-height: 20px; font-weight: 400; }
+.donnee-forte { font-family: var(--font-donnee); font-size: 14px; line-height: 20px; font-weight: 600; }
+.doc-titre { font-family: var(--font-document); font-size: 26px; line-height: 32px; font-weight: 500; }
+.doc-intertitre { font-family: var(--font-document); font-size: 18px; line-height: 28px; font-weight: 500; }
+.doc-corps { font-family: var(--font-document); font-size: 16px; line-height: 28px; font-weight: 400; }
+.patient-titre { font-family: var(--font-texte); font-size: 28px; line-height: 36px; font-weight: 500; }
+.patient-corps { font-family: var(--font-texte); font-size: 18px; line-height: 28px; font-weight: 400; }
+.patient-action { font-family: var(--font-texte); font-size: 18px; line-height: 24px; font-weight: 500; }

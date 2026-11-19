@@ -1,0 +1,100 @@
+[
+ {
+  "id": "S-06",
+  "name": "Accueil praticien et préparation du jour",
+  "slug": "nora",
+  "label": "Default — Dr Nora Lefebvre, Monday 2 Nov 2026 16:00, practice scope",
+  "module": "screens_s06",
+  "path": "ecrans/S-06/nora.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-06",
+  "name": "Accueil praticien et préparation du jour",
+  "slug": "chargement",
+  "label": "Loading sections — skeletons per section",
+  "module": "screens_s06",
+  "path": "ecrans/S-06/chargement.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-06",
+  "name": "Accueil praticien et préparation du jour",
+  "slug": "jour-vide",
+  "label": "Empty day — Dr Sami Rahmani in Cabinet du Canal (no appointment on 2 Nov; Hugo Petit tomorrow with Dr Élodie Morel)",
+  "module": "screens_s06",
+  "path": "ecrans/S-06/jour-vide.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-06",
+  "name": "Accueil praticien et préparation du jour",
+  "slug": "echec-partiel",
+  "label": "Partial failure — task section failed, agenda and reviews kept",
+  "module": "screens_s06",
+  "path": "ecrans/S-06/echec-partiel.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-06",
+  "name": "Accueil praticien et préparation du jour",
+  "slug": "perime",
+  "label": "Stale publication — V-STALE snapshot at 12:00, explanation v1 published but sources changed at 09:10",
+  "module": "screens_s06",
+  "path": "ecrans/S-06/perime.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-06",
+  "name": "Accueil praticien et préparation du jour",
+  "slug": "annule",
+  "label": "Cancelled visit — historical snapshot Mon 26 Oct, APT-A-004 stays visible with reason (AC-S06-F)",
+  "module": "screens_s06",
+  "path": "ecrans/S-06/annule.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-06",
+  "name": "Accueil praticien et préparation du jour",
+  "slug": "minuit",
+  "label": "Date boundary — Tue 3 Nov 00:05 Europe/Paris, lists roll over",
+  "module": "screens_s06",
+  "path": "ecrans/S-06/minuit.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ }
+]

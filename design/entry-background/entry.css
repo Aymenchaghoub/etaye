@@ -1,0 +1,17 @@
+/* Apply the measured layer only to the allowed entry surfaces. */
+.etaye-auth[data-entry-background] {
+  padding: var(--espace-6);
+}
+[data-entry-background="login"] > .etaye-calm,
+[data-entry-background="showcase"] > .etaye-calm,
+[data-entry-background="patient-heading"] > .etaye-calm {
+  --bg-calm-inset: var(--espace-1);
+  --bg-calm-feather: var(--espace-1);
+}
+[data-entry-background="showcase"] .etaye-document {
+  background: var(--surface);
+}
+[data-entry-background="patient-heading"] {
+  min-height: 0;
+  padding: var(--espace-6);
+}

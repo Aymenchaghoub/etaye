@@ -1,0 +1,898 @@
+[
+ {
+  "id": "S-19",
+  "name": "Consultation et notes structurées",
+  "slug": "en-cours",
+  "label": "IN_PROGRESS — CONS-A-002 Louis Bernard, Dr Sami Rahmani since 14:10, no appointment linked, every section 'Non renseigné'",
+  "module": "screens_consult",
+  "path": "ecrans/S-19/en-cours.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-19",
+  "name": "Consultation et notes structurées",
+  "slug": "echec",
+  "label": "Failed save — motif typed from APT-A-002 reason kept, nothing saved",
+  "module": "screens_consult",
+  "path": "ecrans/S-19/echec.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-19",
+  "name": "Consultation et notes structurées",
+  "slug": "conflit",
+  "label": "Concurrent edit — V-CONFLICT variant, nothing overwritten, link to I-21",
+  "module": "screens_consult",
+  "path": "ecrans/S-19/conflit.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-19",
+  "name": "Consultation et notes structurées",
+  "slug": "session",
+  "label": "Session expired before save — V-SESSION, entry kept on device",
+  "module": "screens_consult",
+  "path": "ecrans/S-19/session.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-19",
+  "name": "Consultation et notes structurées",
+  "slug": "lecture-seule",
+  "label": "Membership deactivated — read-only immediately (template)",
+  "module": "screens_consult",
+  "path": "ecrans/S-19/lecture-seule.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-19",
+  "name": "Consultation et notes structurées",
+  "slug": "terminer",
+  "label": "Completion guard dialog — motif missing blocks completion (proposed guard); appointment stays independent",
+  "module": "screens_consult",
+  "path": "ecrans/S-19/terminer.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-19",
+  "name": "Consultation et notes structurées",
+  "slug": "termine",
+  "label": "COMPLETED — CONS-A-001 Claire Martin 20 Oct 10:35, read-only, dated sources, corrected weight lineage",
+  "module": "screens_consult",
+  "path": "ecrans/S-19/termine.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-19",
+  "name": "Consultation et notes structurées",
+  "slug": "annulee",
+  "label": "CANCELLED — template, notes read-only, appointment unchanged",
+  "module": "screens_consult",
+  "path": "ecrans/S-19/annulee.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-19",
+  "name": "Consultation et notes structurées",
+  "slug": "longue",
+  "label": "Long notes — V-LONG variant: every dated Claire source quoted in full (no new clinical content)",
+  "module": "screens_consult",
+  "path": "ecrans/S-19/longue.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-05",
+  "name": "Saisir des informations pour la consultation",
+  "slug": "ouvert",
+  "label": "Inline editor — Louis allergies, unknown/negative/not asked distinct, origin and date",
+  "module": "screens_consult",
+  "path": "ecrans/I-05/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-05",
+  "name": "Saisir des informations pour la consultation",
+  "slug": "erreur",
+  "label": "Validation — 'Présente' without text: field error and summary, no invented negative",
+  "module": "screens_consult",
+  "path": "ecrans/I-05/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-05",
+  "name": "Saisir des informations pour la consultation",
+  "slug": "echec",
+  "label": "Network failure — motif kept, nothing saved",
+  "module": "screens_consult",
+  "path": "ecrans/I-05/echec.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-05",
+  "name": "Saisir des informations pour la consultation",
+  "slug": "annuler",
+  "label": "Cancel with unsaved entry — explicit discard, safe choice first",
+  "module": "screens_consult",
+  "path": "ecrans/I-05/annuler.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-05",
+  "name": "Saisir des informations pour la consultation",
+  "slug": "enregistre",
+  "label": "Saved — motif with author, date and origin (template)",
+  "module": "screens_consult",
+  "path": "ecrans/I-05/enregistre.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-20",
+  "name": "Rédaction du compte rendu",
+  "slug": "brouillon",
+  "label": "DRAFT v2 variant from REPORT-A-001-v1 — exact v1 text, saved, sources panel, v1 unchanged",
+  "module": "screens_consult",
+  "path": "ecrans/S-20/brouillon.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-20",
+  "name": "Rédaction du compte rendu",
+  "slug": "nouveau",
+  "label": "New report for CONS-A-002 (Louis) — missing-data statements only, no citable source, no generated text",
+  "module": "screens_consult",
+  "path": "ecrans/S-20/nouveau.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-20",
+  "name": "Rédaction du compte rendu",
+  "slug": "sale",
+  "label": "Dirty — human correction labelled, supported by SRC-A-003 date",
+  "module": "screens_consult",
+  "path": "ecrans/S-20/sale.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-20",
+  "name": "Rédaction du compte rendu",
+  "slug": "enregistrement",
+  "label": "Saving — actions disabled, no success shown yet",
+  "module": "screens_consult",
+  "path": "ecrans/S-20/enregistrement.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-20",
+  "name": "Rédaction du compte rendu",
+  "slug": "echec",
+  "label": "Save failed — text kept in the editor",
+  "module": "screens_consult",
+  "path": "ecrans/S-20/echec.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-20",
+  "name": "Rédaction du compte rendu",
+  "slug": "enregistre",
+  "label": "Saved — human correction kept and labelled",
+  "module": "screens_consult",
+  "path": "ecrans/S-20/enregistre.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-20",
+  "name": "Rédaction du compte rendu",
+  "slug": "source-retiree",
+  "label": "Cited source removed from record — sentence marked for review (template)",
+  "module": "screens_consult",
+  "path": "ecrans/S-20/source-retiree.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-20",
+  "name": "Rédaction du compte rendu",
+  "slug": "non-soutenu",
+  "label": "Unsupported citation — variant: blood pressure sentence cites the lab document SRC-A-003",
+  "module": "screens_consult",
+  "path": "ecrans/S-20/non-soutenu.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-20",
+  "name": "Rédaction du compte rendu",
+  "slug": "conflit",
+  "label": "Stale write rejected — V-CONFLICT variant, link to I-21",
+  "module": "screens_consult",
+  "path": "ecrans/S-20/conflit.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-20",
+  "name": "Rédaction du compte rendu",
+  "slug": "lecture-seule",
+  "label": "REPORT-A-001-v1 VALIDATED — read-only, 'Créer une nouvelle version' instead of editing",
+  "module": "screens_consult",
+  "path": "ecrans/S-20/lecture-seule.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-21",
+  "name": "Résoudre un conflit de version",
+  "slug": "ouvert",
+  "label": "Stale write explained — your copy vs saved version, authors, no automatic overwrite (V-CONFLICT variant)",
+  "module": "screens_consult",
+  "path": "ecrans/I-21/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-21",
+  "name": "Résoudre un conflit de version",
+  "slug": "comparaison",
+  "label": "Readable side-by-side diff, text labels, sequential on mobile",
+  "module": "screens_consult",
+  "path": "ecrans/I-21/comparaison.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-21",
+  "name": "Résoudre un conflit de version",
+  "slug": "copie",
+  "label": "Local copy kept in memory for the session, not saved",
+  "module": "screens_consult",
+  "path": "ecrans/I-21/copie.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-22",
+  "name": "Historique et comparaison des versions",
+  "slug": "comparaison",
+  "label": "PATIENT-A-001 v1 vs v2 — Supprimé/Ajouté labels, source set change, origin layers",
+  "module": "screens_consult",
+  "path": "ecrans/S-22/comparaison.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-22",
+  "name": "Historique et comparaison des versions",
+  "slug": "generation",
+  "label": "Origin first — source facts, rejected generated text, human correction and reason",
+  "module": "screens_consult",
+  "path": "ecrans/S-22/generation.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-22",
+  "name": "Historique et comparaison des versions",
+  "slug": "longue",
+  "label": "Full lineage in order — v1, stale event, generated draft, corrected v2, publication",
+  "module": "screens_consult",
+  "path": "ecrans/S-22/longue.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-22",
+  "name": "Historique et comparaison des versions",
+  "slug": "une-version",
+  "label": "One version — REPORT-A-001-v1 only, nothing to compare",
+  "module": "screens_consult",
+  "path": "ecrans/S-22/une-version.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-22",
+  "name": "Historique et comparaison des versions",
+  "slug": "source-manquante",
+  "label": "Historic source excerpt unavailable (template)",
+  "module": "screens_consult",
+  "path": "ecrans/S-22/source-manquante.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-22",
+  "name": "Historique et comparaison des versions",
+  "slug": "nouvelle-version",
+  "label": "Concurrent new draft created while reading (variant)",
+  "module": "screens_consult",
+  "path": "ecrans/S-22/nouvelle-version.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-22",
+  "name": "Historique et comparaison des versions",
+  "slug": "lecture-seule",
+  "label": "Read-only history, no new-draft action (template)",
+  "module": "screens_consult",
+  "path": "ecrans/S-22/lecture-seule.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-22",
+  "name": "Historique et comparaison des versions",
+  "slug": "lien-remplace",
+  "label": "Followed a replaced publication link — v1 shown as history",
+  "module": "screens_consult",
+  "path": "ecrans/S-22/lien-remplace.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-23",
+  "name": "Validation humaine puis publication",
+  "slug": "validation",
+  "label": "IN_REVIEW PATIENT-A-001-v2 — checklist, two separate steps, publication not yet available",
+  "module": "screens_consult",
+  "path": "ecrans/S-23/validation.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-23",
+  "name": "Validation humaine puis publication",
+  "slug": "contradiction",
+  "label": "Blocked — unsupported generated statement still present (SC-UNSUPPORTED-DRAFT)",
+  "module": "screens_consult",
+  "path": "ecrans/S-23/contradiction.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-23",
+  "name": "Validation humaine puis publication",
+  "slug": "source-manquante",
+  "label": "Blocked — one source could not be loaded (template)",
+  "module": "screens_consult",
+  "path": "ecrans/S-23/source-manquante.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-23",
+  "name": "Validation humaine puis publication",
+  "slug": "perime",
+  "label": "Blocked — sources changed during review (template)",
+  "module": "screens_consult",
+  "path": "ecrans/S-23/perime.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-23",
+  "name": "Validation humaine puis publication",
+  "slug": "brouillon-modifie",
+  "label": "Blocked — draft changed during review (template)",
+  "module": "screens_consult",
+  "path": "ecrans/S-23/brouillon-modifie.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-23",
+  "name": "Validation humaine puis publication",
+  "slug": "valide",
+  "label": "VALIDATED 14:20, not published — step 2 offered separately",
+  "module": "screens_consult",
+  "path": "ecrans/S-23/valide.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-23",
+  "name": "Validation humaine puis publication",
+  "slug": "publie",
+  "label": "PUBLISHED 14:25 as PUB-A-002, replaces PUB-A-001",
+  "module": "screens_consult",
+  "path": "ecrans/S-23/publie.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-23",
+  "name": "Validation humaine puis publication",
+  "slug": "brief",
+  "label": "Clinician brief BRIEF-A-001-v1 — internal review only, no publication action",
+  "module": "screens_consult",
+  "path": "ecrans/S-23/brief.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-23",
+  "name": "Validation humaine puis publication",
+  "slug": "echec-publication",
+  "label": "Publication failed — still VALIDATED and internal, v1 remains published (template)",
+  "module": "screens_consult",
+  "path": "ecrans/S-23/echec-publication.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-16",
+  "name": "Valider la version relue",
+  "slug": "ouvert",
+  "label": "Validate dialog — exact version, patient, sources, gaps, attestation; not patient-visible",
+  "module": "screens_consult",
+  "path": "ecrans/I-16/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-16",
+  "name": "Valider la version relue",
+  "slug": "bloque",
+  "label": "Blocked — unsupported statement remains, primary disabled",
+  "module": "screens_consult",
+  "path": "ecrans/I-16/bloque.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-16",
+  "name": "Valider la version relue",
+  "slug": "envoi",
+  "label": "Submitting — controls disabled, no success yet",
+  "module": "screens_consult",
+  "path": "ecrans/I-16/envoi.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-16",
+  "name": "Valider la version relue",
+  "slug": "erreur",
+  "label": "Ambiguous response checked — not validated, nothing shared (template)",
+  "module": "screens_consult",
+  "path": "ecrans/I-16/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-17",
+  "name": "Publier pour la patiente",
+  "slug": "ouvert",
+  "label": "Publish dialog — audience, exact version, patient preview, 3 approved excerpts, no attachment, consequences",
+  "module": "screens_consult",
+  "path": "ecrans/I-17/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-17",
+  "name": "Publier pour la patiente",
+  "slug": "envoi",
+  "label": "Publishing — controls disabled",
+  "module": "screens_consult",
+  "path": "ecrans/I-17/envoi.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-17",
+  "name": "Publier pour la patiente",
+  "slug": "erreur",
+  "label": "Publication failed — nothing visible, v1 still published (template)",
+  "module": "screens_consult",
+  "path": "ecrans/I-17/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-17",
+  "name": "Publier pour la patiente",
+  "slug": "brief",
+  "label": "Forbidden — clinician brief cannot be published",
+  "module": "screens_consult",
+  "path": "ecrans/I-17/brief.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-17",
+  "name": "Publier pour la patiente",
+  "slug": "perime",
+  "label": "Blocked — STALE v1 cannot be published again (V-STALE 12:00)",
+  "module": "screens_consult",
+  "path": "ecrans/I-17/perime.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-24",
+  "name": "Contenu périmé, remplacé ou retiré",
+  "slug": "perime",
+  "label": "V-STALE 12:00 — v1 VALIDATED + STALE + still PUBLISHED, reason SRC-A-005 vs SRC-A-001",
+  "module": "screens_consult",
+  "path": "ecrans/S-24/perime.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-24",
+  "name": "Contenu périmé, remplacé ou retiré",
+  "slug": "remplace",
+  "label": "PUB-A-001 REPLACED by PUB-A-002 at 14:25 — old text not presented as current",
+  "module": "screens_consult",
+  "path": "ecrans/S-24/remplace.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-24",
+  "name": "Contenu périmé, remplacé ou retiré",
+  "slug": "retire",
+  "label": "V-WITHDRAWN — PUB-A-002 withdrawn, internal reason for professionals only, copies not recalled",
+  "module": "screens_consult",
+  "path": "ecrans/S-24/retire.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-24",
+  "name": "Contenu périmé, remplacé ou retiré",
+  "slug": "lien-ancien",
+  "label": "Old download link of v1 — inactive, history and current version offered",
+  "module": "screens_consult",
+  "path": "ecrans/S-24/lien-ancien.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-24",
+  "name": "Contenu périmé, remplacé ou retiré",
+  "slug": "piece-revoquee",
+  "label": "Attachment access revoked (template — no attachment granted in the dataset)",
+  "module": "screens_consult",
+  "path": "ecrans/S-24/piece-revoquee.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-18",
+  "name": "Remplacer ou retirer la publication",
+  "slug": "ouvert",
+  "label": "Choice page — PUB-A-001 (v1 STALE) between 14:20 and 14:25, replace or withdraw, nothing preselected",
+  "module": "screens_consult",
+  "path": "ecrans/I-18/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-18",
+  "name": "Remplacer ou retirer la publication",
+  "slug": "remplacer",
+  "label": "Replace selected — v2 validated, patient preview, atomic replacement",
+  "module": "screens_consult",
+  "path": "ecrans/I-18/remplacer.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-18",
+  "name": "Remplacer ou retirer la publication",
+  "slug": "termine",
+  "label": "Replaced at 14:25 — PUB-A-001 REPLACED, PUB-A-002 PUBLISHED, M-05 queued",
+  "module": "screens_consult",
+  "path": "ecrans/I-18/termine.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-18",
+  "name": "Remplacer ou retirer la publication",
+  "slug": "retrait",
+  "label": "Withdraw PUB-A-002 — V-WITHDRAWN start, reason required, no newer version to replace with",
+  "module": "screens_consult",
+  "path": "ecrans/I-18/retrait.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-18",
+  "name": "Remplacer ou retirer la publication",
+  "slug": "erreur",
+  "label": "Withdrawal reason missing — error summary and field error",
+  "module": "screens_consult",
+  "path": "ecrans/I-18/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-18",
+  "name": "Remplacer ou retirer la publication",
+  "slug": "conflit",
+  "label": "Publication changed meanwhile — nothing replaced (template)",
+  "module": "screens_consult",
+  "path": "ecrans/I-18/conflit.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ }
+]

@@ -284,6 +284,17 @@ for asset in manifest["assets"]:
     require(path.exists() and hashlib.sha256(path.read_bytes()).hexdigest() == asset["sha256"],
             "Changed/missing original Figma export: " + asset["file"])
 checks["verifiedFigmaExports"] = len(manifest["assets"])
+offline_reference = ROOT / "design/offline-reference"
+offline_snapshot = read_json("design/offline-reference/snapshot.json")
+offline_files = [
+    {"path": path.relative_to(offline_reference).as_posix(), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+    for path in sorted((offline_reference / "site").rglob("*"), key=lambda path: path.parts)
+    if path.is_file()
+]
+require(offline_snapshot["files"] == offline_files, "Changed or missing offline mockup files")
+offline_digest = hashlib.sha256(json.dumps(offline_files, sort_keys=True).encode()).hexdigest()
+require(offline_snapshot["snapshotSha256"] == offline_digest, "Offline mockup snapshot hash mismatch")
+checks["offlineMockupFiles"] = len(offline_files)
 require((ROOT / ".agents/skills").resolve() == (ROOT / ".claude/skills").resolve(), "Shared skills discovery link broken")
 require((ROOT / "CLAUDE.md").read_text(encoding="utf-8").startswith("@AGENTS.md"), "Claude shared-policy import missing")
 require(not (ROOT / "docs/design/claude-chat-kit").exists(), "Redundant chat export should remain outside repository")

@@ -1,0 +1,483 @@
+[
+ {
+  "id": "P-01",
+  "name": "Brief de préparation (A4)",
+  "slug": "court",
+  "label": "Short — BRIEF-A-001-v1 exact text, DRAFT internal, measurements with SRC-A-007 correction lineage",
+  "module": "screens_documents",
+  "path": "ecrans/P-01/court.html",
+  "viewports": [
+   "a4"
+  ]
+ },
+ {
+  "id": "P-01",
+  "name": "Brief de préparation (A4)",
+  "slug": "long",
+  "label": "Long — content samples + clinician appendix and 3 labelled layout test copies",
+  "module": "screens_documents",
+  "path": "ecrans/P-01/long.html",
+  "viewports": [
+   "a4"
+  ]
+ },
+ {
+  "id": "P-01",
+  "name": "Brief de préparation (A4)",
+  "slug": "incomplet",
+  "label": "Incomplete — Louis Bernard, AI-A-002 failed, no synthesis, no risk wording",
+  "module": "screens_documents",
+  "path": "ecrans/P-01/incomplet.html",
+  "viewports": [
+   "a4"
+  ]
+ },
+ {
+  "id": "P-02",
+  "name": "Compte rendu de consultation (A4)",
+  "slug": "court",
+  "label": "Short — REPORT-A-001-v1 exact text, VALIDATED 20 Oct 10:40, internal (no publication)",
+  "module": "screens_documents",
+  "path": "ecrans/P-02/court.html",
+  "viewports": [
+   "a4"
+  ]
+ },
+ {
+  "id": "P-02",
+  "name": "Compte rendu de consultation (A4)",
+  "slug": "long",
+  "label": "Long — structured paragraphs + appendix and 5 labelled layout test copies",
+  "module": "screens_documents",
+  "path": "ecrans/P-02/long.html",
+  "viewports": [
+   "a4"
+  ]
+ },
+ {
+  "id": "P-02",
+  "name": "Compte rendu de consultation (A4)",
+  "slug": "incomplet",
+  "label": "Incomplete — CONS-A-002 draft, preparation not received, no validation footer",
+  "module": "screens_documents",
+  "path": "ecrans/P-02/incomplet.html",
+  "viewports": [
+   "a4"
+  ]
+ },
+ {
+  "id": "P-03",
+  "name": "Explication publiée pour la patiente (A4)",
+  "slug": "court",
+  "label": "Short — PATIENT-A-001-v2 exact text, validated 14:20 vs published 14:25, three approved excerpts",
+  "module": "screens_documents",
+  "path": "ecrans/P-03/court.html",
+  "viewports": [
+   "a4"
+  ]
+ },
+ {
+  "id": "P-03",
+  "name": "Explication publiée pour la patiente (A4)",
+  "slug": "long",
+  "label": "Long — patient-facing paragraphs + 3 labelled layout test copies of the authorized table",
+  "module": "screens_documents",
+  "path": "ecrans/P-03/long.html",
+  "viewports": [
+   "a4"
+  ]
+ },
+ {
+  "id": "P-03",
+  "name": "Explication publiée pour la patiente (A4)",
+  "slug": "incomplet",
+  "label": "Incomplete — internal draft preview, not publishable",
+  "module": "screens_documents",
+  "path": "ecrans/P-03/incomplet.html",
+  "viewports": [
+   "a4"
+  ]
+ },
+ {
+  "id": "S-39",
+  "name": "Options d'export et aperçu avant impression",
+  "slug": "options",
+  "label": "P-01 options — frozen version and status, audience, sources, real A4 page previews",
+  "module": "screens_documents",
+  "path": "ecrans/S-39/options.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-39",
+  "name": "Options d'export et aperçu avant impression",
+  "slug": "long",
+  "label": "Long P-02 preview — page count and repeated headers",
+  "module": "screens_documents",
+  "path": "ecrans/S-39/long.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-39",
+  "name": "Options d'export et aperçu avant impression",
+  "slug": "generation",
+  "label": "Generating — version frozen, no percentage",
+  "module": "screens_documents",
+  "path": "ecrans/S-39/generation.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-39",
+  "name": "Options d'export et aperçu avant impression",
+  "slug": "echec",
+  "label": "Generation failed — nothing shared",
+  "module": "screens_documents",
+  "path": "ecrans/S-39/echec.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-39",
+  "name": "Options d'export et aperçu avant impression",
+  "slug": "perime",
+  "label": "Stale source snapshot (variant) — mention on every page",
+  "module": "screens_documents",
+  "path": "ecrans/S-39/perime.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-39",
+  "name": "Options d'export et aperçu avant impression",
+  "slug": "police",
+  "label": "Font/render error (template) — no degraded file",
+  "module": "screens_documents",
+  "path": "ecrans/S-39/police.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-39",
+  "name": "Options d'export et aperçu avant impression",
+  "slug": "non-autorise",
+  "label": "Unauthorized — patient, SC-NOT-PUBLISHED",
+  "module": "screens_documents",
+  "path": "ecrans/S-39/non-autorise.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-19",
+  "name": "Exporter un document",
+  "slug": "ouvert",
+  "label": "Drawer — template, exact status/version, audience, sources, preview",
+  "module": "screens_documents",
+  "path": "ecrans/I-19/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-19",
+  "name": "Exporter un document",
+  "slug": "brouillon",
+  "label": "Draft labelling notice",
+  "module": "screens_documents",
+  "path": "ecrans/I-19/brouillon.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-19",
+  "name": "Exporter un document",
+  "slug": "erreur",
+  "label": "Reauthorization needed (template) — nothing created",
+  "module": "screens_documents",
+  "path": "ecrans/I-19/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-19",
+  "name": "Exporter un document",
+  "slug": "patient",
+  "label": "Patient — current publication only",
+  "module": "screens_documents",
+  "path": "ecrans/I-19/patient.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "M-01",
+  "name": "Invitation d'équipe (e-mail)",
+  "slug": "html",
+  "label": "INV-TEAM-01 to alex.riviere@example.test, expires 5 Nov 12:00 — HTML 600 px, one action, masked token link",
+  "module": "screens_documents",
+  "path": "ecrans/M-01/html.html",
+  "viewports": [
+   "mail",
+   "mail-narrow"
+  ]
+ },
+ {
+  "id": "M-01",
+  "name": "Invitation d'équipe (e-mail)",
+  "slug": "texte",
+  "label": "INV-TEAM-01 to alex.riviere@example.test, expires 5 Nov 12:00 — plain-text equivalent",
+  "module": "screens_documents",
+  "path": "ecrans/M-01/texte.html",
+  "viewports": [
+   "mail",
+   "mail-narrow"
+  ]
+ },
+ {
+  "id": "M-01",
+  "name": "Invitation d'équipe (e-mail)",
+  "slug": "sombre",
+  "label": "INV-TEAM-01 to alex.riviere@example.test, expires 5 Nov 12:00 — dark client rendering",
+  "module": "screens_documents",
+  "path": "ecrans/M-01/sombre.html",
+  "viewports": [
+   "mail",
+   "mail-narrow"
+  ]
+ },
+ {
+  "id": "M-02",
+  "name": "Activation de l'espace patient (e-mail)",
+  "slug": "html",
+  "label": "Portal activation to claire.martin@example.test, expiry not in dataset — HTML 600 px, one action, masked token link",
+  "module": "screens_documents",
+  "path": "ecrans/M-02/html.html",
+  "viewports": [
+   "mail",
+   "mail-narrow"
+  ]
+ },
+ {
+  "id": "M-02",
+  "name": "Activation de l'espace patient (e-mail)",
+  "slug": "texte",
+  "label": "Portal activation to claire.martin@example.test, expiry not in dataset — plain-text equivalent",
+  "module": "screens_documents",
+  "path": "ecrans/M-02/texte.html",
+  "viewports": [
+   "mail",
+   "mail-narrow"
+  ]
+ },
+ {
+  "id": "M-02",
+  "name": "Activation de l'espace patient (e-mail)",
+  "slug": "sombre",
+  "label": "Portal activation to claire.martin@example.test, expiry not in dataset — dark client rendering",
+  "module": "screens_documents",
+  "path": "ecrans/M-02/sombre.html",
+  "viewports": [
+   "mail",
+   "mail-narrow"
+  ]
+ },
+ {
+  "id": "M-03",
+  "name": "Récupération d'accès (e-mail)",
+  "slug": "html",
+  "label": "Recovery to nora.lefebvre@example.test (request time is a variant) — HTML 600 px, one action, masked token link",
+  "module": "screens_documents",
+  "path": "ecrans/M-03/html.html",
+  "viewports": [
+   "mail",
+   "mail-narrow"
+  ]
+ },
+ {
+  "id": "M-03",
+  "name": "Récupération d'accès (e-mail)",
+  "slug": "texte",
+  "label": "Recovery to nora.lefebvre@example.test (request time is a variant) — plain-text equivalent",
+  "module": "screens_documents",
+  "path": "ecrans/M-03/texte.html",
+  "viewports": [
+   "mail",
+   "mail-narrow"
+  ]
+ },
+ {
+  "id": "M-03",
+  "name": "Récupération d'accès (e-mail)",
+  "slug": "sombre",
+  "label": "Recovery to nora.lefebvre@example.test (request time is a variant) — dark client rendering",
+  "module": "screens_documents",
+  "path": "ecrans/M-03/sombre.html",
+  "viewports": [
+   "mail",
+   "mail-narrow"
+  ]
+ },
+ {
+  "id": "M-04",
+  "name": "Rendez-vous (e-mail)",
+  "slug": "html",
+  "label": "APT-A-001 confirmed, Paris time — HTML 600 px, one action, masked token link",
+  "module": "screens_documents",
+  "path": "ecrans/M-04/html.html",
+  "viewports": [
+   "mail",
+   "mail-narrow"
+  ]
+ },
+ {
+  "id": "M-04",
+  "name": "Rendez-vous (e-mail)",
+  "slug": "texte",
+  "label": "APT-A-001 confirmed, Paris time — plain-text equivalent",
+  "module": "screens_documents",
+  "path": "ecrans/M-04/texte.html",
+  "viewports": [
+   "mail",
+   "mail-narrow"
+  ]
+ },
+ {
+  "id": "M-04",
+  "name": "Rendez-vous (e-mail)",
+  "slug": "sombre",
+  "label": "APT-A-001 confirmed, Paris time — dark client rendering",
+  "module": "screens_documents",
+  "path": "ecrans/M-04/sombre.html",
+  "viewports": [
+   "mail",
+   "mail-narrow"
+  ]
+ },
+ {
+  "id": "M-04",
+  "name": "Rendez-vous (e-mail)",
+  "slug": "modifie",
+  "label": "Rescheduled to 11:00 (variant)",
+  "module": "screens_documents",
+  "path": "ecrans/M-04/modifie.html",
+  "viewports": [
+   "mail",
+   "mail-narrow"
+  ]
+ },
+ {
+  "id": "M-04",
+  "name": "Rendez-vous (e-mail)",
+  "slug": "annule",
+  "label": "Cancelled (variant)",
+  "module": "screens_documents",
+  "path": "ecrans/M-04/annule.html",
+  "viewports": [
+   "mail",
+   "mail-narrow"
+  ]
+ },
+ {
+  "id": "M-05",
+  "name": "Publication (e-mail)",
+  "slug": "html",
+  "label": "PUB-A-002 replaces PUB-A-001 — no clinical content — HTML 600 px, one action, masked token link",
+  "module": "screens_documents",
+  "path": "ecrans/M-05/html.html",
+  "viewports": [
+   "mail",
+   "mail-narrow"
+  ]
+ },
+ {
+  "id": "M-05",
+  "name": "Publication (e-mail)",
+  "slug": "texte",
+  "label": "PUB-A-002 replaces PUB-A-001 — no clinical content — plain-text equivalent",
+  "module": "screens_documents",
+  "path": "ecrans/M-05/texte.html",
+  "viewports": [
+   "mail",
+   "mail-narrow"
+  ]
+ },
+ {
+  "id": "M-05",
+  "name": "Publication (e-mail)",
+  "slug": "sombre",
+  "label": "PUB-A-002 replaces PUB-A-001 — no clinical content — dark client rendering",
+  "module": "screens_documents",
+  "path": "ecrans/M-05/sombre.html",
+  "viewports": [
+   "mail",
+   "mail-narrow"
+  ]
+ },
+ {
+  "id": "M-05",
+  "name": "Publication (e-mail)",
+  "slug": "disponible",
+  "label": "First publication PUB-A-001",
+  "module": "screens_documents",
+  "path": "ecrans/M-05/disponible.html",
+  "viewports": [
+   "mail",
+   "mail-narrow"
+  ]
+ },
+ {
+  "id": "M-05",
+  "name": "Publication (e-mail)",
+  "slug": "retrait",
+  "label": "Withdrawal — neutral notice, no reason (V-WITHDRAWN)",
+  "module": "screens_documents",
+  "path": "ecrans/M-05/retrait.html",
+  "viewports": [
+   "mail",
+   "mail-narrow"
+  ]
+ }
+]

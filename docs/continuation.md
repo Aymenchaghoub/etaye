@@ -2,6 +2,18 @@
 
 Updated: 2026-11-19. Owner: Aymen Chaghoub.
 
+## Entry background review — 2026-11-19
+
+Aymen requested the approved paper and blueprint background on S-25, S-02 and S-01, with one Figma write if access permits. The [preview](../design/entry-background/README.md) covers 20 HTML states using the frozen corrected mockups. Chromium passed 200 rendered configurations with both themes, and the [review](design/reviews/2026-11-19-entry-background.md) records opened comparison sheets and measured contrast.
+
+Figma read the S-25 source section; the next call hit the Starter quota. Native writes are pending. When access returns, preflight the existing nodes, batch the three review variants in one write and inspect the native result. Product design approval and explicit development authorization remain open.
+
+## Offline mockups and latest design evidence — 2026-11-19
+
+Aymen asked to account for the latest design and accepted committing the mockups. The [offline reference](../design/offline-reference/README.md) includes the exact 523-file HTML bundle from the verified release and points to the 52 desktop comparisons for the latest saved native version evidenced here, `2423224260331333575`. Read the background decision at its study scope and the pending roadmap alignments before applying the reference to later product behavior. No newer Figma revision was independently inspected.
+
+A fresh rebuild reproduced all 456 screen-state HTML files. The nine PDFs, 22 generated PDF previews, and generated index differed in bytes, so the committed baseline comes from the original release. Chromium rendered an S-06 example at desktop, tablet and mobile widths, with desktop and mobile captures opened. Next action is to review the 19 core families at the required widths, align stale states with product decisions, and record Aymen's approval and explicit development authorization. All application stories remain in backlog.
+
 ## Interactive architecture documentation — 2026-11-19
 
 Aymen accepted an SVG preview in the repository README and five interactive Archify views on GitHub Pages. The [architecture views](architecture-views/README.md) preserve the editable candidates and the exact HTML checked against the planning baseline at `eb58c81`. The publication workflow is scoped to the documentation site on `main`. The project remains in design review with all 45 application stories in backlog.

@@ -1,0 +1,800 @@
+[
+ {
+  "id": "S-31",
+  "name": "Équipe et invitations",
+  "slug": "equipe",
+  "label": "Three PRA-A members with readable grouped capabilities, INV-TEAM-01 pending (expires 5 Nov 12:00), no clinical data",
+  "module": "screens_admin",
+  "path": "ecrans/S-31/equipe.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-31",
+  "name": "Équipe et invitations",
+  "slug": "vide",
+  "label": "Empty team (template)",
+  "module": "screens_admin",
+  "path": "ecrans/S-31/vide.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-31",
+  "name": "Équipe et invitations",
+  "slug": "invitation-expiree",
+  "label": "INV-TEAM-01 expired (variant after 5 Nov 12:00)",
+  "module": "screens_admin",
+  "path": "ecrans/S-31/invitation-expiree.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-31",
+  "name": "Équipe et invitations",
+  "slug": "invitation-revoquee",
+  "label": "Revoked invitation (template)",
+  "module": "screens_admin",
+  "path": "ecrans/S-31/invitation-revoquee.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-31",
+  "name": "Équipe et invitations",
+  "slug": "suspendu",
+  "label": "Suspended membership (variant) — account untouched",
+  "module": "screens_admin",
+  "path": "ecrans/S-31/suspendu.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-31",
+  "name": "Équipe et invitations",
+  "slug": "dernier-admin",
+  "label": "Last-admin guard — Mila is the only TEAM_MANAGE holder",
+  "module": "screens_admin",
+  "path": "ecrans/S-31/dernier-admin.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-31",
+  "name": "Équipe et invitations",
+  "slug": "longs",
+  "label": "Long e-mail address (variant, example.test) — actions not clipped",
+  "module": "screens_admin",
+  "path": "ecrans/S-31/longs.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-31",
+  "name": "Équipe et invitations",
+  "slug": "erreur",
+  "label": "List failed to load — nothing changed",
+  "module": "screens_admin",
+  "path": "ecrans/S-31/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-01",
+  "name": "Inviter un membre",
+  "slug": "ouvert",
+  "label": "Dialog — e-mail, explicit grouped capabilities, expiry (72 h proposal), no clinical detail",
+  "module": "screens_admin",
+  "path": "ecrans/I-01/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-01",
+  "name": "Inviter un membre",
+  "slug": "erreur",
+  "label": "Invalid e-mail and no capability — summary and field errors",
+  "module": "screens_admin",
+  "path": "ecrans/I-01/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-01",
+  "name": "Inviter un membre",
+  "slug": "existant",
+  "label": "Pending invitation already exists — resend instead",
+  "module": "screens_admin",
+  "path": "ecrans/I-01/existant.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-01",
+  "name": "Inviter un membre",
+  "slug": "combinaison",
+  "label": "Invalid capability combination rejected server-side (template)",
+  "module": "screens_admin",
+  "path": "ecrans/I-01/combinaison.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-01",
+  "name": "Inviter un membre",
+  "slug": "renvoyer",
+  "label": "Resend — old link revoked",
+  "module": "screens_admin",
+  "path": "ecrans/I-01/renvoyer.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-01",
+  "name": "Inviter un membre",
+  "slug": "envoye",
+  "label": "Invitation recorded — M-01 queued, delivery status separate",
+  "module": "screens_admin",
+  "path": "ecrans/I-01/envoye.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-32",
+  "name": "Droits d'un membre et désactivation",
+  "slug": "membre",
+  "label": "MEM-SAMI-A — capabilities grouped by consequence with plain explanations; practice-only scope",
+  "module": "screens_admin",
+  "path": "ecrans/S-32/membre.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-32",
+  "name": "Droits d'un membre et désactivation",
+  "slug": "modifie",
+  "label": "Unsaved change — PATIENT_PUBLISH removed, consequences panel",
+  "module": "screens_admin",
+  "path": "ecrans/S-32/modifie.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-32",
+  "name": "Droits d'un membre et désactivation",
+  "slug": "conflit",
+  "label": "Concurrent permission edit (template) — nothing overwritten",
+  "module": "screens_admin",
+  "path": "ecrans/S-32/conflit.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-32",
+  "name": "Droits d'un membre et désactivation",
+  "slug": "soi-meme",
+  "label": "Read-only self view — Mila, last administrator",
+  "module": "screens_admin",
+  "path": "ecrans/S-32/soi-meme.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-32",
+  "name": "Droits d'un membre et désactivation",
+  "slug": "dependances",
+  "label": "Dependencies — Nora's APT-A-001 and AVL-A-001 before deactivation",
+  "module": "screens_admin",
+  "path": "ecrans/S-32/dependances.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-32",
+  "name": "Droits d'un membre et désactivation",
+  "slug": "desactive",
+  "label": "Deactivated (variant) — sessions lose authority, account kept",
+  "module": "screens_admin",
+  "path": "ecrans/S-32/desactive.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-32",
+  "name": "Droits d'un membre et désactivation",
+  "slug": "invitation",
+  "label": "Pending invitation member view — Alex Rivière, capabilities not set in dataset",
+  "module": "screens_admin",
+  "path": "ecrans/S-32/invitation.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-02",
+  "name": "Désactiver un accès",
+  "slug": "ouvert",
+  "label": "Dialog — named member and practice, capabilities removed, reason required",
+  "module": "screens_admin",
+  "path": "ecrans/I-02/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-02",
+  "name": "Désactiver un accès",
+  "slug": "erreur",
+  "label": "Reason missing — summary and field error",
+  "module": "screens_admin",
+  "path": "ecrans/I-02/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-02",
+  "name": "Désactiver un accès",
+  "slug": "dernier-admin",
+  "label": "Blocked — final active administrator",
+  "module": "screens_admin",
+  "path": "ecrans/I-02/dernier-admin.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-02",
+  "name": "Désactiver un accès",
+  "slug": "dependances",
+  "label": "Dependencies warning — appointment and availability stay in the agenda",
+  "module": "screens_admin",
+  "path": "ecrans/I-02/dependances.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-02",
+  "name": "Désactiver un accès",
+  "slug": "conflit",
+  "label": "Membership changed since opening (template)",
+  "module": "screens_admin",
+  "path": "ecrans/I-02/conflit.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-33",
+  "name": "Réglages du cabinet",
+  "slug": "cabinet",
+  "label": "Initial — name, timezone Europe/Paris, booking policy, portal contact text, logo reference",
+  "module": "screens_admin",
+  "path": "ecrans/S-33/cabinet.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-33",
+  "name": "Réglages du cabinet",
+  "slug": "sale",
+  "label": "Unsaved change",
+  "module": "screens_admin",
+  "path": "ecrans/S-33/sale.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-33",
+  "name": "Réglages du cabinet",
+  "slug": "erreur",
+  "label": "Validation error — contact text required",
+  "module": "screens_admin",
+  "path": "ecrans/S-33/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-33",
+  "name": "Réglages du cabinet",
+  "slug": "enregistre",
+  "label": "Saved",
+  "module": "screens_admin",
+  "path": "ecrans/S-33/enregistre.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-33",
+  "name": "Réglages du cabinet",
+  "slug": "conflit",
+  "label": "Concurrent edit (template)",
+  "module": "screens_admin",
+  "path": "ecrans/S-33/conflit.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-33",
+  "name": "Réglages du cabinet",
+  "slug": "fuseau",
+  "label": "Timezone impact preview (variant) — instants unchanged, display only",
+  "module": "screens_admin",
+  "path": "ecrans/S-33/fuseau.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-34",
+  "name": "Historique d'audit",
+  "slug": "admin",
+  "label": "ADMIN_AUDIT (Mila) — membership, invitation and access-denied events only; missing times shown as not provided",
+  "module": "screens_admin",
+  "path": "ecrans/S-34/admin.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-34",
+  "name": "Historique d'audit",
+  "slug": "clinique",
+  "label": "CLINICAL_AUDIT (Nora) — R-A-001 history derived from dataset dates, versions and actors, no source text",
+  "module": "screens_admin",
+  "path": "ecrans/S-34/clinique.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-34",
+  "name": "Historique d'audit",
+  "slug": "restreint",
+  "label": "Restricted — clinical events need CLINICAL_AUDIT",
+  "module": "screens_admin",
+  "path": "ecrans/S-34/restreint.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-34",
+  "name": "Historique d'audit",
+  "slug": "vide",
+  "label": "No events for filters",
+  "module": "screens_admin",
+  "path": "ecrans/S-34/vide.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-34",
+  "name": "Historique d'audit",
+  "slug": "export",
+  "label": "Export unavailable (template)",
+  "module": "screens_admin",
+  "path": "ecrans/S-34/export.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-34",
+  "name": "Historique d'audit",
+  "slug": "erreur-partielle",
+  "label": "Partial service error — older events missing, no absence conclusion",
+  "module": "screens_admin",
+  "path": "ecrans/S-34/erreur-partielle.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-25",
+  "name": "Filtres et détail d'un événement d'audit",
+  "slug": "ouvert",
+  "label": "PUB-A-002 event detail — exact version, actor, replaced publication, source IDs only",
+  "module": "screens_admin",
+  "path": "ecrans/I-25/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-25",
+  "name": "Filtres et détail d'un événement d'audit",
+  "slug": "admin",
+  "label": "Admin event detail — SC-ADMIN-CLINICAL 403, no record content",
+  "module": "screens_admin",
+  "path": "ecrans/I-25/admin.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-25",
+  "name": "Filtres et détail d'un événement d'audit",
+  "slug": "filtres",
+  "label": "Filtered to publications",
+  "module": "screens_admin",
+  "path": "ecrans/I-25/filtres.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-25",
+  "name": "Filtres et détail d'un événement d'audit",
+  "slug": "aucun",
+  "label": "No match for filters",
+  "module": "screens_admin",
+  "path": "ecrans/I-25/aucun.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-35",
+  "name": "Profil et préférences",
+  "slug": "pro",
+  "label": "Practitioner profile — display identity, theme, French-only notice, timezone display, security links",
+  "module": "screens_admin",
+  "path": "ecrans/S-35/pro.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-35",
+  "name": "Profil et préférences",
+  "slug": "admin",
+  "label": "Administrator profile — Mila Dubois",
+  "module": "screens_admin",
+  "path": "ecrans/S-35/admin.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-35",
+  "name": "Profil et préférences",
+  "slug": "patient",
+  "label": "Patient profile — Claire Martin, vouvoiement, no relink",
+  "module": "screens_admin",
+  "path": "ecrans/S-35/patient.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-35",
+  "name": "Profil et préférences",
+  "slug": "sale",
+  "label": "Unsaved theme change",
+  "module": "screens_admin",
+  "path": "ecrans/S-35/sale.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-35",
+  "name": "Profil et préférences",
+  "slug": "enregistre",
+  "label": "Saved",
+  "module": "screens_admin",
+  "path": "ecrans/S-35/enregistre.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-35",
+  "name": "Profil et préférences",
+  "slug": "erreur",
+  "label": "Save failed — choice kept",
+  "module": "screens_admin",
+  "path": "ecrans/S-35/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-35",
+  "name": "Profil et préférences",
+  "slug": "session",
+  "label": "Session stale — nothing sent",
+  "module": "screens_admin",
+  "path": "ecrans/S-35/session.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-37",
+  "name": "Services indisponibles et échec partiel",
+  "slug": "indisponible",
+  "label": "503 — no action recorded, unsent input kept, reference without secrets",
+  "module": "screens_admin",
+  "path": "ecrans/S-37/indisponible.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-37",
+  "name": "Services indisponibles et échec partiel",
+  "slug": "hors-ligne",
+  "label": "Offline — last loaded version, edits disabled",
+  "module": "screens_admin",
+  "path": "ecrans/S-37/hors-ligne.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-37",
+  "name": "Services indisponibles et échec partiel",
+  "slug": "reconnexion",
+  "label": "Reconnecting",
+  "module": "screens_admin",
+  "path": "ecrans/S-37/reconnexion.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-37",
+  "name": "Services indisponibles et échec partiel",
+  "slug": "limite",
+  "label": "429 — wait, nothing duplicated",
+  "module": "screens_admin",
+  "path": "ecrans/S-37/limite.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-37",
+  "name": "Services indisponibles et échec partiel",
+  "slug": "delai",
+  "label": "Timeout — outcome checked before any retry",
+  "module": "screens_admin",
+  "path": "ecrans/S-37/delai.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-37",
+  "name": "Services indisponibles et échec partiel",
+  "slug": "partiel",
+  "label": "Degraded partial content — lab section failed, identity and chronology kept, no absence conclusion",
+  "module": "screens_admin",
+  "path": "ecrans/S-37/partiel.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-37",
+  "name": "Services indisponibles et échec partiel",
+  "slug": "ia",
+  "label": "AI unavailable (V-AI-DOWN) — manual notes continue",
+  "module": "screens_admin",
+  "path": "ecrans/S-37/ia.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-37",
+  "name": "Services indisponibles et échec partiel",
+  "slug": "maintenance",
+  "label": "Demo reset / maintenance",
+  "module": "screens_admin",
+  "path": "ecrans/S-37/maintenance.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ }
+]

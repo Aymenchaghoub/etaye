@@ -1,0 +1,436 @@
+[
+ {
+  "id": "S-14",
+  "name": "Agenda du cabinet",
+  "slug": "jour",
+  "label": "Day — Tue 3 Nov: Nora's availability 09:00–12:00 hatched, Claire 10:30 booked; mobile agenda list",
+  "module": "screens_agenda",
+  "path": "ecrans/S-14/jour.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-14",
+  "name": "Agenda du cabinet",
+  "slug": "lundi",
+  "label": "Day — Mon 2 Nov: Louis 14:00 checked in; consultation distinct from appointment",
+  "module": "screens_agenda",
+  "path": "ecrans/S-14/lundi.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-14",
+  "name": "Agenda du cabinet",
+  "slug": "vide",
+  "label": "Empty day — Wed 4 Nov",
+  "module": "screens_agenda",
+  "path": "ecrans/S-14/vide.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-14",
+  "name": "Agenda du cabinet",
+  "slug": "conflit",
+  "label": "Concurrent booking lost — SC-BOOKING-RACE, entered reason kept (AC-S14-F)",
+  "module": "screens_agenda",
+  "path": "ecrans/S-14/conflit.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-14",
+  "name": "Agenda du cabinet",
+  "slug": "annule",
+  "label": "Cancellation — APT-A-004 on 26 Oct, visible and greyed",
+  "module": "screens_agenda",
+  "path": "ecrans/S-14/annule.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-14",
+  "name": "Agenda du cabinet",
+  "slug": "non-honore",
+  "label": "No-show — APT-A-005 on 15 Oct",
+  "module": "screens_agenda",
+  "path": "ecrans/S-14/non-honore.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-14",
+  "name": "Agenda du cabinet",
+  "slug": "changement-heure",
+  "label": "DST — week of 25 Oct, local Paris time kept",
+  "module": "screens_agenda",
+  "path": "ecrans/S-14/changement-heure.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-14",
+  "name": "Agenda du cabinet",
+  "slug": "erreur",
+  "label": "Service failure — nothing changed, retry",
+  "module": "screens_agenda",
+  "path": "ecrans/S-14/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-14",
+  "name": "Agenda du cabinet",
+  "slug": "planificateur",
+  "label": "Administrative agenda — Mila Dubois, names and times only (PD-001 proposal)",
+  "module": "screens_agenda",
+  "path": "ecrans/S-14/planificateur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-15",
+  "name": "Disponibilités et réglages d'agenda",
+  "slug": "semaine",
+  "label": "Dated block AVL-A-001 vs (empty) weekly template, distinct",
+  "module": "screens_agenda",
+  "path": "ecrans/S-15/semaine.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-15",
+  "name": "Disponibilités et réglages d'agenda",
+  "slug": "vide",
+  "label": "No availability — Dr Sami Rahmani",
+  "module": "screens_agenda",
+  "path": "ecrans/S-15/vide.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-24",
+  "name": "Modifier les disponibilités",
+  "slug": "ouvert",
+  "label": "Drawer — edit AVL-A-001, timezone stated",
+  "module": "screens_agenda",
+  "path": "ecrans/I-24/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-24",
+  "name": "Modifier les disponibilités",
+  "slug": "impact",
+  "label": "Impact preview — shortening to 10:30 leaves Claire's booking outside; never cancelled silently (AC-S15-F)",
+  "module": "screens_agenda",
+  "path": "ecrans/I-24/impact.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-24",
+  "name": "Modifier les disponibilités",
+  "slug": "erreur",
+  "label": "Invalid end time",
+  "module": "screens_agenda",
+  "path": "ecrans/I-24/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-24",
+  "name": "Modifier les disponibilités",
+  "slug": "conflit",
+  "label": "Concurrent edit (template)",
+  "module": "screens_agenda",
+  "path": "ecrans/I-24/conflit.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-16",
+  "name": "Détail du rendez-vous",
+  "slug": "claire",
+  "label": "BOOKED — APT-A-001 Claire, 03/11 10:30–11:00, preparation received",
+  "module": "screens_agenda",
+  "path": "ecrans/S-16/claire.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-16",
+  "name": "Détail du rendez-vous",
+  "slug": "louis",
+  "label": "CHECKED_IN — APT-A-002 Louis; CONS-A-002 in progress shown separately (AC-S16-F)",
+  "module": "screens_agenda",
+  "path": "ecrans/S-16/louis.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-16",
+  "name": "Détail du rendez-vous",
+  "slug": "termine",
+  "label": "COMPLETED — APT-A-003 with CONS-A-001 completed 10:35",
+  "module": "screens_agenda",
+  "path": "ecrans/S-16/termine.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-16",
+  "name": "Détail du rendez-vous",
+  "slug": "annule",
+  "label": "CANCELLED — APT-A-004 with reason",
+  "module": "screens_agenda",
+  "path": "ecrans/S-16/annule.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-16",
+  "name": "Détail du rendez-vous",
+  "slug": "non-honore",
+  "label": "NO_SHOW — APT-A-005",
+  "module": "screens_agenda",
+  "path": "ecrans/S-16/non-honore.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-16",
+  "name": "Détail du rendez-vous",
+  "slug": "modifie",
+  "label": "Edited elsewhere — check-in recorded by Sami while Nora viewed version 1",
+  "module": "screens_agenda",
+  "path": "ecrans/S-16/modifie.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-10",
+  "name": "Prendre rendez-vous",
+  "slug": "ouvert",
+  "label": "Dialog — Louis Bernard, Nora, 11:00 chosen, 10:30 shown as taken",
+  "module": "screens_agenda",
+  "path": "ecrans/I-10/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-10",
+  "name": "Prendre rendez-vous",
+  "slug": "recherche",
+  "label": "Patient lookup — minimal identity, registration link requires separate right",
+  "module": "screens_agenda",
+  "path": "ecrans/I-10/recherche.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-10",
+  "name": "Prendre rendez-vous",
+  "slug": "conflit",
+  "label": "Lost race — slot taken, fields kept, refreshed slots",
+  "module": "screens_agenda",
+  "path": "ecrans/I-10/conflit.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-10",
+  "name": "Prendre rendez-vous",
+  "slug": "erreur",
+  "label": "No slot chosen",
+  "module": "screens_agenda",
+  "path": "ecrans/I-10/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-11",
+  "name": "Déplacer le rendez-vous",
+  "slug": "ouvert",
+  "label": "Move APT-A-001 10:30 → 11:00, same identity",
+  "module": "screens_agenda",
+  "path": "ecrans/I-11/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-11",
+  "name": "Déplacer le rendez-vous",
+  "slug": "conflit",
+  "label": "Version changed — original kept",
+  "module": "screens_agenda",
+  "path": "ecrans/I-11/conflit.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-12",
+  "name": "Annuler le rendez-vous",
+  "slug": "ouvert",
+  "label": "Cancel dialog — safe choice first and focused, destructive separated",
+  "module": "screens_agenda",
+  "path": "ecrans/I-12/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-12",
+  "name": "Annuler le rendez-vous",
+  "slug": "erreur",
+  "label": "Reason required",
+  "module": "screens_agenda",
+  "path": "ecrans/I-12/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-13",
+  "name": "Enregistrer la présence",
+  "slug": "ouvert",
+  "label": "Inline attendance on APT-A-002 (version 1, booked) — no-show only after start",
+  "module": "screens_agenda",
+  "path": "ecrans/I-13/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-13",
+  "name": "Enregistrer la présence",
+  "slug": "enregistre",
+  "label": "Saved — checked in, no consultation or report created",
+  "module": "screens_agenda",
+  "path": "ecrans/I-13/enregistre.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ }
+]
