@@ -1154,4 +1154,94 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         assertThat(countRowsInTableDirectly("outbox_event", "practice_id", practiceA)).isEqualTo(outboxCount);
         assertThat(countRowsInTableDirectly("idempotency_receipt", "practice_id", practiceA)).isEqualTo(receiptCount);
     }
+
+    @Test
+    @DisplayName("A1: POST with Accept: text/plain gives 406 problem+json and no writes committed")
+    void a1_postWithTextPlainAccept_gives406AndNoWrites() {
+        String csrfToken = fetchCsrfToken(sessionCookieClinicalA);
+        String idempotencyKey = "key-a1-406-" + UUID.randomUUID();
+
+        int initialPatient = countRowsInTableDirectly("patient", "practice_id", practiceA);
+        int initialRecord = countRowsInTableDirectly("patient_record", "practice_id", practiceA);
+        int initialAudit = countRowsInTableDirectly("audit_event", "practice_id", practiceA);
+        int initialOutbox = countRowsInTableDirectly("outbox_event", "practice_id", practiceA);
+        int initialReceipt = countRowsInTableDirectly("idempotency_receipt", "practice_id", practiceA);
+
+        PatientEdit edit = new PatientEdit(
+                "TextPlain", "Patient", LocalDate.of(1990, 1, 1), null, null
+        );
+
+        ResponseEntity<Map> response = client().post()
+                .uri("/api/v1/practices/" + practiceA + "/patients")
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .header("X-CSRF-TOKEN", csrfToken)
+                .header("Idempotency-Key", idempotencyKey)
+                .header(HttpHeaders.ACCEPT, "text/plain")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(edit)
+                .retrieve()
+                .onStatus(status -> status.value() == 406, (req, res) -> {})
+                .toEntity(Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_ACCEPTABLE);
+        assertThat(response.getHeaders().getContentType().toString()).contains("application/problem+json");
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().get("status")).isEqualTo(406);
+        assertThat(response.getBody().get("code")).isEqualTo("NOT_ACCEPTABLE");
+
+        // Verify zero writes committed
+        assertThat(countRowsInTableDirectly("patient", "practice_id", practiceA)).isEqualTo(initialPatient);
+        assertThat(countRowsInTableDirectly("patient_record", "practice_id", practiceA)).isEqualTo(initialRecord);
+        assertThat(countRowsInTableDirectly("audit_event", "practice_id", practiceA)).isEqualTo(initialAudit);
+        assertThat(countRowsInTableDirectly("outbox_event", "practice_id", practiceA)).isEqualTo(initialOutbox);
+        assertThat(countRowsInTableDirectly("idempotency_receipt", "practice_id", practiceA)).isEqualTo(initialReceipt);
+    }
+
+    @Test
+    @DisplayName("A1: POST with Accept: application/json gives 201")
+    void a1_postWithApplicationJsonAccept_gives201() {
+        String csrfToken = fetchCsrfToken(sessionCookieClinicalA);
+        String idempotencyKey = "key-a1-json-" + UUID.randomUUID();
+
+        PatientEdit edit = new PatientEdit(
+                "AcceptJson", "Patient", LocalDate.of(1991, 2, 2), null, null
+        );
+
+        ResponseEntity<PatientResponse> response = client().post()
+                .uri("/api/v1/practices/" + practiceA + "/patients")
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .header("X-CSRF-TOKEN", csrfToken)
+                .header("Idempotency-Key", idempotencyKey)
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(edit)
+                .retrieve()
+                .toEntity(PatientResponse.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    }
+
+    @Test
+    @DisplayName("A1: POST with Accept: */* gives 201")
+    void a1_postWithWildcardAccept_gives201() {
+        String csrfToken = fetchCsrfToken(sessionCookieClinicalA);
+        String idempotencyKey = "key-a1-wildcard-" + UUID.randomUUID();
+
+        PatientEdit edit = new PatientEdit(
+                "AcceptWildcard", "Patient", LocalDate.of(1992, 3, 3), null, null
+        );
+
+        ResponseEntity<PatientResponse> response = client().post()
+                .uri("/api/v1/practices/" + practiceA + "/patients")
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .header("X-CSRF-TOKEN", csrfToken)
+                .header("Idempotency-Key", idempotencyKey)
+                .header(HttpHeaders.ACCEPT, MediaType.ALL_VALUE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(edit)
+                .retrieve()
+                .toEntity(PatientResponse.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    }
 }

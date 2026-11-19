@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,7 +35,7 @@ public class PatientController {
         this.practiceSecurityService = practiceSecurityService;
     }
 
-    @PostMapping("/api/v1/practices/{practiceId}/patients")
+    @PostMapping(value = "/api/v1/practices/{practiceId}/patients", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PatientResponse> createPatient(
             @PathVariable UUID practiceId,
             @RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey,
@@ -61,7 +62,7 @@ public class PatientController {
                 .body(response);
     }
 
-    @GetMapping("/api/v1/practices/{practiceId}/records/{recordId}")
+    @GetMapping(value = "/api/v1/practices/{practiceId}/records/{recordId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RecordResponse> getPatientRecord(
             @PathVariable UUID practiceId,
             @PathVariable UUID recordId,

@@ -12,6 +12,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.csrf.CsrfException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -78,6 +79,22 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public ResponseEntity<ApiProblem> handleMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex, HttpServletRequest request) {
         return buildProblem(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "UNSUPPORTED_MEDIA_TYPE", "Unsupported media type", ex, request);
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
+    public ResponseEntity<ApiProblem> handleMediaTypeNotAcceptable(HttpMediaTypeNotAcceptableException ex, HttpServletRequest request) {
+        String correlationId = CorrelationIdFilter.getCorrelationId(request);
+        log.warn("Request rejected: class={}, code={}, correlationId={}", ex.getClass().getName(), "NOT_ACCEPTABLE", correlationId);
+        ApiProblem problem = ApiProblem.of(
+                HttpStatus.NOT_ACCEPTABLE.value(),
+                "Not Acceptable",
+                "NOT_ACCEPTABLE",
+                "The requested media type is not supported by this endpoint",
+                correlationId
+        );
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+                .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+                .body(problem);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
