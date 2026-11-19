@@ -38,6 +38,22 @@ for step in codeql["jobs"]["analyze"]["steps"]:
     if "uses" in step:
         assert re.fullmatch(r"[A-Za-z0-9_./-]+@[a-f0-9]{40}", step["uses"])
     assert "continue-on-error" not in step, "Required checks must not suppress failure"
+pages = yaml.load((root / ".github/workflows/architecture-pages.yml").read_text(), Loader=yaml.BaseLoader)
+assert set(pages["on"]) == {"push", "workflow_dispatch"}
+assert pages["on"]["push"]["branches"] == ["main"]
+assert pages["permissions"] == {}
+assert set(pages["jobs"]) == {"publish"}
+publish = pages["jobs"]["publish"]
+assert publish["if"] == "github.ref == 'refs/heads/main'"
+assert publish["environment"]["name"] == "github-pages"
+assert publish["permissions"] == {"contents": "read", "pages": "write", "id-token": "write"}
+steps = publish["steps"]
+assert [step["uses"].split("@")[0] for step in steps] == [
+    "actions/checkout", "actions/configure-pages", "actions/upload-pages-artifact", "actions/deploy-pages",
+]
+assert all(re.fullmatch(r"[A-Za-z0-9_./-]+@[a-f0-9]{40}", step["uses"]) for step in steps)
+assert steps[0]["with"]["persist-credentials"] == "false"
+assert steps[2]["with"] == {"path": "docs/architecture-views/site"}
 config = yaml.load((root / ".github/codeql-config.yml").read_text(), Loader=yaml.BaseLoader)
 assert config["paths"] == ["tools", "design/corrections"], "CodeQL covers first-party planning/design tooling"
 rabbit = yaml.safe_load((root / ".coderabbit.yaml").read_text())
@@ -48,4 +64,4 @@ assert all(item["enabled"] is False for item in rabbit["reviews"]["finishing_tou
 qodo = tomllib.loads((root / ".pr_agent.toml").read_text())["github_app"]
 assert qodo == {"pr_commands": [], "handle_push_trigger": False, "push_commands": []}
 print(json.dumps({"ok": True, "kind": "documentation-workflow-policy", "jobs": len(jobs),
-                  "applicationBuild": False, "deployment": False}))
+                  "applicationBuild": False, "applicationDeployment": False, "architecturePages": True}))

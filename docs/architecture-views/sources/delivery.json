@@ -1,0 +1,425 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Étaye — planned deployment and delivery",
+    "locale": "en",
+    "output": ".archify/architecture-etaye-planned-20261119-102252/delivery/delivery.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "git@github.com:Aymenchaghoub/etaye.git",
+      "revision": "eb58c81b3be3b91819dd2ca31a4f2412b509b5e3",
+      "link_mode": "local-only"
+    }
+  },
+  "components": [
+    {
+      "id": "repo",
+      "type": "external",
+      "label": "GitHub source",
+      "sublabel": "PR branch / exact candidate SHA",
+      "pos": [
+        40,
+        40
+      ],
+      "size": [
+        210,
+        70
+      ],
+      "sources": [
+        {
+          "path": "docs/operations/cicd-deployment-strategy.md",
+          "line": 3,
+          "end_line": 7
+        },
+        {
+          "path": "docs/planning-artifacts/decisions-assumptions.md",
+          "line": 17,
+          "end_line": 20
+        }
+      ],
+      "tag": "Application pipeline planned"
+    },
+    {
+      "id": "ci",
+      "type": "backend",
+      "label": "Isolated validation",
+      "sublabel": "Build / PostgreSQL / browser tests",
+      "pos": [
+        390,
+        40
+      ],
+      "size": [
+        210,
+        70
+      ],
+      "sources": [
+        {
+          "path": "docs/operations/cicd-deployment-strategy.md",
+          "line": 7,
+          "end_line": 14
+        },
+        {
+          "path": "docs/planning-artifacts/roadmap.md",
+          "line": 87,
+          "end_line": 98
+        }
+      ],
+      "tag": "Real stack · nonempty suites"
+    },
+    {
+      "id": "artifacts",
+      "type": "database",
+      "label": "Versioned artifacts",
+      "sublabel": "GHCR digest + frontend hash",
+      "pos": [
+        760,
+        40
+      ],
+      "size": [
+        210,
+        70
+      ],
+      "sources": [
+        {
+          "path": "docs/decisions/ADR-007-delivery-and-hosting.md",
+          "line": 5,
+          "end_line": 11
+        },
+        {
+          "path": "docs/operations/cicd-deployment-strategy.md",
+          "line": 14,
+          "end_line": 15
+        }
+      ],
+      "tag": "Validate once / no rebuild"
+    },
+    {
+      "id": "promotion",
+      "type": "security",
+      "label": "Release and host gate",
+      "sublabel": "Aymen decision + measured footprint",
+      "pos": [
+        760,
+        280
+      ],
+      "size": [
+        210,
+        70
+      ],
+      "sources": [
+        {
+          "path": "docs/decisions/ADR-007-delivery-and-hosting.md",
+          "line": 13,
+          "end_line": 15
+        },
+        {
+          "path": "docs/operations/hosting-cost-assessment.md",
+          "line": 27,
+          "end_line": 33
+        },
+        {
+          "path": "docs/planning-artifacts/roadmap.md",
+          "line": 34,
+          "end_line": 43
+        }
+      ],
+      "tag": "Future authorized promotion"
+    },
+    {
+      "id": "origin",
+      "type": "cloud",
+      "label": "Stable HTTPS origin",
+      "sublabel": "TLS / same-origin application",
+      "pos": [
+        390,
+        280
+      ],
+      "size": [
+        210,
+        70
+      ],
+      "sources": [
+        {
+          "path": "docs/decisions/ADR-004-authentication-sessions.md",
+          "line": 15,
+          "end_line": 15
+        },
+        {
+          "path": "docs/decisions/ADR-007-delivery-and-hosting.md",
+          "line": 7,
+          "end_line": 15
+        }
+      ],
+      "tag": "Always-on before native/store"
+    },
+    {
+      "id": "app",
+      "type": "backend",
+      "label": "Application runtime",
+      "sublabel": "Spring Boot + validated React assets",
+      "pos": [
+        390,
+        520
+      ],
+      "size": [
+        210,
+        70
+      ],
+      "sources": [
+        {
+          "path": "docs/decisions/ADR-004-authentication-sessions.md",
+          "line": 15,
+          "end_line": 15
+        },
+        {
+          "path": "docs/planning-artifacts/architecture/runtime-architecture.md",
+          "line": 18,
+          "end_line": 24
+        }
+      ],
+      "tag": "One process incl. workers"
+    },
+    {
+      "id": "pg",
+      "type": "database",
+      "label": "PostgreSQL",
+      "sublabel": "Managed DB or selected VPS",
+      "pos": [
+        40,
+        520
+      ],
+      "size": [
+        210,
+        70
+      ],
+      "sources": [
+        {
+          "path": "docs/decisions/ADR-007-delivery-and-hosting.md",
+          "line": 7,
+          "end_line": 15
+        },
+        {
+          "path": "docs/operations/hosting-cost-assessment.md",
+          "line": 31,
+          "end_line": 33
+        },
+        {
+          "path": "docs/decisions/ADR-003-practice-isolation.md",
+          "line": 12,
+          "end_line": 18
+        }
+      ],
+      "tag": "Separate migration role"
+    },
+    {
+      "id": "storage",
+      "type": "database",
+      "label": "Persistent file bytes",
+      "sublabel": "Database or private volume",
+      "pos": [
+        760,
+        520
+      ],
+      "size": [
+        210,
+        70
+      ],
+      "sources": [
+        {
+          "path": "docs/decisions/ADR-006-files-pdf-storage.md",
+          "line": 13,
+          "end_line": 15
+        }
+      ],
+      "tag": "Never ephemeral host disk"
+    },
+    {
+      "id": "observe",
+      "type": "backend",
+      "label": "Readiness and metrics",
+      "sublabel": "Queue age / failures / PDF memory",
+      "pos": [
+        390,
+        760
+      ],
+      "size": [
+        210,
+        70
+      ],
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/architecture/runtime-architecture.md",
+          "line": 24,
+          "end_line": 24
+        },
+        {
+          "path": "docs/operations/cicd-deployment-strategy.md",
+          "line": 16,
+          "end_line": 16
+        }
+      ],
+      "tag": "Smoke exact deployed digest"
+    },
+    {
+      "id": "recovery",
+      "type": "database",
+      "label": "Database recovery",
+      "sublabel": "DB backup / compatible release",
+      "pos": [
+        40,
+        760
+      ],
+      "size": [
+        210,
+        70
+      ],
+      "sources": [
+        {
+          "path": "docs/operations/cicd-deployment-strategy.md",
+          "line": 32,
+          "end_line": 34
+        },
+        {
+          "path": "docs/operations/hosting-cost-assessment.md",
+          "line": 15,
+          "end_line": 17
+        }
+      ],
+      "tag": "Restore drill planned"
+    },
+    {
+      "id": "byte-recovery",
+      "type": "database",
+      "label": "File recovery",
+      "sublabel": "Private volume or database backup",
+      "tag": "Restore bytes with metadata",
+      "pos": [
+        760,
+        760
+      ],
+      "size": [
+        210,
+        70
+      ],
+      "sources": [
+        {
+          "path": "docs/operations/cicd-deployment-strategy.md",
+          "line": 32,
+          "end_line": 34
+        },
+        {
+          "path": "docs/decisions/ADR-006-files-pdf-storage.md",
+          "line": 13,
+          "end_line": 15
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "pr-checks",
+      "from": "repo",
+      "to": "ci",
+      "label": "candidate SHA",
+      "variant": "default"
+    },
+    {
+      "id": "checks-artifacts",
+      "from": "ci",
+      "to": "artifacts",
+      "label": "validated digest",
+      "variant": "emphasis"
+    },
+    {
+      "id": "artifact-promotion",
+      "from": "artifacts",
+      "to": "promotion",
+      "label": "release manifest",
+      "variant": "security"
+    },
+    {
+      "id": "gate-origin",
+      "from": "promotion",
+      "to": "origin",
+      "label": "approved hosting",
+      "variant": "security"
+    },
+    {
+      "id": "origin-runtime",
+      "from": "origin",
+      "to": "app",
+      "label": "same origin /api",
+      "variant": "default"
+    },
+    {
+      "id": "app-postgres",
+      "from": "app",
+      "to": "pg",
+      "label": "scoped SQL / TLS",
+      "variant": "default"
+    },
+    {
+      "id": "app-storage",
+      "from": "app",
+      "to": "storage",
+      "label": "private FileStore",
+      "variant": "security"
+    },
+    {
+      "id": "app-observability",
+      "from": "app",
+      "to": "observe",
+      "label": "safe telemetry",
+      "variant": "default"
+    },
+    {
+      "id": "db-backup",
+      "from": "pg",
+      "to": "recovery",
+      "label": "backup / restore",
+      "variant": "default"
+    },
+    {
+      "id": "file-backup",
+      "from": "storage",
+      "to": "byte-recovery",
+      "label": "backup / restore",
+      "variant": "default"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Hosting remains a choice",
+      "items": [
+        "User direction: €0 first, local Compose and free best-effort web hosting; story 10.3 benchmarks memory, PDF peaks, startup and cold starts before Aymen chooses.",
+        "Render + Neon and a single always-on VPS are candidate topologies, not activated providers. The diagram does not choose whether the database shares the application host. No current price or entitlement is asserted."
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Delivery order",
+      "items": [
+        "Increment 1 CI: build, meaningful tests, CodeQL, secret scan and reproducible synthetic journey/isolation evidence. This diagram also includes the later release target.",
+        "Promotion pipeline, SBOM/provenance/signing, Sonar projects and rollback rehearsal are deferred to increment 4 / D-29. They are not active application checks today."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Environment and recovery boundaries",
+      "items": [
+        "Dev, CI, preview and demo use separate databases, credentials, stores and fixtures. Tests must reject public-demo endpoints. Runtime packaging allowlists reviewed assets and excludes planning/design/tooling folders.",
+        "Promote exact tested artifacts; apply compatible Flyway migrations once. Applied migrations stay immutable. Roll back a compatible image or forward fix; rehearse a separate DB/byte restore before switching."
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Mobile and optional surfaces",
+      "items": [
+        "PWA uses the validated web build. Android package and iOS archive derive from the same validated commit; signing material stays outside Git. Store publication, domain and developer accounts require their own decision.",
+        "Native assets are bundled; a remote-site Capacitor shell is rejected. An optional independent static showcase may use Cloudflare without moving the authenticated app to unrelated origins. Sleeping hosts cannot promise timely jobs or reminders."
+      ]
+    }
+  ]
+}

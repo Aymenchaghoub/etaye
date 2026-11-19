@@ -1,6 +1,12 @@
 # Session continuation
 
-Updated: 2026-11-18. Owner: Aymen Chaghoub.
+Updated: 2026-11-19. Owner: Aymen Chaghoub.
+
+## Interactive architecture documentation — 2026-11-19
+
+Aymen accepted an SVG preview in the repository README and five interactive Archify views on GitHub Pages. The [architecture views](architecture-views/README.md) preserve the editable candidates and the exact HTML checked against the planning baseline at `eb58c81`. The publication workflow is scoped to the documentation site on `main`. The project remains in design review with all 45 application stories in backlog.
+
+Chromium opened the index and all five relative links under the Pages project path, toggled Live/Still on each view and exported the README SVG. The desktop and mobile index and both SVG themes were visually inspected. Documentary validation and the workflow policy check passed. GitHub Pages is configured in Actions mode. Next action is to review the documentation PR and verify the public URL after the first successful publication from `main`.
 
 ## Native closure integration — 2026-11-18
 

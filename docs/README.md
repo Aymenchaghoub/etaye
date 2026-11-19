@@ -13,6 +13,7 @@ Status: Planning package ready for complete design work. Documents are reviewed 
 | Terminology and French–English translation | [Glossary](planning-artifacts/glossary.md) |
 | Decisions, assumptions and work outside increment | [Decision register](planning-artifacts/decisions-assumptions.md), [deferred work](planning-artifacts/deferred-work.md) |
 | Cross-module decisions | [Architecture spine](planning-artifacts/architecture/ARCHITECTURE-SPINE.md), [runtime/module design](planning-artifacts/architecture/runtime-architecture.md), [ADRs](decisions/README.md) |
+| Planned architecture diagrams | [Interactive views and source files](architecture-views/README.md) |
 | Data ownership and shape | [Data model](planning-artifacts/data-model.md), [data dictionary](planning-artifacts/data-dictionary.md) |
 | Transport contract and validation | [API guide](contracts/README.md), [OpenAPI](contracts/openapi.yaml), [operation index](contracts/operation-index.json) |
 | AI behavior and evaluation | [AI specification](planning-artifacts/ai-specification.md) |
