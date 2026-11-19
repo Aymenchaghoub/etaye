@@ -1,0 +1,557 @@
+{
+  "pageId": "15:2",
+  "sectionId": "54:34",
+  "version": "2423528717189287238",
+  "sourceVersion": "2423224260331333575",
+  "sourceSnapshot": "d2f0800e275c4b156fedbcf23656ffe2bf435f9b6a72faf0f86fc293e2a82ad6",
+  "protectedPages": [
+    {
+      "id": "2:74",
+      "name": "Fondations",
+      "fingerprint": "53d8f99698e00268f4f8036778c58a0a08a23dec8be0f5f577091a9217537d08"
+    },
+    {
+      "id": "2:75",
+      "name": "Composants",
+      "fingerprint": "24dd0f2ba34f058be063d5bb641b70a301d2eef57af091d538e52c6cfaaa091e"
+    }
+  ],
+  "provenance": "Read-only export of the existing native review section. Version ID copied from Figma version history.",
+  "desktopMessageSource": "outer Figma editor",
+  "rawEvidenceSha256": "2f8f5252678a2115013fe187ff857f4c1d278b2b12b2eabff12416093abf005e",
+  "htmlBrowser": "159.0.8154.6",
+  "htmlViewport": [
+    1440,
+    1024
+  ],
+  "states": [
+    {
+      "state": "S-25/accueil",
+      "sourceId": "30:44610",
+      "sourceFingerprint": "1751dc064cb67b86340fc61518fbfa058e4d0ecdce10f05f72ebda228d588dc6",
+      "reviewId": "54:35",
+      "artworkId": "54:143",
+      "nativeSize": [
+        1440,
+        1113
+      ],
+      "nativePngSha256": "a0a0504d57220f0819af380bf52e305d0e11a147b8aeffcfff9df8bd5274aac2",
+      "htmlSize": [
+        1440,
+        1024
+      ],
+      "htmlPngSha256": "d3da108e5b2ddad838726051a12dd70a6241663c0848b5479cb19d5a2e5353a3",
+      "nativeProductBox": [
+        0,
+        0,
+        1440,
+        1024
+      ],
+      "matchedProductHeight": 1024,
+      "editableTextCount": 25
+    },
+    {
+      "state": "S-25/indisponible",
+      "sourceId": "30:44718",
+      "sourceFingerprint": "29799c9374714e95c66f4bcdc2177cf9dc17a913f5c8f057f3fe006f4c9d855f",
+      "reviewId": "54:144",
+      "artworkId": "54:202",
+      "nativeSize": [
+        1440,
+        1113
+      ],
+      "nativePngSha256": "c246a45e009551c4e0a00494a64cad6b5598df5cf5756a9fa370783833c7fbcf",
+      "htmlSize": [
+        1440,
+        1024
+      ],
+      "htmlPngSha256": "630c9dbc3199955456c4a121c82896d2904394b0638a1de26f003653745281e0",
+      "nativeProductBox": [
+        0,
+        0,
+        1440,
+        1024
+      ],
+      "matchedProductHeight": 1024,
+      "editableTextCount": 14
+    },
+    {
+      "state": "S-25/lien-retire",
+      "sourceId": "30:44776",
+      "sourceFingerprint": "ae4ffac4149b2a52936c5a042ce33d5881adc8f6c153002d566b9a4da4028cdf",
+      "reviewId": "54:203",
+      "artworkId": "54:252",
+      "nativeSize": [
+        1440,
+        1113
+      ],
+      "nativePngSha256": "56d84acdef515ac01772bd576e9c10eae66994f37929d1be0f3e20ebf19a1116",
+      "htmlSize": [
+        1440,
+        1024
+      ],
+      "htmlPngSha256": "3f532015346c7689ff09ab7a4d7856311b04fbfab21695c072ddf8ec88e7d7dd",
+      "nativeProductBox": [
+        0,
+        0,
+        1440,
+        1024
+      ],
+      "matchedProductHeight": 1024,
+      "editableTextCount": 13
+    },
+    {
+      "state": "S-25/remplacee",
+      "sourceId": "30:44825",
+      "sourceFingerprint": "8bcbae7d95fe536165811acc741bce796604f736471bd63828bf1843e493e63d",
+      "reviewId": "54:253",
+      "artworkId": "54:363",
+      "nativeSize": [
+        1440,
+        1113
+      ],
+      "nativePngSha256": "c0cfedeae95aedf5890e134dd88e9ab8796a16997ffba4790b48e2cd8ddfd65d",
+      "htmlSize": [
+        1440,
+        1060
+      ],
+      "htmlPngSha256": "fa79c3195ea8176973a73538b17a1a2cca1f37147b393d9695d74bec713cef8e",
+      "nativeProductBox": [
+        0,
+        0,
+        1440,
+        1024
+      ],
+      "matchedProductHeight": 1024,
+      "editableTextCount": 26
+    },
+    {
+      "state": "S-25/retiree",
+      "sourceId": "30:44935",
+      "sourceFingerprint": "114ce57ee73b9a4df2ed0e55fe151990b395a485ce38bdd9a2f3a1fda29ed438",
+      "reviewId": "54:364",
+      "artworkId": "54:462",
+      "nativeSize": [
+        1440,
+        1113
+      ],
+      "nativePngSha256": "3224153ccc50f0cb285ae211284ac80fa83991f53cccc1fba3ac35be89a83f03",
+      "htmlSize": [
+        1440,
+        1032
+      ],
+      "htmlPngSha256": "6cef6f72702d0ab164f72966b4344241ca47e483f6d3ff97b2f6e46317de3f53",
+      "nativeProductBox": [
+        0,
+        0,
+        1440,
+        1024
+      ],
+      "matchedProductHeight": 1024,
+      "editableTextCount": 25
+    },
+    {
+      "state": "S-25/sans-publication",
+      "sourceId": "30:45033",
+      "sourceFingerprint": "82d55be0dfd9bdb7737724e9e20913c42d3bf90f990322541dd639762620fc07",
+      "reviewId": "54:463",
+      "artworkId": "54:553",
+      "nativeSize": [
+        1440,
+        1113
+      ],
+      "nativePngSha256": "6974fe5e2fc7aa58cd3edf96ed850b9cc2cba0280bd6d77e003aab1ad3907a62",
+      "htmlSize": [
+        1440,
+        1024
+      ],
+      "htmlPngSha256": "91a7ce16c5dc6b7992320a25c31fb33833ca7173b2b9d39daa9d7a5b3bcbdb43",
+      "nativeProductBox": [
+        0,
+        0,
+        1440,
+        1024
+      ],
+      "matchedProductHeight": 1024,
+      "editableTextCount": 24
+    },
+    {
+      "state": "S-25/sans-rdv",
+      "sourceId": "30:45123",
+      "sourceFingerprint": "42fb588b1d8b478ef1daffb1b9c51261a193b7cc807e044fa22fd4738870f456",
+      "reviewId": "54:554",
+      "artworkId": "54:635",
+      "nativeSize": [
+        1440,
+        1113
+      ],
+      "nativePngSha256": "8c37ba01ab0333a0ea3fe6cb7da37deedd2eb9f7bd0b1f53b1b3c0824cb3af11",
+      "htmlSize": [
+        1440,
+        1024
+      ],
+      "htmlPngSha256": "ae141a6838f0a4166619dd7f1b718a0041ba889e77a29c8c95acfb4d5a1c2496",
+      "nativeProductBox": [
+        0,
+        0,
+        1440,
+        1024
+      ],
+      "matchedProductHeight": 1024,
+      "editableTextCount": 20
+    },
+    {
+      "state": "S-02/champ-vide",
+      "sourceId": "30:465",
+      "sourceFingerprint": "e42fea73a9e5cfb0f51fdcc36287c509b3b9bfe1ba82fb8c4ad9c0a8caaaf775",
+      "reviewId": "54:636",
+      "artworkId": "54:697",
+      "nativeSize": [
+        1440,
+        1113
+      ],
+      "nativePngSha256": "ddb749fd34a7276a39f41d4690c9de178dd18ebdbe8f5986eaab302cdc9fe117",
+      "htmlSize": [
+        1440,
+        1024
+      ],
+      "htmlPngSha256": "dc4cdff568e566f88fb5ed9ca57277464397e508b3204b0fca058c72de6acec3",
+      "nativeProductBox": [
+        0,
+        0,
+        1440,
+        1024
+      ],
+      "matchedProductHeight": 1024,
+      "editableTextCount": 18
+    },
+    {
+      "state": "S-02/connexion",
+      "sourceId": "30:525",
+      "sourceFingerprint": "e6d622d6223f4a6209229bb0085b141671ff5c8b14ff0a34f8dba3d9011c1643",
+      "reviewId": "54:698",
+      "artworkId": "54:750",
+      "nativeSize": [
+        1440,
+        1113
+      ],
+      "nativePngSha256": "08a798f634857502bf01f0751175bd9f76fa2e0048effbc8e392739cfdf054ce",
+      "htmlSize": [
+        1440,
+        1024
+      ],
+      "htmlPngSha256": "5545dd459b86a3cd3cec01aeffec361033dab61c50198c580926fc557a217ac2",
+      "nativeProductBox": [
+        0,
+        0,
+        1440,
+        1024
+      ],
+      "matchedProductHeight": 1024,
+      "editableTextCount": 15
+    },
+    {
+      "state": "S-02/envoi",
+      "sourceId": "30:577",
+      "sourceFingerprint": "679728e2eb885d5095d0cd5612f1a0468e0d7d451e3a847ae721f8b4b5f905b7",
+      "reviewId": "54:751",
+      "artworkId": "54:804",
+      "nativeSize": [
+        1440,
+        1113
+      ],
+      "nativePngSha256": "f4b668387a585d4dad6579a9e3d4d09ea288aa04e2af341974a3fe803d0ecaa8",
+      "htmlSize": [
+        1440,
+        1024
+      ],
+      "htmlPngSha256": "f73d6f57765d1f01c9b2aead176fb3e93408123ea1ebc42adedd9f448b16aa45",
+      "nativeProductBox": [
+        0,
+        0,
+        1440,
+        1024
+      ],
+      "matchedProductHeight": 1024,
+      "editableTextCount": 17
+    },
+    {
+      "state": "S-02/invalide",
+      "sourceId": "30:630",
+      "sourceFingerprint": "b7449b1c7e37a58673d31b257f3e5741bec7635dabd2c2ddcff62d3ccdb9fd06",
+      "reviewId": "54:805",
+      "artworkId": "54:868",
+      "nativeSize": [
+        1440,
+        1113
+      ],
+      "nativePngSha256": "16fb6cbc196fd234947c8979a4da94702d97daa382cf97c98d17aa00f7c94aad",
+      "htmlSize": [
+        1440,
+        1024
+      ],
+      "htmlPngSha256": "8b8ef22054b1df26b094b31d849d0a7b340fab2abb16007c09dddcac9bfd3c9a",
+      "nativeProductBox": [
+        0,
+        0,
+        1440,
+        1024
+      ],
+      "matchedProductHeight": 1024,
+      "editableTextCount": 20
+    },
+    {
+      "state": "S-02/limite",
+      "sourceId": "30:692",
+      "sourceFingerprint": "6e585d81cbeb55db7f67f66e3983a08f8b3dabede1f3459615f8a8dd4d301b47",
+      "reviewId": "54:869",
+      "artworkId": "54:936",
+      "nativeSize": [
+        1440,
+        1113
+      ],
+      "nativePngSha256": "62231ac422254ac10c0680ba0e0f94e967caf76ec5df3d44b40a4a7960650aac",
+      "htmlSize": [
+        1440,
+        1024
+      ],
+      "htmlPngSha256": "b250cbf2c2733a48f9d7f9c9d6dc14c40bdca920dd73da206cffe7fce8337b62",
+      "nativeProductBox": [
+        0,
+        0,
+        1440,
+        1024
+      ],
+      "matchedProductHeight": 1024,
+      "editableTextCount": 22
+    },
+    {
+      "state": "S-02/patient",
+      "sourceId": "30:759",
+      "sourceFingerprint": "efb13bb2502ec0bf5b5bc8529c94469b8bfbc32eb1895c09960e7e5d0281817b",
+      "reviewId": "54:937",
+      "artworkId": "54:991",
+      "nativeSize": [
+        1440,
+        1113
+      ],
+      "nativePngSha256": "4f47472832b28eee9df245331ca11a403209d8adc1b12ea3551ba0e821619085",
+      "htmlSize": [
+        1440,
+        1024
+      ],
+      "htmlPngSha256": "a1aaa6d9e8eef3566ed48221c211276c721336f5419bb8e145e565cbdd6e2ba3",
+      "nativeProductBox": [
+        0,
+        0,
+        1440,
+        1024
+      ],
+      "matchedProductHeight": 1024,
+      "editableTextCount": 15
+    },
+    {
+      "state": "S-02/patient-invalide",
+      "sourceId": "30:813",
+      "sourceFingerprint": "4a14741fe4d2be886bc3f24db18e1161856602cc7fb1a1d18c49b5ae8801a1d0",
+      "reviewId": "54:992",
+      "artworkId": "54:1057",
+      "nativeSize": [
+        1440,
+        1113
+      ],
+      "nativePngSha256": "de44ea18e3e9741666500f26e4a6388cd8553c6e1f79f9ac94b413350777bd4c",
+      "htmlSize": [
+        1440,
+        1024
+      ],
+      "htmlPngSha256": "a0002736d457177b1183fa8b8f657ad782f8d43e7d9ce35181893f1107829a2e",
+      "nativeProductBox": [
+        0,
+        0,
+        1440,
+        1024
+      ],
+      "matchedProductHeight": 1024,
+      "editableTextCount": 20
+    },
+    {
+      "state": "S-02/retour",
+      "sourceId": "30:877",
+      "sourceFingerprint": "d1d51ec5d66bd561199c6f4667a5c3c0e27885017cc804c7461b144cbde4121e",
+      "reviewId": "54:1058",
+      "artworkId": "54:1122",
+      "nativeSize": [
+        1440,
+        1113
+      ],
+      "nativePngSha256": "eadce11493d50db68e98bda70bb95f2043e3e480bdb04b2b176c4ecc99a4357f",
+      "htmlSize": [
+        1440,
+        1024
+      ],
+      "htmlPngSha256": "8e79d1259ceb1f9d545b41305dd4f762c57a9542b5fab7d31e1db616af934c40",
+      "nativeProductBox": [
+        0,
+        0,
+        1440,
+        1024
+      ],
+      "matchedProductHeight": 1024,
+      "editableTextCount": 20
+    },
+    {
+      "state": "S-02/suspendu",
+      "sourceId": "30:942",
+      "sourceFingerprint": "2399836f3608653764f4e021838c3dfd1507826d1441a0a9bb2f9e3e5940c14c",
+      "reviewId": "54:1123",
+      "artworkId": "54:1187",
+      "nativeSize": [
+        1440,
+        1113
+      ],
+      "nativePngSha256": "d0a96f78fd66b29f140739baece3c60c54d2af259ca08d335c685cc0820b0df1",
+      "htmlSize": [
+        1440,
+        1024
+      ],
+      "htmlPngSha256": "d3b6c3513f0e4773016739b8d445838d830e340dd456cbbfd17de90351a4204a",
+      "nativeProductBox": [
+        0,
+        0,
+        1440,
+        1024
+      ],
+      "matchedProductHeight": 1024,
+      "editableTextCount": 20
+    },
+    {
+      "state": "S-01/accueil",
+      "sourceId": "30:3",
+      "sourceFingerprint": "711936a8f8de6ce887479dfca2a55904cdc8f1c32e052373445ea192ed0d5001",
+      "reviewId": "54:1188",
+      "artworkId": "54:1294",
+      "nativeSize": [
+        1440,
+        1113
+      ],
+      "nativePngSha256": "5b953c72216fb18541103226e1afc624256062269c7a969e67e55d2f7e470aa9",
+      "htmlSize": [
+        1440,
+        1024
+      ],
+      "htmlPngSha256": "bd3ad7e955a1b430427ddb5df0a8510c47140515e60678afe629853f495a4025",
+      "nativeProductBox": [
+        0,
+        0,
+        1440,
+        1024
+      ],
+      "matchedProductHeight": 1024,
+      "editableTextCount": 30
+    },
+    {
+      "state": "S-01/indisponible",
+      "sourceId": "30:109",
+      "sourceFingerprint": "0755cd030e2faa6a50ad0d7a567e3db25d87ef5c7eb71c99725c57d9629a6c11",
+      "reviewId": "54:1295",
+      "artworkId": "54:1419",
+      "nativeSize": [
+        1440,
+        1113
+      ],
+      "nativePngSha256": "9718a0739c44ada5f764f4c16b720b2dcd7945848280585f366a4042c5f84928",
+      "htmlSize": [
+        1440,
+        1024
+      ],
+      "htmlPngSha256": "46dac2f2756685a2dd73728b17f008550e7f6dda3685d8bf18706324b26e46c8",
+      "nativeProductBox": [
+        0,
+        0,
+        1440,
+        1024
+      ],
+      "matchedProductHeight": 1024,
+      "editableTextCount": 33
+    },
+    {
+      "state": "S-01/preparation",
+      "sourceId": "30:233",
+      "sourceFingerprint": "cb70493789a3933ac29caee080c097bc8d3d2f00360bb1f8a45a48d6b17fe7b9",
+      "reviewId": "54:1420",
+      "artworkId": "54:1535",
+      "nativeSize": [
+        1440,
+        1113
+      ],
+      "nativePngSha256": "17b295e28a6e25cea69bbe4d3952211ddb945e51de0e20c7bf682a8de1290c38",
+      "htmlSize": [
+        1440,
+        1024
+      ],
+      "htmlPngSha256": "cc6575e156b5673b018db713bbd7040a96468694af8c46adde20f0cfb6302761",
+      "nativeProductBox": [
+        0,
+        0,
+        1440,
+        1024
+      ],
+      "matchedProductHeight": 1024,
+      "editableTextCount": 32
+    },
+    {
+      "state": "S-01/reinitialisation",
+      "sourceId": "30:348",
+      "sourceFingerprint": "27d994c1afc3a1fd4225ed564327622d93a6d3dcd9497d0874abaa23e8816e83",
+      "reviewId": "54:1536",
+      "artworkId": "54:1652",
+      "nativeSize": [
+        1440,
+        1113
+      ],
+      "nativePngSha256": "f82297134c5ce563994985fb2a34173c419abc277fcb60ed3377f06bdb723bbb",
+      "htmlSize": [
+        1440,
+        1024
+      ],
+      "htmlPngSha256": "6b8ab1641fffeafb73f4d587a42e2144260f0025811177f64bbe65fc26e79a07",
+      "nativeProductBox": [
+        0,
+        0,
+        1440,
+        1024
+      ],
+      "matchedProductHeight": 1024,
+      "editableTextCount": 32
+    }
+  ],
+  "rawEvidenceBytes": 11883021,
+  "releaseZipSha256": "f68bcd6fb723e3aa6d7839560a456b43f97c745fc3479075f9e912ed8e868ef7",
+  "reviewedProductPairs": 20,
+  "comparisonDetails": {
+    "S-25": {
+      "path": "S-25-details.jpg",
+      "sha256": "00b2cad6340ff0bcb65d441b11cfc75f2d125d4a05abc77558f37d91b93549b4"
+    },
+    "S-02": {
+      "path": "S-02-details.jpg",
+      "sha256": "ee13032dfb95424d20dafc863616bf353f9af57f9b7da466d22ecd2240c99e9a"
+    },
+    "S-01": {
+      "path": "S-01-details.jpg",
+      "sha256": "1fa7b51a4264a4668f7ff8dff54d7745d9b04d8226d46eea693af02a78c62701"
+    }
+  },
+  "openedDetailStates": [
+    "S-25/accueil",
+    "S-25/indisponible",
+    "S-25/remplacee",
+    "S-25/retiree",
+    "S-02/connexion",
+    "S-02/patient",
+    "S-02/champ-vide",
+    "S-02/patient-invalide",
+    "S-01/accueil"
+  ]
+}
