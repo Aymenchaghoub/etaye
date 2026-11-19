@@ -85,16 +85,19 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
         });
 
         // Verify table ownership belongs to etaye_owner, not etaye_runtime
-        jdbcTemplate.query("SELECT tablename, tableowner FROM pg_tables WHERE tablename IN ('practice', 'patient')", rs -> {
+        jdbcTemplate.query("SELECT tablename, tableowner FROM pg_tables WHERE tablename IN ('practice', 'patient', 'patient_record', 'audit_event', 'outbox_event', 'idempotency_receipt')", rs -> {
             assertEquals("etaye_owner", rs.getString("tableowner"),
                     "Table " + rs.getString("tablename") + " must be owned by etaye_owner");
         });
 
-        // Verify RLS is enabled and forced on patient table via pg_class (relrowsecurity and relforcerowsecurity)
-        jdbcTemplate.query("SELECT relrowsecurity, relforcerowsecurity FROM pg_class WHERE relname = 'patient'", rs -> {
-            assertTrue(rs.getBoolean("relrowsecurity"), "RLS must be enabled on patient table");
-            assertTrue(rs.getBoolean("relforcerowsecurity"), "FORCE RLS must be enabled on patient table");
-        });
+        // Verify RLS is enabled and forced on practice-owned tables via pg_class (relrowsecurity and relforcerowsecurity)
+        List<String> rlsTables = List.of("patient", "patient_record", "audit_event", "outbox_event", "idempotency_receipt");
+        for (String tbl : rlsTables) {
+            jdbcTemplate.query("SELECT relrowsecurity, relforcerowsecurity FROM pg_class WHERE relname = ?", ps -> ps.setString(1, tbl), rs -> {
+                assertTrue(rs.getBoolean("relrowsecurity"), "RLS must be enabled on " + tbl);
+                assertTrue(rs.getBoolean("relforcerowsecurity"), "FORCE RLS must be enabled on " + tbl);
+            });
+        }
 
         // Verify minimal privileges: no DELETE on patient, no SELECT on account or membership
         Boolean canDeletePatient = jdbcTemplate.queryForObject(
@@ -307,7 +310,7 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
         // Direct SQL insert for practice A
         UUID directPatientA = UUID.randomUUID();
         practiceTransaction.executeVoid(practiceAId, () -> {
-            jdbcTemplate.update("INSERT INTO patient (id, practice_id, first_name, last_name) VALUES (?, ?, 'Direct', 'A')",
+            jdbcTemplate.update("INSERT INTO patient (id, practice_id, first_name, last_name, date_of_birth) VALUES (?, ?, 'Direct', 'A', '1980-01-01')",
                     directPatientA, practiceAId);
         });
 

@@ -95,7 +95,7 @@ public abstract class AbstractPostgresTest {
                 OWNER_USER,
                 OWNER_PASSWORD);
              PreparedStatement ps = conn.prepareStatement(
-                     "INSERT INTO practice (name) VALUES (?) RETURNING id")) {
+                     "INSERT INTO practice (display_name, timezone) VALUES (?, 'Europe/Paris') RETURNING id")) {
             ps.setString(1, name);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
