@@ -1,4 +1,4 @@
-package fr.etaye.communications.domain;
+package dev.aymen.etaye.communications.domain;
 
 import java.time.Instant;
 import java.util.Objects;

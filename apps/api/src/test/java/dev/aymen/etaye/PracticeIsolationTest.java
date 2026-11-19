@@ -1,10 +1,9 @@
-package fr.etaye;
+package dev.aymen.etaye;
 
-import fr.etaye.infrastructure.transaction.PracticeTransaction;
-import fr.etaye.patients.domain.Patient;
-import fr.etaye.patients.service.PatientService;
-import fr.etaye.practices.domain.Practice;
-import fr.etaye.practices.domain.PracticeRepository;
+import dev.aymen.etaye.infrastructure.transaction.PracticeTransaction;
+import dev.aymen.etaye.practices.domain.PracticeRepository;
+import dev.aymen.etaye.records.domain.Patient;
+import dev.aymen.etaye.records.service.PatientService;
 import jakarta.persistence.EntityManager;
 import org.hibernate.Session;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,8 +17,6 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

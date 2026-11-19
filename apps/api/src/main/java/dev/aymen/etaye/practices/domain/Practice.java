@@ -1,4 +1,4 @@
-package fr.etaye.practices.domain;
+package dev.aymen.etaye.practices.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,7 +19,7 @@ public class Practice {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -29,12 +29,6 @@ public class Practice {
     }
 
     public Practice(String name) {
-        this.name = Objects.requireNonNull(name, "name must not be null");
-        this.createdAt = Instant.now();
-    }
-
-    public Practice(UUID id, String name) {
-        this.id = id;
         this.name = Objects.requireNonNull(name, "name must not be null");
         this.createdAt = Instant.now();
     }

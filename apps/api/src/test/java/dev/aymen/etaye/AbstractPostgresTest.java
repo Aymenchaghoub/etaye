@@ -1,4 +1,4 @@
-package fr.etaye;
+package dev.aymen.etaye;
 
 import org.flywaydb.core.Flyway;
 import org.springframework.test.context.ActiveProfiles;
@@ -17,11 +17,12 @@ import java.util.UUID;
 public abstract class AbstractPostgresTest {
 
     protected static final String OWNER_USER = "etaye_owner";
-    protected static final String OWNER_PASSWORD = "test_owner_secret_pw";
+    protected static final String OWNER_PASSWORD = UUID.randomUUID().toString();
     protected static final String RUNTIME_USER = "etaye_runtime";
-    protected static final String RUNTIME_PASSWORD = "test_runtime_secret_pw";
+    protected static final String RUNTIME_PASSWORD = UUID.randomUUID().toString();
     protected static final String IDENTITY_USER = "etaye_identity";
-    protected static final String IDENTITY_PASSWORD = "test_identity_secret_pw";
+    protected static final String IDENTITY_PASSWORD = UUID.randomUUID().toString();
+    private static final String ADMIN_PASSWORD = UUID.randomUUID().toString();
 
     protected static final PostgreSQLContainer<?> POSTGRES_CONTAINER;
 
@@ -29,7 +30,7 @@ public abstract class AbstractPostgresTest {
         POSTGRES_CONTAINER = new PostgreSQLContainer<>("postgres:18")
                 .withDatabaseName("etaye_test")
                 .withUsername("postgres")
-                .withPassword("admin_secret_pw");
+                .withPassword(ADMIN_PASSWORD);
         POSTGRES_CONTAINER.start();
 
         provisionRolesAndDatabase();

@@ -1,7 +1,7 @@
-package fr.etaye.patients.service;
+package dev.aymen.etaye.records.service;
 
-import fr.etaye.patients.domain.Patient;
-import fr.etaye.patients.domain.PatientRepository;
+import dev.aymen.etaye.records.domain.Patient;
+import dev.aymen.etaye.records.domain.PatientRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

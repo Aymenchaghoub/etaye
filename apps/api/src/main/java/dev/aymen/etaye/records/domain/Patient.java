@@ -1,4 +1,4 @@
-package fr.etaye.patients.domain;
+package dev.aymen.etaye.records.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

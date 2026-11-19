@@ -1,4 +1,4 @@
-package fr.etaye.infrastructure.web;
+package dev.aymen.etaye.infrastructure.web;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

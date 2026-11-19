@@ -11,7 +11,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>fr.etaye</groupId>
+    <groupId>dev.aymen.etaye</groupId>
     <artifactId>etaye-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>etaye-api</name>
