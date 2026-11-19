@@ -354,6 +354,8 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
                 .toEntity(Map.class);
 
         assertThat(readOnlyResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        assertThat(readOnlyResponse.getBody().get("code")).isEqualTo("FORBIDDEN");
+        assertThat(readOnlyResponse.getBody().get("correlationId")).isNotNull();
 
         // Verify AT-038-B invariant: NO domain audit or outbox row is committed for the failed mutation
         int finalAuditCount = countRowsInTableDirectly("audit_event", "practice_id", practiceA);
@@ -450,7 +452,7 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
                 .toEntity(Map.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-        assertThat(response.getBody().get("code")).isEqualTo("FORBIDDEN");
+        assertThat(response.getBody().get("code")).isEqualTo("CSRF_REJECTED");
         assertThat(response.getBody().get("correlationId")).isNotNull();
     }
 
@@ -665,7 +667,7 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
                 .toEntity(Map.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-        assertThat(response.getBody().get("code")).isEqualTo("FORBIDDEN");
+        assertThat(response.getBody().get("code")).isEqualTo("CSRF_REJECTED");
         assertThat(response.getBody().get("correlationId")).isNotNull();
     }
 
@@ -688,7 +690,7 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
                 .toEntity(Map.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-        assertThat(response.getBody().get("code")).isEqualTo("FORBIDDEN");
+        assertThat(response.getBody().get("code")).isEqualTo("CSRF_REJECTED");
         assertThat(response.getBody().get("correlationId")).isNotNull();
     }
 
@@ -723,7 +725,7 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
                 .toEntity(Map.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-        assertThat(response.getBody().get("code")).isEqualTo("FORBIDDEN");
+        assertThat(response.getBody().get("code")).isEqualTo("CSRF_REJECTED");
         assertThat(response.getBody().get("correlationId")).isNotNull();
     }
 

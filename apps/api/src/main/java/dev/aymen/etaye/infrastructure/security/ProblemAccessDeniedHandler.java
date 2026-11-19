@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.csrf.CsrfException;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -25,11 +26,15 @@ public class ProblemAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException)
             throws IOException, ServletException {
         String correlationId = CorrelationIdFilter.getCorrelationId(request);
+        boolean isCsrf = accessDeniedException instanceof CsrfException;
+        String code = isCsrf ? "CSRF_REJECTED" : "FORBIDDEN";
+        String detail = isCsrf ? "CSRF token is missing or invalid" : "Access denied";
+
         ApiProblem problem = ApiProblem.of(
                 HttpStatus.FORBIDDEN.value(),
                 "Forbidden",
-                "FORBIDDEN",
-                "Access denied",
+                code,
+                detail,
                 correlationId
         );
         problemResponseWriter.writeProblem(response, problem);

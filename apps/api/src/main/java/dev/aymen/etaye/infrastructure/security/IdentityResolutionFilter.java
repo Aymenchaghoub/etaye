@@ -68,52 +68,61 @@ public class IdentityResolutionFilter extends OncePerRequestFilter {
 
         if (auth != null && auth.isAuthenticated() && auth.getPrincipal() != null) {
             String principalStr = auth.getPrincipal().toString();
+            UUID accountId;
             try {
-                UUID accountId = UUID.fromString(principalStr);
-                Optional<AuthenticatedAccount> resolved;
-                try {
-                    resolved = identityLookupRepository.resolveAccountAndMemberships(accountId);
-                } catch (DataAccessResourceFailureException e) {
-                    String correlationId = CorrelationIdFilter.getCorrelationId(request);
-                    log.error("Database connection failure during identity resolution: class={}, code={}, correlationId={}",
-                            e.getClass().getName(), "SERVICE_UNAVAILABLE", correlationId);
-                    ApiProblem problem = ApiProblem.of(
-                            HttpStatus.SERVICE_UNAVAILABLE.value(),
-                            "Service Unavailable",
-                            "SERVICE_UNAVAILABLE",
-                            "Service temporarily unavailable",
-                            correlationId
-                    );
-                    problemResponseWriter.writeProblem(response, problem);
-                    return;
-                }
-
-                if (resolved.isEmpty() || !resolved.get().account().isActive()) {
-                    // Account suspended or revoked: delete persisted session, clear context, return 401
-                    HttpSession session = request.getSession(false);
-                    if (session != null) {
-                        String sessionId = session.getId();
-                        try {
-                            session.invalidate();
-                        } catch (Exception ignored) {}
-                        if (sessionRepository != null) {
-                            try {
-                                sessionRepository.deleteById(sessionId);
-                            } catch (Exception ignored) {}
-                        }
-                    }
-                    SecurityContextHolder.clearContext();
-                    authenticationEntryPoint.commence(request, response,
-                            new AuthenticationCredentialsNotFoundException("Account is inactive or does not exist"));
-                    return;
-                }
-
-                // Store resolved account with current memberships in request attribute
-                request.setAttribute(AUTHENTICATED_ACCOUNT_ATTR, resolved.get());
-
+                accountId = UUID.fromString(principalStr);
             } catch (IllegalArgumentException e) {
                 // Not a valid UUID principal: allow chain to proceed
+                filterChain.doFilter(request, response);
+                return;
             }
+
+            Optional<AuthenticatedAccount> resolved;
+            try {
+                resolved = identityLookupRepository.resolveAccountAndMemberships(accountId);
+            } catch (DataAccessResourceFailureException e) {
+                String correlationId = CorrelationIdFilter.getCorrelationId(request);
+                log.error("Database connection failure during identity resolution: class={}, code={}, correlationId={}",
+                        e.getClass().getName(), "SERVICE_UNAVAILABLE", correlationId);
+                ApiProblem problem = ApiProblem.of(
+                        HttpStatus.SERVICE_UNAVAILABLE.value(),
+                        "Service Unavailable",
+                        "SERVICE_UNAVAILABLE",
+                        "Service temporarily unavailable",
+                        correlationId
+                );
+                problemResponseWriter.writeProblem(response, problem);
+                return;
+            }
+
+            if (resolved.isEmpty() || !resolved.get().account().isActive()) {
+                // Account suspended or revoked: delete persisted session, clear context, return 401
+                HttpSession session = request.getSession(false);
+                if (session != null) {
+                    String sessionId = session.getId();
+                    try {
+                        session.invalidate();
+                    } catch (Exception ex) {
+                        log.warn("Session invalidation failed: class={}, code={}",
+                                ex.getClass().getName(), "SESSION_INVALIDATION_FAILED");
+                    }
+                    if (sessionRepository != null) {
+                        try {
+                            sessionRepository.deleteById(sessionId);
+                        } catch (Exception ex) {
+                            log.warn("Persisted session deletion failed: class={}, code={}",
+                                    ex.getClass().getName(), "SESSION_DELETION_FAILED");
+                        }
+                    }
+                }
+                SecurityContextHolder.clearContext();
+                authenticationEntryPoint.commence(request, response,
+                        new AuthenticationCredentialsNotFoundException("Account is inactive or does not exist"));
+                return;
+            }
+
+            // Store resolved account with current memberships in request attribute
+            request.setAttribute(AUTHENTICATED_ACCOUNT_ATTR, resolved.get());
         }
 
         filterChain.doFilter(request, response);

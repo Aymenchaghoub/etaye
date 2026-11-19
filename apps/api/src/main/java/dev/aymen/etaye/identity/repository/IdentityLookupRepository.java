@@ -3,6 +3,8 @@ package dev.aymen.etaye.identity.repository;
 import dev.aymen.etaye.identity.domain.AccountProfile;
 import dev.aymen.etaye.identity.domain.AuthenticatedAccount;
 import dev.aymen.etaye.identity.domain.MembershipGrant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -32,6 +34,8 @@ import java.util.UUID;
 @Repository
 public class IdentityLookupRepository {
 
+    private static final Logger log = LoggerFactory.getLogger(IdentityLookupRepository.class);
+
     private final JdbcTemplate jdbcTemplate;
 
     public IdentityLookupRepository(@Qualifier("identityJdbcTemplate") JdbcTemplate jdbcTemplate) {
@@ -60,7 +64,10 @@ public class IdentityLookupRepository {
             } catch (Exception e) {
                 try {
                     conn.rollback();
-                } catch (Exception ignored) {}
+                } catch (Exception ex) {
+                    log.warn("Rollback failed in identity context: class={}, code={}",
+                            ex.getClass().getName(), "IDENTITY_ROLLBACK_FAILED");
+                }
                 if (e instanceof RuntimeException re) {
                     throw re;
                 }
@@ -68,7 +75,10 @@ public class IdentityLookupRepository {
             } finally {
                 try {
                     conn.setAutoCommit(originalAutoCommit);
-                } catch (Exception ignored) {}
+                } catch (Exception ex) {
+                    log.warn("Reset autocommit failed in identity context: class={}, code={}",
+                            ex.getClass().getName(), "IDENTITY_SET_AUTOCOMMIT_FAILED");
+                }
             }
         });
     }

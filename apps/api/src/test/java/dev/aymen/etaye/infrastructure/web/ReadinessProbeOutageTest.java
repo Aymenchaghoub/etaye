@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -16,10 +17,12 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
+import java.time.Duration;
 import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -111,8 +114,12 @@ public class ReadinessProbeOutageTest {
     private int port;
 
     private RestClient client() {
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(Duration.ofSeconds(10));
+        requestFactory.setReadTimeout(Duration.ofSeconds(10));
         return RestClient.builder()
                 .baseUrl("http://localhost:" + port)
+                .requestFactory(requestFactory)
                 .build();
     }
 
@@ -133,17 +140,19 @@ public class ReadinessProbeOutageTest {
         OUTAGE_CONTAINER.getDockerClient().pauseContainerCmd(containerId).exec();
 
         try {
-            long startPause = System.currentTimeMillis();
-            ResponseEntity<Map> pausedResponse = client().get()
-                    .uri("/api/v1/probes/readiness")
-                    .retrieve()
-                    .onStatus(status -> status.value() == 503, (req, res) -> {})
-                    .toEntity(Map.class);
-            long pauseDuration = System.currentTimeMillis() - startPause;
+            assertTimeoutPreemptively(Duration.ofSeconds(10), () -> {
+                long startPause = System.currentTimeMillis();
+                ResponseEntity<Map> pausedResponse = client().get()
+                        .uri("/api/v1/probes/readiness")
+                        .retrieve()
+                        .onStatus(status -> status.value() == 503, (req, res) -> {})
+                        .toEntity(Map.class);
+                long pauseDuration = System.currentTimeMillis() - startPause;
 
-            assertThat(pausedResponse.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
-            assertThat(pausedResponse.getBody()).containsExactly(Map.entry("status", "DOWN"));
-            assertThat(pauseDuration).isLessThan(4500L);
+                assertThat(pausedResponse.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
+                assertThat(pausedResponse.getBody()).containsExactly(Map.entry("status", "DOWN"));
+                assertThat(pauseDuration).isLessThan(4500L);
+            });
         } finally {
             // Unpause to restore connectivity before stopped test
             OUTAGE_CONTAINER.getDockerClient().unpauseContainerCmd(containerId).exec();
@@ -160,16 +169,18 @@ public class ReadinessProbeOutageTest {
         // 3. Stop the container to simulate crash outage
         OUTAGE_CONTAINER.stop();
 
-        long startStop = System.currentTimeMillis();
-        ResponseEntity<Map> stoppedResponse = client().get()
-                .uri("/api/v1/probes/readiness")
-                .retrieve()
-                .onStatus(status -> status.value() == 503, (req, res) -> {})
-                .toEntity(Map.class);
-        long stopDuration = System.currentTimeMillis() - startStop;
+        assertTimeoutPreemptively(Duration.ofSeconds(10), () -> {
+            long startStop = System.currentTimeMillis();
+            ResponseEntity<Map> stoppedResponse = client().get()
+                    .uri("/api/v1/probes/readiness")
+                    .retrieve()
+                    .onStatus(status -> status.value() == 503, (req, res) -> {})
+                    .toEntity(Map.class);
+            long stopDuration = System.currentTimeMillis() - startStop;
 
-        assertThat(stoppedResponse.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
-        assertThat(stoppedResponse.getBody()).containsExactly(Map.entry("status", "DOWN"));
-        assertThat(stopDuration).isLessThan(4500L);
+            assertThat(stoppedResponse.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
+            assertThat(stoppedResponse.getBody()).containsExactly(Map.entry("status", "DOWN"));
+            assertThat(stopDuration).isLessThan(4500L);
+        });
     }
 }
