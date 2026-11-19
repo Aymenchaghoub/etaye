@@ -51,6 +51,10 @@ jobs:
         run: |
           node --check design/figma-background-study/code.js
           node --test design/figma-background-study/test-plugin.cjs
+      - name: Verify the entry-background Figma plugin
+        run: |
+          node --check design/entry-background/figma/runtime.js
+          node --test design/entry-background/figma/test-runtime.cjs
       - name: Validate planning documents and synthetic fixtures
         run: .venv-docs/bin/python tools/validate_docs.py --report reports/document-validation.json
       - name: Validate the documentary OpenAPI contract

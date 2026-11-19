@@ -12,3 +12,5 @@ python -m http.server 8765 --bind 127.0.0.1 --directory /tmp/etaye-entry-review
 ```
 
 Open `http://127.0.0.1:8765/entry-background.html` and choose a screen state and theme. HTTP allows Chromium to load the same-origin SVG mask. The generated copy contains the original navigation and assets so links to other screens can still be followed. The original snapshot remains the baseline for comparison.
+
+The [one-run Figma Desktop handoff](figma/README.md) packages the 20 desktop light-theme variants when the connector cannot write. It exports native evidence for review.
