@@ -49,6 +49,20 @@ public class SecurityIntegrationTest extends AbstractPostgresTest {
         }
     }
 
+    private boolean hasSessionRow(String sessionId) {
+        try (var conn = java.sql.DriverManager.getConnection(
+                POSTGRES_CONTAINER.getJdbcUrl(), OWNER_USER, OWNER_PASSWORD);
+             var ps = conn.prepareStatement("SELECT COUNT(*) FROM spring_session WHERE session_id = ?")) {
+            ps.setString(1, sessionId);
+            try (var rs = ps.executeQuery()) {
+                rs.next();
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Test
     @DisplayName("A2: Unauthenticated protected request gives 401, creates NO row in spring_session, and sends no Set-Cookie")
     void unauthenticatedRequestCreatesNoSession() {
@@ -90,6 +104,64 @@ public class SecurityIntegrationTest extends AbstractPostgresTest {
 
         assertThat(response.getStatusCode().value()).isIn(404, 405);
         assertThat(countSpringSessions()).isEqualTo(initialSessions);
+    }
+
+    @Test
+    @DisplayName("A4: A suspended account's old cookie on /csrf gives 200 with token and new session id, and old session is gone")
+    void suspendedAccountCookieOnCsrfIssuesNewSessionAndDeletesOldSession() {
+        String email = "csrf.suspended." + UUID.randomUUID() + "@example.com";
+        UUID accountId = createAccountAsOwner(email, "CSRF Suspended User");
+        UUID practiceId = createPracticeAsOwner("Cabinet CSRF Suspended");
+        createMembershipAsOwner(accountId, practiceId, "ACTIVE", new String[]{"CLINICAL_READ"});
+
+        // 1. Create a valid session
+        String oldSessionCookie = testSessionHelper.createSessionCookie(accountId);
+        String rawOldCookie = oldSessionCookie.replace("__Host-etaye-session=", "").split(";")[0];
+        String oldSessionId = new String(java.util.Base64.getDecoder().decode(rawOldCookie), java.nio.charset.StandardCharsets.UTF_8);
+        assertThat(hasSessionRow(oldSessionId)).isTrue();
+
+        // 2. Suspend account in database
+        try (var conn = java.sql.DriverManager.getConnection(
+                POSTGRES_CONTAINER.getJdbcUrl(), OWNER_USER, OWNER_PASSWORD);
+             var ps = conn.prepareStatement("UPDATE account SET state = 'SUSPENDED' WHERE id = ?")) {
+            ps.setObject(1, accountId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        // 3. Request /api/v1/csrf using the suspended account's cookie
+        ResponseEntity<Map> csrfResponse = client().get()
+                .uri("/api/v1/csrf")
+                .header(HttpHeaders.COOKIE, oldSessionCookie)
+                .retrieve()
+                .onStatus(status -> status.is4xxClientError(), (req, res) -> {})
+                .toEntity(Map.class);
+
+        // Must be 200 OK
+        assertThat(csrfResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(csrfResponse.getBody()).isNotNull();
+        assertThat(csrfResponse.getBody().get("headerName")).isEqualTo("X-CSRF-TOKEN");
+        assertThat(csrfResponse.getBody().get("token")).isNotNull();
+
+        // Must send a NEW Set-Cookie
+        String newSetCookie = csrfResponse.getHeaders().getFirst(HttpHeaders.SET_COOKIE);
+        assertThat(newSetCookie).isNotNull();
+        assertThat(newSetCookie).contains("__Host-etaye-session=");
+        assertThat(oldSessionCookie).doesNotContain(newSetCookie.split(";")[0]);
+
+        // Old session row must be physically gone from the database
+        assertThat(hasSessionRow(oldSessionId)).isFalse();
+
+        // 4. Using the same old cookie on a protected route still gives 401
+        ResponseEntity<Map> protectedResponse = client().get()
+                .uri("/api/v1/practices/" + practiceId + "/records/" + UUID.randomUUID())
+                .header(HttpHeaders.COOKIE, oldSessionCookie)
+                .retrieve()
+                .onStatus(status -> status.value() == 401, (req, res) -> {})
+                .toEntity(Map.class);
+
+        assertThat(protectedResponse.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
 
     @Test

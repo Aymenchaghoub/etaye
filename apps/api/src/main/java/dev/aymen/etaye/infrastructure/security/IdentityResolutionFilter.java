@@ -116,6 +116,10 @@ public class IdentityResolutionFilter extends OncePerRequestFilter {
                     }
                 }
                 SecurityContextHolder.clearContext();
+                if (isCsrfEndpoint(request)) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
                 authenticationEntryPoint.commence(request, response,
                         new AuthenticationCredentialsNotFoundException("Account is inactive or does not exist"));
                 return;
@@ -126,5 +130,14 @@ public class IdentityResolutionFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private boolean isCsrfEndpoint(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        String contextPath = request.getContextPath();
+        String path = (contextPath != null && !contextPath.isEmpty() && uri.startsWith(contextPath))
+                ? uri.substring(contextPath.length())
+                : uri;
+        return "/api/v1/csrf".equals(path);
     }
 }
