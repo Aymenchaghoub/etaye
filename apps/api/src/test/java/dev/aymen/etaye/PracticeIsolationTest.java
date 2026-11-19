@@ -444,27 +444,189 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("Direct SQL isolation test: RLS filters out rows of other practice at database level")
-    void checkDirectSqlIsolation() {
-        // Direct SQL insert for practice A
+    @DisplayName("C12 patient: Direct SQL isolation, invisible to other practice, counted with and without context")
+    void checkDirectSqlIsolation_patient() {
         UUID directPatientA = UUID.randomUUID();
         practiceTransaction.executeVoid(practiceAId, () -> {
             jdbcTemplate.update("INSERT INTO patient (id, practice_id, first_name, last_name, date_of_birth) VALUES (?, ?, 'Direct', 'A', ?)",
                     directPatientA, practiceAId, java.sql.Date.valueOf(java.time.LocalDate.of(1980, 1, 1)));
         });
 
-        // Direct SQL read from Practice B context must return empty
+        // 1. Direct SQL read from Practice B context must return empty (count = 0)
         List<UUID> foundInB = practiceTransaction.execute(practiceBId, () ->
                 jdbcTemplate.query("SELECT id FROM patient WHERE id = ?",
                         (rs, rowNum) -> (UUID) rs.getObject("id"),
                         directPatientA));
         assertThat(foundInB).isEmpty();
 
-        // Direct SQL read from Practice A context must return the row
+        Integer countInB = practiceTransaction.execute(practiceBId, () ->
+                jdbcTemplate.queryForObject("SELECT count(*) FROM patient WHERE id = ?", Integer.class, directPatientA));
+        assertThat(countInB).isEqualTo(0);
+
+        // 2. Read without context must return empty (count = 0)
+        Integer countNoContext = testTransactionHelper.executeWithoutContext(() ->
+                jdbcTemplate.queryForObject("SELECT count(*) FROM patient WHERE id = ?", Integer.class, directPatientA));
+        assertThat(countNoContext).isEqualTo(0);
+
+        // 3. Direct SQL read from Practice A context must return the row (count = 1)
         List<UUID> foundInA = practiceTransaction.execute(practiceAId, () ->
                 jdbcTemplate.query("SELECT id FROM patient WHERE id = ?",
                         (rs, rowNum) -> (UUID) rs.getObject("id"),
                         directPatientA));
         assertThat(foundInA).containsExactly(directPatientA);
+
+        Integer countInA = practiceTransaction.execute(practiceAId, () ->
+                jdbcTemplate.queryForObject("SELECT count(*) FROM patient WHERE id = ?", Integer.class, directPatientA));
+        assertThat(countInA).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("C12 patient_record: Direct SQL isolation, invisible to other practice, counted with and without context")
+    void checkDirectSqlIsolation_patientRecord() {
+        UUID directPatientA = UUID.randomUUID();
+        UUID directRecordA = UUID.randomUUID();
+        practiceTransaction.executeVoid(practiceAId, () -> {
+            jdbcTemplate.update("INSERT INTO patient (id, practice_id, first_name, last_name, date_of_birth) VALUES (?, ?, 'PatientRec', 'A', ?)",
+                    directPatientA, practiceAId, java.sql.Date.valueOf(java.time.LocalDate.of(1982, 3, 10)));
+            jdbcTemplate.update("INSERT INTO patient_record (id, practice_id, patient_id) VALUES (?, ?, ?)",
+                    directRecordA, practiceAId, directPatientA);
+        });
+
+        // 1. Practice B context: invisible, count = 0
+        List<UUID> foundInB = practiceTransaction.execute(practiceBId, () ->
+                jdbcTemplate.query("SELECT id FROM patient_record WHERE id = ?",
+                        (rs, rowNum) -> (UUID) rs.getObject("id"),
+                        directRecordA));
+        assertThat(foundInB).isEmpty();
+
+        Integer countInB = practiceTransaction.execute(practiceBId, () ->
+                jdbcTemplate.queryForObject("SELECT count(*) FROM patient_record WHERE id = ?", Integer.class, directRecordA));
+        assertThat(countInB).isEqualTo(0);
+
+        // 2. Without context: invisible, count = 0
+        Integer countNoContext = testTransactionHelper.executeWithoutContext(() ->
+                jdbcTemplate.queryForObject("SELECT count(*) FROM patient_record WHERE id = ?", Integer.class, directRecordA));
+        assertThat(countNoContext).isEqualTo(0);
+
+        // 3. Practice A context: visible, count = 1
+        List<UUID> foundInA = practiceTransaction.execute(practiceAId, () ->
+                jdbcTemplate.query("SELECT id FROM patient_record WHERE id = ?",
+                        (rs, rowNum) -> (UUID) rs.getObject("id"),
+                        directRecordA));
+        assertThat(foundInA).containsExactly(directRecordA);
+
+        Integer countInA = practiceTransaction.execute(practiceAId, () ->
+                jdbcTemplate.queryForObject("SELECT count(*) FROM patient_record WHERE id = ?", Integer.class, directRecordA));
+        assertThat(countInA).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("C12 idempotency_receipt: Direct SQL isolation, invisible to other practice, counted with and without context")
+    void checkDirectSqlIsolation_idempotencyReceipt() {
+        UUID directPatientA = UUID.randomUUID();
+        UUID directActor = UUID.randomUUID();
+        String keyDigest = "test-digest-" + UUID.randomUUID();
+        practiceTransaction.executeVoid(practiceAId, () -> {
+            jdbcTemplate.update("INSERT INTO patient (id, practice_id, first_name, last_name, date_of_birth) VALUES (?, ?, 'Idemp', 'A', ?)",
+                    directPatientA, practiceAId, java.sql.Date.valueOf(java.time.LocalDate.of(1979, 11, 20)));
+            jdbcTemplate.update("INSERT INTO idempotency_receipt (practice_id, actor_id, operation, key_digest, body_hash, response_resource, outcome, expires_at) " +
+                            "VALUES (?, ?, 'createPatient', ?, 'bodyhash', ?, 'SUCCESS', CURRENT_TIMESTAMP + interval '1 day')",
+                    practiceAId, directActor, keyDigest, directPatientA);
+        });
+
+        // 1. Practice B context: invisible, count = 0
+        List<UUID> foundInB = practiceTransaction.execute(practiceBId, () ->
+                jdbcTemplate.query("SELECT response_resource FROM idempotency_receipt WHERE key_digest = ?",
+                        (rs, rowNum) -> (UUID) rs.getObject("response_resource"),
+                        keyDigest));
+        assertThat(foundInB).isEmpty();
+
+        Integer countInB = practiceTransaction.execute(practiceBId, () ->
+                jdbcTemplate.queryForObject("SELECT count(*) FROM idempotency_receipt WHERE key_digest = ?", Integer.class, keyDigest));
+        assertThat(countInB).isEqualTo(0);
+
+        // 2. Without context: invisible, count = 0
+        Integer countNoContext = testTransactionHelper.executeWithoutContext(() ->
+                jdbcTemplate.queryForObject("SELECT count(*) FROM idempotency_receipt WHERE key_digest = ?", Integer.class, keyDigest));
+        assertThat(countNoContext).isEqualTo(0);
+
+        // 3. Practice A context: visible, count = 1
+        List<UUID> foundInA = practiceTransaction.execute(practiceAId, () ->
+                jdbcTemplate.query("SELECT response_resource FROM idempotency_receipt WHERE key_digest = ?",
+                        (rs, rowNum) -> (UUID) rs.getObject("response_resource"),
+                        keyDigest));
+        assertThat(foundInA).containsExactly(directPatientA);
+
+        Integer countInA = practiceTransaction.execute(practiceAId, () ->
+                jdbcTemplate.queryForObject("SELECT count(*) FROM idempotency_receipt WHERE key_digest = ?", Integer.class, keyDigest));
+        assertThat(countInA).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("C12 audit_event: WITH CHECK policy prevents mismatched practice_id and missing context; matching succeeds")
+    void checkDirectSqlIsolation_auditEvent() {
+        UUID actorId = UUID.randomUUID();
+        UUID resourceId = UUID.randomUUID();
+
+        // 1. Under Practice A context: inserting row with practice_id = practiceBId violates RLS WITH CHECK
+        assertThatThrownBy(() -> practiceTransaction.executeVoid(practiceAId, () -> {
+            jdbcTemplate.update("INSERT INTO audit_event (practice_id, actor_account_id, event_type, resource_type, resource_id, outcome, correlation_id, safe_metadata) " +
+                            "VALUES (?, ?, 'TEST_AUDIT', 'Patient', ?, 'SUCCESS', 'corr-denied', '{}'::jsonb)",
+                    practiceBId, actorId, resourceId);
+        })).isInstanceOf(DataAccessException.class)
+                .getRootCause()
+                .hasMessageFindingMatch("(?i).*row-level security policy.*");
+
+        // 2. Without context: inserting row violates RLS WITH CHECK
+        assertThatThrownBy(() -> testTransactionHelper.executeVoidWithoutContext(() -> {
+            jdbcTemplate.update("INSERT INTO audit_event (practice_id, actor_account_id, event_type, resource_type, resource_id, outcome, correlation_id, safe_metadata) " +
+                            "VALUES (?, ?, 'TEST_AUDIT', 'Patient', ?, 'SUCCESS', 'corr-no-ctx', '{}'::jsonb)",
+                    practiceAId, actorId, resourceId);
+        })).isInstanceOf(DataAccessException.class)
+                .getRootCause()
+                .hasMessageFindingMatch("(?i).*row-level security policy.*");
+
+        // 3. Under Practice A context: inserting row with practice_id = practiceAId succeeds
+        practiceTransaction.executeVoid(practiceAId, () -> {
+            int inserted = jdbcTemplate.update("INSERT INTO audit_event (practice_id, actor_account_id, event_type, resource_type, resource_id, outcome, correlation_id, safe_metadata) " +
+                            "VALUES (?, ?, 'TEST_AUDIT', 'Patient', ?, 'SUCCESS', 'corr-ok', '{}'::jsonb)",
+                    practiceAId, actorId, resourceId);
+            assertThat(inserted).isEqualTo(1);
+        });
+    }
+
+    @Test
+    @DisplayName("C12 outbox_event: WITH CHECK policy prevents mismatched practice_id and missing context; matching succeeds")
+    void checkDirectSqlIsolation_outboxEvent() {
+        UUID resourceId = UUID.randomUUID();
+        String dedupeKeyMismatch = "dedupe-mismatch-" + UUID.randomUUID();
+        String dedupeKeyNoCtx = "dedupe-noctx-" + UUID.randomUUID();
+        String dedupeKeyOk = "dedupe-ok-" + UUID.randomUUID();
+
+        // 1. Under Practice A context: inserting row with practice_id = practiceBId violates RLS WITH CHECK
+        assertThatThrownBy(() -> practiceTransaction.executeVoid(practiceAId, () -> {
+            jdbcTemplate.update("INSERT INTO outbox_event (practice_id, event_type, resource_id, resource_version, dedupe_key, safe_payload) " +
+                            "VALUES (?, 'TEST_OUTBOX', ?, 1, ?, '{\"test\":true}'::jsonb)",
+                    practiceBId, resourceId, dedupeKeyMismatch);
+        })).isInstanceOf(DataAccessException.class)
+                .getRootCause()
+                .hasMessageFindingMatch("(?i).*row-level security policy.*");
+
+        // 2. Without context: inserting row violates RLS WITH CHECK
+        assertThatThrownBy(() -> testTransactionHelper.executeVoidWithoutContext(() -> {
+            jdbcTemplate.update("INSERT INTO outbox_event (practice_id, event_type, resource_id, resource_version, dedupe_key, safe_payload) " +
+                            "VALUES (?, 'TEST_OUTBOX', ?, 1, ?, '{\"test\":true}'::jsonb)",
+                    practiceAId, resourceId, dedupeKeyNoCtx);
+        })).isInstanceOf(DataAccessException.class)
+                .getRootCause()
+                .hasMessageFindingMatch("(?i).*row-level security policy.*");
+
+        // 3. Under Practice A context: inserting row with practice_id = practiceAId succeeds
+        practiceTransaction.executeVoid(practiceAId, () -> {
+            int inserted = jdbcTemplate.update("INSERT INTO outbox_event (practice_id, event_type, resource_id, resource_version, dedupe_key, safe_payload) " +
+                            "VALUES (?, 'TEST_OUTBOX', ?, 1, ?, '{\"test\":true}'::jsonb)",
+                    practiceAId, resourceId, dedupeKeyOk);
+            assertThat(inserted).isEqualTo(1);
+        });
     }
 }
