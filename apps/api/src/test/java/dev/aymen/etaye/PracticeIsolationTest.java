@@ -31,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -77,7 +78,7 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("C8: Verify runtime role catalog invariants, ownership, privileges, and FORCE RLS")
+    @DisplayName("C8: Verify runtime and identity role catalog invariants, ownership, privileges, and FORCE RLS")
     void checkC8_RuntimeRoleCatalogVerification() {
         // 1. Current user and session user from HTTP datasource
         jdbcTemplate.query("SELECT current_user, session_user", rs -> {
@@ -98,82 +99,144 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
                 "SELECT pg_has_role('etaye_runtime', 'etaye_identity', 'member')", Boolean.class);
         assertFalse(memberOfIdentity, "etaye_runtime must not be a member of etaye_identity");
 
-        // Verify runtime role is non-superuser and has NO BYPASSRLS
-        jdbcTemplate.query("SELECT rolsuper, rolbypassrls FROM pg_roles WHERE rolname = 'etaye_runtime'", rs -> {
-            assertFalse(rs.getBoolean("rolsuper"), "etaye_runtime must not be superuser");
-            assertFalse(rs.getBoolean("rolbypassrls"), "etaye_runtime must not have BYPASSRLS");
-        });
+        // B4(3): Full membership closure of etaye_runtime and etaye_identity (pg_auth_members recursively)
+        // must contain no superuser, no BYPASSRLS role, and no owner role
+        for (String roleName : List.of("etaye_runtime", "etaye_identity")) {
+            jdbcTemplate.query("SELECT rolsuper, rolbypassrls FROM pg_roles WHERE rolname = ?", ps -> ps.setString(1, roleName), rs -> {
+                assertFalse(rs.getBoolean("rolsuper"), roleName + " must not have rolsuper");
+                assertFalse(rs.getBoolean("rolbypassrls"), roleName + " must not have rolbypassrls");
+            });
 
-        // 3. Ownership of every expected object by schema with cardinality (all expected tables found)
+            String closureSql = """
+                    WITH RECURSIVE closure(role_oid) AS (
+                        SELECT roleid FROM pg_auth_members WHERE member = ?::regrole
+                        UNION
+                        SELECT m.roleid FROM pg_auth_members m JOIN closure c ON m.member = c.role_oid
+                    )
+                    SELECT r.rolname, r.rolsuper, r.rolbypassrls FROM closure c JOIN pg_roles r ON c.role_oid = r.oid
+                    """;
+            List<Map<String, Object>> inheritedRoles = jdbcTemplate.queryForList(closureSql, roleName);
+            for (Map<String, Object> inherited : inheritedRoles) {
+                String inheritedName = (String) inherited.get("rolname");
+                assertFalse((Boolean) inherited.get("rolsuper"), "Inherited role " + inheritedName + " in closure of " + roleName + " must not have rolsuper");
+                assertFalse((Boolean) inherited.get("rolbypassrls"), "Inherited role " + inheritedName + " in closure of " + roleName + " must not have rolbypassrls");
+                assertNotEquals("etaye_owner", inheritedName, roleName + " closure must not contain etaye_owner");
+                assertNotEquals("postgres", inheritedName, roleName + " closure must not contain postgres");
+            }
+        }
+
+        // B4(4): Ownership and both RLS flags (relrowsecurity AND relforcerowsecurity) using schema-qualified to_regclass
         List<String> expectedTables = List.of(
                 "practice", "account", "membership",
                 "patient", "patient_record", "audit_event", "outbox_event", "idempotency_receipt",
                 "spring_session", "spring_session_attributes"
         );
-        List<Map<String, Object>> publicTables = jdbcTemplate.queryForList(
-                "SELECT tablename, tableowner FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename");
-        List<String> foundTables = publicTables.stream()
-                .map(row -> (String) row.get("tablename"))
-                .toList();
+        List<String> rlsTables = List.of("account", "membership", "patient", "patient_record", "audit_event", "outbox_event", "idempotency_receipt");
 
-        assertThat(foundTables).containsAll(expectedTables);
-        for (Map<String, Object> tableRow : publicTables) {
-            String tableName = (String) tableRow.get("tablename");
-            String owner = (String) tableRow.get("tableowner");
-            if (expectedTables.contains(tableName)) {
-                assertEquals("etaye_owner", owner, "Table " + tableName + " must be owned by etaye_owner");
+        for (String tbl : expectedTables) {
+            String qualifiedTable = "public." + tbl;
+            jdbcTemplate.query("SELECT c.relrowsecurity, c.relforcerowsecurity, r.rolname " +
+                            "FROM pg_class c JOIN pg_roles r ON c.relowner = r.oid " +
+                            "WHERE c.oid = to_regclass(?)",
+                    ps -> ps.setString(1, qualifiedTable),
+                    rs -> {
+                        assertEquals("etaye_owner", rs.getString("rolname"), "Table " + qualifiedTable + " must be owned by etaye_owner");
+                        if (rlsTables.contains(tbl)) {
+                            assertTrue(rs.getBoolean("relrowsecurity"), "relrowsecurity must be true on " + qualifiedTable);
+                            assertTrue(rs.getBoolean("relforcerowsecurity"), "relforcerowsecurity (FORCE RLS) must be true on " + qualifiedTable);
+                        }
+                    });
+        }
+
+        // B4(2): No TRUNCATE, REFERENCES, or TRIGGER privilege on any table for runtime or identity
+        for (String tbl : expectedTables) {
+            String qualifiedTable = "public." + tbl;
+            assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', to_regclass(?), 'TRUNCATE')", Boolean.class, qualifiedTable),
+                    "etaye_runtime must not have TRUNCATE on " + qualifiedTable);
+            assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', to_regclass(?), 'REFERENCES')", Boolean.class, qualifiedTable),
+                    "etaye_runtime must not have REFERENCES on " + qualifiedTable);
+            assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', to_regclass(?), 'TRIGGER')", Boolean.class, qualifiedTable),
+                    "etaye_runtime must not have TRIGGER on " + qualifiedTable);
+
+            assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_identity', to_regclass(?), 'TRUNCATE')", Boolean.class, qualifiedTable),
+                    "etaye_identity must not have TRUNCATE on " + qualifiedTable);
+            assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_identity', to_regclass(?), 'REFERENCES')", Boolean.class, qualifiedTable),
+                    "etaye_identity must not have REFERENCES on " + qualifiedTable);
+            assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_identity', to_regclass(?), 'TRIGGER')", Boolean.class, qualifiedTable),
+                    "etaye_identity must not have TRIGGER on " + qualifiedTable);
+        }
+
+        // B4(1) & B4(5): Column privileges for every column of every table from runtime datasource
+        List<Map<String, Object>> columns = jdbcTemplate.queryForList(
+                "SELECT table_name, column_name FROM information_schema.columns WHERE table_schema = 'public' ORDER BY table_name, ordinal_position");
+        for (Map<String, Object> colRow : columns) {
+            String table = (String) colRow.get("table_name");
+            String col = (String) colRow.get("column_name");
+            String qualifiedTable = "public." + table;
+
+            // Runtime role column privileges
+            boolean rtSelect = jdbcTemplate.queryForObject("SELECT has_column_privilege('etaye_runtime', to_regclass(?), ?, 'SELECT')", Boolean.class, qualifiedTable, col);
+            boolean rtInsert = jdbcTemplate.queryForObject("SELECT has_column_privilege('etaye_runtime', to_regclass(?), ?, 'INSERT')", Boolean.class, qualifiedTable, col);
+            boolean rtUpdate = jdbcTemplate.queryForObject("SELECT has_column_privilege('etaye_runtime', to_regclass(?), ?, 'UPDATE')", Boolean.class, qualifiedTable, col);
+            boolean rtReferences = jdbcTemplate.queryForObject("SELECT has_column_privilege('etaye_runtime', to_regclass(?), ?, 'REFERENCES')", Boolean.class, qualifiedTable, col);
+
+            assertFalse(rtReferences, "etaye_runtime must never have REFERENCES on " + qualifiedTable + "." + col);
+
+            if (List.of("patient", "patient_record", "idempotency_receipt").contains(table)) {
+                assertTrue(rtSelect, "etaye_runtime should have SELECT on " + qualifiedTable + "." + col);
+                assertTrue(rtInsert, "etaye_runtime should have INSERT on " + qualifiedTable + "." + col);
+                assertFalse(rtUpdate, "etaye_runtime must not have UPDATE on " + qualifiedTable + "." + col);
+            } else if (List.of("audit_event", "outbox_event").contains(table)) {
+                assertFalse(rtSelect, "etaye_runtime must not have SELECT on " + qualifiedTable + "." + col);
+                assertTrue(rtInsert, "etaye_runtime should have INSERT on " + qualifiedTable + "." + col);
+                assertFalse(rtUpdate, "etaye_runtime must not have UPDATE on " + qualifiedTable + "." + col);
+            } else if (List.of("spring_session", "spring_session_attributes").contains(table)) {
+                assertTrue(rtSelect, "etaye_runtime should have SELECT on " + qualifiedTable + "." + col);
+                assertTrue(rtInsert, "etaye_runtime should have INSERT on " + qualifiedTable + "." + col);
+                assertTrue(rtUpdate, "etaye_runtime should have UPDATE on " + qualifiedTable + "." + col);
+            } else {
+                // practice, account, membership: NO column privileges for runtime role
+                assertFalse(rtSelect, "etaye_runtime must not have SELECT on " + qualifiedTable + "." + col);
+                assertFalse(rtInsert, "etaye_runtime must not have INSERT on " + qualifiedTable + "." + col);
+                assertFalse(rtUpdate, "etaye_runtime must not have UPDATE on " + qualifiedTable + "." + col);
+            }
+
+            // password_hash must NEVER have any privilege under etaye_runtime or etaye_identity
+            if ("password_hash".equals(col)) {
+                assertFalse(rtSelect, "etaye_runtime must NEVER have SELECT on password_hash");
+                assertFalse(rtInsert, "etaye_runtime must NEVER have INSERT on password_hash");
+                assertFalse(rtUpdate, "etaye_runtime must NEVER have UPDATE on password_hash");
+                boolean idSelectPw = jdbcTemplate.queryForObject("SELECT has_column_privilege('etaye_identity', to_regclass(?), ?, 'SELECT')", Boolean.class, qualifiedTable, col);
+                assertFalse(idSelectPw, "etaye_identity must NEVER have SELECT on password_hash");
+            }
+
+            // Identity role privileges (B4(5))
+            boolean idSelect = jdbcTemplate.queryForObject("SELECT has_column_privilege('etaye_identity', to_regclass(?), ?, 'SELECT')", Boolean.class, qualifiedTable, col);
+            boolean idInsert = jdbcTemplate.queryForObject("SELECT has_column_privilege('etaye_identity', to_regclass(?), ?, 'INSERT')", Boolean.class, qualifiedTable, col);
+            boolean idUpdate = jdbcTemplate.queryForObject("SELECT has_column_privilege('etaye_identity', to_regclass(?), ?, 'UPDATE')", Boolean.class, qualifiedTable, col);
+            boolean idReferences = jdbcTemplate.queryForObject("SELECT has_column_privilege('etaye_identity', to_regclass(?), ?, 'REFERENCES')", Boolean.class, qualifiedTable, col);
+
+            assertFalse(idInsert, "etaye_identity must never have INSERT on " + qualifiedTable + "." + col);
+            assertFalse(idUpdate, "etaye_identity must never have UPDATE on " + qualifiedTable + "." + col);
+            assertFalse(idReferences, "etaye_identity must never have REFERENCES on " + qualifiedTable + "." + col);
+
+            if ("account".equals(table)) {
+                if (List.of("id", "normalized_email", "display_name", "state", "locale", "created_at", "updated_at").contains(col)) {
+                    assertTrue(idSelect, "etaye_identity should have SELECT on account." + col);
+                } else {
+                    assertFalse(idSelect, "etaye_identity must not have SELECT on account." + col);
+                }
+            } else if ("membership".equals(table)) {
+                if (List.of("id", "account_id", "practice_id", "state", "capabilities", "created_at", "updated_at").contains(col)) {
+                    assertTrue(idSelect, "etaye_identity should have SELECT on membership." + col);
+                } else {
+                    assertFalse(idSelect, "etaye_identity must not have SELECT on membership." + col);
+                }
+            } else {
+                // All other tables: etaye_identity has NO SELECT on any column
+                assertFalse(idSelect, "etaye_identity must not have SELECT on " + qualifiedTable + "." + col);
             }
         }
-
-        // 4. Verify both RLS flags (relrowsecurity AND relforcerowsecurity) on every practice-owned table
-        List<String> rlsTables = List.of("account", "membership", "patient", "patient_record", "audit_event", "outbox_event", "idempotency_receipt");
-        for (String tbl : rlsTables) {
-            jdbcTemplate.query("SELECT relrowsecurity, relforcerowsecurity FROM pg_class WHERE relname = ?", ps -> ps.setString(1, tbl), rs -> {
-                assertTrue(rs.getBoolean("relrowsecurity"), "relrowsecurity (RLS enabled) must be true on " + tbl);
-                assertTrue(rs.getBoolean("relforcerowsecurity"), "relforcerowsecurity (FORCE RLS) must be true on " + tbl);
-            });
-        }
-
-        // 5. Effective table and column privileges for every table under etaye_runtime
-        // patient & patient_record: SELECT, INSERT only (no UPDATE, no DELETE)
-        assertTrue(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'patient', 'SELECT')", Boolean.class));
-        assertTrue(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'patient', 'INSERT')", Boolean.class));
-        assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'patient', 'UPDATE')", Boolean.class));
-        assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'patient', 'DELETE')", Boolean.class));
-
-        assertTrue(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'patient_record', 'SELECT')", Boolean.class));
-        assertTrue(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'patient_record', 'INSERT')", Boolean.class));
-        assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'patient_record', 'UPDATE')", Boolean.class));
-        assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'patient_record', 'DELETE')", Boolean.class));
-
-        // idempotency_receipt: SELECT, INSERT only
-        assertTrue(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'idempotency_receipt', 'SELECT')", Boolean.class));
-        assertTrue(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'idempotency_receipt', 'INSERT')", Boolean.class));
-        assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'idempotency_receipt', 'UPDATE')", Boolean.class));
-        assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'idempotency_receipt', 'DELETE')", Boolean.class));
-
-        // audit_event & outbox_event: INSERT only (no SELECT, no UPDATE, no DELETE)
-        assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'audit_event', 'SELECT')", Boolean.class));
-        assertTrue(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'audit_event', 'INSERT')", Boolean.class));
-        assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'audit_event', 'UPDATE')", Boolean.class));
-        assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'audit_event', 'DELETE')", Boolean.class));
-
-        assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'outbox_event', 'SELECT')", Boolean.class));
-        assertTrue(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'outbox_event', 'INSERT')", Boolean.class));
-        assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'outbox_event', 'UPDATE')", Boolean.class));
-        assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'outbox_event', 'DELETE')", Boolean.class));
-
-        // practice, account, membership: NO privileges for runtime role
-        assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'practice', 'SELECT')", Boolean.class));
-        assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'practice', 'INSERT')", Boolean.class));
-        assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'account', 'SELECT')", Boolean.class));
-        assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'account', 'INSERT')", Boolean.class));
-        assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'membership', 'SELECT')", Boolean.class));
-        assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'membership', 'INSERT')", Boolean.class));
-
-        // Column privileges: password_hash never selectable by runtime role
-        assertFalse(jdbcTemplate.queryForObject(
-                "SELECT has_column_privilege('etaye_runtime', 'account', 'password_hash', 'SELECT')", Boolean.class));
     }
 
     @Test
