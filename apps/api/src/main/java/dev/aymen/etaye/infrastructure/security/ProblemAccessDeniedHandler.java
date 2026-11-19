@@ -1,7 +1,7 @@
 package dev.aymen.etaye.infrastructure.security;
 
-import tools.jackson.databind.ObjectMapper;
 import dev.aymen.etaye.infrastructure.error.ApiProblem;
+import dev.aymen.etaye.infrastructure.error.ProblemResponseWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,31 +15,23 @@ import java.io.IOException;
 @Component
 public class ProblemAccessDeniedHandler implements AccessDeniedHandler {
 
-    private final ObjectMapper objectMapper;
+    private final ProblemResponseWriter problemResponseWriter;
 
-    public ProblemAccessDeniedHandler(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
+    public ProblemAccessDeniedHandler(ProblemResponseWriter problemResponseWriter) {
+        this.problemResponseWriter = problemResponseWriter;
     }
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException)
             throws IOException, ServletException {
         String correlationId = CorrelationIdFilter.getCorrelationId(request);
-        String detail = accessDeniedException.getMessage() != null && !accessDeniedException.getMessage().isBlank()
-                ? accessDeniedException.getMessage()
-                : "Access denied";
-
         ApiProblem problem = ApiProblem.of(
                 HttpStatus.FORBIDDEN.value(),
                 "Forbidden",
                 "FORBIDDEN",
-                detail,
+                "Access denied",
                 correlationId
         );
-
-        response.setStatus(HttpStatus.FORBIDDEN.value());
-        response.setContentType("application/problem+json");
-        response.setCharacterEncoding("UTF-8");
-        objectMapper.writeValue(response.getWriter(), problem);
+        problemResponseWriter.writeProblem(response, problem);
     }
 }

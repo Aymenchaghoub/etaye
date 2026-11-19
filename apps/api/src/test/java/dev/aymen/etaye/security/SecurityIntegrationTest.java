@@ -91,8 +91,8 @@ public class SecurityIntegrationTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("Security: Re-resolving suspended account rejects request with 403 Forbidden")
-    void suspendedAccountReResolutionDeniesAccess() {
+    @DisplayName("B6: Suspending account deletes session; request denied with 401; reactivating account with same cookie still denied")
+    void suspendedAccountInvalidatesSessionAndDeniesAccessEvenIfReactivated() {
         String email = "suspended." + UUID.randomUUID() + "@example.com";
         UUID accountId = createAccountAsOwner(email, "Suspended User", "hash");
         UUID practiceId = createPracticeAsOwner("Cabinet Suspendu");
@@ -101,7 +101,7 @@ public class SecurityIntegrationTest extends AbstractPostgresTest {
         // Create valid session
         String sessionCookie = testSessionHelper.createSessionCookie(accountId);
 
-        // Suspend the account in database
+        // 1. Suspend the account in database
         try (var conn = java.sql.DriverManager.getConnection(
                 POSTGRES_CONTAINER.getJdbcUrl(), OWNER_USER, OWNER_PASSWORD);
              var ps = conn.prepareStatement("UPDATE account SET state = 'SUSPENDED' WHERE id = ?")) {
@@ -111,20 +111,43 @@ public class SecurityIntegrationTest extends AbstractPostgresTest {
             throw new RuntimeException(e);
         }
 
-        // Subsequent request using existing session cookie must be rejected on-the-fly
-        ResponseEntity<Map> response = client().get()
+        // 2. Request using existing session cookie must be rejected with 401 and session deleted
+        ResponseEntity<Map> response1 = client().get()
                 .uri("/api/v1/practices/" + practiceId + "/records/" + UUID.randomUUID())
                 .header(HttpHeaders.COOKIE, sessionCookie)
                 .retrieve()
-                .onStatus(status -> status.value() == 403, (req, res) -> {})
+                .onStatus(status -> status.value() == 401, (req, res) -> {})
                 .toEntity(Map.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-        assertThat(response.getHeaders().getContentType().toString()).contains("application/problem+json");
-        Map<String, Object> body = response.getBody();
-        assertThat(body).isNotNull();
-        assertThat(body.get("status")).isEqualTo(403);
-        assertThat(body.get("code")).isEqualTo("FORBIDDEN");
-        assertThat(body.get("correlationId")).isNotNull();
+        assertThat(response1.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        assertThat(response1.getHeaders().getContentType().toString()).contains("application/problem+json");
+        Map<String, Object> body1 = response1.getBody();
+        assertThat(body1).isNotNull();
+        assertThat(body1.get("status")).isEqualTo(401);
+        assertThat(body1.get("code")).isEqualTo("UNAUTHORIZED");
+        assertThat(body1.get("correlationId")).isNotNull();
+
+        // 3. Reactivate the account in database
+        try (var conn = java.sql.DriverManager.getConnection(
+                POSTGRES_CONTAINER.getJdbcUrl(), OWNER_USER, OWNER_PASSWORD);
+             var ps = conn.prepareStatement("UPDATE account SET state = 'ACTIVE' WHERE id = ?")) {
+            ps.setObject(1, accountId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        // 4. Request with SAME cookie must STILL be denied with 401 because session was physically deleted
+        ResponseEntity<Map> response2 = client().get()
+                .uri("/api/v1/practices/" + practiceId + "/records/" + UUID.randomUUID())
+                .header(HttpHeaders.COOKIE, sessionCookie)
+                .retrieve()
+                .onStatus(status -> status.value() == 401, (req, res) -> {})
+                .toEntity(Map.class);
+
+        assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        assertThat(response2.getBody()).isNotNull();
+        assertThat(response2.getBody().get("status")).isEqualTo(401);
+        assertThat(response2.getBody().get("code")).isEqualTo("UNAUTHORIZED");
     }
 }

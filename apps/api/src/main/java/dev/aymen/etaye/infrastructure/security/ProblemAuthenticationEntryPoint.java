@@ -1,7 +1,7 @@
 package dev.aymen.etaye.infrastructure.security;
 
-import tools.jackson.databind.ObjectMapper;
 import dev.aymen.etaye.infrastructure.error.ApiProblem;
+import dev.aymen.etaye.infrastructure.error.ProblemResponseWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,10 +15,10 @@ import java.io.IOException;
 @Component
 public class ProblemAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    private final ObjectMapper objectMapper;
+    private final ProblemResponseWriter problemResponseWriter;
 
-    public ProblemAuthenticationEntryPoint(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
+    public ProblemAuthenticationEntryPoint(ProblemResponseWriter problemResponseWriter) {
+        this.problemResponseWriter = problemResponseWriter;
     }
 
     @Override
@@ -32,10 +32,6 @@ public class ProblemAuthenticationEntryPoint implements AuthenticationEntryPoint
                 "Authentication required or session expired",
                 correlationId
         );
-
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.setContentType("application/problem+json");
-        response.setCharacterEncoding("UTF-8");
-        objectMapper.writeValue(response.getWriter(), problem);
+        problemResponseWriter.writeProblem(response, problem);
     }
 }

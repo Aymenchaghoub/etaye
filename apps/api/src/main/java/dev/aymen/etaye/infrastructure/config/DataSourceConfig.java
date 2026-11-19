@@ -20,9 +20,11 @@ public class DataSourceConfig {
             @Value("${spring.datasource.url}") String url,
             @Value("${spring.datasource.username}") String username,
             @Value("${spring.datasource.password}") String password,
-            @Value("${spring.datasource.hikari.maximum-pool-size:1}") int maxPoolSize,
-            @Value("${spring.datasource.hikari.minimum-idle:1}") int minIdle,
-            @Value("${spring.datasource.hikari.connection-timeout:2500}") long connectionTimeout) {
+            @Value("${spring.datasource.hikari.maximum-pool-size:10}") int maxPoolSize,
+            @Value("${spring.datasource.hikari.minimum-idle:2}") int minIdle,
+            @Value("${spring.datasource.hikari.connection-timeout:2500}") long connectionTimeout,
+            @Value("${spring.datasource.hikari.data-source-properties.connectTimeout:3}") int connectTimeout,
+            @Value("${spring.datasource.hikari.data-source-properties.socketTimeout:3}") int socketTimeout) {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(url);
         config.setUsername(username);
@@ -31,6 +33,9 @@ public class DataSourceConfig {
         config.setMinimumIdle(minIdle);
         config.setConnectionTimeout(connectionTimeout);
         config.setValidationTimeout(1500);
+        config.addDataSourceProperty("connectTimeout", String.valueOf(connectTimeout));
+        config.addDataSourceProperty("socketTimeout", String.valueOf(socketTimeout));
+        config.addDataSourceProperty("cancelSignalTimeout", "1");
         config.setPoolName("HikariPool-Runtime");
         return new HikariDataSource(config);
     }
@@ -45,15 +50,20 @@ public class DataSourceConfig {
     public DataSource identityDataSource(
             @Value("${spring.datasource.url}") String url,
             @Value("${etaye.identity.datasource.username:etaye_identity}") String username,
-            @Value("${etaye.identity.datasource.password}") String password) {
+            @Value("${etaye.identity.datasource.password}") String password,
+            @Value("${etaye.identity.datasource.hikari.maximum-pool-size:5}") int maxPoolSize,
+            @Value("${etaye.identity.datasource.hikari.minimum-idle:1}") int minIdle,
+            @Value("${etaye.identity.datasource.hikari.connection-timeout:2500}") long connectionTimeout) {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(url);
         config.setUsername(username);
         config.setPassword(password);
-        config.setMaximumPoolSize(5);
-        config.setMinimumIdle(1);
-        config.setConnectionTimeout(2500);
+        config.setMaximumPoolSize(maxPoolSize);
+        config.setMinimumIdle(minIdle);
+        config.setConnectionTimeout(connectionTimeout);
         config.setValidationTimeout(1500);
+        config.addDataSourceProperty("connectTimeout", "3");
+        config.addDataSourceProperty("socketTimeout", "3");
         config.setPoolName("HikariPool-Identity");
         return new HikariDataSource(config);
     }

@@ -460,7 +460,7 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         String csrfToken = fetchCsrfToken(sessionCookieClinicalA);
         PatientEdit edit = new PatientEdit("Short", "Key", LocalDate.of(1991, 1, 1), null, null);
 
-        // Idempotency-Key with < 16 characters
+        // 1. Idempotency-Key with < 16 characters
         ResponseEntity<Map> response = client().post()
                 .uri("/api/v1/practices/" + practiceA + "/patients")
                 .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
@@ -473,8 +473,34 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
                 .toEntity(Map.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getHeaders().getContentType().toString()).contains("application/problem+json");
+        assertThat(response.getBody().get("type")).isEqualTo("about:blank");
+        assertThat(response.getBody().get("title")).isEqualTo("Bad Request");
+        assertThat(response.getBody().get("status")).isEqualTo(400);
+        assertThat(response.getBody().get("detail")).isEqualTo("Invalid idempotency key");
         assertThat(response.getBody().get("code")).isEqualTo("INVALID_IDEMPOTENCY_KEY");
         assertThat(response.getBody().get("correlationId")).isNotNull();
+
+        String bodyString = response.getBody().toString();
+        assertThat(bodyString).doesNotContain("Exception");
+        assertThat(bodyString).doesNotContain("stackTrace");
+        assertThat(bodyString).doesNotContain("org.postgresql");
+        assertThat(bodyString).doesNotContain("SELECT ");
+
+        // 2. Idempotency-Key missing entirely
+        ResponseEntity<Map> missingHeaderResponse = client().post()
+                .uri("/api/v1/practices/" + practiceA + "/patients")
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .header("X-CSRF-TOKEN", csrfToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(edit)
+                .retrieve()
+                .onStatus(status -> status.value() == 400, (req, res) -> {})
+                .toEntity(Map.class);
+
+        assertThat(missingHeaderResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(missingHeaderResponse.getHeaders().getContentType().toString()).contains("application/problem+json");
+        assertThat(missingHeaderResponse.getBody().get("code")).isEqualTo("INVALID_IDEMPOTENCY_KEY");
     }
 
     @Test
@@ -699,5 +725,393 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
         assertThat(response.getBody().get("code")).isEqualTo("FORBIDDEN");
         assertThat(response.getBody().get("correlationId")).isNotNull();
+    }
+
+    @Test
+    @DisplayName("B1: Schema validation failure (missing required field) returns 400 Problem with fieldErrors")
+    void b1_schemaValidationFailure_missingRequiredField_returns400WithFieldErrors() {
+        String csrfToken = fetchCsrfToken(sessionCookieClinicalA);
+        String idempotencyKey = "key-val-req-" + UUID.randomUUID();
+
+        // JSON missing required firstName
+        String jsonPayload = """
+                {
+                    "lastName": "Dupont",
+                    "dateOfBirth": "1985-05-20"
+                }
+                """;
+
+        ResponseEntity<Map> response = client().post()
+                .uri("/api/v1/practices/" + practiceA + "/patients")
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .header("X-CSRF-TOKEN", csrfToken)
+                .header("Idempotency-Key", idempotencyKey)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(jsonPayload)
+                .retrieve()
+                .onStatus(status -> status.value() == 400, (req, res) -> {})
+                .toEntity(Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getHeaders().getContentType().toString()).contains("application/problem+json");
+        assertThat(response.getBody().get("code")).isEqualTo("VALIDATION_FAILED");
+        assertThat(response.getBody().get("fieldErrors")).isNotNull();
+
+        @SuppressWarnings("unchecked")
+        java.util.List<Map<String, Object>> fieldErrors = (java.util.List<Map<String, Object>>) response.getBody().get("fieldErrors");
+        assertThat(fieldErrors).anyMatch(fe -> "firstName".equals(fe.get("field")));
+    }
+
+    @Test
+    @DisplayName("B1: Schema validation failure (field exceeding max length) returns 400 Problem with fieldErrors")
+    void b1_schemaValidationFailure_fieldExceedingMaxLength_returns400WithFieldErrors() {
+        String csrfToken = fetchCsrfToken(sessionCookieClinicalA);
+        String idempotencyKey = "key-val-len-" + UUID.randomUUID();
+
+        String overLongName = "A".repeat(101);
+        PatientEdit edit = new PatientEdit(overLongName, "Dupont", LocalDate.of(1985, 5, 20), null, null);
+
+        ResponseEntity<Map> response = client().post()
+                .uri("/api/v1/practices/" + practiceA + "/patients")
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .header("X-CSRF-TOKEN", csrfToken)
+                .header("Idempotency-Key", idempotencyKey)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(edit)
+                .retrieve()
+                .onStatus(status -> status.value() == 400, (req, res) -> {})
+                .toEntity(Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getHeaders().getContentType().toString()).contains("application/problem+json");
+        assertThat(response.getBody().get("code")).isEqualTo("VALIDATION_FAILED");
+        assertThat(response.getBody().get("fieldErrors")).isNotNull();
+
+        @SuppressWarnings("unchecked")
+        java.util.List<Map<String, Object>> fieldErrors = (java.util.List<Map<String, Object>>) response.getBody().get("fieldErrors");
+        assertThat(fieldErrors).anyMatch(fe -> "firstName".equals(fe.get("field")));
+    }
+
+    @Test
+    @DisplayName("B1: Business validation failure (future dateOfBirth) returns 422 Unprocessable Content with fieldErrors")
+    void b1_businessValidation_futureBirthDate_returns422WithFieldErrors() {
+        String csrfToken = fetchCsrfToken(sessionCookieClinicalA);
+        String idempotencyKey = "key-val-future-" + UUID.randomUUID();
+
+        PatientEdit edit = new PatientEdit(
+                "Future",
+                "Baby",
+                LocalDate.now().plusDays(1),
+                null,
+                null
+        );
+
+        ResponseEntity<Map> response = client().post()
+                .uri("/api/v1/practices/" + practiceA + "/patients")
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .header("X-CSRF-TOKEN", csrfToken)
+                .header("Idempotency-Key", idempotencyKey)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(edit)
+                .retrieve()
+                .onStatus(status -> status.value() == 422, (req, res) -> {})
+                .toEntity(Map.class);
+
+        assertThat(response.getStatusCode().value()).isEqualTo(422);
+        assertThat(response.getHeaders().getContentType().toString()).contains("application/problem+json");
+        assertThat(response.getBody().get("code")).isEqualTo("VALIDATION_FAILED");
+        assertThat(response.getBody().get("status")).isEqualTo(422);
+
+        @SuppressWarnings("unchecked")
+        java.util.List<Map<String, Object>> fieldErrors = (java.util.List<Map<String, Object>>) response.getBody().get("fieldErrors");
+        assertThat(fieldErrors).anyMatch(fe -> "dateOfBirth".equals(fe.get("field")));
+    }
+
+    @Test
+    @DisplayName("B1: Malformed JSON payload returns 400 Bad Request with MALFORMED_REQUEST")
+    void b1_malformedJsonPayload_returns400Problem() {
+        String csrfToken = fetchCsrfToken(sessionCookieClinicalA);
+        String idempotencyKey = "key-malformed-" + UUID.randomUUID();
+
+        String malformedJson = "{ \"firstName\": \"Jean\", \"invalid\": ";
+
+        ResponseEntity<Map> response = client().post()
+                .uri("/api/v1/practices/" + practiceA + "/patients")
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .header("X-CSRF-TOKEN", csrfToken)
+                .header("Idempotency-Key", idempotencyKey)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(malformedJson)
+                .retrieve()
+                .onStatus(status -> status.value() == 400, (req, res) -> {})
+                .toEntity(Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getHeaders().getContentType().toString()).contains("application/problem+json");
+        assertThat(response.getBody().get("code")).isEqualTo("MALFORMED_REQUEST");
+    }
+
+    @Test
+    @DisplayName("B1: Unknown property in JSON payload returns 400 Bad Request with MALFORMED_REQUEST")
+    void b1_unknownPropertyInPayload_returns400Problem() {
+        String csrfToken = fetchCsrfToken(sessionCookieClinicalA);
+        String idempotencyKey = "key-unknown-prop-" + UUID.randomUUID();
+
+        String jsonWithUnknown = """
+                {
+                    "firstName": "Jean",
+                    "lastName": "Dupont",
+                    "dateOfBirth": "1985-05-20",
+                    "forbiddenExtraProperty": "hacker"
+                }
+                """;
+
+        ResponseEntity<Map> response = client().post()
+                .uri("/api/v1/practices/" + practiceA + "/patients")
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .header("X-CSRF-TOKEN", csrfToken)
+                .header("Idempotency-Key", idempotencyKey)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(jsonWithUnknown)
+                .retrieve()
+                .onStatus(status -> status.value() == 400, (req, res) -> {})
+                .toEntity(Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getHeaders().getContentType().toString()).contains("application/problem+json");
+        assertThat(response.getBody().get("code")).isEqualTo("MALFORMED_REQUEST");
+    }
+
+    @Test
+    @DisplayName("B1: Invalid parameter type in path (non-UUID) returns 400 Bad Request with INVALID_PARAMETER")
+    void b1_invalidParameterTypeInPath_returns400Problem() {
+        ResponseEntity<Map> response = client().get()
+                .uri("/api/v1/practices/not-a-valid-uuid/records/" + UUID.randomUUID())
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .retrieve()
+                .onStatus(status -> status.value() == 400, (req, res) -> {})
+                .toEntity(Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getHeaders().getContentType().toString()).contains("application/problem+json");
+        assertThat(response.getBody().get("code")).isEqualTo("INVALID_PARAMETER");
+    }
+
+    @Test
+    @DisplayName("B1: Unknown route returns 404 Not Found RFC 9457")
+    void b1_unknownRoute_returns404Problem() {
+        ResponseEntity<Map> response = client().get()
+                .uri("/api/v1/non-existent-subpath-" + UUID.randomUUID())
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .retrieve()
+                .onStatus(status -> status.value() == 404, (req, res) -> {})
+                .toEntity(Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getHeaders().getContentType().toString()).contains("application/problem+json");
+        assertThat(response.getBody().get("code")).isEqualTo("NOT_FOUND");
+    }
+
+    @Test
+    @DisplayName("B1: Unsupported HTTP method returns 405 Method Not Allowed RFC 9457")
+    void b1_unsupportedMethod_returns405Problem() {
+        String csrfToken = fetchCsrfToken(sessionCookieClinicalA);
+        ResponseEntity<Map> response = client().delete()
+                .uri("/api/v1/practices/" + practiceA + "/patients")
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .header("X-CSRF-TOKEN", csrfToken)
+                .retrieve()
+                .onStatus(status -> status.value() == 405, (req, res) -> {})
+                .toEntity(Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.METHOD_NOT_ALLOWED);
+        assertThat(response.getHeaders().getContentType().toString()).contains("application/problem+json");
+        assertThat(response.getBody().get("code")).isEqualTo("METHOD_NOT_ALLOWED");
+    }
+
+    @Test
+    @DisplayName("B1: Unsupported media type returns 415 Unsupported Media Type RFC 9457")
+    void b1_unsupportedMediaType_returns415Problem() {
+        String csrfToken = fetchCsrfToken(sessionCookieClinicalA);
+        String idempotencyKey = "key-mediatype-" + UUID.randomUUID();
+
+        ResponseEntity<Map> response = client().post()
+                .uri("/api/v1/practices/" + practiceA + "/patients")
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .header("X-CSRF-TOKEN", csrfToken)
+                .header("Idempotency-Key", idempotencyKey)
+                .contentType(MediaType.TEXT_PLAIN)
+                .body("plain text body")
+                .retrieve()
+                .onStatus(status -> status.value() == 415, (req, res) -> {})
+                .toEntity(Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+        assertThat(response.getHeaders().getContentType().toString()).contains("application/problem+json");
+        assertThat(response.getBody().get("code")).isEqualTo("UNSUPPORTED_MEDIA_TYPE");
+    }
+
+    @Test
+    @DisplayName("B1: Practice invisibility: unknown practice returns indistinguishable 404 without leaking ID")
+    void b1_practiceInvisibility_unknownPracticeReturnsIndistinguishable404() {
+        UUID unknownPracticeId = UUID.randomUUID();
+        UUID nonExistentRecordId = UUID.randomUUID();
+
+        // 1. Clinical user A queries non-existent record in practice A (authorized practice)
+        ResponseEntity<Map> notFoundInPracticeA = client().get()
+                .uri("/api/v1/practices/" + practiceA + "/records/" + nonExistentRecordId)
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .retrieve()
+                .onStatus(status -> status.value() == 404, (req, res) -> {})
+                .toEntity(Map.class);
+
+        // 2. Clinical user A queries record in unknown/unauthorized practice
+        ResponseEntity<Map> notFoundInUnknownPractice = client().get()
+                .uri("/api/v1/practices/" + unknownPracticeId + "/records/" + nonExistentRecordId)
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .retrieve()
+                .onStatus(status -> status.value() == 404, (req, res) -> {})
+                .toEntity(Map.class);
+
+        assertThat(notFoundInPracticeA.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(notFoundInUnknownPractice.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        // Bodies are completely identical in title, status, code, detail
+        assertThat(notFoundInUnknownPractice.getBody().get("title")).isEqualTo(notFoundInPracticeA.getBody().get("title"));
+        assertThat(notFoundInUnknownPractice.getBody().get("status")).isEqualTo(notFoundInPracticeA.getBody().get("status"));
+        assertThat(notFoundInUnknownPractice.getBody().get("code")).isEqualTo(notFoundInPracticeA.getBody().get("code"));
+        assertThat(notFoundInUnknownPractice.getBody().get("detail")).isEqualTo(notFoundInPracticeA.getBody().get("detail"));
+        assertThat(notFoundInUnknownPractice.getBody().get("detail")).isEqualTo("Resource not found");
+
+        // Verify neither body leaks practice or record IDs
+        String bodyString = notFoundInUnknownPractice.getBody().toString();
+        assertThat(bodyString).doesNotContain(unknownPracticeId.toString());
+        assertThat(bodyString).doesNotContain(nonExistentRecordId.toString());
+    }
+
+    @Test
+    @DisplayName("B2: Valid client X-Correlation-Id is preserved and echoed in response header")
+    void b2_validClientCorrelationId_isEchoedInHeader() {
+        String clientCorrelation = "client-trace-12345678";
+
+        ResponseEntity<Map> response = client().get()
+                .uri("/api/v1/csrf")
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .header("X-Correlation-Id", clientCorrelation)
+                .retrieve()
+                .toEntity(Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getHeaders().getFirst("X-Correlation-Id")).isEqualTo(clientCorrelation);
+    }
+
+    @Test
+    @DisplayName("B2: Over-long client X-Correlation-Id (>64 chars) still succeeds and generates a server UUID")
+    void b2_overLongCorrelationId_stillSucceedsAndGeneratesServerUuid() {
+        String overLongCorrelation = "A".repeat(80);
+
+        ResponseEntity<Map> response = client().get()
+                .uri("/api/v1/csrf")
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .header("X-Correlation-Id", overLongCorrelation)
+                .retrieve()
+                .toEntity(Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        String returnedCorrelation = response.getHeaders().getFirst("X-Correlation-Id");
+        assertThat(returnedCorrelation).isNotNull();
+        assertThat(returnedCorrelation).isNotEqualTo(overLongCorrelation);
+        // Must be a valid UUID
+        assertThat(java.util.UUID.fromString(returnedCorrelation)).isNotNull();
+    }
+
+    @Test
+    @DisplayName("B2: Invalid characters in client X-Correlation-Id still succeeds and generates a server UUID")
+    void b2_invalidCharactersInCorrelationId_stillSucceedsAndGeneratesServerUuid() {
+        String invalidCorrelation = "invalid_chars_$$$!!";
+
+        ResponseEntity<Map> response = client().get()
+                .uri("/api/v1/csrf")
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .header("X-Correlation-Id", invalidCorrelation)
+                .retrieve()
+                .toEntity(Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        String returnedCorrelation = response.getHeaders().getFirst("X-Correlation-Id");
+        assertThat(returnedCorrelation).isNotNull();
+        assertThat(returnedCorrelation).isNotEqualTo(invalidCorrelation);
+        assertThat(java.util.UUID.fromString(returnedCorrelation)).isNotNull();
+    }
+
+    @Test
+    @DisplayName("B6: Replay after membership is suspended is denied with 403, no projection, and zero new writes")
+    void b6_replayAfterMembershipSuspended_isDeniedWithNoProjectionAndNoNewWrite() {
+        // Create an account with CLINICAL_WRITE in Practice A
+        UUID operatorAccount = createAccountAsOwner(
+                "suspendable." + UUID.randomUUID() + "@example.com",
+                "Dr Suspendable",
+                "hash"
+        );
+        createMembershipAsOwner(operatorAccount, practiceA, "ACTIVE", new String[]{"CLINICAL_WRITE", "CLINICAL_READ"});
+        String operatorSessionCookie = testSessionHelper.createSessionCookie(operatorAccount);
+        String csrfToken = fetchCsrfToken(operatorSessionCookie);
+        String idempotencyKey = "key-suspend-" + UUID.randomUUID();
+
+        PatientEdit edit = new PatientEdit(
+                "Before",
+                "Suspension",
+                LocalDate.of(1987, 6, 15),
+                "suspendable@example.com",
+                null
+        );
+
+        // 1. Initial request succeeds -> 201 Created
+        ResponseEntity<PatientResponse> firstResponse = client().post()
+                .uri("/api/v1/practices/" + practiceA + "/patients")
+                .header(HttpHeaders.COOKIE, operatorSessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken)
+                .header("Idempotency-Key", idempotencyKey)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(edit)
+                .retrieve()
+                .toEntity(PatientResponse.class);
+
+        assertThat(firstResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        UUID createdPatientId = firstResponse.getBody().id();
+
+        // Snapshot row counts across all 5 tables
+        int patientCount = countRowsInTableDirectly("patient", "practice_id", practiceA);
+        int recordCount = countRowsInTableDirectly("patient_record", "practice_id", practiceA);
+        int auditCount = countRowsInTableDirectly("audit_event", "practice_id", practiceA);
+        int outboxCount = countRowsInTableDirectly("outbox_event", "practice_id", practiceA);
+        int receiptCount = countRowsInTableDirectly("idempotency_receipt", "practice_id", practiceA);
+
+        // 2. Suspend membership in database directly as owner
+        updateMembershipStateAsOwner(operatorAccount, practiceA, "SUSPENDED");
+
+        // 3. Replay with exact same idempotency key and body
+        ResponseEntity<Map> replayResponse = client().post()
+                .uri("/api/v1/practices/" + practiceA + "/patients")
+                .header(HttpHeaders.COOKIE, operatorSessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken)
+                .header("Idempotency-Key", idempotencyKey)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(edit)
+                .retrieve()
+                .onStatus(status -> status.value() == 403, (req, res) -> {})
+                .toEntity(Map.class);
+
+        // Assert: 403 Forbidden, no projection returned
+        assertThat(replayResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        assertThat(replayResponse.getBody().get("code")).isEqualTo("FORBIDDEN");
+        assertThat(replayResponse.getBody().get("detail")).isEqualTo("Access denied");
+
+        // Verify zero new writes across all 5 tables
+        assertThat(countRowsInTableDirectly("patient", "practice_id", practiceA)).isEqualTo(patientCount);
+        assertThat(countRowsInTableDirectly("patient_record", "practice_id", practiceA)).isEqualTo(recordCount);
+        assertThat(countRowsInTableDirectly("audit_event", "practice_id", practiceA)).isEqualTo(auditCount);
+        assertThat(countRowsInTableDirectly("outbox_event", "practice_id", practiceA)).isEqualTo(outboxCount);
+        assertThat(countRowsInTableDirectly("idempotency_receipt", "practice_id", practiceA)).isEqualTo(receiptCount);
     }
 }

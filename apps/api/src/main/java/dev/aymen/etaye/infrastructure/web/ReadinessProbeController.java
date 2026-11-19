@@ -1,5 +1,7 @@
 package dev.aymen.etaye.infrastructure.web;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,8 @@ import java.util.Map;
 @RequestMapping("/api/v1/probes")
 public class ReadinessProbeController {
 
+    private static final Logger log = LoggerFactory.getLogger(ReadinessProbeController.class);
+
     private final DataSource dataSource;
 
     public ReadinessProbeController(DataSource dataSource) {
@@ -26,27 +30,16 @@ public class ReadinessProbeController {
     @GetMapping(value = "/readiness", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> checkReadiness() {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement("SELECT 1")) {
-            ps.setQueryTimeout(2);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return ResponseEntity.ok(Map.of(
-                            "status", "UP",
-                            "database", "UP"
-                    ));
-                }
+             PreparedStatement ps = connection.prepareStatement("SELECT 1");
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return ResponseEntity.ok(Map.of("status", "UP"));
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(Map.of(
-                    "status", "DOWN",
-                    "database", "DOWN",
-                    "error", "Database connection unavailable"
-            ));
+            log.warn("Readiness probe check failed: class={}, code={}", e.getClass().getName(), "DATABASE_UNAVAILABLE");
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(Map.of("status", "DOWN"));
         }
 
-        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(Map.of(
-                "status", "DOWN",
-                "database", "DOWN"
-        ));
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(Map.of("status", "DOWN"));
     }
 }

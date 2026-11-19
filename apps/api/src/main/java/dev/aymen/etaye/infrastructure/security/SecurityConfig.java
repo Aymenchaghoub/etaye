@@ -1,6 +1,8 @@
 package dev.aymen.etaye.infrastructure.security;
 
 import dev.aymen.etaye.identity.repository.IdentityLookupRepository;
+import dev.aymen.etaye.infrastructure.error.ProblemResponseWriter;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,7 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.session.SessionRepository;
 import org.springframework.session.jdbc.config.annotation.web.http.EnableJdbcHttpSession;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
@@ -22,14 +24,20 @@ public class SecurityConfig {
 
     private final ProblemAuthenticationEntryPoint authenticationEntryPoint;
     private final ProblemAccessDeniedHandler accessDeniedHandler;
+    private final ProblemResponseWriter problemResponseWriter;
     private final IdentityLookupRepository identityLookupRepository;
+    private final ObjectProvider<SessionRepository<?>> sessionRepositoryProvider;
 
     public SecurityConfig(ProblemAuthenticationEntryPoint authenticationEntryPoint,
                           ProblemAccessDeniedHandler accessDeniedHandler,
-                          IdentityLookupRepository identityLookupRepository) {
+                          ProblemResponseWriter problemResponseWriter,
+                          IdentityLookupRepository identityLookupRepository,
+                          ObjectProvider<SessionRepository<?>> sessionRepositoryProvider) {
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.accessDeniedHandler = accessDeniedHandler;
+        this.problemResponseWriter = problemResponseWriter;
         this.identityLookupRepository = identityLookupRepository;
+        this.sessionRepositoryProvider = sessionRepositoryProvider;
     }
 
     @Bean
@@ -63,17 +71,22 @@ public class SecurityConfig {
             .csrf(csrf -> csrf
                 .csrfTokenRepository(csrfTokenRepository())
                 .csrfTokenRequestHandler(csrfRequestHandler)
-                .ignoringRequestMatchers("/api/v1/csrf", "/api/v1/probes/**", "/actuator/**")
+                .ignoringRequestMatchers("/api/v1/csrf", "/api/v1/probes/**")
             )
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
             )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/csrf", "/api/v1/probes/**", "/actuator/**").permitAll()
+                .requestMatchers("/api/v1/csrf", "/api/v1/probes/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterAfter(
-                new IdentityResolutionFilter(identityLookupRepository, accessDeniedHandler),
+                new IdentityResolutionFilter(
+                        identityLookupRepository,
+                        authenticationEntryPoint,
+                        problemResponseWriter,
+                        sessionRepositoryProvider.getIfAvailable()
+                ),
                 SecurityContextHolderFilter.class
             );
 

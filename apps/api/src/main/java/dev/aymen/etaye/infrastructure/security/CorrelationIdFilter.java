@@ -19,12 +19,17 @@ public class CorrelationIdFilter extends OncePerRequestFilter {
 
     public static final String CORRELATION_ID_HEADER = "X-Correlation-Id";
     public static final String CORRELATION_ID_ATTR = "correlationId";
+    private static final java.util.regex.Pattern VALID_CORRELATION_PATTERN =
+            java.util.regex.Pattern.compile("^[A-Za-z0-9-]{8,64}$");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        String correlationId = request.getHeader(CORRELATION_ID_HEADER);
-        if (correlationId == null || correlationId.isBlank()) {
+        String clientCorrelation = request.getHeader(CORRELATION_ID_HEADER);
+        String correlationId;
+        if (clientCorrelation != null && VALID_CORRELATION_PATTERN.matcher(clientCorrelation).matches()) {
+            correlationId = clientCorrelation;
+        } else {
             correlationId = UUID.randomUUID().toString();
         }
 

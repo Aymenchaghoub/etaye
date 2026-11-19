@@ -151,6 +151,25 @@ public abstract class AbstractPostgresTest {
         }
     }
 
+    protected static void updateMembershipStateAsOwner(UUID accountId, UUID practiceId, String newState) {
+        try (Connection conn = DriverManager.getConnection(
+                POSTGRES_CONTAINER.getJdbcUrl(),
+                OWNER_USER,
+                OWNER_PASSWORD);
+             PreparedStatement ps = conn.prepareStatement(
+                     "UPDATE membership SET state = ? WHERE account_id = ? AND practice_id = ?")) {
+            ps.setString(1, newState);
+            ps.setObject(2, accountId);
+            ps.setObject(3, practiceId);
+            int updated = ps.executeUpdate();
+            if (updated == 0) {
+                throw new IllegalStateException("No membership row updated for account " + accountId + " and practice " + practiceId);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update membership state as owner", e);
+        }
+    }
+
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
         // HTTP application datasource connects strictly under the non-owner runtime role

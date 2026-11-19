@@ -76,9 +76,9 @@ public class PatientService {
             if (existingIdOpt.isPresent()) {
                 UUID existingPatientId = existingIdOpt.get();
                 Patient existingPatient = patientRepository.findByIdAndPracticeId(existingPatientId, practiceId)
-                        .orElseThrow(() -> new ResourceNotFoundException("Patient not found: " + existingPatientId));
+                        .orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
                 PatientRecord existingRecord = patientRecordRepository.findByPatientIdAndPracticeId(existingPatientId, practiceId)
-                        .orElseThrow(() -> new ResourceNotFoundException("Patient record not found for patient: " + existingPatientId));
+                        .orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
                 return PatientResponse.of(existingPatient, existingRecord.getId());
             }
 
@@ -143,10 +143,10 @@ public class PatientService {
 
         return practiceTransaction.execute(practiceId, () -> {
             PatientRecord record = patientRecordRepository.findByIdAndPracticeId(recordId, practiceId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Record not found: " + recordId));
+                    .orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
 
             Patient patient = patientRepository.findByIdAndPracticeId(record.getPatientId(), practiceId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Patient not found: " + record.getPatientId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
 
             return RecordResponse.of(record, patient);
         });

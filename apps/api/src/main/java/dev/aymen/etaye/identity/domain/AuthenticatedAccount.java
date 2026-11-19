@@ -13,13 +13,18 @@ public record AuthenticatedAccount(
         AccountProfile account,
         List<MembershipGrant> memberships
 ) {
-    public Optional<MembershipGrant> getActiveMembershipForPractice(UUID practiceId) {
+    public Optional<MembershipGrant> getMembershipForPractice(UUID practiceId) {
         if (!account.isActive()) {
             return Optional.empty();
         }
         return memberships.stream()
-                .filter(m -> m.practiceId().equals(practiceId) && m.isActive())
+                .filter(m -> m.practiceId().equals(practiceId))
                 .findFirst();
+    }
+
+    public Optional<MembershipGrant> getActiveMembershipForPractice(UUID practiceId) {
+        return getMembershipForPractice(practiceId)
+                .filter(MembershipGrant::isActive);
     }
 
     public boolean hasCapabilityInPractice(UUID practiceId, String capability) {

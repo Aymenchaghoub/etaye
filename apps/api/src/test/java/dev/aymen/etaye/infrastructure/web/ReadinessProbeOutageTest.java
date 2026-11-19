@@ -16,7 +16,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
-import java.time.Duration;
 import java.util.Map;
 import java.util.UUID;
 
@@ -104,8 +103,8 @@ public class ReadinessProbeOutageTest {
         registry.add("spring.datasource.password", () -> RUNTIME_PASSWORD);
         registry.add("etaye.identity.datasource.username", () -> IDENTITY_USER);
         registry.add("etaye.identity.datasource.password", () -> IDENTITY_PASSWORD);
-        registry.add("spring.datasource.hikari.maximum-pool-size", () -> 1);
-        registry.add("spring.datasource.hikari.connection-timeout", () -> 2500);
+        // Production timeouts are used directly from DataSourceConfig / application.yml
+        // No test-only timeout overrides (B7)
     }
 
     @LocalServerPort
@@ -118,36 +117,59 @@ public class ReadinessProbeOutageTest {
     }
 
     @Test
-    @DisplayName("Finding 4: Readiness probe must fail with 503 within 3 seconds when PostgreSQL is stopped")
-    void readinessProbeFailsWithinThreeSecondsWhenDatabaseIsDown() {
-        // 1. Initial state: Database is UP, probe returns 200 OK
+    @DisplayName("B7: Readiness probe outage test under production timeouts with paused and stopped container")
+    void readinessProbeFailsWithinAboutFourSecondsUnderOutages() {
+        // 1. Initial state: Database is UP, probe returns 200 OK with only {"status":"UP"}
         ResponseEntity<Map> upResponse = client().get()
                 .uri("/api/v1/probes/readiness")
                 .retrieve()
                 .toEntity(Map.class);
 
         assertThat(upResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(upResponse.getBody().get("status")).isEqualTo("UP");
+        assertThat(upResponse.getBody()).containsExactly(Map.entry("status", "UP"));
 
-        // 2. Stop the PostgreSQL container to simulate an outage
+        // 2. Pause the container to simulate silent network / database loss (docker pause)
+        String containerId = OUTAGE_CONTAINER.getContainerId();
+        OUTAGE_CONTAINER.getDockerClient().pauseContainerCmd(containerId).exec();
+
+        try {
+            long startPause = System.currentTimeMillis();
+            ResponseEntity<Map> pausedResponse = client().get()
+                    .uri("/api/v1/probes/readiness")
+                    .retrieve()
+                    .onStatus(status -> status.value() == 503, (req, res) -> {})
+                    .toEntity(Map.class);
+            long pauseDuration = System.currentTimeMillis() - startPause;
+
+            assertThat(pausedResponse.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
+            assertThat(pausedResponse.getBody()).containsExactly(Map.entry("status", "DOWN"));
+            assertThat(pauseDuration).isLessThan(4500L);
+        } finally {
+            // Unpause to restore connectivity before stopped test
+            OUTAGE_CONTAINER.getDockerClient().unpauseContainerCmd(containerId).exec();
+        }
+
+        // Verify recovery after unpausing
+        ResponseEntity<Map> recoveredResponse = client().get()
+                .uri("/api/v1/probes/readiness")
+                .retrieve()
+                .toEntity(Map.class);
+        assertThat(recoveredResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(recoveredResponse.getBody()).containsExactly(Map.entry("status", "UP"));
+
+        // 3. Stop the container to simulate crash outage
         OUTAGE_CONTAINER.stop();
 
-        // 3. Query readiness probe and assert that it fails within about 3 seconds (well below Hikari 30s default)
-        long startTime = System.currentTimeMillis();
-
-        ResponseEntity<Map> downResponse = client().get()
+        long startStop = System.currentTimeMillis();
+        ResponseEntity<Map> stoppedResponse = client().get()
                 .uri("/api/v1/probes/readiness")
                 .retrieve()
                 .onStatus(status -> status.value() == 503, (req, res) -> {})
                 .toEntity(Map.class);
+        long stopDuration = System.currentTimeMillis() - startStop;
 
-        long durationMs = System.currentTimeMillis() - startTime;
-
-        assertThat(downResponse.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
-        assertThat(downResponse.getBody().get("status")).isEqualTo("DOWN");
-        assertThat(downResponse.getBody().get("database")).isEqualTo("DOWN");
-
-        // Verify time limit: must fail in <= 3500ms (budget is ~3s)
-        assertThat(durationMs).isLessThan(3500L);
+        assertThat(stoppedResponse.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
+        assertThat(stoppedResponse.getBody()).containsExactly(Map.entry("status", "DOWN"));
+        assertThat(stopDuration).isLessThan(4500L);
     }
 }

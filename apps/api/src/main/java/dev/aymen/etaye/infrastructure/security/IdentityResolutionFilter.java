@@ -2,14 +2,23 @@ package dev.aymen.etaye.infrastructure.security;
 
 import dev.aymen.etaye.identity.domain.AuthenticatedAccount;
 import dev.aymen.etaye.identity.repository.IdentityLookupRepository;
+import dev.aymen.etaye.infrastructure.error.ApiProblem;
+import dev.aymen.etaye.infrastructure.error.ProblemResponseWriter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.security.access.AccessDeniedException;
+import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.session.SessionRepository;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -20,18 +29,35 @@ import java.util.UUID;
  * Re-resolves account state and practice memberships on every request via etaye_identity.
  * Ensures account suspension or capability revocation takes immediate effect
  * on active sessions without waiting for cookie expiry.
+ * When account is inactive or missing, invalidates and deletes the persisted session,
+ * and answers 401.
+ * Excludes readiness probe endpoints from running session/identity filters.
  */
 public class IdentityResolutionFilter extends OncePerRequestFilter {
+
+    private static final Logger log = LoggerFactory.getLogger(IdentityResolutionFilter.class);
 
     public static final String AUTHENTICATED_ACCOUNT_ATTR = "authenticatedAccount";
 
     private final IdentityLookupRepository identityLookupRepository;
-    private final ProblemAccessDeniedHandler accessDeniedHandler;
+    private final ProblemAuthenticationEntryPoint authenticationEntryPoint;
+    private final ProblemResponseWriter problemResponseWriter;
+    private final SessionRepository<?> sessionRepository;
 
     public IdentityResolutionFilter(IdentityLookupRepository identityLookupRepository,
-                                    ProblemAccessDeniedHandler accessDeniedHandler) {
+                                    ProblemAuthenticationEntryPoint authenticationEntryPoint,
+                                    ProblemResponseWriter problemResponseWriter,
+                                    SessionRepository<?> sessionRepository) {
         this.identityLookupRepository = identityLookupRepository;
-        this.accessDeniedHandler = accessDeniedHandler;
+        this.authenticationEntryPoint = authenticationEntryPoint;
+        this.problemResponseWriter = problemResponseWriter;
+        this.sessionRepository = sessionRepository;
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path != null && path.startsWith("/api/v1/probes/");
     }
 
     @Override
@@ -44,13 +70,41 @@ public class IdentityResolutionFilter extends OncePerRequestFilter {
             String principalStr = auth.getPrincipal().toString();
             try {
                 UUID accountId = UUID.fromString(principalStr);
-                Optional<AuthenticatedAccount> resolved = identityLookupRepository.resolveAccountAndMemberships(accountId);
+                Optional<AuthenticatedAccount> resolved;
+                try {
+                    resolved = identityLookupRepository.resolveAccountAndMemberships(accountId);
+                } catch (DataAccessResourceFailureException e) {
+                    String correlationId = CorrelationIdFilter.getCorrelationId(request);
+                    log.error("Database connection failure during identity resolution: class={}, code={}, correlationId={}",
+                            e.getClass().getName(), "SERVICE_UNAVAILABLE", correlationId);
+                    ApiProblem problem = ApiProblem.of(
+                            HttpStatus.SERVICE_UNAVAILABLE.value(),
+                            "Service Unavailable",
+                            "SERVICE_UNAVAILABLE",
+                            "Service temporarily unavailable",
+                            correlationId
+                    );
+                    problemResponseWriter.writeProblem(response, problem);
+                    return;
+                }
 
                 if (resolved.isEmpty() || !resolved.get().account().isActive()) {
-                    // Account suspended or revoked: clear security context and reject immediately
+                    // Account suspended or revoked: delete persisted session, clear context, return 401
+                    HttpSession session = request.getSession(false);
+                    if (session != null) {
+                        String sessionId = session.getId();
+                        try {
+                            session.invalidate();
+                        } catch (Exception ignored) {}
+                        if (sessionRepository != null) {
+                            try {
+                                sessionRepository.deleteById(sessionId);
+                            } catch (Exception ignored) {}
+                        }
+                    }
                     SecurityContextHolder.clearContext();
-                    accessDeniedHandler.handle(request, response,
-                            new AccessDeniedException("Account is inactive or does not exist"));
+                    authenticationEntryPoint.commence(request, response,
+                            new AuthenticationCredentialsNotFoundException("Account is inactive or does not exist"));
                     return;
                 }
 
@@ -58,7 +112,7 @@ public class IdentityResolutionFilter extends OncePerRequestFilter {
                 request.setAttribute(AUTHENTICATED_ACCOUNT_ATTR, resolved.get());
 
             } catch (IllegalArgumentException e) {
-                // Not a valid UUID principal: allow chain to proceed or fail as appropriate
+                // Not a valid UUID principal: allow chain to proceed
             }
         }
 
