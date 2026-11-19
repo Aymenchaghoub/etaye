@@ -154,6 +154,37 @@ CREATE TABLE spring_session_attributes (
     CONSTRAINT spring_session_attributes_fk FOREIGN KEY (session_primary_id) REFERENCES spring_session(primary_id) ON DELETE CASCADE
 );
 
+-- Row-Level Security on authentication tables (bounded identity lookup)
+ALTER TABLE account ENABLE ROW LEVEL SECURITY;
+ALTER TABLE account FORCE ROW LEVEL SECURITY;
+
+CREATE POLICY account_identity_isolation_policy ON account
+    FOR ALL
+    TO etaye_identity
+    USING (id = NULLIF(current_setting('etaye.account_id', true), '')::uuid)
+    WITH CHECK (id = NULLIF(current_setting('etaye.account_id', true), '')::uuid);
+
+CREATE POLICY account_owner_policy ON account
+    FOR ALL
+    TO etaye_owner
+    USING (true)
+    WITH CHECK (true);
+
+ALTER TABLE membership ENABLE ROW LEVEL SECURITY;
+ALTER TABLE membership FORCE ROW LEVEL SECURITY;
+
+CREATE POLICY membership_identity_isolation_policy ON membership
+    FOR ALL
+    TO etaye_identity
+    USING (account_id = NULLIF(current_setting('etaye.account_id', true), '')::uuid)
+    WITH CHECK (account_id = NULLIF(current_setting('etaye.account_id', true), '')::uuid);
+
+CREATE POLICY membership_owner_policy ON membership
+    FOR ALL
+    TO etaye_owner
+    USING (true)
+    WITH CHECK (true);
+
 -- Row-Level Security on practice-owned tables
 ALTER TABLE patient ENABLE ROW LEVEL SECURITY;
 ALTER TABLE patient FORCE ROW LEVEL SECURITY;
@@ -190,12 +221,12 @@ CREATE POLICY idempotency_receipt_practice_isolation_policy ON idempotency_recei
     USING (practice_id = NULLIF(current_setting('etaye.practice_id', true), '')::uuid)
     WITH CHECK (practice_id = NULLIF(current_setting('etaye.practice_id', true), '')::uuid);
 
--- Minimal Grants for runtime role (etaye_runtime)
-GRANT SELECT ON practice TO etaye_runtime;
+-- Minimal Grants for runtime role (etaye_runtime):
+-- Least privilege: no SELECT on practice, audit_event, or outbox_event (INSERT only on last two)
 GRANT SELECT, INSERT ON patient TO etaye_runtime;
 GRANT SELECT, INSERT ON patient_record TO etaye_runtime;
-GRANT SELECT, INSERT ON audit_event TO etaye_runtime;
-GRANT SELECT, INSERT ON outbox_event TO etaye_runtime;
+GRANT INSERT ON audit_event TO etaye_runtime;
+GRANT INSERT ON outbox_event TO etaye_runtime;
 GRANT SELECT, INSERT ON idempotency_receipt TO etaye_runtime;
 
 -- Grants for Spring Session JDBC on etaye_runtime
@@ -207,6 +238,7 @@ GRANT SELECT(id, normalized_email, display_name, state, locale, created_at, upda
 GRANT SELECT(id, account_id, practice_id, state, capabilities, created_at, updated_at) ON membership TO etaye_identity;
 
 -- Strict least-privilege enforcement
+REVOKE ALL ON practice FROM etaye_runtime;
 REVOKE ALL ON account FROM etaye_runtime;
 REVOKE ALL ON membership FROM etaye_runtime;
 REVOKE ALL ON patient FROM etaye_identity;

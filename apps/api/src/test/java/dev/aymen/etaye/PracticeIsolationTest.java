@@ -15,6 +15,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -94,8 +95,8 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
                     "Table " + rs.getString("tablename") + " must be owned by etaye_owner");
         });
 
-        // Verify RLS is enabled and forced on practice-owned tables via pg_class (relrowsecurity and relforcerowsecurity)
-        List<String> rlsTables = List.of("patient", "patient_record", "audit_event", "outbox_event", "idempotency_receipt");
+        // Verify RLS is enabled and forced on practice-owned and authentication tables via pg_class
+        List<String> rlsTables = List.of("account", "membership", "patient", "patient_record", "audit_event", "outbox_event", "idempotency_receipt");
         for (String tbl : rlsTables) {
             jdbcTemplate.query("SELECT relrowsecurity, relforcerowsecurity FROM pg_class WHERE relname = ?", ps -> ps.setString(1, tbl), rs -> {
                 assertTrue(rs.getBoolean("relrowsecurity"), "RLS must be enabled on " + tbl);
@@ -115,6 +116,27 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
         Boolean canSelectMembership = jdbcTemplate.queryForObject(
                 "SELECT has_table_privilege('etaye_runtime', 'membership', 'SELECT')", Boolean.class);
         assertFalse(canSelectMembership, "etaye_runtime must not have SELECT privilege on membership");
+
+        // B5: Least privilege: runtime role gets no SELECT on practice, audit_event or outbox_event
+        Boolean canSelectPractice = jdbcTemplate.queryForObject(
+                "SELECT has_table_privilege('etaye_runtime', 'practice', 'SELECT')", Boolean.class);
+        assertFalse(canSelectPractice, "etaye_runtime must not have SELECT privilege on practice");
+
+        Boolean canSelectAuditEvent = jdbcTemplate.queryForObject(
+                "SELECT has_table_privilege('etaye_runtime', 'audit_event', 'SELECT')", Boolean.class);
+        assertFalse(canSelectAuditEvent, "etaye_runtime must not have SELECT privilege on audit_event");
+
+        Boolean canSelectOutboxEvent = jdbcTemplate.queryForObject(
+                "SELECT has_table_privilege('etaye_runtime', 'outbox_event', 'SELECT')", Boolean.class);
+        assertFalse(canSelectOutboxEvent, "etaye_runtime must not have SELECT privilege on outbox_event");
+
+        Boolean canInsertAuditEvent = jdbcTemplate.queryForObject(
+                "SELECT has_table_privilege('etaye_runtime', 'audit_event', 'INSERT')", Boolean.class);
+        assertTrue(canInsertAuditEvent, "etaye_runtime must have INSERT privilege on audit_event");
+
+        Boolean canInsertOutboxEvent = jdbcTemplate.queryForObject(
+                "SELECT has_table_privilege('etaye_runtime', 'outbox_event', 'INSERT')", Boolean.class);
+        assertTrue(canInsertOutboxEvent, "etaye_runtime must have INSERT privilege on outbox_event");
     }
 
     @Test

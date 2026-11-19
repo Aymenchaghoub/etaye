@@ -93,4 +93,69 @@ public class IdentityLookupTest extends AbstractPostgresTest {
                 .getRootCause()
                 .hasMessageFindingMatch("(?i).*permission denied.*(?:table|relation).*membership.*");
     }
+
+    @Test
+    @DisplayName("B4: Without etaye.account_id setting, etaye_identity role sees zero rows in account and membership")
+    void shouldSeeZeroRowsWithoutAccountIdSetting() throws Exception {
+        UUID practiceId = createPracticeAsOwner("Cabinet Dentaire RLS");
+        UUID accountId = createAccountAsOwner("rls.test." + UUID.randomUUID() + "@example.com", "Dr. RLS", "hash");
+        createMembershipAsOwner(accountId, practiceId, "ACTIVE", new String[]{"CLINICAL_READ"});
+
+        try (Connection conn = identityDataSource.getConnection();
+             Statement stmt = conn.createStatement()) {
+            // No etaye.account_id setting: RLS must hide all rows
+            try (ResultSet rs = stmt.executeQuery("SELECT count(*) FROM account")) {
+                assertThat(rs.next()).isTrue();
+                assertThat(rs.getInt(1)).isEqualTo(0);
+            }
+            try (ResultSet rs = stmt.executeQuery("SELECT count(*) FROM membership")) {
+                assertThat(rs.next()).isTrue();
+                assertThat(rs.getInt(1)).isEqualTo(0);
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("B4: With etaye.account_id set, etaye_identity role sees only that account and its memberships")
+    void shouldSeeOnlyTargetAccountAndMembershipsWithAccountIdSetting() throws Exception {
+        UUID practiceId = createPracticeAsOwner("Cabinet Dentaire RLS Isolation");
+        UUID account1 = createAccountAsOwner("acc1." + UUID.randomUUID() + "@example.com", "Account 1", "hash1");
+        UUID membership1 = createMembershipAsOwner(account1, practiceId, "ACTIVE", new String[]{"CLINICAL_READ"});
+
+        UUID account2 = createAccountAsOwner("acc2." + UUID.randomUUID() + "@example.com", "Account 2", "hash2");
+        UUID membership2 = createMembershipAsOwner(account2, practiceId, "ACTIVE", new String[]{"CLINICAL_WRITE"});
+
+        try (Connection conn = identityDataSource.getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                // Set context for account1
+                try (java.sql.PreparedStatement ps = conn.prepareStatement("SELECT set_config('etaye.account_id', ?, true)")) {
+                    ps.setString(1, account1.toString());
+                    ps.execute();
+                }
+
+                // Query account: sees account1, does NOT see account2
+                try (Statement stmt = conn.createStatement();
+                     ResultSet rs = stmt.executeQuery("SELECT id FROM account")) {
+                    java.util.List<UUID> visibleAccounts = new java.util.ArrayList<>();
+                    while (rs.next()) {
+                        visibleAccounts.add((UUID) rs.getObject("id"));
+                    }
+                    assertThat(visibleAccounts).containsExactly(account1);
+                }
+
+                // Query membership: sees membership1, does NOT see membership2
+                try (Statement stmt = conn.createStatement();
+                     ResultSet rs = stmt.executeQuery("SELECT id FROM membership")) {
+                    java.util.List<UUID> visibleMemberships = new java.util.ArrayList<>();
+                    while (rs.next()) {
+                        visibleMemberships.add((UUID) rs.getObject("id"));
+                    }
+                    assertThat(visibleMemberships).containsExactly(membership1);
+                }
+            } finally {
+                conn.rollback();
+            }
+        }
+    }
 }
