@@ -250,6 +250,8 @@ Query options: `v=a|b`, `t=clair|sombre`, `grain=0.12`, `tick=0.32`, `calm=off`,
 
 Still open: building the Figma page and Phase 2 (blocked by the access limits below), revising DESIGN and the token reference after validation, and the explicit development authorization, which has **not** been given.
 
+The product-screen overlay is now available for offline review. See the [phase 2 render evidence](../reviews/2026-11-19-entry-background.md) for S-01, S-02 and S-25. The native status below remains historical.
+
 ## 8. Not done
 
 - No Figma page, frame, variable binding or node was created or changed; Phase 2 (applying the winner to S-01, S-02 and S-25) was not run. S-01 `30:2`, S-02 `30:464` / `30:941` and S-25 `30:44609` exist in Figma, desktop 1440 only as last observed; no tablet or mobile frames of those screens were seen (node reads were blocked). [PR 19](https://github.com/Aymenchaghoub/etaye/pull/19) (merged on 2026-11-18) closed the native desktop import (456 states, protected pages intact, old trial roots removed) and did not apply the background studies. Its final saved version `2423224260331333575` was read back through the Figma REST `/versions` route on 2026-11-18; the node-level state was not read (tier-1 REST limit). A Figma Desktop development plugin that builds the study frames (variant B, adopted tone, light and dark, four viewports) is prepared and tested offline but never run: [design/figma-background-study](../../../design/figma-background-study/README.md).

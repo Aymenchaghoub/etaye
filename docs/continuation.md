@@ -2,6 +2,12 @@
 
 Updated: 2026-11-19. Owner: Aymen Chaghoub.
 
+## Entry background review — 2026-11-19
+
+Aymen requested the approved paper and blueprint background on S-25, S-02 and S-01, with one Figma write if access permits. The [preview](../design/entry-background/README.md) covers 20 HTML states using the frozen corrected mockups. Chromium passed 200 rendered configurations with both themes, and the [review](design/reviews/2026-11-19-entry-background.md) records opened comparison sheets and measured contrast.
+
+Figma read the S-25 source section; the next call hit the Starter quota. Native writes are pending. When access returns, preflight the existing nodes, batch the three review variants in one write and inspect the native result. Product design approval and explicit development authorization remain open.
+
 ## Offline mockups and latest design evidence — 2026-11-19
 
 Aymen asked to account for the latest design and accepted committing the mockups. The [offline reference](../design/offline-reference/README.md) includes the exact 523-file HTML bundle from the verified release and points to the 52 desktop comparisons for the latest saved native version evidenced here, `2423224260331333575`. Read the background decision at its study scope and the pending roadmap alignments before applying the reference to later product behavior. No newer Figma revision was independently inspected.

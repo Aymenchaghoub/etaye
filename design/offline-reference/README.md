@@ -14,6 +14,8 @@ From a local clone, open [the mockup index](site/index.html) in a browser. It li
 
 The offline workflow uses the corrected HTML and the recorded native corrections. If a later Figma revision exists, import its exports and review the affected states before treating those changes as part of the reference. Tablet and mobile review, alignment with later product decisions, and approval of the core families remain open. Application development requires Aymen's explicit authorization.
 
+The [entry background preview](../entry-background/README.md) applies the paper and blueprint direction to S-01, S-02 and S-25 for review.
+
 ## Provenance and updates
 
 The documentary validator verifies the [snapshot manifest](snapshot.json) against every file under `site/`. The [rebuild instructions](../corrections/README.md) regenerate the corrected references with `--corrected --pdf`. A fresh rebuild on 19 November 2026 matched all 456 state HTML files, CSS, fonts and logos. The nine regenerated PDFs, 22 PDF preview images and the generated index had different bytes. Use the committed bundle for exact comparison.

@@ -226,7 +226,7 @@ A4 documents use the `doc-a4` rules in [ext-print.css](../../design/received/202
 
 ## 10. Background layer (proposal, not approved)
 
-**Proposal, not applied to any screen.** Paper grain with a restrained blueprint touch (variant B, confirmed as a variant by Aymen on 2026-11-18), the adopted dark tone `neutral-dark` (the dark grain starts from `--fond`), a 12 % grain and calm plates behind text and controls. It introduces no new color: it uses `papier`, `encre`, `filet`, `accent-fond` and `fond`, and clinical roles never sit on it. Full specification, allow and deny lists and measurements: [background-study](background-study/README.md); CSS: `docs/design/background-study/background.css`. A Figma Desktop development plugin that builds the study frames lives in `design/figma-background-study` once its pull request is merged. Do not add this layer to a screen without a design decision.
+**Approved direction for the study and applied to the offline review copy of S-01, S-02 and S-25.** See the [render review](reviews/2026-11-19-entry-background.md). Paper grain with a restrained blueprint touch (variant B, confirmed as a variant by Aymen on 2026-11-18), the adopted dark tone `neutral-dark` (the dark grain starts from `--fond`), a 12 % grain and calm plates behind text and controls. It introduces no new color: it uses `papier`, `encre`, `filet`, `accent-fond` and `fond`, and clinical roles never sit on it. Full specification, allow and deny lists and measurements: [background-study](background-study/README.md); CSS: `docs/design/background-study/background.css`. The study-frame plugin lives in `design/figma-background-study`. Native application to the three product families remains pending.
 
 ## 11. Reproducing and checking the rendering
 
