@@ -43,7 +43,7 @@ UD-37). Increment 3 needs a stable HTTPS origin, hence the hosting decision of s
 | Native patient screens designed and reviewed (DF-19) | Aymen, design owner | Story 10.6 build | Pending |
 | Hosting decision (story 10.3, UD-25) | Aymen | Story 10.4 onward, any store step | Future |
 | Store publication (D-15) | Aymen | Any store submission | Not planned (UD-39) |
-| iOS native demonstration | Aymen | Story 10.8 build | Needs a Mac (simulator) or an explicit Apple-program decision |
+| iOS native demonstration | Aymen | Story 10.8 build | A borrowed Mac gives the simulator (A-17, Xcode version To verify); a physical iPhone build still needs an explicit Apple-program decision |
 
 ## 3. Increment 1: red-thread slice (web)
 
