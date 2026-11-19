@@ -1,10 +1,13 @@
 package dev.aymen.etaye.infrastructure.web;
 
+import dev.aymen.etaye.TestSessionHelper;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -16,6 +19,8 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.Duration;
 import java.util.Map;
@@ -113,6 +118,30 @@ public class ReadinessProbeOutageTest {
     @LocalServerPort
     private int port;
 
+    @Autowired
+    private TestSessionHelper testSessionHelper;
+
+    private UUID createAccountInOutageDb(String email, String displayName) {
+        try (Connection conn = DriverManager.getConnection(
+                OUTAGE_CONTAINER.getJdbcUrl(),
+                OWNER_USER,
+                OWNER_PASSWORD);
+             PreparedStatement ps = conn.prepareStatement(
+                     "INSERT INTO account (normalized_email, display_name, password_hash) VALUES (?, ?, ?) RETURNING id")) {
+            ps.setString(1, email);
+            ps.setString(2, displayName);
+            ps.setString(3, "$argon2id$v=19$m=65536,t=3,p=4$" + UUID.randomUUID() + "$" + UUID.randomUUID());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return (UUID) rs.getObject("id");
+                }
+            }
+            throw new IllegalStateException("Failed to retrieve generated account id");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to insert account fixture as owner in outage DB", e);
+        }
+    }
+
     private RestClient client() {
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setConnectTimeout(Duration.ofSeconds(10));
@@ -124,11 +153,15 @@ public class ReadinessProbeOutageTest {
     }
 
     @Test
-    @DisplayName("B7: Readiness probe outage test under production timeouts with paused and stopped container")
+    @DisplayName("B7: Readiness probe outage test under production timeouts with paused and stopped container, with valid session cookie")
     void readinessProbeFailsWithinAboutFourSecondsUnderOutages() {
         // 1. Initial state: Database is UP, probe returns 200 OK with only {"status":"UP"}
+        UUID accountId = createAccountInOutageDb("probe.outage." + UUID.randomUUID() + "@example.com", "Probe Outage User");
+        String sessionCookie = testSessionHelper.createSessionCookie(accountId);
+
         ResponseEntity<Map> upResponse = client().get()
                 .uri("/api/v1/probes/readiness")
+                .header(HttpHeaders.COOKIE, sessionCookie)
                 .retrieve()
                 .toEntity(Map.class);
 
@@ -144,6 +177,7 @@ public class ReadinessProbeOutageTest {
                 long startPause = System.currentTimeMillis();
                 ResponseEntity<Map> pausedResponse = client().get()
                         .uri("/api/v1/probes/readiness")
+                        .header(HttpHeaders.COOKIE, sessionCookie)
                         .retrieve()
                         .onStatus(status -> status.value() == 503, (req, res) -> {})
                         .toEntity(Map.class);
@@ -161,6 +195,7 @@ public class ReadinessProbeOutageTest {
         // Verify recovery after unpausing
         ResponseEntity<Map> recoveredResponse = client().get()
                 .uri("/api/v1/probes/readiness")
+                .header(HttpHeaders.COOKIE, sessionCookie)
                 .retrieve()
                 .toEntity(Map.class);
         assertThat(recoveredResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -173,6 +208,7 @@ public class ReadinessProbeOutageTest {
             long startStop = System.currentTimeMillis();
             ResponseEntity<Map> stoppedResponse = client().get()
                     .uri("/api/v1/probes/readiness")
+                    .header(HttpHeaders.COOKIE, sessionCookie)
                     .retrieve()
                     .onStatus(status -> status.value() == 503, (req, res) -> {})
                     .toEntity(Map.class);

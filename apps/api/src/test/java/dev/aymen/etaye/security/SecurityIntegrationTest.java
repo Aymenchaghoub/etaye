@@ -37,6 +37,61 @@ public class SecurityIntegrationTest extends AbstractPostgresTest {
                 .build();
     }
 
+    private int countSpringSessions() {
+        try (var conn = java.sql.DriverManager.getConnection(
+                POSTGRES_CONTAINER.getJdbcUrl(), OWNER_USER, OWNER_PASSWORD);
+             var stmt = conn.createStatement();
+             var rs = stmt.executeQuery("SELECT COUNT(*) FROM spring_session")) {
+            rs.next();
+            return rs.getInt(1);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    @DisplayName("A2: Unauthenticated protected request gives 401, creates NO row in spring_session, and sends no Set-Cookie")
+    void unauthenticatedRequestCreatesNoSession() {
+        int initialSessions = countSpringSessions();
+
+        ResponseEntity<Map> response = client().get()
+                .uri("/api/v1/practices/" + UUID.randomUUID() + "/records/" + UUID.randomUUID())
+                .retrieve()
+                .onStatus(status -> status.value() == 401, (req, res) -> {})
+                .toEntity(Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        assertThat(response.getHeaders().getFirst(HttpHeaders.SET_COOKIE)).isNull();
+        assertThat(countSpringSessions()).isEqualTo(initialSessions);
+    }
+
+    @Test
+    @DisplayName("A2: Authenticated POST /logout is not served as a logout (404/405 problem) and session still exists afterwards")
+    void logoutIsNotServed() {
+        UUID accountId = createAccountAsOwner("logout.test." + UUID.randomUUID() + "@example.com", "Logout Test");
+        String sessionCookie = testSessionHelper.createSessionCookie(accountId);
+
+        ResponseEntity<Map> csrfResponse = client().get()
+                .uri("/api/v1/csrf")
+                .header(HttpHeaders.COOKIE, sessionCookie)
+                .retrieve()
+                .toEntity(Map.class);
+        String csrfToken = (String) csrfResponse.getBody().get("token");
+
+        int initialSessions = countSpringSessions();
+
+        ResponseEntity<Map> response = client().post()
+                .uri("/logout")
+                .header(HttpHeaders.COOKIE, sessionCookie)
+                .header("X-CSRF-TOKEN", csrfToken)
+                .retrieve()
+                .onStatus(status -> status.is4xxClientError(), (req, res) -> {})
+                .toEntity(Map.class);
+
+        assertThat(response.getStatusCode().value()).isIn(404, 405);
+        assertThat(countSpringSessions()).isEqualTo(initialSessions);
+    }
+
     @Test
     @DisplayName("Security: Unauthenticated request to protected endpoint returns RFC 9457 401 Unauthorized with correlationId")
     void unauthenticatedRequestReturns401Problem() {
