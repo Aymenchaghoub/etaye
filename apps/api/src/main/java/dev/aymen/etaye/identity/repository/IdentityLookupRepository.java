@@ -68,10 +68,14 @@ public class IdentityLookupRepository {
                     log.warn("Rollback failed in identity context: class={}, code={}",
                             ex.getClass().getName(), "IDENTITY_ROLLBACK_FAILED");
                 }
+                if (e instanceof java.sql.SQLException sqlEx) {
+                    throw sqlEx;
+                }
                 if (e instanceof RuntimeException re) {
                     throw re;
                 }
-                throw new RuntimeException("Error executing identity query in account context", e);
+                throw new org.springframework.dao.DataAccessResourceFailureException(
+                        "Database unavailable during identity query", e);
             } finally {
                 try {
                     conn.setAutoCommit(originalAutoCommit);

@@ -3,6 +3,7 @@ package dev.aymen.etaye.infrastructure.security;
 import dev.aymen.etaye.identity.domain.AuthenticatedAccount;
 import dev.aymen.etaye.identity.repository.IdentityLookupRepository;
 import dev.aymen.etaye.infrastructure.error.ApiProblem;
+import dev.aymen.etaye.infrastructure.error.DatabaseUnavailable;
 import dev.aymen.etaye.infrastructure.error.ProblemResponseWriter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -63,26 +64,62 @@ public class IdentityResolutionFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        SecurityContext context = SecurityContextHolder.getContext();
-        Authentication auth = context.getAuthentication();
+        try {
+            SecurityContext context = SecurityContextHolder.getContext();
+            Authentication auth = context.getAuthentication();
 
-        if (auth != null && auth.isAuthenticated() && auth.getPrincipal() != null) {
-            String principalStr = auth.getPrincipal().toString();
-            UUID accountId;
-            try {
-                accountId = UUID.fromString(principalStr);
-            } catch (IllegalArgumentException e) {
-                // Not a valid UUID principal: allow chain to proceed
-                filterChain.doFilter(request, response);
-                return;
+            if (auth != null && auth.isAuthenticated() && auth.getPrincipal() != null) {
+                String principalStr = auth.getPrincipal().toString();
+                UUID accountId;
+                try {
+                    accountId = UUID.fromString(principalStr);
+                } catch (IllegalArgumentException e) {
+                    // Not a valid UUID principal: allow chain to proceed
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+
+                Optional<AuthenticatedAccount> resolved = identityLookupRepository.resolveAccountAndMemberships(accountId);
+
+                if (resolved.isEmpty() || !resolved.get().account().isActive()) {
+                    // Account suspended or revoked: delete persisted session, clear context, return 401
+                    HttpSession session = request.getSession(false);
+                    if (session != null) {
+                        String sessionId = session.getId();
+                        try {
+                            session.invalidate();
+                        } catch (Exception ex) {
+                            log.warn("Session invalidation failed: class={}, code={}",
+                                    ex.getClass().getName(), "SESSION_INVALIDATION_FAILED");
+                        }
+                        if (sessionRepository != null) {
+                            try {
+                                sessionRepository.deleteById(sessionId);
+                            } catch (Exception ex) {
+                                log.warn("Persisted session deletion failed: class={}, code={}",
+                                        ex.getClass().getName(), "SESSION_DELETION_FAILED");
+                            }
+                        }
+                    }
+                    SecurityContextHolder.clearContext();
+                    if (isCsrfEndpoint(request)) {
+                        filterChain.doFilter(request, response);
+                        return;
+                    }
+                    authenticationEntryPoint.commence(request, response,
+                            new AuthenticationCredentialsNotFoundException("Account is inactive or does not exist"));
+                    return;
+                }
+
+                // Store resolved account with current memberships in request attribute
+                request.setAttribute(AUTHENTICATED_ACCOUNT_ATTR, resolved.get());
             }
 
-            Optional<AuthenticatedAccount> resolved;
-            try {
-                resolved = identityLookupRepository.resolveAccountAndMemberships(accountId);
-            } catch (DataAccessResourceFailureException e) {
+            filterChain.doFilter(request, response);
+        } catch (Exception e) {
+            if (DatabaseUnavailable.isConnectionFailure(e)) {
                 String correlationId = CorrelationIdFilter.getCorrelationId(request);
-                log.error("Database connection failure during identity resolution: class={}, code={}, correlationId={}",
+                log.error("Database connection failure in identity filter: class={}, code={}, correlationId={}",
                         e.getClass().getName(), "SERVICE_UNAVAILABLE", correlationId);
                 ApiProblem problem = ApiProblem.of(
                         HttpStatus.SERVICE_UNAVAILABLE.value(),
@@ -94,42 +131,14 @@ public class IdentityResolutionFilter extends OncePerRequestFilter {
                 problemResponseWriter.writeProblem(response, problem);
                 return;
             }
-
-            if (resolved.isEmpty() || !resolved.get().account().isActive()) {
-                // Account suspended or revoked: delete persisted session, clear context, return 401
-                HttpSession session = request.getSession(false);
-                if (session != null) {
-                    String sessionId = session.getId();
-                    try {
-                        session.invalidate();
-                    } catch (Exception ex) {
-                        log.warn("Session invalidation failed: class={}, code={}",
-                                ex.getClass().getName(), "SESSION_INVALIDATION_FAILED");
-                    }
-                    if (sessionRepository != null) {
-                        try {
-                            sessionRepository.deleteById(sessionId);
-                        } catch (Exception ex) {
-                            log.warn("Persisted session deletion failed: class={}, code={}",
-                                    ex.getClass().getName(), "SESSION_DELETION_FAILED");
-                        }
-                    }
-                }
-                SecurityContextHolder.clearContext();
-                if (isCsrfEndpoint(request)) {
-                    filterChain.doFilter(request, response);
-                    return;
-                }
-                authenticationEntryPoint.commence(request, response,
-                        new AuthenticationCredentialsNotFoundException("Account is inactive or does not exist"));
-                return;
+            if (e instanceof ServletException se) {
+                throw se;
             }
-
-            // Store resolved account with current memberships in request attribute
-            request.setAttribute(AUTHENTICATED_ACCOUNT_ATTR, resolved.get());
+            if (e instanceof IOException ioe) {
+                throw ioe;
+            }
+            throw new ServletException(e);
         }
-
-        filterChain.doFilter(request, response);
     }
 
     private boolean isCsrfEndpoint(HttpServletRequest request) {
