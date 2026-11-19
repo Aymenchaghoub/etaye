@@ -266,6 +266,52 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
     }
 
     @Test
+    @org.junit.jupiter.api.extension.ExtendWith(org.springframework.boot.test.system.OutputCaptureExtension.class)
+    @DisplayName("A6: Forced 500 logs only exception class, code, and correlationId without raw data, SQL, or request UUIDs")
+    void forced500_logsNoRawDataOrSqlOrRequestUuids(org.springframework.boot.test.system.CapturedOutput output) {
+        String csrfToken = fetchCsrfToken(sessionCookieClinicalA);
+        String idempotencyKey = "key-logcheck-" + UUID.randomUUID();
+        String syntheticName = "SYNTHLOGCHECK";
+
+        PatientEdit edit = new PatientEdit(
+                syntheticName,
+                "Patient",
+                LocalDate.of(1990, 1, 1),
+                null,
+                null
+        );
+
+        testFailureHelper.enableFailureInBeforeCommit(
+                new RuntimeException("Simulated SQL error on insert into patient with " + syntheticName + " for practice " + practiceA)
+        );
+
+        try {
+            ResponseEntity<Map> response = client().post()
+                    .uri("/api/v1/practices/" + practiceA + "/patients")
+                    .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                    .header("X-CSRF-TOKEN", csrfToken)
+                    .header("Idempotency-Key", idempotencyKey)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(edit)
+                    .retrieve()
+                    .onStatus(status -> status.value() == 500, (req, res) -> {})
+                    .toEntity(Map.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+            assertThat(response.getBody().get("code")).isEqualTo("INTERNAL_ERROR");
+
+            String logs = output.getAll();
+            assertThat(logs).contains("Unhandled server exception: class=java.lang.RuntimeException");
+            assertThat(logs).doesNotContain(syntheticName);
+            assertThat(logs).doesNotContain("insert into");
+            assertThat(logs).doesNotContain("select ");
+            assertThat(logs).doesNotContain(practiceA.toString());
+        } finally {
+            testFailureHelper.disableFailureInBeforeCommit();
+        }
+    }
+
+    @Test
     @DisplayName("C3: Practitioner of practice B reading record of practice A gets indistinguishable 404")
     void c3_crossPracticeRecordRead_returnsIndistinguishable404() {
         String csrfToken = fetchCsrfToken(sessionCookieClinicalA);

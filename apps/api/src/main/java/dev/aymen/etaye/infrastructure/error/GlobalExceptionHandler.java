@@ -4,6 +4,7 @@ import dev.aymen.etaye.infrastructure.security.CorrelationIdFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.NestedExceptionUtils;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.TransientDataAccessResourceException;
 import org.springframework.http.HttpStatus;
@@ -35,14 +36,19 @@ public class GlobalExceptionHandler {
 
     private ResponseEntity<ApiProblem> buildProblem(HttpStatus status, String code, String publicDetail, Exception ex, HttpServletRequest request) {
         String correlationId = CorrelationIdFilter.getCorrelationId(request);
+        Throwable rootCause = NestedExceptionUtils.getMostSpecificCause(ex);
+        String rootCauseClass = rootCause != null ? rootCause.getClass().getName() : ex.getClass().getName();
         if (status.is5xxServerError()) {
             if (status == HttpStatus.INTERNAL_SERVER_ERROR) {
-                log.error("Unhandled server exception: class={}, code={}, correlationId={}", ex.getClass().getName(), code, correlationId, ex);
+                log.error("Unhandled server exception: class={}, rootCauseClass={}, code={}, correlationId={}",
+                        ex.getClass().getName(), rootCauseClass, code, correlationId);
             } else {
-                log.error("Database connection failure: class={}, code={}, correlationId={}", ex.getClass().getName(), code, correlationId);
+                log.error("Database connection failure: class={}, rootCauseClass={}, code={}, correlationId={}",
+                        ex.getClass().getName(), rootCauseClass, code, correlationId);
             }
         } else {
-            log.warn("Request rejected: class={}, code={}, correlationId={}", ex.getClass().getName(), code, correlationId);
+            log.warn("Request rejected: class={}, rootCauseClass={}, code={}, correlationId={}",
+                    ex.getClass().getName(), rootCauseClass, code, correlationId);
         }
         ApiProblem problem = ApiProblem.of(
                 status.value(),
@@ -87,7 +93,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
     public ResponseEntity<ApiProblem> handleMediaTypeNotAcceptable(HttpMediaTypeNotAcceptableException ex, HttpServletRequest request) {
         String correlationId = CorrelationIdFilter.getCorrelationId(request);
-        log.warn("Request rejected: class={}, code={}, correlationId={}", ex.getClass().getName(), "NOT_ACCEPTABLE", correlationId);
+        Throwable rootCause = NestedExceptionUtils.getMostSpecificCause(ex);
+        String rootCauseClass = rootCause != null ? rootCause.getClass().getName() : ex.getClass().getName();
+        log.warn("Request rejected: class={}, rootCauseClass={}, code={}, correlationId={}",
+                ex.getClass().getName(), rootCauseClass, "NOT_ACCEPTABLE", correlationId);
         ApiProblem problem = ApiProblem.of(
                 HttpStatus.NOT_ACCEPTABLE.value(),
                 "Not Acceptable",
@@ -139,9 +148,12 @@ public class GlobalExceptionHandler {
             fieldErrors.add(new FieldErrorItem(fe.getField(), fe.getCode(), fe.getDefaultMessage()));
         }
 
+        Throwable rootCause = NestedExceptionUtils.getMostSpecificCause(ex);
+        String rootCauseClass = rootCause != null ? rootCause.getClass().getName() : ex.getClass().getName();
+
         if (futureDateOfBirth) {
-            log.warn("Future birth date validation failure: class={}, code={}, correlationId={}",
-                    ex.getClass().getName(), "VALIDATION_FAILED", correlationId);
+            log.warn("Future birth date validation failure: class={}, rootCauseClass={}, code={}, correlationId={}",
+                    ex.getClass().getName(), rootCauseClass, "VALIDATION_FAILED", correlationId);
             ApiProblem problem = ApiProblem.withFieldErrors(
                     HttpStatus.UNPROCESSABLE_ENTITY.value(),
                     "Unprocessable Content",
@@ -155,8 +167,8 @@ public class GlobalExceptionHandler {
                     .body(problem);
         }
 
-        log.warn("Schema validation failure: class={}, code={}, correlationId={}",
-                ex.getClass().getName(), "VALIDATION_FAILED", correlationId);
+        log.warn("Schema validation failure: class={}, rootCauseClass={}, code={}, correlationId={}",
+                ex.getClass().getName(), rootCauseClass, "VALIDATION_FAILED", correlationId);
         ApiProblem problem = ApiProblem.withFieldErrors(
                 HttpStatus.BAD_REQUEST.value(),
                 "Bad Request",

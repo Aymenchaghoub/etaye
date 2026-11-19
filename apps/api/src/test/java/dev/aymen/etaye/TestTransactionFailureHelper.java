@@ -35,6 +35,7 @@ public class TestTransactionFailureHelper {
 
     private final AtomicBoolean failInBeforeCommit = new AtomicBoolean(false);
     private final AtomicInteger reachedCount = new AtomicInteger(0);
+    private volatile Throwable customFailure;
 
     private final AtomicBoolean pauseInBeforeCommit = new AtomicBoolean(false);
     private final AtomicBoolean firstPaused = new AtomicBoolean(false);
@@ -51,12 +52,18 @@ public class TestTransactionFailureHelper {
     }
 
     public void enableFailureInBeforeCommit() {
+        enableFailureInBeforeCommit(null);
+    }
+
+    public void enableFailureInBeforeCommit(Throwable customFailure) {
         reachedCount.set(0);
+        this.customFailure = customFailure;
         failInBeforeCommit.set(true);
     }
 
     public void disableFailureInBeforeCommit() {
         failInBeforeCommit.set(false);
+        this.customFailure = null;
     }
 
     public int getReachedCount() {
@@ -99,6 +106,11 @@ public class TestTransactionFailureHelper {
                     reachedCount.incrementAndGet();
                     if (entityManager != null) {
                         entityManager.flush();
+                    }
+                    if (customFailure != null) {
+                        if (customFailure instanceof RuntimeException re) throw re;
+                        if (customFailure instanceof Error err) throw err;
+                        throw new RuntimeException(customFailure);
                     }
                     throw new RuntimeException("Simulated commit failure in beforeCommit after flushing domain writes");
                 }
