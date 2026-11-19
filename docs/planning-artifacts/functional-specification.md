@@ -21,7 +21,7 @@ Appointment reasons may be sensitive: scheduler sees only what is necessary for 
 
 Patient publication is an immutable audience-specific projection. It can include a selected consultation report or a separately reviewed patient explanation, never a clinician brief by re-labeling. A citation for the patient resolves to a permitted published excerpt/attachment; a source ID alone grants nothing. See I-17/I-18 and the publication contract.
 
-Journeys are client-independent: the same behavior and server checks apply in the web app, the installed web app and the native shell (UD-12, ADR-008), and notifications of any channel carry no clinical content.
+Journeys are client-independent: the same behavior and server checks apply in the web app, the installed web app and the native app (UD-12, ADR-008, ADR-010), and notifications of any channel carry no clinical content.
 
 ## Verification contract
 

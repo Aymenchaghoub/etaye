@@ -2,7 +2,7 @@
 title: "Étaye — Product requirements"
 status: draft
 created: 2026-11-02
-updated: 2026-11-17
+updated: 2026-11-19
 review_status: ready-for-design
 user_approval: not-approved
 ---
@@ -19,7 +19,7 @@ The primary actor is the practitioner. Patients manage visits and read selected 
 
 ## Platforms and clients
 
-Étaye is a web application and, by user direction (UD-12), also an installable Android and iOS app built from the same API and, as far as possible, the same React and TypeScript code. The native app targets the patient first (UD-13); practitioners use the responsive web app and its installable form. Packaging follows the order installable web app, then a Capacitor shell (UD-14), with no offline clinical mode (UD-15). Publishing in app stores is a separate decision with its own costs and policies (D-15). Multi-client rules are in [ADR-008](../../decisions/ADR-008-multi-client-access.md), [ADR-009](../../decisions/ADR-009-api-compatibility.md) and NFR-15; the delivery order is in the [roadmap](../roadmap.md).
+Étaye is a web application and, by user direction (UD-12), also an Android and iOS app built on the same API. The native app is a React Native app built with Expo (UD-38, [ADR-010](../../decisions/ADR-010-native-client-react-native-expo.md)); it shares the generated client, the design tokens and the types of the web app, not its UI components, and keeps the same visual identity. It targets the patient first (UD-13); practitioners use the responsive web app and its installable form. Packaging follows the order installable web app, then the native app, with no offline clinical mode (UD-15). The mobile apps are demos and are not published (UD-39, D-15). Multi-client rules are in [ADR-008](../../decisions/ADR-008-multi-client-access.md), [ADR-009](../../decisions/ADR-009-api-compatibility.md), ADR-010 and NFR-15; the delivery order is in the [roadmap](../roadmap.md).
 
 ## Functional requirements
 

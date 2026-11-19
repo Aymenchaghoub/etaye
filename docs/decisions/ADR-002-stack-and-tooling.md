@@ -1,6 +1,6 @@
 # ADR-002 — Current supported stack and tooling
 
-Status: Proposed. Date: 2026-11-02. Related: AD-1/10, FR-020.
+Status: Proposed. Date: 2026-11-02. Amended 2026-11-19: native app row added by [ADR-010](ADR-010-native-client-react-native-expo.md). Related: AD-1/10, FR-020.
 
 User decisions fix Spring Boot, React TypeScript and PostgreSQL. Current official evidence is recorded in [technology and hosting sources](../operations/technology-and-hosting-sources.md).
 
@@ -11,10 +11,11 @@ User decisions fix Spring Boot, React TypeScript and PostgreSQL. Current officia
 | Build | Maven wrapper on a supported 3.9 release, chosen and checksum-pinned during setup | Gradle also supported; no user value justifies both |
 | Database | PostgreSQL 18.6 for CI/local/demo, provider support verified before provisioning | PostgreSQL 17 remains an acceptable documented fallback if a selected provider lacks 18; keep all environments on the same major |
 | Browser app | React 19.3.0, TypeScript strict, Vite 8 supported patch, Node 26 LTS | Next.js/SSR evaluated: public showcase can benefit from static pre-render, but clinician workspace needs no second server runtime; do not adopt an app framework only for a landing page |
+| Native app (patient first, ADR-010) | React Native with Expo, TypeScript strict; latest stable line observed 2026-11-19 is Expo SDK 58 with React Native 0.88, exact lock at the spike; `expo-secure-store` for the session secret, `expo-notifications` for push | Capacitor (UD-14) rejected by ADR-010; Flutter and Kotlin Multiplatform rejected. An Expo SDK pins its own React (19.2.x for SDK 56 and 57, SDK 58 To verify) while the web proposal is React 19.3, so no shared package may import React |
 | UI primitives | Radix Primitives plus CSS tokens/components authored from Figma | MUI/Ant default themes pull identity away from existing foundations; shadcn source snippets are optional references, not a substitute design system |
 | State | Local form/UI state, server-query cache (TanStack Query candidate), URL state for safe filters | Global Redux store not justified; never cache clinical data indefinitely across logout/practice changes |
 | Migration | Flyway Community SQL, checksums, validate and clean/upgrade test paths | Liquibase supports declarative migrations but adds format/abstraction without a demonstrated need; paid undo is not the rollback strategy |
-| Tests | Boot-managed JUnit generation, Testcontainers PostgreSQL, Vitest supported compatible patch at setup, Testing Library, Playwright | H2 and endpoint mocks cannot establish PostgreSQL isolation, constraints or end-to-end behavior |
+| Tests | Boot-managed JUnit generation, Testcontainers PostgreSQL, Vitest supported compatible patch at setup, Testing Library, Playwright; native app: Expo Jest preset, React Native Testing Library and an emulator smoke journey (tool chosen at the spike) | H2 and endpoint mocks cannot establish PostgreSQL isolation, constraints or end-to-end behavior |
 | PDF | Apache PDFBox 3 supported patch, server-side layout service and embedded licensed fonts | Chromium HTML-to-PDF simplifies CSS but increases memory/startup cost; OpenHTMLToPDF maintenance and accessibility fit require further evaluation before selecting it |
 
 Primary-source validation establishes support and baseline compatibility, **not a successful project build**. Exact tool patches, plugin compatibility, accessibility behavior and PDF layout remain future setup spikes after authorization. Use BOM/lockfiles; do not force independent Spring component versions. Pin base images by digest at release. No starter was run or generated in this phase.

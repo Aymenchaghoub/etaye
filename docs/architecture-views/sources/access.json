@@ -4,11 +4,11 @@
   "meta": {
     "title": "Étaye — client sessions and resource isolation",
     "locale": "en",
-    "output": ".archify/architecture-etaye-planned-20261119-102252/access/access.html",
+    "output": ".archify/architecture-etaye-native-expo-20261119-112639/access/access.html",
     "quality_profile": "showcase",
     "repository": {
       "url": "git@github.com:Aymenchaghoub/etaye.git",
-      "revision": "eb58c81b3be3b91819dd2ca31a4f2412b509b5e3",
+      "revision": "f05b30b527d910872da79bd62f55f68447921961",
       "link_mode": "local-only"
     }
   },
@@ -56,8 +56,8 @@
       "sources": [
         {
           "path": "docs/planning-artifacts/architecture/ARCHITECTURE-SPINE.md",
-          "line": 54,
-          "end_line": 58
+          "line": 55,
+          "end_line": 59
         },
         {
           "path": "docs/decisions/ADR-004-authentication-sessions.md",
@@ -124,8 +124,8 @@
     {
       "id": "native",
       "type": "frontend",
-      "label": "Patient Capacitor shell",
-      "sublabel": "Bundled React assets / online only",
+      "label": "Patient React Native app",
+      "sublabel": "Expo native screens / online only",
       "pos": [
         40,
         280
@@ -136,23 +136,23 @@
       ],
       "sources": [
         {
-          "path": "docs/decisions/ADR-008-multi-client-access.md",
+          "path": "docs/decisions/ADR-010-native-client-react-native-expo.md",
           "line": 9,
-          "end_line": 16
+          "end_line": 13
         },
         {
           "path": "docs/planning-artifacts/roadmap.md",
-          "line": 109,
-          "end_line": 126
+          "line": 112,
+          "end_line": 134
         }
       ],
-      "tag": "I3 Android · I4 iOS"
+      "tag": "I3 Android · I4 iOS demo gate"
     },
     {
       "id": "bearer",
       "type": "security",
       "label": "Native header transport",
-      "sublabel": "Opaque bearer / exact native origin",
+      "sublabel": "Opaque bearer / no cookie, no Origin",
       "pos": [
         365,
         280
@@ -166,15 +166,20 @@
           "path": "docs/decisions/ADR-008-multi-client-access.md",
           "line": 9,
           "end_line": 14
+        },
+        {
+          "path": "docs/decisions/ADR-010-native-client-react-native-expo.md",
+          "line": 11,
+          "end_line": 11
         }
       ],
-      "tag": "Never JWT / never web origin"
+      "tag": "Never JWT / never browser headers"
     },
     {
       "id": "device",
       "type": "security",
       "label": "Device registration",
-      "sublabel": "Keychain / Keystore secret only",
+      "sublabel": "Keychain / Keystore · first-launch wipe",
       "pos": [
         365,
         520
@@ -193,6 +198,11 @@
           "path": "docs/planning-artifacts/data-dictionary.md",
           "line": 37,
           "end_line": 37
+        },
+        {
+          "path": "docs/decisions/ADR-010-native-client-react-native-expo.md",
+          "line": 11,
+          "end_line": 11
         }
       ],
       "tag": "List / revoke · lifetime open"
@@ -360,10 +370,10 @@
     },
     {
       "dot": "cyan",
-      "title": "Session and device decisions — ADR-008 accepted",
+      "title": "Session and device decisions — ADR-008 and ADR-010 accepted",
       "items": [
-        "Web/PWA: secure host-only opaque cookie and CSRF, no bearer in browser storage. Native: same opaque server session over the Authorization header from an exact allowlisted origin; platform secure storage only.",
-        "No mixed transports; bearer is rejected from web origins. Revoke on logout, reset and suspension; device registration can be revoked. Native duration and exact origin/framework support remain story 10.5 checks."
+        "Web/PWA: secure host-only opaque cookie and CSRF, no bearer in browser storage. Native: same opaque server session over the Authorization header after credential verification to a registered device; platform secure storage only.",
+        "No mixed transports; a bearer request carrying a cookie or browser origin headers is refused. Revoke on logout, reset and suspension; device registration can be revoked. Native duration and the exact header rule remain story 10.5 checks."
       ]
     },
     {

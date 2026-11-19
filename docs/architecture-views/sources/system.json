@@ -4,11 +4,11 @@
   "meta": {
     "title": "Étaye — planned system",
     "locale": "en",
-    "output": ".archify/architecture-etaye-planned-20261119-102252/system/system.html",
+    "output": ".archify/architecture-etaye-native-expo-20261119-112639/system/system.html",
     "quality_profile": "showcase",
     "repository": {
       "url": "git@github.com:Aymenchaghoub/etaye.git",
-      "revision": "eb58c81b3be3b91819dd2ca31a4f2412b509b5e3",
+      "revision": "f05b30b527d910872da79bd62f55f68447921961",
       "link_mode": "local-only"
     }
   },
@@ -38,7 +38,7 @@
       "id": "react",
       "type": "frontend",
       "label": "React + TypeScript",
-      "sublabel": "Web, PWA, patient Capacitor shell",
+      "sublabel": "Web, PWA, patient React Native app",
       "pos": [
         390,
         40
@@ -57,9 +57,14 @@
           "path": "docs/decisions/ADR-008-multi-client-access.md",
           "line": 9,
           "end_line": 16
+        },
+        {
+          "path": "docs/decisions/ADR-010-native-client-react-native-expo.md",
+          "line": 9,
+          "end_line": 10
         }
       ],
-      "tag": "I1 web · I3 Android · I4 iOS"
+      "tag": "I1 web · I3 Android · I4 iOS demo"
     },
     {
       "id": "api",
@@ -109,8 +114,8 @@
       "sources": [
         {
           "path": "docs/planning-artifacts/architecture/ARCHITECTURE-SPINE.md",
-          "line": 42,
-          "end_line": 52
+          "line": 43,
+          "end_line": 53
         },
         {
           "path": "docs/planning-artifacts/architecture/runtime-architecture.md",
@@ -141,8 +146,8 @@
         },
         {
           "path": "docs/planning-artifacts/architecture/ARCHITECTURE-SPINE.md",
-          "line": 72,
-          "end_line": 82
+          "line": 73,
+          "end_line": 83
         },
         {
           "path": "docs/planning-artifacts/data-model.md",
@@ -200,8 +205,8 @@
         },
         {
           "path": "docs/planning-artifacts/architecture/ARCHITECTURE-SPINE.md",
-          "line": 84,
-          "end_line": 88
+          "line": 85,
+          "end_line": 89
         }
       ],
       "tag": "Opaque IDs · guarded delivery"
@@ -249,8 +254,8 @@
       "sources": [
         {
           "path": "docs/planning-artifacts/roadmap.md",
-          "line": 56,
-          "end_line": 61
+          "line": 59,
+          "end_line": 64
         },
         {
           "path": "docs/decisions/ADR-008-multi-client-access.md",
@@ -343,8 +348,8 @@
       "dot": "cyan",
       "title": "Planning snapshot — 19 Nov 2026",
       "items": [
-        "User decisions: Spring Boot, React TypeScript, PostgreSQL; isolated practices; patient-first native direction.",
-        "The modular monolith and most tooling remain documented proposals (ADR-001–007). ADR-008/009 are accepted. Nothing here is an implemented runtime."
+        "User decisions: Spring Boot, React TypeScript, PostgreSQL; isolated practices; patient-first native app (React Native with Expo, demo-only).",
+        "The modular monolith and most tooling remain documented proposals (ADR-001–007). ADR-008, ADR-009 and ADR-010 are accepted. Nothing here is an implemented runtime."
       ]
     },
     {
@@ -367,7 +372,7 @@
       "dot": "amber",
       "title": "Phased target, not an increment-1 inventory",
       "items": [
-        "I1: web journey, seeded slots/document, deterministic adapters, P-03 PDF. I2: complete web entry/upload/scheduling/admin and P-01/P-02. I3: PWA → Android + push. I4: iOS and conditional release extensions.",
+        "I1: web journey, seeded slots/document, deterministic adapters, P-03 PDF. I2: complete web entry/upload/scheduling/admin and P-01/P-02. I3: PWA → Android app (Expo) + push. I4: iOS demo gate and conditional release extensions.",
         "No required broker, Redis, microservices or vector database. Object storage and real antivirus scanning are deferred; hosting and exact dependency versions remain gated."
       ]
     }

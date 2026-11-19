@@ -7,7 +7,7 @@ paradigm: modular monolith with ports and adapters
 scope: All Étaye application domains and delivery environments
 status: draft
 created: 2026-11-02
-updated: 2026-11-02
+updated: 2026-11-19
 binds: [FR-001, FR-002, FR-003, FR-004, FR-005, FR-006, FR-007, FR-008, FR-009, FR-010, FR-011, FR-012, FR-013, FR-014, FR-015, FR-016, FR-017, FR-018, FR-019, FR-020]
 sources: [../prd/prd.md, ../business-rules.md, ../../references/source-register.md]
 companions: [../../decisions/README.md, ../data-model.md, ../data-dictionary.md, ../../contracts/openapi.yaml, ../ai-specification.md, ../security-privacy.md, ../non-functional-requirements.md, ../../operations/cicd-deployment-strategy.md, ../../operations/hosting-cost-assessment.md, ../../test-artifacts/test-strategy.md]
@@ -19,11 +19,12 @@ Review status: Draft for complete design planning. New technical choices below a
 
 ## Design Paradigm
 
-One Spring Boot deployment and one React client. Business modules own their data and application services; controllers and provider adapters depend inward. Modules communicate through explicit application interfaces and immutable events, never another module's repositories. PostgreSQL is the transactional authority. Separate external ports for AI, files, PDF rendering and email allow deterministic replacements.
+One Spring Boot deployment, one React web client and, from increment 3, a React Native patient app on the same API (ADR-010). Business modules own their data and application services; controllers and provider adapters depend inward. Modules communicate through explicit application interfaces and immutable events, never another module's repositories. PostgreSQL is the transactional authority. Separate external ports for AI, files, PDF rendering and email allow deterministic replacements.
 
 ```mermaid
 flowchart LR
   UI[React browser] --> HTTP[HTTP controllers]
+  NATIVE[React Native app, increment 3] --> HTTP
   HTTP --> APP[Application services]
   APP --> DOMAIN[Domain rules]
   DB[PostgreSQL adapters] --> APP
@@ -97,7 +98,7 @@ flowchart LR
 
 - **Binds:** FR-001, FR-016.
 - **Prevents:** a second session model, clinical data on devices and clients that break when the API evolves.
-- **Rule:** The web app, the installed web app and a native shell call the same versioned API with the same authorization. The web app and the installed web app use the AD-4 cookie and CSRF transport; a native shell uses the same server-side opaque session in an `Authorization` header from an allowlisted native origin (ADR-008). Cookie and bearer are never mixed and bearer is never accepted from a web origin. Devices hold the session secret only: no offline clinical cache, a service worker that caches the application shell only, and content-free push notifications re-authorized at delivery. API changes are additive within `/api/v1`, with a minimum client version and a compatibility window (ADR-009).
+- **Rule:** The web app, the installed web app and a native app call the same versioned API with the same authorization. The web app and the installed web app use the AD-4 cookie and CSRF transport; the native app (React Native with Expo, ADR-010) uses the same server-side opaque session in an `Authorization` header, issued after credential verification to a registered device (ADR-008, amended by ADR-010). Cookie and bearer are never mixed and a bearer request that carries a cookie or browser origin headers is refused. Devices hold the session secret only: no offline clinical cache, a service worker that caches the application shell only, and content-free push notifications re-authorized at delivery. API changes are additive within `/api/v1`, with a minimum client version and a compatibility window (ADR-009).
 
 ## Consistency Conventions
 
@@ -113,13 +114,15 @@ flowchart LR
 
 ## Stack
 
-Seed only, verified 2026-11-02. Pin supported patch releases and container digests during authorized setup; this document does not imply installed application dependencies. Framework-managed dependencies follow the Spring Boot BOM.
+Seed only, verified 2026-11-02 (the Expo and React Native rows 2026-11-19). Pin supported patch releases and container digests during authorized setup; this document does not imply installed application dependencies. Framework-managed dependencies follow the Spring Boot BOM.
 
 | Name | Version |
 |---|---|
 | Java LTS | 25 |
 | Spring Boot | 4.1.2 |
 | React | 19.3.0 |
+| Expo SDK (native app) | 58 (latest stable observed 2026-11-19; lock at the spike) |
+| React Native (native app) | 0.88 (with Expo SDK 58) |
 | Vite | 8.0.0 |
 | PostgreSQL | 18.6 |
 | Node.js LTS | 26 |
@@ -131,6 +134,7 @@ The `8.0.0` Vite seed identifies the verified stable major release; refresh its 
 ```mermaid
 flowchart TB
   B[Browser on one application origin] --> G[TLS ingress / reverse proxy]
+  N[React Native app, demo] --> G
   G --> S[React static artifact]
   G --> A[Spring Boot modular monolith]
   A --> P[(PostgreSQL)]
@@ -141,7 +145,7 @@ flowchart TB
   R -. future authorized promotion .-> G
 ```
 
-No directories below are created in this mission. Future seed: `apps/api`, `apps/web`, `infra/local`, `docs`. Development, CI, preview and public demo use different database credentials, stores and synthetic datasets; a test never points at the public demo database. A separate Cloudflare showcase may be static; browser sessions require same-origin application routing, not unrelated free subdomains. See the [hosting assessment](../../operations/hosting-cost-assessment.md) for this constraint.
+No directories below are created in this mission. Future seed: `apps/api`, `apps/web`, `apps/mobile` (increment 3), `infra/local`, `docs`. Development, CI, preview and public demo use different database credentials, stores and synthetic datasets; a test never points at the public demo database. A separate Cloudflare showcase may be static; browser sessions require same-origin application routing, not unrelated free subdomains. See the [hosting assessment](../../operations/hosting-cost-assessment.md) for this constraint.
 
 ## Capability → Architecture Map
 
@@ -156,7 +160,7 @@ No directories below are created in this mission. Future seed: `apps/api`, `apps
 | FR-016 | portal projection of authorized domain services | AD-3, AD-4, AD-6, AD-9 |
 | FR-017, FR-018 | communications / files / audit | AD-7, AD-9 |
 | FR-019, FR-020 | demo administration / delivery | AD-1, AD-8, AD-10 |
-| Clients (web, installed web app, native shell) | identity, communications, API contract | AD-4, AD-11 |
+| Clients (web, installed web app, native app) | identity, communications, API contract | AD-4, AD-11 |
 
 ## Deferred and open decisions
 
@@ -165,4 +169,4 @@ No directories below are created in this mission. Future seed: `apps/api`, `apps
 - Exact patch lockfiles, Maven wrapper and source scaffolds wait for development authorization. No scaffold command is verified.
 - Representatives/minors, narrower clinical record assignments and identity proof beyond the adult synthetic demo need product decisions before expanding scope; do not weaken the current boundaries.
 - Intelligent laboratory PDF extraction is a later increment with mandatory extraction review; ordinary upload/manual labs remain in the current scope.
-- Native publication, offline mode, a native practitioner app and device lock are decisions D-15 to D-18; store policies and fees are verified when Aymen decides.
+- Native publication is not planned (UD-39, D-15); offline mode, a native practitioner app and device lock are decisions D-16 to D-18; store policies and fees are verified only if Aymen reopens D-15.

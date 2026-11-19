@@ -4,11 +4,11 @@
   "meta": {
     "title": "Étaye — planned deployment and delivery",
     "locale": "en",
-    "output": ".archify/architecture-etaye-planned-20261119-102252/delivery/delivery.html",
+    "output": ".archify/architecture-etaye-native-expo-20261119-112639/delivery/delivery.html",
     "quality_profile": "showcase",
     "repository": {
       "url": "git@github.com:Aymenchaghoub/etaye.git",
-      "revision": "eb58c81b3be3b91819dd2ca31a4f2412b509b5e3",
+      "revision": "f05b30b527d910872da79bd62f55f68447921961",
       "link_mode": "local-only"
     }
   },
@@ -61,8 +61,8 @@
         },
         {
           "path": "docs/planning-artifacts/roadmap.md",
-          "line": 87,
-          "end_line": 98
+          "line": 90,
+          "end_line": 101
         }
       ],
       "tag": "Real stack · nonempty suites"
@@ -121,7 +121,7 @@
         {
           "path": "docs/planning-artifacts/roadmap.md",
           "line": 34,
-          "end_line": 43
+          "end_line": 46
         }
       ],
       "tag": "Future authorized promotion"
@@ -151,7 +151,7 @@
           "end_line": 15
         }
       ],
-      "tag": "Always-on before native/store"
+      "tag": "Always-on before phone demos"
     },
     {
       "id": "app",
@@ -417,8 +417,8 @@
       "dot": "rose",
       "title": "Mobile and optional surfaces",
       "items": [
-        "PWA uses the validated web build. Android package and iOS archive derive from the same validated commit; signing material stays outside Git. Store publication, domain and developer accounts require their own decision.",
-        "Native assets are bundled; a remote-site Capacitor shell is rejected. An optional independent static showcase may use Cloudflare without moving the authenticated app to unrelated origins. Sleeping hosts cannot promise timely jobs or reminders."
+        "PWA uses the validated web build. The Expo Android app derives from the same validated commit as a development build or package file; iOS needs a Mac or the Apple program (Linux cannot build it); signing material stays outside Git. Store publication is not planned (D-15).",
+        "The native app loads no remote page and no webview shows clinical content. An optional independent static showcase may use Cloudflare without moving the authenticated app to unrelated origins. Sleeping hosts cannot promise timely jobs or reminders."
       ]
     }
   ]

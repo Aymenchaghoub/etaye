@@ -27,7 +27,7 @@ Planning/design evidence remains outside runtime packaging. Future backend/conta
 
 ## Mobile artifacts (increments 3 and 4)
 
-The installable web app is part of the validated web artifact. An Android package and an iOS archive are built only in increments 3 and 4, from the same validated commit; signing keys and store credentials never enter the repository or the logs, and no Apple or Google developer account is created or paid without Aymen's decision (D-15). Native smoke evidence is recorded only for runs that actually happened (an emulator is not a real device).
+The installable web app is part of the validated web artifact. The Expo Android app is built in increment 3, as a local development build or a package file, from the same validated commit. An iOS simulator build follows in increment 4 and only on a Mac (Linux cannot produce it); no iOS device build exists without the Apple program (ADR-010). Signing keys and store credentials never enter the repository or the logs, and no Apple or Google developer account is created or paid without Aymen's decision (D-15, not planned, UD-39). Native smoke evidence is recorded only for runs that actually happened (an emulator is not a real device).
 
 ## Rollback and recovery
 

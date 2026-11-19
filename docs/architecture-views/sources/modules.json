@@ -4,11 +4,11 @@
   "meta": {
     "title": "Étaye — module ownership",
     "locale": "en",
-    "output": ".archify/architecture-etaye-planned-20261119-102252/modules/modules.html",
+    "output": ".archify/architecture-etaye-native-expo-20261119-112639/modules/modules.html",
     "quality_profile": "showcase",
     "repository": {
       "url": "git@github.com:Aymenchaghoub/etaye.git",
-      "revision": "eb58c81b3be3b91819dd2ca31a4f2412b509b5e3",
+      "revision": "f05b30b527d910872da79bd62f55f68447921961",
       "link_mode": "local-only"
     }
   },
@@ -20,8 +20,8 @@
       "sources": [
         {
           "path": "docs/planning-artifacts/architecture/ARCHITECTURE-SPINE.md",
-          "line": 42,
-          "end_line": 46
+          "line": 43,
+          "end_line": 47
         },
         {
           "path": "docs/planning-artifacts/architecture/runtime-architecture.md",
@@ -38,8 +38,8 @@
       "sources": [
         {
           "path": "docs/planning-artifacts/architecture/ARCHITECTURE-SPINE.md",
-          "line": 42,
-          "end_line": 46
+          "line": 43,
+          "end_line": 47
         }
       ]
     },
@@ -51,8 +51,8 @@
       "sources": [
         {
           "path": "docs/planning-artifacts/architecture/ARCHITECTURE-SPINE.md",
-          "line": 42,
-          "end_line": 46
+          "line": 43,
+          "end_line": 47
         }
       ]
     },
@@ -64,8 +64,8 @@
       "sources": [
         {
           "path": "docs/planning-artifacts/architecture/ARCHITECTURE-SPINE.md",
-          "line": 42,
-          "end_line": 46
+          "line": 43,
+          "end_line": 47
         }
       ]
     },
@@ -77,8 +77,8 @@
       "sources": [
         {
           "path": "docs/planning-artifacts/architecture/ARCHITECTURE-SPINE.md",
-          "line": 42,
-          "end_line": 46
+          "line": 43,
+          "end_line": 47
         }
       ]
     },

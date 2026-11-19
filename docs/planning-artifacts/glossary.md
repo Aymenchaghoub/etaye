@@ -41,7 +41,7 @@ Status: Draft for design. Date: 2026-11-02. Use these terms consistently in requ
 | Acknowledgement | Prise de connaissance | Append-only practitioner action on one exact visit preparation or clinician brief version. It is not validation, never changes authorship and never creates patient visibility. |
 | Increment | Incrément | A delivery slice of the roadmap that allocates stories, design families and API operations; the allocation is an assumption until Aymen reorders it. |
 | Installed web app (PWA) | Application web installée | The web app installed on a phone from the browser, with a service worker that caches the application shell only. |
-| Native shell | Coque native | A thin native container (Capacitor) around the bundled web app, with secure session storage and native sharing and notifications. |
+| Native app | Application native | The React Native app built with Expo (ADR-010): native screens on the same API, secure session storage, native sharing and content-free notifications. It shares the generated client, tokens and types of the web app, not its UI components. |
 
 ## Status axes
 

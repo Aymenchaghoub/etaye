@@ -1,7 +1,7 @@
 {
   "version": 1,
   "date": "2026-11-17",
-  "note": "Canonical allocation of every story, design family and API operation to a delivery increment (assumption A-16 until Aymen reorders). docs/planning-artifacts/roadmap.md renders it; tools/validate_docs.py enforces completeness.",
+  "note": "Canonical allocation of every story, design family and API operation to a delivery increment (assumption A-16 until Aymen reorders; increments 3 and 4 renamed on 2026-11-19 by UD-38 and UD-39). docs/planning-artifacts/roadmap.md renders it; tools/validate_docs.py enforces completeness.",
   "increments": {
     "1": {
       "name": "Red-thread slice (web)",
@@ -12,12 +12,12 @@
       "goal": "Everything the specification requires on the web that increment 1 deliberately left out: team administration, availability and rescheduling, data entry screens, uploads and attachments, remaining PDFs and emails, audit and profile."
     },
     "3": {
-      "name": "Mobile (installable web app, then Android shell)",
-      "goal": "The same product usable as an installed app: installable PWA, native session transport, Android shell with bundled assets, content-free push notifications."
+      "name": "Mobile (installable web app, then Android app)",
+      "goal": "The same product usable as an installed app: installable PWA, native session transport, a React Native Android app built with Expo (ADR-010), content-free push notifications."
     },
     "4": {
-      "name": "Release engineering, iOS, stores and quality extensions",
-      "goal": "iOS build, explicit store decision, promotion pipeline, optional real-model evaluation, advanced audit and device privacy options."
+      "name": "Release engineering, iOS demo gate and quality extensions",
+      "goal": "iOS build and distribution gate, promotion pipeline, optional real-model evaluation, advanced audit and device privacy options."
     }
   },
   "coreDesignFamilies": {
