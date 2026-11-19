@@ -14,6 +14,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.UnexpectedRollbackException;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -41,6 +44,12 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
 
     @Autowired
     private PracticeTransaction practiceTransaction;
+
+    @Autowired
+    private TestTransactionHelper testTransactionHelper;
+
+    @Autowired
+    private PlatformTransactionManager transactionManager;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -102,16 +111,26 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("C5: Absent context must deny: read returns 0 rows, write violates RLS WITH CHECK")
+    @DisplayName("C5: Absent context must deny: positive control, read returns 0 rows, write violates RLS WITH CHECK")
     void checkC5_AbsentContextDenial() {
-        // Read without context must return 0 rows
-        List<Patient> patients = practiceTransaction.executeWithoutContext(() ->
+        // Positive control: create Patient A under practice context
+        Patient patientA = practiceTransaction.execute(practiceAId, () ->
+                patientService.createPatient(practiceAId, "Alice", "PositiveControl"));
+        assertThat(patientA.getId()).isNotNull();
+
+        // Read without context must return 0 rows even though Patient A exists
+        List<Patient> patients = testTransactionHelper.executeWithoutContext(() ->
                 patientService.listPatientsWithoutAppPredicate());
         assertThat(patients).isEmpty();
 
+        // Direct ID lookup without context must return empty
+        Optional<Patient> crossReadNoContext = testTransactionHelper.executeWithoutContext(() ->
+                patientService.getPatientWithoutAppPredicate(patientA.getId()));
+        assertThat(crossReadNoContext).isEmpty();
+
         // Write without context must violate RLS WITH CHECK policy
-        assertThatThrownBy(() -> practiceTransaction.executeVoidWithoutContext(() ->
-                patientService.createPatient(practiceAId, "Alice", "Dupont")))
+        assertThatThrownBy(() -> testTransactionHelper.executeVoidWithoutContext(() ->
+                patientService.createPatient(practiceAId, "NoContext", "Denied")))
                 .isInstanceOf(DataAccessException.class)
                 .hasMessageFindingMatch("(?i).*row-level security policy.*");
     }
@@ -141,7 +160,7 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
         // 3. Transaction 3: Reused connection after error for Practice B
         // Proves: same backend PID is reused, context is empty before setting B, Practice B sees only B
         AtomicReference<String> contextBeforeB = new AtomicReference<>();
-        Long backendPid2 = practiceTransaction.executeWithoutContext(() -> {
+        Long backendPid2 = testTransactionHelper.executeWithoutContext(() -> {
             contextBeforeB.set(jdbcTemplate.queryForObject(
                     "SELECT NULLIF(current_setting('etaye.practice_id', true), '')", String.class));
             return jdbcTemplate.queryForObject("SELECT pg_backend_pid()", Long.class);
@@ -172,7 +191,7 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
 
         // 6. Transaction 5: Reused connection after capability denial back to Practice A
         AtomicReference<String> contextBeforeA = new AtomicReference<>();
-        Long backendPid3 = practiceTransaction.executeWithoutContext(() -> {
+        Long backendPid3 = testTransactionHelper.executeWithoutContext(() -> {
             contextBeforeA.set(jdbcTemplate.queryForObject(
                     "SELECT NULLIF(current_setting('etaye.practice_id', true), '')", String.class));
             return jdbcTemplate.queryForObject("SELECT pg_backend_pid()", Long.class);
@@ -196,6 +215,45 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
         Optional<Patient> crossReadByB = practiceTransaction.execute(practiceBId, () ->
                 patientService.getPatientWithoutAppPredicate(patientA.getId()));
         assertThat(crossReadByB).isEmpty();
+    }
+
+    @Test
+    @DisplayName("PracticeTransaction: Nested calls for same practice join successfully")
+    void checkNestedCallJoinsSamePractice() {
+        String result = practiceTransaction.execute(practiceAId, () -> {
+            // Nested call for the same practice
+            return practiceTransaction.execute(practiceAId, () -> "nested-success");
+        });
+        assertThat(result).isEqualTo("nested-success");
+    }
+
+    @Test
+    @DisplayName("PracticeTransaction: Outermost call refuses to join an already active transaction without context")
+    void checkOutermostCallRefusesToJoinActiveTransaction() {
+        TransactionTemplate rawTemplate = new TransactionTemplate(transactionManager);
+        rawTemplate.execute(status -> {
+            assertThatThrownBy(() -> practiceTransaction.execute(practiceAId, () -> "forbidden"))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("Outermost PracticeTransaction cannot join an already active transaction without practice context");
+            return null;
+        });
+    }
+
+    @Test
+    @DisplayName("PracticeTransaction: Nested call failure marks transaction rollback-only without savepoints")
+    void checkNestedCallFailureMarksRollbackOnly() {
+        assertThatThrownBy(() -> practiceTransaction.execute(practiceAId, () -> {
+            try {
+                // Nested transaction execution throws an exception
+                practiceTransaction.execute(practiceAId, () -> {
+                    throw new RuntimeException("Nested failure");
+                });
+            } catch (RuntimeException e) {
+                // Swallow in caller: Spring's TransactionTemplate marks transaction rollback-only
+            }
+            // Attempting normal commit of the outer transaction must fail with UnexpectedRollbackException
+            return "outer-completed";
+        })).isInstanceOf(UnexpectedRollbackException.class);
     }
 
     @Test
