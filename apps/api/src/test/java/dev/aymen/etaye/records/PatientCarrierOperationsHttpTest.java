@@ -22,6 +22,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -75,12 +76,12 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         createMembershipAsOwner(clinicalUserA, practiceA, "ACTIVE", new String[]{"CLINICAL_WRITE", "CLINICAL_READ"});
         sessionCookieClinicalA = testSessionHelper.createSessionCookie(clinicalUserA);
 
-        // Account with CLINICAL_READ in Practice B
+        // Account with CLINICAL_WRITE and CLINICAL_READ in Practice B
         clinicalUserB = createAccountAsOwner(
                 "clinical.b." + UUID.randomUUID() + "@example.com",
                 "Dr B"
         );
-        createMembershipAsOwner(clinicalUserB, practiceB, "ACTIVE", new String[]{"CLINICAL_READ"});
+        createMembershipAsOwner(clinicalUserB, practiceB, "ACTIVE", new String[]{"CLINICAL_WRITE", "CLINICAL_READ"});
         sessionCookieClinicalB = testSessionHelper.createSessionCookie(clinicalUserB);
 
         // Administrator-only account in Practice A (no clinical capabilities)
@@ -319,60 +320,147 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("C3: Practitioner of practice B reading record of practice A gets indistinguishable 404")
+    @DisplayName("C3: Indistinguishable 404 comparison across all 5 access permutations modulo correlationId, plus positive local reads")
     void c3_crossPracticeRecordRead_returnsIndistinguishable404() {
-        String csrfToken = fetchCsrfToken(sessionCookieClinicalA);
-        String idempotencyKey = "key-cross-" + UUID.randomUUID();
-
-        PatientEdit edit = new PatientEdit("Alice", "Martin", LocalDate.of(1982, 3, 14), null, null);
-        PatientResponse patient = client().post()
+        // Setup Practice A patient and record
+        String csrfTokenA = fetchCsrfToken(sessionCookieClinicalA);
+        String idempotencyKeyA = "key-cross-a-" + UUID.randomUUID();
+        PatientEdit editA = new PatientEdit("Alice", "Martin", LocalDate.of(1982, 3, 14), null, null);
+        PatientResponse patientA = client().post()
                 .uri("/api/v1/practices/" + practiceA + "/patients")
                 .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
-                .header("X-CSRF-TOKEN", csrfToken)
-                .header("Idempotency-Key", idempotencyKey)
+                .header("X-CSRF-TOKEN", csrfTokenA)
+                .header("Idempotency-Key", idempotencyKeyA)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(edit)
+                .body(editA)
                 .retrieve()
                 .body(PatientResponse.class);
+        UUID recordAId = patientA.recordId();
 
-        UUID recordAId = patient.recordId();
+        // Setup Practice B patient and record
+        String csrfTokenB = fetchCsrfToken(sessionCookieClinicalB);
+        String idempotencyKeyB = "key-cross-b-" + UUID.randomUUID();
+        PatientEdit editB = new PatientEdit("Bob", "Dupont", LocalDate.of(1975, 7, 22), null, null);
+        PatientResponse patientB = client().post()
+                .uri("/api/v1/practices/" + practiceB + "/patients")
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalB)
+                .header("X-CSRF-TOKEN", csrfTokenB)
+                .header("Idempotency-Key", idempotencyKeyB)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(editB)
+                .retrieve()
+                .body(PatientResponse.class);
+        UUID recordBId = patientB.recordId();
 
-        // 1. Practice B practitioner reads Practice A record by UUID -> 404
-        ResponseEntity<Map> crossResponse = client().get()
+        UUID nonExistentRecordId = UUID.randomUUID();
+        UUID unknownPracticeId = UUID.randomUUID();
+
+        // 1. Record that does not exist in an authorized practice (Practice A clinician)
+        ResponseEntity<Map> resNonExistent = client().get()
+                .uri("/api/v1/practices/" + practiceA + "/records/" + nonExistentRecordId)
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .retrieve()
+                .onStatus(status -> status.value() == 404, (req, res) -> {})
+                .toEntity(Map.class);
+
+        // 2. Record of practice B requested through practice A route by a member of practice A
+        ResponseEntity<Map> resRecordBViaPracticeA = client().get()
+                .uri("/api/v1/practices/" + practiceA + "/records/" + recordBId)
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .retrieve()
+                .onStatus(status -> status.value() == 404, (req, res) -> {})
+                .toEntity(Map.class);
+
+        // 3. The same record id requested through an existing practice where the caller has no membership (member of A calls practice B route)
+        ResponseEntity<Map> resRecordAViaPracticeB = client().get()
+                .uri("/api/v1/practices/" + practiceB + "/records/" + recordAId)
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .retrieve()
+                .onStatus(status -> status.value() == 404, (req, res) -> {})
+                .toEntity(Map.class);
+
+        // 4. An unknown practice id
+        ResponseEntity<Map> resUnknownPractice = client().get()
+                .uri("/api/v1/practices/" + unknownPracticeId + "/records/" + recordAId)
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .retrieve()
+                .onStatus(status -> status.value() == 404, (req, res) -> {})
+                .toEntity(Map.class);
+
+        // 5. Reverse direction: member of practice B requesting Practice A's record on practice B route
+        ResponseEntity<Map> resReverseDirection = client().get()
                 .uri("/api/v1/practices/" + practiceB + "/records/" + recordAId)
                 .header(HttpHeaders.COOKIE, sessionCookieClinicalB)
                 .retrieve()
                 .onStatus(status -> status.value() == 404, (req, res) -> {})
                 .toEntity(Map.class);
 
-        assertThat(crossResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(crossResponse.getHeaders().getContentType().toString()).contains("application/problem+json");
-        assertThat(crossResponse.getBody().get("code")).isEqualTo("NOT_FOUND");
-        assertThat(crossResponse.getBody().get("correlationId")).isNotNull();
+        List<ResponseEntity<Map>> all404Responses = List.of(
+                resNonExistent,
+                resRecordBViaPracticeA,
+                resRecordAViaPracticeB,
+                resUnknownPractice,
+                resReverseDirection
+        );
 
-        // 2. Practice B practitioner reads non-existent random UUID -> 404
-        UUID nonExistentId = UUID.randomUUID();
-        ResponseEntity<Map> nonExistentResponse = client().get()
-                .uri("/api/v1/practices/" + practiceB + "/records/" + nonExistentId)
-                .header(HttpHeaders.COOKIE, sessionCookieClinicalB)
-                .retrieve()
-                .onStatus(status -> status.value() == 404, (req, res) -> {})
-                .toEntity(Map.class);
+        Map<String, Object> baselineBody = null;
+        for (int i = 0; i < all404Responses.size(); i++) {
+            ResponseEntity<Map> resp = all404Responses.get(i);
+            assertThat(resp.getStatusCode()).as("Case %d must be 404 Not Found", i + 1).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(resp.getHeaders().getContentType().toString())
+                    .as("Case %d Content-Type must be application/problem+json", i + 1)
+                    .contains("application/problem+json");
+            assertThat(resp.getHeaders().getFirst(HttpHeaders.ETAG))
+                    .as("Case %d ETag header must be absent on 404", i + 1)
+                    .isNull();
 
-        assertThat(nonExistentResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(nonExistentResponse.getBody().get("code")).isEqualTo(crossResponse.getBody().get("code"));
+            Map<String, Object> body = resp.getBody();
+            assertThat(body).as("Case %d body must not be null", i + 1).isNotNull();
+            assertThat(body.get("correlationId")).as("Case %d correlationId must be present", i + 1).isNotNull();
 
-        // 3. Positive control: Practice A clinician reading record A -> 200 OK
-        ResponseEntity<RecordResponse> readSuccess = client().get()
+            // Extract entire problem body modulo correlationId
+            Map<String, Object> bodyWithoutCorrelationId = new HashMap<>(body);
+            bodyWithoutCorrelationId.remove("correlationId");
+
+            if (baselineBody == null) {
+                baselineBody = bodyWithoutCorrelationId;
+                assertThat(baselineBody.get("status")).isEqualTo(404);
+                assertThat(baselineBody.get("code")).isEqualTo("NOT_FOUND");
+                assertThat(baselineBody.get("title")).isEqualTo("Not Found");
+                assertThat(baselineBody.get("detail")).isEqualTo("Resource not found");
+                assertThat(baselineBody.get("type")).isEqualTo("about:blank");
+            } else {
+                assertThat(bodyWithoutCorrelationId)
+                        .as("Entire problem body of case %d must be identical to baseline modulo correlationId", i + 1)
+                        .isEqualTo(baselineBody);
+            }
+        }
+
+        // Positive local reads: Practice A clinician reading Record A -> 200 OK
+        ResponseEntity<RecordResponse> readSuccessA = client().get()
                 .uri("/api/v1/practices/" + practiceA + "/records/" + recordAId)
                 .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
                 .retrieve()
                 .toEntity(RecordResponse.class);
 
-        assertThat(readSuccess.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(readSuccess.getHeaders().getFirst(HttpHeaders.ETAG)).isEqualTo("\"0\"");
-        assertThat(readSuccess.getBody().id()).isEqualTo(recordAId);
-        assertThat(readSuccess.getBody().patient().id()).isEqualTo(patient.id());
+        assertThat(readSuccessA.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(readSuccessA.getHeaders().getFirst(HttpHeaders.ETAG)).isEqualTo("\"0\"");
+        assertThat(readSuccessA.getBody()).isNotNull();
+        assertThat(readSuccessA.getBody().id()).isEqualTo(recordAId);
+        assertThat(readSuccessA.getBody().patient().id()).isEqualTo(patientA.id());
+
+        // Positive local reads: Practice B clinician reading Record B -> 200 OK
+        ResponseEntity<RecordResponse> readSuccessB = client().get()
+                .uri("/api/v1/practices/" + practiceB + "/records/" + recordBId)
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalB)
+                .retrieve()
+                .toEntity(RecordResponse.class);
+
+        assertThat(readSuccessB.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(readSuccessB.getHeaders().getFirst(HttpHeaders.ETAG)).isEqualTo("\"0\"");
+        assertThat(readSuccessB.getBody()).isNotNull();
+        assertThat(readSuccessB.getBody().id()).isEqualTo(recordBId);
+        assertThat(readSuccessB.getBody().patient().id()).isEqualTo(patientB.id());
     }
 
     @Test
