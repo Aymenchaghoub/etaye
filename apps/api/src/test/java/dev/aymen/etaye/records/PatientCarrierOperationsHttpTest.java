@@ -1124,6 +1124,8 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.METHOD_NOT_ALLOWED);
         assertThat(response.getHeaders().getContentType().toString()).contains("application/problem+json");
         assertThat(response.getBody().get("code")).isEqualTo("METHOD_NOT_ALLOWED");
+        assertThat(response.getHeaders().get(HttpHeaders.ALLOW)).isNotNull().isNotEmpty();
+        assertThat(response.getHeaders().getFirst(HttpHeaders.ALLOW)).contains("POST");
     }
 
     @Test
