@@ -1,0 +1,683 @@
+[
+ {
+  "id": "S-01",
+  "name": "Vitrine et entrée de démonstration",
+  "slug": "accueil",
+  "label": "Ready — purpose, one readable sourced sentence, three fictional scenarios, design-status notice",
+  "module": "screens_acces",
+  "path": "ecrans/S-01/accueil.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-01",
+  "name": "Vitrine et entrée de démonstration",
+  "slug": "preparation",
+  "label": "Demo preparing",
+  "module": "screens_acces",
+  "path": "ecrans/S-01/preparation.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-01",
+  "name": "Vitrine et entrée de démonstration",
+  "slug": "reinitialisation",
+  "label": "Demo resetting — sessions closed, dataset reloaded",
+  "module": "screens_acces",
+  "path": "ecrans/S-01/reinitialisation.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-01",
+  "name": "Vitrine et entrée de démonstration",
+  "slug": "indisponible",
+  "label": "Demo unavailable — mockups stay readable, retry",
+  "module": "screens_acces",
+  "path": "ecrans/S-01/indisponible.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-26",
+  "name": "Choisir ou réinitialiser le scénario de démonstration",
+  "slug": "ouvert",
+  "label": "Scenario page — cast, practice, fixture version, limits before entry (AC-S01-F)",
+  "module": "screens_acces",
+  "path": "ecrans/I-26/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-26",
+  "name": "Choisir ou réinitialiser le scénario de démonstration",
+  "slug": "reinitialiser",
+  "label": "Operator reset — destructive action separated, not primary",
+  "module": "screens_acces",
+  "path": "ecrans/I-26/reinitialiser.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-02",
+  "name": "Connexion",
+  "slug": "connexion",
+  "label": "Initial — professional login, visible label, focus on email",
+  "module": "screens_acces",
+  "path": "ecrans/S-02/connexion.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow",
+   "zoom"
+  ]
+ },
+ {
+  "id": "S-02",
+  "name": "Connexion",
+  "slug": "envoi",
+  "label": "Submitting — single submit, fields locked",
+  "module": "screens_acces",
+  "path": "ecrans/S-02/envoi.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow",
+   "zoom"
+  ]
+ },
+ {
+  "id": "S-02",
+  "name": "Connexion",
+  "slug": "invalide",
+  "label": "Invalid credentials — generic message, email kept, password cleared",
+  "module": "screens_acces",
+  "path": "ecrans/S-02/invalide.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow",
+   "zoom"
+  ]
+ },
+ {
+  "id": "S-02",
+  "name": "Connexion",
+  "slug": "champ-vide",
+  "label": "Missing email — error summary + field error",
+  "module": "screens_acces",
+  "path": "ecrans/S-02/champ-vide.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow",
+   "zoom"
+  ]
+ },
+ {
+  "id": "S-02",
+  "name": "Connexion",
+  "slug": "suspendu",
+  "label": "Suspended-access guidance after authentication (template: no suspended account in dataset)",
+  "module": "screens_acces",
+  "path": "ecrans/S-02/suspendu.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow",
+   "zoom"
+  ]
+ },
+ {
+  "id": "S-02",
+  "name": "Connexion",
+  "slug": "limite",
+  "label": "Throttled — no account disclosure, recovery link",
+  "module": "screens_acces",
+  "path": "ecrans/S-02/limite.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow",
+   "zoom"
+  ]
+ },
+ {
+  "id": "S-02",
+  "name": "Connexion",
+  "slug": "retour",
+  "label": "Expired-session return — no clinical data before login",
+  "module": "screens_acces",
+  "path": "ecrans/S-02/retour.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow",
+   "zoom"
+  ]
+ },
+ {
+  "id": "S-02",
+  "name": "Connexion",
+  "slug": "patient",
+  "label": "Patient variant — espace patient logo, larger targets, Claire Martin",
+  "module": "screens_acces",
+  "path": "ecrans/S-02/patient.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow",
+   "zoom"
+  ]
+ },
+ {
+  "id": "S-02",
+  "name": "Connexion",
+  "slug": "patient-invalide",
+  "label": "Patient variant — invalid credentials",
+  "module": "screens_acces",
+  "path": "ecrans/S-02/patient-invalide.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow",
+   "zoom"
+  ]
+ },
+ {
+  "id": "S-03",
+  "name": "Invitation et activation du compte",
+  "slug": "equipe",
+  "label": "PENDING team invitation — INV-TEAM-01 Alex Rivière, expiry 05/11/2026 12:00, masked recipient",
+  "module": "screens_acces",
+  "path": "ecrans/S-03/equipe.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-03",
+  "name": "Invitation et activation du compte",
+  "slug": "erreur",
+  "label": "Validation — passwords differ, fields cleared",
+  "module": "screens_acces",
+  "path": "ecrans/S-03/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-03",
+  "name": "Invitation et activation du compte",
+  "slug": "expiree",
+  "label": "EXPIRED (template on team invitation)",
+  "module": "screens_acces",
+  "path": "ecrans/S-03/expiree.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-03",
+  "name": "Invitation et activation du compte",
+  "slug": "revoquee",
+  "label": "REVOKED (template)",
+  "module": "screens_acces",
+  "path": "ecrans/S-03/revoquee.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-03",
+  "name": "Invitation et activation du compte",
+  "slug": "invalide",
+  "label": "Invalid link",
+  "module": "screens_acces",
+  "path": "ecrans/S-03/invalide.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-03",
+  "name": "Invitation et activation du compte",
+  "slug": "deja-utilisee",
+  "label": "Concurrent acceptance — already used (template)",
+  "module": "screens_acces",
+  "path": "ecrans/S-03/deja-utilisee.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-03",
+  "name": "Activer l'espace patient",
+  "slug": "ouvert",
+  "label": "Patient activation page — INV-PORTAL-01 before acceptance; birth date check, single-use purpose",
+  "module": "screens_acces",
+  "path": "ecrans/I-03/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-03",
+  "name": "Activer l'espace patient",
+  "slug": "erreur",
+  "label": "Ambiguous identity — stops without saying which field differs",
+  "module": "screens_acces",
+  "path": "ecrans/I-03/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-03",
+  "name": "Activer l'espace patient",
+  "slug": "deja-active",
+  "label": "ACCEPTED — already activated 18/10/2026, link unusable",
+  "module": "screens_acces",
+  "path": "ecrans/I-03/deja-active.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-03",
+  "name": "Activer l'espace patient",
+  "slug": "expiree",
+  "label": "EXPIRED — INV-PORTAL-02 Louis Bernard, no space created",
+  "module": "screens_acces",
+  "path": "ecrans/I-03/expiree.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-04",
+  "name": "Récupération d'accès",
+  "slug": "demande",
+  "label": "Request — email only",
+  "module": "screens_acces",
+  "path": "ecrans/S-04/demande.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-04",
+  "name": "Récupération d'accès",
+  "slug": "envoye",
+  "label": "Sent — generic, no account enumeration",
+  "module": "screens_acces",
+  "path": "ecrans/S-04/envoye.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-04",
+  "name": "Récupération d'accès",
+  "slug": "nouveau",
+  "label": "Reset form from link",
+  "module": "screens_acces",
+  "path": "ecrans/S-04/nouveau.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-04",
+  "name": "Récupération d'accès",
+  "slug": "nouveau-erreur",
+  "label": "Reset validation — too short, field cleared",
+  "module": "screens_acces",
+  "path": "ecrans/S-04/nouveau-erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-04",
+  "name": "Récupération d'accès",
+  "slug": "lien-expire",
+  "label": "Invalid/expired token — new request, no secret shown",
+  "module": "screens_acces",
+  "path": "ecrans/S-04/lien-expire.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-04",
+  "name": "Récupération d'accès",
+  "slug": "reussi",
+  "label": "Reset succeeded — other sessions closed",
+  "module": "screens_acces",
+  "path": "ecrans/S-04/reussi.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-04",
+  "name": "Récupération d'accès",
+  "slug": "limite",
+  "label": "Throttled",
+  "module": "screens_acces",
+  "path": "ecrans/S-04/limite.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-04",
+  "name": "Récupération d'accès",
+  "slug": "reseau",
+  "label": "Network failure — email kept, retry",
+  "module": "screens_acces",
+  "path": "ecrans/S-04/reseau.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-05",
+  "name": "Choix du cabinet et du contexte d'accès",
+  "slug": "choix",
+  "label": "Multiple contexts — Sami Rahmani in Tilleuls and Canal; publication not allowed in Canal",
+  "module": "screens_acces",
+  "path": "ecrans/S-05/choix.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-05",
+  "name": "Choix du cabinet et du contexte d'accès",
+  "slug": "un-seul",
+  "label": "Single context bypass — Nora Lefebvre goes straight to Today",
+  "module": "screens_acces",
+  "path": "ecrans/S-05/un-seul.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-05",
+  "name": "Choix du cabinet et du contexte d'accès",
+  "slug": "desactive",
+  "label": "Deactivated membership (template)",
+  "module": "screens_acces",
+  "path": "ecrans/S-05/desactive.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-05",
+  "name": "Choix du cabinet et du contexte d'accès",
+  "slug": "retire",
+  "label": "Context removed during selection (template) — nothing opened",
+  "module": "screens_acces",
+  "path": "ecrans/S-05/retire.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-36",
+  "name": "Accès refusé et élément introuvable",
+  "slug": "interdit",
+  "label": "403 — SC-ADMIN-CLINICAL: Mila Dubois tries the clinical workspace; no clinical metadata",
+  "module": "screens_acces",
+  "path": "ecrans/S-36/interdit.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-36",
+  "name": "Accès refusé et élément introuvable",
+  "slug": "introuvable",
+  "label": "404 — SC-ISOLATION: Nora Lefebvre opens R-B-001; no name, no existence disclosure",
+  "module": "screens_acces",
+  "path": "ecrans/S-36/introuvable.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-36",
+  "name": "Accès refusé et élément introuvable",
+  "slug": "lien-obsolete",
+  "label": "Moved/replaced safe link",
+  "module": "screens_acces",
+  "path": "ecrans/S-36/lien-obsolete.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-36",
+  "name": "Accès refusé et élément introuvable",
+  "slug": "patient",
+  "label": "Patient side — non-disclosing unavailable page",
+  "module": "screens_acces",
+  "path": "ecrans/S-36/patient.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-38",
+  "name": "Session expirée et retour",
+  "slug": "expiree",
+  "label": "Expired during editing (V-SESSION) — background obscured, draft kept in memory, nothing replayed",
+  "module": "screens_acces",
+  "path": "ecrans/S-38/expiree.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-38",
+  "name": "Session expirée et retour",
+  "slug": "enregistrement",
+  "label": "Expired while saving — nothing saved server-side, text kept",
+  "module": "screens_acces",
+  "path": "ecrans/S-38/enregistrement.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-38",
+  "name": "Session expirée et retour",
+  "slug": "publication",
+  "label": "Expired in a publication dialog — never replayed automatically (AC-S38-F)",
+  "module": "screens_acces",
+  "path": "ecrans/S-38/publication.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-38",
+  "name": "Session expirée et retour",
+  "slug": "droits-modifies",
+  "label": "Permission revoked during return — draft not restored",
+  "module": "screens_acces",
+  "path": "ecrans/S-38/droits-modifies.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-38",
+  "name": "Session expirée et retour",
+  "slug": "autre-compte",
+  "label": "Other user signs in — previous drafts unavailable",
+  "module": "screens_acces",
+  "path": "ecrans/S-38/autre-compte.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-22",
+  "name": "Expiration de session",
+  "slug": "ouvert",
+  "label": "Full-page session expiry — Se reconnecter / Quitter la session",
+  "module": "screens_acces",
+  "path": "ecrans/I-22/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-22",
+  "name": "Expiration de session",
+  "slug": "publication",
+  "label": "Full-page variant after an interrupted publication",
+  "module": "screens_acces",
+  "path": "ecrans/I-22/publication.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ }
+]

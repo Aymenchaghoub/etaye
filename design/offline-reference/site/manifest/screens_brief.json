@@ -1,0 +1,688 @@
+[
+ {
+  "id": "S-17",
+  "name": "Préparation de visite (vue praticien)",
+  "slug": "claire",
+  "label": "PREP-A-001 submitted 2 Nov 09:10 — patient's own words, unknown reaction details, contradiction with SRC-A-001, treatments unanswered ≠ 'Non'",
+  "module": "screens_brief",
+  "path": "ecrans/S-17/claire.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-17",
+  "name": "Préparation de visite (vue praticien)",
+  "slug": "lue",
+  "label": "Acknowledged reading (variant) — reporter unchanged",
+  "module": "screens_brief",
+  "path": "ecrans/S-17/lue.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-17",
+  "name": "Préparation de visite (vue praticien)",
+  "slug": "non-soumise",
+  "label": "Not submitted — Louis Bernard (V-EMPTY), nothing inferred from the absence",
+  "module": "screens_brief",
+  "path": "ecrans/S-17/non-soumise.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-17",
+  "name": "Préparation de visite (vue praticien)",
+  "slug": "brouillon-patient",
+  "label": "Patient draft not visible to the practice (variant at 09:05)",
+  "module": "screens_brief",
+  "path": "ecrans/S-17/brouillon-patient.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-17",
+  "name": "Préparation de visite (vue praticien)",
+  "slug": "corrigee",
+  "label": "Corrected submission v2 (variant) — treatments 'Je ne sais pas', v1 kept and dated",
+  "module": "screens_brief",
+  "path": "ecrans/S-17/corrigee.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-17",
+  "name": "Préparation de visite (vue praticien)",
+  "slug": "longue",
+  "label": "Long text (V-LONG variant, administrative text only)",
+  "module": "screens_brief",
+  "path": "ecrans/S-17/longue.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-17",
+  "name": "Préparation de visite (vue praticien)",
+  "slug": "lien-perime",
+  "label": "Linked appointment moved (variant) — preparation stays attached",
+  "module": "screens_brief",
+  "path": "ecrans/S-17/lien-perime.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-18",
+  "name": "Brief de préparation sourcé",
+  "slug": "brouillon",
+  "label": "BRIEF-A-001-v1 DRAFT exact text — 4 markers, missing treatments flagged, contradiction, 6 sources (2 consulted, not cited), internal only",
+  "module": "screens_brief",
+  "path": "ecrans/S-18/brouillon.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-18",
+  "name": "Brief de préparation sourcé",
+  "slug": "louis",
+  "label": "No prior visit and no dated source — Louis Bernard (V-EMPTY), explicit gaps, no generated text",
+  "module": "screens_brief",
+  "path": "ecrans/S-18/louis.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-18",
+  "name": "Brief de préparation sourcé",
+  "slug": "en-file",
+  "label": "QUEUED (variant of AI-A-001) — frozen source snapshot, no percentage",
+  "module": "screens_brief",
+  "path": "ecrans/S-18/en-file.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-18",
+  "name": "Brief de préparation sourcé",
+  "slug": "en-cours",
+  "label": "RUNNING (variant of AI-A-001) — can leave the page",
+  "module": "screens_brief",
+  "path": "ecrans/S-18/en-cours.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-18",
+  "name": "Brief de préparation sourcé",
+  "slug": "relecture",
+  "label": "IN_REVIEW (variant)",
+  "module": "screens_brief",
+  "path": "ecrans/S-18/relecture.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-18",
+  "name": "Brief de préparation sourcé",
+  "slug": "valide",
+  "label": "VALIDATED (variant) — still internal, no publication action exists",
+  "module": "screens_brief",
+  "path": "ecrans/S-18/valide.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-18",
+  "name": "Brief de préparation sourcé",
+  "slug": "perime",
+  "label": "STALE (variant) — preparation v2 after 14:05, text kept, regenerate as new version",
+  "module": "screens_brief",
+  "path": "ecrans/S-18/perime.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-18",
+  "name": "Brief de préparation sourcé",
+  "slug": "echec",
+  "label": "Failed task — AI-A-002 PROVIDER_TIMEOUT 14:30:30 (V-AI-DOWN), I-23 inline, no draft",
+  "module": "screens_brief",
+  "path": "ecrans/S-18/echec.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-14",
+  "name": "Générer un brouillon sourcé",
+  "slug": "ouvert",
+  "label": "First generation for Claire (before AI-A-001 14:04:50) — dated inputs, warnings, draft only",
+  "module": "screens_brief",
+  "path": "ecrans/I-14/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-14",
+  "name": "Générer un brouillon sourcé",
+  "slug": "existant",
+  "label": "Regenerate — v1 kept, corrections not replaced, new version",
+  "module": "screens_brief",
+  "path": "ecrans/I-14/existant.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-14",
+  "name": "Générer un brouillon sourcé",
+  "slug": "louis",
+  "label": "No dated source warning — Louis Bernard before AI-A-002",
+  "module": "screens_brief",
+  "path": "ecrans/I-14/louis.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-14",
+  "name": "Générer un brouillon sourcé",
+  "slug": "doublon",
+  "label": "Duplicate request — existing task reused (variant)",
+  "module": "screens_brief",
+  "path": "ecrans/I-14/doublon.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-14",
+  "name": "Générer un brouillon sourcé",
+  "slug": "quota",
+  "label": "Quota reached — primary disabled (template)",
+  "module": "screens_brief",
+  "path": "ecrans/I-14/quota.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-14",
+  "name": "Générer un brouillon sourcé",
+  "slug": "erreur",
+  "label": "Request not sent — nothing launched",
+  "module": "screens_brief",
+  "path": "ecrans/I-14/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-21",
+  "name": "Relecture du brouillon généré",
+  "slug": "revue",
+  "label": "BRIEF-A-001-v1 claim by claim — exact excerpts with occurred/recorded dates, counts not scores, keep/correct/remove",
+  "module": "screens_brief",
+  "path": "ecrans/S-21/revue.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-21",
+  "name": "Relecture du brouillon généré",
+  "slug": "non-soutenu",
+  "label": "SC-UNSUPPORTED-DRAFT — 'Vous n'avez pas d'allergie connue.' cites nothing that supports it at this date",
+  "module": "screens_brief",
+  "path": "ecrans/S-21/non-soutenu.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-21",
+  "name": "Relecture du brouillon généré",
+  "slug": "corrigee",
+  "label": "Corrected — humanEditedText labelled, generated text rejected with reason, then validation",
+  "module": "screens_brief",
+  "path": "ecrans/S-21/corrigee.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-21",
+  "name": "Relecture du brouillon généré",
+  "slug": "incomplet",
+  "label": "Partial output rejected (variant) — v1 unchanged",
+  "module": "screens_brief",
+  "path": "ecrans/S-21/incomplet.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-21",
+  "name": "Relecture du brouillon généré",
+  "slug": "delai",
+  "label": "Timeout — AI-A-002, nothing to review",
+  "module": "screens_brief",
+  "path": "ecrans/S-21/delai.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-21",
+  "name": "Relecture du brouillon généré",
+  "slug": "citation-invalide",
+  "label": "Malformed citation (template) — passage flagged",
+  "module": "screens_brief",
+  "path": "ecrans/S-21/citation-invalide.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-21",
+  "name": "Relecture du brouillon généré",
+  "slug": "quota",
+  "label": "Quota reached (template) — manual review continues",
+  "module": "screens_brief",
+  "path": "ecrans/S-21/quota.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-21",
+  "name": "Relecture du brouillon généré",
+  "slug": "doublon",
+  "label": "Duplicate request reused (variant)",
+  "module": "screens_brief",
+  "path": "ecrans/S-21/doublon.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-21",
+  "name": "Relecture du brouillon généré",
+  "slug": "source-modifiee",
+  "label": "Source changed during task (template) — result marked STALE",
+  "module": "screens_brief",
+  "path": "ecrans/S-21/source-modifiee.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-15",
+  "name": "Relire et corriger",
+  "slug": "ouvert",
+  "label": "Generated baseline (read-only) and editor — PATIENT-A-001-v2 before correction",
+  "module": "screens_brief",
+  "path": "ecrans/I-15/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-15",
+  "name": "Relire et corriger",
+  "slug": "sale",
+  "label": "Dirty — humanEditedText typed, correction reason",
+  "module": "screens_brief",
+  "path": "ecrans/I-15/sale.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-15",
+  "name": "Relire et corriger",
+  "slug": "non-soutenu",
+  "label": "Save blocked — sentence without a source marker, field error and summary",
+  "module": "screens_brief",
+  "path": "ecrans/I-15/non-soutenu.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-15",
+  "name": "Relire et corriger",
+  "slug": "echec",
+  "label": "Save failed — text kept in the editor",
+  "module": "screens_brief",
+  "path": "ecrans/I-15/echec.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-15",
+  "name": "Relire et corriger",
+  "slug": "enregistre",
+  "label": "Saved — still a draft",
+  "module": "screens_brief",
+  "path": "ecrans/I-15/enregistre.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-40",
+  "name": "Tâches de génération et détail",
+  "slug": "liste",
+  "label": "AI-A-002 FAILED and AI-A-001 SUCCEEDED — task state and document state in separate columns",
+  "module": "screens_brief",
+  "path": "ecrans/S-40/liste.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-40",
+  "name": "Tâches de génération et détail",
+  "slug": "detail",
+  "label": "AI-A-001 detail — requested 14:04:50, done 14:05:00, frozen sources, output DRAFT, no patient notification",
+  "module": "screens_brief",
+  "path": "ecrans/S-40/detail.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-40",
+  "name": "Tâches de génération et détail",
+  "slug": "echec",
+  "label": "AI-A-002 detail — PROVIDER_TIMEOUT, retry, safe error with no patient data",
+  "module": "screens_brief",
+  "path": "ecrans/S-40/echec.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-40",
+  "name": "Tâches de génération et détail",
+  "slug": "en-file",
+  "label": "QUEUED (variant) — cancel",
+  "module": "screens_brief",
+  "path": "ecrans/S-40/en-file.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-40",
+  "name": "Tâches de génération et détail",
+  "slug": "en-cours",
+  "label": "RUNNING (variant) — no completion percentage",
+  "module": "screens_brief",
+  "path": "ecrans/S-40/en-cours.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-40",
+  "name": "Tâches de génération et détail",
+  "slug": "termine",
+  "label": "Completion after navigation (variant) — toast, draft only",
+  "module": "screens_brief",
+  "path": "ecrans/S-40/termine.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-40",
+  "name": "Tâches de génération et détail",
+  "slug": "doublon",
+  "label": "Duplicate request reuses the task (variant)",
+  "module": "screens_brief",
+  "path": "ecrans/S-40/doublon.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-40",
+  "name": "Tâches de génération et détail",
+  "slug": "quota",
+  "label": "Quota exhausted (template)",
+  "module": "screens_brief",
+  "path": "ecrans/S-40/quota.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-40",
+  "name": "Tâches de génération et détail",
+  "slug": "source-modifiee",
+  "label": "Source changed during task (template) — output STALE",
+  "module": "screens_brief",
+  "path": "ecrans/S-40/source-modifiee.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-40",
+  "name": "Tâches de génération et détail",
+  "slug": "annule",
+  "label": "CANCELLED (template)",
+  "module": "screens_brief",
+  "path": "ecrans/S-40/annule.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-23",
+  "name": "Échec d'une tâche et nouvelle tentative",
+  "slug": "ouvert",
+  "label": "Inline failure — AI-A-002 safe reason, attempt and time, no draft, retry allowed",
+  "module": "screens_brief",
+  "path": "ecrans/I-23/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-23",
+  "name": "Échec d'une tâche et nouvelle tentative",
+  "slug": "relance",
+  "label": "New bounded attempt queued (variant)",
+  "module": "screens_brief",
+  "path": "ecrans/I-23/relance.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-23",
+  "name": "Échec d'une tâche et nouvelle tentative",
+  "slug": "limite",
+  "label": "Attempt cap reached (template)",
+  "module": "screens_brief",
+  "path": "ecrans/I-23/limite.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-23",
+  "name": "Échec d'une tâche et nouvelle tentative",
+  "slug": "ambigu",
+  "label": "Ambiguous outcome checked by operation identity (template)",
+  "module": "screens_brief",
+  "path": "ecrans/I-23/ambigu.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ }
+]

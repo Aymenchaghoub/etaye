@@ -1,0 +1,814 @@
+[
+  {
+    "id": "I-09",
+    "slug": "source-src-a-001",
+    "name": "Source datée",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/I-09/source-src-a-001.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-09",
+    "slug": "source-src-a-002",
+    "name": "Source datée",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/I-09/source-src-a-002.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-09",
+    "slug": "source-src-a-003",
+    "name": "Source datée",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/I-09/source-src-a-003.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-09",
+    "slug": "source-src-a-004",
+    "name": "Source datée",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/I-09/source-src-a-004.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-09",
+    "slug": "source-src-a-005",
+    "name": "Source datée",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/I-09/source-src-a-005.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-09",
+    "slug": "source-src-a-006",
+    "name": "Source datée",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/I-09/source-src-a-006.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-09",
+    "slug": "source-src-b-001",
+    "name": "Source datée",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/I-09/source-src-b-001.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-09",
+    "slug": "source-src-a-007-v1",
+    "name": "Source datée",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/I-09/source-src-a-007-v1.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-09",
+    "slug": "source-src-a-007-v2",
+    "name": "Source datée",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/I-09/source-src-a-007-v2.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-09",
+    "slug": "source-src-a-008",
+    "name": "Source datée",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/I-09/source-src-a-008.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-29",
+    "slug": "extrait-src-a-001",
+    "name": "Extrait partagé",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/S-29/extrait-src-a-001.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-29",
+    "slug": "extrait-src-a-005",
+    "name": "Extrait partagé",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/S-29/extrait-src-a-005.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-29",
+    "slug": "extrait-src-a-006",
+    "name": "Extrait partagé",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/S-29/extrait-src-a-006.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-06",
+    "slug": "sami-a",
+    "name": "Aujourd'hui — Dr Sami Rahmani",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/S-06/sami-a.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-07",
+    "slug": "canal",
+    "name": "Patients — Cabinet du Canal",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/S-07/canal.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-09",
+    "slug": "hugo",
+    "name": "Dossier de Hugo Petit",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/S-09/hugo.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-14",
+    "slug": "canal",
+    "name": "Agenda — Cabinet du Canal",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/S-14/canal.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-16",
+    "slug": "hugo",
+    "name": "Rendez-vous de Hugo Petit",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/S-16/hugo.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-15",
+    "slug": "canal",
+    "name": "Disponibilités — Cabinet du Canal",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/S-15/canal.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-35",
+    "slug": "canal",
+    "name": "Profil — Cabinet du Canal",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/S-35/canal.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-18",
+    "slug": "canal",
+    "name": "Briefs — Cabinet du Canal",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/S-18/canal.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-20",
+    "slug": "canal",
+    "name": "Comptes rendus — Cabinet du Canal",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/S-20/canal.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-40",
+    "slug": "canal",
+    "name": "Tâches — Cabinet du Canal",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/S-40/canal.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-19",
+    "slug": "acces-revoque",
+    "name": "Accès au cabinet retiré",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/S-19/acces-revoque.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-40",
+    "slug": "louis-en-file",
+    "name": "Nouvelle tâche pour Louis Bernard",
+    "label": "Retry scenario: linked new task, identity allocated on submission; no fabricated dataset ID.",
+    "module": "review_corrections",
+    "path": "ecrans/S-40/louis-en-file.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-21",
+    "slug": "identite",
+    "name": "Comparer les données d’identité",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/I-21/identite.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-21",
+    "slug": "mesure",
+    "name": "Comparer les versions de la mesure",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/I-21/mesure.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-21",
+    "slug": "disponibilite",
+    "name": "Comparer les disponibilités",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/I-21/disponibilite.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-21",
+    "slug": "nouvelle-explication",
+    "name": "Nouveau brouillon d’explication",
+    "label": "New-version scenario, no new dataset version ID assigned; corrected baseline preserved.",
+    "module": "review_corrections",
+    "path": "ecrans/S-21/nouvelle-explication.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-21",
+    "slug": "nouvelle-relecture",
+    "name": "Relire la nouvelle version",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/S-21/nouvelle-relecture.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-07",
+    "slug": "qualitatif",
+    "name": "Saisir un résultat textuel",
+    "label": "Qualitative template: no new clinical result invented.",
+    "module": "review_corrections",
+    "path": "ecrans/I-07/qualitatif.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-07",
+    "slug": "qualitatif-revue",
+    "name": "Vérifier la saisie textuelle",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/I-07/qualitatif-revue.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-07",
+    "slug": "correction",
+    "name": "Corriger un résultat",
+    "label": "Correction template of an existing lab; no unprovided replacement value.",
+    "module": "review_corrections",
+    "path": "ecrans/I-07/correction.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-07",
+    "slug": "correction-revue",
+    "name": "Historique de correction",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/I-07/correction-revue.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-20",
+    "slug": "louis-enregistre",
+    "name": "Compte rendu de Louis — brouillon",
+    "label": "Manual report scenario; no dated clinical source or validation invented.",
+    "module": "review_corrections",
+    "path": "ecrans/S-20/louis-enregistre.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-19",
+    "slug": "louis",
+    "name": "Exporter le brouillon de Louis",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/I-19/louis.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-05",
+    "slug": "motif",
+    "name": "Saisir le motif de Louis",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/I-05/motif.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-19",
+    "slug": "louis-terminee",
+    "name": "Consultation de Louis terminée",
+    "label": "Completion scenario after the frozen baseline, no fabricated timestamp or validation.",
+    "module": "review_corrections",
+    "path": "ecrans/S-19/louis-terminee.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-10",
+    "slug": "claire",
+    "name": "Réserver pour Claire Martin",
+    "label": "Replay before APT-A-001 booking; synthetic transition only, no new appointment ID.",
+    "module": "review_corrections",
+    "path": "ecrans/I-10/claire.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-10",
+    "slug": "conflit-claire",
+    "name": "Créneau déjà réservé",
+    "label": "Scenario variant; synthetic design only.",
+    "module": "review_corrections",
+    "path": "ecrans/I-10/conflit-claire.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-11",
+    "slug": "claire",
+    "name": "Déplacer le rendez-vous de Claire",
+    "label": "Move scenario for APT-A-001; required reason; no other patient.",
+    "module": "review_corrections",
+    "path": "ecrans/I-11/claire.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-12",
+    "slug": "textuel",
+    "name": "Résultat textuel",
+    "label": "Explicit laboratory presentation template; no new clinical value or dataset observation.",
+    "module": "review_corrections",
+    "path": "ecrans/S-12/textuel.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-12",
+    "slug": "hors-intervalle",
+    "name": "Valeur hors intervalle fourni",
+    "label": "Explicit laboratory presentation template; no new clinical value or dataset observation.",
+    "module": "review_corrections",
+    "path": "ecrans/S-12/hors-intervalle.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-12",
+    "slug": "unites-incompatibles",
+    "name": "Unités différentes",
+    "label": "Explicit laboratory presentation template; no new clinical value or dataset observation.",
+    "module": "review_corrections",
+    "path": "ecrans/S-12/unites-incompatibles.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-12",
+    "slug": "a-verifier",
+    "name": "Transcription à vérifier",
+    "label": "Explicit laboratory presentation template; no new clinical value or dataset observation.",
+    "module": "review_corrections",
+    "path": "ecrans/S-12/a-verifier.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "S-12",
+    "slug": "corrige",
+    "name": "Historique du résultat",
+    "label": "Explicit laboratory presentation template; no new clinical value or dataset observation.",
+    "module": "review_corrections",
+    "path": "ecrans/S-12/corrige.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-25",
+    "slug": "evenement-0",
+    "name": "Détail de l’événement",
+    "label": "Illustrative audit projection from dataset facts; not a real event log.",
+    "module": "review_corrections",
+    "path": "ecrans/I-25/evenement-0.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-25",
+    "slug": "evenement-1",
+    "name": "Détail de l’événement",
+    "label": "Illustrative audit projection from dataset facts; not a real event log.",
+    "module": "review_corrections",
+    "path": "ecrans/I-25/evenement-1.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-25",
+    "slug": "evenement-2",
+    "name": "Détail de l’événement",
+    "label": "Illustrative audit projection from dataset facts; not a real event log.",
+    "module": "review_corrections",
+    "path": "ecrans/I-25/evenement-2.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-25",
+    "slug": "evenement-3",
+    "name": "Détail de l’événement",
+    "label": "Illustrative audit projection from dataset facts; not a real event log.",
+    "module": "review_corrections",
+    "path": "ecrans/I-25/evenement-3.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-25",
+    "slug": "evenement-4",
+    "name": "Détail de l’événement",
+    "label": "Illustrative audit projection from dataset facts; not a real event log.",
+    "module": "review_corrections",
+    "path": "ecrans/I-25/evenement-4.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-25",
+    "slug": "evenement-5",
+    "name": "Détail de l’événement",
+    "label": "Illustrative audit projection from dataset facts; not a real event log.",
+    "module": "review_corrections",
+    "path": "ecrans/I-25/evenement-5.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-25",
+    "slug": "evenement-6",
+    "name": "Détail de l’événement",
+    "label": "Illustrative audit projection from dataset facts; not a real event log.",
+    "module": "review_corrections",
+    "path": "ecrans/I-25/evenement-6.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-25",
+    "slug": "evenement-7",
+    "name": "Détail de l’événement",
+    "label": "Illustrative audit projection from dataset facts; not a real event log.",
+    "module": "review_corrections",
+    "path": "ecrans/I-25/evenement-7.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-25",
+    "slug": "evenement-8",
+    "name": "Détail de l’événement",
+    "label": "Illustrative audit projection from dataset facts; not a real event log.",
+    "module": "review_corrections",
+    "path": "ecrans/I-25/evenement-8.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-25",
+    "slug": "evenement-9",
+    "name": "Détail de l’événement",
+    "label": "Illustrative audit projection from dataset facts; not a real event log.",
+    "module": "review_corrections",
+    "path": "ecrans/I-25/evenement-9.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-25",
+    "slug": "evenement-10",
+    "name": "Détail de l’événement",
+    "label": "Illustrative audit projection from dataset facts; not a real event log.",
+    "module": "review_corrections",
+    "path": "ecrans/I-25/evenement-10.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  },
+  {
+    "id": "I-25",
+    "slug": "evenement-11",
+    "name": "Détail de l’événement",
+    "label": "Illustrative audit projection from dataset facts; not a real event log.",
+    "module": "review_corrections",
+    "path": "ecrans/I-25/evenement-11.html",
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile",
+      "narrow"
+    ]
+  }
+]

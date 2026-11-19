@@ -2,6 +2,12 @@
 
 Updated: 2026-11-19. Owner: Aymen Chaghoub.
 
+## Offline mockups and latest design evidence — 2026-11-19
+
+Aymen asked to account for the latest design and accepted committing the mockups. The [offline reference](../design/offline-reference/README.md) includes the exact 523-file HTML bundle from the verified release and points to the 52 desktop comparisons for the latest saved native version evidenced here, `2423224260331333575`. Read the background decision at its study scope and the pending roadmap alignments before applying the reference to later product behavior. No newer Figma revision was independently inspected.
+
+A fresh rebuild reproduced all 456 screen-state HTML files. The nine PDFs, 22 generated PDF previews, and generated index differed in bytes, so the committed baseline comes from the original release. Chromium rendered an S-06 example at desktop, tablet and mobile widths, with desktop and mobile captures opened. Next action is to review the 19 core families at the required widths, align stale states with product decisions, and record Aymen's approval and explicit development authorization. All application stories remain in backlog.
+
 ## Interactive architecture documentation — 2026-11-19
 
 Aymen accepted an SVG preview in the repository README and five interactive Archify views on GitHub Pages. The [architecture views](architecture-views/README.md) preserve the editable candidates and the exact HTML checked against the planning baseline at `eb58c81`. The publication workflow is scoped to the documentation site on `main`. The project remains in design review with all 45 application stories in backlog.

@@ -1,0 +1,282 @@
+[
+ {
+  "id": "S-07",
+  "name": "Annuaire et recherche de patients",
+  "slug": "liste",
+  "label": "Initial — two Cabinet des Tilleuls records, birth date and portal status visible",
+  "module": "screens_patients",
+  "path": "ecrans/S-07/liste.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-07",
+  "name": "Annuaire et recherche de patients",
+  "slug": "aucun-resultat",
+  "label": "No result — 'Petit' from PRA-A never finds Hugo Petit (AC-S07-F, SC-ISOLATION)",
+  "module": "screens_patients",
+  "path": "ecrans/S-07/aucun-resultat.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-07",
+  "name": "Annuaire et recherche de patients",
+  "slug": "chargement",
+  "label": "Loading",
+  "module": "screens_patients",
+  "path": "ecrans/S-07/chargement.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-07",
+  "name": "Annuaire et recherche de patients",
+  "slug": "vide",
+  "label": "No patients (template)",
+  "module": "screens_patients",
+  "path": "ecrans/S-07/vide.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-07",
+  "name": "Annuaire et recherche de patients",
+  "slug": "erreur",
+  "label": "Partial error — results kept with timestamp",
+  "module": "screens_patients",
+  "path": "ecrans/S-07/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-07",
+  "name": "Annuaire et recherche de patients",
+  "slug": "perime",
+  "label": "Stale results — refresh offered",
+  "module": "screens_patients",
+  "path": "ecrans/S-07/perime.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-07",
+  "name": "Annuaire et recherche de patients",
+  "slug": "longs",
+  "label": "Long names — layout template, birth date never truncated",
+  "module": "screens_patients",
+  "path": "ecrans/S-07/longs.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-07",
+  "name": "Annuaire et recherche de patients",
+  "slug": "planificateur",
+  "label": "Scheduling lookup — Mila Dubois, minimal projection, no record links (PD-001 proposal)",
+  "module": "screens_patients",
+  "path": "ecrans/S-07/planificateur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-08",
+  "name": "Création et modification de l'identité",
+  "slug": "nouveau",
+  "label": "New — required/optional explicit, focus on first field",
+  "module": "screens_patients",
+  "path": "ecrans/S-08/nouveau.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-08",
+  "name": "Création et modification de l'identité",
+  "slug": "modifier",
+  "label": "Edit — Claire Martin, version 7 opened",
+  "module": "screens_patients",
+  "path": "ecrans/S-08/modifier.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-08",
+  "name": "Création et modification de l'identité",
+  "slug": "erreur",
+  "label": "Validation — missing name, impossible date",
+  "module": "screens_patients",
+  "path": "ecrans/S-08/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-08",
+  "name": "Création et modification de l'identité",
+  "slug": "doublon",
+  "label": "Possible local duplicate — inspect, no automatic merge, no cross-practice search",
+  "module": "screens_patients",
+  "path": "ecrans/S-08/doublon.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-08",
+  "name": "Création et modification de l'identité",
+  "slug": "conflit",
+  "label": "Version conflict — edits kept, compare via I-21 (AC-S08-F)",
+  "module": "screens_patients",
+  "path": "ecrans/S-08/conflit.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-08",
+  "name": "Création et modification de l'identité",
+  "slug": "enregistrement",
+  "label": "Saving — single submit",
+  "module": "screens_patients",
+  "path": "ecrans/S-08/enregistrement.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-08",
+  "name": "Création et modification de l'identité",
+  "slug": "sale",
+  "label": "Unsaved changes indicator",
+  "module": "screens_patients",
+  "path": "ecrans/S-08/sale.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-08",
+  "name": "Création et modification de l'identité",
+  "slug": "planificateur",
+  "label": "Scheduler create-only — Mila Dubois, demographic identity only (PD-001 proposal)",
+  "module": "screens_patients",
+  "path": "ecrans/S-08/planificateur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-04",
+  "name": "Créer ou modifier l'identité du patient",
+  "slug": "ouvert",
+  "label": "Identity page — create, same form as S-08 'nouveau'",
+  "module": "screens_patients",
+  "path": "ecrans/I-04/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-04",
+  "name": "Créer ou modifier l'identité du patient",
+  "slug": "doublon",
+  "label": "Duplicate suggestion inside the page",
+  "module": "screens_patients",
+  "path": "ecrans/I-04/doublon.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-04",
+  "name": "Créer ou modifier l'identité du patient",
+  "slug": "planificateur",
+  "label": "Scheduler variant returns to I-10 after save",
+  "module": "screens_patients",
+  "path": "ecrans/I-04/planificateur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-20",
+  "name": "Quitter avec des modifications non enregistrées",
+  "slug": "ouvert",
+  "label": "Dirty identity edit, leaving to Today — save and continue / stay / explicit discard",
+  "module": "screens_patients",
+  "path": "ecrans/I-20/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ }
+]

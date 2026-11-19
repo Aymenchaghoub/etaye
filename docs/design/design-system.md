@@ -24,7 +24,7 @@ Status: **Proposal, written 2026-11-18 as the offline working reference for agen
 2. **Take values only from section 4.** Use the CSS custom properties of `tokens.css` (`--encre`, `--espace-4`, `--rayon-1`, ...). No new hex value, no estimated size, no generic component theme.
 3. **Build from the recipes in section 6** and the layout rules in section 5. For a missing component, use the closest existing one and flag a design gap per the [coverage guide](coverage-guide.md); do not invent a token.
 4. **Reuse the original logo files** (section 4.6). Never retype, recolor, stretch or redraw them.
-5. **Render and compare** at matching viewports: 1440×1024, 1024×768, 768×1024, 390×844 and a 320 px reflow check. The reference screens can be rebuilt offline with `python tools/rebuild_design_receipt.py --output <folder outside the repository> --pdf` (see the [received README](../../design/received/2026-11-03/README.md)).
+5. **Render and compare** at matching viewports: 1440×1024, 1024×768, 768×1024, 390×844 and a 320 px reflow check. Open the [committed offline reference](../../design/offline-reference/README.md) to use the exact HTML and PDF bytes, then consult its native comparisons for the 52 corrected desktop states.
 6. **Measure contrast on rendered pairs**, in both themes, for text, control borders and focus. A palette entry does not prove a combination accessible.
 7. **Label the result** "built without Figma access, to reconcile against Figma when available".
 
@@ -53,7 +53,7 @@ Figma file: see [figma-inventory.md](figma-inventory.md) for its identifier and 
 
 **Generated tables.** The token tables in section 4 are produced by [tools/design_system_reference.py](../../tools/design_system_reference.py) from `tokens.css` and cross-checked against `resolved-tokens.json` (34 color values, 14 text styles, 10 spacing steps, 4 radii). `python3 tools/design_system_reference.py --check` fails if the file is stale or if the two sources disagree; `--write` regenerates the blocks. A repository test runs the check.
 
-**Reference snapshot identity.** The corrected HTML reference (398 delivered states plus the reviewed overlay, 523 files) is identified by SHA-256 `d2f0800e275c4b156fedbcf23656ffe2bf435f9b6a72faf0f86fc293e2a82ad6` in [html-reception.csv](html-reception.csv) (the same value for all 76 families); its generator and CSS are in `design/received/2026-11-03`. It was matched again on 2026-11-18 by the [closure report](reviews/2026-11-18-figma-native-closure.md); this session did not rebuild it.
+**Reference snapshot identity.** The corrected HTML reference (398 delivered states plus the reviewed overlay, 523 files) is identified by SHA-256 `d2f0800e275c4b156fedbcf23656ffe2bf435f9b6a72faf0f86fc293e2a82ad6` in [html-reception.csv](html-reception.csv) (the same value for all 76 families); its generator and CSS are in `design/received/2026-11-03`. The [committed offline reference](../../design/offline-reference/README.md) contains the frozen site and links the desktop corrections to Figma version `2423224260331333575`.
 
 ## 4. Tokens
 
@@ -232,7 +232,7 @@ A4 documents use the `doc-a4` rules in [ext-print.css](../../design/received/202
 
 ```sh
 python3 tools/design_system_reference.py --check        # this file matches the CSS tokens and the Figma-resolved values
-python tools/rebuild_design_receipt.py --output <folder outside the repository> --pdf   # rebuild the reference screens
+python tools/rebuild_design_receipt.py --output <folder outside the repository> --corrected --pdf
 ```
 
 Compare a rebuilt screen and your implementation at the same viewport and theme, by opening both images. Measure contrast on the rendered pixels for each text and control pair. Record which images were opened and what remains unverified. Never report a documentary check as an application test.
@@ -268,11 +268,11 @@ Change the sources first (Figma, then `tokens.css`, `resolved-tokens.json` or th
 **Per-surface procedure, once development is authorized:**
 
 1. Read the surface's tracker row, its catalog entries, stories and the other required sources of [AGENTS.md](../../AGENTS.md).
-2. Open the reference state at the matching viewport and theme (rebuild with `tools/rebuild_design_receipt.py` if the external copy is missing).
+2. Open the [committed reference state](../../design/offline-reference/README.md) at the matching viewport and theme. Check the latest native comparison for a corrected desktop state and the roadmap for any later design alignment.
 3. Implement with the `.etaye-*` classes and the custom properties as the style contract: reuse `tokens.css`, the component CSS and `icons.css`; do not inherit a generic component theme or re-theme.
 4. Capture the running UI at 1440×1024, 1024×768, 390×844 and the 320 px reflow check, in both themes, including empty, error, long, restricted and focus states.
 5. Open the reference and the implementation at the same width and compare them as matching pairs (the method of the closure report); record every difference.
 6. Measure contrast on rendered pairs; test keyboard, focus and 200 % zoom.
 7. Record the evidence in the tracker (`visual_evidence`, `exceptions`); never mark a row approved without Aymen.
 
-**Ready:** generated and checked tokens, component recipes, shells and breakpoints, the snapshot identity, this procedure. **Missing before a first screen can be built:** design approval, the development authorization, the frontend scaffolding (not authorized), a decision on how the tokens reach the React code (the proposal is to reuse `tokens.css` unchanged) and a harness that compares running-UI screenshots with the reference (the measurement tools of the [background study](background-study/README.md) show a workable method). **Not verified:** that the full reference rebuilds in this environment today.
+**Ready:** generated and checked tokens, component recipes, shells and breakpoints, the snapshot identity, this procedure. **Missing before a first screen can be built:** design approval, the development authorization, the frontend scaffolding (not authorized), a decision on how the tokens reach the React code (the proposal is to reuse `tokens.css` unchanged) and a harness that compares running-UI screenshots with the reference (the measurement tools of the [background study](background-study/README.md) show a workable method). **Verified on 2026-11-19:** a fresh rebuild reproduced all 456 state HTML files. The committed snapshot preserves the exact PDF and preview bytes for visual review.

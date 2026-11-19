@@ -17,3 +17,6 @@ docs/architecture-views/site/documents.html -text -diff -whitespace
 docs/architecture-views/site/modules.html -text -diff -whitespace
 docs/architecture-views/site/system.html -text -diff -whitespace
 docs/architecture-views/overview.svg -text -diff -whitespace
+# Preserve the frozen mockup bytes across platforms and collapse generated diffs.
+design/offline-reference/site/** -text -diff -whitespace linguist-generated=true
+design/offline-reference/snapshot.json text eol=lf

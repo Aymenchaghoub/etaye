@@ -1,0 +1,562 @@
+[
+ {
+  "id": "S-09",
+  "name": "Dossier patient et chronologie",
+  "slug": "claire",
+  "label": "Default — Claire Martin chronology, occurrence vs recording dates, contradiction & missing data aside",
+  "module": "screens_dossier",
+  "path": "ecrans/S-09/claire.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-09",
+  "name": "Dossier patient et chronologie",
+  "slug": "long",
+  "label": "Long chronology — all 16 dataset events, no pagination (V-LONG baseline without duplicated events)",
+  "module": "screens_dossier",
+  "path": "ecrans/S-09/long.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-09",
+  "name": "Dossier patient et chronologie",
+  "slug": "louis",
+  "label": "Minimal history — Louis Bernard (V-EMPTY): checked-in, consultation in progress, cancelled visit, failed brief",
+  "module": "screens_dossier",
+  "path": "ecrans/S-09/louis.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-09",
+  "name": "Dossier patient et chronologie",
+  "slug": "corrige",
+  "label": "Corrected event — weight 86,4 → 68,4 kg, version history inline (SRC-A-007-v1/v2)",
+  "module": "screens_dossier",
+  "path": "ecrans/S-09/corrige.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-09",
+  "name": "Dossier patient et chronologie",
+  "slug": "date-inconnue",
+  "label": "Unknown occurrence date — rendering template (dataset gap, no clinical value)",
+  "module": "screens_dossier",
+  "path": "ecrans/S-09/date-inconnue.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-09",
+  "name": "Dossier patient et chronologie",
+  "slug": "erreur-partielle",
+  "label": "Partial failure — measurements failed to load, other events kept (SP-STATE)",
+  "module": "screens_dossier",
+  "path": "ecrans/S-09/erreur-partielle.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-09",
+  "name": "Dossier patient et chronologie",
+  "slug": "lecture-seule",
+  "label": "Read-only membership — permission test variant (CLINICAL_READ only)",
+  "module": "screens_dossier",
+  "path": "ecrans/S-09/lecture-seule.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-10",
+  "name": "Antécédents, allergies et traitements déclarés",
+  "slug": "claire",
+  "label": "Default — contradictory allergy statements, both dated sources; treatments missing (not 'none')",
+  "module": "screens_dossier",
+  "path": "ecrans/S-10/claire.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-10",
+  "name": "Antécédents, allergies et traitements déclarés",
+  "slug": "louis",
+  "label": "Missing — Louis Bernard, every section unknown/not documented (V-EMPTY)",
+  "module": "screens_dossier",
+  "path": "ecrans/S-10/louis.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-10",
+  "name": "Antécédents, allergies et traitements déclarés",
+  "slug": "evaluation",
+  "label": "Practitioner assessment being added — dirty form, focus on reason, patient report preserved",
+  "module": "screens_dossier",
+  "path": "ecrans/S-10/evaluation.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-10",
+  "name": "Antécédents, allergies et traitements déclarés",
+  "slug": "evaluation-erreur",
+  "label": "Assessment save refused — error summary + field error, input kept",
+  "module": "screens_dossier",
+  "path": "ecrans/S-10/evaluation-erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-10",
+  "name": "Antécédents, allergies et traitements déclarés",
+  "slug": "lecture-seule",
+  "label": "Read-only — permission test variant, no add/correct actions",
+  "module": "screens_dossier",
+  "path": "ecrans/S-10/lecture-seule.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-27",
+  "name": "Examiner des informations manquantes ou discordantes",
+  "slug": "ouvert",
+  "label": "Inline review — opposing dated statements side by side, missing field, no auto-resolution",
+  "module": "screens_dossier",
+  "path": "ecrans/I-27/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-27",
+  "name": "Examiner des informations manquantes ou discordantes",
+  "slug": "conserve",
+  "label": "After 'Conserver à vérifier' — disposition recorded, both sources unchanged (toast)",
+  "module": "screens_dossier",
+  "path": "ecrans/I-27/conserve.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-11",
+  "name": "Mesures et tendances",
+  "slug": "claire",
+  "label": "Default — BP 128/80 then 134/82 mmHg chart + table; weight single corrected point (no curve)",
+  "module": "screens_dossier",
+  "path": "ecrans/S-11/claire.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-11",
+  "name": "Mesures et tendances",
+  "slug": "louis",
+  "label": "No measurements — Louis Bernard (V-EMPTY)",
+  "module": "screens_dossier",
+  "path": "ecrans/S-11/louis.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-11",
+  "name": "Mesures et tendances",
+  "slug": "chargement",
+  "label": "Loading — skeleton sections",
+  "module": "screens_dossier",
+  "path": "ecrans/S-11/chargement.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-11",
+  "name": "Mesures et tendances",
+  "slug": "gabarits",
+  "label": "Mixed units / unknown date — rendering templates only (dataset gap)",
+  "module": "screens_dossier",
+  "path": "ecrans/S-11/gabarits.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-06",
+  "name": "Saisir ou corriger une mesure",
+  "slug": "ouvert",
+  "label": "Drawer — new measurement entry, focus on first value, dirty",
+  "module": "screens_dossier",
+  "path": "ecrans/I-06/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-06",
+  "name": "Saisir ou corriger une mesure",
+  "slug": "erreur",
+  "label": "Impossible entry — 1340 mmHg refused, missing date; summary + field errors, input kept",
+  "module": "screens_dossier",
+  "path": "ecrans/I-06/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-06",
+  "name": "Saisir ou corriger une mesure",
+  "slug": "correction",
+  "label": "Correction — weight v2, reason required, old value kept in history",
+  "module": "screens_dossier",
+  "path": "ecrans/I-06/correction.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-06",
+  "name": "Saisir ou corriger une mesure",
+  "slug": "conflit",
+  "label": "Version conflict — v2 saved at 10:15 while user edited v1; input preserved → I-21",
+  "module": "screens_dossier",
+  "path": "ecrans/I-06/conflit.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-12",
+  "name": "Biologie et intervalles fournis",
+  "slug": "claire",
+  "label": "Default — creatinine 96 → 104 µmol/L, glucose 5,2 mmol/L, lab-supplied intervals, chart + table",
+  "module": "screens_dossier",
+  "path": "ecrans/S-12/claire.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-12",
+  "name": "Biologie et intervalles fournis",
+  "slug": "sans-intervalle",
+  "label": "V-LAB-NO-INTERVAL — 'Intervalle non fourni', no generic interval invented",
+  "module": "screens_dossier",
+  "path": "ecrans/S-12/sans-intervalle.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-12",
+  "name": "Biologie et intervalles fournis",
+  "slug": "louis",
+  "label": "Empty — Louis Bernard (V-EMPTY)",
+  "module": "screens_dossier",
+  "path": "ecrans/S-12/louis.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-07",
+  "name": "Saisir ou corriger un résultat de biologie",
+  "slug": "ouvert",
+  "label": "Drawer — manual entry, numeric/textual choice, supplied interval or 'non fourni', source required",
+  "module": "screens_dossier",
+  "path": "ecrans/I-07/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-07",
+  "name": "Saisir ou corriger un résultat de biologie",
+  "slug": "erreur",
+  "label": "Validation — unit and source missing; input kept",
+  "module": "screens_dossier",
+  "path": "ecrans/I-07/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-13",
+  "name": "Documents du dossier et visionneuse de sources",
+  "slug": "claire",
+  "label": "Default — DOC-A-001 ready, document vs upload dates, clinician-only access",
+  "module": "screens_dossier",
+  "path": "ecrans/S-13/claire.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-13",
+  "name": "Documents du dossier et visionneuse de sources",
+  "slug": "file",
+  "label": "Upload queue — sending, scanning (long filename), rejected format; UI placeholder filenames",
+  "module": "screens_dossier",
+  "path": "ecrans/S-13/file.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-13",
+  "name": "Documents du dossier et visionneuse de sources",
+  "slug": "visionneuse",
+  "label": "Viewer — page 1 with cited excerpt highlighted, metadata, citing statement + return link",
+  "module": "screens_dossier",
+  "path": "ecrans/S-13/visionneuse.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-13",
+  "name": "Documents du dossier et visionneuse de sources",
+  "slug": "page-manquante",
+  "label": "Missing page — citation points to absent page; not shown as verified",
+  "module": "screens_dossier",
+  "path": "ecrans/S-13/page-manquante.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-13",
+  "name": "Documents du dossier et visionneuse de sources",
+  "slug": "acces-expire",
+  "label": "Expired preview access — reload, nothing downloaded",
+  "module": "screens_dossier",
+  "path": "ecrans/S-13/acces-expire.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-13",
+  "name": "Documents du dossier et visionneuse de sources",
+  "slug": "apercu-indisponible",
+  "label": "Unsupported preview — download only",
+  "module": "screens_dossier",
+  "path": "ecrans/S-13/apercu-indisponible.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-13",
+  "name": "Documents du dossier et visionneuse de sources",
+  "slug": "louis",
+  "label": "Empty — no documents (V-EMPTY)",
+  "module": "screens_dossier",
+  "path": "ecrans/S-13/louis.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-08",
+  "name": "Ajouter un document",
+  "slug": "ouvert",
+  "label": "Drawer — empty drop zone, submit disabled until a file is chosen",
+  "module": "screens_dossier",
+  "path": "ecrans/I-08/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-08",
+  "name": "Ajouter un document",
+  "slug": "envoi",
+  "label": "File chosen — metadata entry, unknown-date option",
+  "module": "screens_dossier",
+  "path": "ecrans/I-08/envoi.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-08",
+  "name": "Ajouter un document",
+  "slug": "erreur",
+  "label": "Validation — date missing; file kept",
+  "module": "screens_dossier",
+  "path": "ecrans/I-08/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-09",
+  "name": "Ouvrir la source",
+  "slug": "ouvert",
+  "label": "Source drawer over labs — SRC-A-003 excerpt highlighted, dates, author, version, locator",
+  "module": "screens_dossier",
+  "path": "ecrans/I-09/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-09",
+  "name": "Ouvrir la source",
+  "slug": "allergie",
+  "label": "Source drawer over history — SRC-A-001 dated explicit negative (patient-reported)",
+  "module": "screens_dossier",
+  "path": "ecrans/I-09/allergie.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-09",
+  "name": "Ouvrir la source",
+  "slug": "indisponible",
+  "label": "Source unavailable — statement not treated as verified",
+  "module": "screens_dossier",
+  "path": "ecrans/I-09/indisponible.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ }
+]

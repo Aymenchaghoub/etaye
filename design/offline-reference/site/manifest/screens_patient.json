@@ -1,0 +1,604 @@
+[
+ {
+  "id": "S-25",
+  "name": "Accueil de l'espace patient",
+  "slug": "accueil",
+  "label": "Default — Claire Martin: next visit APT-A-001, preparation sent, explanation v2 published; REPORT-A-001-v1 absent (SC-NOT-PUBLISHED)",
+  "module": "screens_patient",
+  "path": "ecrans/S-25/accueil.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-25",
+  "name": "Accueil de l'espace patient",
+  "slug": "sans-rdv",
+  "label": "No appointment (template)",
+  "module": "screens_patient",
+  "path": "ecrans/S-25/sans-rdv.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-25",
+  "name": "Accueil de l'espace patient",
+  "slug": "sans-publication",
+  "label": "No publication (template)",
+  "module": "screens_patient",
+  "path": "ecrans/S-25/sans-publication.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-25",
+  "name": "Accueil de l'espace patient",
+  "slug": "remplacee",
+  "label": "Replaced notice — v1 replaced by v2 on 2 Nov",
+  "module": "screens_patient",
+  "path": "ecrans/S-25/remplacee.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-25",
+  "name": "Accueil de l'espace patient",
+  "slug": "retiree",
+  "label": "Withdrawn notice — V-WITHDRAWN, no internal reason",
+  "module": "screens_patient",
+  "path": "ecrans/S-25/retiree.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-25",
+  "name": "Accueil de l'espace patient",
+  "slug": "lien-retire",
+  "label": "Revoked portal link (template)",
+  "module": "screens_patient",
+  "path": "ecrans/S-25/lien-retire.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-25",
+  "name": "Accueil de l'espace patient",
+  "slug": "indisponible",
+  "label": "API unavailable — nothing shown as empty success",
+  "module": "screens_patient",
+  "path": "ecrans/S-25/indisponible.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-26",
+  "name": "Rendez-vous et réservation (patient)",
+  "slug": "liste",
+  "label": "Own appointments — upcoming BOOKED, past COMPLETED and NO_SHOW (read-only)",
+  "module": "screens_patient",
+  "path": "ecrans/S-26/liste.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-26",
+  "name": "Rendez-vous et réservation (patient)",
+  "slug": "detail",
+  "label": "Own appointment detail — patient variant of S-16",
+  "module": "screens_patient",
+  "path": "ecrans/S-26/detail.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-26",
+  "name": "Rendez-vous et réservation (patient)",
+  "slug": "creneaux",
+  "label": "Booking — anonymised slots Tue 3 Nov (10:30 unavailable), 11:00 chosen (I-10 patient)",
+  "module": "screens_patient",
+  "path": "ecrans/S-26/creneaux.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-26",
+  "name": "Rendez-vous et réservation (patient)",
+  "slug": "conflit",
+  "label": "Booking race lost — choice context and reason kept, no duplicate (AC-S26-F)",
+  "module": "screens_patient",
+  "path": "ecrans/S-26/conflit.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-26",
+  "name": "Rendez-vous et réservation (patient)",
+  "slug": "aucun",
+  "label": "No slots (template)",
+  "module": "screens_patient",
+  "path": "ecrans/S-26/aucun.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-26",
+  "name": "Rendez-vous et réservation (patient)",
+  "slug": "deplacer",
+  "label": "Move — current visit kept until confirmed (I-11 patient)",
+  "module": "screens_patient",
+  "path": "ecrans/S-26/deplacer.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-26",
+  "name": "Rendez-vous et réservation (patient)",
+  "slug": "annuler",
+  "label": "Cancel — keep is primary and focused (I-12 patient)",
+  "module": "screens_patient",
+  "path": "ecrans/S-26/annuler.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-26",
+  "name": "Rendez-vous et réservation (patient)",
+  "slug": "annule",
+  "label": "Cancelled confirmation (template)",
+  "module": "screens_patient",
+  "path": "ecrans/S-26/annule.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-26",
+  "name": "Rendez-vous et réservation (patient)",
+  "slug": "indisponible",
+  "label": "Booking service unavailable",
+  "module": "screens_patient",
+  "path": "ecrans/S-26/indisponible.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-27",
+  "name": "Préparation de visite (patient)",
+  "slug": "brouillon",
+  "label": "Draft — PREP-A-001 before 09:10, saved 09:02, patient-only",
+  "module": "screens_patient",
+  "path": "ecrans/S-27/brouillon.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-27",
+  "name": "Préparation de visite (patient)",
+  "slug": "vide",
+  "label": "Empty — all optional, 'Je ne sais pas' and 'Je préfère ne pas répondre' distinct from 'Non'",
+  "module": "screens_patient",
+  "path": "ecrans/S-27/vide.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-27",
+  "name": "Préparation de visite (patient)",
+  "slug": "envoyee",
+  "label": "Submitted — 2 Nov 09:10, own statements, treatments 'Non renseigné'",
+  "module": "screens_patient",
+  "path": "ecrans/S-27/envoyee.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-27",
+  "name": "Préparation de visite (patient)",
+  "slug": "revision",
+  "label": "Reopened revision — previous version kept and dated",
+  "module": "screens_patient",
+  "path": "ecrans/S-27/revision.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-27",
+  "name": "Préparation de visite (patient)",
+  "slug": "erreur",
+  "label": "Validation error — sharing consent not checked on send; summary + message, answers kept",
+  "module": "screens_patient",
+  "path": "ecrans/S-27/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-27",
+  "name": "Préparation de visite (patient)",
+  "slug": "rdv-change",
+  "label": "Appointment changed — preparation kept (template)",
+  "module": "screens_patient",
+  "path": "ecrans/S-27/rdv-change.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-27",
+  "name": "Préparation de visite (patient)",
+  "slug": "session",
+  "label": "Session expired — answers kept on device, nothing sent",
+  "module": "screens_patient",
+  "path": "ecrans/S-27/session.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-28",
+  "name": "Documents publiés (patient)",
+  "slug": "liste",
+  "label": "Published list — PUB-A-002 current, PUB-A-001 replaced (not openable); no internal report",
+  "module": "screens_patient",
+  "path": "ecrans/S-28/liste.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-28",
+  "name": "Documents publiés (patient)",
+  "slug": "vide",
+  "label": "No publications (template)",
+  "module": "screens_patient",
+  "path": "ecrans/S-28/vide.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-28",
+  "name": "Documents publiés (patient)",
+  "slug": "retiree",
+  "label": "Withdrawn row — V-WITHDRAWN",
+  "module": "screens_patient",
+  "path": "ecrans/S-28/retiree.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-28",
+  "name": "Documents publiés (patient)",
+  "slug": "erreur",
+  "label": "Pagination failure — loaded rows kept",
+  "module": "screens_patient",
+  "path": "ecrans/S-28/erreur.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-29",
+  "name": "Information publiée (patient)",
+  "slug": "v2",
+  "label": "PATIENT-A-001-v2 exact text, validated 14:20 vs published 14:25, three approved excerpts",
+  "module": "screens_patient",
+  "path": "ecrans/S-29/v2.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-29",
+  "name": "Information publiée (patient)",
+  "slug": "extrait",
+  "label": "Approved excerpt drawer — I-09 patient variant (SRC-A-005, own statement, unconfirmed)",
+  "module": "screens_patient",
+  "path": "ecrans/S-29/extrait.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-29",
+  "name": "Information publiée (patient)",
+  "slug": "a-jour",
+  "label": "Update in preparation notice (template)",
+  "module": "screens_patient",
+  "path": "ecrans/S-29/a-jour.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-29",
+  "name": "Information publiée (patient)",
+  "slug": "remplacee",
+  "label": "Replaced — v1 link no longer readable",
+  "module": "screens_patient",
+  "path": "ecrans/S-29/remplacee.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-29",
+  "name": "Information publiée (patient)",
+  "slug": "retiree",
+  "label": "Withdrawn — V-WITHDRAWN, downloaded copies not recalled",
+  "module": "screens_patient",
+  "path": "ecrans/S-29/retiree.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-29",
+  "name": "Information publiée (patient)",
+  "slug": "source-indisponible",
+  "label": "Excerpts failed to load — published text kept",
+  "module": "screens_patient",
+  "path": "ecrans/S-29/source-indisponible.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-30",
+  "name": "Document autorisé et téléchargement (patient)",
+  "slug": "apercu",
+  "label": "PDF preview of the current published version (no attachment granted: attachmentDocumentIds empty)",
+  "module": "screens_patient",
+  "path": "ecrans/S-30/apercu.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-30",
+  "name": "Document autorisé et téléchargement (patient)",
+  "slug": "chargement",
+  "label": "Loading",
+  "module": "screens_patient",
+  "path": "ecrans/S-30/chargement.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-30",
+  "name": "Document autorisé et téléchargement (patient)",
+  "slug": "indisponible",
+  "label": "PDF unavailable",
+  "module": "screens_patient",
+  "path": "ecrans/S-30/indisponible.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-30",
+  "name": "Document autorisé et téléchargement (patient)",
+  "slug": "non-pris-en-charge",
+  "label": "Unsupported preview — text alternative",
+  "module": "screens_patient",
+  "path": "ecrans/S-30/non-pris-en-charge.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-30",
+  "name": "Document autorisé et téléchargement (patient)",
+  "slug": "lien-expire",
+  "label": "Expired download link",
+  "module": "screens_patient",
+  "path": "ecrans/S-30/lien-expire.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-30",
+  "name": "Document autorisé et téléchargement (patient)",
+  "slug": "retire",
+  "label": "Withdrawn grant",
+  "module": "screens_patient",
+  "path": "ecrans/S-30/retire.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "S-30",
+  "name": "Document autorisé et téléchargement (patient)",
+  "slug": "echec",
+  "label": "Download failure",
+  "module": "screens_patient",
+  "path": "ecrans/S-30/echec.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-28",
+  "name": "Résultat du téléchargement autorisé",
+  "slug": "ouvert",
+  "label": "Inline download panel — file, type, version, audience; copies cannot be recalled",
+  "module": "screens_patient",
+  "path": "ecrans/I-28/ouvert.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-28",
+  "name": "Résultat du téléchargement autorisé",
+  "slug": "termine",
+  "label": "Download complete",
+  "module": "screens_patient",
+  "path": "ecrans/I-28/termine.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ },
+ {
+  "id": "I-28",
+  "name": "Résultat du téléchargement autorisé",
+  "slug": "refuse",
+  "label": "Refused — grant no longer valid, nothing sent",
+  "module": "screens_patient",
+  "path": "ecrans/I-28/refuse.html",
+  "viewports": [
+   "desktop",
+   "tablet",
+   "mobile",
+   "narrow"
+  ]
+ }
+]
