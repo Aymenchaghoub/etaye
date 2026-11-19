@@ -22,6 +22,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
@@ -967,6 +968,115 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(response.getHeaders().getContentType().toString()).contains("application/problem+json");
         assertThat(response.getBody().get("code")).isEqualTo("MALFORMED_REQUEST");
+    }
+
+    @Test
+    @DisplayName("A8: Strict typing: JSON number or boolean for string fields gives 400 MALFORMED_REQUEST")
+    void strictTyping_numberOrBooleanForStringFields_returns400MalformedRequest() {
+        String csrfToken = fetchCsrfToken(sessionCookieClinicalA);
+
+        List<String> payloads = List.of(
+                "{\"firstName\": 12345, \"lastName\": \"Martin\", \"dateOfBirth\": \"1990-01-01\"}",
+                "{\"firstName\": true, \"lastName\": \"Martin\", \"dateOfBirth\": \"1990-01-01\"}",
+                "{\"firstName\": \"Alice\", \"lastName\": 9876, \"dateOfBirth\": \"1990-01-01\"}",
+                "{\"firstName\": \"Alice\", \"lastName\": false, \"dateOfBirth\": \"1990-01-01\"}",
+                "{\"firstName\": \"Alice\", \"lastName\": \"Martin\", \"dateOfBirth\": \"1990-01-01\", \"contactEmail\": 123}",
+                "{\"firstName\": \"Alice\", \"lastName\": \"Martin\", \"dateOfBirth\": \"1990-01-01\", \"contactEmail\": true}",
+                "{\"firstName\": \"Alice\", \"lastName\": \"Martin\", \"dateOfBirth\": \"1990-01-01\", \"phone\": 123456}",
+                "{\"firstName\": \"Alice\", \"lastName\": \"Martin\", \"dateOfBirth\": \"1990-01-01\", \"phone\": false}"
+        );
+
+        for (String payload : payloads) {
+            String idempotencyKey = "key-strict-str-" + UUID.randomUUID();
+            ResponseEntity<Map> response = client().post()
+                    .uri("/api/v1/practices/" + practiceA + "/patients")
+                    .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                    .header("X-CSRF-TOKEN", csrfToken)
+                    .header("Idempotency-Key", idempotencyKey)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(payload)
+                    .retrieve()
+                    .onStatus(status -> status.value() == 400, (req, res) -> {})
+                    .toEntity(Map.class);
+
+            assertThat(response.getStatusCode()).as("Payload: " + payload).isEqualTo(HttpStatus.BAD_REQUEST);
+            assertThat(response.getBody().get("code")).as("Payload: " + payload).isEqualTo("MALFORMED_REQUEST");
+        }
+    }
+
+    @Test
+    @DisplayName("A8: Strict typing: non-string value for dateOfBirth (number, array, object) gives 400 MALFORMED_REQUEST")
+    void strictTyping_nonStringForDateOfBirth_returns400MalformedRequest() {
+        String csrfToken = fetchCsrfToken(sessionCookieClinicalA);
+
+        List<String> payloads = List.of(
+                "{\"firstName\": \"Alice\", \"lastName\": \"Martin\", \"dateOfBirth\": [1990, 1, 1]}",
+                "{\"firstName\": \"Alice\", \"lastName\": \"Martin\", \"dateOfBirth\": 123456789}",
+                "{\"firstName\": \"Alice\", \"lastName\": \"Martin\", \"dateOfBirth\": {\"year\": 1990, \"month\": 1, \"day\": 1}}",
+                "{\"firstName\": \"Alice\", \"lastName\": \"Martin\", \"dateOfBirth\": true}"
+        );
+
+        for (String payload : payloads) {
+            String idempotencyKey = "key-strict-dob-" + UUID.randomUUID();
+            ResponseEntity<Map> response = client().post()
+                    .uri("/api/v1/practices/" + practiceA + "/patients")
+                    .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                    .header("X-CSRF-TOKEN", csrfToken)
+                    .header("Idempotency-Key", idempotencyKey)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(payload)
+                    .retrieve()
+                    .onStatus(status -> status.value() == 400, (req, res) -> {})
+                    .toEntity(Map.class);
+
+            assertThat(response.getStatusCode()).as("Payload: " + payload).isEqualTo(HttpStatus.BAD_REQUEST);
+            assertThat(response.getBody().get("code")).as("Payload: " + payload).isEqualTo("MALFORMED_REQUEST");
+        }
+    }
+
+    @Test
+    @DisplayName("A8: Strict typing: contactEmail present but empty gives 400 VALIDATION_FAILED with field error; phone empty string is valid")
+    void strictTyping_emptyContactEmailFails_emptyPhoneValid() {
+        String csrfToken = fetchCsrfToken(sessionCookieClinicalA);
+
+        // 1. contactEmail empty string gives 400 VALIDATION_FAILED with field error
+        String payloadEmptyEmail = """
+                {"firstName": "Alice", "lastName": "Martin", "dateOfBirth": "1990-01-01", "contactEmail": ""}
+                """;
+        ResponseEntity<Map> emailResponse = client().post()
+                .uri("/api/v1/practices/" + practiceA + "/patients")
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .header("X-CSRF-TOKEN", csrfToken)
+                .header("Idempotency-Key", "key-empty-email-" + UUID.randomUUID())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(payloadEmptyEmail)
+                .retrieve()
+                .onStatus(status -> status.value() == 400, (req, res) -> {})
+                .toEntity(Map.class);
+
+        assertThat(emailResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(emailResponse.getBody().get("code")).isEqualTo("VALIDATION_FAILED");
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> errors = (List<Map<String, Object>>) emailResponse.getBody().get("fieldErrors");
+        assertThat(errors).isNotEmpty();
+        assertThat(errors).anyMatch(err -> "contactEmail".equals(err.get("field")));
+
+        // 2. phone empty string is valid and returns 201 Created
+        String payloadEmptyPhone = """
+                {"firstName": "Alice", "lastName": "Martin", "dateOfBirth": "1990-01-01", "phone": ""}
+                """;
+        ResponseEntity<PatientResponse> phoneResponse = client().post()
+                .uri("/api/v1/practices/" + practiceA + "/patients")
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .header("X-CSRF-TOKEN", csrfToken)
+                .header("Idempotency-Key", "key-empty-phone-" + UUID.randomUUID())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(payloadEmptyPhone)
+                .retrieve()
+                .toEntity(PatientResponse.class);
+
+        assertThat(phoneResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(phoneResponse.getBody().phone()).isEqualTo("");
     }
 
     @Test
