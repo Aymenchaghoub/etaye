@@ -13,7 +13,6 @@ import dev.aymen.etaye.records.web.PatientEdit;
 import dev.aymen.etaye.records.web.PatientResponse;
 import dev.aymen.etaye.records.web.RecordResponse;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -21,7 +20,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@Transactional
 public class PatientService {
 
     private final PatientRepository patientRepository;
@@ -147,7 +145,6 @@ public class PatientService {
     /**
      * Executes the getPatientRecord carrier operation inside a practice-scoped transaction.
      */
-    @Transactional(readOnly = true)
     public RecordResponse getPatientRecord(UUID practiceId, UUID recordId) {
         Objects.requireNonNull(practiceId, "practiceId must not be null");
         Objects.requireNonNull(recordId, "recordId must not be null");
@@ -168,22 +165,18 @@ public class PatientService {
         return patientRepository.save(patient);
     }
 
-    @Transactional(readOnly = true)
     public Optional<Patient> getPatient(UUID practiceId, UUID id) {
         return patientRepository.findByIdAndPracticeId(id, practiceId);
     }
 
-    @Transactional(readOnly = true)
     public Optional<Patient> getPatientWithoutAppPredicate(UUID id) {
         return patientRepository.findById(id);
     }
 
-    @Transactional(readOnly = true)
     public List<Patient> listPatients(UUID practiceId) {
         return patientRepository.findAllByPracticeId(practiceId);
     }
 
-    @Transactional(readOnly = true)
     public List<Patient> listPatientsWithoutAppPredicate() {
         return patientRepository.findAll();
     }

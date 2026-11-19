@@ -98,8 +98,11 @@ public class GlobalExceptionHandler {
                 .body(problem);
     }
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiProblem> handleGenericException(Exception ex, HttpServletRequest request) {
+        log.error("Unhandled exception: ", ex);
         String correlationId = CorrelationIdFilter.getCorrelationId(request);
         ApiProblem problem = ApiProblem.of(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
