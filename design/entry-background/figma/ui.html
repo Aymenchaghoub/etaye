@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8">
+<title>Étaye · Fond des écrans d’entrée</title>
+<style>
+body { font: 14px/1.5 system-ui; padding: 12px; }
+input, button { font: inherit; display: block; margin: 8px 0; }
+#status { overflow-wrap: anywhere; }
+</style>
+<h2>Fond papier · revue desktop</h2>
+<label for="file">Lot Étaye</label>
+<input id="file" type="file" accept=".json">
+<button id="apply" disabled>Créer les 20 variantes et exporter</button>
+<p id="status" role="status"></p>
+<a id="download" hidden>Télécharger les preuves et captures</a>
+<script>
+const file = document.querySelector('#file');
+const apply = document.querySelector('#apply');
+const status = document.querySelector('#status');
+const download = document.querySelector('#download');
+let packet;
+file.onchange = async () => {
+  try {
+    packet = JSON.parse(await file.files[0].text());
+    apply.disabled = false;
+    status.textContent = 'Lot chargé.';
+  } catch {
+    packet = null;
+    apply.disabled = true;
+    status.textContent = 'Lot illisible.';
+  }
+};
+apply.onclick = () => {
+  file.disabled = apply.disabled = true;
+  status.textContent = 'Vérification, création et export en cours…';
+  parent.postMessage({pluginMessage: {type: 'import', packet}}, '*');
+};
+onmessage = event => {
+  if (event.source !== parent || !event.data?.pluginMessage) return;
+  const message = event.data.pluginMessage;
+  status.textContent = message.status;
+  if (message.failed) file.disabled = apply.disabled = false;
+  if (message.evidence) {
+    download.href = URL.createObjectURL(new Blob([JSON.stringify(message.evidence)], {type: 'application/json'}));
+    download.download = 'etaye-entry-background-native-evidence.json';
+    download.hidden = false;
+  }
+};
+</script>
+</html>
