@@ -1,6 +1,6 @@
 package dev.aymen.etaye.infrastructure.security;
 
-import dev.aymen.etaye.identity.repository.IdentityLookupRepository;
+import dev.aymen.etaye.identity.service.IdentityLookupService;
 import dev.aymen.etaye.infrastructure.error.ProblemResponseWriter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
@@ -27,18 +27,18 @@ public class SecurityConfig {
     private final ProblemAuthenticationEntryPoint authenticationEntryPoint;
     private final ProblemAccessDeniedHandler accessDeniedHandler;
     private final ProblemResponseWriter problemResponseWriter;
-    private final IdentityLookupRepository identityLookupRepository;
+    private final IdentityLookupService identityLookupService;
     private final ObjectProvider<SessionRepository<?>> sessionRepositoryProvider;
 
     public SecurityConfig(ProblemAuthenticationEntryPoint authenticationEntryPoint,
                           ProblemAccessDeniedHandler accessDeniedHandler,
                           ProblemResponseWriter problemResponseWriter,
-                          IdentityLookupRepository identityLookupRepository,
+                          IdentityLookupService identityLookupService,
                           ObjectProvider<SessionRepository<?>> sessionRepositoryProvider) {
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.accessDeniedHandler = accessDeniedHandler;
         this.problemResponseWriter = problemResponseWriter;
-        this.identityLookupRepository = identityLookupRepository;
+        this.identityLookupService = identityLookupService;
         this.sessionRepositoryProvider = sessionRepositoryProvider;
     }
 
@@ -136,7 +136,7 @@ public class SecurityConfig {
             )
             .addFilterAfter(
                 new IdentityResolutionFilter(
-                        identityLookupRepository,
+                        identityLookupService,
                         authenticationEntryPoint,
                         problemResponseWriter,
                         sessionRepositoryProvider.getIfAvailable()

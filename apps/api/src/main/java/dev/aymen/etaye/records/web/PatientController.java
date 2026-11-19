@@ -1,6 +1,6 @@
 package dev.aymen.etaye.records.web;
 
-import dev.aymen.etaye.identity.domain.AuthenticatedAccount;
+import dev.aymen.etaye.identity.dto.AuthenticatedAccount;
 import dev.aymen.etaye.infrastructure.error.InvalidIdempotencyKeyException;
 import dev.aymen.etaye.infrastructure.security.CorrelationIdFilter;
 import dev.aymen.etaye.infrastructure.security.PracticeSecurityService;

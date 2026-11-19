@@ -1,7 +1,7 @@
 package dev.aymen.etaye.infrastructure.security;
 
-import dev.aymen.etaye.identity.domain.AuthenticatedAccount;
-import dev.aymen.etaye.identity.domain.MembershipGrant;
+import dev.aymen.etaye.identity.dto.AuthenticatedAccount;
+import dev.aymen.etaye.identity.dto.MembershipGrant;
 import dev.aymen.etaye.infrastructure.error.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.access.AccessDeniedException;

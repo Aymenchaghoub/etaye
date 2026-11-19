@@ -1,8 +1,8 @@
 package dev.aymen.etaye.identity.repository;
 
-import dev.aymen.etaye.identity.domain.AccountProfile;
-import dev.aymen.etaye.identity.domain.AuthenticatedAccount;
-import dev.aymen.etaye.identity.domain.MembershipGrant;
+import dev.aymen.etaye.identity.dto.AccountProfile;
+import dev.aymen.etaye.identity.dto.AuthenticatedAccount;
+import dev.aymen.etaye.identity.dto.MembershipGrant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;

@@ -1,8 +1,8 @@
 package dev.aymen.etaye.identity;
 
 import dev.aymen.etaye.AbstractPostgresTest;
-import dev.aymen.etaye.identity.domain.AuthenticatedAccount;
-import dev.aymen.etaye.identity.domain.MembershipGrant;
+import dev.aymen.etaye.identity.dto.AuthenticatedAccount;
+import dev.aymen.etaye.identity.dto.MembershipGrant;
 import dev.aymen.etaye.identity.repository.IdentityLookupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

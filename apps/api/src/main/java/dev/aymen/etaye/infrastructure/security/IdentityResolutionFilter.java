@@ -1,7 +1,7 @@
 package dev.aymen.etaye.infrastructure.security;
 
-import dev.aymen.etaye.identity.domain.AuthenticatedAccount;
-import dev.aymen.etaye.identity.repository.IdentityLookupRepository;
+import dev.aymen.etaye.identity.dto.AuthenticatedAccount;
+import dev.aymen.etaye.identity.service.IdentityLookupService;
 import dev.aymen.etaye.infrastructure.error.ApiProblem;
 import dev.aymen.etaye.infrastructure.error.DatabaseUnavailable;
 import dev.aymen.etaye.infrastructure.error.ProblemResponseWriter;
@@ -40,16 +40,16 @@ public class IdentityResolutionFilter extends OncePerRequestFilter {
 
     public static final String AUTHENTICATED_ACCOUNT_ATTR = "authenticatedAccount";
 
-    private final IdentityLookupRepository identityLookupRepository;
+    private final IdentityLookupService identityLookupService;
     private final ProblemAuthenticationEntryPoint authenticationEntryPoint;
     private final ProblemResponseWriter problemResponseWriter;
     private final SessionRepository<?> sessionRepository;
 
-    public IdentityResolutionFilter(IdentityLookupRepository identityLookupRepository,
+    public IdentityResolutionFilter(IdentityLookupService identityLookupService,
                                     ProblemAuthenticationEntryPoint authenticationEntryPoint,
                                     ProblemResponseWriter problemResponseWriter,
                                     SessionRepository<?> sessionRepository) {
-        this.identityLookupRepository = identityLookupRepository;
+        this.identityLookupService = identityLookupService;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.problemResponseWriter = problemResponseWriter;
         this.sessionRepository = sessionRepository;
@@ -79,7 +79,7 @@ public class IdentityResolutionFilter extends OncePerRequestFilter {
                     return;
                 }
 
-                Optional<AuthenticatedAccount> resolved = identityLookupRepository.resolveAccountAndMemberships(accountId);
+                Optional<AuthenticatedAccount> resolved = identityLookupService.resolveAccountAndMemberships(accountId);
 
                 if (resolved.isEmpty() || !resolved.get().account().isActive()) {
                     // Account suspended or revoked: delete persisted session, clear context, return 401

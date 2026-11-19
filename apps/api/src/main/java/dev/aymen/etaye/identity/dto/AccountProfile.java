@@ -1,4 +1,4 @@
-package dev.aymen.etaye.identity.domain;
+package dev.aymen.etaye.identity.dto;
 
 import java.util.UUID;
 
