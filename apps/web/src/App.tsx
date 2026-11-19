@@ -57,7 +57,7 @@ export default function App() {
           <strong role="status" data-testid="readiness-status">{readiness}</strong>
         </div>
         {readiness === 'UNAVAILABLE' && (
-          <div data-testid="probe-error" style={{ color: 'red', marginTop: '0.5rem' }}>
+          <div data-testid="probe-error" style={{ color: '#b00020', marginTop: '0.5rem' }}>
             Le service est temporairement indisponible.
           </div>
         )}
