@@ -234,6 +234,66 @@ public class SecurityIntegrationTest extends AbstractPostgresTest {
     }
 
     @Test
+    @DisplayName("B7(a): Non-secure MockHttpServletRequest still emits Secure cookie attribute via explicit serializer configuration")
+    void nonSecureRequestStillEmitsSecureCookie() {
+        assertThat(cookieSerializer).isInstanceOf(DefaultCookieSerializer.class);
+
+        org.springframework.mock.web.MockHttpServletRequest request = new org.springframework.mock.web.MockHttpServletRequest();
+        request.setSecure(false);
+        request.setScheme("http");
+        request.setServerPort(80);
+        org.springframework.mock.web.MockHttpServletResponse response = new org.springframework.mock.web.MockHttpServletResponse();
+
+        String sessionId = UUID.randomUUID().toString();
+        cookieSerializer.writeCookieValue(new CookieSerializer.CookieValue(request, response, sessionId));
+
+        String setCookie = response.getHeader(HttpHeaders.SET_COOKIE);
+        assertThat(setCookie).isNotNull();
+
+        java.util.List<String> parts = java.util.Arrays.asList(setCookie.split("; "));
+        String expectedValue = java.util.Base64.getEncoder()
+                .encodeToString(sessionId.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        assertThat(parts.get(0)).isEqualTo("__Host-etaye-session=" + expectedValue);
+        assertThat(parts.subList(1, parts.size()))
+                .containsExactlyInAnyOrder("Path=/", "Secure", "HttpOnly", "SameSite=Lax");
+    }
+
+    @Test
+    @DisplayName("B7(b): Real HTTP anonymous GET /api/v1/csrf returns real Set-Cookie with __Host-etaye-session and exact hardened attributes")
+    void realHttpAnonymousCsrfReturnsExactHardenedSessionCookie() {
+        ResponseEntity<Map> response = client().get()
+                .uri("/api/v1/csrf")
+                .retrieve()
+                .toEntity(Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        String setCookie = response.getHeaders().getFirst(HttpHeaders.SET_COOKIE);
+        assertThat(setCookie).as("Set-Cookie header must be present on anonymous /csrf").isNotNull();
+
+        java.util.List<String> parts = java.util.Arrays.asList(setCookie.split("; "));
+        String nameAndValue = parts.get(0);
+        assertThat(nameAndValue).startsWith("__Host-etaye-session=");
+
+        String base64Value = nameAndValue.substring("__Host-etaye-session=".length());
+        byte[] decoded = java.util.Base64.getDecoder().decode(base64Value);
+        String rawSessionId = new String(decoded, java.nio.charset.StandardCharsets.UTF_8);
+        assertThat(rawSessionId).isNotBlank();
+
+        // Exact attributes: Path=/, Secure, HttpOnly, SameSite=Lax (no Domain, no Max-Age, no Expires)
+        assertThat(parts.subList(1, parts.size()))
+                .containsExactlyInAnyOrder("Path=/", "Secure", "HttpOnly", "SameSite=Lax");
+
+        // Explicitly assert absence of forbidden attributes
+        for (String part : parts) {
+            String lower = part.toLowerCase();
+            assertThat(lower).doesNotStartWith("domain=");
+            assertThat(lower).doesNotStartWith("max-age=");
+            assertThat(lower).doesNotStartWith("expires=");
+        }
+    }
+
+    @Test
     @DisplayName("B6: Suspending account deletes session; request denied with 401; reactivating account with same cookie still denied")
     void suspendedAccountInvalidatesSessionAndDeniesAccessEvenIfReactivated() {
         String email = "suspended." + UUID.randomUUID() + "@example.com";
