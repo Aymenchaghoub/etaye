@@ -1,0 +1,28 @@
+services:
+  postgres:
+    image: postgres:18
+    container_name: etaye-local-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-etaye}
+      POSTGRES_USER: ${POSTGRES_ADMIN_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
+      ETAYE_OWNER_USER: ${ETAYE_OWNER_USER:-etaye_owner}
+      ETAYE_OWNER_PASSWORD: ${ETAYE_OWNER_PASSWORD}
+      ETAYE_RUNTIME_USER: ${ETAYE_RUNTIME_USER:-etaye_runtime}
+      ETAYE_RUNTIME_PASSWORD: ${ETAYE_RUNTIME_PASSWORD}
+      ETAYE_IDENTITY_USER: ${ETAYE_IDENTITY_USER:-etaye_identity}
+      ETAYE_IDENTITY_PASSWORD: ${ETAYE_IDENTITY_PASSWORD}
+    volumes:
+      - ./init-roles.sh:/docker-entrypoint-initdb.d/01-init-roles.sh:ro
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_ADMIN_USER:-postgres} -d ${POSTGRES_DB:-etaye}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres-data:
