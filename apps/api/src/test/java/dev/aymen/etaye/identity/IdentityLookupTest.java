@@ -41,7 +41,7 @@ public class IdentityLookupTest extends AbstractPostgresTest {
     void shouldResolveAccountAndMemberships() {
         UUID practiceId = createPracticeAsOwner("Cabinet Dentaire Alpha");
         String email = "dr.martin." + UUID.randomUUID() + "@example.com";
-        UUID accountId = createAccountAsOwner(email, "Dr. Martin", "argon2_secret_hash");
+        UUID accountId = createAccountAsOwner(email, "Dr. Martin", generateRandomPasswordHash());
 
         String[] caps = new String[]{"CLINICAL_READ", "CLINICAL_WRITE", "PATIENT_REGISTER"};
         UUID membershipId = createMembershipAsOwner(accountId, practiceId, "ACTIVE", caps);
@@ -119,10 +119,10 @@ public class IdentityLookupTest extends AbstractPostgresTest {
     @DisplayName("B4: With etaye.account_id set, etaye_identity role sees only that account and its memberships")
     void shouldSeeOnlyTargetAccountAndMembershipsWithAccountIdSetting() throws Exception {
         UUID practiceId = createPracticeAsOwner("Cabinet Dentaire RLS Isolation");
-        UUID account1 = createAccountAsOwner("acc1." + UUID.randomUUID() + "@example.com", "Account 1", "hash1");
+        UUID account1 = createAccountAsOwner("acc1." + UUID.randomUUID() + "@example.com", "Account 1", generateRandomPasswordHash());
         UUID membership1 = createMembershipAsOwner(account1, practiceId, "ACTIVE", new String[]{"CLINICAL_READ"});
 
-        UUID account2 = createAccountAsOwner("acc2." + UUID.randomUUID() + "@example.com", "Account 2", "hash2");
+        UUID account2 = createAccountAsOwner("acc2." + UUID.randomUUID() + "@example.com", "Account 2", generateRandomPasswordHash());
         UUID membership2 = createMembershipAsOwner(account2, practiceId, "ACTIVE", new String[]{"CLINICAL_WRITE"});
 
         try (Connection conn = identityDataSource.getConnection()) {
