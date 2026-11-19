@@ -14,6 +14,12 @@ Updated: 2026-11-19. Owner: Aymen Chaghoub.
 
 **Open choices and access:** Aymen can borrow an Android phone and a Mac from friends (A-17, his statement of 2026-11-19), which settles real-device evidence on Android and the iOS Simulator; a physical iPhone build still needs the Apple program (story 10.8 gate), and the Xcode version the Mac can run must support the chosen Expo SDK (To verify); DF-19, the native patient screens, to design and review before story 10.6; spike checks (bearer-versus-browser header rule, React version alignment, FCM cost, exact SDK lock, React Native and Expo licenses). No account, credential or paid service was requested. **Next action:** Aymen reviews the pull request; merge only after the required checks pass; the Pages workflow republishes the architecture site from `main`, then check the public pages. The background study line about a Capacitor tile precache in `docs/design/` was left for the design owner (DF-19).
 
+## Figma Desktop handoff for entry backgrounds — 2026-11-19
+
+The [offline entry previews](../design/entry-background/README.md) and the mockup baseline were integrated in PR26 at `873452b`. The [one-run Figma Desktop kit](../design/entry-background/figma/README.md) packages all 20 source desktop light-theme states and the 9 deduplicated decorative PNGs. Native source layout checks passed against the 20 archived scenes, the three representative decorative renders were opened, and 4 offline runtime tests passed for preflight, duplicate refusal, creation, export evidence and rollback.
+
+The Starter MCP quota still blocks a remote write. This Linux environment cannot run the supported Figma Desktop plugin. The next required event is a single Desktop run and receipt of the exported 20 native PNGs and identifiers. Open comparisons before recording native acceptance. No Figma version, native review completion or application authorization is asserted.
+
 ## Entry background review — 2026-11-19
 
 Aymen requested the approved paper and blueprint background on S-25, S-02 and S-01, with one Figma write if access permits. The [preview](../design/entry-background/README.md) covers 20 HTML states using the frozen corrected mockups. Chromium passed 200 rendered configurations with both themes, and the [review](design/reviews/2026-11-19-entry-background.md) records opened comparison sheets and measured contrast.
