@@ -306,6 +306,19 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
     }
 
     @Test
+    @DisplayName("A7: A foreign transaction named exactly etaye-practice-{uuid} is refused by PracticeTransaction")
+    void foreignTransactionWithForgedPracticeNameIsRefused() {
+        TransactionTemplate foreignTemplate = new TransactionTemplate(transactionManager);
+        foreignTemplate.setName(PracticeTransaction.PRACTICE_TX_PREFIX + practiceAId);
+        foreignTemplate.execute(status -> {
+            assertThatThrownBy(() -> practiceTransaction.execute(practiceAId, () -> "forbidden"))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("Outermost PracticeTransaction cannot join an already active transaction without practice context");
+            return null;
+        });
+    }
+
+    @Test
     @DisplayName("PracticeTransaction: Nested call failure marks transaction rollback-only without savepoints")
     void checkNestedCallFailureMarksRollbackOnly() {
         assertThatThrownBy(() -> practiceTransaction.execute(practiceAId, () -> {

@@ -6,6 +6,7 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -32,6 +33,30 @@ public class PracticeTransaction {
 
     public static final String PRACTICE_TX_PREFIX = "etaye-practice-";
 
+    private static final class PracticeTransactionMarker implements TransactionSynchronization {
+        private final UUID practiceId;
+
+        PracticeTransactionMarker(UUID practiceId) {
+            this.practiceId = practiceId;
+        }
+
+        UUID getPracticeId() {
+            return practiceId;
+        }
+    }
+
+    private static PracticeTransactionMarker findMarker() {
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            return null;
+        }
+        for (TransactionSynchronization sync : TransactionSynchronizationManager.getSynchronizations()) {
+            if (sync instanceof PracticeTransactionMarker marker) {
+                return marker;
+            }
+        }
+        return null;
+    }
+
     @FunctionalInterface
     public interface ConnectionLifecycleListener {
         void onPracticeContextSetting(Connection connection, UUID practiceId, String contextBeforeSetting, long backendPid);
@@ -52,21 +77,17 @@ public class PracticeTransaction {
     public <T> T execute(UUID practiceId, Supplier<T> action) {
         Objects.requireNonNull(practiceId, "practiceId must not be null");
 
-        String currentTxName = TransactionSynchronizationManager.getCurrentTransactionName();
         boolean txActive = TransactionSynchronizationManager.isActualTransactionActive();
+        PracticeTransactionMarker marker = findMarker();
 
         if (txActive) {
-            if (currentTxName == null || !currentTxName.startsWith(PRACTICE_TX_PREFIX)) {
+            if (marker == null) {
+                String currentTxName = TransactionSynchronizationManager.getCurrentTransactionName();
                 throw new IllegalStateException(
                         "Outermost PracticeTransaction cannot join an already active transaction without practice context (or where transaction was suspended). Current tx: " + currentTxName);
             }
-            UUID currentPracticeId;
-            try {
-                currentPracticeId = UUID.fromString(currentTxName.substring(PRACTICE_TX_PREFIX.length()));
-            } catch (IllegalArgumentException e) {
-                throw new IllegalStateException("Malformed practice transaction name: " + currentTxName, e);
-            }
 
+            UUID currentPracticeId = marker.getPracticeId();
             if (!currentPracticeId.equals(practiceId)) {
                 throw new IllegalStateException(
                         "Cannot change practice context inside an active transaction. Current: " + currentPracticeId + ", requested: " + practiceId);
@@ -83,6 +104,7 @@ public class PracticeTransaction {
         template.setName(PRACTICE_TX_PREFIX + practiceId);
 
         return template.execute(status -> {
+            TransactionSynchronizationManager.registerSynchronization(new PracticeTransactionMarker(practiceId));
             setTransactionPracticeContext(practiceId);
             return action.get();
         });
@@ -96,15 +118,8 @@ public class PracticeTransaction {
     }
 
     public UUID getActivePracticeId() {
-        String name = TransactionSynchronizationManager.getCurrentTransactionName();
-        if (name != null && name.startsWith(PRACTICE_TX_PREFIX)) {
-            try {
-                return UUID.fromString(name.substring(PRACTICE_TX_PREFIX.length()));
-            } catch (IllegalArgumentException e) {
-                return null;
-            }
-        }
-        return null;
+        PracticeTransactionMarker marker = findMarker();
+        return marker != null ? marker.getPracticeId() : null;
     }
 
     private void setTransactionPracticeContext(UUID practiceId) {
