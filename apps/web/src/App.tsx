@@ -19,8 +19,10 @@ export default function App() {
           cache: 'no-store',
           signal: controller.signal,
         });
+        // Always consume the body: an unread fetch body keeps the request open in the browser.
+        const text = await response.text();
         if (response.ok) {
-          const body: unknown = await response.json();
+          const body: unknown = JSON.parse(text);
           if (typeof body === 'object' && body !== null && 'status' in body && body.status === 'UP') {
             nextState = 'READY';
           }
