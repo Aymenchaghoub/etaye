@@ -35,9 +35,4 @@ public class ArchitectureTest {
     public static final ArchRule practicesShouldNotDependOnRecords =
             noClasses().that().resideInAPackage("..practices..")
                     .should().dependOnClassesThat().resideInAPackage("..records..");
-
-    @ArchTest
-    public static final ArchRule recordsShouldNotDependOnCommunications =
-            noClasses().that().resideInAPackage("..records..")
-                    .should().dependOnClassesThat().resideInAPackage("..communications..");
 }

@@ -63,6 +63,21 @@ public class GlobalExceptionHandler {
                 .body(problem);
     }
 
+    @ExceptionHandler(InvalidIdempotencyKeyException.class)
+    public ResponseEntity<ApiProblem> handleInvalidIdempotencyKey(InvalidIdempotencyKeyException ex, HttpServletRequest request) {
+        String correlationId = CorrelationIdFilter.getCorrelationId(request);
+        ApiProblem problem = ApiProblem.of(
+                HttpStatus.BAD_REQUEST.value(),
+                "Bad Request",
+                "INVALID_IDEMPOTENCY_KEY",
+                ex.getMessage(),
+                correlationId
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+                .body(problem);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiProblem> handleValidationErrors(MethodArgumentNotValidException ex, HttpServletRequest request) {
         String correlationId = CorrelationIdFilter.getCorrelationId(request);
