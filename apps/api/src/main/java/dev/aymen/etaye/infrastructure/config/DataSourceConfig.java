@@ -22,7 +22,7 @@ public class DataSourceConfig {
             @Value("${spring.datasource.password}") String password,
             @Value("${spring.datasource.hikari.maximum-pool-size:1}") int maxPoolSize,
             @Value("${spring.datasource.hikari.minimum-idle:1}") int minIdle,
-            @Value("${spring.datasource.hikari.connection-timeout:3000}") long connectionTimeout) {
+            @Value("${spring.datasource.hikari.connection-timeout:2500}") long connectionTimeout) {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(url);
         config.setUsername(username);
@@ -30,6 +30,7 @@ public class DataSourceConfig {
         config.setMaximumPoolSize(maxPoolSize);
         config.setMinimumIdle(minIdle);
         config.setConnectionTimeout(connectionTimeout);
+        config.setValidationTimeout(1500);
         config.setPoolName("HikariPool-Runtime");
         return new HikariDataSource(config);
     }
@@ -51,7 +52,8 @@ public class DataSourceConfig {
         config.setPassword(password);
         config.setMaximumPoolSize(5);
         config.setMinimumIdle(1);
-        config.setConnectionTimeout(3000);
+        config.setConnectionTimeout(2500);
+        config.setValidationTimeout(1500);
         config.setPoolName("HikariPool-Identity");
         return new HikariDataSource(config);
     }

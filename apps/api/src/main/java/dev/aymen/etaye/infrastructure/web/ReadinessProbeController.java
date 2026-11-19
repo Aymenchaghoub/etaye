@@ -26,13 +26,15 @@ public class ReadinessProbeController {
     @GetMapping(value = "/readiness", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> checkReadiness() {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement("SELECT 1");
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                return ResponseEntity.ok(Map.of(
-                        "status", "UP",
-                        "database", "UP"
-                ));
+             PreparedStatement ps = connection.prepareStatement("SELECT 1")) {
+            ps.setQueryTimeout(2);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return ResponseEntity.ok(Map.of(
+                            "status", "UP",
+                            "database", "UP"
+                    ));
+                }
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(Map.of(
