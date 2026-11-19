@@ -19,7 +19,7 @@
     "noFallthroughCasesInSwitch": true,
     "composite": true,
     "outDir": "./dist/tsc",
-    "rootDir": "./src"
+    "rootDir": "."
   },
-  "include": ["src"]
+  "include": ["src", "tests", "e2e", "playwright*.config.ts"]
 }
