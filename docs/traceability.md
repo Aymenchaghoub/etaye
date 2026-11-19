@@ -71,7 +71,7 @@ Status: Reviewed planning coverage, not implementation or design completion.2026
 | [10.3](planning-artifacts/epics/epic-10.md) | FR-019, FR-020 | BR-018 | J-08 | Operational evidence | — | AT-040-A/B/C |
 | [10.4](planning-artifacts/epics/epic-10.md) | FR-016 | BR-002, BR-013 | J-06 | Operational evidence | — | AT-041-A/B/C |
 | [10.5](planning-artifacts/epics/epic-10.md) | FR-001, FR-016 | BR-003, BR-005 | J-01, J-06 | Operational evidence | — | AT-042-A/B/C |
-| [10.6](planning-artifacts/epics/epic-10.md) | FR-016 | BR-002, BR-013, BR-016 | J-06 | Operational evidence | — | AT-043-A/B/C |
+| [10.6](planning-artifacts/epics/epic-10.md) | FR-016 | BR-002, BR-013, BR-016 | J-06 | S-02, S-04, S-25 to S-29, S-36 to S-38 (native adaptation, DF-19) | — | AT-043-A/B/C |
 | [10.7](planning-artifacts/epics/epic-10.md) | FR-009, FR-015 | BR-006, BR-013, BR-016 | J-05, J-06 | Operational evidence | — | AT-044-A/B/C |
 | [10.8](planning-artifacts/epics/epic-10.md) | FR-016, FR-020 | BR-016, BR-018 | J-08 | Operational evidence | — | AT-045-A/B/C |
 

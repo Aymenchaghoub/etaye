@@ -1,6 +1,6 @@
 # ADR-008 — Multi-client access: web, installed web app and native shell
 
-Status: Accepted by Aymen on 2026-11-17 (UD-29). Date: 2026-11-17. Related: UD-12 to UD-15, AD-4, AD-11, ADR-004, NFR-15, stories 10.2 and 10.4 to 10.8.
+Status: Accepted by Aymen on 2026-11-17 (UD-29). Amended on 2026-11-19 by [ADR-010](ADR-010-native-client-react-native-expo.md) (UD-38, UD-39): point 5, the Capacitor wording of points 1 and 4 and the React Native alternative are superseded; read the amendment at the end. Date: 2026-11-17. Related: UD-12 to UD-15, AD-4, AD-11, ADR-004, NFR-15, stories 10.2 and 10.4 to 10.8.
 
 Aymen's direction (UD-12) is that Étaye runs on the web and as an installable app on Android and iOS, from one API and as much shared front-end code as possible, at a budget close to zero. ADR-004 chose same-origin cookie sessions with CSRF protection. That choice stays correct for the web, but a native shell loads its pages from another origin (typically `capacitor://localhost` on iOS and `https://localhost` on Android, To verify in the Capacitor configuration), so a host-only `SameSite=Lax` cookie is not sent on its API calls.
 
@@ -25,3 +25,14 @@ Alternatives:
 Consequences: four planned contract operations (`createNativeSession`, `registerDevice`, `listOwnDevices`, `revokeDevice`), one planned entity (`DeviceRegistration`, see the data dictionary), tests for both transports, the CORS allowlist and the push payload canary. Native session duration is open (A-15, D-19). Store policy risk (guidelines 4.2, 1.4.1, 5.1.1), costs and the Google Play tester rule belong to D-15.
 
 To verify during the first spikes (acceptance does not wait for them): the session-id resolver by header in Spring Session with Spring Boot 4.1.2; the native origins of the chosen Capacitor version; Capacitor's license file (expected MIT); whether FCM has any cost for this use. No account, credential or paid service is requested by this ADR.
+
+## Amendment 2026-11-19 (ADR-010, UD-38, UD-39)
+
+The body above is kept as written on 2026-11-17. What changed:
+
+- **Point 5 is superseded.** The packaging ladder is the installable web app first, then a React Native app built with Expo (ADR-010); a Capacitor shell is no longer planned. The rejection of a remote-URL shell has no object any more, because the native app loads no remote page.
+- **Points 1 and 4, the native origin.** A React Native client has no browser origin, so session issuance no longer depends on an allowlisted native origin. ADR-010 point 3 replaces it with credential verification, a declared client kind, a device registration and the refusal of bearer requests that carry a cookie or browser origin headers. The CORS allowlist keeps browser origins only.
+- **Alternatives.** React Native is now the chosen technology; Flutter and Kotlin Multiplatform stay rejected.
+- **Point 7, push and stores.** Apple's push service stays gated behind the Apple program, and every store step is Not planned (D-15, UD-39).
+- **Unchanged:** one account authority and one server-side opaque session store (point 1), revocation (point 2), no mixing of transports (point 3), no clinical data at rest (point 6), content-free push (point 7), HTTPS links (point 8) and the planned operations `createNativeSession`, `registerDevice`, `listOwnDevices` and `revokeDevice`.
+- **Spike checks.** The two Capacitor items (native origins and license) are replaced by the ADR-010 list; the Spring Session header resolver and the FCM cost remain.

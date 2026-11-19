@@ -2,7 +2,7 @@
 
 Status: Accepted by Aymen on 2026-11-17 (UD-29). Date: 2026-11-17. Related: AD-10, ADR-007, ADR-008, NFR-15, story 10.2.
 
-Browsers always load the current front end from the application origin, but an installed web app can keep an old cached shell and a native shell is updated through a store, sometimes weeks after the server. The API must therefore tolerate older clients for a defined window.
+Browsers always load the current front end from the application origin, but an installed web app can keep an old cached shell and a native app is updated by hand or through a store, sometimes weeks after the server. The API must therefore tolerate older clients for a defined window.
 
 **Choice:**
 

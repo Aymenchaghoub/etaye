@@ -801,13 +801,13 @@
   {
     "id": "10.6",
     "epic": "10",
-    "title": "Native Android shell",
+    "title": "Native Android app (React Native)",
     "requirements": [
       "FR-016"
     ],
     "rules": "BR-002, BR-013, BR-016",
     "journeys": "J-06",
-    "screens": "Operational evidence",
+    "screens": "S-02, S-04, S-25 to S-29, S-36 to S-38 (native adaptation, DF-19)",
     "interactions": "",
     "test": "AT-043",
     "path": "docs/planning-artifacts/epics/epic-10.md",
@@ -841,7 +841,7 @@
   {
     "id": "10.8",
     "epic": "10",
-    "title": "iOS build and store-readiness gate",
+    "title": "iOS build and distribution gate",
     "requirements": [
       "FR-016",
       "FR-020"

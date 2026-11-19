@@ -1,6 +1,6 @@
 # Roadmap and increment allocation
 
-Status: Proposal derived from the user decisions of 2026-11-17 (UD-12 to UD-37). The allocation itself is
+Status: Proposal derived from the user decisions of 2026-11-17 (UD-12 to UD-37), amended on 2026-11-19 (UD-38, UD-39). The allocation itself is
 [ASSUMPTION A-16] until Aymen reorders it. Development is not authorized (UD-28). The machine-readable source is
 [roadmap-assignments.json](roadmap-assignments.json); the tables below are rendered from it and
 `tools/validate_docs.py` fails if a story, design family or API operation is left unassigned.
@@ -24,8 +24,8 @@ Sources consulted in full for this version (2026-11-17): [PRD](prd/prd.md), [bus
 |---|---|---|---|
 | 1 | Red-thread slice (web) | 33 | One complete, demonstrable journey on the web: invited access, practice context, record reading, visit preparation, sourced brief, consultation, human-reviewed report, explicit publication, patient reading, isolation proof, with the multi-client foundations in place. |
 | 2 | Web completion | 7 | Everything the specification requires on the web that increment 1 deliberately left out: team administration, availability and rescheduling, data entry screens, uploads and attachments, remaining PDFs and emails, audit and profile. |
-| 3 | Mobile (installable web app, then Android shell) | 4 | The same product usable as an installed app: installable PWA, native session transport, Android shell with bundled assets, content-free push notifications. |
-| 4 | Release engineering, iOS, stores and quality extensions | 1 | iOS build, explicit store decision, promotion pipeline, optional real-model evaluation, advanced audit and device privacy options. |
+| 3 | Mobile (installable web app, then Android app) | 4 | The same product usable as an installed app: installable PWA, native session transport, a React Native Android app built with Expo (ADR-010), content-free push notifications. |
+| 4 | Release engineering, iOS demo gate and quality extensions | 1 | iOS build and distribution gate, promotion pipeline, optional real-model evaluation, advanced audit and device privacy options. |
 
 Increments 2 and 3 both depend only on increment 1 and may run in either order; the order is 2 then 3 (settled,
 UD-37). Increment 3 needs a stable HTTPS origin, hence the hosting decision of story 10.3. Relative size
@@ -39,8 +39,11 @@ UD-37). Increment 3 needs a stable HTTPS origin, hence the hosting decision of s
 | Core design families reviewed (UD-16) | Aymen, with Codex for the Figma side | Increment 1 build of those families | Pending |
 | Increment 1 exit review | Aymen | Increments 2 and 3 | Future |
 | ADR-008 and ADR-009 accepted | Aymen | Stories 10.2 (API meta), 10.4 to 10.8 | Done (UD-29); contract operations are added before stories 10.2 and 10.5 |
+| ADR-010 accepted (native client: React Native with Expo) | Aymen | Stories 10.2 and 10.5 to 10.8 | Done (UD-38, UD-39) |
+| Native patient screens designed and reviewed (DF-19) | Aymen, design owner | Story 10.6 build | Pending |
 | Hosting decision (story 10.3, UD-25) | Aymen | Story 10.4 onward, any store step | Future |
-| Store decision (D-15) | Aymen | Story 10.8 submission | Future |
+| Store publication (D-15) | Aymen | Any store submission | Not planned (UD-39) |
+| iOS native demonstration | Aymen | Story 10.8 build | Needs a Mac (simulator) or an explicit Apple-program decision |
 
 ## 3. Increment 1: red-thread slice (web)
 
@@ -80,8 +83,8 @@ forbidden for every actor (UD-23), demo files in PostgreSQL or a volume (UD-24),
 | Uploads and patient attachments | One seeded document; file adapter decision | Inc 2, D-25 |
 | PDFs P-01, P-02 | One PDF proves the export boundary | Inc 2, D-27 |
 | Audit screen, profile screen | Audit events are written from story 10.1 on | Inc 2, D-30, D-31 |
-| Installable web app, native session, Android shell, push | Needs a stable origin and ADR-008 | Inc 3 |
-| iOS, stores, promotion pipeline, Sonar, real AI evaluation, biometric lock | Costs and policies need Aymen | Inc 4 |
+| Installable web app, native session, Android app, push | Needs a stable origin, ADR-008 and ADR-010 | Inc 3 |
+| iOS demo build, promotion pipeline, Sonar, real AI evaluation, biometric lock | Costs, a Mac or the Apple program, and policies need Aymen | Inc 4 |
 | D-01 to D-14, D-16, D-17, D-28 | Existing scope exclusions or no trigger yet | Unscheduled |
 
 **Exit criteria (increment 1):** the acceptance designs A and B of every increment 1 story pass on a real
@@ -109,21 +112,26 @@ twenty requirements are covered on the web.
 ## 5. Increment 3: mobile
 
 Delivers the installable web app (10.4), the native session transport and device registry (10.5), the Android
-shell (10.6) and content-free push notifications (10.7). Prerequisites: increment 1 exit, accepted ADR-008 and
-ADR-009, a stable HTTPS origin, the five planned contract operations added to the contract (see section 8).
-Exit criteria: the app installs on Android Chrome and iOS Safari in standalone mode (opened evidence); the
-Android emulator shell signs in, reads a published explanation and shares its PDF; no clinical data is at rest on
-the device (inspected); a push payload carries no clinical text; real-device evidence is claimed only when a real
-device was used. Budget: €0 for the web app, an Android emulator and APK distribution; a domain for universal
-links and any store fee are decisions (D-15, D-32).
+app (10.6), a React Native app built with Expo (ADR-010), and content-free push notifications (10.7).
+Prerequisites: increment 1 exit, accepted ADR-008, ADR-009 and ADR-010, a stable HTTPS origin, the native patient
+screens designed and reviewed (DF-19), the four planned native contract operations added to the contract (see
+section 8). Exit criteria: the app installs on Android Chrome and iOS Safari in standalone mode (opened
+evidence); the Android app on an emulator signs in, reads a published explanation and shares its PDF; no
+clinical data is at rest in the app sandbox, including the temporary PDF copy (inspected); a push payload
+carries no clinical text; real-device evidence is claimed only when a real device was used. Budget: €0 for the
+web app, an Android emulator and package-file distribution; a domain for universal links is a decision (D-32);
+no store fee is planned (UD-39).
 
 ## 6. Increment 4: release engineering, iOS, stores and quality extensions
 
-Delivers the iOS build and the store decision gate (10.8, D-15), the promotion pipeline, SBOM and signing and the
+Delivers the iOS build and distribution gate (10.8), the promotion pipeline, SBOM and signing and the
 optional SonarQube Cloud analysis (D-29), the optional real-model evaluation and live provider (D-26), advanced
-audit filters (D-30) and device privacy options (D-18). Costs known today: Apple Developer Program US$99 per year
-(official page, 2026-11-17); Google Play registration fee To verify, plus a closed test with at least 12 testers
-over 14 days for new personal accounts; real-model cost To verify.
+audit filters (D-30) and device privacy options (D-18). A native iOS demonstration needs a Mac for the
+simulator, or the Apple program for a device: Linux supports neither the iOS Simulator nor an iPhone build, and a
+physical iPhone with Expo Go needs the program as well (Expo documentation, read 2026-11-19). The installed web
+app serves iOS users for free meanwhile. Costs kept for a possible reopening of D-15 (not planned, UD-39): Apple
+Developer Program US$99 per year (official page, 2026-11-17); Google Play registration fee To verify, plus a
+closed test with at least 12 testers over 14 days for new personal accounts; real-model cost To verify.
 
 ## 7. Deferred and unscheduled work
 
@@ -132,10 +140,10 @@ Every deferred item has rationale, dependencies, impact and an explicit trigger 
 
 | ID | Work | Increment | Trigger |
 |---|---|---|---|
-| D-15 | Store publication (Google Play, App Store) | 4 | Costs, review policies and an always-on backend must be accepted first |
+| D-15 | Store publication (Google Play, App Store) | Not planned (UD-39) | Aymen decides to publish; costs, review policies and an always-on backend must then be accepted first |
 | D-16 | Native practitioner application | unscheduled | Aymen requests it after the patient app and slice usage |
 | D-17 | Offline clinical mode and device cache | unscheduled | A concrete offline use case plus an encrypted-store security design |
-| D-18 | Biometric lock, app-switcher privacy screen, remote wipe | 4 | Native shell exists and Aymen selects the option |
+| D-18 | Biometric lock, app-switcher privacy screen, remote wipe | 4 | Android app exists and Aymen selects the option |
 | D-19 | Native session duration and refresh policy (A-15) | 3 | Decided when ADR-008 is accepted |
 | D-20 | Rich availability: recurring rules, exceptions, DST, impacted bookings | 2 | Increment 1 delivered with its fixed grid |
 | D-21 | Booking and cancellation window policy (A-07 remainder) | 2 | Increment 2 starts; Aymen sets defaults |
@@ -201,9 +209,9 @@ D-01 to D-14 keep their existing triggers and stay unscheduled.
 | 2 | [2.2](epics/epic-2.md) | Deactivate access without losing accountability | 2.1 | — |
 | 3 | [10.4](epics/epic-10.md) | Installable web app (PWA) | 10.2, 10.3 | — |
 | 3 | [10.5](epics/epic-10.md) | Native session transport and device registry | 1.2, 10.2 | — |
-| 3 | [10.6](epics/epic-10.md) | Native Android shell | 10.4, 10.5 | — |
+| 3 | [10.6](epics/epic-10.md) | Native Android app (React Native) | 10.4, 10.5 | — |
 | 3 | [10.7](epics/epic-10.md) | Content-free push notifications | 10.5, 10.6, 8.3 | — |
-| 4 | [10.8](epics/epic-10.md) | iOS build and store-readiness gate | 10.6 | — |
+| 4 | [10.8](epics/epic-10.md) | iOS build and distribution gate | 10.6 | — |
 
 ### 8.2 Design families (76)
 
@@ -466,11 +474,12 @@ On 2026-11-17 Aymen validated every recommendation of this list except the devel
 | O-6 | Accept ADR-008 and ADR-009 | Settled: accepted (UD-29) |
 | O-7 | Adopt proposals P-1 to P-7 | Settled: adopted (UD-30 to UD-36) |
 | O-8 | Booking and cancellation windows (D-21) | Gated: decided at the start of increment 2; fixed grid until then |
-| O-9 | Store decision (D-15): Apple program, Google fee and tester rule | Gated: at the story 10.8 gate with costs and policies; no store until then |
+| O-9 | Store decision (D-15): Apple program, Google fee and tester rule | Settled: no store publication is planned (UD-39); a native iOS demonstration needs a Mac or an explicit Apple-program decision at the story 10.8 gate |
 | O-10 | Custom domain and privacy-policy page (D-32) | Gated: with the store or deep-link decision |
 | O-11 | Assumptions A-02, A-04, A-05, A-08, A-09, A-10, A-11 | Settled: confirmed as working baselines (UD-37); each keeps its revisit trigger |
 | O-12 | Real-model evaluation corpus size | Settled: 12 to 15 hand-annotated cases (UD-36) |
 | O-13 | Module-verification tool and exact dependency versions | Delegated: chosen at the story 10.1 spike and recorded |
+| O-14 | Native client technology and distribution | Settled: React Native with Expo, demo-only (UD-38, UD-39, ADR-010); spike checks listed in ADR-010 |
 
 Still kept by Aymen: the development authorization (UD-28) and the review and approval of the core design families (UD-16).
 
@@ -490,7 +499,7 @@ is working there. These alignments are needed; items DF-11 to DF-13 were observe
 | DF-6 | Replace the per-family visual-acceptance wording and add an `evidence_level` column (CORE or SAMPLED) in the tracker | UD-16 |
 | DF-7 | I-10 copy for the refused patient overlap (PATIENT_OVERLAP) with no staff override | UD-23 |
 | DF-8 | Conflict copy per error code (SLOT_CONFLICT, PATIENT_OVERLAP, STALE_VERSION) | Contract README catalog |
-| DF-9 | Multi-client design: safe areas, navigation convention, notification permission copy, biometric lock screen (D-18), invitation landing with and without the app (S-03), native unavailable state (S-37), install prompt, app icon and splash from the existing logos | UD-12 |
+| DF-9 | Multi-client design (native specifics in DF-19): safe areas, navigation convention, notification permission copy, biometric lock screen (D-18), invitation landing with and without the app (S-03), native unavailable state (S-37), install prompt, app icon and splash from the existing logos | UD-12 |
 | DF-10 | S-01: a later "install the app" entry point | UD-12 |
 | DF-11 | Source excerpts are not in chronological order in I-17 and in the patient view (14/09, 02/11, 20/10; numbering ^1 = 2 November): decide an ordering rule | Local captures I-17, S-29 |
 | DF-12 | S-06 repeats the empty-day message in two sentences | Local capture S-06 |
@@ -500,6 +509,7 @@ is working there. These alignments are needed; items DF-11 to DF-13 were observe
 | DF-16 | S-18, S-21, S-23: show each citation's mechanical check result and its flags, the copy "Contrôles mécaniques passés — relecture humaine requise" (never "vérifié") and the validation-blocked state | UD-31 |
 | DF-17 | S-09, S-11: the as-of selector, the "Vue historique — lecture seule" banner and the link to the correction | UD-32 |
 | DF-18 | S-01, S-36: the guided "Prouvez l'isolation" journey and the static warm-up page of the demo package | UD-33, UD-34 |
+| DF-19 | Native app (React Native, ADR-010): design the native patient screens from the approved 390×844 designs of S-02, S-04, S-25 to S-29, S-36 to S-38 and I-22, with native navigation, safe areas, the notification-permission copy, app icon and splash from the existing logos; map the tokens to the native token module; decide the native rendering of the background layer, which is CSS and SVG (`docs/design/background-study`) and cannot be reused as is, so the study's line about precaching the tile with the Capacitor shell is obsolete; the screens must be modern and fluid yet keep the identity of the web app (same tokens, fonts, logos, light and dark themes), within the DESIGN.md limits on motion; the visual evidence for the native screens is separate from the web evidence and is a side-by-side comparison with the 390×844 web designs | UD-38, ADR-010 |
 
 **Contract and rules (this change did the following; pending items are listed).**
 
@@ -523,3 +533,4 @@ is working there. These alignments are needed; items DF-11 to DF-13 were observe
 
 - 2026-11-17: first version, from the user decisions of that date.
 - 2026-11-17 (later): UD-29 to UD-37 settle the open decisions and adopt proposals P-1 to P-7.
+- 2026-11-19: UD-38 and UD-39 replace the Capacitor shell with a React Native app built with Expo and make the mobile apps demo-only (ADR-010). Increments 3 and 4 are renamed, story titles 10.6 and 10.8 reworded, D-15 becomes Not planned, O-9 is settled and DF-19 is added. Sources consulted in full for this amendment: PRD, business rules, access matrix, functional specification, UX experience and design, architecture spine, data model and dictionary, AI specification, security and privacy, NFRs, test strategy and acceptance index, contract README, decision register, deferred register, ADR-002, ADR-004, ADR-007, ADR-008, ADR-009 and epic 10; the Expo documentation read on 2026-11-19 is cited in ADR-010. The allocation of stories to increments is unchanged.

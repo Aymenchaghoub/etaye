@@ -14,7 +14,7 @@ Status: Draft for design. Date: 2026-11-02. Authorization rules: [BR-001–004](
 | Background service | Named job execution grants tied to practice/resource snapshot | Never a broad interactive superuser; rechecks task scope before retrieval/output. |
 | Portfolio operator | Synthetic demo reset and service operations | Operational access is not a product role granting routine unrestricted clinical browsing. |
 
-An account can combine administrator and practitioner capabilities only through explicit assignment; display the active role/context. Revoking one practice membership does not revoke unrelated memberships. Server checks use current grants, not stale UI state. The same capabilities and checks apply whatever the client: web app, installed web app or native shell (ADR-008).
+An account can combine administrator and practitioner capabilities only through explicit assignment; display the active role/context. Revoking one practice membership does not revoke unrelated memberships. Server checks use current grants, not stale UI state. The same capabilities and checks apply whatever the client: web app, installed web app or native app (ADR-008, ADR-010).
 
 ## Resource matrix
 
