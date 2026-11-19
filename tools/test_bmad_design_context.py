@@ -45,6 +45,7 @@ class BmadDesignContextTests(unittest.TestCase):
                     self.assertTrue(target.is_file(), "%s loads a missing file %s" % (path.name, target))
         config = tomllib.loads((CUSTOM / "config.toml").read_text(encoding="utf-8"))
         self.assertIn("development_authorized", config["etaye"])
+        self.assertIsInstance(config["etaye"]["authorized_stories"], list)
 
 
 if __name__ == "__main__":

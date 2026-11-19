@@ -14,9 +14,9 @@ As the maintainer, I want a walking skeleton with the secure request path so tha
 
 - Requirements: FR-002, FR-020. Rules: BR-001, BR-017–018. Journey: J-08.
 - Design: Operational evidence. Acceptance test design: AT-038.
-- Dependencies: No story dependency. Gates: Aymen's development authorization and the core design families (UD-16).
+- Dependencies: No story dependency. Gates: development is authorized for this story only (UD-41, 2026-11-19); the core design families (UD-16) are not required for it, a named exception because it has no screen. Aymen's authorization is still required for every other story.
 - Delivery: Increment 1, Red-thread slice (web).
-- Read before refinement: [PRD](../prd/prd.md), [rules](../business-rules.md), [access](../access-matrix.md), [architecture](../architecture/ARCHITECTURE-SPINE.md), [data](../data-model.md), [contracts](../../contracts/openapi.yaml), [screen catalog](../../design/screen-catalog.md), [test strategy](../../test-artifacts/test-strategy.md), [ADR-008](../../decisions/ADR-008-multi-client-access.md), [ADR-009](../../decisions/ADR-009-api-compatibility.md).
+- Read before refinement: [PRD](../prd/prd.md), [rules](../business-rules.md), [access](../access-matrix.md), [architecture](../architecture/ARCHITECTURE-SPINE.md), [data](../data-model.md), [contracts](../../contracts/openapi.yaml), [screen catalog](../../design/screen-catalog.md), [test strategy](../../test-artifacts/test-strategy.md), [ADR-008](../../decisions/ADR-008-multi-client-access.md), [ADR-009](../../decisions/ADR-009-api-compatibility.md), [context packet](../../implementation-artifacts/story-10-1-context-packet.md).
 - Assumptions: apply relevant A-01–A-12 from the decision register; never treat them as verified facts. Record any changed source/version and resulting AC change in the future story.
 
 **AT-038-A:** Given a clean checkout and Aymen's development authorization, when the skeleton is built and run, then one request path resolves session, membership or portal link, capability and resource ownership, opens a transaction with practice context, and commits domain change, audit and outbox together. Module boundaries are verified by the tool chosen at the spike, ArchUnit or Spring Modulith (UD-35).

@@ -1,6 +1,6 @@
 # Architecture decision records
 
-Date: 2026-11-02. Status: Draft / internally reviewed when recorded in the review report. **ADR-001 to ADR-007 are not approved by Aymen; ADR-008 and ADR-009 were accepted by him on 2026-11-17 (UD-29) and ADR-010 on 2026-11-19 (UD-38, UD-39); ADR-011 is Proposed and awaits his acceptance.** The user selected the product boundaries and three core technologies; the concrete choices here are proposals for design continuity.
+Date: 2026-11-02. Status: Draft / internally reviewed when recorded in the review report. **ADR-001 to ADR-007 are not approved by Aymen; ADR-008 and ADR-009 were accepted by him on 2026-11-17 (UD-29) and ADR-010 on 2026-11-19 (UD-38, UD-39); ADR-011 on the same day (UD-40).** The user selected the product boundaries and three core technologies; the concrete choices here are proposals for design continuity.
 
 | ADR | Decision |
 |---|---|
@@ -14,6 +14,6 @@ Date: 2026-11-02. Status: Draft / internally reviewed when recorded in the revie
 | [008](ADR-008-multi-client-access.md) | Multi-client access: web, installed web app and native client (amended by ADR-010) |
 | [009](ADR-009-api-compatibility.md) | API compatibility and client versioning |
 | [010](ADR-010-native-client-react-native-expo.md) | Native client: React Native with Expo, distributed as a demo |
-| [011](ADR-011-delivery-order-and-milestones.md) | Delivery order and increment 1 milestones, without calendar dates (Proposed) |
+| [011](ADR-011-delivery-order-and-milestones.md) | Delivery order and increment 1 milestones, without calendar dates |
 
 The [architecture spine](../planning-artifacts/architecture/ARCHITECTURE-SPINE.md) owns cross-domain constraints; ADRs explain the tradeoffs. Update both when an invariant changes, preserving IDs and supersession history.

@@ -14,3 +14,6 @@ project_knowledge = "{project-root}/docs"
 test_artifacts = "{project-root}/docs/test-artifacts"
 phase = "planning-design"
 development_authorized = false
+# Per-story authorization (UD-41, Aymen, 2026-11-19): story 10.1 only, a named exception to the core design gate because it has no screen.
+# Default deny: a story that is not listed is not authorized.
+authorized_stories = ["10.1"]
