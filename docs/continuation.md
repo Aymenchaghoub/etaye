@@ -8,7 +8,7 @@ Updated: 2026-11-19. Owner: Aymen Chaghoub.
 
 **Verified by execution:** the six milestones partition the 33 increment 1 stories exactly and respect every story dependency; increment 3 depends only on increments 1 and 3; the native patient families are all increment 1; increment 1 holds 74 of the 96 contract operations. Documentary validation only; no application exists.
 
-**Open choice and next action:** Aymen confirms or amends the ADR. On acceptance, add UD-40 to the register, change the order sentence of roadmap section 1 and O-2, and mark the milestones in roadmap section 3. The development authorization and the CORE design review are still his.
+**Open choice and next action:** Aymen confirms or amends the ADR. On acceptance, add UD-40 to the register, change the order sentence of roadmap section 1 and O-2, and mark the milestones in roadmap section 3. The development authorization and the CORE design review are still his. Decided the same day: the HawkScan configuration waits for the spike, recorded as D-33 with its trigger; no account, key or scanner was set up.
 
 ## Windows native entry background review — 2026-11-19
 
