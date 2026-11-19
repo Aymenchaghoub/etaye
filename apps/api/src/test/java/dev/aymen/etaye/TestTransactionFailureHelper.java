@@ -17,6 +17,11 @@ import org.springframework.transaction.support.ResourceTransactionManager;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -36,6 +41,7 @@ public class TestTransactionFailureHelper {
     private final AtomicBoolean failInBeforeCommit = new AtomicBoolean(false);
     private final AtomicInteger reachedCount = new AtomicInteger(0);
     private volatile Throwable customFailure;
+    private final Map<String, Long> inTransactionInsertCounts = new ConcurrentHashMap<>();
 
     private final AtomicBoolean pauseInBeforeCommit = new AtomicBoolean(false);
     private final AtomicBoolean firstPaused = new AtomicBoolean(false);
@@ -57,6 +63,7 @@ public class TestTransactionFailureHelper {
 
     public void enableFailureInBeforeCommit(Throwable customFailure) {
         reachedCount.set(0);
+        inTransactionInsertCounts.clear();
         this.customFailure = customFailure;
         failInBeforeCommit.set(true);
     }
@@ -68,6 +75,14 @@ public class TestTransactionFailureHelper {
 
     public int getReachedCount() {
         return reachedCount.get();
+    }
+
+    public Map<String, Long> getInTransactionInsertCounts() {
+        return Collections.unmodifiableMap(new HashMap<>(inTransactionInsertCounts));
+    }
+
+    public long getInsertCount(String relname) {
+        return inTransactionInsertCounts.getOrDefault(relname, 0L);
     }
 
     public void enablePauseInBeforeCommit(CountDownLatch reachedLatch, CountDownLatch releaseLatch) {
@@ -106,6 +121,21 @@ public class TestTransactionFailureHelper {
                     reachedCount.incrementAndGet();
                     if (entityManager != null) {
                         entityManager.flush();
+                        try {
+                            @SuppressWarnings("unchecked")
+                            List<Object[]> stats = entityManager.createNativeQuery(
+                                    "SELECT relname, n_tup_ins FROM pg_stat_xact_user_tables " +
+                                            "WHERE schemaname = 'public' AND relname IN " +
+                                            "('patient', 'patient_record', 'audit_event', 'outbox_event', 'idempotency_receipt')"
+                            ).getResultList();
+                            for (Object[] row : stats) {
+                                String relname = (String) row[0];
+                                long count = ((Number) row[1]).longValue();
+                                inTransactionInsertCounts.put(relname, count);
+                            }
+                        } catch (Exception e) {
+                            // If stats reading fails, record in helper
+                        }
                     }
                     if (customFailure != null) {
                         if (customFailure instanceof RuntimeException re) throw re;

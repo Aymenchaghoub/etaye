@@ -255,6 +255,13 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
             // Verify that the beforeCommit failure hook was actually reached
             assertThat(testFailureHelper.getReachedCount()).isGreaterThan(0);
 
+            // B1: Prove all 5 writes were really sent in the transaction before the injected failure
+            assertThat(testFailureHelper.getInsertCount("patient")).as("patient insert count before failure").isGreaterThanOrEqualTo(1);
+            assertThat(testFailureHelper.getInsertCount("patient_record")).as("patient_record insert count before failure").isGreaterThanOrEqualTo(1);
+            assertThat(testFailureHelper.getInsertCount("audit_event")).as("audit_event insert count before failure").isGreaterThanOrEqualTo(1);
+            assertThat(testFailureHelper.getInsertCount("outbox_event")).as("outbox_event insert count before failure").isGreaterThanOrEqualTo(1);
+            assertThat(testFailureHelper.getInsertCount("idempotency_receipt")).as("idempotency_receipt insert count before failure").isGreaterThanOrEqualTo(1);
+
             // Assert row counts of all five tables filtered by practice_id before and after, from an independent observation connection
             assertThat(countRowsInTableDirectly("patient", "practice_id", practiceA)).isEqualTo(patientCountBefore);
             assertThat(countRowsInTableDirectly("patient_record", "practice_id", practiceA)).isEqualTo(recordCountBefore);
