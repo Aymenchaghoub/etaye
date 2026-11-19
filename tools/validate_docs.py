@@ -60,6 +60,14 @@ def check_application_scope(root, errors):
     if not authorized:
         return scope
 
+    register = "docs/planning-artifacts/decisions-assumptions.md"
+    try:
+        has_decision = "UD-41" in (root / register).read_text(encoding="utf-8")
+    except (OSError, UnicodeError):
+        has_decision = False
+    if not has_decision:
+        errors.append(f"Story 10.1 authorization requires UD-41 in {register}")
+
     apps = root / "apps"
     if apps.is_symlink() or not apps.is_dir() or {path.name for path in apps.iterdir()} != {"api", "web"}:
         errors.append("Story 10.1 requires exactly apps/api and apps/web under apps/")
@@ -96,9 +104,23 @@ def check_application_scope(root, errors):
         scope["trackedBuildOutputCheck"] = "skipped: git ls-files unavailable"
     else:
         scope["trackedBuildOutputCheck"] = "checked with git ls-files"
+        allowed_entries = {
+            "apps/api": {"pom.xml", "mvnw", "mvnw.cmd", ".mvn/", "src/", ".gitignore"},
+            "apps/web": {"package.json", "tsconfig.json", "vite.config.ts", "playwright.config.ts",
+                         "playwright.real.config.ts", "index.html", "src/", "tests/", "e2e/"},
+            "infra/local": {"docker-compose.yml", "init-roles.sh", "verify-init-roles.sh", ".env.example"},
+        }
         for name in os.fsdecode(index.stdout).split("\0"):
             if build_directories.intersection(name.split("/")):
                 errors.append("Tracked build output: " + name)
+                continue
+            parent, _, entry = name.partition("/")
+            child, _, relative = entry.partition("/")
+            allowed = allowed_entries.get(f"{parent}/{child}")
+            if allowed is not None and relative not in allowed:
+                top_level, separator, _ = relative.partition("/")
+                if not separator or f"{top_level}/" not in allowed:
+                    errors.append("Unexpected tracked path for story 10.1: " + name)
     return scope
 
 

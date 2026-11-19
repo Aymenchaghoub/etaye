@@ -36,7 +36,8 @@ class ApplicationScopeTests(unittest.TestCase):
 
     def authorize(self):
         self.configure('authorized_stories = ["10.1"]')
-        for name in ("apps/api/pom.xml", "apps/api/mvnw", "apps/web/package.json", "infra/local/compose.yaml",
+        self.write("docs/planning-artifacts/decisions-assumptions.md", "| UD-41 | Authorized story 10.1 |\n")
+        for name in ("apps/api/pom.xml", "apps/api/mvnw", "apps/web/package.json", "infra/local/docker-compose.yml",
                      "package.json", "pnpm-workspace.yaml", "pnpm-lock.yaml", "tsconfig.base.json",
                      ".github/workflows/api.yml", ".github/workflows/web.yml"):
             self.write(name)
@@ -144,6 +145,26 @@ class ApplicationScopeTests(unittest.TestCase):
             scope, errors = self.check_scope()
         self.assertIn("skipped", scope["trackedBuildOutputCheck"])
         self.assertEqual(errors, [])
+
+    def test_authorized_scope_rejects_unlisted_tracked_entries(self):
+        self.authorize()
+        self.write(".git")
+        allowed = ("apps/api/.gitignore", "apps/api/.mvn/wrapper/maven-wrapper.properties",
+                   "apps/web/tests/nested/probe.spec.ts", "infra/local/verify-init-roles.sh")
+        unlisted = ("apps/api/extra.txt", "apps/web/public/extra.txt", "infra/local/extra.sh",
+                    "apps/web/package.json/extra.txt", "apps/api/src")
+        index = subprocess.CompletedProcess([], 0, "\0".join((*allowed, *unlisted, "")).encode())
+        with patch("validate_docs.subprocess.run", return_value=index):
+            _, errors = self.check_scope()
+        self.assertEqual(errors, [f"Unexpected tracked path for story 10.1: {name}" for name in unlisted])
+
+    def test_authorized_scope_requires_ud_41_even_without_git(self):
+        self.authorize()
+        register = "docs/planning-artifacts/decisions-assumptions.md"
+        self.write(register, "| UD-40 | Accepted ADR-011 |\n")
+        scope, errors = self.check_scope()
+        self.assertIn("skipped", scope["trackedBuildOutputCheck"])
+        self.assertEqual(errors, [f"Story 10.1 authorization requires UD-41 in {register}"])
 
 
 @unittest.skipIf(yaml is None, "PyYAML is unavailable")
