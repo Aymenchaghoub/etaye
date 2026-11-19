@@ -20,3 +20,11 @@ The existing [Figma identity](https://www.figma.com/design/vfh4BSnbRAbaDE1q0Cyss
 Sequence: **planning → complete design and review → Aymen's explicit development authorization → implementation**. Completing the documents does not authorize development. There is no application scaffold, migration, application pipeline or deployment in this repository. Aymen subsequently authorized the initial documentation/tooling CI and free GitHub security setup; see [actual security/quality state](docs/operations/github-security.md).
 
 Repository: [Aymenchaghoub/etaye](https://github.com/Aymenchaghoub/etaye). Aymen explicitly authorized public visibility on 2026-11-02. Former project/working-name context is recorded only in the [source register and legacy audit](docs/references/source-register.md).
+
+## Architecture
+
+The overview shows the planned web and mobile clients, Spring Boot modules, PostgreSQL and external services.
+
+[![Planned Étaye system architecture](docs/architecture-views/overview.svg)](https://aymenchaghoub.github.io/etaye/)
+
+[Explore the five interactive views](https://aymenchaghoub.github.io/etaye/) · [Diagram sources and local viewing](docs/architecture-views/README.md)

@@ -1,0 +1,313 @@
+{
+  "schema_version": 1,
+  "diagram_type": "tree",
+  "meta": {
+    "title": "Étaye — module ownership",
+    "locale": "en",
+    "output": ".archify/architecture-etaye-planned-20261119-102252/modules/modules.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "git@github.com:Aymenchaghoub/etaye.git",
+      "revision": "eb58c81b3be3b91819dd2ca31a4f2412b509b5e3",
+      "link_mode": "local-only"
+    }
+  },
+  "nodes": [
+    {
+      "id": "monolith",
+      "label": "Spring Boot modular monolith",
+      "sublabel": "Planned ownership, not runtime calls",
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/architecture/ARCHITECTURE-SPINE.md",
+          "line": 42,
+          "end_line": 46
+        },
+        {
+          "path": "docs/planning-artifacts/architecture/runtime-architecture.md",
+          "line": 5,
+          "end_line": 18
+        }
+      ]
+    },
+    {
+      "id": "access",
+      "label": "Access",
+      "parent": "monolith",
+      "sublabel": "Identity and practice grants",
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/architecture/ARCHITECTURE-SPINE.md",
+          "line": 42,
+          "end_line": 46
+        }
+      ]
+    },
+    {
+      "id": "care",
+      "label": "Care",
+      "parent": "monolith",
+      "sublabel": "Practice-local patient work",
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/architecture/ARCHITECTURE-SPINE.md",
+          "line": 42,
+          "end_line": 46
+        }
+      ]
+    },
+    {
+      "id": "content",
+      "label": "Content",
+      "parent": "monolith",
+      "sublabel": "Evidence and assisted authoring",
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/architecture/ARCHITECTURE-SPINE.md",
+          "line": 42,
+          "end_line": 46
+        }
+      ]
+    },
+    {
+      "id": "operations",
+      "label": "Operations",
+      "parent": "monolith",
+      "sublabel": "Delivery and accountability",
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/architecture/ARCHITECTURE-SPINE.md",
+          "line": 42,
+          "end_line": 46
+        }
+      ]
+    },
+    {
+      "id": "identity",
+      "label": "identity",
+      "parent": "access",
+      "sublabel": "Accounts, sessions, recovery, devices",
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/architecture/runtime-architecture.md",
+          "line": 7,
+          "end_line": 8
+        },
+        {
+          "path": "docs/planning-artifacts/data-dictionary.md",
+          "line": 7,
+          "end_line": 8
+        },
+        {
+          "path": "docs/decisions/ADR-008-multi-client-access.md",
+          "line": 9,
+          "end_line": 10
+        }
+      ]
+    },
+    {
+      "id": "practices",
+      "label": "practices",
+      "parent": "access",
+      "sublabel": "Memberships, profiles, invitation grants",
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/architecture/runtime-architecture.md",
+          "line": 8,
+          "end_line": 8
+        },
+        {
+          "path": "docs/planning-artifacts/data-dictionary.md",
+          "line": 9,
+          "end_line": 15
+        }
+      ]
+    },
+    {
+      "id": "records",
+      "label": "records",
+      "parent": "care",
+      "sublabel": "Local identity, facts, revisions, preparation",
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/architecture/runtime-architecture.md",
+          "line": 9,
+          "end_line": 9
+        },
+        {
+          "path": "docs/planning-artifacts/data-dictionary.md",
+          "line": 12,
+          "end_line": 24
+        }
+      ]
+    },
+    {
+      "id": "scheduling",
+      "label": "scheduling",
+      "parent": "care",
+      "sublabel": "Slots, appointments, overlap protection",
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/architecture/runtime-architecture.md",
+          "line": 10,
+          "end_line": 10
+        },
+        {
+          "path": "docs/planning-artifacts/business-rules.md",
+          "line": 57,
+          "end_line": 73
+        }
+      ]
+    },
+    {
+      "id": "consultations",
+      "label": "consultations",
+      "parent": "care",
+      "sublabel": "Encounters and structured notes",
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/architecture/runtime-architecture.md",
+          "line": 11,
+          "end_line": 11
+        },
+        {
+          "path": "docs/planning-artifacts/data-dictionary.md",
+          "line": 20,
+          "end_line": 20
+        }
+      ]
+    },
+    {
+      "id": "documents",
+      "label": "documents",
+      "parent": "content",
+      "sublabel": "Versions, citations, review, publication",
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/architecture/runtime-architecture.md",
+          "line": 12,
+          "end_line": 12
+        },
+        {
+          "path": "docs/planning-artifacts/data-dictionary.md",
+          "line": 26,
+          "end_line": 31
+        }
+      ]
+    },
+    {
+      "id": "ai",
+      "label": "ai",
+      "parent": "content",
+      "sublabel": "Leased jobs, provider attempts, evaluation",
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/architecture/runtime-architecture.md",
+          "line": 14,
+          "end_line": 14
+        },
+        {
+          "path": "docs/planning-artifacts/ai-specification.md",
+          "line": 19,
+          "end_line": 31
+        }
+      ]
+    },
+    {
+      "id": "files",
+      "label": "files",
+      "parent": "content",
+      "sublabel": "Quarantine, private bytes, PDF exports",
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/architecture/runtime-architecture.md",
+          "line": 13,
+          "end_line": 13
+        },
+        {
+          "path": "docs/decisions/ADR-006-files-pdf-storage.md",
+          "line": 9,
+          "end_line": 15
+        }
+      ]
+    },
+    {
+      "id": "communications",
+      "label": "communications",
+      "parent": "operations",
+      "sublabel": "Committed outbox, minimal notifications",
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/architecture/runtime-architecture.md",
+          "line": 15,
+          "end_line": 15
+        },
+        {
+          "path": "docs/planning-artifacts/data-dictionary.md",
+          "line": 34,
+          "end_line": 34
+        }
+      ]
+    },
+    {
+      "id": "audit-demo",
+      "label": "audit / demo operations",
+      "parent": "operations",
+      "sublabel": "Append-only events, health, bounded reset",
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/architecture/runtime-architecture.md",
+          "line": 16,
+          "end_line": 24
+        },
+        {
+          "path": "docs/planning-artifacts/business-rules.md",
+          "line": 161,
+          "end_line": 167
+        }
+      ]
+    }
+  ],
+  "layout": {
+    "direction": "right",
+    "nodeW": 190,
+    "nodeMaxW": 300,
+    "gapX": 55,
+    "gapY": 26
+  },
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Dependency rule — proposal ADR-001",
+      "items": [
+        "Controllers and infrastructure adapters depend inward on application contracts and domain rules. Each module owns its repositories.",
+        "Integration uses public module services and immutable events. Never share JPA entities as transport or write another module repository. Links in this tree mean containment only."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Logical data, not physical tables",
+      "items": [
+        "Identity/access: Account, Session, Practice, Membership, Practitioner, Invitation, record-local PortalLink; DeviceRegistration is future.",
+        "Care: Patient, PatientRecord, AvailabilityRule, AvailabilityException, Appointment, VisitPreparation, Consultation, ClinicalAssertion, SourceRevision, Measurement, LabResult.",
+        "Content/operations: RecordDocument, ClinicalDocument, DocumentVersion, StatementCitation, ReviewEvent, Publication, PublicationSourceGrant, ProcessingTask, ExportArtifact, OutboxEvent, AuditEvent, IdempotencyReceipt."
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Shared integrity contract",
+      "items": [
+        "Global accounts do not make patient records global. Practice-owned rows carry practice_id; composite references and RLS reinforce current application authorization.",
+        "One transaction commits domain state, required successful audit, idempotency outcome and outbox/job rows. Appointment state, encounter state, task state, review, freshness and publication stay separate."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Frontend and tooling",
+      "items": [
+        "React features/routes use the generated OpenAPI client, practice/account-scoped query state and local form state. Resolve unsaved edits before switching practice; clear caches on logout/switch.",
+        "Figma foundations govern tokens/components. Radix, TanStack Query, PDFBox and exact dependency locks are proposals/setup checks. ArchUnit or Spring Modulith is chosen in story 10.1."
+      ]
+    }
+  ]
+}

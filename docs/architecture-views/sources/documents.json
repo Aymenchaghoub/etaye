@@ -1,0 +1,456 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Étaye — evidence, drafts and publication",
+    "locale": "en",
+    "output": ".archify/architecture-etaye-planned-20261119-102252/documents/documents.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "git@github.com:Aymenchaghoub/etaye.git",
+      "revision": "eb58c81b3be3b91819dd2ca31a4f2412b509b5e3",
+      "link_mode": "local-only"
+    }
+  },
+  "components": [
+    {
+      "id": "sources",
+      "type": "database",
+      "label": "Source revisions",
+      "sublabel": "Facts / preparation / encounter notes",
+      "pos": [
+        40,
+        40
+      ],
+      "size": [
+        210,
+        70
+      ],
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/business-rules.md",
+          "line": 88,
+          "end_line": 106
+        },
+        {
+          "path": "docs/planning-artifacts/data-model.md",
+          "line": 37,
+          "end_line": 43
+        }
+      ],
+      "tag": "Immutable · new facts → STALE"
+    },
+    {
+      "id": "snapshot",
+      "type": "backend",
+      "label": "Authorized snapshot",
+      "sublabel": "Revisions / locators / watermark",
+      "pos": [
+        370,
+        40
+      ],
+      "size": [
+        210,
+        70
+      ],
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/ai-specification.md",
+          "line": 9,
+          "end_line": 17
+        },
+        {
+          "path": "docs/planning-artifacts/business-rules.md",
+          "line": 104,
+          "end_line": 106
+        }
+      ],
+      "tag": "One practice + record"
+    },
+    {
+      "id": "processing",
+      "type": "backend",
+      "label": "Draft processing",
+      "sublabel": "Leased task + fixture provider port",
+      "pos": [
+        700,
+        40
+      ],
+      "size": [
+        210,
+        70
+      ],
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/ai-specification.md",
+          "line": 19,
+          "end_line": 25
+        },
+        {
+          "path": "docs/planning-artifacts/architecture/runtime-architecture.md",
+          "line": 20,
+          "end_line": 22
+        }
+      ],
+      "tag": "Schema / citations / lease guard"
+    },
+    {
+      "id": "draft",
+      "type": "database",
+      "label": "Report / explanation",
+      "sublabel": "DRAFT: baseline + human edits",
+      "pos": [
+        1000,
+        40
+      ],
+      "size": [
+        200,
+        70
+      ],
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/business-rules.md",
+          "line": 104,
+          "end_line": 129
+        },
+        {
+          "path": "docs/planning-artifacts/data-dictionary.md",
+          "line": 26,
+          "end_line": 29
+        }
+      ],
+      "tag": "Separate document purposes"
+    },
+    {
+      "id": "composer",
+      "type": "backend",
+      "label": "Brief composer",
+      "sublabel": "Deterministic structured facts",
+      "pos": [
+        370,
+        300
+      ],
+      "size": [
+        210,
+        70
+      ],
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/business-rules.md",
+          "line": 104,
+          "end_line": 106
+        },
+        {
+          "path": "docs/planning-artifacts/decisions-assumptions.md",
+          "line": 53,
+          "end_line": 53
+        }
+      ],
+      "tag": "Server-derived source set"
+    },
+    {
+      "id": "brief",
+      "type": "backend",
+      "label": "Clinician brief",
+      "sublabel": "DRAFT + exact acknowledgement",
+      "pos": [
+        40,
+        300
+      ],
+      "size": [
+        210,
+        70
+      ],
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/business-rules.md",
+          "line": 131,
+          "end_line": 133
+        }
+      ],
+      "tag": "Never validated / published"
+    },
+    {
+      "id": "review",
+      "type": "security",
+      "label": "Human review",
+      "sublabel": "Source support + CURRENT + grant",
+      "pos": [
+        1000,
+        300
+      ],
+      "size": [
+        200,
+        70
+      ],
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/business-rules.md",
+          "line": 119,
+          "end_line": 131
+        }
+      ],
+      "tag": "CLINICAL_VALIDATE + CURRENT"
+    },
+    {
+      "id": "validated",
+      "type": "database",
+      "label": "Validated version",
+      "sublabel": "Immutable text / validator / date",
+      "pos": [
+        640,
+        300
+      ],
+      "size": [
+        210,
+        70
+      ],
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/business-rules.md",
+          "line": 123,
+          "end_line": 129
+        },
+        {
+          "path": "docs/planning-artifacts/data-dictionary.md",
+          "line": 27,
+          "end_line": 29
+        }
+      ],
+      "tag": "Internal until explicit publish"
+    },
+    {
+      "id": "publication",
+      "type": "security",
+      "label": "Publication grant",
+      "sublabel": "CURRENT / exact version / audience",
+      "pos": [
+        640,
+        560
+      ],
+      "size": [
+        210,
+        70
+      ],
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/business-rules.md",
+          "line": 135,
+          "end_line": 151
+        },
+        {
+          "path": "docs/planning-artifacts/data-dictionary.md",
+          "line": 30,
+          "end_line": 31
+        }
+      ],
+      "tag": "PATIENT_PUBLISH + CURRENT"
+    },
+    {
+      "id": "portal",
+      "type": "frontend",
+      "label": "Patient projection",
+      "sublabel": "Own current PUBLISHED content",
+      "pos": [
+        1000,
+        560
+      ],
+      "size": [
+        200,
+        70
+      ],
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/access-matrix.md",
+          "line": 33,
+          "end_line": 38
+        },
+        {
+          "path": "docs/decisions/ADR-005-document-lineage-publication.md",
+          "line": 9,
+          "end_line": 11
+        }
+      ],
+      "tag": "Active record-local PortalLink"
+    },
+    {
+      "id": "outbox",
+      "type": "backend",
+      "label": "Committed outbox",
+      "sublabel": "Minimal nonclinical notification",
+      "pos": [
+        640,
+        800
+      ],
+      "size": [
+        210,
+        70
+      ],
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/business-rules.md",
+          "line": 157,
+          "end_line": 163
+        },
+        {
+          "path": "docs/planning-artifacts/data-dictionary.md",
+          "line": 34,
+          "end_line": 35
+        }
+      ],
+      "tag": "Retry / dedupe / reauthorize"
+    },
+    {
+      "id": "pdf",
+      "type": "backend",
+      "label": "Guarded PDF export",
+      "sublabel": "Exact content / template / checksum",
+      "pos": [
+        1000,
+        800
+      ],
+      "size": [
+        200,
+        70
+      ],
+      "sources": [
+        {
+          "path": "docs/planning-artifacts/business-rules.md",
+          "line": 157,
+          "end_line": 159
+        },
+        {
+          "path": "docs/planning-artifacts/data-dictionary.md",
+          "line": 33,
+          "end_line": 33
+        },
+        {
+          "path": "docs/decisions/ADR-006-files-pdf-storage.md",
+          "line": 9,
+          "end_line": 15
+        }
+      ],
+      "tag": "Recheck grant at delivery"
+    }
+  ],
+  "connections": [
+    {
+      "id": "facts-snapshot",
+      "from": "sources",
+      "to": "snapshot",
+      "label": "exact revisions",
+      "variant": "security"
+    },
+    {
+      "id": "snapshot-draft-job",
+      "from": "snapshot",
+      "to": "processing",
+      "label": "bounded job",
+      "variant": "dashed"
+    },
+    {
+      "id": "job-draft",
+      "from": "processing",
+      "to": "draft",
+      "label": "valid result",
+      "variant": "emphasis"
+    },
+    {
+      "id": "snapshot-composer",
+      "from": "snapshot",
+      "to": "composer",
+      "label": "record watermark",
+      "variant": "default"
+    },
+    {
+      "id": "composer-brief",
+      "from": "composer",
+      "to": "brief",
+      "label": "cited facts",
+      "variant": "emphasis"
+    },
+    {
+      "id": "draft-review",
+      "from": "draft",
+      "to": "review",
+      "label": "submit for review",
+      "variant": "default"
+    },
+    {
+      "id": "review-draft",
+      "from": "review",
+      "to": "draft",
+      "label": "request changes",
+      "variant": "default"
+    },
+    {
+      "id": "review-validate",
+      "from": "review",
+      "to": "validated",
+      "label": "explicit validation",
+      "variant": "security"
+    },
+    {
+      "id": "validated-publish",
+      "from": "validated",
+      "to": "publication",
+      "label": "explicit publish",
+      "variant": "security"
+    },
+    {
+      "id": "publication-portal",
+      "from": "publication",
+      "to": "portal",
+      "label": "authorized audience",
+      "variant": "security"
+    },
+    {
+      "id": "publication-notify",
+      "from": "publication",
+      "to": "outbox",
+      "label": "after commit",
+      "variant": "dashed"
+    },
+    {
+      "id": "patient-pdf",
+      "from": "portal",
+      "to": "pdf",
+      "label": "published view",
+      "variant": "security"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Source and generation ownership",
+      "items": [
+        "Brief: the server derives its entire source manifest from the record watermark; deterministic composition creates cited facts, gaps and contradictions.",
+        "Reports/explanations: the requester selects a bounded source subset; relevant exclusions carry reasons. An explanation is separately authored and reviewed; a report does not automatically become one."
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Validation and visibility gates",
+      "items": [
+        "Mechanical flags block validation until corrected or dispositioned with a reason; a mechanical pass does not prove clinical support. A human inspects the cited revision and qualifier.",
+        "A successful task creates only a draft candidate. Recheck current access, lease, target version and freshness before committing; late/cancelled results preserve human edits."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Independent histories",
+      "items": [
+        "Source corrections append a new revision; relevant changes mark content STALE and keep reviewed text/history. Regeneration creates a candidate/new draft.",
+        "Publication replacement is atomic and guarded by current versions; withdrawal blocks future reads/downloads. Already downloaded copies cannot be recalled. Each attachment needs its own explicit grant."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Other state axes and delivery scope",
+      "items": [
+        "Appointment BOOKED/CHECKED_IN/COMPLETED/CANCELLED/NO_SHOW is separate from consultation IN_PROGRESS/COMPLETED/CANCELLED. Task QUEUED/RUNNING/SUCCEEDED/FAILED/CANCELLED is separate from review and CURRENT/STALE.",
+        "P-03 patient explanation export is in increment 1. P-01 clinician brief and P-02 report follow in increment 2; clinician-only exports remain clinician-only. PDFBox is the proposed renderer."
+      ]
+    }
+  ]
+}

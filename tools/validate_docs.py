@@ -289,7 +289,8 @@ require((ROOT / "CLAUDE.md").read_text(encoding="utf-8").startswith("@AGENTS.md"
 require(not (ROOT / "docs/design/claude-chat-kit").exists(), "Redundant chat export should remain outside repository")
 workflow_dir = ROOT / ".github/workflows"
 if workflow_dir.exists():
-    require({p.name for p in workflow_dir.iterdir()} == {"documentation.yml", "codeql.yml"},
+    documentation_workflows = {"documentation.yml", "codeql.yml", "architecture-pages.yml"}
+    require({p.name for p in workflow_dir.iterdir()} == documentation_workflows,
             "Unexpected application workflow before development authorization")
 for forbidden in ("pom.xml", "package.json", "apps", "src", "compose.yaml", "docker-compose.yml"):
     require(not (ROOT / forbidden).exists(), "Application implementation artifact created: " + forbidden)

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Étaye · Planned architecture</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --paper: #f7f6f2;
+      --ink: #172335;
+      --muted: #46556e;
+      --line: #c8cfdb;
+      --link: #214c8a;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper: #131b29;
+        --ink: #edf0f6;
+        --muted: #b7c0d1;
+        --line: #45516a;
+        --link: #a5c7ff;
+      }
+    }
+    body {
+      margin: 0;
+      padding: clamp(1.25rem, 6vw, 4rem);
+      background: var(--paper);
+      color: var(--ink);
+      font: 1rem/1.55 system-ui, sans-serif;
+    }
+    main { max-width: 44rem; margin-inline: auto; }
+    h1 {
+      margin: 0;
+      font: 400 clamp(2.2rem, 6vw, 3.5rem)/1.1 Georgia, serif;
+    }
+    p { color: var(--muted); }
+    a { color: var(--link); text-underline-offset: 0.2em; }
+    a:focus-visible { outline: 2px solid currentColor; outline-offset: 5px; }
+    ul { list-style: none; margin: 2rem 0; padding: 0; }
+    li { padding: 0.75rem 0; border-block-start: 1px solid var(--line); }
+    li:last-child { border-block-end: 1px solid var(--line); }
+    li a { font-weight: 650; }
+    li p { margin: 0.25rem 0 0; }
+    footer { margin-block-start: 2rem; font-size: 0.875rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Étaye’s planned architecture</h1>
+    <p>Five interactive views of the proposed application. Select <strong>Live</strong> in a diagram to animate its connections.</p>
+    <nav aria-label="Architecture views">
+      <ul>
+        <li>
+          <a href="system.html">System overview</a>
+          <p>Web and mobile clients, Spring Boot, PostgreSQL, and external services.</p>
+        </li>
+        <li>
+          <a href="modules.html">Modules and data ownership</a>
+          <p>Business modules, their dependencies, and the logical data inventory.</p>
+        </li>
+        <li>
+          <a href="documents.html">Evidence, drafts, and publication</a>
+          <p>Source lineage, AI-assisted drafting, clinician review, and explicit release to a patient.</p>
+        </li>
+        <li>
+          <a href="access.html">Client access and isolation</a>
+          <p>Web and native sessions, access controls, and practice boundaries.</p>
+        </li>
+        <li>
+          <a href="delivery.html">Deployment, delivery, and recovery</a>
+          <p>Planned release flow, hosting, observability, and backups.</p>
+        </li>
+      </ul>
+    </nav>
+    <footer>
+      <a href="https://github.com/Aymenchaghoub/etaye/blob/main/docs/planning-artifacts/architecture/ARCHITECTURE-SPINE.md">Architecture specification</a>
+      · <a href="https://github.com/Aymenchaghoub/etaye">Repository</a>
+      · <a href="licenses/NOTICE">Viewer credits</a>
+      · <a href="licenses/LICENSE">Viewer license</a>
+    </footer>
+  </main>
+</body>
+</html>
