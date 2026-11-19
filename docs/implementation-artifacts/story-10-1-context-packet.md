@@ -1,6 +1,6 @@
 # Story 10.1 — implementation context packet
 
-Status: Prepared for a future implementation. **This packet does not authorize development** (UD-28). Date: 2026-11-19. Prepared by Claude Code at Aymen's request, following the context-packet rule of [delivery rules](../operations/delivery-rules.md). The story text and acceptance designs stay in [epic 10](../planning-artifacts/epics/epic-10.md); where this packet adds detail it says so, and a [Proposal] is not a decision.
+Status: Prepared; the authorization is UD-41 (2026-11-19) and covers story 10.1 only. This packet itself authorizes nothing. Date: 2026-11-19. Prepared by Claude Code at Aymen's request, following the context-packet rule of [delivery rules](../operations/delivery-rules.md). The story text and acceptance designs stay in [epic 10](../planning-artifacts/epics/epic-10.md); where this packet adds detail it says so, and a [Proposal] is not a decision.
 
 ## 1. Objective and traceability
 
@@ -8,8 +8,8 @@ Build the walking skeleton and the secure request path, so that every later stor
 
 ## 2. Preconditions (check before any code)
 
-1. Written development authorization naming story 10.1: `development_authorized = true` in `_bmad/custom/config.toml` and a dated row in the decision register. It is false at the time of writing.
-2. ADR-011 accepted by Aymen (it is Proposed at the time of writing).
+1. Written authorization naming story 10.1: given on 2026-11-19 (UD-41) and encoded as `authorized_stories = ["10.1"]` in `_bmad/custom/config.toml`; `development_authorized` stays false for every other story. Check both the key and the register row.
+2. ADR-011 accepted by Aymen: done on 2026-11-19 (UD-40).
 3. A clean checkout of main without `apps/`.
 4. Toolchain, observed on Aymen's machine on 2026-11-19: Java 21 (OpenJDK 21.0.12), Maven 3.9.11, Node 22.23.2, Docker 29.8.2, **no** Java 25, **no** Node 26, **no** pnpm. ADR-002 proposes Java 25 and Node 26 and keeps Java 21 and Spring Boot 3.5 as fallbacks. Installing a toolchain is allowed only in the user's home directory from the official distribution with its checksum verified, never with `sudo`, and is recorded in the spike report; otherwise use the fallbacks and say so.
 

@@ -1,7 +1,7 @@
 # Roadmap and increment allocation
 
-Status: Proposal derived from the user decisions of 2026-11-17 (UD-12 to UD-37), amended on 2026-11-19 (UD-38, UD-39). The allocation itself is
-[ASSUMPTION A-16] until Aymen reorders it. Development is not authorized (UD-28). The machine-readable source is
+Status: Proposal derived from the user decisions of 2026-11-17 (UD-12 to UD-37), amended on 2026-11-19 (UD-38 to UD-41). The allocation itself is
+[ASSUMPTION A-16] until Aymen reorders it. Development is authorized for story 10.1 only (UD-41); UD-28 still applies to every other story. The machine-readable source is
 [roadmap-assignments.json](roadmap-assignments.json); the tables below are rendered from it and
 `tools/validate_docs.py` fails if a story, design family or API operation is left unassigned.
 
@@ -27,16 +27,16 @@ Sources consulted in full for this version (2026-11-17): [PRD](prd/prd.md), [bus
 | 3 | Mobile (installable web app, then Android app) | 4 | The same product usable as an installed app: installable PWA, native session transport, a React Native Android app built with Expo (ADR-010), content-free push notifications. |
 | 4 | Release engineering, iOS demo gate and quality extensions | 1 | iOS build and distribution gate, promotion pipeline, optional real-model evaluation, advanced audit and device privacy options. |
 
-Increments 2 and 3 both depend only on increment 1 and may run in either order; the order is 2 then 3 (settled,
-UD-37). Increment 3 needs a stable HTTPS origin, hence the hosting decision of story 10.3. Relative size
+Increments 2 and 3 both depend only on increment 1 and may run in either order; the order is 3 then 2 (UD-40, ADR-011,
+replacing the order of UD-37). Increment 3 needs a stable HTTPS origin, hence the hosting decision of story 10.3. Relative size
 [ASSUMPTION]: increment 1 is the largest, increment 2 about two thirds of it, increments 3 and 4 smaller.
 
 ## 2. Gates, owners and what blocks what
 
 | Gate | Owner | Blocks | State |
 |---|---|---|---|
-| Development authorization | Aymen | Every implementation story | Not given (UD-28) |
-| Core design families reviewed (UD-16) | Aymen, with Codex for the Figma side | Increment 1 build of those families | Pending |
+| Development authorization | Aymen | Every implementation story | Given for story 10.1 only (UD-41); not given for the others (UD-28) |
+| Core design families reviewed (UD-16) | Aymen, with Codex for the Figma side | Increment 1 build of those families | Pending; named exception for the UI-free story 10.1 (UD-41) |
 | Increment 1 exit review | Aymen | Increments 2 and 3 | Future |
 | ADR-008 and ADR-009 accepted | Aymen | Stories 10.2 (API meta), 10.4 to 10.8 | Done (UD-29); contract operations are added before stories 10.2 and 10.5 |
 | ADR-010 accepted (native client: React Native with Expo) | Aymen | Stories 10.2 and 10.5 to 10.8 | Done (UD-38, UD-39) |
@@ -66,6 +66,8 @@ UD-37). Increment 3 needs a stable HTTPS origin, hence the hosting decision of s
    (S-36); Mila looks up and registers a patient for scheduling under PD-001 (S-07, S-08 restricted variants);
    Dr Sami Rahmani switches practice (S-05, I-20); a double booking and a stale edit are refused (I-21);
    Louis Bernard's AI timeout (S-37, I-23) and an expired session (S-38, I-22) recover honestly.
+
+**Build order (ADR-011, UD-40).** Increment 1 is built in six milestones, M1 secure skeleton, M2 record and schedule, M3 preparation and brief, M4 consultation to validated report, M5 publication and patient reading, M6 proof and release evidence. Each is demonstrable, has effort budgets instead of dates and a cut rule; the stories, tests and budgets of each milestone are in ADR-011.
 
 **Built from decisions:** PD-001 registration (UD-17), the acknowledgement operations (UD-18, UD-22),
 multi-membership switching (UD-19), the fixed slot grid with atomic booking and cancellation (UD-21), overlap
@@ -468,7 +470,7 @@ On 2026-11-17 Aymen validated every recommendation of this list except the devel
 | ID | Decision | State |
 |---|---|---|
 | O-1 | Native session duration and refresh (A-15, D-19) | Open; decided in story 10.5 (increment 3) |
-| O-2 | Order of increments 2 and 3 | Settled: 2 then 3 (UD-37) |
+| O-2 | Order of increments 2 and 3 | Settled: 3 then 2 (UD-40, ADR-011), replacing UD-37 |
 | O-3 | Promote S-07, S-08, S-17, S-26, S-27 to CORE | Settled: they stay SAMPLED (UD-37) |
 | O-4 | Sampling numbers for SAMPLED evidence | Settled: 8–10 screens, 2 widths (UD-37) |
 | O-5 | Hosting decision after the benchmark | Gated: story 10.3 benchmark, then Aymen chooses; €0 best effort until then (UD-25) |
@@ -535,3 +537,4 @@ is working there. These alignments are needed; items DF-11 to DF-13 were observe
 - 2026-11-17: first version, from the user decisions of that date.
 - 2026-11-17 (later): UD-29 to UD-37 settle the open decisions and adopt proposals P-1 to P-7.
 - 2026-11-19: UD-38 and UD-39 replace the Capacitor shell with a React Native app built with Expo and make the mobile apps demo-only (ADR-010). Increments 3 and 4 are renamed, story titles 10.6 and 10.8 reworded, D-15 becomes Not planned, O-9 is settled and DF-19 is added. Sources consulted in full for this amendment: PRD, business rules, access matrix, functional specification, UX experience and design, architecture spine, data model and dictionary, AI specification, security and privacy, NFRs, test strategy and acceptance index, contract README, decision register, deferred register, ADR-002, ADR-004, ADR-007, ADR-008, ADR-009 and epic 10; the Expo documentation read on 2026-11-19 is cited in ADR-010. The allocation of stories to increments is unchanged.
+- 2026-11-19 (later): UD-40 accepts ADR-011 (order 3 then 2, six milestones of increment 1) and UD-41 authorizes story 10.1 only; O-2 and the gates of section 2 are updated.

@@ -6,7 +6,7 @@
 
 ## Policy
 
-- Do not scaffold, implement, migrate, deploy or activate the application pipeline before complete required design review and Aymen's explicit development authorization. Documentation/design completion does not authorize development; keep stories in planning/backlog.
+- Do not scaffold, implement, migrate, deploy or activate the application pipeline before complete required design review and Aymen's explicit development authorization. Documentation/design completion does not authorize development; keep stories in planning/backlog. Authorization is per story: `development_authorized` stays false in `_bmad/custom/config.toml`, a story may be implemented only if it is listed in `[etaye] authorized_stories` and its scope and named exceptions are in the decision register (UD-41); a story that is not listed is not authorized.
 - Speak French with Aymen. Write repository documents, requirements, ADRs, stories, reports and handoffs in English. Use English technical identifiers/comments and Conventional Commits/PR text. Preserve Étaye and existing French interface copy; English demo language remains a product decision.
 - User decisions govern scope. docs/planning-artifacts/business-rules.md owns domain behavior; prd/prd.md owns requirements; ADRs own technical choices; verified Figma properties own existing visual values. Surface conflicts explicitly; a newer file or previous AI answer is not automatic authority. Distinguish User decision, Verified observation, Proposal, [ASSUMPTION] and To verify.
 - Legacy source is read-only reference; inspect its actual current commit when needed. Never copy professional reference content, infrastructure, URLs, credentials or business rules into Étaye. Use GitHub, not organizational GitLab procedures.
