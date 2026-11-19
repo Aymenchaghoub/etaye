@@ -15,5 +15,5 @@ spring:
       table-name: spring_session
   datasource:
     hikari:
-      maximum-pool-size: 1
-      minimum-idle: 1
+      maximum-pool-size: 5
+      minimum-idle: 2

@@ -75,6 +75,10 @@ public class PracticeTransaction {
         });
     }
 
+    public UUID getActivePracticeId() {
+        return activePracticeId.get();
+    }
+
     private void setTransactionPracticeContext(UUID practiceId) {
         Session session = entityManager.unwrap(Session.class);
         session.doWork(connection -> {

@@ -57,10 +57,14 @@ public class SecurityIntegrationTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("Security: getCsrfToken returns 200 with X-CSRF-TOKEN headerName and sets XSRF-TOKEN cookie")
-    void getCsrfTokenReturnsTokenAndSetsCookie() {
+    @DisplayName("Security: getCsrfToken returns 200 with X-CSRF-TOKEN headerName and no JavaScript-readable cookie")
+    void getCsrfTokenReturnsTokenAndNoCookie() {
+        UUID accountId = createAccountAsOwner("csrf.test." + UUID.randomUUID() + "@example.com", "CSRF Test", "hash");
+        String sessionCookie = testSessionHelper.createSessionCookie(accountId);
+
         ResponseEntity<Map> response = client().get()
                 .uri("/api/v1/csrf")
+                .header(HttpHeaders.COOKIE, sessionCookie)
                 .retrieve()
                 .toEntity(Map.class);
 
@@ -72,8 +76,9 @@ public class SecurityIntegrationTest extends AbstractPostgresTest {
         assertThat(body.get("token")).isNotNull();
 
         String setCookie = response.getHeaders().getFirst(HttpHeaders.SET_COOKIE);
-        assertThat(setCookie).isNotNull();
-        assertThat(setCookie).contains("XSRF-TOKEN=");
+        if (setCookie != null) {
+            assertThat(setCookie).doesNotContain("XSRF-TOKEN");
+        }
     }
 
     @Test

@@ -48,7 +48,7 @@ public class PatientService {
      * Atomically creates Patient, PatientRecord, AuditEvent, OutboxEvent, and IdempotencyReceipt.
      */
     public PatientResponse createPatient(UUID practiceId, UUID actorAccountId, String correlationId,
-                                         String idempotencyKey, PatientEdit edit, Runnable failureInjectionHook) {
+                                         String idempotencyKey, PatientEdit edit) {
         Objects.requireNonNull(practiceId, "practiceId must not be null");
         Objects.requireNonNull(actorAccountId, "actorAccountId must not be null");
         Objects.requireNonNull(correlationId, "correlationId must not be null");
@@ -57,14 +57,16 @@ public class PatientService {
 
         return practiceTransaction.execute(practiceId, () -> {
             String keyDigest = idempotencyService.computeSha256(idempotencyKey);
-            String canonicalPayload = String.join("|",
-                    edit.firstName(),
-                    edit.lastName(),
-                    edit.dateOfBirth().toString(),
-                    edit.contactEmail() != null ? edit.contactEmail() : "",
-                    edit.phone() != null ? edit.phone() : ""
-            );
-            String bodyHash = idempotencyService.computeSha256(canonicalPayload);
+            java.util.Map<String, Object> payload = new java.util.TreeMap<>();
+            payload.put("contactEmail", edit.contactEmail());
+            payload.put("dateOfBirth", edit.dateOfBirth() != null ? edit.dateOfBirth().toString() : null);
+            payload.put("firstName", edit.firstName());
+            payload.put("lastName", edit.lastName());
+            payload.put("phone", edit.phone());
+            String bodyHash = idempotencyService.computeCanonicalBodyHash(payload);
+
+            // Transaction-scoped advisory lock serializes concurrent requests on the same key
+            idempotencyService.acquireLock(practiceId, actorAccountId, "createPatient", keyDigest);
 
             // Check if prior receipt exists
             Optional<UUID> existingIdOpt = idempotencyService.checkReceipt(
@@ -89,16 +91,11 @@ public class PatientService {
                     edit.contactEmail(),
                     edit.phone()
             );
-            patient = patientRepository.save(patient);
+            patient = patientRepository.saveAndFlush(patient);
 
             // 2. Create PatientRecord
             PatientRecord record = new PatientRecord(practiceId, patient.getId());
-            record = patientRecordRepository.save(record);
-
-            // Optional test failure hook for mutation check / rollback verification
-            if (failureInjectionHook != null) {
-                failureInjectionHook.run();
-            }
+            record = patientRecordRepository.saveAndFlush(record);
 
             // 3. Record Audit Event
             auditService.recordEvent(
@@ -137,11 +134,6 @@ public class PatientService {
         });
     }
 
-    public PatientResponse createPatient(UUID practiceId, UUID actorAccountId, String correlationId,
-                                         String idempotencyKey, PatientEdit edit) {
-        return createPatient(practiceId, actorAccountId, correlationId, idempotencyKey, edit, null);
-    }
-
     /**
      * Executes the getPatientRecord carrier operation inside a practice-scoped transaction.
      */
@@ -158,26 +150,5 @@ public class PatientService {
 
             return RecordResponse.of(record, patient);
         });
-    }
-
-    public Patient createPatient(UUID practiceId, String firstName, String lastName) {
-        Patient patient = new Patient(practiceId, firstName, lastName);
-        return patientRepository.save(patient);
-    }
-
-    public Optional<Patient> getPatient(UUID practiceId, UUID id) {
-        return patientRepository.findByIdAndPracticeId(id, practiceId);
-    }
-
-    public Optional<Patient> getPatientWithoutAppPredicate(UUID id) {
-        return patientRepository.findById(id);
-    }
-
-    public List<Patient> listPatients(UUID practiceId) {
-        return patientRepository.findAllByPracticeId(practiceId);
-    }
-
-    public List<Patient> listPatientsWithoutAppPredicate() {
-        return patientRepository.findAll();
     }
 }

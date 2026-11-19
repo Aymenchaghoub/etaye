@@ -125,7 +125,9 @@ CREATE TABLE idempotency_receipt (
     outcome VARCHAR(50) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     expires_at TIMESTAMPTZ NOT NULL,
-    CONSTRAINT uq_idempotency_receipt UNIQUE (actor_id, practice_id, operation, key_digest)
+    CONSTRAINT uq_idempotency_receipt UNIQUE (actor_id, practice_id, operation, key_digest),
+    CONSTRAINT fk_idempotency_receipt_patient FOREIGN KEY (practice_id, response_resource)
+        REFERENCES patient(practice_id, id) ON DELETE RESTRICT
 );
 
 -- Spring Session JDBC official schema for PostgreSQL

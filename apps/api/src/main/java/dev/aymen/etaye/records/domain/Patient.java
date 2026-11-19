@@ -62,10 +62,6 @@ public class Patient {
         this.updatedAt = Instant.now();
     }
 
-    public Patient(UUID practiceId, String firstName, String lastName) {
-        this(practiceId, firstName, lastName, LocalDate.of(1980, 1, 1), null, null);
-    }
-
     public UUID getId() {
         return id;
     }

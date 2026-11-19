@@ -34,13 +34,17 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
+@org.springframework.test.context.TestPropertySource(properties = {
+        "spring.datasource.hikari.maximum-pool-size=1",
+        "spring.datasource.hikari.minimum-idle=1"
+})
 public class PracticeIsolationTest extends AbstractPostgresTest {
 
     @Autowired
     private PracticeRepository practiceRepository;
 
     @Autowired
-    private PatientService patientService;
+    private TestPatientHelper testPatientHelper;
 
     @Autowired
     private PracticeTransaction practiceTransaction;
@@ -118,22 +122,22 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
     void checkC5_AbsentContextDenial() {
         // Positive control: create Patient A under practice context
         Patient patientA = practiceTransaction.execute(practiceAId, () ->
-                patientService.createPatient(practiceAId, "Alice", "PositiveControl"));
+                testPatientHelper.createPatient(practiceAId, "Alice", "PositiveControl"));
         assertThat(patientA.getId()).isNotNull();
 
         // Read without context must return 0 rows even though Patient A exists
         List<Patient> patients = testTransactionHelper.executeWithoutContext(() ->
-                patientService.listPatientsWithoutAppPredicate());
+                testPatientHelper.listPatientsWithoutAppPredicate());
         assertThat(patients).isEmpty();
 
         // Direct ID lookup without context must return empty
         Optional<Patient> crossReadNoContext = testTransactionHelper.executeWithoutContext(() ->
-                patientService.getPatientWithoutAppPredicate(patientA.getId()));
+                testPatientHelper.getPatientWithoutAppPredicate(patientA.getId()));
         assertThat(crossReadNoContext).isEmpty();
 
         // Write without context must violate RLS WITH CHECK policy
         assertThatThrownBy(() -> testTransactionHelper.executeVoidWithoutContext(() ->
-                patientService.createPatient(practiceAId, "NoContext", "Denied")))
+                testPatientHelper.createPatient(practiceAId, "NoContext", "Denied")))
                 .isInstanceOf(DataAccessException.class)
                 .hasMessageFindingMatch("(?i).*row-level security policy.*");
     }
@@ -143,7 +147,7 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
     void checkC6_AdversarialTwoPracticesAndConnectionReuse() {
         // 1. Transaction 1: Practice A context. Create Patient A.
         Patient patientA = practiceTransaction.execute(practiceAId, () ->
-                patientService.createPatient(practiceAId, "Alice", "Martin"));
+                testPatientHelper.createPatient(practiceAId, "Alice", "Martin"));
         assertThat(patientA.getId()).isNotNull();
 
         Long backendPid1 = practiceTransaction.execute(practiceAId, () ->
@@ -151,12 +155,12 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
 
         // Verify Practice A sees Patient A
         List<Patient> listA = practiceTransaction.execute(practiceAId, () ->
-                patientService.listPatientsWithoutAppPredicate());
+                testPatientHelper.listPatientsWithoutAppPredicate());
         assertThat(listA).extracting(Patient::getId).contains(patientA.getId());
 
         // 2. Transaction 2: Error injection causing rollback on the single connection
         assertThatThrownBy(() -> practiceTransaction.executeVoid(practiceAId, () -> {
-            patientService.createPatient(practiceAId, "WillFail", "Rollback");
+            testPatientHelper.createPatient(practiceAId, "WillFail", "Rollback");
             throw new RuntimeException("Simulated domain failure before commit");
         })).hasMessage("Simulated domain failure before commit");
 
@@ -175,12 +179,12 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
 
         // Now establish Practice B context and create Patient B
         Patient patientB = practiceTransaction.execute(practiceBId, () ->
-                patientService.createPatient(practiceBId, "Bob", "Dubois"));
+                testPatientHelper.createPatient(practiceBId, "Bob", "Dubois"));
         assertThat(patientB.getId()).isNotNull();
 
         // 4. Practice B must see Patient B, but CANNOT see Patient A (RLS + application predicate)
         List<Patient> listB = practiceTransaction.execute(practiceBId, () ->
-                patientService.listPatientsWithoutAppPredicate());
+                testPatientHelper.listPatientsWithoutAppPredicate());
         assertThat(listB).extracting(Patient::getId).contains(patientB.getId());
         assertThat(listB).extracting(Patient::getId).doesNotContain(patientA.getId());
 
@@ -206,17 +210,17 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
         // 7. Verify bidirectional isolation:
         // Practice A cannot see Patient B (neither with direct ID lookup nor raw list)
         Optional<Patient> crossReadByA = practiceTransaction.execute(practiceAId, () ->
-                patientService.getPatientWithoutAppPredicate(patientB.getId()));
+                testPatientHelper.getPatientWithoutAppPredicate(patientB.getId()));
         assertThat(crossReadByA).isEmpty();
 
         List<Patient> finalA = practiceTransaction.execute(practiceAId, () ->
-                patientService.listPatientsWithoutAppPredicate());
+                testPatientHelper.listPatientsWithoutAppPredicate());
         assertThat(finalA).extracting(Patient::getId).contains(patientA.getId());
         assertThat(finalA).extracting(Patient::getId).doesNotContain(patientB.getId());
 
         // Practice B cannot see Patient A
         Optional<Patient> crossReadByB = practiceTransaction.execute(practiceBId, () ->
-                patientService.getPatientWithoutAppPredicate(patientA.getId()));
+                testPatientHelper.getPatientWithoutAppPredicate(patientA.getId()));
         assertThat(crossReadByB).isEmpty();
     }
 
@@ -263,16 +267,16 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
     @DisplayName("Defense-in-depth: Removing application predicate with RLS active keeps isolation green; removing both goes red")
     void checkDefenseInDepthApplicationPredicateAndRls() {
         Patient patientA = practiceTransaction.execute(practiceAId, () ->
-                patientService.createPatient(practiceAId, "Claire", "Defense"));
+                testPatientHelper.createPatient(practiceAId, "Claire", "Defense"));
 
         // 1. With application predicate and RLS active: cross-practice read returns empty
         Optional<Patient> readWithAppPredicate = practiceTransaction.execute(practiceBId, () ->
-                patientService.getPatient(practiceBId, patientA.getId()));
+                testPatientHelper.getPatient(practiceBId, patientA.getId()));
         assertThat(readWithAppPredicate).isEmpty();
 
         // 2. Removing application predicate (direct findById) while RLS is active: STAYS GREEN (returns empty)
         Optional<Patient> readWithoutAppPredicate = practiceTransaction.execute(practiceBId, () ->
-                patientService.getPatientWithoutAppPredicate(patientA.getId()));
+                testPatientHelper.getPatientWithoutAppPredicate(patientA.getId()));
         assertThat(readWithoutAppPredicate).isEmpty();
     }
 

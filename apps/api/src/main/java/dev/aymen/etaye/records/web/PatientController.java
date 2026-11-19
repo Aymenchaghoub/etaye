@@ -35,7 +35,6 @@ public class PatientController {
     public ResponseEntity<PatientResponse> createPatient(
             @PathVariable UUID practiceId,
             @RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey,
-            @RequestHeader(value = "X-Test-Fail-After-Write", required = false) String testFailAfterWrite,
             @Valid @RequestBody PatientEdit edit,
             HttpServletRequest request) {
 
@@ -46,17 +45,12 @@ public class PatientController {
         AuthenticatedAccount account = practiceSecurityService.requireCapability(request, practiceId, "CLINICAL_WRITE");
         String correlationId = CorrelationIdFilter.getCorrelationId(request);
 
-        Runnable failureHook = "true".equalsIgnoreCase(testFailAfterWrite)
-                ? () -> { throw new RuntimeException("Simulated failure after domain write"); }
-                : null;
-
         PatientResponse response = patientService.createPatient(
                 practiceId,
                 account.account().id(),
                 correlationId,
                 idempotencyKey,
-                edit,
-                failureHook
+                edit
         );
 
         return ResponseEntity.status(HttpStatus.CREATED)
