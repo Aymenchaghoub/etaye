@@ -2,6 +2,14 @@
 
 Updated: 2026-11-19. Owner: Aymen Chaghoub.
 
+## Delivery order and milestones, proposed — 2026-11-19
+
+**Phase:** design review; development remains unauthorized (UD-28). After an outside review of the planning package, Aymen said the project has no calendar dates because it is personal, and asked for a mini-ADR. **Proposal, not yet accepted:** [ADR-011](decisions/ADR-011-delivery-order-and-milestones.md) puts the mobile increment before web completion (3 then 2), cuts increment 1 into six demonstrable milestones with effort budgets instead of dates, sets exit criteria for the story 10.1 spike (including the package manager and workspace layout, still undecided), adds a cut rule and keeps documentation attached to the stories that change behavior.
+
+**Verified by execution:** the six milestones partition the 33 increment 1 stories exactly and respect every story dependency; increment 3 depends only on increments 1 and 3; the native patient families are all increment 1; increment 1 holds 74 of the 96 contract operations. Documentary validation only; no application exists.
+
+**Open choice and next action:** Aymen confirms or amends the ADR. On acceptance, add UD-40 to the register, change the order sentence of roadmap section 1 and O-2, and mark the milestones in roadmap section 3. The development authorization and the CORE design review are still his.
+
 ## Windows native entry background review — 2026-11-19
 
 **Phase:** design review. One native creation run saved all 20 light desktop review states (S-25: 7, S-02: 9, S-01: 4), section `54:34`, named version `2423528717189287238`, from verified history version `2423224260331333575`. A read-only recovery downloaded `etaye-entry-background-native-evidence.json` after the original UI failed to expose the link. The download is stored locally and its SHA-256 is `2f8f5252678a2115013fe187ff857f4c1d278b2b12b2eabff12416093abf005e`.
