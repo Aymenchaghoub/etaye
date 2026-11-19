@@ -2,9 +2,9 @@ package dev.aymen.etaye.records;
 
 import dev.aymen.etaye.AbstractPostgresTest;
 import dev.aymen.etaye.TestSessionHelper;
-import dev.aymen.etaye.records.web.PatientEdit;
-import dev.aymen.etaye.records.web.PatientResponse;
-import dev.aymen.etaye.records.web.RecordResponse;
+import dev.aymen.etaye.records.dto.PatientEdit;
+import dev.aymen.etaye.records.dto.PatientResponse;
+import dev.aymen.etaye.records.dto.RecordResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -69,8 +69,7 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         // Account with CLINICAL_WRITE and CLINICAL_READ in Practice A
         clinicalUserA = createAccountAsOwner(
                 "clinical.a." + UUID.randomUUID() + "@example.com",
-                "Dr A",
-                "hash"
+                "Dr A"
         );
         createMembershipAsOwner(clinicalUserA, practiceA, "ACTIVE", new String[]{"CLINICAL_WRITE", "CLINICAL_READ"});
         sessionCookieClinicalA = testSessionHelper.createSessionCookie(clinicalUserA);
@@ -78,8 +77,7 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         // Account with CLINICAL_READ in Practice B
         clinicalUserB = createAccountAsOwner(
                 "clinical.b." + UUID.randomUUID() + "@example.com",
-                "Dr B",
-                "hash"
+                "Dr B"
         );
         createMembershipAsOwner(clinicalUserB, practiceB, "ACTIVE", new String[]{"CLINICAL_READ"});
         sessionCookieClinicalB = testSessionHelper.createSessionCookie(clinicalUserB);
@@ -87,8 +85,7 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         // Administrator-only account in Practice A (no clinical capabilities)
         adminOnlyUserA = createAccountAsOwner(
                 "admin.a." + UUID.randomUUID() + "@example.com",
-                "Admin A",
-                "hash"
+                "Admin A"
         );
         createMembershipAsOwner(adminOnlyUserA, practiceA, "ACTIVE", new String[]{"TEAM_MANAGE", "PRACTICE_SETTINGS", "ADMIN_AUDIT"});
         sessionCookieAdminOnlyA = testSessionHelper.createSessionCookie(adminOnlyUserA);
@@ -96,8 +93,7 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         // Clinician with CLINICAL_READ only in Practice A
         readOnlyUserA = createAccountAsOwner(
                 "readonly.a." + UUID.randomUUID() + "@example.com",
-                "Dr ReadOnly",
-                "hash"
+                "Dr ReadOnly"
         );
         createMembershipAsOwner(readOnlyUserA, practiceA, "ACTIVE", new String[]{"CLINICAL_READ"});
         sessionCookieReadOnlyA = testSessionHelper.createSessionCookie(readOnlyUserA);
@@ -166,6 +162,12 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         String csrfToken = fetchCsrfToken(sessionCookieClinicalA);
         String idempotencyKey = "key-" + UUID.randomUUID();
 
+        int initialPatientCount = countRowsInTableDirectly("patient", "practice_id", practiceA);
+        int initialRecordCount = countRowsInTableDirectly("patient_record", "practice_id", practiceA);
+        int initialAuditCount = countRowsInTableDirectly("audit_event", "practice_id", practiceA);
+        int initialOutboxCount = countRowsInTableDirectly("outbox_event", "practice_id", practiceA);
+        int initialReceiptCount = countRowsInTableDirectly("idempotency_receipt", "practice_id", practiceA);
+
         PatientEdit edit = new PatientEdit(
                 "Jean",
                 "Dupont",
@@ -198,7 +200,14 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
 
         UUID patientId = patient.id();
 
-        // Verify exactly one row in all 5 tables in PostgreSQL
+        // Verify counts filtered by practice_id before and after
+        assertThat(countRowsInTableDirectly("patient", "practice_id", practiceA)).isEqualTo(initialPatientCount + 1);
+        assertThat(countRowsInTableDirectly("patient_record", "practice_id", practiceA)).isEqualTo(initialRecordCount + 1);
+        assertThat(countRowsInTableDirectly("audit_event", "practice_id", practiceA)).isEqualTo(initialAuditCount + 1);
+        assertThat(countRowsInTableDirectly("outbox_event", "practice_id", practiceA)).isEqualTo(initialOutboxCount + 1);
+        assertThat(countRowsInTableDirectly("idempotency_receipt", "practice_id", practiceA)).isEqualTo(initialReceiptCount + 1);
+
+        // Verify exactly one row in all 5 tables in PostgreSQL for this specific patient
         assertThat(countRowsInTableDirectly("patient", "id", patientId)).isEqualTo(1);
         assertThat(countRowsInTableDirectly("patient_record", "patient_id", patientId)).isEqualTo(1);
         assertThat(countRowsInTableDirectly("audit_event", "resource_id", patientId)).isEqualTo(1);
@@ -371,6 +380,13 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         String csrfToken = fetchCsrfToken(sessionCookieClinicalA);
         String idempotencyKey = "key-idemp-" + UUID.randomUUID();
 
+        // Baseline counts of all five tables before creation
+        int p0 = countRowsInTableDirectly("patient", "practice_id", practiceA);
+        int r0 = countRowsInTableDirectly("patient_record", "practice_id", practiceA);
+        int a0 = countRowsInTableDirectly("audit_event", "practice_id", practiceA);
+        int o0 = countRowsInTableDirectly("outbox_event", "practice_id", practiceA);
+        int i0 = countRowsInTableDirectly("idempotency_receipt", "practice_id", practiceA);
+
         PatientEdit initialEdit = new PatientEdit(
                 "Idempotent",
                 "User",
@@ -391,7 +407,15 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
                 .toEntity(PatientResponse.class);
 
         assertThat(firstResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(firstResponse.getHeaders().getFirst(HttpHeaders.ETAG)).isEqualTo("\"0\"");
         UUID createdPatientId = firstResponse.getBody().id();
+
+        // Verify all five tables incremented by 1
+        assertThat(countRowsInTableDirectly("patient", "practice_id", practiceA)).isEqualTo(p0 + 1);
+        assertThat(countRowsInTableDirectly("patient_record", "practice_id", practiceA)).isEqualTo(r0 + 1);
+        assertThat(countRowsInTableDirectly("audit_event", "practice_id", practiceA)).isEqualTo(a0 + 1);
+        assertThat(countRowsInTableDirectly("outbox_event", "practice_id", practiceA)).isEqualTo(o0 + 1);
+        assertThat(countRowsInTableDirectly("idempotency_receipt", "practice_id", practiceA)).isEqualTo(i0 + 1);
 
         // 2. Replay with exact same key and body -> returns same patient, no new row
         ResponseEntity<PatientResponse> replayResponse = client().post()
@@ -405,10 +429,19 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
                 .toEntity(PatientResponse.class);
 
         assertThat(replayResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(replayResponse.getBody().id()).isEqualTo(createdPatientId);
+        assertThat(replayResponse.getHeaders().getFirst(HttpHeaders.ETAG))
+                .isEqualTo(firstResponse.getHeaders().getFirst(HttpHeaders.ETAG));
+        assertThat(replayResponse.getBody()).isEqualTo(firstResponse.getBody());
 
         // Exactly 1 patient in database with this ID
         assertThat(countRowsInTableDirectly("patient", "id", createdPatientId)).isEqualTo(1);
+
+        // Verify all five table counts remained unchanged after replay
+        assertThat(countRowsInTableDirectly("patient", "practice_id", practiceA)).isEqualTo(p0 + 1);
+        assertThat(countRowsInTableDirectly("patient_record", "practice_id", practiceA)).isEqualTo(r0 + 1);
+        assertThat(countRowsInTableDirectly("audit_event", "practice_id", practiceA)).isEqualTo(a0 + 1);
+        assertThat(countRowsInTableDirectly("outbox_event", "practice_id", practiceA)).isEqualTo(o0 + 1);
+        assertThat(countRowsInTableDirectly("idempotency_receipt", "practice_id", practiceA)).isEqualTo(i0 + 1);
 
         // 3. Replay with same key but DIFFERENT body -> 409 IDEMPOTENCY_CONFLICT
         PatientEdit conflictingEdit = new PatientEdit(
@@ -433,6 +466,13 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         assertThat(conflictResponse.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assertThat(conflictResponse.getBody().get("code")).isEqualTo("IDEMPOTENCY_CONFLICT");
         assertThat(conflictResponse.getBody().get("correlationId")).isNotNull();
+
+        // Verify all five table counts remained unchanged after conflict
+        assertThat(countRowsInTableDirectly("patient", "practice_id", practiceA)).isEqualTo(p0 + 1);
+        assertThat(countRowsInTableDirectly("patient_record", "practice_id", practiceA)).isEqualTo(r0 + 1);
+        assertThat(countRowsInTableDirectly("audit_event", "practice_id", practiceA)).isEqualTo(a0 + 1);
+        assertThat(countRowsInTableDirectly("outbox_event", "practice_id", practiceA)).isEqualTo(o0 + 1);
+        assertThat(countRowsInTableDirectly("idempotency_receipt", "practice_id", practiceA)).isEqualTo(i0 + 1);
     }
 
     @Test
@@ -700,8 +740,7 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         // Create an entirely separate account and session
         UUID otherAccountId = createAccountAsOwner(
                 "other.user." + UUID.randomUUID() + "@example.com",
-                "Other User",
-                "hash"
+                "Other User"
         );
         createMembershipAsOwner(otherAccountId, practiceA, "ACTIVE", new String[]{"CLINICAL_WRITE"});
         String sessionCookieOther = testSessionHelper.createSessionCookie(otherAccountId);
@@ -1052,8 +1091,7 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         // Create an account with CLINICAL_WRITE in Practice A
         UUID operatorAccount = createAccountAsOwner(
                 "suspendable." + UUID.randomUUID() + "@example.com",
-                "Dr Suspendable",
-                "hash"
+                "Dr Suspendable"
         );
         createMembershipAsOwner(operatorAccount, practiceA, "ACTIVE", new String[]{"CLINICAL_WRITE", "CLINICAL_READ"});
         String operatorSessionCookie = testSessionHelper.createSessionCookie(operatorAccount);

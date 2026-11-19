@@ -108,6 +108,14 @@ public abstract class AbstractPostgresTest {
         }
     }
 
+    protected static String generateRandomPasswordHash() {
+        return "$argon2id$v=19$m=65536,t=3,p=4$" + UUID.randomUUID() + "$" + UUID.randomUUID();
+    }
+
+    protected static UUID createAccountAsOwner(String email, String displayName) {
+        return createAccountAsOwner(email, displayName, generateRandomPasswordHash());
+    }
+
     protected static UUID createAccountAsOwner(String email, String displayName, String passwordHash) {
         try (Connection conn = DriverManager.getConnection(
                 POSTGRES_CONTAINER.getJdbcUrl(),

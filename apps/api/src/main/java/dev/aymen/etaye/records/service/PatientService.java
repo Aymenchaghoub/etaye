@@ -9,9 +9,10 @@ import dev.aymen.etaye.records.domain.Patient;
 import dev.aymen.etaye.records.domain.PatientRecord;
 import dev.aymen.etaye.records.domain.PatientRecordRepository;
 import dev.aymen.etaye.records.domain.PatientRepository;
-import dev.aymen.etaye.records.web.PatientEdit;
-import dev.aymen.etaye.records.web.PatientResponse;
-import dev.aymen.etaye.records.web.RecordResponse;
+import dev.aymen.etaye.records.dto.PatientEdit;
+import dev.aymen.etaye.records.dto.PatientResponse;
+import dev.aymen.etaye.records.dto.RecordResponse;
+import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,19 +29,22 @@ public class PatientService {
     private final OutboxService outboxService;
     private final IdempotencyService idempotencyService;
     private final PracticeTransaction practiceTransaction;
+    private final EntityManager entityManager;
 
     public PatientService(PatientRepository patientRepository,
                           PatientRecordRepository patientRecordRepository,
                           AuditService auditService,
                           OutboxService outboxService,
                           IdempotencyService idempotencyService,
-                          PracticeTransaction practiceTransaction) {
+                          PracticeTransaction practiceTransaction,
+                          EntityManager entityManager) {
         this.patientRepository = patientRepository;
         this.patientRecordRepository = patientRecordRepository;
         this.auditService = auditService;
         this.outboxService = outboxService;
         this.idempotencyService = idempotencyService;
         this.practiceTransaction = practiceTransaction;
+        this.entityManager = entityManager;
     }
 
     /**
@@ -92,6 +96,7 @@ public class PatientService {
                     edit.phone()
             );
             patient = patientRepository.saveAndFlush(patient);
+            entityManager.refresh(patient);
 
             // 2. Create PatientRecord
             PatientRecord record = new PatientRecord(practiceId, patient.getId());

@@ -1,4 +1,4 @@
-package dev.aymen.etaye.records.web;
+package dev.aymen.etaye.records.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.Email;

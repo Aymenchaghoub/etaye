@@ -3,12 +3,15 @@ package dev.aymen.etaye.infrastructure.transaction;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.hibernate.Session;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -29,13 +32,21 @@ public class PracticeTransaction {
 
     public static final String PRACTICE_TX_PREFIX = "etaye-practice-";
 
+    @FunctionalInterface
+    public interface ConnectionLifecycleListener {
+        void onPracticeContextSetting(Connection connection, UUID practiceId, String contextBeforeSetting, long backendPid);
+    }
+
     private final PlatformTransactionManager transactionManager;
+    private final ObjectProvider<ConnectionLifecycleListener> connectionLifecycleListenerProvider;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public PracticeTransaction(PlatformTransactionManager transactionManager) {
+    public PracticeTransaction(PlatformTransactionManager transactionManager,
+                               ObjectProvider<ConnectionLifecycleListener> connectionLifecycleListenerProvider) {
         this.transactionManager = transactionManager;
+        this.connectionLifecycleListenerProvider = connectionLifecycleListenerProvider;
     }
 
     public <T> T execute(UUID practiceId, Supplier<T> action) {
@@ -99,6 +110,25 @@ public class PracticeTransaction {
     private void setTransactionPracticeContext(UUID practiceId) {
         Session session = entityManager.unwrap(Session.class);
         session.doWork(connection -> {
+            String priorContext = null;
+            long backendPid = 0L;
+            try (PreparedStatement checkPs = connection.prepareStatement(
+                    "SELECT NULLIF(current_setting('etaye.practice_id', true), ''), pg_backend_pid()");
+                 ResultSet rs = checkPs.executeQuery()) {
+                if (rs.next()) {
+                    priorContext = rs.getString(1);
+                    backendPid = rs.getLong(2);
+                    if (priorContext != null) {
+                        throw new IllegalStateException("Leaked practice context detected before setting practiceId: " + priorContext);
+                    }
+                }
+            }
+
+            ConnectionLifecycleListener listener = connectionLifecycleListenerProvider.getIfAvailable();
+            if (listener != null) {
+                listener.onPracticeContextSetting(connection, practiceId, priorContext, backendPid);
+            }
+
             // Parameterized query: never use string concatenation
             try (PreparedStatement ps = connection.prepareStatement("SELECT set_config('etaye.practice_id', ?, true)")) {
                 ps.setString(1, practiceId.toString());

@@ -1,4 +1,4 @@
-package dev.aymen.etaye.records.web;
+package dev.aymen.etaye.records.dto;
 
 import dev.aymen.etaye.records.domain.Patient;
 import dev.aymen.etaye.records.domain.PatientRecord;

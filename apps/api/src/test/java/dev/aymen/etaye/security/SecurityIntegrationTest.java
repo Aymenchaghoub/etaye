@@ -59,7 +59,7 @@ public class SecurityIntegrationTest extends AbstractPostgresTest {
     @Test
     @DisplayName("Security: getCsrfToken returns 200 with X-CSRF-TOKEN headerName and no JavaScript-readable cookie")
     void getCsrfTokenReturnsTokenAndNoCookie() {
-        UUID accountId = createAccountAsOwner("csrf.test." + UUID.randomUUID() + "@example.com", "CSRF Test", "hash");
+        UUID accountId = createAccountAsOwner("csrf.test." + UUID.randomUUID() + "@example.com", "CSRF Test");
         String sessionCookie = testSessionHelper.createSessionCookie(accountId);
 
         ResponseEntity<Map> response = client().get()
@@ -82,19 +82,35 @@ public class SecurityIntegrationTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("Security: Session cookie serializer enforces __Host-etaye-session, HttpOnly, Secure, SameSite=Lax")
+    @DisplayName("C-6: Session cookie serializer enforces __Host-etaye-session, HttpOnly, Secure, SameSite=Lax, Path=/, no Domain")
     void sessionCookieSerializerInvariants() {
         assertThat(cookieSerializer).isInstanceOf(DefaultCookieSerializer.class);
-        UUID accountId = createAccountAsOwner("cookie.test." + UUID.randomUUID() + "@example.com", "Cookie Test", "hash");
-        String cookieHeader = testSessionHelper.createSessionCookie(accountId);
-        assertThat(cookieHeader).startsWith("__Host-etaye-session=");
+
+        org.springframework.mock.web.MockHttpServletRequest request = new org.springframework.mock.web.MockHttpServletRequest();
+        request.setSecure(true);
+        org.springframework.mock.web.MockHttpServletResponse response = new org.springframework.mock.web.MockHttpServletResponse();
+
+        String sessionId = UUID.randomUUID().toString();
+        cookieSerializer.writeCookieValue(new CookieSerializer.CookieValue(request, response, sessionId));
+
+        String setCookie = response.getHeader(HttpHeaders.SET_COOKIE);
+        assertThat(setCookie).isNotNull();
+
+        // The serializer Base64-encodes the session id; the attributes must be exactly the hardened set
+        // (no Domain so the __Host- prefix is honoured, no Max-Age so it stays a browser-session cookie).
+        java.util.List<String> parts = java.util.Arrays.asList(setCookie.split("; "));
+        String expectedValue = java.util.Base64.getEncoder()
+                .encodeToString(sessionId.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        assertThat(parts.get(0)).isEqualTo("__Host-etaye-session=" + expectedValue);
+        assertThat(parts.subList(1, parts.size()))
+                .containsExactlyInAnyOrder("Path=/", "Secure", "HttpOnly", "SameSite=Lax");
     }
 
     @Test
     @DisplayName("B6: Suspending account deletes session; request denied with 401; reactivating account with same cookie still denied")
     void suspendedAccountInvalidatesSessionAndDeniesAccessEvenIfReactivated() {
         String email = "suspended." + UUID.randomUUID() + "@example.com";
-        UUID accountId = createAccountAsOwner(email, "Suspended User", "hash");
+        UUID accountId = createAccountAsOwner(email, "Suspended User");
         UUID practiceId = createPracticeAsOwner("Cabinet Suspendu");
         createMembershipAsOwner(accountId, practiceId, "ACTIVE", new String[]{"CLINICAL_READ"});
 

@@ -98,7 +98,7 @@ public class IdentityLookupTest extends AbstractPostgresTest {
     @DisplayName("B4: Without etaye.account_id setting, etaye_identity role sees zero rows in account and membership")
     void shouldSeeZeroRowsWithoutAccountIdSetting() throws Exception {
         UUID practiceId = createPracticeAsOwner("Cabinet Dentaire RLS");
-        UUID accountId = createAccountAsOwner("rls.test." + UUID.randomUUID() + "@example.com", "Dr. RLS", "hash");
+        UUID accountId = createAccountAsOwner("rls.test." + UUID.randomUUID() + "@example.com", "Dr. RLS");
         createMembershipAsOwner(accountId, practiceId, "ACTIVE", new String[]{"CLINICAL_READ"});
 
         try (Connection conn = identityDataSource.getConnection();

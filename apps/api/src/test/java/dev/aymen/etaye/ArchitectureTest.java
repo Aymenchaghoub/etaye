@@ -35,4 +35,19 @@ public class ArchitectureTest {
     public static final ArchRule practicesShouldNotDependOnRecords =
             noClasses().that().resideInAPackage("..practices..")
                     .should().dependOnClassesThat().resideInAPackage("..records..");
+
+    @ArchTest
+    public static final ArchRule servicesNeverDependOnWeb =
+            noClasses().that().resideInAPackage("..service..")
+                    .should().dependOnClassesThat().resideInAPackage("..web..");
+
+    @ArchTest
+    public static final ArchRule modulesOnlyUseOtherModuleServicesOrPublicTypes =
+            noClasses().that().resideInAPackage("dev.aymen.etaye.records..")
+                    .should().dependOnClassesThat().resideInAnyPackage(
+                            "dev.aymen.etaye.audit.domain..",
+                            "dev.aymen.etaye.communications.domain..",
+                            "dev.aymen.etaye.practices.domain..",
+                            "dev.aymen.etaye.identity.repository.."
+                    );
 }
