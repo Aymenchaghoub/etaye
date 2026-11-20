@@ -9,7 +9,7 @@ Authoritative links: [PRD](../planning-artifacts/prd/prd.md), [business rules](.
 Every row inherits these checks; the local acceptance criterion adds the product-specific test. Keep annotations in English and product copy in French. Resolve conflicting business behavior against business-rules.md, and visual values against [verified token/asset reference](token-reference.md), not generic component-library defaults.
 
 - **SP-STATE:** Specify cold loading, empty, no-results, error, success, read-only and permission-denied where data/actions exist. Render existing data with a failed-section notice on partial failures; do not substitute empty success. Include long content and at least one non-happy-path frame per family.
-- **SP-SAVE:** Show dirty/saving/saved/failed independently. Keep entered information after validation/network failure. Reject stale versions through I-21; prevent duplicate submission; never show success before durable server acknowledgement. I-20 guards navigation, practice switching and closing dirty forms.
+- **SP-SAVE:** Show dirty/saving/saved/failed independently. Keep entered information after validation/network failure. Reject stale versions through I-21; prevent duplicate submission; never show success before durable server acknowledgement. Save states appear in place without changing the button width ([motion study](motion-study/README.md) pattern A). I-20 guards navigation, practice switching and closing dirty forms.
 - **SP-SECURITY:** Every list/item/source/download checks server membership, capability, active practice and resource ownership or patient publication grant. UI hiding is presentation, not security. Expired sessions use S-38; revoked permissions clear protected context.
 - **SP-RESPONSIVE:** Review desktop 1440×1024, tablet 1024×768, mobile 390×844 and minimum reflow at 320 CSS px. Professional multi-pane layouts become sequential full-width panels; patient flows are mobile-first. Do not shrink whole workspaces to fit. Test long French labels and 200% zoom. Datatables may use a labeled horizontal scroll region only where row-to-column comparison genuinely needs it.
 - **SP-A11Y:** Visible keyboard focus, logical heading/order, labeled form fields, error summary and field association; focus restoration after panels; status announcements without excessive interruption; no color-only meaning. Touch targets at least 44×44 CSS px as design target. Use a chart table alternative. Accessibility targets are proposed and require implementation verification.
@@ -71,7 +71,7 @@ Every row inherits these checks; the local acceptance criterion adds the product
 | Content / example | Étaye purpose; dated-source product preview; synthetic-data notice; planning/design status until implementation exists |
 | Actions / validation | Choose scenario; explain current capability honestly; no invented adoption claims or live application link |
 | Permission / visibility | Public synthetic examples only; no account list or private data |
-| Necessary states | Demo preparing, ready, resetting, unavailable; reduced motion; long explanatory copy; shared SP-STATE/SP-SAVE where applicable |
+| Necessary states | Demo preparing (the sign is traced once, only after 400 ms, [motion study](motion-study/README.md) pattern C), ready, resetting, unavailable; reduced motion (static sign); long explanatory copy; shared SP-STATE/SP-SAVE where applicable |
 | Responsive | SP-RESPONSIVE; preserve identity, dates, source readability and action order |
 | Reused components | Showcase; scenario selector; demo notice; visual/behavioral specification in the UX spines |
 | Figma | Required: new S-01 journey frame and relevant state variants; foundations/component source refs per SP-FIGMA |
@@ -287,7 +287,7 @@ Every row inherits these checks; the local acceptance criterion adds the product
 | Content / example | Bilan fictif du 12 octobre 2026, upload metadata, source date, page location, title and version |
 | Actions / validation | Upload via I-08; preview authorized file; open cited page; download; metadata correction with history |
 | Permission / visibility | Each document and citation checked against active practice and record; no public storage URLs |
-| Necessary states | Upload pending, scanning, ready, rejected, unsupported preview, missing page, expired access, long filename; shared SP-STATE/SP-SAVE where applicable |
+| Necessary states | Upload pending, scanning, ready, rejected, unsupported preview, missing page, expired access, long filename; drag over the drop target ([motion study](motion-study/README.md) pattern B); shared SP-STATE/SP-SAVE where applicable |
 | Responsive | SP-RESPONSIVE; preserve identity, dates, source readability and action order |
 | Reused components | File row; secure preview; source panel; upload queue; visual/behavioral specification in the UX spines |
 | Figma | Required: new S-13 journey frame and relevant state variants; foundations/component source refs per SP-FIGMA |

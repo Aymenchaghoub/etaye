@@ -2,6 +2,10 @@
 
 Updated: 2026-11-19. Owner: Aymen Chaghoub.
 
+## Functional motion validated — 2026-11-20
+
+**User decision:** after asking whether Étaye could take ideas from the Kitchen collection, Aymen played an interactive proposal and answered "je valide" (UD-42, [ADR-012](decisions/ADR-012-functional-motion.md)). **Phase:** design. **Completed artifacts:** the [motion study](design/motion-study/README.md) with its playable [prototype](design/motion-study/prototype.html), pointers in the design system (sections 3, 4.5, 7, 12), the states added to I-08, S-01, S-13 and the save pattern, UD-42 in the register. **Verification:** the prototype was exercised in Chromium only (study section 6); `python3 tools/validate_docs.py` and `python3 tools/design_system_reference.py --check` ran on this branch. **Not done:** the Figma variants (study section 7), Firefox and WebKit, contrast measurement of each state, a screen-reader pass; no application code, and development stays gated by UD-28. **Open:** the 400 ms, 2.4 s and 28 px values are [ASSUMPTION]; `--duree-trace` is promoted through Figma and the next token export. **Next action:** draw the variants when Figma access allows, or apply the offline exception of design-system section 14. No code from the Kitchen pages was reused; check any licence first if that changes.
+
 ## Development authorized for story 10.1 only — 2026-11-19
 
 **User decision (written, this session):** "J'accepte l'ADR-011. J'autorise le développement de la story 10.1 uniquement, en exception nommée à la porte design CORE pour ce travail sans interface." Recorded as UD-40 (ADR-011 accepted) and UD-41 (authorization). UD-28 stays in force for every other story, and no screen family is approved by this decision.

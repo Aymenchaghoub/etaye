@@ -70,6 +70,12 @@ Source: Aymen's statements in the working session of that date. He wanted the ap
 | UD-40 | ADR-011 is accepted as written: the delivery order is increment 1, then 3, then 2; increment 1 is built in six milestones with effort budgets instead of dates; the story 10.1 spike has the exit criteria of the ADR; the cut rule applies. The budgets stay placeholders recalibrated after M1, and the cut candidates stay a proposal until a milestone gate. | [ADR-011](../decisions/ADR-011-delivery-order-and-milestones.md); roadmap section 1 and O-2; replaces the order of UD-37. |
 | UD-41 | Development is authorized for **story 10.1 only** (spike, then walking skeleton), as a named exception to the core design gate of UD-16, because the story has no screen. UD-28 stays in force for every other story. Recorded as `authorized_stories = ["10.1"]` in `_bmad/custom/config.toml`; `development_authorized` stays false. | [Context packet](../implementation-artifacts/story-10-1-context-packet.md); epic 10 story 10.1; AGENTS.md; the eleven BMAD overrides. A new story needs its own written authorization. |
 
+### User decisions recorded on 2026-11-20
+
+| ID | Decision | Consequence |
+|---|---|---|
+| UD-42 | Functional motion is added to the design system as proposed: four state-carrying patterns (save button states, the file drop target, the one-shot trace of the sign on S-01, an overflow fade on bounded lists), the proposed token `--duree-trace` of 1200 ms, and animating the sign on S-01 only. His words, after he played the interactive proposal: "je valide". [ASSUMPTION] read as acceptance of the whole proposal; he can amend any point. | [ADR-012](../decisions/ADR-012-functional-motion.md) (the mini-ADR UD-27 requires); [motion study](../design/motion-study/README.md) with its playable prototype; design-system sections 3, 4.5, 7 and 12; I-08, S-01, S-13 and the save pattern. Figma variants are still to be drawn; no application code. |
+
 ### Corrections applied on 2026-11-17 under Aymen's authorization to correct the package
 
 | ID | Correction | Where |
