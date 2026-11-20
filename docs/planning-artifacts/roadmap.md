@@ -1,7 +1,7 @@
 # Roadmap and increment allocation
 
 Status: Proposal derived from the user decisions of 2026-11-17 (UD-12 to UD-37), amended on 2026-11-19 (UD-38 to UD-41). The allocation itself is
-[ASSUMPTION A-16] until Aymen reorders it. Development is authorized for story 10.1 only (UD-41); UD-28 still applies to every other story. The machine-readable source is
+[ASSUMPTION A-16] until Aymen reorders it. Development is authorized for stories 10.1 (UD-41) and 10.2 (UD-45) only; UD-28 still applies to every other story. The machine-readable source is
 [roadmap-assignments.json](roadmap-assignments.json); the tables below are rendered from it and
 `tools/validate_docs.py` fails if a story, design family or API operation is left unassigned.
 
@@ -35,8 +35,8 @@ replacing the order of UD-37). Increment 3 needs a stable HTTPS origin, hence th
 
 | Gate | Owner | Blocks | State |
 |---|---|---|---|
-| Development authorization | Aymen | Every implementation story | Given for story 10.1 only (UD-41); not given for the others (UD-28) |
-| Core design families reviewed (UD-16) | Aymen, with Codex for the Figma side | Increment 1 build of those families | Pending; named exception for the UI-free story 10.1 (UD-41) |
+| Development authorization | Aymen | Every implementation story | Given for stories 10.1 (UD-41) and 10.2 (UD-45) only; not given for the others (UD-28) |
+| Core design families reviewed (UD-16) | Aymen, with Codex for the Figma side | Increment 1 build of those families | Pending; named exceptions for the UI-free stories 10.1 (UD-41) and 10.2 (UD-45) |
 | Increment 1 exit review | Aymen | Increments 2 and 3 | Future |
 | ADR-008 and ADR-009 accepted | Aymen | Stories 10.2 (API meta), 10.4 to 10.8 | Done (UD-29); contract operations are added before stories 10.2 and 10.5 |
 | ADR-010 accepted (native client: React Native with Expo) | Aymen | Stories 10.2 and 10.5 to 10.8 | Done (UD-38, UD-39) |

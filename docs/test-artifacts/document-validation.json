@@ -3,8 +3,8 @@
   "date": "2026-11-20",
   "ok": true,
   "checks": {
-    "markdownFiles": 108,
-    "localLinks": 1305,
+    "markdownFiles": 109,
+    "localLinks": 1322,
     "apiOperations": 96,
     "apiSchemas": 87,
     "planningStories": 45,
@@ -17,13 +17,14 @@
     "verifiedFigmaExports": 15,
     "offlineMockupFiles": 523,
     "applicationScope": {
-      "mode": "story-10.1",
+      "mode": "stories-10.1-10.2",
       "authorizedStories": [
-        "10.1"
+        "10.1",
+        "10.2"
       ],
       "trackedBuildOutputCheck": "checked with git ls-files"
     },
-    "projectFilesSecretScanned": 190
+    "projectFilesSecretScanned": 191
   },
   "errors": [],
   "applicationTestsExecuted": false,

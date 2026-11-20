@@ -30,6 +30,9 @@ STORY_10_1_TRACKED_PATH = re.compile(
     """,
     re.VERBOSE,
 )
+STORY_10_2_TRACKED_PATH = re.compile(
+    r"apps/web/(?:scripts/[^/]+\.(?:mjs|ts)|(?:openapi|codegen)[^/]*\.config\.(?:ts|mjs))"
+)
 RESOURCE_ARTIFACT_SUFFIXES = {
     ".sh", ".bash", ".cmd", ".bat", ".ps1",
     ".class", ".jar", ".war", ".ear", ".exe", ".dll", ".so", ".bin",
@@ -51,6 +54,11 @@ def is_story_resource(path):
 
 
 def check_application_scope(root, errors):
+    modes = {
+        (): "planning-only",
+        ("10.1",): "story-10.1",
+        ("10.1", "10.2"): "stories-10.1-10.2",
+    }
     scope = {"mode": "planning-only", "authorizedStories": []}
     try:
         config = tomllib.loads((root / "_bmad/custom/config.toml").read_text(encoding="utf-8"))
@@ -64,17 +72,22 @@ def check_application_scope(root, errors):
         stories = etaye.get("authorized_stories", [])
         if not isinstance(stories, list) or any(not isinstance(story, str) for story in stories):
             raise ValueError("[etaye] authorized_stories must be a list of story IDs")
-        if any(story != "10.1" for story in stories):
+        story_ids = set(stories)
+        if story_ids - {"10.1", "10.2"}:
             raise ValueError("unknown authorized story in [etaye] authorized_stories")
-        if stories and stories != ["10.1"]:
+        if len(story_ids) != len(stories):
             raise ValueError("[etaye] authorized_stories contains duplicate story IDs")
-        if stories:
-            scope = {"mode": "story-10.1", "authorizedStories": stories}
+        mode = modes.get(tuple(stories))
+        if mode is None:
+            raise ValueError('[etaye] authorized_stories must be [], ["10.1"] or ["10.1", "10.2"]')
+        scope = {"mode": mode, "authorizedStories": stories}
     except (OSError, ValueError) as exc:
         errors.append(f"Invalid authorization in _bmad/custom/config.toml: {exc}")
         scope["mode"] = "invalid-authorization"
 
-    authorized = scope["mode"] == "story-10.1"
+    combined = scope["mode"] == "stories-10.1-10.2"
+    authorized = scope["mode"] == "story-10.1" or combined
+    scope_label = "stories 10.1 and 10.2" if combined else "story 10.1"
     workflows = {"documentation.yml", "codeql.yml", "architecture-pages.yml"}
     forbidden = ("pom.xml", "src", "compose.yaml", "docker-compose.yml")
     if authorized:
@@ -86,7 +99,7 @@ def check_application_scope(root, errors):
     if authorized or workflow_dir.exists():
         if ((authorized and workflow_dir.is_symlink()) or not workflow_dir.is_dir()
                 or {path.name for path in workflow_dir.iterdir()} != workflows):
-            errors.append("Unexpected workflows for story 10.1" if authorized else
+            errors.append(f"Unexpected workflows for {scope_label}" if authorized else
                           "Unexpected application workflow before development authorization")
     for name in forbidden:
         artifact = root / name
@@ -99,33 +112,45 @@ def check_application_scope(root, errors):
     register = "docs/planning-artifacts/decisions-assumptions.md"
     try:
         decisions = (root / register).read_text(encoding="utf-8")
-        row = re.search(r"^[ \t]*\|[ \t]*UD-41[ \t]*\|([^|\n]*)\|", decisions, re.MULTILINE)
-        decision = row[1].casefold() if row else ""
     except (OSError, UnicodeError):
-        decision = ""
-    if (not re.search(r"\bauthorized for \*{0,2}story 10\.1 only\b\*{0,2}", decision)
-            or set(re.findall(r"\b\d{1,2}\.\d{1,2}\b", decision)) != {"10.1"}
-            or re.search(r"\b(?:not|no\s+longer)\s+authorized\b|refus", decision)):
-        errors.append(f"Story 10.1 authorization requires UD-41 in {register} to authorize only story 10.1")
+        decisions = ""
+    # Keep line boundaries while ignoring fenced examples and hidden comments.
+    decisions = re.sub(
+        r"^ {0,3}(?P<fence>`{3,})[^`\n]*(?:\n|\Z).*?(?:^ {0,3}(?P=fence)`*[ \t]*$|\Z)"
+        r"|<!--.*?(?:-->|\Z)",
+        lambda hidden: "\n" * hidden[0].count("\n"),
+        decisions,
+        flags=re.MULTILINE | re.DOTALL,
+    )
+    required_decisions = [("10.1", "UD-41")]
+    if combined:
+        required_decisions.append(("10.2", "UD-45"))
+    for story, decision_id in required_decisions:
+        rows = re.findall(rf"^[ \t]*\|[ \t]*{decision_id}[ \t]*\|(?:([^|\n]*)\|)?", decisions, re.MULTILINE)
+        decision = rows[0].casefold() if len(rows) == 1 else ""
+        if (not re.search(rf"\bauthorized for \*{{0,2}}story {re.escape(story)} only\b\*{{0,2}}", decision)
+                or set(re.findall(r"\b\d{1,2}\.\d{1,2}\b", decision)) != {story}
+                or re.search(r"\b(?:not|never|no\s+longer)(?:\s+\w+){0,3}\s+authorized\b|refus", decision)):
+            errors.append(f"Story {story} authorization requires {decision_id} in {register} to authorize only story {story}")
 
     apps = root / "apps"
     if apps.is_symlink() or not apps.is_dir() or {path.name for path in apps.iterdir()} != {"api", "web"}:
-        errors.append("Story 10.1 requires exactly apps/api and apps/web under apps/")
+        errors.append(f"{scope_label.capitalize()} requires exactly apps/api and apps/web under apps/")
     for name in ("apps/api", "apps/web"):
         path = root / name
         if not path.is_dir() or path.is_symlink():
-            errors.append("Missing or invalid story 10.1 directory: " + name)
+            errors.append(f"Missing or invalid {scope_label} directory: {name}")
     for name in ("apps/api/pom.xml", "apps/api/mvnw", "apps/web/package.json"):
         path = root / name
         if not path.is_file() or path.is_symlink():
-            errors.append("Missing or invalid story 10.1 file: " + name)
+            errors.append(f"Missing or invalid {scope_label} file: {name}")
 
     infra = root / "infra"
     if infra.exists() or infra.is_symlink():
         local = infra / "local"
         if (infra.is_symlink() or not infra.is_dir() or {path.name for path in infra.iterdir()} != {"local"}
                 or local.is_symlink() or not local.is_dir()):
-            errors.append("Story 10.1 only allows infra/local under infra/")
+            errors.append(f"{scope_label.capitalize()} only allows infra/local under infra/")
 
     build_directories = {"node_modules", "target", "test-results", "playwright-report", "dist"}
     try:
@@ -150,16 +175,22 @@ def check_application_scope(root, errors):
             metadata, name = entry.split("\t", 1)
             mode = metadata.split(" ", 1)[0]
             if mode == "120000" and name.startswith(("apps/api/", "apps/web/", "infra/local/")):
-                errors.append("Tracked symlink for story 10.1: " + name)
+                errors.append(f"Tracked symlink for {scope_label}: {name}")
                 continue
             if build_directories.intersection(name.split("/")):
                 errors.append("Tracked build output: " + name)
                 continue
-            if not name.startswith(("apps/", "infra/")):
+            application_path = name.startswith(("apps/", "infra/"))
+            if application_path and mode not in {"100644", "100755"}:
+                errors.append(f"Tracked non-regular entry for {scope_label}: {name}")
+                continue
+            if not application_path:
+                continue
+            if combined and STORY_10_2_TRACKED_PATH.fullmatch(name):
                 continue
             match = STORY_10_1_TRACKED_PATH.fullmatch(name)
             if not match or (match["resource"] and not is_story_resource(root / name)):
-                errors.append("Unexpected tracked path for story 10.1: " + name)
+                errors.append(f"Unexpected tracked path for {scope_label}: {name}")
     return scope
 
 
