@@ -19,3 +19,6 @@ playwright-report/
 reports/
 __pycache__/
 local-reference/
+
+# Archify run output (final diagrams are committed under docs/architecture-views)
+.archify/
