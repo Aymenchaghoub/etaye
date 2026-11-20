@@ -11,6 +11,8 @@ winfig/
 node_modules/
 target/
 dist/
+test-results/
+playwright-report/
 .cache/
 .venv-docs/
 .venv-visual/

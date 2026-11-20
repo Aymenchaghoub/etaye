@@ -6,6 +6,25 @@ Updated: 2026-11-19. Owner: Aymen Chaghoub.
 
 **User decision:** after asking whether Étaye could take ideas from the Kitchen collection, Aymen played an interactive proposal and answered "je valide" (UD-42, [ADR-012](decisions/ADR-012-functional-motion.md)). **Phase:** design. **Completed artifacts:** the [motion study](design/motion-study/README.md) with its playable [prototype](design/motion-study/prototype.html), pointers in the design system (sections 3, 4.5, 7, 12), the states added to I-08, S-01, S-13 and the save pattern, UD-42 in the register. **Verification:** the prototype was exercised in Chromium only (study section 6); `python3 tools/validate_docs.py` and `python3 tools/design_system_reference.py --check` ran on this branch. **Not done:** the Figma variants (study section 7), Firefox and WebKit, contrast measurement of each state, a screen-reader pass; no application code, and development stays gated by UD-28. **Open:** the 400 ms, 2.4 s and 28 px values are [ASSUMPTION]; `--duree-trace` is promoted through Figma and the next token export. **Next action:** draw the variants when Figma access allows, or apply the offline exception of design-system section 14. No code from the Kitchen pages was reused; check any licence first if that changes.
 
+## Story 10.1 implemented, waiting for validation and merge — 2026-11-19
+
+**Phase:** story 10.1 (the only authorized story) is built and verified locally on `feat/10.1-walking-skeleton`. The pull request is opened by the orchestrator after the final review; merge waits for Aymen's validation of the running application, as the delivery rules require. No other story is authorized (UD-28).
+
+**Completed artifacts:** `apps/api` (83 tests on a real PostgreSQL 18), `apps/web` (readiness page, 8 stubbed tests, a real outage spec), `infra/local` (compose, provisioning script and its verification script), `api.yml` and `web.yml` workflows, `tools/assert_test_reports.py`, the TF-3 change of `tools/validate_docs.py` (60 Python tests), deferred items D-34 to D-40, the [implementation record](implementation-artifacts/story-10-1-implementation-record.md), screenshots in `docs/test-artifacts/story-10-1-screenshots/`.
+
+**Actual verification:** see section 5 of the implementation record. Documentary validation, the API suite, the web checks, the real-stack outage spec, the provisioning script and the mutation matrices were run by the orchestrator on 2026-11-19. Not verified: any GitHub Actions run of the new workflows, CodeQL and Gitleaks on this branch, Windows or macOS, load or memory.
+
+**Open choices for Aymen:**
+
+1. Validate what is visible: run the commands of section 9 of the implementation record, open http://localhost:5173 (READY), stop the database container and reload (UNAVAILABLE). The merge waits for your reply.
+2. BR-017 versus AT-038-B: the story follows AT-038-B literally, so denied attempts leave no audit row. Decide whether denials must be recorded.
+3. Toolchain: the code uses Java 21 and Node 22; ADR-002 proposes Java 25 and Node 26, which are not installed here. Keep the fallback or amend ADR-002.
+4. D-40: the new API and web workflows are informational. Turning them into required checks changes the branch rules and is your decision, after a first green run on GitHub.
+5. D-33: its trigger (the backend runs locally) is met. Starting HawkScan needs a StackHawk account and key and may start a time-limited trial; nothing was created. Say if and when.
+6. Deferred items D-33 and D-34 to D-40 keep their own resumption triggers.
+
+**Next action:** after the merge, verify main, record the merge in this file, then wait for a written authorization before any other story. The CORE design review remains Aymen's.
+
 ## Development authorized for story 10.1 only — 2026-11-19
 
 **User decision (written, this session):** "J'accepte l'ADR-011. J'autorise le développement de la story 10.1 uniquement, en exception nommée à la porte design CORE pour ce travail sans interface." Recorded as UD-40 (ADR-011 accepted) and UD-41 (authorization). UD-28 stays in force for every other story, and no screen family is approved by this decision.

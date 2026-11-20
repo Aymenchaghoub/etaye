@@ -20,3 +20,6 @@ docs/architecture-views/overview.svg -text -diff -whitespace
 # Preserve the frozen mockup bytes across platforms and collapse generated diffs.
 design/offline-reference/site/** -text -diff -whitespace linguist-generated=true
 design/offline-reference/snapshot.json text eol=lf
+
+# Maven wrapper batch script on Windows
+apps/api/mvnw.cmd text eol=crlf whitespace=cr-at-eol

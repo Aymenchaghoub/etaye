@@ -1,0 +1,30 @@
+services:
+  postgres:
+    image: postgres:18
+    container_name: etaye-local-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-etaye}
+      # Fixed on purpose: a configurable administrator named like an application role would stay a superuser
+      # when the container restarts on an initialized volume, because the init hook only runs once.
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?set POSTGRES_ADMIN_PASSWORD}
+      ETAYE_OWNER_PASSWORD: ${ETAYE_OWNER_PASSWORD:?set ETAYE_OWNER_PASSWORD}
+      ETAYE_RUNTIME_PASSWORD: ${ETAYE_RUNTIME_PASSWORD:?set ETAYE_RUNTIME_PASSWORD}
+      ETAYE_IDENTITY_PASSWORD: ${ETAYE_IDENTITY_PASSWORD:?set ETAYE_IDENTITY_PASSWORD}
+    volumes:
+      - ./init-roles.sh:/docker-entrypoint-initdb.d/01-init-roles.sh:ro,z
+      - postgres-data:/var/lib/postgresql
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      # Also checked on every start: the init hook runs only once, so a volume initialized by an older
+      # configuration could keep a privileged application role, directly or through a membership. The container
+      # then reports unhealthy.
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ${POSTGRES_DB:-etaye} && psql -U postgres -d ${POSTGRES_DB:-etaye} -Atc \"select not exists (select from pg_roles where rolname in ('etaye_owner', 'etaye_runtime', 'etaye_identity') and (rolsuper or rolbypassrls or rolcreaterole or rolcreatedb or rolreplication)) and not exists (select from pg_auth_members m join pg_roles r on r.oid = m.member where r.rolname in ('etaye_owner', 'etaye_runtime', 'etaye_identity'))\" | grep -qx t"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres-data:
