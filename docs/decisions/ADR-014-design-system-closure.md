@@ -1,0 +1,26 @@
+# ADR-014 — Design-system closure: type roles, web theme, tokens and CSS corrections
+
+Status: Accepted by Aymen on 2026-11-20 (UD-43), after he read an interactive preview of the seven decisions and answered OK to each, with point 7 as "(b) différer", then reviewed a specimen of the 29 type roles and accepted it. Date: 2026-11-20. Related: UD-16, UD-27 (this is the mini-ADR it requires), UD-28, UD-42, ADR-010, ADR-012, ADR-013, [design system](../design/design-system.md) sections 2, 4.3, 5, 12 and 15, [type roles](../design/typography-closure.md), [review record](../design/reviews/2026-11-20-design-system-review.md), D-42 to D-52.
+
+A last review of the design system before closing the topic found, with measurements on `main` at `b48d1c2`, four things that block a faithful implementation: the type roles do not describe the mockups, the web theme has no initial value, the tokens have no generator in the repository, and a few values or rules are missing. This ADR decides them without changing any token, colour, font or logo.
+
+**Choice:**
+
+1. **Type roles follow the mockups.** 63 of 130 usages (48 %) in the component CSS match none of the 14 roles. The roles grow from 14 to **29**: 15 shared or touch-target values are added, 9 isolated values are normalised to the nearest role (at most 1 px of size and 4 px of line height), and the two A4 preview values keep the document scale. Details and the rule: [type roles](../design/typography-closure.md).
+2. **Web theme.** The initial theme follows `prefers-color-scheme`; a manual choice (S-35) overrides it; a small inline script sets `data-theme` before the first paint; `tokens.css` declares `color-scheme: light` and `color-scheme: dark` with the themes, so native controls and scrollbars follow. Where the choice is remembered (device or account) is decided with S-35. Today `tokens.css` has no `color-scheme` and no `prefers-color-scheme` (verified).
+3. **Tokens.** `tokens.json` stays the source (custom format, French usage notes); no migration to the DTCG format now. A generator written in the repository, with a golden-file test against the received `tokens.css`, produces the CSS for both themes and a typed TypeScript module for the native app: it belongs to story 10.6 and needs Aymen's written authorization. `--duree-trace` (ADR-012) is promoted when it exists. A "layout" group for structural dimensions (navigation 248, dialog 560/720, drawer 480/640, preview 328 px) is decided at 10.6. DTCG export, Style Dictionary or Terrazzo only if a second consumer appears (Figma variables recovered, Tokens Studio).
+4. **Six corrections are decided, not applied** (the generated tables are never edited by hand, section 13 of the design system): remove `opacity: .8` from `.etaye-touche` (3.72:1 light and 3.99:1 dark for 12 px text, below 4.5:1; 5.78 and 5.45 without it); add `max-width: 100%` to `.etaye-a4`; document the 1200 px breakpoint of `ext-consult.css`; write the stacking policy (no `z-index` exists; one overlay at a time in a portal above the page, toast above it); give the scrim `rgba(15, 16, 18, 0.48)` a token per theme; remove or document `.etaye-fond-flou`.
+5. **Missing interaction specifications are deferred, not written** (UD-27 freezes specification scope; Aymen chose option (b)): source preview popover, toast and announcements, table sort, disclosure, mobile navigation, patient combobox, calendar and date field, each with a trigger (D-42 to D-48).
+
+**Alternatives:**
+
+- Normalise all values onto the 14 roles: rejected; it would change 63 usages of reviewed mockups and needs a new visual review.
+- Migrate the tokens to the DTCG format now: rejected; no second consumer exists, and it adds a migration without a user.
+- Edit `tokens.css` and the component CSS by hand in this change: rejected; the token tables are generated and the exports are frozen. The values are fixed here and applied through the generator (D-50).
+- Write the missing specifications now: rejected by Aymen (option (a), an exception to UD-27).
+
+**Consequences:**
+
+- Written with this ADR: [type roles](../design/typography-closure.md), the [review record](../design/reviews/2026-11-20-design-system-review.md), [design system](../design/design-system.md) section 15, UD-43, D-42 to D-52, and the amendments of ADR-002 and ADR-010.
+- The 15 added roles have no Figma text style and the generated tables show 14 until the generator runs: they are "Figma to reconcile". `python3 tools/design_system_reference.py --check` is unaffected.
+- **To verify:** the rendered effect of the normalised values on a running interface, the near-duplicate roles that could merge (`meta-aere`, `ui-dense-aere`), forced-colors, relative font sizes (the CSS uses `px` only) and a measured WCAG 2.2 AA audit with screen readers (D-52).
