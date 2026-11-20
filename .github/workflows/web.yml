@@ -1,16 +1,10 @@
 name: Web
 
 on:
+  # No path filter on pull requests: "Web verify" is a required check (D-40), and a required check that
+  # never starts blocks every documentation-only pull request. The job always runs and reports; its
+  # heavy steps run only when a relevant path changed.
   pull_request:
-    paths:
-      - 'apps/web/**'
-      - 'package.json'
-      - 'pnpm-workspace.yaml'
-      - 'pnpm-lock.yaml'
-      - 'tsconfig.json'
-      - 'tsconfig.base.json'
-      - 'tools/assert_test_reports.py'
-      - '.github/workflows/web.yml'
   push:
     branches: [main]
     paths:
@@ -32,40 +26,69 @@ concurrency:
 
 jobs:
   verify:
+    name: Web verify
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+          # The pull request merge commit and its first parent (the base tip) are enough to list the changed files.
+          fetch-depth: 2
+      - name: Detect relevant changes
+        id: changes
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          # Fail closed: anything unexpected runs the full verification.
+          relevant=true
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            if changed=$(git diff --name-only HEAD^1 HEAD); then
+              printf 'Changed files:\n%s\n' "$changed"
+              if ! printf '%s\n' "$changed" | grep -Eq '^(apps/web/|package\.json$|pnpm-workspace\.yaml$|pnpm-lock\.yaml$|tsconfig\.json$|tsconfig\.base\.json$|tools/assert_test_reports\.py$|\.github/workflows/web\.yml$)'; then
+                relevant=false
+              fi
+            else
+              echo 'Could not list the changed files; running the full verification.'
+            fi
+          fi
+          echo "relevant=$relevant" >> "$GITHUB_OUTPUT"
+          echo "Full web verification needed: $relevant"
+      - if: steps.changes.outputs.relevant == 'true'
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '26'
       - name: Install Corepack (no longer bundled with Node 26), enable it and install locked dependencies
+        if: steps.changes.outputs.relevant == 'true'
         run: |
           npm install --global corepack@0.36.0
           corepack enable
           pnpm install --frozen-lockfile
       - name: Check workspace types
+        if: steps.changes.outputs.relevant == 'true'
         run: PATH="$PWD/apps/web/node_modules/.bin:$PATH" pnpm exec tsc -b
       - name: Build web
+        if: steps.changes.outputs.relevant == 'true'
         working-directory: apps/web
         run: pnpm build
       - name: Install Playwright Chromium
+        if: steps.changes.outputs.relevant == 'true'
         working-directory: apps/web
         run: pnpm exec playwright install --with-deps chromium
       - name: Run browser smoke tests with a stubbed probe
+        if: steps.changes.outputs.relevant == 'true'
         working-directory: apps/web
         env:
           PLAYWRIGHT_JSON_OUTPUT_FILE: ${{ github.workspace }}/apps/web/playwright-report/smoke.json
         run: pnpm test:smoke --reporter=json
       - name: Verify Playwright test counts
+        if: steps.changes.outputs.relevant == 'true'
         # Raise the minimum whenever the suite grows.
         run: >-
           python3 tools/assert_test_reports.py playwright apps/web/playwright-report/smoke.json --min-tests 9
           --require-file tests/stubbed-probe.spec.ts
       - name: Upload Playwright report
-        if: failure()
+        if: failure() && steps.changes.outputs.relevant == 'true'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: web-playwright-report
