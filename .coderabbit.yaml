@@ -22,6 +22,12 @@ reviews:
     - "!apps/api/mvnw"
     - "!apps/api/mvnw.cmd"
     - "!apps/api/.mvn/**"
+    - "!.gitattributes"
+    - "!tsconfig.json"
+    - "!tsconfig.base.json"
+    - "!pnpm-workspace.yaml"
+    - "!apps/web/index.html"
+    - "!apps/web/tsconfig.json"
   path_instructions:
     - path: "**"
       instructions: >-
