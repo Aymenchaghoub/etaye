@@ -1,26 +1,40 @@
 package dev.aymen.etaye.records;
 
 import dev.aymen.etaye.AbstractPostgresTest;
+import dev.aymen.etaye.MutableTestClock;
 import dev.aymen.etaye.TestSessionHelper;
+import dev.aymen.etaye.audit.service.AuditService;
 import dev.aymen.etaye.records.dto.PatientEdit;
 import dev.aymen.etaye.records.dto.PatientResponse;
 import dev.aymen.etaye.records.dto.RecordResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.client.RestClient;
+import tools.jackson.databind.ObjectMapper;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +45,11 @@ import java.util.concurrent.CountDownLatch;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Import(PatientCarrierOperationsHttpTest.DenialAuditTestConfig.class)
 public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
+
+    private static final String CREATE_OPERATION = "POST /api/v1/practices/{practiceId}/patients";
+    private static final String READ_OPERATION = "GET /api/v1/practices/{practiceId}/records/{recordId}";
 
     @LocalServerPort
     private int port;
@@ -44,6 +62,50 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
 
     @Autowired
     private dev.aymen.etaye.infrastructure.idempotency.IdempotencyService idempotencyService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private MutableTestClock denialClock;
+
+    @Autowired
+    private FailingDenialAuditService auditService;
+
+    @TestConfiguration(proxyBeanMethods = false)
+    static class DenialAuditTestConfig {
+
+        @Bean
+        MutableTestClock denialClock() {
+            return new MutableTestClock(Instant.parse("2026-11-20T12:00:00Z"));
+        }
+
+        @Bean
+        @Primary
+        FailingDenialAuditService denialTestAuditService(JdbcTemplate jdbcTemplate) {
+            return new FailingDenialAuditService(jdbcTemplate);
+        }
+    }
+
+    static class FailingDenialAuditService extends AuditService {
+        private static final String FAILURE_DETAIL = "synthetic audit exception detail";
+        private volatile UUID failingActor;
+
+        FailingDenialAuditService(JdbcTemplate jdbcTemplate) {
+            super(jdbcTemplate);
+        }
+
+        @Override
+        public void recordEvent(UUID practiceId, UUID actorAccountId, String eventType, String resourceType,
+                                UUID resourceId, Long resourceVersion, String outcome, String correlationId,
+                                String safeMetadataJson) {
+            super.recordEvent(practiceId, actorAccountId, eventType, resourceType, resourceId, resourceVersion,
+                    outcome, correlationId, safeMetadataJson);
+            if ("ACCESS_DENIED".equals(eventType) && actorAccountId.equals(failingActor)) {
+                throw new IllegalStateException(FAILURE_DETAIL);
+            }
+        }
+    }
 
     private RestClient client() {
         return RestClient.builder()
@@ -131,6 +193,69 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         } catch (Exception e) {
             throw new RuntimeException("Error counting rows in " + table, e);
         }
+    }
+
+    private void assertDenialEvent(UUID auditPracticeId, UUID actor, String correlationId,
+                                   Map<String, String> metadata) throws Exception {
+        try (Connection conn = DriverManager.getConnection(
+                POSTGRES_CONTAINER.getJdbcUrl(), POSTGRES_CONTAINER.getUsername(), POSTGRES_CONTAINER.getPassword());
+             PreparedStatement ps = conn.prepareStatement("""
+                     SELECT practice_id, actor_account_id, event_type, resource_type,
+                            resource_id, resource_version, outcome, safe_metadata
+                     FROM audit_event WHERE correlation_id = ?
+                     """)) {
+            ps.setString(1, correlationId);
+            try (ResultSet rs = ps.executeQuery()) {
+                assertThat(rs.next()).isTrue();
+                assertThat(rs.getObject("practice_id")).isEqualTo(auditPracticeId);
+                assertThat(rs.getObject("actor_account_id")).isEqualTo(actor);
+                assertThat(rs.getString("event_type")).isEqualTo("ACCESS_DENIED");
+                assertThat(rs.getString("resource_type")).isEqualTo("API_OPERATION");
+                assertThat(rs.getObject("resource_id")).isNull();
+                assertThat(rs.getObject("resource_version")).isNull();
+                assertThat(rs.getString("outcome")).isEqualTo("DENIED");
+                assertThat(objectMapper.readTree(rs.getString("safe_metadata")))
+                        .isEqualTo(objectMapper.valueToTree(metadata));
+                assertThat(rs.next()).isFalse();
+            }
+        }
+    }
+
+    private ResponseEntity<Map> attemptDeniedCreate(UUID targetPracticeId, String sessionCookie) {
+        return client().post()
+                .uri("/api/v1/practices/" + targetPracticeId + "/patients")
+                .header(HttpHeaders.COOKIE, sessionCookie)
+                .header("X-CSRF-TOKEN", fetchCsrfToken(sessionCookie))
+                .header("Idempotency-Key", "key-denied-" + UUID.randomUUID())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new PatientEdit("Denied", "Candidate", LocalDate.of(1995, 8, 12), null, null))
+                .retrieve()
+                .onStatus(status -> status.is4xxClientError(), (req, res) -> {})
+                .toEntity(Map.class);
+    }
+
+    private ResponseEntity<Map> attemptDeniedRead(UUID targetPracticeId, String sessionCookie) {
+        return client().get()
+                .uri("/api/v1/practices/" + targetPracticeId + "/records/" + UUID.randomUUID())
+                .header(HttpHeaders.COOKIE, sessionCookie)
+                .retrieve()
+                .onStatus(status -> status.is4xxClientError(), (req, res) -> {})
+                .toEntity(Map.class);
+    }
+
+    private String assertDenialProblem(ResponseEntity<Map> response, HttpStatus status, String code, String detail) {
+        assertThat(response.getStatusCode()).isEqualTo(status);
+        assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
+        String correlationId = response.getHeaders().getFirst("X-Correlation-Id");
+        assertThat(correlationId).isNotBlank();
+        assertThat(response.getBody()).isEqualTo(Map.of(
+                "type", "about:blank",
+                "title", status.getReasonPhrase(),
+                "status", status.value(),
+                "code", code,
+                "detail", detail,
+                "correlationId", correlationId));
+        return correlationId;
     }
 
     private void waitForAdvisoryLockContention(long expectedLockKey, long timeoutSeconds) {
@@ -502,55 +627,113 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("C4: Missing capability (admin-only membership and read-only) gives 403 and NO audit/outbox rows")
-    void c4_missingCapability_returns403AndCommitsNoAuditOrOutbox() {
-        String csrfAdmin = fetchCsrfToken(sessionCookieAdminOnlyA);
-        String idempotencyKey = "key-denied-" + UUID.randomUUID();
+    @DisplayName("C4: Each denied mutation gives 403 and commits only its security audit event")
+    void c4_missingCapability_returns403AndCommitsOnlyDenialAudit() throws Exception {
+        Map<String, String> metadata = Map.of("reason", "CAPABILITY_MISSING", "operation", CREATE_OPERATION,
+                "capability", "CLINICAL_WRITE");
 
-        PatientEdit edit = new PatientEdit("Denied", "Candidate", LocalDate.of(1995, 8, 12), null, null);
+        String adminCorrelationId = assertDenialProblem(attemptDeniedCreate(practiceA, sessionCookieAdminOnlyA),
+                HttpStatus.FORBIDDEN, "FORBIDDEN", "Access denied");
+        assertDenialEvent(practiceA, adminOnlyUserA, adminCorrelationId, metadata);
+        assertThat(countRowsInTableDirectly("audit_event", "practice_id", practiceA)).isEqualTo(1);
 
-        int initialAuditCount = countRowsInTableDirectly("audit_event", "practice_id", practiceA);
-        int initialOutboxCount = countRowsInTableDirectly("outbox_event", "practice_id", practiceA);
+        String readOnlyCorrelationId = assertDenialProblem(attemptDeniedCreate(practiceA, sessionCookieReadOnlyA),
+                HttpStatus.FORBIDDEN, "FORBIDDEN", "Access denied");
+        assertDenialEvent(practiceA, readOnlyUserA, readOnlyCorrelationId, metadata);
+        assertThat(countRowsInTableDirectly("audit_event", "practice_id", practiceA)).isEqualTo(2);
 
-        // 1. Administrator without CLINICAL_WRITE attempts createPatient
-        ResponseEntity<Map> adminResponse = client().post()
-                .uri("/api/v1/practices/" + practiceA + "/patients")
-                .header(HttpHeaders.COOKIE, sessionCookieAdminOnlyA)
-                .header("X-CSRF-TOKEN", csrfAdmin)
-                .header("Idempotency-Key", idempotencyKey)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(edit)
-                .retrieve()
-                .onStatus(status -> status.value() == 403, (req, res) -> {})
-                .toEntity(Map.class);
+        assertThat(countRowsInTableDirectly("patient", "practice_id", practiceA)).isZero();
+        assertThat(countRowsInTableDirectly("patient_record", "practice_id", practiceA)).isZero();
+        assertThat(countRowsInTableDirectly("outbox_event", "practice_id", practiceA)).isZero();
+        assertThat(countRowsInTableDirectly("idempotency_receipt", "practice_id", practiceA)).isZero();
+    }
 
-        assertThat(adminResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-        assertThat(adminResponse.getBody().get("code")).isEqualTo("FORBIDDEN");
-        assertThat(adminResponse.getBody().get("correlationId")).isNotNull();
+    @Test
+    void foreignPracticeDenialIsAuditedOnlyInTheSoleActivePractice() throws Exception {
+        UUID practiceC = createPracticeAsOwner("Cabinet C " + UUID.randomUUID());
+        createMembershipAsOwner(clinicalUserA, practiceC, "SUSPENDED", new String[]{"CLINICAL_READ"});
 
-        // 2. Clinician with CLINICAL_READ only attempts createPatient
-        String csrfReadOnly = fetchCsrfToken(sessionCookieReadOnlyA);
-        ResponseEntity<Map> readOnlyResponse = client().post()
-                .uri("/api/v1/practices/" + practiceA + "/patients")
-                .header(HttpHeaders.COOKIE, sessionCookieReadOnlyA)
-                .header("X-CSRF-TOKEN", csrfReadOnly)
-                .header("Idempotency-Key", idempotencyKey + "-2")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(edit)
-                .retrieve()
-                .onStatus(status -> status.value() == 403, (req, res) -> {})
-                .toEntity(Map.class);
+        assertDenialProblem(attemptDeniedRead(practiceA, sessionCookieClinicalA),
+                HttpStatus.NOT_FOUND, "NOT_FOUND", "Resource not found");
+        assertThat(countRowsInTableDirectly("audit_event", "practice_id", practiceA)).isZero();
 
-        assertThat(readOnlyResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-        assertThat(readOnlyResponse.getBody().get("code")).isEqualTo("FORBIDDEN");
-        assertThat(readOnlyResponse.getBody().get("correlationId")).isNotNull();
+        String correlationId = assertDenialProblem(attemptDeniedRead(practiceB, sessionCookieClinicalA),
+                HttpStatus.NOT_FOUND, "NOT_FOUND", "Resource not found");
 
-        // Verify AT-038-B invariant: NO domain audit or outbox row is committed for the failed mutation
-        int finalAuditCount = countRowsInTableDirectly("audit_event", "practice_id", practiceA);
-        int finalOutboxCount = countRowsInTableDirectly("outbox_event", "practice_id", practiceA);
+        assertDenialEvent(practiceA, clinicalUserA, correlationId,
+                Map.of("reason", "NOT_VISIBLE", "operation", READ_OPERATION));
+        assertThat(countRowsInTableDirectly("audit_event", "practice_id", practiceA)).isEqualTo(1);
+        assertThat(countRowsInTableDirectly("audit_event", "practice_id", practiceB)).isZero();
+        assertThat(countRowsInTableDirectly("audit_event", "practice_id", practiceC)).isZero();
+    }
 
-        assertThat(finalAuditCount).isEqualTo(initialAuditCount);
-        assertThat(finalOutboxCount).isEqualTo(initialOutboxCount);
+    @ParameterizedTest
+    @ValueSource(ints = {0, 2})
+    @ExtendWith(OutputCaptureExtension.class)
+    void foreignPracticeDenialWithoutASoleActiveMembershipIsOnlyLogged(int activeMemberships, CapturedOutput output) {
+        if (activeMemberships == 0) {
+            updateMembershipStateAsOwner(clinicalUserA, practiceA, "SUSPENDED");
+        } else {
+            UUID practiceC = createPracticeAsOwner("Cabinet C " + UUID.randomUUID());
+            createMembershipAsOwner(clinicalUserA, practiceC, "ACTIVE", new String[]{"CLINICAL_READ"});
+        }
+
+        String correlationId = assertDenialProblem(attemptDeniedRead(practiceB, sessionCookieClinicalA),
+                HttpStatus.NOT_FOUND, "NOT_FOUND", "Resource not found");
+
+        assertThat(countRowsInTableDirectly("audit_event", "actor_account_id", clinicalUserA)).isZero();
+        assertThat(countRowsInTableDirectly("audit_event", "practice_id", practiceB)).isZero();
+        assertThat(output.getAll()).containsPattern("WARN.*Request rejected:.*code=NOT_FOUND, correlationId=" + correlationId)
+                .doesNotContain(practiceB.toString());
+    }
+
+    @Test
+    @ExtendWith(OutputCaptureExtension.class)
+    void auditFailureRollsBackAndPreservesBothDenialResponses(CapturedOutput output) {
+        auditService.failingActor = adminOnlyUserA;
+        try {
+            String forbiddenId = assertDenialProblem(attemptDeniedCreate(practiceA, sessionCookieAdminOnlyA),
+                    HttpStatus.FORBIDDEN, "FORBIDDEN", "Access denied");
+            String notFoundId = assertDenialProblem(attemptDeniedRead(practiceB, sessionCookieAdminOnlyA),
+                    HttpStatus.NOT_FOUND, "NOT_FOUND", "Resource not found");
+
+            assertThat(countRowsInTableDirectly("audit_event", "actor_account_id", adminOnlyUserA)).isZero();
+            String errorMessage = "ERROR.*Authorization denial audit failed: class=java.lang.IllegalStateException, correlationId=";
+            assertThat(output.getAll()).containsPattern(errorMessage + forbiddenId).containsPattern(errorMessage + notFoundId)
+                    .doesNotContain(FailingDenialAuditService.FAILURE_DETAIL);
+        } finally {
+            auditService.failingActor = null;
+        }
+    }
+
+    @Test
+    void denialAuditVolumeIsBoundedPerActorOperationAndReason() throws Exception {
+        assertDenialProblem(attemptDeniedRead(practiceA, sessionCookieAdminOnlyA),
+                HttpStatus.FORBIDDEN, "FORBIDDEN", "Access denied");
+        assertThat(countRowsInTableDirectly("audit_event", "actor_account_id", adminOnlyUserA)).isEqualTo(1);
+
+        denialClock.advanceSeconds(59);
+        String duplicateId = assertDenialProblem(attemptDeniedRead(practiceA, sessionCookieAdminOnlyA),
+                HttpStatus.FORBIDDEN, "FORBIDDEN", "Access denied");
+        assertThat(countRowsInTableDirectly("audit_event", "correlation_id", duplicateId)).isZero();
+
+        String differentReasonId = assertDenialProblem(attemptDeniedRead(practiceB, sessionCookieAdminOnlyA),
+                HttpStatus.NOT_FOUND, "NOT_FOUND", "Resource not found");
+        assertDenialEvent(practiceA, adminOnlyUserA, differentReasonId,
+                Map.of("reason", "NOT_VISIBLE", "operation", READ_OPERATION));
+
+        String differentOperationId = assertDenialProblem(attemptDeniedCreate(practiceA, sessionCookieAdminOnlyA),
+                HttpStatus.FORBIDDEN, "FORBIDDEN", "Access denied");
+        assertDenialEvent(practiceA, adminOnlyUserA, differentOperationId,
+                Map.of("reason", "CAPABILITY_MISSING", "operation", CREATE_OPERATION, "capability", "CLINICAL_WRITE"));
+        assertThat(countRowsInTableDirectly("audit_event", "actor_account_id", adminOnlyUserA)).isEqualTo(3);
+
+        denialClock.advanceSeconds(1);
+        String expiredWindowId = assertDenialProblem(attemptDeniedRead(practiceA, sessionCookieAdminOnlyA),
+                HttpStatus.FORBIDDEN, "FORBIDDEN", "Access denied");
+        assertDenialEvent(practiceA, adminOnlyUserA, expiredWindowId,
+                Map.of("reason", "CAPABILITY_MISSING", "operation", READ_OPERATION, "capability", "CLINICAL_READ"));
+        assertThat(countRowsInTableDirectly("audit_event", "actor_account_id", adminOnlyUserA)).isEqualTo(4);
     }
 
     @Test
@@ -673,6 +856,7 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
         assertThat(response.getBody().get("code")).isEqualTo("CSRF_REJECTED");
         assertThat(response.getBody().get("correlationId")).isNotNull();
+        assertThat(countRowsInTableDirectly("audit_event", "practice_id", practiceA)).isZero();
     }
 
     @Test
@@ -1646,8 +1830,8 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("B6: Replay after membership is suspended is denied with 403, no projection, and zero new writes")
-    void b6_replayAfterMembershipSuspended_isDeniedWithNoProjectionAndNoNewWrite() {
+    @DisplayName("B6: Replay after membership suspension gives 403 and commits only its security audit event")
+    void b6_replayAfterMembershipSuspended_isDeniedWithOnlySecurityAudit() throws Exception {
         // Create an account with CLINICAL_WRITE in Practice A
         UUID operatorAccount = createAccountAsOwner(
                 "suspendable." + UUID.randomUUID() + "@example.com",
@@ -1702,18 +1886,12 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
                 .onStatus(status -> status.value() == 403, (req, res) -> {})
                 .toEntity(Map.class);
 
-        // Assert: 403 Forbidden, no projection returned
-        assertThat(replayResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-        assertThat(replayResponse.getBody().get("code")).isEqualTo("FORBIDDEN");
-        assertThat(replayResponse.getBody().get("detail")).isEqualTo("Access denied");
-        assertThat(replayResponse.getBody().keySet())
-                .as("a denied replay must carry only problem fields, never a patient projection")
-                .isSubsetOf("type", "title", "status", "detail", "instance", "code", "correlationId", "fieldErrors");
-
-        // Verify zero new writes across all 5 tables
+        String correlationId = assertDenialProblem(replayResponse, HttpStatus.FORBIDDEN, "FORBIDDEN", "Access denied");
+        assertDenialEvent(practiceA, operatorAccount, correlationId,
+                Map.of("reason", "MEMBERSHIP_NOT_ACTIVE", "operation", CREATE_OPERATION, "capability", "CLINICAL_WRITE"));
         assertThat(countRowsInTableDirectly("patient", "practice_id", practiceA)).isEqualTo(patientCount);
         assertThat(countRowsInTableDirectly("patient_record", "practice_id", practiceA)).isEqualTo(recordCount);
-        assertThat(countRowsInTableDirectly("audit_event", "practice_id", practiceA)).isEqualTo(auditCount);
+        assertThat(countRowsInTableDirectly("audit_event", "practice_id", practiceA)).isEqualTo(auditCount + 1);
         assertThat(countRowsInTableDirectly("outbox_event", "practice_id", practiceA)).isEqualTo(outboxCount);
         assertThat(countRowsInTableDirectly("idempotency_receipt", "practice_id", practiceA)).isEqualTo(receiptCount);
     }

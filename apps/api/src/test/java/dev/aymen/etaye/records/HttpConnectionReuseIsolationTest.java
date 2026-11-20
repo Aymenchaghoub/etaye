@@ -143,24 +143,15 @@ public class HttpConnectionReuseIsolationTest extends AbstractPostgresTest {
         assertThat(successResponse.getBody()).isNotNull();
         assertThat(successResponse.getBody().practiceId()).isEqualTo(practiceB);
 
-        // 4. Assert recorded connection lifecycle invariants across the HTTP calls:
-        // Request 1 and Request 3 entered PracticeTransaction
         List<TestConnectionLifecycleRecorder.Snapshot> snapshots = connectionRecorder.getSnapshots();
-        assertThat(snapshots).hasSize(2);
+        assertThat(snapshots).extracting(TestConnectionLifecycleRecorder.Snapshot::practiceId)
+                .containsExactly(practiceA, practiceA, practiceB);
 
-        TestConnectionLifecycleRecorder.Snapshot snapshotA = snapshots.get(0);
-        TestConnectionLifecycleRecorder.Snapshot snapshotB = snapshots.get(1);
-
-        assertThat(snapshotA.practiceId()).isEqualTo(practiceA);
-        assertThat(snapshotB.practiceId()).isEqualTo(practiceB);
-
-        // Both observed an empty context before setting the practice ID (no leak from previous transaction)
-        assertThat(snapshotA.contextBeforeSetting()).isNull();
-        assertThat(snapshotB.contextBeforeSetting()).isNull();
-
-        // Exact same PostgreSQL backend PID was reused
-        assertThat(snapshotB.backendPid())
-                .withFailMessage("Hikari pool size 1 must reuse exact same backend PID across requests")
-                .isEqualTo(snapshotA.backendPid());
+        assertThat(snapshots).allSatisfy(snapshot -> {
+            assertThat(snapshot.contextBeforeSetting()).isNull();
+            assertThat(snapshot.backendPid())
+                    .withFailMessage("Hikari pool size 1 must reuse exact same backend PID across requests")
+                    .isEqualTo(snapshots.getFirst().backendPid());
+        });
     }
 }
