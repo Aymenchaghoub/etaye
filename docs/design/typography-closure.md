@@ -14,7 +14,7 @@ The roles of section 4.3 describe fewer styles than the received mockups use. Th
 
 - A combination used by **two or more selectors**, or by the Figma-verified Repère component, **becomes a role** (13 roles).
 - Two isolated mono values of **patient touch targets** are kept as roles (`donnee-action`, `donnee-jour`): reducing them to 14 px would shrink the slot and day controls of the 48 px patient scale. Total **15 roles added, 29 in all**.
-- An **isolated value moves to the nearest role** (same family; then size, line height, weight) when the shift is at most 1 px of size and 4 px of line height (9 values, below).
+- An **isolated value moves to the nearest role** of the same family, measured by a weighted distance (3 per pixel of size, 1 per pixel of line height, 3 for a different weight), when the shift is at most 1 px of size and 4 px of line height (9 values, below). The table below is authoritative: where this rule read literally gives another target, the listed target applies.
 - The two **A4 preview** values keep their own document scale (2 exceptions).
 - No value of a component verified in Figma (Bouton, Statut, Repère) moves.
 
@@ -65,7 +65,7 @@ Simulated A4 content follows the document scale (section 9 of the design system)
 
 ## 7. How and when this is applied
 
-Never by hand: the generated tables stay at the 14 Figma-resolved roles until the token generator of story 10.6 writes the new ones from `tokens.json` (D-50). The 15 added roles have no Figma text style: they are recorded as "Figma to reconcile" ([design system section 13](design-system.md#13-maintenance)). The component CSS keeps its current values until the same step. Until then this file is the authority for the 15 added roles.
+Never by hand: the generated tables stay at the 14 Figma-resolved roles until the token bridge of story 10.2 (the generator of ADR-014) writes the new ones from `tokens.json` (D-50). The 15 added roles have no Figma text style: they are recorded as "Figma to reconcile" ([design system section 13](design-system.md#13-maintenance)). The component CSS keeps its current values until the same step. Until then this file is the authority for the 15 added roles.
 
 ## 8. Limits
 

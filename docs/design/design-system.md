@@ -294,7 +294,7 @@ Change the sources first (Figma, then `tokens.css`, `resolved-tokens.json` or th
 | 2 | Type roles follow the mockups: 14 roles become 29, 9 values are normalised, A4 keeps its scale | [type roles](typography-closure.md), [ADR-014](../decisions/ADR-014-design-system-closure.md) point 1 |
 | 3 | Six corrections: `.etaye-touche` opacity (4.5:1 failure), `.etaye-a4` width, the 1200 px breakpoint, the stacking policy, a scrim token, `.etaye-fond-flou` | ADR-014 point 4; section 5 |
 | 4 | Web theme: system preference by default, manual override, script before first paint, `color-scheme` per theme | ADR-014 point 2 |
-| 5 | Tokens: `tokens.json` stays the source, a generator in the repository at story 10.6, DTCG only if a second consumer appears | ADR-014 point 3, D-50 |
+| 5 | Tokens: `tokens.json` stays the source, the token bridge of story 10.2 extended into the generator (CSS output, golden-file test) with the native module at story 10.6, DTCG only if a second consumer appears | ADR-014 point 3, D-50 |
 | 6 | Native: ADR-010 confirmed with five execution precisions, no component library | ADR-010 point 7, D-51 |
 | 7 | Missing interaction specifications are deferred, not written (UD-27 is not lifted) | D-42 to D-48 |
 
