@@ -5,6 +5,7 @@ import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
 
@@ -42,42 +43,37 @@ public class ArchitectureTest {
                     .should().dependOnClassesThat().resideInAPackage("..web..");
 
     @ArchTest
-    public static final ArchRule auditDomainAndRepositoryArePrivate =
-            noClasses().that().resideOutsideOfPackage("dev.aymen.etaye.audit..")
-                    .should().dependOnClassesThat().resideInAnyPackage(
-                            "dev.aymen.etaye.audit.domain..",
-                            "dev.aymen.etaye.audit.repository.."
-                    ).as("Classes outside the audit module must not depend on its domain or repository packages; only service and dto are allowed");
+    public static final ArchRule auditModuleInternalClassesArePrivate =
+            classes().that().resideInAPackage("dev.aymen.etaye.audit..")
+                    .and().resideOutsideOfPackages("dev.aymen.etaye.audit.service..", "dev.aymen.etaye.audit.dto..")
+                    .should().onlyHaveDependentClassesThat().resideInAnyPackage("dev.aymen.etaye.audit..")
+                    .allowEmptyShould(false);
 
     @ArchTest
-    public static final ArchRule communicationsDomainAndRepositoryArePrivate =
-            noClasses().that().resideOutsideOfPackage("dev.aymen.etaye.communications..")
-                    .should().dependOnClassesThat().resideInAnyPackage(
-                            "dev.aymen.etaye.communications.domain..",
-                            "dev.aymen.etaye.communications.repository.."
-                    ).as("Classes outside the communications module must not depend on its domain or repository packages; only service and dto are allowed");
+    public static final ArchRule communicationsModuleInternalClassesArePrivate =
+            classes().that().resideInAPackage("dev.aymen.etaye.communications..")
+                    .and().resideOutsideOfPackages("dev.aymen.etaye.communications.service..", "dev.aymen.etaye.communications.dto..")
+                    .should().onlyHaveDependentClassesThat().resideInAnyPackage("dev.aymen.etaye.communications..")
+                    .allowEmptyShould(false);
 
     @ArchTest
-    public static final ArchRule identityDomainAndRepositoryArePrivate =
-            noClasses().that().resideOutsideOfPackage("dev.aymen.etaye.identity..")
-                    .should().dependOnClassesThat().resideInAnyPackage(
-                            "dev.aymen.etaye.identity.domain..",
-                            "dev.aymen.etaye.identity.repository.."
-                    ).as("Classes outside the identity module must not depend on its domain or repository packages; only service and dto are allowed");
+    public static final ArchRule identityModuleInternalClassesArePrivate =
+            classes().that().resideInAPackage("dev.aymen.etaye.identity..")
+                    .and().resideOutsideOfPackages("dev.aymen.etaye.identity.service..", "dev.aymen.etaye.identity.dto..")
+                    .should().onlyHaveDependentClassesThat().resideInAnyPackage("dev.aymen.etaye.identity..")
+                    .allowEmptyShould(false);
 
     @ArchTest
-    public static final ArchRule practicesDomainAndRepositoryArePrivate =
-            noClasses().that().resideOutsideOfPackage("dev.aymen.etaye.practices..")
-                    .should().dependOnClassesThat().resideInAnyPackage(
-                            "dev.aymen.etaye.practices.domain..",
-                            "dev.aymen.etaye.practices.repository.."
-                    ).as("Classes outside the practices module must not depend on its domain or repository packages; only service and dto are allowed");
+    public static final ArchRule practicesModuleInternalClassesArePrivate =
+            classes().that().resideInAPackage("dev.aymen.etaye.practices..")
+                    .and().resideOutsideOfPackages("dev.aymen.etaye.practices.service..", "dev.aymen.etaye.practices.dto..")
+                    .should().onlyHaveDependentClassesThat().resideInAnyPackage("dev.aymen.etaye.practices..")
+                    .allowEmptyShould(false);
 
     @ArchTest
-    public static final ArchRule recordsDomainAndRepositoryArePrivate =
-            noClasses().that().resideOutsideOfPackage("dev.aymen.etaye.records..")
-                    .should().dependOnClassesThat().resideInAnyPackage(
-                            "dev.aymen.etaye.records.domain..",
-                            "dev.aymen.etaye.records.repository.."
-                    ).as("Classes outside the records module must not depend on its domain or repository packages; only service and dto are allowed");
+    public static final ArchRule recordsModuleInternalClassesArePrivate =
+            classes().that().resideInAPackage("dev.aymen.etaye.records..")
+                    .and().resideOutsideOfPackages("dev.aymen.etaye.records.service..", "dev.aymen.etaye.records.dto..")
+                    .should().onlyHaveDependentClassesThat().resideInAnyPackage("dev.aymen.etaye.records..")
+                    .allowEmptyShould(false);
 }
