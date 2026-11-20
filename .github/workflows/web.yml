@@ -61,7 +61,7 @@ jobs:
       - name: Verify Playwright test counts
         # Raise the minimum whenever the suite grows.
         run: >-
-          python3 tools/assert_test_reports.py playwright apps/web/playwright-report/smoke.json --min-tests 8
+          python3 tools/assert_test_reports.py playwright apps/web/playwright-report/smoke.json --min-tests 9
           --require-file tests/stubbed-probe.spec.ts
       - name: Upload Playwright report
         if: failure()

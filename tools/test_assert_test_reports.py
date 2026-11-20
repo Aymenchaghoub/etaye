@@ -23,15 +23,19 @@ class AssertTestReportsTests(unittest.TestCase):
             cases = "".join(f'<testcase name="test{index}" classname="{classname}"/>' for index in range(counts["tests"]))
         (self.root / filename).write_text(f"<testsuite {attributes}>{cases}</testsuite>", encoding="utf-8")
 
-    def write_playwright(self, *, files=("stubbed-probe.spec.ts",) * 3, test_overrides=None, **overrides):
+    def write_playwright(self, *, files=("stubbed-probe.spec.ts",) * 3, test_overrides=None,
+                         suites=None, errors=(), **overrides):
         stats = dict(expected=3, unexpected=0, flaky=0, skipped=0)
         stats.update(overrides)
-        test = {"expectedStatus": "passed", "status": "expected", "results": [{"status": "passed"}]}
+        test = {"projectId": "", "expectedStatus": "passed", "status": "expected", "results": [{"status": "passed"}]}
         test.update(test_overrides or {})
-        specs = [{"file": file, "tests": [test]} for file in files]
+        specs = [{"file": file, "title": f"test{index}", "tests": [test]} for index, file in enumerate(files)]
         data = {
             "config": {"rootDir": "/workspace/apps/web/tests", "configFile": "/workspace/apps/web/playwright.config.ts"},
-            "suites": [{"suites": [{"specs": specs}]}] if specs else [],
+            "suites": suites if suites is not None else (
+                [{"title": "file suite", "suites": [{"title": "describe suite", "specs": specs}]}] if specs else []
+            ),
+            "errors": errors,
             "stats": stats,
         }
         path = self.root / "report.json"
@@ -68,13 +72,35 @@ class AssertTestReportsTests(unittest.TestCase):
 
     def test_surefire_rejects_missing_testcase_elements(self):
         self.write_suite(tests=5, cases="")
-        self.check_report("surefire", self.root, 1, "declares tests=5 but contains 0 testcase elements")
+        self.check_report("surefire", self.root, 1, "declares tests=5 but contains 0 unique testcase elements")
 
     def test_surefire_rejects_testcase_count_mismatch(self):
+        cases = '<testcase classname="Suite" name="one"/><testcase classname="Suite" name="two"/>'
         for declared in (1, 3):
             with self.subTest(declared=declared):
-                self.write_suite(tests=declared, cases="<testcase/><testcase/>")
-                self.check_report("surefire", self.root, 1, "contains 2 testcase elements")
+                self.write_suite(tests=declared, cases=cases)
+                self.check_report("surefire", self.root, 1, "contains 2 unique testcase elements")
+
+    def test_surefire_rejects_duplicate_testcases_in_one_suite(self):
+        case = '<testcase classname="Suite" name="test"/>'
+        self.write_suite(tests=2, cases=case * 2)
+        self.check_report("surefire", self.root, 1, "Duplicate Surefire testcase")
+
+    def test_surefire_rejects_duplicate_testcases_across_reports(self):
+        self.write_suite()
+        self.write_suite("TEST-copy.xml")
+        self.check_report("surefire", self.root, 1, "Duplicate Surefire testcase")
+
+    def test_surefire_rejects_nested_testcase_elements(self):
+        self.write_suite(tests=1, cases='<wrapper><testcase classname="Suite" name="test"/></wrapper>')
+        self.check_report("surefire", self.root, 1, "Nested Surefire testcase")
+
+    def test_surefire_requires_case_name_and_classname(self):
+        for attributes in ('name="test"', 'classname="Suite"', 'name=" " classname="Suite"',
+                           'name="test" classname=""'):
+            with self.subTest(attributes=attributes):
+                self.write_suite(tests=1, cases=f"<testcase {attributes}/>")
+                self.check_report("surefire", self.root, 1, "requires a name and classname")
 
     def test_surefire_requires_each_named_suite(self):
         self.write_suite("TEST-example.Missing.xml")
@@ -90,7 +116,7 @@ class AssertTestReportsTests(unittest.TestCase):
     def test_surefire_rejects_failure_error_and_skip_elements_even_with_green_totals(self):
         for tag in ("failure", "error", "skipped"):
             with self.subTest(tag=tag):
-                self.write_suite(tests=1, cases=f"<testcase><{tag}/></testcase>")
+                self.write_suite(tests=1, cases=f'<testcase classname="Suite" name="test"><{tag}/></testcase>')
                 self.check_report("surefire", self.root, 1, f"Found <{tag}>")
 
     def test_surefire_rejects_malformed_xml(self):
@@ -126,6 +152,38 @@ class AssertTestReportsTests(unittest.TestCase):
         for field in ("unexpected", "flaky", "skipped"):
             with self.subTest(field=field):
                 self.check_report("playwright", self.write_playwright(**{field: 1}), 1, f"{field}=1")
+
+    def test_playwright_rejects_global_errors(self):
+        path = self.write_playwright(errors=[{"message": "worker teardown failed"}])
+        self.check_report("playwright", path, 1, "Playwright report contains global errors")
+
+    def test_playwright_identifies_tests_by_file_full_title_and_project(self):
+        test = {"projectId": "chromium", "expectedStatus": "passed",
+                "status": "expected", "results": [{"status": "passed"}]}
+        spec = {"file": "stubbed-probe.spec.ts", "title": "probe", "tests": [test]}
+        other_file = dict(spec, file="other.spec.ts")
+        other_project = dict(test, projectId="firefox")
+        suites = [{"title": "outer", "suites": [
+            {"title": "group A", "specs": [dict(spec, tests=[test, other_project]), other_file]},
+            {"title": "group B", "specs": [spec]},
+        ]}]
+        path = self.write_playwright(suites=suites, expected=4)
+        self.check_report("playwright", path, 0, "tests=4", minimum=4)
+        suites[0]["suites"].append({"title": "group B", "specs": [spec]})
+        path = self.write_playwright(suites=suites, expected=5)
+        self.check_report("playwright", path, 1, "Duplicate Playwright test", minimum=5)
+
+    def test_playwright_requires_spec_title(self):
+        test = {"projectId": "", "expectedStatus": "passed", "status": "expected", "results": [{"status": "passed"}]}
+        for title in ({}, {"title": " "}):
+            with self.subTest(title=title):
+                spec = {"file": "stubbed-probe.spec.ts", "tests": [test], **title}
+                path = self.write_playwright(suites=[{"title": "group", "specs": [spec]}], expected=1)
+                self.check_report("playwright", path, 1, "Invalid Playwright spec title")
+
+    def test_playwright_requires_project_id(self):
+        path = self.write_playwright(test_overrides={"projectId": None})
+        self.check_report("playwright", path, 1, "Invalid Playwright project ID")
 
     def test_playwright_rejects_empty_suites_with_positive_stats(self):
         self.check_report("playwright", self.write_playwright(files=()), 1, "do not match the 0 passing tests")

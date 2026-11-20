@@ -14,7 +14,7 @@ def read_surefire(directory, required_suites=()):
 
     fields = ("tests", "failures", "errors", "skipped")
     totals = dict.fromkeys(fields, 0)
-    classnames = set()
+    seen_cases = set()
     for report in reports:
         try:
             source = report.read_text(encoding="utf-8-sig")
@@ -33,18 +33,30 @@ def read_surefire(directory, required_suites=()):
         counts = {field: int(suite.attrib[field]) for field in fields}
         if counts["tests"] == 0:
             raise ValueError(f"Zero tests in Surefire report {report.name}")
-        cases = suite.findall("testcase")
-        if len(cases) != counts["tests"]:
+        cases = set(suite.findall("testcase"))
+        unique_cases = set()
+        for case in suite.iter("testcase"):
+            if case not in cases:
+                raise ValueError(f"Nested Surefire testcase in {report.name}")
+            classname, name = case.get("classname", ""), case.get("name", "")
+            if not classname.strip() or not name.strip():
+                raise ValueError(f"Surefire testcase in {report.name} requires a name and classname")
+            key = (classname, name)
+            if key in seen_cases or key in unique_cases:
+                raise ValueError(f"Duplicate Surefire testcase {key!r} in {report.name}")
+            unique_cases.add(key)
+        if len(unique_cases) != counts["tests"]:
             raise ValueError(
-                f"Surefire report {report.name} declares tests={counts['tests']} but contains {len(cases)} testcase elements"
+                f"Surefire report {report.name} declares tests={counts['tests']} "
+                f"but contains {len(unique_cases)} unique testcase elements"
             )
         for element in suite.iter():
             if element.tag in {"skipped", "failure", "error"}:
                 raise ValueError(f"Found <{element.tag}> in Surefire report {report.name}")
-        classnames.update(case.get("classname") for case in cases)
+        seen_cases.update(unique_cases)
         for field in fields:
             totals[field] += counts[field]
-    missing = sorted(set(required_suites) - classnames)
+    missing = sorted(set(required_suites) - {classname for classname, _ in seen_cases})
     if missing:
         raise ValueError(f"Missing required Surefire suites: {', '.join(missing)}")
     return totals
@@ -84,19 +96,33 @@ def read_playwright(report, required_files=()):
     fields = ("expected", "unexpected", "flaky", "skipped")
     if not isinstance(stats, dict) or any(type(stats.get(field)) is not int or stats[field] < 0 for field in fields):
         raise ValueError(f"Invalid stats in Playwright report {report.name}")
+    if playwright_entries(data, "errors", []):
+        raise ValueError(f"Playwright report contains global errors: {report.name}")
 
-    files = set()
-    count = 0
-    suites = list(playwright_entries(data, "suites"))
+    test_keys = set()
+    suites = [(suite, ()) for suite in playwright_entries(data, "suites")]
     while suites:
-        suite = suites.pop()
-        suites.extend(playwright_entries(suite, "suites", []))
+        suite, parent_titles = suites.pop()
+        title = suite.get("title")
+        if not isinstance(title, str):
+            raise ValueError("Invalid Playwright suite title")
+        suite_titles = (*parent_titles, title)
+        suites.extend((child, suite_titles) for child in playwright_entries(suite, "suites", []))
         for spec in playwright_entries(suite, "specs", []):
             file = spec.get("file")
-            if not isinstance(file, str) or not file:
+            if not isinstance(file, str) or not file.strip():
                 raise ValueError("Invalid Playwright spec file")
+            title = spec.get("title")
+            if not isinstance(title, str) or not title.strip():
+                raise ValueError("Invalid Playwright spec title")
             report_file = PurePosixPath(file.replace("\\", "/"))
             for test in playwright_entries(spec, "tests"):
+                project_id = test.get("projectId")
+                if not isinstance(project_id, str):
+                    raise ValueError("Invalid Playwright project ID")
+                key = (report_file, (*suite_titles, title), project_id)
+                if key in test_keys:
+                    raise ValueError(f"Duplicate Playwright test in {file}: {key[1]!r} (project {project_id!r})")
                 if test.get("expectedStatus") != "passed" or test.get("status") != "expected":
                     raise ValueError(
                         f"Playwright test in {file} must expect a pass and finish as expected "
@@ -105,13 +131,14 @@ def read_playwright(report, required_files=()):
                 results = playwright_entries(test, "results")
                 if not results or any(result.get("status") != "passed" for result in results):
                     raise ValueError(f"Playwright test in {file} must have only passed results and at least one result")
-                count += 1
-                files.add(report_file)
+                test_keys.add(key)
 
+    count = len(test_keys)
     if stats["expected"] != count or any(stats[field] for field in fields[1:]):
         summary = ", ".join(f"{field}={stats[field]}" for field in fields)
         raise ValueError(f"Playwright stats ({summary}) do not match the {count} passing tests in the results")
     file_base = playwright_file_base(data.get("config"))
+    files = {file for file, _, _ in test_keys}
     available_paths = {file_base / file for file in files} | {PurePosixPath(file.name) for file in files}
     required_paths = {PurePosixPath(file.replace("\\", "/")) for file in required_files}
     missing = sorted(required_paths - available_paths)
