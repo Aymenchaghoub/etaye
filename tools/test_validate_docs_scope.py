@@ -44,9 +44,13 @@ class ApplicationScopeTests(unittest.TestCase):
     def configure(self, settings="", gate="false"):
         self.write("_bmad/custom/config.toml", f"[etaye]\ndevelopment_authorized = {gate}\n{settings}\n")
 
-    def authorize(self):
-        self.configure('authorized_stories = ["10.1"]')
-        self.write("docs/planning-artifacts/decisions-assumptions.md", "| UD-41 | Authorized for story 10.1 only |\n")
+    def authorize(self, *, story_10_2=False):
+        stories = '["10.1", "10.2"]' if story_10_2 else '["10.1"]'
+        self.configure(f"authorized_stories = {stories}")
+        decisions = "| UD-41 | Authorized for story 10.1 only |\n"
+        if story_10_2:
+            decisions += "| UD-45 | AUTHORIZED FOR **STORY 10.2 ONLY** |\n"
+        self.write("docs/planning-artifacts/decisions-assumptions.md", decisions)
         for name in ("apps/api/pom.xml", "apps/api/mvnw", "apps/web/package.json", "infra/local/docker-compose.yml",
                      "package.json", "pnpm-workspace.yaml", "pnpm-lock.yaml", "tsconfig.base.json",
                      ".github/workflows/api.yml", ".github/workflows/web.yml"):
@@ -118,11 +122,31 @@ class ApplicationScopeTests(unittest.TestCase):
                 if name.startswith(("apps/mobile/", "infra/cloud/")):
                     path.parent.rmdir()
 
+    def test_combined_scope_accepts_story_10_1_tree_with_both_decisions(self):
+        self.authorize(story_10_2=True)
+        scope, errors = self.check_scope()
+        self.assertEqual(scope["mode"], "stories-10.1-10.2")
+        self.assertEqual(scope["authorizedStories"], ["10.1", "10.2"])
+        self.assertIn("skipped", scope["trackedBuildOutputCheck"])
+        self.assertEqual(errors, [])
+
+    def test_authorized_scopes_reject_top_level_packages(self):
+        for story_10_2 in (False, True):
+            with self.subTest(story_10_2=story_10_2):
+                self.authorize(story_10_2=story_10_2)
+                self.write("packages/client/package.json")
+                _, errors = self.check_scope()
+                self.assertEqual(errors, ["Application implementation artifact created: packages"])
+
     def test_invalid_config_fails_closed(self):
         self.write("apps/web/package.json")
+        invalid_list = '[etaye] authorized_stories must be [], ["10.1"] or ["10.1", "10.2"]'
         for settings, gate, expected in [
-            ('authorized_stories = ["10.1", "10.2"]', "false", "unknown authorized story"),
+            ('authorized_stories = ["10.1", "10.3"]', "false", "unknown authorized story"),
             ('authorized_stories = ["10.1", "10.1"]', "false", "duplicate story IDs"),
+            ('authorized_stories = ["10.1", "10.2", "10.2"]', "false", "duplicate story IDs"),
+            ('authorized_stories = ["10.2"]', "false", invalid_list),
+            ('authorized_stories = ["10.2", "10.1"]', "false", invalid_list),
             ('authorized_stories = ["10.1"]', "true", "development_authorized must be false"),
             ('authorized_stories = "10.1"', "false", "must be a list"),
             ('authorized_stories = [10.1]', "false", "must be a list"),
@@ -196,6 +220,19 @@ class ApplicationScopeTests(unittest.TestCase):
             _, errors = self.check_scope()
         self.assertEqual(errors, [f"Unexpected tracked path for story 10.1: {name}" for name in unlisted])
 
+    def test_tracked_codegen_paths_are_allowed_only_in_combined_scope(self):
+        self.write(".git")
+        paths = ("apps/web/scripts/generate-client.mjs", "apps/web/openapi-ts.config.ts")
+        entries = "".join(f"100644 {'0' * 40} 0\t{name}\0" for name in paths)
+        index = subprocess.CompletedProcess([], 0, entries.encode())
+        for story_10_2 in (False, True):
+            with self.subTest(story_10_2=story_10_2):
+                self.authorize(story_10_2=story_10_2)
+                with patch("validate_docs.subprocess.run", return_value=index):
+                    _, errors = self.check_scope()
+                expected = [] if story_10_2 else [f"Unexpected tracked path for story 10.1: {name}" for name in paths]
+                self.assertEqual(errors, expected)
+
     def test_authorized_scope_rejects_tracked_symlinks_with_allowed_names(self):
         self.authorize()
         links = ("apps/api/src/main/java/dev/aymen/etaye/Link.java", "apps/web/src/Link.tsx",
@@ -213,6 +250,18 @@ class ApplicationScopeTests(unittest.TestCase):
         self.write(links[0])
         _, errors = self.check_scope()
         self.assertEqual(errors, [f"Tracked symlink for story 10.1: {name}" for name in links])
+
+    def test_combined_scope_rejects_tracked_symlink_at_allowed_script_path(self):
+        self.authorize(story_10_2=True)
+        name = "apps/web/scripts/generate-client.mjs"
+        path = self.root / name
+        path.parent.mkdir()
+        os.symlink(self.root / ".gitignore", path)
+        subprocess.run(["git", "init", "--quiet", "--template="], cwd=self.root, check=True)
+        subprocess.run(["git", "-c", "core.symlinks=true", "update-index", "--add", "--", name],
+                       cwd=self.root, check=True)
+        _, errors = self.check_scope()
+        self.assertEqual(errors, [f"Tracked symlink for stories 10.1 and 10.2: {name}"])
 
     def test_authorized_scope_requires_ud_41_even_without_git(self):
         self.authorize()
@@ -232,6 +281,29 @@ class ApplicationScopeTests(unittest.TestCase):
                 scope, errors = self.check_scope()
                 self.assertIn("skipped", scope["trackedBuildOutputCheck"])
                 self.assertEqual(errors, [f"Story 10.1 authorization requires UD-41 in {register} to authorize only story 10.1"])
+
+    def test_combined_scope_requires_ud_45_in_the_decision_cell(self):
+        self.authorize(story_10_2=True)
+        register = "docs/planning-artifacts/decisions-assumptions.md"
+        reference = "| UD-41 | Authorized for story 10.1 only |\n"
+        for decision in ("", "| UD-45 | Authorized for story 10.20 only | See story 10.2. |\n",
+                         "| UD-45 | Authorized for story 10.2 only. Also authorized for story 10.1. |\n",
+                         "UD-45 authorizes story 10.2.\n",
+                         "| UD-45 | Development is not authorized for story 10.2 only. |\n",
+                         "| UD-45 | Development is no longer authorized for story 10.2 only. |\n",
+                         "| UD-45 | Development is authorized for story 10.2 only, but refused |\n",
+                         "| UD-45 | Pending decision | Authorized for story 10.2 only |\n"):
+            with self.subTest(decision=decision):
+                self.write(register, reference + decision)
+                _, errors = self.check_scope()
+                self.assertEqual(errors, [f"Story 10.2 authorization requires UD-45 in {register} to authorize only story 10.2"])
+
+    def test_combined_scope_still_requires_ud_41(self):
+        self.authorize(story_10_2=True)
+        register = "docs/planning-artifacts/decisions-assumptions.md"
+        self.write(register, "| UD-45 | Authorized for story 10.2 only |\n")
+        _, errors = self.check_scope()
+        self.assertEqual(errors, [f"Story 10.1 authorization requires UD-41 in {register} to authorize only story 10.1"])
 
     def test_authorized_scope_accepts_real_ud_41_row(self):
         self.authorize()
