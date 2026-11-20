@@ -2,6 +2,30 @@
 
 Updated: 2026-11-20. Owner: Aymen Chaghoub.
 
+## Story 1.2 implemented and live screens approved — 2026-11-20
+
+**Phase.** The branch implements browser sign-in, recovery, and expiry under UD-48. Aymen selected the local inbox and approved the running screens. He authorized merging after CodeRabbit findings are resolved and the required GitHub checks are green. [Implementation record](implementation-artifacts/story-1-2-implementation-record.md)
+
+**Actual verification.** A real-stack sign-in, recovery and second-session revocation journey and the PostgreSQL outage test passed. The isolated V1 upgrade retained the synthetic account and membership. Java 25 passed 150 tests, Chromium smoke passed 19, and the build and documentary validator passed. The local gallery contains the visible runtime comparison.
+
+**Next action.** Complete the single Zcode review, triage and verify the findings, and manually request CodeRabbit on the final pull request revision. Verify current checks and resolved threads before merging.
+
+## Story 1.2 design approved and technical plan drafted — 2026-11-20
+
+**Phase.** Aymen approved S-38 with the neutral background, I-22 and S-04 with the revised amber error summary. S-02 carries its prior approval under UD-46. UD-48 is encoded in `[etaye] authorized_stories`, and global authorization stays false. [Design review record](design/reviews/2026-11-20-story-1-2-review.md)
+
+**Actual verification.** The authorization validator accepts the new scope only with UD-48, and all 95 tooling tests passed. No application code changed. [Draft implementation spec](implementation-artifacts/spec-1-2-sign-in-recovery-expiry.md)
+
+**Next action.** Resolve the manual recovery demonstration boundary before implementation. Story 8.3 owns the branded recovery email. The open choice is automated capture in the real-stack tests or a local-only inbox that Aymen can use during this story.
+
+## Story 10.2 merged and story 1.2 design review prepared — 2026-11-20
+
+**Integration.** [PR #44](https://github.com/Aymenchaghoub/etaye/pull/44) merged as `04a2910e6b224b844dee2b5be13984f27dd84d57` from `ce9e7a0802e65f2c322509321968f59213dc8024`. All seven review threads were resolved and all five required checks passed. [API verify](https://github.com/Aymenchaghoub/etaye/actions/runs/44816341776/job/136565567892) ran Testcontainers and the Surefire evidence gate. [Web verify](https://github.com/Aymenchaghoub/etaye/actions/runs/44816341784/job/136565567911) type-checked, built the Web app, ran Chromium smoke tests and uploaded Playwright and axe evidence. Local reruns passed 143 API tests, 13 browser smoke tests and 94 tooling tests. A separate Chromium exercise loaded all seven compiled fonts over HTTP beneath a path prefix.
+
+**Current phase.** Aymen authorized starting story 1.2 after the 10.2 merge (UD-48). Branch `feat/1.2-sign-in-recovery-expiry` starts at the verified merge. The current work is design review. The local gallery uses the corrected HTML snapshot and includes 96 light and dark captures of S-04, S-38, I-22 and the related M-03 reference at desktop, tablet and phone widths. Figma was not read for this review. The S-38 source shows clinical content through a pale overlay, so the gallery presents additional captures with the underlying content removed. M-03 remains assigned to 8.3. The visual gallery is outside the repository.
+
+**Next action.** Obtain Aymen's S-04, S-38 and I-22 design decisions. Then record the evidence, encode the 1.2 authorization and prepare the implementation spec against the current contract and security decisions. S-02 already has UD-46 approval. No story 1.2 application changes have started. Use one local Zcode review covering silent failures, edge cases and acceptance criteria, then request the manual CodeRabbit review on the story PR.
+
 ## Story 10.2 implemented and locally reviewed — 2026-11-20
 
 **Phase.** Authorized implementation under UD-45 after Aymen approved phase 0. The contract and its indexes were committed before application changes. [PR #44](https://github.com/Aymenchaghoub/etaye/pull/44) contains the generated SDK, readiness migration, version discovery, origin and transport foundations, content-free push port and the web token bridge. The [implementation record](implementation-artifacts/story-10-2-implementation-record.md) follows C1–C9 and explains the ownership of 426 in story 10.4.

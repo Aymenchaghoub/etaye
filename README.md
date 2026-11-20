@@ -11,11 +11,14 @@
 
 - **Story 10.1** delivers a runnable Spring Boot, React and PostgreSQL foundation. It includes a technical readiness page, practice-scoped patient and record API operations, session and CSRF foundations, and an audit trail for access denials. [Implementation record](docs/implementation-artifacts/story-10-1-implementation-record.md)
 - **Story 10.2** adds the OpenAPI-generated TypeScript client, version discovery, and the token generator for the light and dark web themes. [PR #44](https://github.com/Aymenchaghoub/etaye/pull/44) · [Implementation record](docs/implementation-artifacts/story-10-2-implementation-record.md)
+- **Story 1.2** adds Web sign-in, access recovery with an optional local test inbox, and session expiry and return. [Implementation record](docs/implementation-artifacts/story-1-2-implementation-record.md)
 - The consultation screens, patient portal and Expo client are planned. [Story delivery order](docs/planning-artifacts/story-delivery-order.md) · [Roadmap](docs/planning-artifacts/roadmap.md) · [Design coverage](docs/design/coverage.csv)
 
 ## Develop locally
 
 Use Java 25, Node 26, Corepack, Python 3 and Docker. The repository pins pnpm 12.21.0 and includes a Maven wrapper. For the full stack and its generated local database credentials, follow [Running it locally](docs/implementation-artifacts/story-10-1-implementation-record.md#9-running-it-locally). The web server at `http://localhost:5173` proxies API calls to `http://127.0.0.1:8080`.
+
+Open `/connexion` for professional access, `/connexion/patient` for patient sign-in, or `/recuperation` to request a reset link with a synthetic account. [Try local recovery](docs/implementation-artifacts/story-1-2-implementation-record.md#try-local-recovery)
 
 Run these from the repository root to verify the current checkout:
 
@@ -27,7 +30,7 @@ corepack pnpm --filter etaye-web build
 python3 tools/validate_docs.py
 ```
 
-The API suite uses PostgreSQL through Testcontainers. The browser smoke suite uses a stubbed readiness response. The separate real-stack outage test stops and pauses an isolated database container. The Python validator checks the documentation package. [Test strategy](docs/test-artifacts/test-strategy.md) · [GitHub controls](docs/operations/github-security.md)
+The API suite uses PostgreSQL through Testcontainers. Browser smoke tests exercise readiness and authentication against controlled responses. The separate real-stack tests exercise recovery with a disposable synthetic account and stop and pause an isolated database container. The Python validator checks the documentation package. [Test strategy](docs/test-artifacts/test-strategy.md) · [GitHub controls](docs/operations/github-security.md)
 
 ## Project references
 

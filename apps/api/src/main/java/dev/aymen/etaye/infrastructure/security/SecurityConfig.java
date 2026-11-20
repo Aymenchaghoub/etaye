@@ -6,6 +6,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -23,7 +24,7 @@ import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
-@EnableJdbcHttpSession
+@EnableJdbcHttpSession(maxInactiveIntervalInSeconds = 1800)
 public class SecurityConfig {
 
     private final ProblemAuthenticationEntryPoint authenticationEntryPoint;
@@ -114,7 +115,7 @@ public class SecurityConfig {
 
     @Bean
     @Order(2)
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, BrowserSessionLifetime lifetime) throws Exception {
         HeaderOnlyCsrfTokenRequestAttributeHandler csrfRequestHandler = new HeaderOnlyCsrfTokenRequestAttributeHandler();
 
         http
@@ -138,14 +139,17 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/v1/csrf").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/session", "/api/v1/access-recovery",
+                        "/api/v1/access-recovery/complete").permitAll()
                 .anyRequest().authenticated()
             )
+            .addFilterBefore(new ExistingSessionCsrfFilter(accessDeniedHandler), CsrfFilter.class)
             .addFilterBefore(
                 new IdentityResolutionFilter(
                         identityLookupService,
                         authenticationEntryPoint,
                         problemResponseWriter,
-                        sessionRepositoryProvider.getIfAvailable()
+                        sessionRepositoryProvider.getIfAvailable(), lifetime
                 ),
                 CsrfFilter.class
             );

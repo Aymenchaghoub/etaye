@@ -11,7 +11,9 @@ import java.util.UUID;
  */
 public record AuthenticatedAccount(
         AccountProfile account,
-        List<MembershipGrant> memberships
+        List<MembershipGrant> memberships,
+        List<UUID> activeMembershipIds,
+        List<UUID> activePortalLinkIds
 ) {
     public Optional<MembershipGrant> getMembershipForPractice(UUID practiceId) {
         if (!account.isActive()) {
@@ -24,7 +26,11 @@ public record AuthenticatedAccount(
 
     public Optional<MembershipGrant> getActiveMembershipForPractice(UUID practiceId) {
         return getMembershipForPractice(practiceId)
-                .filter(MembershipGrant::isActive);
+                .filter(this::isMembershipCurrent);
+    }
+
+    public boolean isMembershipCurrent(MembershipGrant membership) {
+        return membership.isActive() && activeMembershipIds.contains(membership.id());
     }
 
     public boolean hasCapabilityInPractice(UUID practiceId, String capability) {

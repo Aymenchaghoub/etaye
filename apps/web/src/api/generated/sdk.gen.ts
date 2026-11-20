@@ -35,14 +35,14 @@ export const getApiMeta = <ThrowOnError extends boolean = false>(options?: Optio
 /**
  * getCsrfToken
  *
- * Requires PUBLIC. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.
+ * Issue a session-bound token. Anonymous issuance is rate-limited by the direct client address and a global budget.
  */
 export const getCsrfToken = <ThrowOnError extends boolean = false>(options?: Options<GetCsrfTokenData, ThrowOnError>): RequestResult<GetCsrfTokenResponses, GetCsrfTokenErrors, ThrowOnError> => (options?.client ?? client).get<GetCsrfTokenResponses, GetCsrfTokenErrors, ThrowOnError>({ url: '/csrf', ...options });
 
 /**
  * signOut
  *
- * Requires AUTHENTICATED. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.
+ * Revoke the current authenticated web session.
  */
 export const signOut = <ThrowOnError extends boolean = false>(options: Options<SignOutData, ThrowOnError>): RequestResult<SignOutResponses, SignOutErrors, ThrowOnError> => (options.client ?? client).delete<SignOutResponses, SignOutErrors, ThrowOnError>({
     security: [{
@@ -57,7 +57,7 @@ export const signOut = <ThrowOnError extends boolean = false>(options: Options<S
 /**
  * getSession
  *
- * Requires AUTHENTICATED. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.
+ * Re-resolve account state, session lifetime and current grants from the server.
  */
 export const getSession = <ThrowOnError extends boolean = false>(options?: Options<GetSessionData, ThrowOnError>): RequestResult<GetSessionResponses, GetSessionErrors, ThrowOnError> => (options?.client ?? client).get<GetSessionResponses, GetSessionErrors, ThrowOnError>({
     security: [{
@@ -72,7 +72,7 @@ export const getSession = <ThrowOnError extends boolean = false>(options?: Optio
 /**
  * signIn
  *
- * Requires PUBLIC. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.
+ * Verify web credentials, rotate the cookie and CSRF value, and resolve current grants. Missing, inactive and incorrect identities share one 401.
  */
 export const signIn = <ThrowOnError extends boolean = false>(options: Options<SignInData, ThrowOnError>): RequestResult<SignInResponses, SignInErrors, ThrowOnError> => (options.client ?? client).post<SignInResponses, SignInErrors, ThrowOnError>({
     url: '/session',
@@ -86,7 +86,7 @@ export const signIn = <ThrowOnError extends boolean = false>(options: Options<Si
 /**
  * requestRecovery
  *
- * Requires PUBLIC. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.
+ * Accept the same request for eligible and ineligible identities. Deduplicate within 15 minutes by normalized email and key. Eligible recovery links are issued only after the transaction commits.
  */
 export const requestRecovery = <ThrowOnError extends boolean = false>(options: Options<RequestRecoveryData, ThrowOnError>): RequestResult<RequestRecoveryResponses, RequestRecoveryErrors, ThrowOnError> => (options.client ?? client).post<RequestRecoveryResponses, RequestRecoveryErrors, ThrowOnError>({
     url: '/access-recovery',
@@ -100,7 +100,7 @@ export const requestRecovery = <ThrowOnError extends boolean = false>(options: O
 /**
  * completeRecovery
  *
- * Requires PUBLIC. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.
+ * Redeem the secret from the reset-page fragment once within 15 minutes, replace the password and revoke the account’s sessions atomically. Every expired, inactive or already redeemed token receives the same 422.
  */
 export const completeRecovery = <ThrowOnError extends boolean = false>(options: Options<CompleteRecoveryData, ThrowOnError>): RequestResult<CompleteRecoveryResponses, CompleteRecoveryErrors, ThrowOnError> => (options.client ?? client).post<CompleteRecoveryResponses, CompleteRecoveryErrors, ThrowOnError>({
     url: '/access-recovery/complete',

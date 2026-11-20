@@ -1,0 +1,236 @@
+/* Auth recipes from the approved Étaye offline reference. The two icons are Lucide (ISC). */
+.etaye-auth-icone--attention{--i:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%221.5%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 %3E %3Cpath d=%22m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3%22 /%3E %3Cpath d=%22M12 9v4%22 /%3E %3Cpath d=%22M12 17h.01%22 /%3E %3C/svg%3E")}
+.etaye-auth-icone--info{--i:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%221.5%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 %3E %3Ccircle cx=%2212%22 cy=%2212%22 r=%2210%22 /%3E %3Cpath d=%22M12 16v-4%22 /%3E %3Cpath d=%22M12 8h.01%22 /%3E %3C/svg%3E")}
+
+body:has(.etaye-root) { margin: 0; }
+
+.etaye-root {
+  color: var(--encre);
+  font-family: var(--font-texte);
+  overflow-wrap: anywhere;
+  -webkit-font-smoothing: antialiased;
+}
+
+.etaye-root *, .etaye-root *::before, .etaye-root *::after { box-sizing: border-box; }
+:where(.etaye-root) :where(p, h1, h2, ul) { margin: 0; }
+.etaye-2 { color: var(--encre-2); }
+.etaye-3 { color: var(--encre-3); }
+.etaye-root a:not([class]) { color: var(--accent); text-underline-offset: 3px; }
+.etaye-root a:not([class]):hover { text-decoration-thickness: 2px; }
+
+.etaye-root :is(a, button, input, [tabindex]):focus-visible {
+  outline: var(--trait-focus) solid var(--accent);
+  outline-offset: 2px;
+}
+
+.etaye-auth {
+  min-height: 100dvh;
+  background: var(--papier);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: var(--espace-6);
+}
+
+.etaye-auth header img { height: 28px; }
+.etaye-logo-s, [data-theme="sombre"] .etaye-logo-c { display: none; }
+[data-theme="sombre"] .etaye-logo-s { display: inline; }
+
+.etaye-auth__corps {
+  width: 100%;
+  max-width: 440px;
+  margin: var(--espace-10) auto;
+  display: grid;
+  gap: var(--espace-6);
+  align-content: start;
+}
+
+.etaye-auth__carte {
+  background: var(--surface);
+  border: var(--trait-filet) solid var(--filet-controle);
+  border-radius: var(--rayon-2);
+  padding: var(--espace-6);
+  display: grid;
+  gap: var(--espace-4);
+  min-width: 0;
+}
+
+.etaye-auth h1 { font: 500 26px/32px var(--font-texte); }
+.etaye-auth__introduction { margin-top: var(--espace-2); }
+.etaye-auth__detail { font-size: 14px; }
+.etaye-auth__first { font-size: 13px; line-height: 20px; }
+.etaye-auth__usage { font-size: 12px; }
+
+.etaye-auth__pied, .etaye-auth__options {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--espace-3);
+}
+
+.etaye-auth__pied { font: 400 13px/20px var(--font-texte); }
+.etaye-auth__options { align-items: center; }
+
+.etaye-demo {
+  display: flex;
+  align-items: center;
+  gap: var(--espace-2);
+  font: 400 12px/16px var(--font-texte);
+  color: var(--encre-3);
+}
+
+.etaye-demo::before { content: ""; width: 6px; height: 6px; background: var(--encre-3); flex: none; }
+
+.etaye-form { display: grid; gap: var(--espace-4); }
+.etaye-champ { display: grid; gap: var(--espace-1); min-width: 0; }
+.etaye-champ__libelle { font: 500 13px/20px var(--font-texte); letter-spacing: .01em; }
+.etaye-champ__saisie {
+  min-height: var(--cible-soignant);
+  padding: 0 var(--espace-3);
+  width: 100%;
+  font: 400 15px/22px var(--font-texte);
+  color: var(--encre);
+  background: var(--surface);
+  border: var(--trait-filet) solid var(--filet-controle);
+  border-radius: var(--rayon-1);
+}
+
+.etaye-champ__aide { font: 400 13px/20px var(--font-texte); color: var(--encre-2); }
+.etaye-champ--erreur .etaye-champ__saisie { border: var(--trait-erreur) solid var(--encre); }
+.etaye-champ--erreur .etaye-champ__aide { color: var(--encre); font-weight: 500; }
+
+.etaye-choix {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espace-3);
+  min-height: var(--cible-soignant);
+  font: 400 15px/22px var(--font-texte);
+  cursor: pointer;
+}
+
+.etaye-choix input { width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--accent); flex: none; }
+.etaye-patient .etaye-champ__libelle { font: 500 16px/24px var(--font-texte); }
+.etaye-patient .etaye-champ__saisie { min-height: var(--cible-patient); font-size: 18px; }
+.etaye-patient .etaye-champ__aide { font-size: 15px; line-height: 22px; }
+.etaye-patient .etaye-choix { min-height: var(--cible-patient); font: 400 18px/28px var(--font-texte); align-items: center; }
+.etaye-patient .etaye-choix input { width: 24px; height: 24px; }
+
+.etaye-bouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--cible-soignant);
+  padding: 0 var(--espace-3);
+  font: 500 14px/20px var(--font-texte);
+  border: var(--trait-filet) solid transparent;
+  border-radius: var(--rayon-1);
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+}
+
+.etaye-bouton--principal { background: var(--encre); color: var(--encre-inverse); }
+.etaye-bouton--secondaire { background: var(--surface); color: var(--encre); border-color: var(--filet-controle); }
+.etaye-bouton--secondaire:hover { background: var(--surface-2); }
+.etaye-bouton--discret {
+  background: transparent;
+  color: var(--accent);
+  padding: 0 var(--espace-1);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.etaye-auth__actions { display: flex; flex-wrap: wrap; gap: var(--espace-3); }
+.etaye-bouton[disabled] { background: var(--surface-2); color: var(--encre-2); border-color: var(--filet); cursor: not-allowed; }
+.etaye-bouton--patient {
+  min-height: var(--cible-patient);
+  padding: 0 var(--espace-6);
+  font: 500 18px/24px var(--font-texte);
+  border-radius: var(--rayon-2);
+}
+
+.etaye-bandeau {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--espace-3);
+  align-items: start;
+  padding: var(--espace-3) var(--espace-4);
+  border: var(--trait-filet) solid var(--filet-controle);
+  border-radius: var(--rayon-1);
+  background: var(--surface);
+  font: 400 14px/20px var(--font-texte);
+}
+
+.etaye-bandeau__titre { font-weight: 500; }
+.etaye-bandeau .etaye-bouton { margin-top: var(--espace-2); }
+.etaye-bandeau--attention { background: var(--attention-fond); border-color: var(--attention); }
+.etaye-bandeau--info { background: var(--accent-fond); border-color: var(--accent); }
+.etaye-patient .etaye-bandeau { font: 400 16px/24px var(--font-texte); }
+
+.etaye-auth-icone {
+  display: block;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  background: currentColor;
+  mask: var(--i) center / contain no-repeat;
+}
+
+.etaye-auth-icone--attention { color: var(--attention); }
+.etaye-auth-icone--info { color: var(--accent); }
+
+.etaye-resume-erreurs {
+  padding: var(--espace-3) var(--espace-4);
+  border: 2px solid var(--encre);
+  border-radius: var(--rayon-1);
+  background: var(--surface);
+  font: 400 14px/20px var(--font-texte);
+}
+
+.etaye-resume-erreurs--attention { background: var(--attention-fond); border-color: var(--attention); }
+.etaye-resume-erreurs h2 { font: 500 15px/22px var(--font-texte); margin-bottom: var(--espace-1); }
+.etaye-resume-erreurs ul { padding-left: 20px; }
+
+.etaye-session-scene {
+  box-sizing: border-box;
+  min-height: 100dvh;
+  padding: 96px var(--espace-6) var(--espace-6);
+  background: var(--fond);
+}
+
+.etaye-session-panel {
+  width: min(100%, 560px);
+  margin: 0 auto;
+  background: var(--surface);
+  border-radius: var(--rayon-2);
+  box-shadow: var(--ombre-flottant);
+}
+
+.etaye-session-panel__heading { padding: var(--espace-5) var(--espace-6) var(--espace-3); }
+.etaye-session-panel h1 { font: 500 20px/28px var(--font-texte); }
+.etaye-session-panel__body {
+  padding: var(--espace-2) var(--espace-6) var(--espace-5);
+}
+
+.etaye-session-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--espace-2);
+  padding: var(--espace-4) var(--espace-6);
+  border-top: var(--trait-filet) solid var(--filet);
+}
+
+@media (max-width: 760px) {
+  .etaye-auth { padding: var(--espace-4); }
+  .etaye-auth__corps { margin: var(--espace-6) auto; }
+  .etaye-auth__carte { padding: var(--espace-5); }
+  .etaye-session-scene { padding: 0; }
+  .etaye-session-panel {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100dvh;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .etaye-session-panel__actions { margin-top: auto; }
+}

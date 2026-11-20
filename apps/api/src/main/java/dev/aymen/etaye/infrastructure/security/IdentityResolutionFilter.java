@@ -12,9 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.http.HttpStatus;
-import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -44,15 +42,17 @@ public class IdentityResolutionFilter extends OncePerRequestFilter {
     private final ProblemAuthenticationEntryPoint authenticationEntryPoint;
     private final ProblemResponseWriter problemResponseWriter;
     private final SessionRepository<?> sessionRepository;
+    private final BrowserSessionLifetime lifetime;
 
     public IdentityResolutionFilter(IdentityLookupService identityLookupService,
                                     ProblemAuthenticationEntryPoint authenticationEntryPoint,
                                     ProblemResponseWriter problemResponseWriter,
-                                    SessionRepository<?> sessionRepository) {
+                                    SessionRepository<?> sessionRepository, BrowserSessionLifetime lifetime) {
         this.identityLookupService = identityLookupService;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.problemResponseWriter = problemResponseWriter;
         this.sessionRepository = sessionRepository;
+        this.lifetime = lifetime;
     }
 
     @Override
@@ -81,12 +81,12 @@ public class IdentityResolutionFilter extends OncePerRequestFilter {
 
                 Optional<AuthenticatedAccount> resolved = identityLookupService.resolveAccountAndMemberships(accountId);
 
-                if (resolved.isEmpty() || !resolved.get().account().isActive()) {
-                    HttpSession session = request.getSession(false);
+                HttpSession session = request.getSession(false);
+                if (resolved.isEmpty() || !resolved.get().account().isActive()
+                        || !lifetime.isCurrent(session, resolved.get().account().credentialRevision())) {
 
                     if (isCsrfEndpoint(request)) {
                         if (session != null) {
-                            String sessionId = session.getId();
                             try {
                                 // invalidate() already deletes the persisted session through the repository
                                 session.invalidate();
@@ -141,8 +141,11 @@ public class IdentityResolutionFilter extends OncePerRequestFilter {
                     return;
                 }
 
+                lifetime.recordActivity(request, session);
                 // Store resolved account with current memberships in request attribute
                 request.setAttribute(AUTHENTICATED_ACCOUNT_ATTR, resolved.get());
+            } else {
+                lifetime.retireExpiredAnonymousSession(request);
             }
 
             filterChain.doFilter(request, response);

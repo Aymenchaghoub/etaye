@@ -130,6 +130,21 @@ class ApplicationScopeTests(unittest.TestCase):
         self.assertIn("skipped", scope["trackedBuildOutputCheck"])
         self.assertEqual(errors, [])
 
+    def test_story_1_2_scope_requires_its_own_decision(self):
+        self.authorize(story_10_2=True)
+        self.configure('authorized_stories = ["10.1", "10.2", "1.2"]')
+        scope, errors = self.check_scope()
+        self.assertEqual(scope["mode"], "stories-10.1-10.2-1.2")
+        self.assertEqual(scope["authorizedStories"], ["10.1", "10.2", "1.2"])
+        self.assertEqual(len(errors), 1)
+        self.assertIn("Story 1.2 authorization requires UD-48", errors[0])
+
+        decisions = self.root / "docs/planning-artifacts/decisions-assumptions.md"
+        with decisions.open("a", encoding="utf-8") as stream:
+            stream.write("| UD-48 | Authorized for **story 1.2 only**. |\n")
+        _, errors = self.check_scope()
+        self.assertEqual(errors, [])
+
     def test_authorized_scopes_reject_top_level_packages(self):
         for story_10_2 in (False, True):
             with self.subTest(story_10_2=story_10_2):
@@ -140,7 +155,7 @@ class ApplicationScopeTests(unittest.TestCase):
 
     def test_invalid_config_fails_closed(self):
         self.write("apps/web/package.json")
-        invalid_list = '[etaye] authorized_stories must be [], ["10.1"] or ["10.1", "10.2"]'
+        invalid_list = '[etaye] authorized_stories must be'
         for settings, gate, expected in [
             ('authorized_stories = ["10.1", "10.3"]', "false", "unknown authorized story"),
             ('authorized_stories = ["10.1", "10.2 "]', "false", "unknown authorized story"),
@@ -149,6 +164,7 @@ class ApplicationScopeTests(unittest.TestCase):
             ('authorized_stories = ["10.1", "10.2", "10.2"]', "false", "duplicate story IDs"),
             ('authorized_stories = ["10.2"]', "false", invalid_list),
             ('authorized_stories = ["10.2", "10.1"]', "false", invalid_list),
+            ('authorized_stories = ["10.1", "1.2"]', "false", invalid_list),
             ('authorized_stories = ["10.1"]', "true", "development_authorized must be false"),
             ('authorized_stories = ["10.1"]', "0", "development_authorized must be false"),
             ('authorized_stories = "10.1"', "false", "must be a list"),

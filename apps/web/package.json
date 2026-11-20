@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "node scripts/generate-api.mjs --check && node scripts/check-web-dependencies.mjs && tsc -b && vite build && python3 ../../tools/generate_web_tokens.py --target-dir dist && node -e \"require('node:fs').copyFileSync('../../docs/references/hey-api-license.md', 'dist/hey-api-license.md')\"",
+    "dev": "python3 ../../tools/generate_web_tokens.py --target-dir .cache/design && vite",
+    "build": "node scripts/generate-api.mjs --check && node scripts/check-web-dependencies.mjs && tsc -b && python3 ../../tools/generate_web_tokens.py --target-dir .cache/design && vite build && node -e \"const { copyFileSync } = require('node:fs'); copyFileSync('../../docs/references/hey-api-license.md', 'dist/hey-api-license.md'); copyFileSync('../../design/received/2026-11-03/licenses/Lucide-LICENSE.txt', 'dist/Lucide-LICENSE.txt')\"",
     "preview": "vite preview",
     "test:smoke": "playwright test",
     "test:e2e-real": "playwright test --config=playwright.real.config.ts",
