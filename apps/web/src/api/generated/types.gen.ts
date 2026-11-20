@@ -876,6 +876,10 @@ export type GetReadinessData = {
 
 export type GetReadinessErrors = {
     /**
+     * Forbidden action on visible resource or CSRF failure
+     */
+    403: Problem;
+    /**
      * No supported response media type matches Accept.
      */
     406: Problem;
@@ -911,6 +915,10 @@ export type GetApiMetaData = {
 
 export type GetApiMetaErrors = {
     /**
+     * Forbidden action on visible resource or CSRF failure
+     */
+    403: Problem;
+    /**
      * No supported response media type matches Accept.
      */
     406: Problem;
@@ -941,6 +949,10 @@ export type GetCsrfTokenData = {
 };
 
 export type GetCsrfTokenErrors = {
+    /**
+     * Forbidden action on visible resource or CSRF failure
+     */
+    403: Problem;
     /**
      * No supported response media type matches Accept.
      */

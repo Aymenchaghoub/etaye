@@ -41,6 +41,9 @@
               }
             }
           },
+          "403": {
+            "$ref": "#/components/responses/Problem403"
+          },
           "406": {
             "$ref": "#/components/responses/Problem406"
           },
@@ -82,6 +85,9 @@
               }
             }
           },
+          "403": {
+            "$ref": "#/components/responses/Problem403"
+          },
           "406": {
             "$ref": "#/components/responses/Problem406"
           }
@@ -112,6 +118,9 @@
                 }
               }
             }
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem403"
           },
           "406": {
             "$ref": "#/components/responses/Problem406"

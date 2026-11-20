@@ -104,11 +104,13 @@ public class SecurityIntegrationTest extends AbstractPostgresTest {
         assertThat(allowed.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(allowed.getBody()).containsEntry("headerName", "X-CSRF-TOKEN");
 
-        for (String path : new String[]{"/api/v1/csrf", "/api/v1/meta"}) {
+        for (String path : new String[]{"/api/v1/csrf", "/api/v1/meta", "/api/v1/probes/readiness"}) {
             var rejected = client().get().uri(path).header(HttpHeaders.COOKIE, cookie)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer synthetic-fixture")
                     .retrieve().onStatus(HttpStatus.FORBIDDEN::equals, (req, res) -> {}).toEntity(Map.class);
             assertThat(rejected.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+            assertThat(rejected.getHeaders().getContentType())
+                    .matches(MediaType.APPLICATION_PROBLEM_JSON::includes);
             assertThat(rejected.getBody()).containsEntry("code", "FORBIDDEN");
         }
     }

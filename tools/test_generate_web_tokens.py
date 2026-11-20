@@ -1,4 +1,5 @@
 import json
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -12,10 +13,15 @@ class WebTokenBridgeTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
             model = bridge.build(target)
-            self.assertEqual((target / 'tokens.css').read_bytes(), bridge.GOLDEN.read_bytes())
+            stylesheet = target / 'tokens.css'
+            self.assertEqual(stylesheet.read_bytes(), bridge.GOLDEN.read_bytes())
             self.assertEqual(len(model['typography']), 29)
             self.assertEqual(model['layout']['drawerWidth'], 480)
             self.assertEqual(len(list((target / 'fonts').glob('*.woff2'))), 7)
+            font_urls = re.findall(r'url\("([^"]+\.woff2)"\)', stylesheet.read_text(encoding='utf-8'))
+            self.assertCountEqual(font_urls, [font['file'] for font in model['fonts']])
+            for font_url in font_urls:
+                self.assertTrue((stylesheet.parent / font_url).is_file(), font_url)
             self.assertEqual(len(list((target / 'fonts').glob('*-OFL.txt'))), 3)
             for theme, scheme in [('clair', 'light'), ('sombre', 'dark')]:
                 self.assertEqual(model['themes'][theme]['color-scheme'], scheme)

@@ -11,7 +11,7 @@
 
 - **Story 10.1** delivers a runnable Spring Boot, React and PostgreSQL foundation. It includes a technical readiness page, practice-scoped patient and record API operations, session and CSRF foundations, and an audit trail for access denials. [Implementation record](docs/implementation-artifacts/story-10-1-implementation-record.md)
 - **Story 10.2** adds the OpenAPI-generated TypeScript client, version discovery, and the token generator for the light and dark web themes. [PR #44](https://github.com/Aymenchaghoub/etaye/pull/44) · [Implementation record](docs/implementation-artifacts/story-10-2-implementation-record.md)
-- The consultation screens, patient portal and Expo client are planned. Story authorization and visual approval are tracked separately. [Roadmap](docs/planning-artifacts/roadmap.md) · [Design coverage](docs/design/coverage.csv)
+- The consultation screens, patient portal and Expo client are planned. [Story delivery order](docs/planning-artifacts/story-delivery-order.md) · [Roadmap](docs/planning-artifacts/roadmap.md) · [Design coverage](docs/design/coverage.csv)
 
 ## Develop locally
 

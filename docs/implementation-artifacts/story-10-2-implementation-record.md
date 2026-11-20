@@ -43,6 +43,21 @@ One local Zcode review targeted `b2684a592cb2387b2fda93d0fdab6d131ec1f9f4` from 
 
 The implementation record above captures the reruns after triage. The Web has no unsafe browser operation in this slice. Its cookie and CSRF behavior is exercised at the real HTTP API boundary, while browser tests exercise both flag states on readiness. The PDF check guards known inline viewer package families. AT-039-C still has no new product surface. The real smoke page matched its 10.1 baseline at three widths. Eight synthetic Git changes verified contract, token, license and general documentation routing to the required Web job.
 
+### CodeRabbit
+
+Aymen requested a manual review on `9294bc808dbf869db64de3ec69d048e384b5018f` and accepted the opened smoke-page captures. CodeRabbit returned two actionable findings:
+
+- The public readiness and version operations declare the 403 problem returned for a disallowed bearer header. The CSRF operation shares that behavior and received the same declaration. The SDK was regenerated, and the HTTP integration test asserts the status, media type and problem code for mixed credentials on all three routes. [Contract thread](https://github.com/Aymenchaghoub/etaye/pull/44#discussion_r4647589963)
+- D-50 identifies the remaining native token work and ties it to authorization of story 10.6, rendered typography evidence and future Figma reconciliation. [Deferred-work thread](https://github.com/Aymenchaghoub/etaye/pull/44#discussion_r4647589971)
+
+The review summary also flagged stale version-discovery wording. ADR-009 now identifies the implemented public operation. The architecture-view README points readers from the versioned planning snapshot to the current API contract.
+
+### GitHub Copilot follow-up
+
+- Spring MVC processes the record ETag after the controller checks permission and reads the scoped record. The real HTTP test passes for a bodyless 304 with its ETag. Hey API 0.99.0 omits 304 from the generated body types. A caller requesting conditional reads can inspect the raw response status and ETag in the full SDK result. Story 10.2 has no record UI caller. [HTTP test thread](https://github.com/Aymenchaghoub/etaye/pull/44#discussion_r4647635841) · [Contract thread](https://github.com/Aymenchaghoub/etaye/pull/44#discussion_r4647635900)
+- Generated font URLs now resolve relative to the shipped stylesheet, including when served under a path prefix. The golden fixture and all seven local font references are verified by the generator test. Frozen source assets retain their original layout. [Font thread](https://github.com/Aymenchaghoub/etaye/pull/44#discussion_r4647635993)
+- Two duplicate findings are covered by the CodeRabbit corrections above.
+
 ## Integration
 
 [PR #44](https://github.com/Aymenchaghoub/etaye/pull/44) is the integration point. All five required GitHub checks ran green on the implementation revision and on `a66433a05fdeab0f9707d5fcd236ae972094463e` after the origin correction. The [API run](https://github.com/Aymenchaghoub/etaye/actions/runs/44812052128) ran PostgreSQL tests and the [Web run](https://github.com/Aymenchaghoub/etaye/actions/runs/44812052232) ran the build and Chromium smoke suite.

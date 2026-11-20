@@ -42,11 +42,12 @@ def normalize(source, deltas=None):
     }
 
 
-def render_css(tokens):
+def render_css(tokens, *, font_prefix=''):
     lines = ['/* Étaye — généré depuis tokens.json. Thème : <html data-theme="clair"> ou "sombre". */']
     for font in tokens['fonts']:
-        lines.append('@font-face {{ font-family: "{family}"; src: url("../{file}") format("woff2"); '
-                     'font-weight: {weight}; font-style: {style}; font-display: swap; }}'.format(**font))
+        lines.append('@font-face {{ font-family: "{family}"; src: url("{prefix}{file}") format("woff2"); '
+                     'font-weight: {weight}; font-style: {style}; font-display: swap; }}'
+                     .format(prefix=font_prefix, **font))
     for theme, properties in tokens['themes'].items():
         prefix = ':root, ' if theme == 'clair' else ''
         lines.append(f'{prefix}[data-theme="{theme}"] {{')
@@ -66,7 +67,7 @@ def render_css(tokens):
 
 def build(target):
     source = json.loads(SOURCE.read_text(encoding='utf-8'))
-    if render_css(normalize(source)) != BASELINE.read_text(encoding='utf-8'):
+    if render_css(normalize(source), font_prefix='../') != BASELINE.read_text(encoding='utf-8'):
         raise ValueError('Received tokens.json no longer reproduces the frozen CSS baseline')
     deltas = json.loads(DELTAS.read_text(encoding='utf-8'))
     model = normalize(source, deltas)

@@ -22,7 +22,7 @@ The planning, design and implementation records cover different stages of Étaye
 | Future delivery and recovery | [CI/CD/deployment](operations/cicd-deployment-strategy.md), [GitHub delivery rules](operations/delivery-rules.md) |
 | Dated compatibility/cost evidence | [Hosting assessment](operations/hosting-cost-assessment.md), [official source evidence](operations/technology-and-hosting-sources.md) |
 | Verification design | [Test strategy](test-artifacts/test-strategy.md), [acceptance scenarios](test-artifacts/acceptance-scenarios.md) |
-| Planning backlog and roadmap | [10 epics / 45 stories](planning-artifacts/epics/README.md), [roadmap by increment](planning-artifacts/roadmap.md), [implementation stopping point](implementation-artifacts/README.md) |
+| Planning backlog and roadmap | [Story delivery order](planning-artifacts/story-delivery-order.md), [10 epics / 45 stories](planning-artifacts/epics/README.md), [roadmap by increment](planning-artifacts/roadmap.md), [implementation stopping point](implementation-artifacts/README.md) |
 | UX spines | [DESIGN](planning-artifacts/ux/DESIGN.md), [EXPERIENCE](planning-artifacts/ux/EXPERIENCE.md) |
 | Existing visual source and assets | [Figma inventory](design/figma-inventory.md), [tokens/assets](design/token-reference.md), [snapshot/export manifest](design/figma/manifest.json), [offline design-system reference](design/design-system.md) |
 | Design surfaces | [Screens](design/screen-catalog.md), [interactions/modals](design/interaction-catalog.md), [PDFs/emails](design/pdf-email-specifications.md) |
