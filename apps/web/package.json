@@ -5,16 +5,20 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "node scripts/generate-api.mjs --check && node scripts/check-web-dependencies.mjs && tsc -b && vite build && python3 ../../tools/generate_web_tokens.py --target-dir dist && node -e \"require('node:fs').copyFileSync('../../docs/references/hey-api-license.md', 'dist/hey-api-license.md')\"",
     "preview": "vite preview",
     "test:smoke": "playwright test",
-    "test:e2e-real": "playwright test --config=playwright.real.config.ts"
+    "test:e2e-real": "playwright test --config=playwright.real.config.ts",
+    "generate:api": "node scripts/generate-api.mjs",
+    "check:api": "node scripts/generate-api.mjs --check"
   },
   "dependencies": {
     "react": "19.3.1",
     "react-dom": "19.3.1"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@hey-api/openapi-ts": "0.99.0",
     "@playwright/test": "1.63.0",
     "@types/node": "22.13.10",
     "@types/react": "19.0.10",

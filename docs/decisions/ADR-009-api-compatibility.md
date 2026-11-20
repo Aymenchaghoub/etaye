@@ -16,3 +16,5 @@ Browsers always load the current front end from the application origin, but an i
 Alternatives: URL-per-release versioning (more routes to maintain), header-only content negotiation (harder to cache and debug), and no policy (breaks installed clients silently).
 
 Consequences: one planned operation, one new error code in the catalog, a client-version log field, a contract-drift check in story 10.2 and an update screen to design (DF-9). The window numbers are assumptions until measured against real release cadence.
+
+**Delivery sequence (10.2 phase 0, 2026-11-20).** Story 10.2 publishes version discovery and the generated SDK. Story 10.4 owns the protected-route `426 CLIENT_TOO_OLD` response and the first stale-client recovery, ahead of native rollout. The shared compatibility window remains an assumption. [Phase 0 plan](../implementation-artifacts/story-10-2-phase-0.md)

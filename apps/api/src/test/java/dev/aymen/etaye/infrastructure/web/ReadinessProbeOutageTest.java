@@ -217,6 +217,13 @@ public class ReadinessProbeOutageTest {
             assertThat(stoppedResponse.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
             assertThat(stoppedResponse.getBody()).containsExactly(Map.entry("status", "DOWN"));
             assertThat(stopDuration).isLessThan(4500L);
+
+            var meta = client().get().uri("/api/v1/meta")
+                    .header(HttpHeaders.COOKIE, sessionCookie).retrieve().toEntity(Map.class);
+            assertThat(meta.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(meta.getBody()).containsExactlyInAnyOrderEntriesOf(Map.of(
+                    "apiVersion", "v1", "minimumClientVersion", "0.0.1", "latestClientVersion", "0.0.1"));
+            assertThat(meta.getHeaders().getFirst(HttpHeaders.SET_COOKIE)).isNull();
         });
     }
 }
