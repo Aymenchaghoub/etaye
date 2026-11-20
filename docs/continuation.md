@@ -2,6 +2,14 @@
 
 Updated: 2026-11-20. Owner: Aymen Chaghoub.
 
+## Story 10.2 phase 0 prepared — 2026-11-20
+
+**Phase.** Planning and owner review for story 10.2 under UD-45. The [phase 0 plan and implementation prompt](implementation-artifacts/story-10-2-phase-0.md) record the contract-first sequence, SDK and token bridge, metadata and transport proposals, C1–C9 evidence and scope limits. Aymen requested one local Zcode review per implementation story, with silent failures, edge cases and acceptance criteria in one report. The [delivery rules](operations/delivery-rules.md) carry that decision.
+
+**Actual verification.** The sources and authorization were checked at `8afd51c2a7e41a29bfa9825620fc6cafaaaaf1e1`. In a disposable directory, Hey API 0.99.0 generated 96 deterministic SDK operations from the current contract, strict TypeScript compilation passed and the synthetic probe exercise confirmed header-first handling and forward-compatible decoding. The design-system reference check and the linked JSON comparison passed. The Zcode CLI reports version 0.17.1 and exposes headless plan mode. Documentary validation reported zero errors and all 91 tooling tests passed. This phase generated no application test results.
+
+**Open choices and next action.** Review the proposed 426 ownership, version and transport defaults, and delivery plan with Aymen. After approval, prepare the contract commit before application changes. No review run is due until there is an implementation diff.
+
 ## Story 10.1 authorization-denial audit verified — 2026-11-20
 
 **Phase:** story 10.1 maintenance. **Completed:** the decision and acceptance amendment are on `main` as `13f6d12` (PR #42). The audit follow-up implements the decision and is documented in the [implementation record](implementation-artifacts/story-10-1-implementation-record.md#10-authorization-denial-audit-follow-up-ud-47-2026-11-20). The D-40 path checks use Git pathspecs so a rename out of an application directory still runs its verification.

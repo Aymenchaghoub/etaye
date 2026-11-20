@@ -2,6 +2,8 @@
 
 Status: Prepared; the authorization is UD-45 (2026-11-20) and covers story 10.2 only. This packet itself authorizes nothing. Date 2026-11-20.
 
+The [phase 0 plan](story-10-2-phase-0.md) records current code and CI evidence and the choices awaiting approval.
+
 ## 1. Objective and traceability
 
 Give the web, installed web and future Expo clients one typed API contract and one visual token source (UD-12, UD-38). Story 10.2 is in increment 1, milestone M1 (ADR-011 point 2). It depends on 10.1 and traces to FR-016, FR-020, BR-002, BR-013, BR-016, J-06, J-08 and AD-11. Evidence is operational. [Epic 10](../planning-artifacts/epics/epic-10.md#story-102-generated-client-token-bridge-and-multi-client-foundations)
