@@ -38,7 +38,23 @@ class DatabaseUnavailableTest {
                         true
                 ),
 
+                Arguments.of(
+                        "SQLState 57P01 admin_shutdown while PostgreSQL stops (seen on the CI runner)",
+                        new org.springframework.dao.DataAccessResourceFailureException("PreparedStatementCallback", new SQLException("terminating connection due to administrator command", "57P01")),
+                        true
+                ),
+                Arguments.of(
+                        "SQLState 57P03 cannot_connect_now",
+                        new SQLException("the database system is shutting down", "57P03"),
+                        true
+                ),
+
                 // FALSE cases:
+                Arguments.of(
+                        "SQLState 57014 query_canceled",
+                        new SQLException("canceling statement due to user request", "57014"),
+                        false
+                ),
                 Arguments.of(
                         "bare SocketException",
                         new SocketException("Connection reset"),

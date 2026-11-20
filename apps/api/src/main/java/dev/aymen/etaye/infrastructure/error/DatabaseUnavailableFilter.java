@@ -18,7 +18,9 @@ import java.io.IOException;
 /**
  * Servlet filter ordered right after CorrelationIdFilter and BEFORE the Spring
  * Session filter. Catches database connection failures thrown by the rest of
- * the chain and writes a 503 application/problem+json response.
+ * the chain and writes a 503 application/problem+json response. Any other exception that escapes the
+ * chain answers a 500 problem instead of reaching the container, whose error dispatch would turn it
+ * into a misleading 401. A committed response is never rewritten: the original exception is rethrown.
  */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE + 1)
@@ -61,13 +63,25 @@ public class DatabaseUnavailableFilter extends OncePerRequestFilter {
                 }
                 return;
             }
-            if (ex instanceof ServletException se) {
-                throw se;
-            }
             if (ex instanceof IOException ioe) {
+                // Typically a client that went away: nothing useful can be written.
                 throw ioe;
             }
-            throw new ServletException(ex);
+            String correlationId = CorrelationIdFilter.getCorrelationId(request);
+            Throwable root = org.springframework.core.NestedExceptionUtils.getMostSpecificCause(ex);
+            log.error("Unhandled exception escaped the filter chain: class={}, rootCauseClass={}, code={}, correlationId={}",
+                    ex.getClass().getName(), root != null ? root.getClass().getName() : ex.getClass().getName(),
+                    "INTERNAL_ERROR", correlationId);
+            ApiProblem problem = ApiProblem.of(
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "Internal Server Error",
+                    "INTERNAL_ERROR",
+                    "An unexpected server error occurred",
+                    correlationId
+            );
+            if (!problemResponseWriter.writeProblem(response, problem)) {
+                rethrow(ex);
+            }
         }
     }
 

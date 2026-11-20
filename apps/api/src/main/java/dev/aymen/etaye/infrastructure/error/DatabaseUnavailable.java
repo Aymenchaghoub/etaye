@@ -12,7 +12,8 @@ import java.util.Set;
  * Classifier for database connection failures. Walks the cause chain
  * and returns true ONLY for reliable JDBC connection signals:
  * - SQLTransientConnectionException
- * - SQLException whose SQLState starts with "08"
+ * - SQLException whose SQLState starts with "08" (connection exception) or is 57P01, 57P02 or 57P03
+ *   (admin shutdown, crash shutdown, cannot connect now): PostgreSQL answers these while it stops
  * - CannotGetJdbcConnectionException
  * - CannotCreateTransactionException whose cause chain contains one of the former
  * - Hibernate JDBCConnectionException
@@ -40,13 +41,17 @@ public final class DatabaseUnavailable {
         return checkCauseChain(t.getCause(), visited);
     }
 
+    private static boolean isShutdownState(String sqlState) {
+        return "57P01".equals(sqlState) || "57P02".equals(sqlState) || "57P03".equals(sqlState);
+    }
+
     private static boolean isDirectConnectionSignal(Throwable t) {
         if (t instanceof SQLTransientConnectionException) {
             return true;
         }
         if (t instanceof SQLException sqlEx) {
             String sqlState = sqlEx.getSQLState();
-            if (sqlState != null && sqlState.startsWith("08")) {
+            if (sqlState != null && (sqlState.startsWith("08") || isShutdownState(sqlState))) {
                 return true;
             }
         }
