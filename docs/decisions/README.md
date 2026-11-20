@@ -15,5 +15,6 @@ Date: 2026-11-02. Status: Draft / internally reviewed when recorded in the revie
 | [009](ADR-009-api-compatibility.md) | API compatibility and client versioning |
 | [010](ADR-010-native-client-react-native-expo.md) | Native client: React Native with Expo, distributed as a demo |
 | [011](ADR-011-delivery-order-and-milestones.md) | Delivery order and increment 1 milestones, without calendar dates |
+| [012](ADR-012-functional-motion.md) | Functional motion for state feedback |
 
 The [architecture spine](../planning-artifacts/architecture/ARCHITECTURE-SPINE.md) owns cross-domain constraints; ADRs explain the tradeoffs. Update both when an invariant changes, preserving IDs and supersession history.
