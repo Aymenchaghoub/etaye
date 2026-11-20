@@ -61,11 +61,6 @@ public class SecurityConfig {
         return repository;
     }
 
-    @Bean(name = "springSessionTransactionOperations")
-    public org.springframework.transaction.support.TransactionOperations springSessionTransactionOperations() {
-        return org.springframework.transaction.support.TransactionOperations.withoutTransaction();
-    }
-
     @Bean
     @Order(1)
     public SecurityFilterChain probesSecurityFilterChain(HttpSecurity http) throws Exception {

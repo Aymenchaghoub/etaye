@@ -17,6 +17,9 @@ import java.util.Set;
  * - CannotGetJdbcConnectionException
  * - CannotCreateTransactionException whose cause chain contains one of the former
  * - Hibernate JDBCConnectionException
+ * - a failed rollback or commit (Hibernate or Spring TransactionException) caused by Hikari's closed-connection
+ *   SQLException (no SQLState, message "Connection is closed"): the pool already evicted a connection that broke
+ *   on a socket timeout and the rollback attempt masks the original error
  */
 public final class DatabaseUnavailable {
 
@@ -56,6 +59,12 @@ public final class DatabaseUnavailable {
             }
         }
         if (t instanceof CannotGetJdbcConnectionException) {
+            return true;
+        }
+        if ((t instanceof org.hibernate.TransactionException || t instanceof org.springframework.transaction.TransactionSystemException)
+                && t.getCause() instanceof SQLException closed
+                && closed.getSQLState() == null
+                && "Connection is closed".equals(closed.getMessage())) {
             return true;
         }
         if (t instanceof JDBCConnectionException) {

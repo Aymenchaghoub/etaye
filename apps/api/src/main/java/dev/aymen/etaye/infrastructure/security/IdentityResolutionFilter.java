@@ -88,11 +88,13 @@ public class IdentityResolutionFilter extends OncePerRequestFilter {
                         if (session != null) {
                             String sessionId = session.getId();
                             try {
+                                // invalidate() already deletes the persisted session through the repository
                                 session.invalidate();
-                                if (sessionRepository != null) {
-                                    sessionRepository.deleteById(sessionId);
-                                }
                             } catch (Exception ex) {
+                                if (!DatabaseUnavailable.isConnectionFailure(ex)) {
+                                    // A programming or unexpected error is not an outage: let the outermost filter answer 500
+                                    rethrow(ex);
+                                }
                                 log.error("Failed to delete revoked session: class={}, code={}",
                                         ex.getClass().getName(), "SESSION_DELETION_FAILED");
                                 String correlationId = CorrelationIdFilter.getCorrelationId(request);

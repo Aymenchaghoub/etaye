@@ -24,7 +24,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -52,14 +52,14 @@ public class CsrfRevocationFailureTest extends AbstractPostgresTest {
 
     public static class FailingSessionRepositoryWrapper<S extends Session> implements FindByIndexNameSessionRepository<S> {
         private final FindByIndexNameSessionRepository<S> delegate;
-        private final AtomicBoolean throwOnDelete = new AtomicBoolean(false);
+        private final AtomicReference<RuntimeException> failure = new AtomicReference<>();
 
         public FailingSessionRepositoryWrapper(FindByIndexNameSessionRepository<S> delegate) {
             this.delegate = delegate;
         }
 
-        public void setThrowOnDelete(boolean shouldThrow) {
-            this.throwOnDelete.set(shouldThrow);
+        public void failDeletionWith(RuntimeException exception) {
+            this.failure.set(exception);
         }
 
         @Override
@@ -79,8 +79,9 @@ public class CsrfRevocationFailureTest extends AbstractPostgresTest {
 
         @Override
         public void deleteById(String id) {
-            if (throwOnDelete.get()) {
-                throw new RuntimeException("Simulated database failure during session deletion");
+            RuntimeException toThrow = failure.get();
+            if (toThrow != null) {
+                throw toThrow;
             }
             delegate.deleteById(id);
         }
@@ -123,7 +124,8 @@ public class CsrfRevocationFailureTest extends AbstractPostgresTest {
         updateAccountStateAsOwner(accountId, "SUSPENDED");
 
         // 2. Enable failure on deleteById
-        failingWrapper().setThrowOnDelete(true);
+        failingWrapper().failDeletionWith(new org.springframework.jdbc.CannotGetJdbcConnectionException(
+                "Simulated outage during session deletion", new java.sql.SQLException("connection lost", "08006")));
 
         try {
             // 3. Request /api/v1/csrf using the suspended account's cookie
@@ -145,7 +147,7 @@ public class CsrfRevocationFailureTest extends AbstractPostgresTest {
             assertThat(body.get("token")).isNull();
         } finally {
             // 4. Disable failure
-            failingWrapper().setThrowOnDelete(false);
+            failingWrapper().failDeletionWith(null);
         }
 
         // 5. The next request with a working repository gets the normal behavior (200 OK with token)
@@ -160,5 +162,34 @@ public class CsrfRevocationFailureTest extends AbstractPostgresTest {
         assertThat(recoveredResponse.getBody()).isNotNull();
         assertThat(recoveredResponse.getBody().get("token")).isNotNull();
         assertThat(recoveredResponse.getBody().get("headerName")).isEqualTo("X-CSRF-TOKEN");
+    }
+
+    @Test
+    @DisplayName("An unexpected error during revocation is a 500, not a fake outage, and no token is issued")
+    void csrfFailsWith500OnUnexpectedRevocationError() {
+        UUID accountId = createAccountAsOwner("csrf.unexpected." + UUID.randomUUID() + "@example.com", "CSRF Unexpected");
+        UUID practiceId = createPracticeAsOwner("Cabinet CSRF Unexpected");
+        createMembershipAsOwner(accountId, practiceId, "ACTIVE", new String[]{"CLINICAL_READ"});
+        String oldSessionCookie = testSessionHelper.createSessionCookie(accountId);
+        updateAccountStateAsOwner(accountId, "SUSPENDED");
+
+        failingWrapper().failDeletionWith(new IllegalStateException("programming error SECRET-DETAIL"));
+        try {
+            ResponseEntity<Map> response = client().get()
+                    .uri("/api/v1/csrf")
+                    .header(HttpHeaders.COOKIE, oldSessionCookie)
+                    .retrieve()
+                    .onStatus(status -> status.is5xxServerError() || status.is4xxClientError(), (req, res) -> {})
+                    .toEntity(Map.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+            assertThat(response.getHeaders().getContentType().toString()).contains("application/problem+json");
+            assertThat(response.getBody()).isNotNull();
+            assertThat(response.getBody().get("code")).isEqualTo("INTERNAL_ERROR");
+            assertThat(response.getBody().get("token")).isNull();
+            assertThat(response.getBody().toString()).doesNotContain("SECRET-DETAIL");
+        } finally {
+            failingWrapper().failDeletionWith(null);
+        }
     }
 }

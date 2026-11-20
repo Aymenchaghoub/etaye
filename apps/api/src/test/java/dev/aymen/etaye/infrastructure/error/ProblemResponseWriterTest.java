@@ -36,6 +36,27 @@ class ProblemResponseWriterTest {
     }
 
     @Test
+    @DisplayName("Stale headers of a half-built success are dropped and the problem is written after getOutputStream() was used")
+    void staleHeadersAreDroppedAndOutputStreamWasAlreadyChosen() throws Exception {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        response.setStatus(200);
+        response.setHeader("Content-Length", "15");
+        response.setHeader("ETag", "\"0\"");
+        response.getOutputStream().write("{\"status\":\"ok\"}".getBytes());
+
+        ApiProblem problem = ApiProblem.of(503, "Service Unavailable", "SERVICE_UNAVAILABLE",
+                "Service temporarily unavailable", "corr-stale");
+
+        boolean written = writer.writeProblem(response, problem);
+
+        assertThat(written).isTrue();
+        assertThat(response.getStatus()).isEqualTo(503);
+        assertThat(response.getHeader("ETag")).isNull();
+        assertThat(response.getHeader("Content-Length")).isNull();
+        assertThat(response.getContentAsString()).doesNotContain("\"status\":\"ok\"").contains("\"code\":\"SERVICE_UNAVAILABLE\"");
+    }
+
+    @Test
     @DisplayName("C1: Not-yet-committed response with partial body bytes ends with ONLY problem JSON")
     void notCommittedResponseWithPartialBytes_endsOnlyWithProblemJson() throws Exception {
         MockHttpServletResponse response = new MockHttpServletResponse();

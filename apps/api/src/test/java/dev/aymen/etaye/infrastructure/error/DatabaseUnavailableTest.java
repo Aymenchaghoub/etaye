@@ -49,8 +49,23 @@ class DatabaseUnavailableTest {
                         true
                 ),
 
+                Arguments.of(
+                        "Rollback failure over Hikari's closed connection (seen when a paused database breaks a session transaction)",
+                        new org.springframework.orm.jpa.JpaSystemException(new org.hibernate.TransactionException("Unable to rollback against JDBC Connection", new SQLException("Connection is closed"))),
+                        true
+                ),
+
                 // FALSE cases:
                 Arguments.of(
+                        "Bare 'Connection is closed' SQLException outside a transaction failure",
+                        new SQLException("Connection is closed"),
+                        false
+                ),
+                Arguments.of(
+                        "Rollback failure with another cause",
+                        new org.hibernate.TransactionException("Unable to rollback against JDBC Connection", new SQLException("deadlock detected")),
+                        false
+                ),                Arguments.of(
                         "SQLState 57014 query_canceled",
                         new SQLException("canceling statement due to user request", "57014"),
                         false

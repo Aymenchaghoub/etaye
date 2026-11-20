@@ -30,14 +30,21 @@ public class ProblemResponseWriter {
         if (response.isCommitted()) {
             return false;
         }
-        response.resetBuffer();
+        // reset() also clears stale headers (Content-Length, ETag, Set-Cookie) of a half-built success response
+        response.reset();
         response.setStatus(problem.status());
         response.setHeader("Content-Type", "application/problem+json");
         response.setCharacterEncoding("UTF-8");
         if (problem.correlationId() != null && !problem.correlationId().isBlank()) {
             response.setHeader("X-Correlation-Id", problem.correlationId());
         }
-        objectMapper.writeValue(response.getWriter(), problem);
+        byte[] body = objectMapper.writeValueAsBytes(problem);
+        try {
+            response.getOutputStream().write(body);
+        } catch (IllegalStateException writerAlreadyChosen) {
+            // The container remembers that getWriter() was called earlier on this response
+            response.getWriter().write(new String(body, java.nio.charset.StandardCharsets.UTF_8));
+        }
         return true;
     }
 }
