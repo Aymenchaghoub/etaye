@@ -48,6 +48,7 @@ Status: **Proposal, written 2026-11-18 as the offline working reference for agen
 | [bundle-base.css](../../design/received/2026-11-03/ds/bundle-base.css), [bundle-app.css](../../design/received/2026-11-03/ds/bundle-app.css), [ext-consult.css](../../design/received/2026-11-03/ds/ext-consult.css), [ext-print.css](../../design/received/2026-11-03/ds/ext-print.css), [icons.css](../../design/received/2026-11-03/icons.css) | Component, layout, print and icon CSS | Received, not approved; same origin as the Figma import |
 | [screen-catalog.md](screen-catalog.md), [interaction-catalog.md](interaction-catalog.md), [pdf-email-specifications.md](pdf-email-specifications.md) | What each surface contains | Reviewed specifications |
 | [background-study](background-study/README.md) | Paper and blueprint background layer | **Proposal** (section 10) |
+| [motion-study](motion-study/README.md) | Functional motion patterns and one proposed token | **Proposal**, validated by Aymen on 2026-11-20 (section 4.5, ADR-012) |
 
 Figma file: see [figma-inventory.md](figma-inventory.md) for its identifier and the nodes. Pages: Couverture, Étaye — Import HTML (`15:2`, the 456 imported states), Fondations (`2:74`), Composants (`2:75`). The two last pages and the imported roots are protected: never modify them to "fix" an offline mismatch. Saved versions: desktop import `2423132943961499284`; final corrected state `2423224260331333575`.
 
@@ -143,6 +144,8 @@ Group spacing is larger than spacing inside a group. Radii are small: `rayon-0` 
 
 Only the color transitions of links and buttons (`--duree-retour`) and a 0.98 press scale on buttons exist in the reference. The shadow is for floating surfaces only (preview card, dialog, drawer, toast). No decorative glow, gradient or gratuitous animation. `prefers-reduced-motion: reduce` removes every transition. **To verify:** the Figma effect style `2:73` itself was never read; the shadow values above come from the received export.
 
+**Functional motion (proposal validated on 2026-11-20, [ADR-012](../decisions/ADR-012-functional-motion.md)).** Four state-carrying patterns are specified in the [motion study](motion-study/README.md): the states of a save button, the file drop target, the one-shot trace of the sign on S-01 and an overflow fade on bounded lists. They follow five rules (same curve and durations, a static equivalent under reduced motion, the state also written, no motion longer than the work it reports, success only after the server commit) and exclude hold-to-confirm gestures and any motion on publish, withdraw, validate or discard. They add one proposed token, `--duree-trace` 1200 ms, which is not in `tokens.css`, in Figma or in the generated table above. This file still creates no token: the study is the only source until Figma and the token export catch up.
+
 ### 4.6 Logo and icons
 
 **Logo.** Original SVGs, never recolored or stretched: [docs/design/figma/assets](figma/assets/) holds the Figma exports (`logo-light`, `logo-dark`, `logo-monochrome`, `logo-patient`, `mark-light`, `mark-monochrome`, `app-icon-light`, `app-icon-dark`); the exported design system adds the dark patient variant. Figma components: `Logo/Clair` `4:13`, `Logo/Sombre` `4:33`, `Logo/Monochrome` `4:19`, `Logo/Espace patient` `4:20`. Use light on light backgrounds, dark on dark, monochrome for print and document headers, the patient variant for the portal header. The monochrome component's original description mentions prescriptions, which are outside the product scope: do not infer a prescription feature. Alternative text is "Étaye" or "Étaye — Espace patient"; a decorative duplicate has empty alternative text. [ASSUMPTION] Keep at least one sign-height of clear space until an exact rule is recorded in Figma.
@@ -213,7 +216,7 @@ Status vocabularies stay separate: processing, review, freshness and publication
 - **Meaning is never color alone:** a word, an icon or a line style accompanies every status (dashed for missing or generated, solid for validated, wavy for alert); the print and e-mail variants are grayscale-safe.
 - **Targets:** 32 px for clinicians, 40 px for tabs, close and context controls, 48 px for patients; the design goal is 44×44 where space allows ([EXPERIENCE.md](../planning-artifacts/ux/EXPERIENCE.md)).
 - **Hover** is an enhancement only; selection uses `aria-current`, `aria-pressed`, `aria-selected` or `aria-checked`.
-- **Motion:** `prefers-reduced-motion: reduce` removes transitions; nothing necessary relies on animation.
+- **Motion:** `prefers-reduced-motion: reduce` removes transitions; nothing necessary relies on animation. Each functional motion of the [motion study](motion-study/README.md) keeps a static equivalent.
 - **Target level:** proposed WCAG 2.2 AA, **not measured conformance**; test 200 % zoom and 320 px reflow; charts have tables; announcements do not steal focus.
 
 ## 8. Content and tone
@@ -240,6 +243,7 @@ Compare a rebuilt screen and your implementation at the same viewport and theme,
 ## 12. Gaps and open items
 
 - **Not designed as approved Figma components:** everything in section 6.2 exists as received HTML and flat imported frames, not as a Figma component library; practitioner navigation and selectors, fields, calendar and date controls, paginated tables, source drawers, version comparison, dialogs, drawers and print blocks still need design completion with interactive, focus, disabled, read-only, loading, error, restricted and long-content variants.
+- **Not drawn:** the functional motion states of the [motion study](motion-study/README.md) (save button, drop target, sign trace, overflow fade) exist only as a playable HTML prototype and still need Figma variants and review.
 - **Not verified:** Figma effect style `2:73` values, the full variable collections (REST variables need Enterprise), Safari and Android WebView rendering, real devices, measured WCAG conformance, forced-colors and print rendering of the background layer.
 - **Open decisions:** Aymen's design approval of the received screens, responsive frames for the corrected states, the clear-space rule for the logo, and any application of the background layer.
 - **No development is authorized.** All 45 stories stay in backlog; this file does not change that.

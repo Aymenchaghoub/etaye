@@ -2,6 +2,10 @@
 
 Updated: 2026-11-19. Owner: Aymen Chaghoub.
 
+## Functional motion validated — 2026-11-20
+
+**User decision:** after asking whether Étaye could take ideas from the Kitchen collection, Aymen played an interactive proposal and answered "je valide" (UD-42, [ADR-012](decisions/ADR-012-functional-motion.md)). **Phase:** design. **Completed artifacts:** the [motion study](design/motion-study/README.md) with its playable [prototype](design/motion-study/prototype.html), pointers in the design system (sections 3, 4.5, 7, 12), the states added to I-08, S-01, S-13 and the save pattern, UD-42 in the register. **Verification:** the prototype was exercised in Chromium only (study section 6); `python3 tools/validate_docs.py` and `python3 tools/design_system_reference.py --check` ran on this branch. **Not done:** the Figma variants (study section 7), Firefox and WebKit, contrast measurement of each state, a screen-reader pass; no application code, and development stays gated by UD-28. **Open:** the 400 ms, 2.4 s and 28 px values are [ASSUMPTION]; `--duree-trace` is promoted through Figma and the next token export. **Next action:** draw the variants when Figma access allows, or apply the offline exception of design-system section 14. No code from the Kitchen pages was reused; check any licence first if that changes.
+
 ## Story 10.1 merged — 2026-11-20
 
 **Phase:** story 10.1, the only authorized story (UD-41), is merged into `main` as `bfc4706` (squash of PR #33). **Aymen validated the visible part** on 2026-11-20 after the orchestrator started the real stack for him (his words: "je valide"); that covers the readiness page only. `main` carries exactly the tree that was reviewed (checked identical to the pull request head `a0b6a50`).
@@ -16,7 +20,7 @@ Updated: 2026-11-19. Owner: Aymen Chaghoub.
 2. Toolchain: the code uses Java 21 and Node 22; ADR-002 proposes Java 25 and Node 26. Keep the fallback or amend ADR-002.
 3. D-40: `api.yml` and `web.yml` stay informational; making them required checks changes the branch rules and is his decision.
 4. D-33: HawkScan needs a StackHawk account and key and may start a time-limited trial; nothing was created.
-5. Pull request #32 (functional motion, ADR-012) is open and not merged; it also edits this file, so it needs the latest `main` merged into it before it can merge.
+5. Pull request #32 (functional motion, ADR-012, UD-42) is merged. The Figma variants of its four patterns (study section 7) are still to be drawn; no application code exists for them.
 
 **Next action:** wait for a written authorization before any other story (UD-28). The CORE design review remains Aymen's. Until then, work stays on design and the open decisions above.
 
