@@ -43,6 +43,12 @@ class AccountAccessHttpTest extends AbstractPostgresTest {
     @LocalServerPort private int port;
     @Autowired private MutableTestClock clock;
     @Autowired private TestSessionHelper legacySessions;
+    @Autowired private dev.aymen.etaye.infrastructure.security.AccountRequestBudget budget;
+
+    @org.junit.jupiter.api.AfterEach
+    void resetBudget() {
+        budget.reset();
+    }
 
     @TestConfiguration
     static class TimeConfiguration {
@@ -162,7 +168,7 @@ class AccountAccessHttpTest extends AbstractPostgresTest {
                 .isEqualTo(401);
 
         // A legacy session without LAST_ACTIVITY attribute: routine inspection does not push idle expiry.
-        String legacySession = legacySessions.createSessionCookie(account(syntheticEmail()), java.time.Duration.ofSeconds(20));
+        String legacySession = legacySessions.createSessionCookie(account(syntheticEmail()), java.time.Duration.ofSeconds(20), clock.instant());
         var firstLegacyRead = request(HttpMethod.GET, "/session", legacySession, null, null, null);
         assertThat(firstLegacyRead.getStatusCode().value()).isEqualTo(200);
         Instant legacyInitialExpiry = Instant.parse((String) firstLegacyRead.getBody().get("expiresAt"));

@@ -1,7 +1,6 @@
 package dev.aymen.etaye;
 
 import jakarta.servlet.http.Cookie;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -17,7 +16,8 @@ import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.CookieSerializer.CookieValue;
 import org.springframework.stereotype.Component;
 
-import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,28 +32,32 @@ public class TestSessionHelper {
     private final FindByIndexNameSessionRepository sessionRepository;
     private final CookieSerializer cookieSerializer;
     private final JdbcTemplate jdbcTemplate;
-    private final ObjectProvider<Clock> clockProvider;
 
     @SuppressWarnings("rawtypes")
     public TestSessionHelper(FindByIndexNameSessionRepository sessionRepository,
                              CookieSerializer cookieSerializer,
-                             JdbcTemplate jdbcTemplate,
-                             ObjectProvider<Clock> clockProvider) {
+                             JdbcTemplate jdbcTemplate) {
         this.sessionRepository = sessionRepository;
         this.cookieSerializer = cookieSerializer;
         this.jdbcTemplate = jdbcTemplate;
-        this.clockProvider = clockProvider;
     }
 
     @SuppressWarnings("unchecked")
     public String createSessionCookie(UUID accountId) {
-        return createSessionCookie(accountId, java.time.Duration.ofSeconds(20));
+        return createSessionCookie(accountId, Duration.ofMinutes(30), null);
     }
 
     @SuppressWarnings("unchecked")
-    public String createSessionCookie(UUID accountId, java.time.Duration maxInactiveInterval) {
+    public String createSessionCookie(UUID accountId, Duration maxInactiveInterval) {
+        return createSessionCookie(accountId, maxInactiveInterval, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public String createSessionCookie(UUID accountId, Duration maxInactiveInterval, Instant timestamp) {
         Session session = sessionRepository.createSession();
-        session.setMaxInactiveInterval(maxInactiveInterval);
+        if (maxInactiveInterval != null) {
+            session.setMaxInactiveInterval(maxInactiveInterval);
+        }
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
         Authentication auth = new UsernamePasswordAuthenticationToken(
                 accountId.toString(),
@@ -64,11 +68,10 @@ public class TestSessionHelper {
         session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
         sessionRepository.save(session);
 
-        Clock clock = clockProvider.getIfAvailable();
-        if (clock != null) {
-            long now = clock.millis();
+        if (timestamp != null) {
+            long millis = timestamp.toEpochMilli();
             jdbcTemplate.update("UPDATE spring_session SET creation_time = ?, last_access_time = ? WHERE session_id = ?",
-                    now, now, session.getId());
+                    millis, millis, session.getId());
         }
 
         MockHttpServletRequest request = new MockHttpServletRequest();

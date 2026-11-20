@@ -43,6 +43,10 @@ public class AccountRequestBudget {
         return 0;
     }
 
+    public synchronized void reset() {
+        operations.clear();
+    }
+
     private static final class Window {
         private final long startedAt;
         private int requests;
