@@ -149,10 +149,28 @@ class ApplicationScopeTests(unittest.TestCase):
     def test_authorized_scope_rejects_unlisted_tracked_entries(self):
         self.authorize()
         self.write(".git")
-        allowed = ("apps/api/.gitignore", "apps/api/.mvn/wrapper/maven-wrapper.properties",
-                   "apps/web/tests/nested/probe.spec.ts", "infra/local/verify-init-roles.sh")
+        allowed = ("apps/api/.mvn/wrapper/maven-wrapper.properties",
+                   "apps/api/src/main/java/dev/aymen/etaye/EtayeApiApplication.java",
+                   "apps/api/src/main/resources/db/migration/V1__initial_schema.sql",
+                   "apps/api/src/test/java/dev/aymen/etaye/security/SecurityIntegrationTest.java",
+                   "apps/api/src/test/resources/application-test.yml",
+                   "apps/api/src/test/resources/fixtures/nested/patient.json",
+                   "apps/web/src/components/Panel.tsx", "apps/web/src/styles.css",
+                   "apps/web/tests/nested/probe.spec.ts", "apps/web/e2e/outage.spec.ts",
+                   "infra/local/verify-init-roles.sh")
         unlisted = ("apps/api/extra.txt", "apps/web/public/extra.txt", "infra/local/extra.sh",
-                    "apps/web/package.json/extra.txt", "apps/api/src")
+                    "apps/web/package.json/extra.txt", "apps/api/src",
+                    "apps/api/src/main/evil.sh", "apps/api/.mvn/wrapper/maven-wrapper.jar",
+                    "apps/api/src/main/java/dev/aymen/etaye/App.class",
+                    "apps/api/src/test/java/dev/another/OtherTest.java",
+                    "apps/api/src/main/resources/archive.zip", "apps/api/src/main/resources/nested/evil.sh",
+                    "apps/api/src/test/resources/.env", "apps/web/src/nested/.env",
+                    "apps/web/tests/snapshot.png", "apps/web/e2e/script.sh",
+                    "apps/api/src/main/resources/binary.txt")
+        for name in (*allowed, *unlisted):
+            if name != "apps/api/src" and not name.startswith("apps/web/package.json/"):
+                self.write(name)
+        (self.root / "apps/api/src/main/resources/binary.txt").write_bytes(b"\0\xff")
         index = subprocess.CompletedProcess([], 0, "\0".join((*allowed, *unlisted, "")).encode())
         with patch("validate_docs.subprocess.run", return_value=index):
             _, errors = self.check_scope()
@@ -161,10 +179,14 @@ class ApplicationScopeTests(unittest.TestCase):
     def test_authorized_scope_requires_ud_41_even_without_git(self):
         self.authorize()
         register = "docs/planning-artifacts/decisions-assumptions.md"
-        self.write(register, "| UD-40 | Accepted ADR-011 |\n")
-        scope, errors = self.check_scope()
-        self.assertIn("skipped", scope["trackedBuildOutputCheck"])
-        self.assertEqual(errors, [f"Story 10.1 authorization requires UD-41 in {register}"])
+        reference = "| UD-28 | Partly lifted by UD-41 for story 10.1 only. |\n"
+        for decision in ("", "| UD-41 | Authorized story 10.10 | See story 10.1. |\n",
+                         "UD-41 authorizes story 10.1.\n"):
+            with self.subTest(decision=decision):
+                self.write(register, reference + decision)
+                scope, errors = self.check_scope()
+                self.assertIn("skipped", scope["trackedBuildOutputCheck"])
+                self.assertEqual(errors, [f"Story 10.1 authorization requires UD-41 in {register}"])
 
 
 @unittest.skipIf(yaml is None, "PyYAML is unavailable")

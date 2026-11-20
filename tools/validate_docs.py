@@ -14,6 +14,42 @@ from pathlib import Path
 from urllib.parse import unquote
 
 
+STORY_10_1_TRACKED_PATH = re.compile(
+    r"""
+    apps/api/(?:
+        pom\.xml | mvnw(?:\.cmd)? | \.mvn/wrapper/maven-wrapper\.properties
+        | src/(?:main|test)/java/dev/aymen/etaye/(?:[^/]+/)*[^/]+\.java
+        | (?P<resource>src/(?:main|test)/resources/(?:[^/]+/)*[^/]+)
+    )
+    | apps/web/(?:
+        package\.json | tsconfig\.json | vite\.config\.ts | playwright(?:\.real)?\.config\.ts | index\.html
+        | src/(?:[^/]+/)*[^/]+\.(?:ts|tsx|css)
+        | (?:tests|e2e)/(?:[^/]+/)*[^/]+\.ts
+    )
+    | infra/local/(?:docker-compose\.yml | init-roles\.sh | verify-init-roles\.sh | \.env\.example)
+    """,
+    re.VERBOSE,
+)
+RESOURCE_ARTIFACT_SUFFIXES = {
+    ".sh", ".bash", ".cmd", ".bat", ".ps1",
+    ".class", ".jar", ".war", ".ear", ".exe", ".dll", ".so", ".bin",
+    ".zip", ".tar", ".gz", ".tgz", ".bz2", ".xz", ".7z", ".rar",
+}
+
+
+def is_story_resource(path):
+    name = path.name.lower()
+    if path.suffix.lower() in RESOURCE_ARTIFACT_SUFFIXES or name == ".env" or name.startswith(".env."):
+        return False
+    if path.is_symlink() or not path.is_file():
+        return False
+    try:
+        # Allow nested text resources without accepting a binary under a text extension.
+        return not re.search(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError):
+        return False
+
+
 def check_application_scope(root, errors):
     scope = {"mode": "planning-only", "authorizedStories": []}
     try:
@@ -62,7 +98,12 @@ def check_application_scope(root, errors):
 
     register = "docs/planning-artifacts/decisions-assumptions.md"
     try:
-        has_decision = "UD-41" in (root / register).read_text(encoding="utf-8")
+        decisions = (root / register).read_text(encoding="utf-8")
+        has_decision = re.search(
+            r"^[ \t]*\|[ \t]*UD-41[ \t]*\|[^|\n]*\bstory[ \t]+10\.1\b(?!\.\d)[^|\n]*\|",
+            decisions,
+            re.MULTILINE,
+        )
     except (OSError, UnicodeError):
         has_decision = False
     if not has_decision:
@@ -104,23 +145,15 @@ def check_application_scope(root, errors):
         scope["trackedBuildOutputCheck"] = "skipped: git ls-files unavailable"
     else:
         scope["trackedBuildOutputCheck"] = "checked with git ls-files"
-        allowed_entries = {
-            "apps/api": {"pom.xml", "mvnw", "mvnw.cmd", ".mvn/", "src/", ".gitignore"},
-            "apps/web": {"package.json", "tsconfig.json", "vite.config.ts", "playwright.config.ts",
-                         "playwright.real.config.ts", "index.html", "src/", "tests/", "e2e/"},
-            "infra/local": {"docker-compose.yml", "init-roles.sh", "verify-init-roles.sh", ".env.example"},
-        }
         for name in os.fsdecode(index.stdout).split("\0"):
             if build_directories.intersection(name.split("/")):
                 errors.append("Tracked build output: " + name)
                 continue
-            parent, _, entry = name.partition("/")
-            child, _, relative = entry.partition("/")
-            allowed = allowed_entries.get(f"{parent}/{child}")
-            if allowed is not None and relative not in allowed:
-                top_level, separator, _ = relative.partition("/")
-                if not separator or f"{top_level}/" not in allowed:
-                    errors.append("Unexpected tracked path for story 10.1: " + name)
+            if not name.startswith(("apps/", "infra/")):
+                continue
+            match = STORY_10_1_TRACKED_PATH.fullmatch(name)
+            if not match or (match["resource"] and not is_story_resource(root / name)):
+                errors.append("Unexpected tracked path for story 10.1: " + name)
     return scope
 
 
