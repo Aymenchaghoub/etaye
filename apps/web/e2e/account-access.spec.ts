@@ -26,6 +26,7 @@ test('real browser signs in, consumes the committed recovery link and revokes an
   await signIn(page, address, password);
 
   const recoveryContext = await browser.newContext();
+  let passwordChanged = false;
   try {
     const recovering = await recoveryContext.newPage();
     await recovering.goto('http://localhost:5173/connexion/patient');
@@ -43,6 +44,7 @@ test('real browser signs in, consumes the committed recovery link and revokes an
     await inbox.locator('#r-pw').fill(replacement);
     await inbox.locator('#r-pw2').fill(replacement);
     await inbox.getByRole('button', { name: 'Enregistrer le mot de passe' }).click();
+    passwordChanged = true;
     await expect(inbox.getByRole('heading', { name: 'Mot de passe modifié' })).toBeVisible();
     expect(await inbox.evaluate(() => location.hash.length)).toBe(0);
 
@@ -53,7 +55,42 @@ test('real browser signs in, consumes the committed recovery link and revokes an
     await signIn(page, address, replacement);
     await page.getByRole('button', { name: 'Se déconnecter' }).click();
     await expect(page.getByRole('heading', { name: 'Se connecter', exact: true })).toBeVisible();
+
+    // Restore the original test password so subsequent test runs succeed on the same stack
+    await recovering.goto('http://localhost:5173/connexion/patient');
+    await recovering.getByRole('link', { name: 'Mot de passe oublié ?' }).click();
+    await recovering.locator('#r-mail').fill(address);
+    await recovering.getByRole('button', { name: 'Recevoir un lien' }).click();
+    await expect(recovering.getByRole('heading', { name: 'Demande de récupération reçue' })).toBeVisible();
+
+    await inbox.goto(inboxOrigin + '/');
+    await inbox.getByRole('link', { name: address, exact: true }).click();
+    await expect(inbox.getByRole('heading', { name: 'Choisir un nouveau mot de passe' })).toBeVisible();
+    await inbox.locator('#r-pw').fill(password);
+    await inbox.locator('#r-pw2').fill(password);
+    await inbox.getByRole('button', { name: 'Enregistrer le mot de passe' }).click();
+    await expect(inbox.getByRole('heading', { name: 'Mot de passe modifié' })).toBeVisible();
+    passwordChanged = false;
   } finally {
+    if (passwordChanged) {
+      try {
+        const recovering = await recoveryContext.newPage();
+        await recovering.goto('http://localhost:5173/connexion/patient');
+        await recovering.getByRole('link', { name: 'Mot de passe oublié ?' }).click();
+        await recovering.locator('#r-mail').fill(address);
+        await recovering.getByRole('button', { name: 'Recevoir un lien' }).click();
+        await expect(recovering.getByRole('heading', { name: 'Demande de récupération reçue' })).toBeVisible();
+        const inbox = await recoveryContext.newPage();
+        await inbox.goto(inboxOrigin + '/');
+        await inbox.getByRole('link', { name: address, exact: true }).click();
+        await inbox.locator('#r-pw').fill(password);
+        await inbox.locator('#r-pw2').fill(password);
+        await inbox.getByRole('button', { name: 'Enregistrer le mot de passe' }).click();
+        await expect(inbox.getByRole('heading', { name: 'Mot de passe modifié' })).toBeVisible();
+      } catch {
+        // Best effort restore
+      }
+    }
     await recoveryContext.close();
   }
 });

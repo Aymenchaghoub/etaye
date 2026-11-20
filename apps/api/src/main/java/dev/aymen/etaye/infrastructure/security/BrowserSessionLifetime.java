@@ -63,10 +63,23 @@ public class BrowserSessionLifetime {
         return session;
     }
 
+    public boolean isExpiredAnonymous(HttpSession session) {
+        if (session == null || session.getAttribute(SIGNED_IN_AT) != null) {
+            return false;
+        }
+        Object contextObj = session.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+        if (contextObj instanceof org.springframework.security.core.context.SecurityContext context
+                && context.getAuthentication() != null
+                && context.getAuthentication().isAuthenticated()) {
+            return false;
+        }
+        return !clock.instant().isBefore(
+                Instant.ofEpochMilli(session.getCreationTime()).plus(ANONYMOUS_LIFETIME));
+    }
+
     public void retireExpiredAnonymousSession(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        if (session != null && !clock.instant().isBefore(
-                Instant.ofEpochMilli(session.getCreationTime()).plus(ANONYMOUS_LIFETIME))) {
+        if (isExpiredAnonymous(session)) {
             session.invalidate();
         }
     }
@@ -87,7 +100,7 @@ public class BrowserSessionLifetime {
     public Instant expiresAt(HttpSession session) {
         Instant absoluteExpiry = absoluteExpiry(session);
         Instant lastActivity = (Instant) session.getAttribute(LAST_ACTIVITY);
-        Instant idleStart = lastActivity != null ? lastActivity : Instant.ofEpochMilli(session.getLastAccessedTime());
+        Instant idleStart = lastActivity != null ? lastActivity : Instant.ofEpochMilli(session.getCreationTime());
         Instant idleExpiry = idleStart.plusSeconds(session.getMaxInactiveInterval());
         return absoluteExpiry.isBefore(idleExpiry) ? absoluteExpiry : idleExpiry;
     }

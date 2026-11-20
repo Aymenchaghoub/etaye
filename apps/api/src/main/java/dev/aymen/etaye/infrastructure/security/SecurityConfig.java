@@ -143,7 +143,7 @@ public class SecurityConfig {
                         "/api/v1/access-recovery/complete").permitAll()
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(new ExistingSessionCsrfFilter(accessDeniedHandler), CsrfFilter.class)
+            .addFilterBefore(new ExistingSessionCsrfFilter(accessDeniedHandler, lifetime), CsrfFilter.class)
             .addFilterBefore(
                 new IdentityResolutionFilter(
                         identityLookupService,

@@ -2,6 +2,14 @@
 
 Updated: 2026-11-20. Owner: Aymen Chaghoub.
 
+## Story 1.2 post-merge robustness audit (CodeRabbit review on PR #45) — 2026-11-20
+
+**Phase.** Post-merge review findings from PR #45 (story 1.2) triaged and addressed on branch `fix/1.2-session-and-test-robustness`. Addressed legacy session polling idle extension, prevented unbudgeted session allocation on expired anonymous CSRF rejection, verified non-empty idempotency receipts, added retry state retention in AuthApp, restored test account credentials at E2E test teardown, and documented single-instance proxy boundaries in `story-1-2-implementation-record.md`.
+
+**Actual verification.** Java 25 executed `AccountAccessHttpTest` and `AccountRequestBudgetTest` successfully (7 tests passed with Testcontainers PostgreSQL 18). Web Chromium smoke suite passed (19 tests). Web TypeScript check and production build passed. Documentary validator passed with 0 errors.
+
+**Next action.** Open fix pull request targeting `main`, report comment-by-comment triage to Aymen, and await Aymen's explicit validation before merging. Full-stack CodeQL configuration on `ci/codeql-full-stack` (PR #46) resumes next.
+
 ## Story 1.2 implemented and live screens approved — 2026-11-20
 
 **Phase.** The branch implements browser sign-in, recovery, and expiry under UD-48. Aymen selected the local inbox and approved the running screens. He authorized merging after CodeRabbit findings are resolved and the required GitHub checks are green. [Implementation record](implementation-artifacts/story-1-2-implementation-record.md)

@@ -179,16 +179,18 @@ function AccountGate({ target, initial, onHalt, leave, askToSignIn }: {
   // Keep authorization checks independent of a re-render of the login callback.
   const signIn = useRef(askToSignIn);
   signIn.current = askToSignIn;
+  const verifiedAccount = useRef<Session | undefined>(initial);
 
   useEffect(() => {
     if (leaving) return;
-    let current = initial;
+    let current = verifiedAccount.current ?? initial;
     let pending: AbortController | undefined;
     let deadline: number | undefined;
 
     function halt(reason: Notice) {
       pending?.abort();
       window.clearTimeout(deadline);
+      verifiedAccount.current = undefined;
       onHalt(reason, target, current);
     }
 
@@ -226,6 +228,7 @@ function AccountGate({ target, initial, onHalt, leave, askToSignIn }: {
         return;
       }
       current = latest;
+      verifiedAccount.current = latest;
       setUnavailable(false);
       setSession(latest);
       window.clearTimeout(deadline);
@@ -250,6 +253,7 @@ function AccountGate({ target, initial, onHalt, leave, askToSignIn }: {
   }, [initial, leaving, onHalt, retry, target]);
 
   async function signOut() {
+    verifiedAccount.current = undefined;
     setSession(undefined);
     setUnavailable(false);
     setLeaving(true);
