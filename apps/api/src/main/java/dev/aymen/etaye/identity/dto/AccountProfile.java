@@ -1,5 +1,6 @@
 package dev.aymen.etaye.identity.dto;
 
+import java.time.Instant;
 import java.util.UUID;
 
 /**
@@ -12,7 +13,11 @@ public record AccountProfile(
         String normalizedEmail,
         String displayName,
         String state,
-        String locale
+        String locale,
+        long version,
+        Instant createdAt,
+        Instant updatedAt,
+        long credentialRevision
 ) {
     public boolean isActive() {
         return "ACTIVE".equalsIgnoreCase(state);

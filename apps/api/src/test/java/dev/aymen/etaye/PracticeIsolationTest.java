@@ -133,7 +133,7 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
                 String.class);
 
         Set<String> rlsTables = Set.of(
-                "account", "membership", "patient", "patient_record", "audit_event", "outbox_event", "idempotency_receipt");
+                "account", "membership", "patient", "patient_record", "portal_link", "audit_event", "outbox_event", "idempotency_receipt");
 
         for (String tbl : allRelations) {
             String qualifiedTable = "public." + tbl;
@@ -208,7 +208,8 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
 
         List<String> columnPrivileges = List.of("SELECT", "INSERT", "UPDATE", "REFERENCES");
 
-        Set<String> identityAccountCols = Set.of("id", "normalized_email", "display_name", "state", "locale", "created_at", "updated_at");
+        Set<String> identityAccountCols = Set.of("id", "normalized_email", "display_name", "state", "locale",
+                "created_at", "updated_at", "version", "credential_revision");
         Set<String> identityMembershipCols = Set.of("id", "account_id", "practice_id", "state", "capabilities", "created_at", "updated_at");
 
         for (Map<String, Object> colRow : columns) {

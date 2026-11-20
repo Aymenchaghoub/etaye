@@ -25,6 +25,10 @@ export type Reason = {
 
 export type Credentials = {
     email: string;
+    /**
+     * Optional exact account or explicitly granted context route. The server ignores a denied or unrecognized target.
+     */
+    returnTo?: string;
 };
 
 export type RecoveryRequest = {
@@ -33,6 +37,9 @@ export type RecoveryRequest = {
 
 export type RecoveryComplete = {
     token: string;
+    /**
+     * At least 12 Unicode code points.
+     */
     newPassword: string;
 };
 
@@ -61,6 +68,10 @@ export type Session = {
     membershipIds: Array<string>;
     portalLinkIds: Array<string>;
     expiresAt: string;
+    /**
+     * Only returned by sign-in. Server-authorized local path.
+     */
+    returnTo?: string;
 };
 
 export type Csrf = {
@@ -778,6 +789,10 @@ export type ApiMeta = {
 export type CredentialsWritable = {
     email: string;
     password: string;
+    /**
+     * Optional exact account or explicitly granted context route. The server ignores a denied or unrecognized target.
+     */
+    returnTo?: string;
 };
 
 export type ActivationWritable = {
@@ -860,6 +875,11 @@ export type AsOf = string;
  * Client kind followed by a slash and its semantic version. The current browser kind is web. This metadata grants no authority.
  */
 export type ClientVersion = string;
+
+/**
+ * Recovery-request deduplication is scoped to the normalized email for 15 minutes. Reset commands always enforce one-use token redemption, even when a key is reused.
+ */
+export type RecoveryKey = string;
 
 export type GetReadinessData = {
     body?: never;
@@ -958,7 +978,7 @@ export type GetCsrfTokenErrors = {
      */
     406: Problem;
     /**
-     * Rate limit or quota exceeded
+     * The request budget is exhausted. Wait for the indicated number of seconds.
      */
     429: Problem;
     /**
@@ -971,7 +991,7 @@ export type GetCsrfTokenError = GetCsrfTokenErrors[keyof GetCsrfTokenErrors];
 
 export type GetCsrfTokenResponses = {
     /**
-     * Successful outcome; no automatic review or publication.
+     * Return the CSRF header name and token.
      */
     200: Csrf;
 };
@@ -998,14 +1018,6 @@ export type SignOutErrors = {
      */
     403: Problem;
     /**
-     * Semantic validation or disallowed transition
-     */
-    422: Problem;
-    /**
-     * Rate limit or quota exceeded
-     */
-    429: Problem;
-    /**
      * Service temporarily unavailable
      */
     503: Problem;
@@ -1015,7 +1027,7 @@ export type SignOutError = SignOutErrors[keyof SignOutErrors];
 
 export type SignOutResponses = {
     /**
-     * Successful outcome; no automatic review or publication.
+     * Session revoked.
      */
     204: void;
 };
@@ -1039,9 +1051,9 @@ export type GetSessionErrors = {
      */
     403: Problem;
     /**
-     * Rate limit or quota exceeded
+     * No supported response media type matches Accept.
      */
-    429: Problem;
+    406: Problem;
     /**
      * Service temporarily unavailable
      */
@@ -1052,7 +1064,7 @@ export type GetSessionError = GetSessionErrors[keyof GetSessionErrors];
 
 export type GetSessionResponses = {
     /**
-     * Successful outcome; no automatic review or publication.
+     * Current account and grants with the nearer idle or absolute deadline.
      */
     200: Session;
 };
@@ -1083,11 +1095,15 @@ export type SignInErrors = {
      */
     403: Problem;
     /**
-     * Semantic validation or disallowed transition
+     * No supported response media type matches Accept.
      */
-    422: Problem;
+    406: Problem;
     /**
-     * Rate limit or quota exceeded
+     * The request media type is unsupported.
+     */
+    415: Problem;
+    /**
+     * The request budget is exhausted. Wait for the indicated number of seconds.
      */
     429: Problem;
     /**
@@ -1100,7 +1116,7 @@ export type SignInError = SignInErrors[keyof SignInErrors];
 
 export type SignInResponses = {
     /**
-     * Successful outcome; no automatic review or publication.
+     * Authenticated session and an allowlisted return path authorized by its current grants. An absent or denied return path falls back to /compte.
      */
     200: Session;
 };
@@ -1112,7 +1128,7 @@ export type RequestRecoveryData = {
     headers: {
         'X-CSRF-TOKEN': string;
         /**
-         * Scoped to account/practice/operation/body hash. Same key/body returns prior outcome; changed body 409.
+         * Recovery-request deduplication is scoped to the normalized email for 15 minutes. Reset commands always enforce one-use token redemption, even when a key is reused.
          */
         'Idempotency-Key': string;
     };
@@ -1131,11 +1147,15 @@ export type RequestRecoveryErrors = {
      */
     403: Problem;
     /**
-     * Semantic validation or disallowed transition
+     * No supported response media type matches Accept.
      */
-    422: Problem;
+    406: Problem;
     /**
-     * Rate limit or quota exceeded
+     * The request media type is unsupported.
+     */
+    415: Problem;
+    /**
+     * The request budget is exhausted. Wait for the indicated number of seconds.
      */
     429: Problem;
     /**
@@ -1148,7 +1168,7 @@ export type RequestRecoveryError = RequestRecoveryErrors[keyof RequestRecoveryEr
 
 export type RequestRecoveryResponses = {
     /**
-     * Successful outcome; no automatic review or publication.
+     * Generic acceptance with no delivery or eligibility details.
      */
     202: Acknowledgement;
 };
@@ -1160,7 +1180,7 @@ export type CompleteRecoveryData = {
     headers: {
         'X-CSRF-TOKEN': string;
         /**
-         * Scoped to account/practice/operation/body hash. Same key/body returns prior outcome; changed body 409.
+         * Recovery-request deduplication is scoped to the normalized email for 15 minutes. Reset commands always enforce one-use token redemption, even when a key is reused.
          */
         'Idempotency-Key': string;
     };
@@ -1179,11 +1199,19 @@ export type CompleteRecoveryErrors = {
      */
     403: Problem;
     /**
+     * No supported response media type matches Accept.
+     */
+    406: Problem;
+    /**
+     * The request media type is unsupported.
+     */
+    415: Problem;
+    /**
      * Semantic validation or disallowed transition
      */
     422: Problem;
     /**
-     * Rate limit or quota exceeded
+     * The request budget is exhausted. Wait for the indicated number of seconds.
      */
     429: Problem;
     /**
@@ -1196,7 +1224,7 @@ export type CompleteRecoveryError = CompleteRecoveryErrors[keyof CompleteRecover
 
 export type CompleteRecoveryResponses = {
     /**
-     * Successful outcome; no automatic review or publication.
+     * Password changed and previous sessions revoked.
      */
     200: Acknowledgement;
 };

@@ -88,99 +88,89 @@ public class IdentityLookupRepository {
     }
 
     public Optional<AccountProfile> findAccountById(UUID accountId) {
-        return executeInAccountContext(accountId, conn -> {
-            String sql = "SELECT id, normalized_email, display_name, state, locale FROM account WHERE id = ?";
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setObject(1, accountId);
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        return Optional.of(new AccountProfile(
-                                (UUID) rs.getObject("id"),
-                                rs.getString("normalized_email"),
-                                rs.getString("display_name"),
-                                rs.getString("state"),
-                                rs.getString("locale")
-                        ));
-                    }
-                }
-            }
-            return Optional.empty();
-        });
+        return executeInAccountContext(accountId, conn -> findAccount(conn, accountId));
     }
 
     public List<MembershipGrant> findMembershipsByAccountId(UUID accountId) {
-        return executeInAccountContext(accountId, conn -> {
-            String sql = "SELECT id, account_id, practice_id, state, capabilities FROM membership WHERE account_id = ?";
-            List<MembershipGrant> list = new ArrayList<>();
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setObject(1, accountId);
-                try (ResultSet rs = ps.executeQuery()) {
-                    while (rs.next()) {
-                        Array capsArray = rs.getArray("capabilities");
-                        Set<String> capabilities = Collections.emptySet();
-                        if (capsArray != null) {
-                            String[] caps = (String[]) capsArray.getArray();
-                            capabilities = new HashSet<>(Arrays.asList(caps));
-                        }
-                        list.add(new MembershipGrant(
-                                (UUID) rs.getObject("id"),
-                                (UUID) rs.getObject("account_id"),
-                                (UUID) rs.getObject("practice_id"),
-                                rs.getString("state"),
-                                capabilities
-                        ));
-                    }
-                }
-            }
-            return list;
-        });
+        return executeInAccountContext(accountId, conn -> findMemberships(conn, accountId));
     }
 
     public Optional<AuthenticatedAccount> resolveAccountAndMemberships(UUID accountId) {
         return executeInAccountContext(accountId, conn -> {
-            AccountProfile profile = null;
-            String sqlAcc = "SELECT id, normalized_email, display_name, state, locale FROM account WHERE id = ?";
-            try (PreparedStatement ps = conn.prepareStatement(sqlAcc)) {
-                ps.setObject(1, accountId);
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        profile = new AccountProfile(
-                                (UUID) rs.getObject("id"),
-                                rs.getString("normalized_email"),
-                                rs.getString("display_name"),
-                                rs.getString("state"),
-                                rs.getString("locale")
-                        );
-                    }
-                }
-            }
-            if (profile == null) {
+            var profile = findAccount(conn, accountId);
+            if (profile.isEmpty()) {
                 return Optional.empty();
             }
 
-            List<MembershipGrant> memberships = new ArrayList<>();
-            String sqlMem = "SELECT id, account_id, practice_id, state, capabilities FROM membership WHERE account_id = ?";
-            try (PreparedStatement ps = conn.prepareStatement(sqlMem)) {
+            var membershipIds = new ArrayList<UUID>();
+            var portalLinkIds = new ArrayList<UUID>();
+            try (PreparedStatement ps = conn.prepareStatement("""
+                    SELECT grant_id, grant_type FROM public.current_session_grants(?) ORDER BY grant_id
+                    """)) {
                 ps.setObject(1, accountId);
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
-                        Array capsArray = rs.getArray("capabilities");
-                        Set<String> capabilities = Collections.emptySet();
-                        if (capsArray != null) {
-                            String[] caps = (String[]) capsArray.getArray();
-                            capabilities = new HashSet<>(Arrays.asList(caps));
+                        UUID id = rs.getObject("grant_id", UUID.class);
+                        if ("MEMBERSHIP".equals(rs.getString("grant_type"))) {
+                            membershipIds.add(id);
+                        } else {
+                            portalLinkIds.add(id);
                         }
-                        memberships.add(new MembershipGrant(
-                                (UUID) rs.getObject("id"),
-                                (UUID) rs.getObject("account_id"),
-                                (UUID) rs.getObject("practice_id"),
-                                rs.getString("state"),
-                                capabilities
-                        ));
                     }
                 }
             }
-            return Optional.of(new AuthenticatedAccount(profile, memberships));
+            return Optional.of(new AuthenticatedAccount(profile.get(), findMemberships(conn, accountId),
+                    List.copyOf(membershipIds), List.copyOf(portalLinkIds)));
         });
+    }
+
+    private Optional<AccountProfile> findAccount(Connection conn, UUID accountId) throws java.sql.SQLException {
+        try (PreparedStatement ps = conn.prepareStatement("""
+                SELECT id, normalized_email, display_name, state, locale, version, created_at, updated_at,
+                       credential_revision FROM public.account WHERE id = ?
+                """)) {
+            ps.setObject(1, accountId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(new AccountProfile(
+                            rs.getObject("id", UUID.class),
+                            rs.getString("normalized_email"),
+                            rs.getString("display_name"),
+                            rs.getString("state"),
+                            rs.getString("locale"),
+                            rs.getLong("version"),
+                            rs.getTimestamp("created_at").toInstant(),
+                            rs.getTimestamp("updated_at").toInstant(),
+                            rs.getLong("credential_revision")));
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    private List<MembershipGrant> findMemberships(Connection conn, UUID accountId) throws java.sql.SQLException {
+        var memberships = new ArrayList<MembershipGrant>();
+        try (PreparedStatement ps = conn.prepareStatement("""
+                SELECT id, account_id, practice_id, state, capabilities FROM public.membership WHERE account_id = ?
+                """)) {
+            ps.setObject(1, accountId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Array capsArray = rs.getArray("capabilities");
+                    Set<String> capabilities = Collections.emptySet();
+                    if (capsArray != null) {
+                        String[] caps = (String[]) capsArray.getArray();
+                        capabilities = new HashSet<>(Arrays.asList(caps));
+                    }
+                    memberships.add(new MembershipGrant(
+                            rs.getObject("id", UUID.class),
+                            rs.getObject("account_id", UUID.class),
+                            rs.getObject("practice_id", UUID.class),
+                            rs.getString("state"),
+                            capabilities));
+                }
+            }
+        }
+        return memberships;
     }
 }

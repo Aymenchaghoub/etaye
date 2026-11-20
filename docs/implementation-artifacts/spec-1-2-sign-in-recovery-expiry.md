@@ -2,10 +2,12 @@
 title: 'Story 1.2 — Sign in, recover and expire safely'
 type: 'feature'
 created: '2026-11-20'
-status: 'draft'
+status: 'in-review'
+baseline_commit: '9f82546e06bee11841cb2a903bd2551d3529862b'
 route: 'dispatch'
 review_loop_iteration: 0
 context:
+  - '{project-root}/AGENTS.md'
   - '{project-root}/docs/implementation-artifacts/epic-1-context.md'
   - '{project-root}/docs/design/reviews/2026-11-20-story-1-2-review.md'
 ---
@@ -20,6 +22,8 @@ Give existing account holders web sign-in, access recovery and safe return after
 
 Use the generated SDK, opaque JDBC session cookie, header CSRF and approved French designs S-02, S-04, S-38 and I-22 (UD-46, UD-48). Invitations, practice selection, clinical pages, native sessions and branded mail delivery retain their assigned stories. Keep secrets outside API responses, logs, browser storage and reusable database fields.
 
+Aymen approved a manual test inbox for the local demo. Make it opt-in, bounded and reachable through a separate loopback listener with a fixed local origin. Only synthetic accounts use it. Deliver the one-use link after commit, hold it in memory until expiry and keep it out of traces and the application API. The token stays in the reset page fragment until consumed. M-03, the general mail worker and external delivery belong to 8.3.
+
 ## I/O & Edge-Case Matrix
 
 | Scenario | Expected behavior |
@@ -32,10 +36,6 @@ Use the generated SDK, opaque JDBC session cookie, header CSRF and approved Fren
 
 </frozen-after-approval>
 
-## Open Questions
-
-- **Manual recovery testing.** Keep the recovery-link adapter confined to the automated real-stack tests and deliver manual email with 8.3, or expose a minimal opt-in loopback-only inbox in isolated local development so Aymen can follow a synthetic link in the browser during 1.2. The second option brings forward the local capture capability. M-03 branding, the general mail worker and external delivery remain in 8.3 in either case.
-
 ## Code Map
 
 - `docs/contracts/openapi.yaml`, `operation-index.json` and `README.md` already define the five account operations. Align observed outcomes before regenerating.
@@ -45,15 +45,17 @@ Use the generated SDK, opaque JDBC session cookie, header CSRF and approved Fren
 
 ## Tasks & Acceptance
 
-- [ ] `docs/contracts/openapi.yaml` and indexes — confirm request validation, expiry, generic problems, idempotency and cache policy.
-- [ ] `apps/api/src/main/resources/db/migration/V2__identity_access.sql` and `identity/` — add restricted credential lookup, bounded digest/receipt storage and atomic reset, session revocation and safe audit. Prove fresh and upgraded databases.
-- [ ] `infrastructure/security/` and `CsrfController.java` — enforce absolute and idle expiry, rotate credentials, bound anonymous issuance (D-35) and retain exact-origin/header-only CSRF behavior.
-- [ ] `apps/web/src/` — add approved sign-in, recovery and expiry behaviors using generated tokens and original assets. Apply amber to the approved password error summary.
-- [ ] `apps/api/src/test/` and `apps/web/tests/`, `apps/web/e2e/` — exercise the matrix, wrong/missing CSRF, disallowed return, changed grants, outage, keyboard and axe.
+- [x] `docs/contracts/openapi.yaml` and indexes — confirm request validation, expiry, generic problems, idempotency and cache policy.
+- [x] `apps/api/src/main/resources/db/migration/V2__identity_access.sql` and `identity/` — add restricted credential lookup, bounded digest/receipt storage, the isolated local capture adapter, and atomic reset, session revocation and safe audit. Prove fresh and upgraded databases.
+- [x] `infrastructure/security/` and `CsrfController.java` — enforce absolute and idle expiry, rotate credentials, bound anonymous issuance (D-35) by direct client address within a global budget and retain exact-origin/header-only CSRF behavior.
+- [x] `apps/web/src/` — add approved sign-in, recovery and expiry behaviors using generated tokens and original assets. Apply amber to the approved password error summary.
+- [x] `apps/api/src/test/` and `apps/web/tests/`, `apps/web/e2e/` — exercise the matrix, wrong/missing CSRF, disallowed return, changed grants, outage, keyboard and axe.
 
 Given a synthetic account on the isolated stack, when the actor signs in, follows a captured recovery link or returns after expiry, then real HTTP and PostgreSQL enforce AT-002-A/B. Given the running screens at the evidence widths, when compared with the approved references in both themes, then required copy, focus and responsive behavior satisfy AT-002-C.
 
 ## Implementation Notes
+
+Java 25 verification passed 150 tests, Chromium smoke passed 19 tests, and the isolated real-stack recovery and outage tests both passed. The disposable V1-to-V2 migration preserved an existing synthetic account and membership. The live visual comparison covered both themes and widths from 1440 to 320 CSS px.
 
 ## Spec Change Log
 

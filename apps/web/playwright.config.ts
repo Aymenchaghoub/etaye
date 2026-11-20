@@ -1,13 +1,14 @@
 import { defineConfig } from '@playwright/test';
 
-const baseURL = 'http://127.0.0.1:5173';
+const port = Number(process.env.ETAYE_SMOKE_PORT ?? 5173);
+const baseURL = `http://127.0.0.1:${port}`;
 
 export default defineConfig({
   testDir: './tests',
   timeout: 30000,
   retries: 0,
   webServer: {
-    command: 'vite --host 127.0.0.1 --strictPort',
+    command: `python3 ../../tools/generate_web_tokens.py --target-dir .cache/design && vite --host 127.0.0.1 --port ${port} --strictPort`,
     url: baseURL,
     reuseExistingServer: false,
   },

@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Étaye documentary API contract",
-    "version": "0.2.2-planning",
+    "version": "0.2.3-planning",
     "description": "OpenAPI contract for current and planned endpoints. See README for runtime coverage. All examples are synthetic."
   },
   "servers": [
@@ -99,7 +99,7 @@
       "get": {
         "operationId": "getCsrfToken",
         "summary": "getCsrfToken",
-        "description": "Requires PUBLIC. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
+        "description": "Issue a session-bound token. Anonymous issuance is rate-limited by the direct client address and a global budget.",
         "x-required-permissions": [
           "PUBLIC"
         ],
@@ -110,11 +110,20 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful outcome; no automatic review or publication.",
+            "description": "Return the CSRF header name and token.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Csrf"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
                 }
               }
             }
@@ -126,7 +135,7 @@
             "$ref": "#/components/responses/Problem406"
           },
           "429": {
-            "$ref": "#/components/responses/Problem429"
+            "$ref": "#/components/responses/AccountRateLimit"
           },
           "503": {
             "$ref": "#/components/responses/Problem503"
@@ -139,7 +148,7 @@
       "post": {
         "operationId": "signIn",
         "summary": "signIn",
-        "description": "Requires PUBLIC. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
+        "description": "Verify web credentials, rotate the cookie and CSRF value, and resolve current grants. Missing, inactive and incorrect identities share one 401.",
         "x-required-permissions": [
           "PUBLIC"
         ],
@@ -150,11 +159,20 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful outcome; no automatic review or publication.",
+            "description": "Authenticated session and an allowlisted return path authorized by its current grants. An absent or denied return path falls back to /compte.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Session"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
                 }
               }
             }
@@ -168,14 +186,17 @@
           "403": {
             "$ref": "#/components/responses/Problem403"
           },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
           "429": {
-            "$ref": "#/components/responses/Problem429"
+            "$ref": "#/components/responses/AccountRateLimit"
           },
           "503": {
             "$ref": "#/components/responses/Problem503"
+          },
+          "406": {
+            "$ref": "#/components/responses/Problem406"
+          },
+          "415": {
+            "$ref": "#/components/responses/Problem415"
           }
         },
         "security": [],
@@ -193,18 +214,27 @@
       "get": {
         "operationId": "getSession",
         "summary": "getSession",
-        "description": "Requires AUTHENTICATED. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
+        "description": "Re-resolve account state, session lifetime and current grants from the server.",
         "x-required-permissions": [
           "AUTHENTICATED"
         ],
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successful outcome; no automatic review or publication.",
+            "description": "Current account and grants with the nearer idle or absolute deadline.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Session"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
                 }
               }
             }
@@ -215,18 +245,18 @@
           "403": {
             "$ref": "#/components/responses/Problem403"
           },
-          "429": {
-            "$ref": "#/components/responses/Problem429"
-          },
           "503": {
             "$ref": "#/components/responses/Problem503"
+          },
+          "406": {
+            "$ref": "#/components/responses/Problem406"
           }
         }
       },
       "delete": {
         "operationId": "signOut",
         "summary": "signOut",
-        "description": "Requires AUTHENTICATED. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
+        "description": "Revoke the current authenticated web session.",
         "x-required-permissions": [
           "AUTHENTICATED"
         ],
@@ -237,19 +267,22 @@
         ],
         "responses": {
           "204": {
-            "description": "Successful outcome; no automatic review or publication."
+            "description": "Session revoked.",
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            }
           },
           "401": {
             "$ref": "#/components/responses/Problem401"
           },
           "403": {
             "$ref": "#/components/responses/Problem403"
-          },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
-          "429": {
-            "$ref": "#/components/responses/Problem429"
           },
           "503": {
             "$ref": "#/components/responses/Problem503"
@@ -261,7 +294,7 @@
       "post": {
         "operationId": "requestRecovery",
         "summary": "requestRecovery",
-        "description": "Requires PUBLIC. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
+        "description": "Accept the same request for eligible and ineligible identities. Deduplicate within 15 minutes by normalized email and key. Eligible recovery links are issued only after the transaction commits.",
         "x-required-permissions": [
           "PUBLIC"
         ],
@@ -270,16 +303,25 @@
             "$ref": "#/components/parameters/Csrf"
           },
           {
-            "$ref": "#/components/parameters/IdempotencyKey"
+            "$ref": "#/components/parameters/RecoveryKey"
           }
         ],
         "responses": {
           "202": {
-            "description": "Successful outcome; no automatic review or publication.",
+            "description": "Generic acceptance with no delivery or eligibility details.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Acknowledgement"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
                 }
               }
             }
@@ -290,14 +332,17 @@
           "403": {
             "$ref": "#/components/responses/Problem403"
           },
-          "422": {
-            "$ref": "#/components/responses/Problem422"
-          },
           "429": {
-            "$ref": "#/components/responses/Problem429"
+            "$ref": "#/components/responses/AccountRateLimit"
           },
           "503": {
             "$ref": "#/components/responses/Problem503"
+          },
+          "406": {
+            "$ref": "#/components/responses/Problem406"
+          },
+          "415": {
+            "$ref": "#/components/responses/Problem415"
           }
         },
         "security": [],
@@ -317,7 +362,7 @@
       "post": {
         "operationId": "completeRecovery",
         "summary": "completeRecovery",
-        "description": "Requires PUBLIC. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
+        "description": "Redeem the secret from the reset-page fragment once within 15 minutes, replace the password and revoke the account’s sessions atomically. Every expired, inactive or already redeemed token receives the same 422.",
         "x-required-permissions": [
           "PUBLIC"
         ],
@@ -326,16 +371,25 @@
             "$ref": "#/components/parameters/Csrf"
           },
           {
-            "$ref": "#/components/parameters/IdempotencyKey"
+            "$ref": "#/components/parameters/RecoveryKey"
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful outcome; no automatic review or publication.",
+            "description": "Password changed and previous sessions revoked.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Acknowledgement"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
                 }
               }
             }
@@ -350,10 +404,16 @@
             "$ref": "#/components/responses/Problem422"
           },
           "429": {
-            "$ref": "#/components/responses/Problem429"
+            "$ref": "#/components/responses/AccountRateLimit"
           },
           "503": {
             "$ref": "#/components/responses/Problem503"
+          },
+          "406": {
+            "$ref": "#/components/responses/Problem406"
+          },
+          "415": {
+            "$ref": "#/components/responses/Problem415"
           }
         },
         "security": [],
@@ -7822,6 +7882,16 @@
           "type": "string"
         },
         "example": "web/0.0.1"
+      },
+      "RecoveryKey": {
+        "name": "Idempotency-Key",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{16,128}$"
+        },
+        "description": "Recovery-request deduplication is scoped to the normalized email for 15 minutes. Reset commands always enforce one-use token redemption, even when a key is reused."
       }
     },
     "schemas": {
@@ -7928,6 +7998,11 @@
             "minLength": 1,
             "maxLength": 1024,
             "writeOnly": true
+          },
+          "returnTo": {
+            "type": "string",
+            "maxLength": 128,
+            "description": "Optional exact account or explicitly granted context route. The server ignores a denied or unrecognized target."
           }
         },
         "required": [
@@ -7941,7 +8016,8 @@
         "properties": {
           "email": {
             "type": "string",
-            "format": "email"
+            "format": "email",
+            "maxLength": 254
           }
         },
         "required": [
@@ -7962,7 +8038,8 @@
             "type": "string",
             "minLength": 12,
             "maxLength": 1024,
-            "writeOnly": true
+            "writeOnly": true,
+            "description": "At least 12 Unicode code points."
           }
         },
         "required": [
@@ -8087,20 +8164,22 @@
             "items": {
               "type": "string",
               "format": "uuid"
-            },
-            "maxItems": 100
+            }
           },
           "portalLinkIds": {
             "type": "array",
             "items": {
               "type": "string",
               "format": "uuid"
-            },
-            "maxItems": 100
+            }
           },
           "expiresAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "returnTo": {
+            "type": "string",
+            "description": "Only returned by sign-in. Server-authorized local path."
           }
         },
         "required": [
@@ -11613,6 +11692,32 @@
       },
       "Problem415": {
         "description": "The request media type is unsupported.",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "AccountRateLimit": {
+        "description": "The request budget is exhausted. Wait for the indicated number of seconds.",
+        "headers": {
+          "Cache-Control": {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "no-store"
+            }
+          },
+          "Retry-After": {
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
         "content": {
           "application/problem+json": {
             "schema": {

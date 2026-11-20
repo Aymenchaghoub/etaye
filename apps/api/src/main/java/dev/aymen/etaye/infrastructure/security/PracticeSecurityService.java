@@ -29,14 +29,14 @@ public class PracticeSecurityService {
         if (membership == null) {
             // Only the actor's own memberships can establish an audit scope for an invisible practice.
             List<MembershipGrant> activeMemberships = account.memberships().stream()
-                    .filter(MembershipGrant::isActive)
+                    .filter(account::isMembershipCurrent)
                     .limit(2)
                     .toList();
             UUID auditPracticeId = activeMemberships.size() == 1 ? activeMemberships.getFirst().practiceId() : null;
             throw new PracticeNotVisibleException(new AuthorizationDenial(actorAccountId, auditPracticeId,
                     Reason.NOT_VISIBLE, null));
         }
-        if (!membership.isActive()) {
+        if (!account.isMembershipCurrent(membership)) {
             throw new CapabilityDeniedException(new AuthorizationDenial(actorAccountId, practiceId,
                     Reason.MEMBERSHIP_NOT_ACTIVE, capability));
         }
