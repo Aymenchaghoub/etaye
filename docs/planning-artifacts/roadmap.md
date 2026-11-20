@@ -160,7 +160,7 @@ Every deferred item has rationale, dependencies, impact and an explicit trigger 
 | D-30 | Advanced audit filters and clinical-audit detail | 4 | Basic audit (increment 2) is in use |
 | D-31 | Profile and preferences screen | 2 | Increment 2 starts |
 | D-32 | Custom domain, universal links, privacy-policy page | 3 | A store or deep-link decision is made |
-| D-33 | Dynamic security scan (HawkScan) in local runs and CI | 1 (after the spike) | The backend runs locally after the spike and Aymen opens the StackHawk trial |
+| D-33 | Dynamic security scan (HawkScan) in local runs and CI | Not planned (UD-47) | Aymen explicitly reopens dynamic scanning with an accepted tool and cost |
 
 D-01 to D-14 keep their existing triggers and stay unscheduled.
 

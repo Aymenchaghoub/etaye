@@ -2,6 +2,14 @@
 
 Updated: 2026-11-20. Owner: Aymen Chaghoub.
 
+## Follow-up decisions and source drawer spike — 2026-11-20
+
+**Phase:** maintenance of story 10.1 and design evidence. **User decisions:** [UD-47](planning-artifacts/decisions-assumptions.md) records the confirmation of React Aria Components, required API and Web checks, authorization-denial audit design, the HawkScan decision, the Dependabot disposition and the toolchain decision. PRs #38, #39, #40 and #41 are on `main`. **Actual verification:** GitHub ruleset 26390376 lists `API verify` and `Web verify` as active required checks. Both application jobs completed on PR #41. Dependabot alert 54 is dismissed.
+
+The [spike record](design/reviews/2026-11-20-react-aria-spike.md) includes the standalone `Sheet` reproduction in Chromium at 1440 × 900 and 390 × 844. A temporary style produced the required full-height desktop drawer. Escape still left the full-width drawer mounted. D-49 carries the drawer checks, combobox focus issue and screen-reader pass. The existing prototype and design reference were used as read-only evidence.
+
+**Next action:** finish and verify `fix/10-1-denial-audit` against the updated BR-017 and AT-038-B. Then prepare the story 10.2 phase 0 plan for Aymen's review.
+
 ## CORE families approved — 2026-11-20
 
 **Phase:** design. **User decision (UD-46):** Aymen approved the 19 CORE families of increment 1 (15 screens, 4 interactions) on a visual review page, answering "APPROUVÉE" to each with no remark (the batch button). **Completed artifacts:** the [review record](design/reviews/2026-11-20-core-review.md) (what was shown, what was not judged, the families and states), `coverage.csv` and `html-reception.csv` (19 rows approved, 57 not approved; the tablet and mobile review columns say what was captured, the functional review stays Pending), UD-46, and the status lines of the screen catalog, the interaction catalog, roadmap section 9 and design-system section 14. **Actual verification:** `python3 tools/validate_docs.py`; the captures were taken with headless Chromium from the committed offline reference and are not committed. **Not judged:** keyboard focus, long French content, 200 % zoom, 320 px reflow, print, the dark theme and every state not shown. **Not changed:** development stays authorized story by story (UD-41, UD-45); the 57 other families are not approved.

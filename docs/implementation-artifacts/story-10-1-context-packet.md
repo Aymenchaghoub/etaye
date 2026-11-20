@@ -40,7 +40,7 @@ Roles (ADR-003, AD-3): a migration role that owns the objects, and a runtime rol
 | C1 | Authorized create gives 201 and exactly one row each in patient, patient_record, audit_event, outbox_event and idempotency_receipt, with the right practice_id | AT-038-A |
 | C2 | A failure injected after the domain write rolls back everything: no patient, audit, outbox or receipt row | AT-038-A, AD-7 |
 | C3 | Practitioner of practice B reads a record of practice A by UUID: 404, identical to an unknown id | AT-038-B, ADR-003 |
-| C4 | Missing capability (including an administrator-only membership) gives 403 and no domain audit or outbox row for the failed attempt | AT-038-B |
+| C4 | Missing capability (including an administrator-only membership) gives 403 and a separate bounded security audit row in the actor’s practice. The failed attempt commits no domain audit or outbox row. | AT-038-B, BR-017, UD-47 |
 | C5 | A statement on the runtime role without context returns no row or fails closed | AD-3 |
 | C6 | Pool of one connection: a request that fails, then a request of another practice, never sees leaked context; context A then context B never mix | AT-038-B |
 | C7 | Same key and body: one patient, same outcome; same key and another body: 409 | contract, AD-7 |
@@ -51,7 +51,7 @@ Roles (ADR-003, AD-3): a migration role that owns the objects, and a runtime rol
 | C12 | Mutation checks: remove the context, then give the runtime role ownership or BYPASSRLS; C3, C5 and C6 must go red, then green again | quality rule 4 of the agent prompt |
 | C13 | One Playwright smoke on the real stack: browser, React page, API, PostgreSQL | ADR-011 point 4 |
 
-Open point to flag, not to decide: AT-038-B says no audit or outbox row is committed for the failed attempt, while BR-017 lists denials among auditable events. Follow AT-038-B literally for the failed mutation, add no separate security-event row, and report the ambiguity.
+UD-47 resolves the original conflict between AT-038-B and BR-017. The follow-up checks preserve the same 403/404 contract, establish the actor’s practice independently of a foreign target, verify no row for an unscoped denial, exercise a failed audit transaction, and verify the per-actor/operation/reason volume bound.
 
 ## 7. Phases and tasks
 
