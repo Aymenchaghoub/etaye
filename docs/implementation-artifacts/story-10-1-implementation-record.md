@@ -107,7 +107,7 @@ Effect on acceptance: AT-038-A is met for the membership path; the "portal link"
 
 ## 9. Running it locally
 
-Passwords are generated per run and never committed.
+Passwords are generated per run and never committed. Run the whole block in one shell (or re-export the four variables in every terminal that starts the API): a second terminal without them would pass empty runtime and identity passwords.
 
 ```bash
 export POSTGRES_ADMIN_PASSWORD=$(openssl rand -hex 12) ETAYE_OWNER_PASSWORD=$(openssl rand -hex 12) \

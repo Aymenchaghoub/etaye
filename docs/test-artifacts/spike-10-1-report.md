@@ -106,7 +106,7 @@ The exact commands, with the Flyway call, the runtime and identity variables and
 From `apps/web`, `pnpm test:smoke` runs the Playwright suite with a stubbed readiness probe. Its results cover browser behavior for the supplied probe responses. Record real-stack evidence with the separate outage run.
 
 ### 5.3 Negative Run with Database Stopped
-The committed negative run in `3096c1d` intercepts `/api/v1/probes/readiness` and supplies a stubbed HTTP 503. The real outage check runs separately with `pnpm test:e2e-real`, the local stack running, and `ETAYE_E2E_DB_CONTAINER` set to the Compose database container. It checks HTTP 503 with `{"status":"DOWN"}` and the browser's `UNAVAILABLE` state after stopping and pausing PostgreSQL, then checks HTTP 200 with `{"status":"UP"}` and `READY` after each recovery. The real-stack run is pending.
+The committed negative run in `3096c1d` intercepts `/api/v1/probes/readiness` and supplies a stubbed HTTP 503. The real outage check runs separately with `pnpm test:e2e-real`, the local stack running, and `ETAYE_E2E_DB_CONTAINER` set to the Compose database container. It checks HTTP 503 with `{"status":"DOWN"}` and the browser's `UNAVAILABLE` state after stopping and pausing PostgreSQL, then checks HTTP 200 with `{"status":"UP"}` and `READY` after each recovery. **Verified on 2026-11-20 at `c6003e8`:** the real spec passed against the compose stack (stop, start, pause, unpause); the stubbed suite stays a separate result. See the [implementation record](../implementation-artifacts/story-10-1-implementation-record.md), section 5.
 
 ---
 

@@ -107,23 +107,24 @@ healthcheck_command() {
 }
 
 verify_health_follows_role_attributes() {
-  # Healthy after a correct initialization; unhealthy on a volume whose application role is a superuser,
-  # which the init hook (it runs only once) can no longer correct.
-  local command healthy="$prefix-healthy" compromised="$prefix-compromised" password
+  # One change at a time on a fully provisioned container: healthy, then unhealthy because of a single
+  # privileged attribute or membership, then healthy again. The init hook runs only once, so only the
+  # health check can notice such a drift on an initialized volume.
+  local command name="$prefix-health" password
   command=$(healthcheck_command) || return 1
   password=$(openssl rand -hex 24) || return 1
-  start_postgres "$healthy" postgres "$password" && wait_for_init "$healthy" || return 1
-  docker exec "$healthy" sh -c "$command" >/dev/null || return 1
-
-  containers+=("$compromised")
-  docker run --detach --name "$compromised" --env POSTGRES_USER=etaye_runtime --env POSTGRES_DB=etaye \
-    --env POSTGRES_PASSWORD="$(openssl rand -hex 24)" postgres:18 >/dev/null || return 1
-  local deadline=$((SECONDS + 60))
-  until docker exec "$compromised" pg_isready --username=etaye_runtime --dbname=etaye >/dev/null 2>&1; do
-    (( SECONDS < deadline )) || return 1
-    sleep 1
-  done
-  ! docker exec "$compromised" sh -c "$command" >/dev/null 2>&1
+  start_postgres "$name" postgres "$password" && wait_for_init "$name" || return 1
+  local psql_admin=(docker exec "$name" psql -X -w -At -v ON_ERROR_STOP=1 --username=postgres --dbname=etaye --command)
+  healthy() { docker exec "$name" sh -c "$command" >/dev/null 2>&1; }
+  healthy || return 1
+  "${psql_admin[@]}" "ALTER ROLE etaye_runtime SUPERUSER" >/dev/null || return 1
+  ! healthy || return 1
+  "${psql_admin[@]}" "ALTER ROLE etaye_runtime NOSUPERUSER" >/dev/null || return 1
+  healthy || return 1
+  "${psql_admin[@]}" "GRANT etaye_owner TO etaye_runtime" >/dev/null || return 1
+  ! healthy || return 1
+  "${psql_admin[@]}" "REVOKE etaye_owner FROM etaye_runtime" >/dev/null || return 1
+  healthy
 }
 
 verify_compose_settings() {
