@@ -1,0 +1,10 @@
+{
+  "name": "etaye",
+  "private": true,
+  "packageManager": "pnpm@12.21.0",
+  "scripts": {
+    "build": "pnpm --filter etaye-web build",
+    "test:web": "pnpm --filter etaye-web test:smoke",
+    "typecheck": "node apps/web/node_modules/typescript/bin/tsc -b"
+  }
+}

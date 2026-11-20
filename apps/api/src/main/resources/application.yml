@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: etaye-api
+  flyway:
+    enabled: false
+  datasource:
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 2500
+      validation-timeout: 1500
+      data-source-properties:
+        connectTimeout: 3
+        socketTimeout: 3
+        cancelSignalTimeout: 1
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: false
+  session:
+    store-type: jdbc
+    jdbc:
+      initialize-schema: never
+      table-name: spring_session
+
+server:
+  port: 8080
+
+etaye:
+  identity:
+    datasource:
+      username: ${ETAYE_IDENTITY_USER:etaye_identity}
+      password: ${ETAYE_IDENTITY_PASSWORD:}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: none
+  endpoint:
+    health:
+      probes:
+        enabled: false
