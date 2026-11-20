@@ -2,6 +2,12 @@
 
 Updated: 2026-11-20. Owner: Aymen Chaghoub.
 
+## Story 1.2 design approval with one revision pending — 2026-11-20
+
+**Phase.** Aymen approved S-38 with the neutral background, I-22 and the S-04 recovery variants except the invalid password state. He requested a color for the error summary. The revised preview uses the existing attention banner colors and preserves the link to the invalid field. Chromium rendered both themes from desktop through 320 CSS px and verified the text contrast. [Design review record](design/reviews/2026-11-20-story-1-2-review.md)
+
+**Next action.** Obtain approval of the revised S-04 state. Then complete the design gate, encode the written authorization (UD-48) in the per-story configuration and continue implementation preparation.
+
 ## Story 10.2 merged and story 1.2 design review prepared — 2026-11-20
 
 **Integration.** [PR #44](https://github.com/Aymenchaghoub/etaye/pull/44) merged as `04a2910e6b224b844dee2b5be13984f27dd84d57` from `ce9e7a0802e65f2c322509321968f59213dc8024`. All seven review threads were resolved and all five required checks passed. [API verify](https://github.com/Aymenchaghoub/etaye/actions/runs/44816341776/job/136565567892) ran Testcontainers and the Surefire evidence gate. [Web verify](https://github.com/Aymenchaghoub/etaye/actions/runs/44816341784/job/136565567911) type-checked, built the Web app, ran Chromium smoke tests and uploaded Playwright and axe evidence. Local reruns passed 143 API tests, 13 browser smoke tests and 94 tooling tests. A separate Chromium exercise loaded all seven compiled fonts over HTTP beneath a path prefix.
