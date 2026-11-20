@@ -5,7 +5,9 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-etaye}
-      POSTGRES_USER: ${POSTGRES_ADMIN_USER:-postgres}
+      # Fixed on purpose: a configurable administrator named like an application role would stay a superuser
+      # when the container restarts on an initialized volume, because the init hook only runs once.
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?set POSTGRES_ADMIN_PASSWORD}
       ETAYE_OWNER_PASSWORD: ${ETAYE_OWNER_PASSWORD:?set ETAYE_OWNER_PASSWORD}
       ETAYE_RUNTIME_PASSWORD: ${ETAYE_RUNTIME_PASSWORD:?set ETAYE_RUNTIME_PASSWORD}
@@ -16,7 +18,7 @@ services:
     ports:
       - "127.0.0.1:5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_ADMIN_USER:-postgres} -d ${POSTGRES_DB:-etaye}"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ${POSTGRES_DB:-etaye}"]
       interval: 5s
       timeout: 5s
       retries: 5

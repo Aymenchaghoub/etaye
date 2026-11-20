@@ -100,6 +100,21 @@ verify_literal_password() {
   [[ "$result" == etaye_owner ]]
 }
 
+verify_compose_settings() {
+  # The administrator name must stay fixed even when an override is supplied, and the port must stay on the loopback.
+  local json
+  json=$(POSTGRES_ADMIN_PASSWORD=x ETAYE_OWNER_PASSWORD=x ETAYE_RUNTIME_PASSWORD=x ETAYE_IDENTITY_PASSWORD=x \
+    POSTGRES_ADMIN_USER=etaye_runtime \
+    docker compose -f "$script_dir/docker-compose.yml" config --format json) || return 1
+  python3 -c '
+import json, sys
+service = json.loads(sys.argv[1])["services"]["postgres"]
+assert service["environment"]["POSTGRES_USER"] == "postgres", service["environment"]["POSTGRES_USER"]
+ports = service["ports"]
+assert ports and all(port.get("host_ip") == "127.0.0.1" for port in ports), ports
+' "$json"
+}
+
 run_case() {
   local label=$1
   shift
@@ -114,4 +129,5 @@ run_case() {
 run_case "Application role attributes and public schema owner" verify_roles_and_schema
 run_case "Admin collision with etaye_runtime is refused" verify_admin_collision
 run_case "Owner can authenticate with the literal password" verify_literal_password
+run_case "Compose fixes the administrator name and binds the port to the loopback" verify_compose_settings
 exit "$failed"
