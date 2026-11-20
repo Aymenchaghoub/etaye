@@ -1,6 +1,6 @@
 # Story 10.1 — implementation record
 
-Status: implemented on branch `feat/10.1-walking-skeleton` and verified locally; not merged, never run on GitHub Actions. Date: 2026-11-19. Last code commit verified: `f6db2bd` (base `0fc825f`). Authorization: UD-41, story 10.1 only, a named exception to the CORE design gate because the story has no screen. This record claims no clinical validation, certification or regulatory compliance; every person and value in the code, tests and screenshots is synthetic.
+Status: implemented on branch `feat/10.1-walking-skeleton` and verified locally; not merged, never run on GitHub Actions. Date: 2026-11-19. Last code commit verified: `c6003e8` for the API suite and the real stack, plus `a783a89` for the report guard (base `0fc825f`). Authorization: UD-41, story 10.1 only, a named exception to the CORE design gate because the story has no screen. This record claims no clinical validation, certification or regulatory compliance; every person and value in the code, tests and screenshots is synthetic.
 
 ## 1. Who did what
 
@@ -24,12 +24,12 @@ The context packet ([story-10-1-context-packet.md](story-10-1-context-packet.md)
 - `PracticeTransaction`: the single transactional entry point. It sets the context with a parameterized transaction-local `set_config`, refuses to join a transaction it did not open (decided by a private synchronization marker, so a foreign transaction or a `REQUIRES_NEW` inner one cannot forge it), rejects a second practice, and refuses a leaked context.
 - Request path: session cookie `__Host-etaye-session` (HttpOnly, Secure, SameSite=Lax, host-only), the account and memberships re-resolved on every request including replays, CSRF token bound to the session and read only from `X-CSRF-TOKEN`, idempotency with an advisory lock on (account, practice, operation, key digest) and a canonical body hash, audit and outbox written in the same transaction, RFC 9457 problems from one shared writer, database outages answered 503.
 - `apps/web`: a one-page React 19.3.1 + Vite 8 page that shows LOADING, READY or UNAVAILABLE from the readiness probe (6-second abort, response body always consumed), with a stubbed smoke suite and a separate real-stack outage spec.
-- `infra/local`: PostgreSQL 18 compose file bound to `127.0.0.1`, the provisioning script and a script that exercises it in throwaway containers.
+- `infra/local`: PostgreSQL 18 compose file bound to `127.0.0.1` with a fixed administrator name (a configurable one named like an application role would stay a superuser after a restart on an initialized volume), the provisioning script and a script that exercises it and the resolved compose settings in throwaway containers.
 - CI: `api.yml` and `web.yml` (informational, never run on GitHub), `tools/assert_test_reports.py` (recounts real results, requires named suites), TF-3 in `tools/validate_docs.py` (the application exception is derived from `authorized_stories` in `_bmad/custom/config.toml`, bounded to a tracked-path allowlist).
 
 ## 4. Verification of the behavior checks (packet section 6)
 
-All tests run on a real PostgreSQL 18 (Testcontainers) through real HTTP. Total at `f6db2bd`: 83 tests, 0 failures, 0 skipped.
+All tests run on a real PostgreSQL 18 (Testcontainers) through real HTTP. Total at `c6003e8`: 102 tests, 0 failures, 0 skipped (my own run; the per-class counts printed by the code agent were repeatedly wrong and are not used).
 
 | Check | Proof |
 |---|---|
@@ -51,18 +51,19 @@ All tests run on a real PostgreSQL 18 (Testcontainers) through real HTTP. Total 
 
 | Command | Result |
 |---|---|
-| `cd apps/api && ./mvnw -B -ntp verify` (clean worktree at `f6db2bd`) | 83 tests, BUILD SUCCESS. |
-| `corepack pnpm install --frozen-lockfile`, `corepack pnpm exec tsc -b`, `corepack pnpm build`, `corepack pnpm test:smoke` in `apps/web` | Pass; 8 smoke tests. |
-| Real stack: compose PostgreSQL 18 with the real init script, Flyway as owner, API jar as runtime role, Vite dev server, `ETAYE_E2E_DB_CONTAINER=etaye-local-postgres corepack pnpm test:e2e-real` | 1 passed (4.5 s) after the fix below. |
-| `infra/local/verify-init-roles.sh` | 3 PASS: attributes and schema owner, reserved administrator name refused, password with special characters accepted. |
-| `python3 -m unittest discover -s tools -p 'test_*.py'` | 60 tests OK. |
+| `cd apps/api && ./mvnw -B -ntp verify` (clean worktree and the clone at `c6003e8`) | 102 tests, BUILD SUCCESS. |
+| `corepack pnpm install --frozen-lockfile`, `corepack pnpm exec tsc -b`, `corepack pnpm build`, `corepack pnpm test:smoke` in `apps/web` | Pass; 9 smoke tests. |
+| Real stack: compose PostgreSQL 18 with the real init script, Flyway as owner, API jar as runtime role, Vite dev server, `ETAYE_E2E_DB_CONTAINER=etaye-local-postgres corepack pnpm test:e2e-real` | 1 passed (9.3 s) on `c6003e8`, after the fixes below. |
+| `infra/local/verify-init-roles.sh` | 4 PASS: attributes and schema owner, reserved administrator name refused, password with special characters accepted, compose keeps the administrator name fixed and the port on the loopback even with an override. |
+| `python3 -m unittest discover -s tools -p 'test_*.py'` | 69 tests OK. |
+| The exact commands of `api.yml` and `web.yml` replayed on real reports | Surefire guard `PASS surefire: tests=102` with the 14 required suites; Playwright JSON guard `PASS playwright: tests=9` with the required spec file. The first replay on real Surefire reports failed (see below) and was fixed. |
 | `python3 tools/validate_docs.py` | `ok: true`, scope mode `story-10.1`. Documentary check only. |
 | `git diff --check 0fc825f..HEAD` | Silent. |
 | Anonymous probes on the running API | Unknown protected routes 401 problem+json, POST without token 403 `CSRF_REJECTED`, `/api/v1/csrf` 200, `/actuator/health` 401 (not exposed), readiness 200/503 with the minimal body. |
 | Secrets | No generated password in any log; the three role passwords and the admin password searched in the API, web and compose logs: 0 matches. |
 | Screenshots | `docs/test-artifacts/story-10-1-screenshots/` at 1440, 834 and 390 px, READY and with PostgreSQL stopped; no horizontal overflow. Opened and read by the orchestrator. |
 
-Defects found only by the real stack, not by the stubbed or in-process tests: the provisioning script failed on a real container (psql does not interpolate variables inside a dollar-quoted body); and the web page left the body of a non-OK response unread, which kept the request pending in the browser and hung the real outage spec.
+Defects found only by running the real thing, not by the stubbed or in-process tests: the provisioning script failed on a real container (psql does not interpolate variables inside a dollar-quoted body); the web page left the body of a non-OK response unread, which kept the request pending in the browser and hung the real outage spec; and the CI report guard rejected a real green API run because the ArchUnit engine writes simple class names in its testcase elements (the guard now matches the suite name).
 
 Mutation matrices, each mutant shown red then restored (commands kept in the orchestrator's session, outputs read):
 
@@ -70,6 +71,7 @@ Mutation matrices, each mutant shown red then restored (commands kept in the orc
 - Role mutations at `f6db2bd`: the runtime role created WITH BYPASSRLS turns C5, C6 and C8 red; the runtime role made a member of the owner role turns C8 red. The HTTP cross-practice test C3 stays green under BYPASSRLS because `findByIdAndPracticeId` still filters by practice: the isolation is defended twice on purpose, and the database layer is proven by the per-table direct SQL tests (`checkDirectSqlIsolation_*`), which go red when the policy is opened. The packet's wording "C3, C5 and C6 must go red" assumed a single layer; this is a documented deviation, not a missing test.
 - Fix 1 (`ba174f3`): old `|` hash, `_csrf` parameter fallback, C2 hook neutralised, advisory lock removed.
 - Fix 2 (`aae2fa7`): lock, account context, transaction guard, strict JSON, session deletion, membership policy opened, no socket timeout (red by timeout, then bounded).
+- Round 2 of the final review at `c6003e8` (nine mutants, all red): writer ignores a committed response, classifier accepts a bare `SocketException`, `/csrf` continues after a failed session deletion, date deserializer trims again, practice marker stays active after commit, DELETE granted on `audit_event` (C8 privilege matrix), constant advisory lock key (scope test), a `practices` class depending on a `records` controller (ArchUnit allowlist), `patient_record` write check opened. The compose administrator override is covered by `verify-init-roles.sh` (it fails on the previous compose file).
 - Final review fixes: `produces` removed, request cache and logout re-enabled, probe chain removed, generated password allowed, `/csrf` special case removed, error classifier disabled, Throwable logged again, transaction guard removed, strict coercion removed, strict date removed, empty email accepted, `Allow` dropped, outbox write removed, lock removed, 403 instead of 404, TRUNCATE granted, audit WITH CHECK removed, forbidden cross-module import, non-Secure cookie.
 
 ## 6. Decisions and assumptions made while building
@@ -91,7 +93,7 @@ Effect on acceptance: AT-038-A is met for the membership path; the "portal link"
 
 ## 7. Reviews
 
-- Codex reviewed the phase 0 plan, the first backend slice (4 blockers: a test hook in production code, a concurrent idempotency 500, an ambiguous body hash, a CSRF parameter fallback) and the whole branch (2 blockers: a create that could commit then answer 500 on a content negotiation error, and provisioning that could keep a superuser application role). All were fixed and proven by mutations. A targeted re-review of the fixes followed; its findings are in section 8.
+- Codex reviewed the phase 0 plan, the first backend slice (4 blockers: a test hook in production code, a concurrent idempotency 500, an ambiguous body hash, a CSRF parameter fallback) and the whole branch (2 blockers: a create that could commit then answer 500 on a content negotiation error, and provisioning that could keep a superuser application role). All were fixed and proven by mutations. A targeted re-review of the fixes followed and found one more blocker (the administrator name could survive a container restart) and ten important items, mostly CI guards, the outage classifier, response handling on late failures and tests that would pass on a broken implementation; all were fixed and proven as listed in section 5.
 - Items judged not worth blocking the story are deferred with a trigger in the register: D-34 to D-40.
 
 ## 8. Not verified, and limits
