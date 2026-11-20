@@ -2,6 +2,14 @@
 
 Updated: 2026-11-20. Owner: Aymen Chaghoub.
 
+## Story 1.2 implemented and live screens approved — 2026-11-20
+
+**Phase.** The branch implements browser sign-in, recovery, and expiry under UD-48. Aymen selected the local inbox and approved the running screens. He authorized merging after CodeRabbit findings are resolved and the required GitHub checks are green. [Implementation record](implementation-artifacts/story-1-2-implementation-record.md)
+
+**Actual verification.** A real-stack sign-in, recovery and second-session revocation journey and the PostgreSQL outage test passed. The isolated V1 upgrade retained the synthetic account and membership. Java 25 passed 150 tests, Chromium smoke passed 19, and the build and documentary validator passed. The local gallery contains the visible runtime comparison.
+
+**Next action.** Complete the single Zcode review, triage and verify the findings, and manually request CodeRabbit on the final pull request revision. Verify current checks and resolved threads before merging.
+
 ## Story 1.2 design approved and technical plan drafted — 2026-11-20
 
 **Phase.** Aymen approved S-38 with the neutral background, I-22 and S-04 with the revised amber error summary. S-02 carries its prior approval under UD-46. UD-48 is encoded in `[etaye] authorized_stories`, and global authorization stays false. [Design review record](design/reviews/2026-11-20-story-1-2-review.md)

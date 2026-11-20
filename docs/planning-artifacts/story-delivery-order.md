@@ -5,7 +5,7 @@ The agreed increment sequence is **1 → 3 → 2**. Increment 1 delivers a compl
 ## Where to start
 
 - **10.1** is merged. **10.2** followed as the second platform story. [10.1 implementation record](../implementation-artifacts/story-10-1-implementation-record.md) · [10.2 integration status](https://github.com/Aymenchaghoub/etaye/pull/44)
-- **Next: 1.2**, covering sign-in, access recovery and session expiry. It unlocks practice selection in 1.3. Aymen authorized development under UD-48 and approved the required design surfaces, including the revised password validation state. [Design review](../design/reviews/2026-11-20-story-1-2-review.md) · [Decision register](decisions-assumptions.md)
+- **1.2 is in review.** It delivers sign-in, access recovery and session expiry, which unlock practice selection in 1.3. Aymen approved the running screens. [Implementation record](../implementation-artifacts/story-1-2-implementation-record.md) · [Decision register](decisions-assumptions.md)
 - Each row links to its story and lists its direct dependencies. The working order reflects the delivery of 10.1 and 10.2 first and proposes an order for the remaining stories within the accepted milestones. A story can start once its dependencies, design review or named exception, and written authorization are in place. The acceptance tests and scope splits live in the linked stories and roadmap.
 
 ## Increment 1 — Complete web journey
