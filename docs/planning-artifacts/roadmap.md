@@ -36,7 +36,7 @@ replacing the order of UD-37). Increment 3 needs a stable HTTPS origin, hence th
 | Gate | Owner | Blocks | State |
 |---|---|---|---|
 | Development authorization | Aymen | Every implementation story | Given for stories 10.1 (UD-41) and 10.2 (UD-45) only; not given for the others (UD-28) |
-| Core design families reviewed (UD-16) | Aymen, with Codex for the Figma side | Increment 1 build of those families | Pending; named exception for the UI-free story 10.1 (UD-41) |
+| Core design families reviewed (UD-16) | Aymen, with Codex for the Figma side | Increment 1 build of those families | Pending; named exceptions for the UI-free stories 10.1 (UD-41) and 10.2 (UD-45) |
 | Increment 1 exit review | Aymen | Increments 2 and 3 | Future |
 | ADR-008 and ADR-009 accepted | Aymen | Stories 10.2 (API meta), 10.4 to 10.8 | Done (UD-29); contract operations are added before stories 10.2 and 10.5 |
 | ADR-010 accepted (native client: React Native with Expo) | Aymen | Stories 10.2 and 10.5 to 10.8 | Done (UD-38, UD-39) |

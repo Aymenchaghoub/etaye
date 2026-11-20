@@ -31,7 +31,7 @@ As the maintainer, I want a generated typed client, a design-token bridge and mu
 
 - Requirements: FR-016, FR-020. Rules: BR-002, BR-013, BR-016. Journey: J-06, J-08.
 - Design: Operational evidence. Acceptance test design: AT-039.
-- Dependencies: Story 10.1 (see [roadmap](../roadmap.md)). Gates: Aymen's development authorization and the core design families (UD-16).
+- Dependencies: Story 10.1 (see [roadmap](../roadmap.md)). Gates: Aymen's development authorization and the core design families (UD-16). UD-45 (2026-11-20) is the named exception to the CORE design gate for this screenless story.
 - Delivery: Increment 1, Red-thread slice (web).
 - Read before refinement: [PRD](../prd/prd.md), [rules](../business-rules.md), [access](../access-matrix.md), [architecture](../architecture/ARCHITECTURE-SPINE.md), [data](../data-model.md), [contracts](../../contracts/openapi.yaml), [screen catalog](../../design/screen-catalog.md), [test strategy](../../test-artifacts/test-strategy.md), [ADR-008](../../decisions/ADR-008-multi-client-access.md), [ADR-009](../../decisions/ADR-009-api-compatibility.md), [ADR-010](../../decisions/ADR-010-native-client-react-native-expo.md).
 - Assumptions: apply relevant A-01–A-12 from the decision register; never treat them as verified facts. Record any changed source/version and resulting AC change in the future story.

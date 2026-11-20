@@ -114,15 +114,23 @@ def check_application_scope(root, errors):
         decisions = (root / register).read_text(encoding="utf-8")
     except (OSError, UnicodeError):
         decisions = ""
+    # Keep line boundaries while ignoring fenced examples and hidden comments.
+    decisions = re.sub(
+        r"^ {0,3}(?P<fence>`{3,})[^`\n]*(?:\n|\Z).*?(?:^ {0,3}(?P=fence)`*[ \t]*$|\Z)"
+        r"|<!--.*?(?:-->|\Z)",
+        lambda hidden: "\n" * hidden[0].count("\n"),
+        decisions,
+        flags=re.MULTILINE | re.DOTALL,
+    )
     required_decisions = [("10.1", "UD-41")]
     if combined:
         required_decisions.append(("10.2", "UD-45"))
     for story, decision_id in required_decisions:
-        row = re.search(rf"^[ \t]*\|[ \t]*{decision_id}[ \t]*\|([^|\n]*)\|", decisions, re.MULTILINE)
-        decision = row[1].casefold() if row else ""
+        rows = re.findall(rf"^[ \t]*\|[ \t]*{decision_id}[ \t]*\|(?:([^|\n]*)\|)?", decisions, re.MULTILINE)
+        decision = rows[0].casefold() if len(rows) == 1 else ""
         if (not re.search(rf"\bauthorized for \*{{0,2}}story {re.escape(story)} only\b\*{{0,2}}", decision)
                 or set(re.findall(r"\b\d{1,2}\.\d{1,2}\b", decision)) != {story}
-                or re.search(r"\b(?:not|no\s+longer)\s+authorized\b|refus", decision)):
+                or re.search(r"\b(?:not|never|no\s+longer)(?:\s+\w+){0,3}\s+authorized\b|refus", decision)):
             errors.append(f"Story {story} authorization requires {decision_id} in {register} to authorize only story {story}")
 
     apps = root / "apps"
@@ -172,7 +180,11 @@ def check_application_scope(root, errors):
             if build_directories.intersection(name.split("/")):
                 errors.append("Tracked build output: " + name)
                 continue
-            if not name.startswith(("apps/", "infra/")):
+            application_path = name.startswith(("apps/", "infra/"))
+            if application_path and mode not in {"100644", "100755"}:
+                errors.append(f"Tracked non-regular entry for {scope_label}: {name}")
+                continue
+            if not application_path:
                 continue
             if combined and STORY_10_2_TRACKED_PATH.fullmatch(name):
                 continue

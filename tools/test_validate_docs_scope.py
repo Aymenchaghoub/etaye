@@ -143,16 +143,20 @@ class ApplicationScopeTests(unittest.TestCase):
         invalid_list = '[etaye] authorized_stories must be [], ["10.1"] or ["10.1", "10.2"]'
         for settings, gate, expected in [
             ('authorized_stories = ["10.1", "10.3"]', "false", "unknown authorized story"),
+            ('authorized_stories = ["10.1", "10.2 "]', "false", "unknown authorized story"),
+            ('authorized_stories = ["10.1", "10.02"]', "false", "unknown authorized story"),
             ('authorized_stories = ["10.1", "10.1"]', "false", "duplicate story IDs"),
             ('authorized_stories = ["10.1", "10.2", "10.2"]', "false", "duplicate story IDs"),
             ('authorized_stories = ["10.2"]', "false", invalid_list),
             ('authorized_stories = ["10.2", "10.1"]', "false", invalid_list),
             ('authorized_stories = ["10.1"]', "true", "development_authorized must be false"),
+            ('authorized_stories = ["10.1"]', "0", "development_authorized must be false"),
             ('authorized_stories = "10.1"', "false", "must be a list"),
             ('authorized_stories = [10.1]', "false", "must be a list"),
             ('authorized_storiess = ["10.1"]', "false", "Unknown keys"),
             ('phase = true', "false", "must be strings"),
             ('authorized_stories = [', "false", "Invalid authorization"),
+            ('authorized_stories = []\nauthorized_stories = []', "false", "Invalid authorization"),
         ]:
             with self.subTest(settings=settings, gate=gate):
                 self.configure(settings, gate=gate)
@@ -222,7 +226,8 @@ class ApplicationScopeTests(unittest.TestCase):
 
     def test_tracked_codegen_paths_are_allowed_only_in_combined_scope(self):
         self.write(".git")
-        paths = ("apps/web/scripts/generate-client.mjs", "apps/web/openapi-ts.config.ts")
+        paths = ("apps/web/scripts/generate-client.mjs", "apps/web/openapi-ts.config.ts",
+                 "apps/web/scripts/x.ts", "apps/web/openapi-gen.config.mjs", "apps/web/codegen.config.ts")
         entries = "".join(f"100644 {'0' * 40} 0\t{name}\0" for name in paths)
         index = subprocess.CompletedProcess([], 0, entries.encode())
         for story_10_2 in (False, True):
@@ -232,6 +237,17 @@ class ApplicationScopeTests(unittest.TestCase):
                     _, errors = self.check_scope()
                 expected = [] if story_10_2 else [f"Unexpected tracked path for story 10.1: {name}" for name in paths]
                 self.assertEqual(errors, expected)
+
+    def test_combined_scope_rejects_unlisted_codegen_paths(self):
+        self.authorize(story_10_2=True)
+        self.write(".git")
+        paths = ("apps/web/scripts/sub/x.mjs", "apps/web/scripts/X.MJS", "apps/web/scripts/noext",
+                 "apps/web/other.config.ts", "apps/web/scripts/../x.mjs")
+        entries = "".join(f"100644 {'0' * 40} 0\t{name}\0" for name in paths)
+        index = subprocess.CompletedProcess([], 0, entries.encode())
+        with patch("validate_docs.subprocess.run", return_value=index):
+            _, errors = self.check_scope()
+        self.assertEqual(errors, [f"Unexpected tracked path for stories 10.1 and 10.2: {name}" for name in paths])
 
     def test_authorized_scope_rejects_tracked_symlinks_with_allowed_names(self):
         self.authorize()
@@ -262,6 +278,16 @@ class ApplicationScopeTests(unittest.TestCase):
                        cwd=self.root, check=True)
         _, errors = self.check_scope()
         self.assertEqual(errors, [f"Tracked symlink for stories 10.1 and 10.2: {name}"])
+
+    def test_combined_scope_rejects_tracked_gitlink_at_allowed_script_path(self):
+        self.authorize(story_10_2=True)
+        name = "apps/web/scripts/generate-client.mjs"
+        subprocess.run(["git", "init", "--quiet", "--template=", "--object-format=sha1"], cwd=self.root, check=True)
+        sha = "1" * 40  # A gitlink may refer to a commit absent from this repository.
+        subprocess.run(["git", "update-index", "--add", "--cacheinfo", f"160000,{sha},{name}"],
+                       cwd=self.root, check=True)
+        _, errors = self.check_scope()
+        self.assertEqual(errors, [f"Tracked non-regular entry for stories 10.1 and 10.2: {name}"])
 
     def test_authorized_scope_requires_ud_41_even_without_git(self):
         self.authorize()
@@ -304,6 +330,56 @@ class ApplicationScopeTests(unittest.TestCase):
         self.write(register, "| UD-45 | Authorized for story 10.2 only |\n")
         _, errors = self.check_scope()
         self.assertEqual(errors, [f"Story 10.1 authorization requires UD-41 in {register} to authorize only story 10.1"])
+
+    def test_required_decision_rows_must_be_unique(self):
+        register = "docs/planning-artifacts/decisions-assumptions.md"
+        for story_10_2, decision_id, story in ((False, "UD-41", "10.1"), (True, "UD-41", "10.1"),
+                                               (True, "UD-45", "10.2")):
+            with self.subTest(story_10_2=story_10_2, decision_id=decision_id):
+                self.authorize(story_10_2=story_10_2)
+                decisions = (self.root / register).read_text(encoding="utf-8")
+                error = f"Story {story} authorization requires {decision_id} in {register} to authorize only story {story}"
+                for cell in (f" Authorized for story {story} only |", ""):
+                    with self.subTest(cell=cell):
+                        self.write(register, decisions + f" \t|\t{decision_id}\t|{cell}\n")
+                        _, errors = self.check_scope()
+                        self.assertEqual(errors, [error])
+
+    def test_hidden_decision_rows_do_not_count_toward_authorization(self):
+        register = "docs/planning-artifacts/decisions-assumptions.md"
+        story_10_1 = "| UD-41 | Authorized for story 10.1 only |\n"
+        authorized = "| UD-45 | Authorized for story 10.2 only |\n"
+        revoked = "| UD-45 | Authorization revoked for story 10.2 |\n"
+        error = f"Story 10.2 authorization requires UD-45 in {register} to authorize only story 10.2"
+        self.authorize(story_10_2=True)
+        for start, end in (("```markdown\n", "```\n"), ("<!--\n", "-->\n")):
+            for visible, expected in ((revoked, [error]), (authorized, []), ("", [error])):
+                with self.subTest(start=start, visible=visible):
+                    self.write(register, story_10_1 + start + authorized + end + visible)
+                    _, errors = self.check_scope()
+                    self.assertEqual(errors, expected)
+
+    def test_html_comments_in_decision_cells_are_ignored(self):
+        self.authorize()
+        register = "docs/planning-artifacts/decisions-assumptions.md"
+        error = f"Story 10.1 authorization requires UD-41 in {register} to authorize only story 10.1"
+        for cell, expected in (("<!-- Authorized for story 10.1 only -->Pending", [error]),
+                               ("Authorized for story 10.1 only <!-- refused | 10.2 -->", [])):
+            with self.subTest(cell=cell):
+                self.write(register, f"| UD-41 | {cell} |\n")
+                _, errors = self.check_scope()
+                self.assertEqual(errors, expected)
+
+    def test_negated_authorizations_are_rejected(self):
+        self.authorize(story_10_2=True)
+        register = "docs/planning-artifacts/decisions-assumptions.md"
+        story_10_1 = "| UD-41 | Authorized for story 10.1 only |\n"
+        for negation in ("not currently authorized", "not yet authorized", "never authorized",
+                         "no longer authorized", "not currently or previously authorized"):
+            with self.subTest(negation=negation):
+                self.write(register, story_10_1 + f"| UD-45 | Development is {negation} for story 10.2 only. |\n")
+                _, errors = self.check_scope()
+                self.assertEqual(errors, [f"Story 10.2 authorization requires UD-45 in {register} to authorize only story 10.2"])
 
     def test_authorized_scope_accepts_real_ud_41_row(self):
         self.authorize()
