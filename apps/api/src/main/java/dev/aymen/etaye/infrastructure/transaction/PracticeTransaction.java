@@ -33,8 +33,9 @@ public class PracticeTransaction {
 
     public static final String PRACTICE_TX_PREFIX = "etaye-practice-";
 
-    private static final class PracticeTransactionMarker implements TransactionSynchronization {
+    private static final class PracticeTransactionMarker implements TransactionSynchronization, org.springframework.core.Ordered {
         private final UUID practiceId;
+        private volatile boolean active = true;
 
         PracticeTransactionMarker(UUID practiceId) {
             this.practiceId = practiceId;
@@ -43,6 +44,25 @@ public class PracticeTransaction {
         UUID getPracticeId() {
             return practiceId;
         }
+
+        boolean isActive() {
+            return active;
+        }
+
+        @Override
+        public int getOrder() {
+            return org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
+        }
+
+        @Override
+        public void afterCommit() {
+            this.active = false;
+        }
+
+        @Override
+        public void afterCompletion(int status) {
+            this.active = false;
+        }
     }
 
     private static PracticeTransactionMarker findMarker() {
@@ -50,7 +70,7 @@ public class PracticeTransaction {
             return null;
         }
         for (TransactionSynchronization sync : TransactionSynchronizationManager.getSynchronizations()) {
-            if (sync instanceof PracticeTransactionMarker marker) {
+            if (sync instanceof PracticeTransactionMarker marker && marker.isActive()) {
                 return marker;
             }
         }

@@ -10,6 +10,9 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -85,5 +88,51 @@ public class PracticeTransactionTest extends AbstractPostgresTest {
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessageContaining("Cannot change practice context inside an active transaction");
         });
+    }
+
+    @Test
+    @DisplayName("C5: Practice marker is deactivated in afterCommit and afterCompletion callbacks on commit")
+    void markerDeactivatedInAfterCommitAndAfterCompletionOnCommit() {
+        UUID practiceId = UUID.randomUUID();
+        AtomicBoolean afterCommitSawNull = new AtomicBoolean(false);
+        AtomicBoolean afterCompletionSawNull = new AtomicBoolean(false);
+
+        practiceTransaction.executeVoid(practiceId, () -> {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    afterCommitSawNull.set(practiceTransaction.getActivePracticeId() == null);
+                }
+
+                @Override
+                public void afterCompletion(int status) {
+                    afterCompletionSawNull.set(practiceTransaction.getActivePracticeId() == null);
+                }
+            });
+        });
+
+        assertThat(afterCommitSawNull.get()).isTrue();
+        assertThat(afterCompletionSawNull.get()).isTrue();
+    }
+
+    @Test
+    @DisplayName("C5: Practice marker is deactivated in afterCompletion callback on rollback")
+    void markerDeactivatedInAfterCompletionOnRollback() {
+        UUID practiceId = UUID.randomUUID();
+        AtomicBoolean afterCompletionSawNull = new AtomicBoolean(false);
+
+        assertThatThrownBy(() -> {
+            practiceTransaction.executeVoid(practiceId, () -> {
+                TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                    @Override
+                    public void afterCompletion(int status) {
+                        afterCompletionSawNull.set(practiceTransaction.getActivePracticeId() == null);
+                    }
+                });
+                throw new RuntimeException("Simulated rollback");
+            });
+        }).isInstanceOf(RuntimeException.class).hasMessage("Simulated rollback");
+
+        assertThat(afterCompletionSawNull.get()).isTrue();
     }
 }
