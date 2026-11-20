@@ -42,6 +42,9 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
     @Autowired
     private dev.aymen.etaye.TestTransactionFailureHelper testFailureHelper;
 
+    @Autowired
+    private dev.aymen.etaye.infrastructure.idempotency.IdempotencyService idempotencyService;
+
     private RestClient client() {
         return RestClient.builder()
                 .baseUrl("http://localhost:" + port)
@@ -130,7 +133,7 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         }
     }
 
-    private void waitForAdvisoryLockContention(long timeoutSeconds) {
+    private void waitForAdvisoryLockContention(long expectedLockKey, long timeoutSeconds) {
         long deadline = System.currentTimeMillis() + (timeoutSeconds * 1000);
         while (System.currentTimeMillis() < deadline) {
             try (Connection conn = DriverManager.getConnection(
@@ -138,9 +141,23 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
                     POSTGRES_CONTAINER.getUsername(),
                     POSTGRES_CONTAINER.getPassword());
                  PreparedStatement ps = conn.prepareStatement(
-                         "SELECT count(*) FROM pg_locks WHERE locktype = 'advisory' AND granted = false")) {
+                         "SELECT pid, granted FROM pg_locks " +
+                                 "WHERE locktype = 'advisory' AND objsubid = 1 " +
+                                 "AND ((classid::bigint << 32) | (objid::bigint & 4294967295)) = ?")) {
+                ps.setLong(1, expectedLockKey);
                 try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next() && rs.getInt(1) > 0) {
+                    Long waitingPid = null;
+                    Long holderPid = null;
+                    while (rs.next()) {
+                        long pid = rs.getLong("pid");
+                        boolean granted = rs.getBoolean("granted");
+                        if (granted) {
+                            holderPid = pid;
+                        } else {
+                            waitingPid = pid;
+                        }
+                    }
+                    if (waitingPid != null && holderPid != null && !waitingPid.equals(holderPid)) {
                         return;
                     }
                 }
@@ -154,7 +171,28 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
                 throw new IllegalStateException("Interrupted while polling for advisory lock contention", e);
             }
         }
-        throw new IllegalStateException("Timeout after " + timeoutSeconds + "s: pending advisory lock (locktype='advisory' AND granted=false) was never observed in pg_locks");
+        throw new IllegalStateException("Timeout after " + timeoutSeconds + "s: pending advisory lock for key " +
+                expectedLockKey + " (locktype='advisory', objsubid=1, granted=false with distinct holder) was never observed in pg_locks");
+    }
+
+    private void assertAdvisoryLockHeld(long expectedLockKey) {
+        try (Connection conn = DriverManager.getConnection(
+                POSTGRES_CONTAINER.getJdbcUrl(),
+                POSTGRES_CONTAINER.getUsername(),
+                POSTGRES_CONTAINER.getPassword());
+             PreparedStatement ps = conn.prepareStatement(
+                     "SELECT count(*) FROM pg_locks " +
+                             "WHERE locktype = 'advisory' AND objsubid = 1 AND granted = true " +
+                             "AND ((classid::bigint << 32) | (objid::bigint & 4294967295)) = ?")) {
+            ps.setLong(1, expectedLockKey);
+            try (ResultSet rs = ps.executeQuery()) {
+                assertThat(rs.next() && rs.getInt(1) > 0)
+                        .as("Advisory lock for key %d must be held", expectedLockKey)
+                        .isTrue();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to check held advisory lock", e);
+        }
     }
 
     @Test
@@ -737,7 +775,9 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
             java.util.concurrent.Future<ResponseEntity<PatientResponse>> future2 = executor.submit(requestTask);
 
             // 4. B2(c): Poll pg_locks from the observation connection until locktype = 'advisory' and granted = false exists
-            waitForAdvisoryLockContention(10);
+            String keyDigest = idempotencyService.computeSha256(idempotencyKey);
+            long expectedLockKey = idempotencyService.computeLockKey(practiceA, clinicalUserA, "createPatient", keyDigest);
+            waitForAdvisoryLockContention(expectedLockKey, 10);
 
             // 5. Only then release request 1
             releaseLatch.countDown();
@@ -775,6 +815,100 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
             assertThat(countRowsInTableDirectly("audit_event", "practice_id", practiceA)).isEqualTo(auditCountBefore + 1);
             assertThat(countRowsInTableDirectly("outbox_event", "practice_id", practiceA)).isEqualTo(outboxCountBefore + 1);
             assertThat(countRowsInTableDirectly("idempotency_receipt", "practice_id", practiceA)).isEqualTo(receiptCountBefore + 1);
+        } finally {
+            testFailureHelper.disablePauseInBeforeCommit();
+            releaseLatch.countDown();
+            executor.shutdownNow();
+        }
+    }
+
+    @Test
+    @DisplayName("C7: Scoped lock allows different key from same account to complete with 201 while request 1 is paused in beforeCommit")
+    void scopedLock_differentKeyFromSameAccountCompletesWhileFirstPaused() throws Exception {
+        String csrfToken = fetchCsrfToken(sessionCookieClinicalA);
+        String key1 = "key-scoped-1-" + UUID.randomUUID();
+        String key2 = "key-scoped-2-" + UUID.randomUUID();
+
+        PatientEdit body1 = new PatientEdit(
+                "PatientOne",
+                "ScopedTest",
+                LocalDate.of(1980, 1, 1),
+                "patient1@example.com",
+                "+33600000001"
+        );
+
+        PatientEdit body2 = new PatientEdit(
+                "PatientTwo",
+                "ScopedTest",
+                LocalDate.of(1982, 2, 2),
+                "patient2@example.com",
+                "+33600000002"
+        );
+
+        CountDownLatch reachedLatch = new CountDownLatch(1);
+        CountDownLatch releaseLatch = new CountDownLatch(1);
+        testFailureHelper.enablePauseInBeforeCommit(reachedLatch, releaseLatch);
+
+        java.util.concurrent.ExecutorService executor = java.util.concurrent.Executors.newFixedThreadPool(2);
+
+        try {
+            // Task 1 with key1
+            java.util.concurrent.Callable<ResponseEntity<PatientResponse>> task1 = () -> client().post()
+                    .uri("/api/v1/practices/" + practiceA + "/patients")
+                    .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                    .header("X-CSRF-TOKEN", csrfToken)
+                    .header("Idempotency-Key", key1)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(body1)
+                    .retrieve()
+                    .onStatus(status -> status.is5xxServerError() || status.is4xxClientError(), (req, res) -> {})
+                    .toEntity(PatientResponse.class);
+
+            // Task 2 with key2 (different key from same account)
+            java.util.concurrent.Callable<ResponseEntity<PatientResponse>> task2 = () -> client().post()
+                    .uri("/api/v1/practices/" + practiceA + "/patients")
+                    .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                    .header("X-CSRF-TOKEN", csrfToken)
+                    .header("Idempotency-Key", key2)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(body2)
+                    .retrieve()
+                    .onStatus(status -> status.is5xxServerError() || status.is4xxClientError(), (req, res) -> {})
+                    .toEntity(PatientResponse.class);
+
+            // 1. Submit request 1
+            java.util.concurrent.Future<ResponseEntity<PatientResponse>> future1 = executor.submit(task1);
+
+            // 2. Wait until request 1 reaches beforeCommit and pauses
+            boolean reached = reachedLatch.await(15, java.util.concurrent.TimeUnit.SECONDS);
+            assertThat(reached).as("Request 1 must reach beforeCommit within 15 seconds").isTrue();
+
+            // Verify request 1 holds its advisory lock in pg_locks
+            String digest1 = idempotencyService.computeSha256(key1);
+            long lockKey1 = idempotencyService.computeLockKey(practiceA, clinicalUserA, "createPatient", digest1);
+            assertAdvisoryLockHeld(lockKey1);
+
+            // 3. Submit request 2 and wait for it to complete WITHOUT releasing request 1
+            // Because locks are fine-grained / scoped per key, request 2 must NOT block!
+            java.util.concurrent.Future<ResponseEntity<PatientResponse>> future2 = executor.submit(task2);
+
+            // Request 2 must complete within 10 seconds while request 1 is STILL PAUSED!
+            ResponseEntity<PatientResponse> res2 = future2.get(10, java.util.concurrent.TimeUnit.SECONDS);
+            assertThat(res2.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+            assertThat(res2.getBody()).isNotNull();
+            assertThat(res2.getBody().firstName()).isEqualTo("PatientTwo");
+
+            // 4. Now release request 1
+            releaseLatch.countDown();
+
+            // Request 1 completes
+            ResponseEntity<PatientResponse> res1 = future1.get(15, java.util.concurrent.TimeUnit.SECONDS);
+            assertThat(res1.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+            assertThat(res1.getBody()).isNotNull();
+            assertThat(res1.getBody().firstName()).isEqualTo("PatientOne");
+
+            // Both patients were created
+            assertThat(res1.getBody().id()).isNotEqualTo(res2.getBody().id());
         } finally {
             testFailureHelper.disablePauseInBeforeCommit();
             releaseLatch.countDown();
@@ -852,7 +986,9 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
             java.util.concurrent.Future<ResponseEntity<Map>> future2 = executor.submit(task2);
 
             // 4. B2(c): Poll pg_locks until advisory lock contention is observed
-            waitForAdvisoryLockContention(10);
+            String keyDigest = idempotencyService.computeSha256(idempotencyKey);
+            long expectedLockKey = idempotencyService.computeLockKey(practiceA, clinicalUserA, "createPatient", keyDigest);
+            waitForAdvisoryLockContention(expectedLockKey, 10);
 
             // 5. Release request 1 to commit
             releaseLatch.countDown();
