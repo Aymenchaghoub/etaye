@@ -2,6 +2,14 @@
 
 Updated: 2026-11-20. Owner: Aymen Chaghoub.
 
+## Story 10.1 authorization-denial audit verified — 2026-11-20
+
+**Phase:** story 10.1 maintenance. **Completed:** the decision and acceptance amendment are on `main` as `13f6d12` (PR #42). The audit follow-up implements the decision and is documented in the [implementation record](implementation-artifacts/story-10-1-implementation-record.md#10-authorization-denial-audit-follow-up-ud-47-2026-11-20). The D-40 path checks use Git pathspecs so a rename out of an application directory still runs its verification.
+
+**Actual verification:** Java 25 and PostgreSQL Testcontainers passed 124 API tests, including the scoped 403 and 404 audit, response preservation on audit failure, rate limiting and pooled connection reuse. All five required GitHub checks passed on the documentation-only PR #42, with the API and Web application steps skipped as designed. Eighteen local path-detection cases covered application and documentation changes, renames, non-ASCII paths, a missing parent and push events. The audit limiter is per instance and resets on restart.
+
+**Next action:** after integration, prepare the story 10.2 phase 0 plan for Aymen's review.
+
 ## Follow-up decisions and source drawer spike — 2026-11-20
 
 **Phase:** maintenance of story 10.1 and design evidence. **User decisions:** [UD-47](planning-artifacts/decisions-assumptions.md) records the confirmation of React Aria Components, required API and Web checks, authorization-denial audit design, the HawkScan decision, the Dependabot disposition and the toolchain decision. PRs #38, #39, #40 and #41 are on `main`. **Actual verification:** GitHub ruleset 26390376 lists `API verify` and `Web verify` as active required checks. Both application jobs completed on PR #41. Dependabot alert 54 is dismissed.

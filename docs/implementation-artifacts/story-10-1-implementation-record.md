@@ -126,3 +126,13 @@ docker compose -f infra/local/docker-compose.yml down -v
 ```
 
 Run the API command from its own terminal; the web and the real spec need the API and the compose database running.
+
+## 10. Authorization-denial audit follow-up (UD-47, 2026-11-20)
+
+**Sources and acceptance.** Reviewed against main `13f6d12037558cb40e0c70bc11447f5c41cad560`, including [BR-017](../planning-artifacts/business-rules.md#br-017--audit-and-accountability), AT-038-B in [epic 10](../planning-artifacts/epics/epic-10.md), the [context packet](story-10-1-context-packet.md) and the practice isolation, security, data and API boundaries referenced here. UD-47 supersedes the open audit assumption in section 6. C4 and the suspended-membership replay now require a separate security event. C6 verifies three practice transactions reuse the same physical connection and start without a residual practice context.
+
+**Implemented behavior.** Story 10.1's authenticated membership checks write `ACCESS_DENIED` in a separate practice-scoped transaction. A denial for a membership known to the actor goes to that membership's practice. A practice hidden by the membership check yields a security event in the actor's sole active practice. With zero or multiple active memberships, the denial stays in the operational log. A record lookup miss inside an authorized practice has no verified denial context and retains its generic 404. Audit metadata contains the operation template, reason and required capability when relevant. An audit failure leaves the original 403 or 404 response and adds a safe error log.
+
+**Implementation limit.** The atomic rate limiter is in memory per application instance and resets on restart. It holds up to 10,000 active or cooling-down keys and admits new keys as slots become available. The 60-second cooldown begins after the write attempt, including failures. These limits fit the single-instance foundation. Global deduplication would need a coordinated mechanism with its own access design.
+
+**Actual verification.** `./mvnw -B -ntp clean verify` passed on Temurin 25.0.5.1 and PostgreSQL 18.7 through Testcontainers with 124 tests, zero failures and zero skips. The HTTP suite verifies 403 and 404 response shape, tenant placement, no scoped row when the actor practice is ambiguous, audit rollback, the volume bound and no domain or outbox write on denial. The rate limiter tests cover simultaneous claims and release after cooldown. No migration was added.

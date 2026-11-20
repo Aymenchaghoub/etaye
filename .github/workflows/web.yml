@@ -42,15 +42,10 @@ jobs:
         run: |
           # Fail closed: anything unexpected runs the full verification.
           relevant=true
-          if [ "$EVENT_NAME" = "pull_request" ]; then
-            if changed=$(git diff --name-only HEAD^1 HEAD); then
-              printf 'Changed files:\n%s\n' "$changed"
-              if ! printf '%s\n' "$changed" | grep -Eq '^(apps/web/|package\.json$|pnpm-workspace\.yaml$|pnpm-lock\.yaml$|tsconfig\.json$|tsconfig\.base\.json$|tools/assert_test_reports\.py$|\.github/workflows/web\.yml$)'; then
-                relevant=false
-              fi
-            else
-              echo 'Could not list the changed files; running the full verification.'
-            fi
+          if [ "$EVENT_NAME" = "pull_request" ] &&
+              git diff --quiet HEAD^1 HEAD -- apps/web/ package.json pnpm-workspace.yaml pnpm-lock.yaml tsconfig.json tsconfig.base.json \
+                tools/assert_test_reports.py .github/workflows/web.yml; then
+            relevant=false
           fi
           echo "relevant=$relevant" >> "$GITHUB_OUTPUT"
           echo "Full web verification needed: $relevant"

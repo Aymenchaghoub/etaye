@@ -1,6 +1,10 @@
 package dev.aymen.etaye.infrastructure.error;
 
+import dev.aymen.etaye.infrastructure.security.AccessDenialAudit;
+import dev.aymen.etaye.infrastructure.security.AuthorizationDenial;
 import dev.aymen.etaye.infrastructure.security.CorrelationIdFilter;
+import dev.aymen.etaye.infrastructure.security.PracticeSecurityService.CapabilityDeniedException;
+import dev.aymen.etaye.infrastructure.security.PracticeSecurityService.PracticeNotVisibleException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +36,21 @@ public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    private final AccessDenialAudit accessDenialAudit;
+
+    public GlobalExceptionHandler(AccessDenialAudit accessDenialAudit) {
+        this.accessDenialAudit = accessDenialAudit;
+    }
+
+    private void recordDenial(AuthorizationDenial denial, HttpServletRequest request) {
+        try {
+            accessDenialAudit.record(denial, request);
+        } catch (Exception ex) {
+            log.error("Authorization denial audit failed: class={}, correlationId={}",
+                    ex.getClass().getName(), CorrelationIdFilter.getCorrelationId(request));
+        }
+    }
+
     private ResponseEntity<ApiProblem> buildProblem(HttpStatus status, String code, String publicDetail, Exception ex, HttpServletRequest request) {
         String correlationId = CorrelationIdFilter.getCorrelationId(request);
         Throwable rootCause = NestedExceptionUtils.getMostSpecificCause(ex);
@@ -62,6 +81,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiProblem> handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
+        if (ex instanceof CapabilityDeniedException denied) {
+            recordDenial(denied.denial(), request);
+        }
         boolean isCsrf = ex instanceof CsrfException;
         String code = isCsrf ? "CSRF_REJECTED" : "FORBIDDEN";
         String detail = isCsrf ? "CSRF token is missing or invalid" : "Access denied";
@@ -70,6 +92,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiProblem> handleNotFound(ResourceNotFoundException ex, HttpServletRequest request) {
+        if (ex instanceof PracticeNotVisibleException denied) {
+            recordDenial(denied.denial(), request);
+        }
         return buildProblem(HttpStatus.NOT_FOUND, "NOT_FOUND", "Resource not found", ex, request);
     }
 
