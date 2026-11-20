@@ -40,6 +40,12 @@ Verified through authenticated GitHub API read-back on 2026-11-02:
 - Required checks are bound to their actual GitHub apps: Planning package checks and Analyze tooling (GitHub Actions 15368), plus CodeQL results (GitHub Advanced Security 57789). Strict up-to-date checks enabled. The results check blocks errors/high/critical security findings under GitHub's default threshold; the analyzer job alone is not treated as a quality gate.
 - [First documentation run 41505033436](https://github.com/Aymenchaghoub/etaye/actions/runs/41505033436) and [CodeQL run 41505033501](https://github.com/Aymenchaghoub/etaye/actions/runs/41505033501) succeeded on ed96cabb065ce3b5c32daac1cbe2c0eca6f34b2c. CodeQL results check succeeded; open code-scanning alerts for refs/pull/1/merge returned an empty array. Retained documentary evidence is attached to the run, with seven-day retention. See [PR1](https://github.com/Aymenchaghoub/etaye/pull/1) for current-head check/merge status.
 
+Verified through GitHub API read-back on 2026-11-20 (UD-47, D-40):
+
+- Ruleset 26390376 is active and strict. It additionally requires `API verify` and `Web verify`, both bound to GitHub Actions (15368).
+- [API run 44768135842](https://github.com/Aymenchaghoub/etaye/actions/runs/44768135842) and [Web run 44768135907](https://github.com/Aymenchaghoub/etaye/actions/runs/44768135907) succeeded on PR #41 before the ruleset update. Each PR starts both jobs. Changed-path detection determines whether each job runs its application tests.
+- GitHub reports [Dependabot alert 54](https://github.com/Aymenchaghoub/etaye/security/dependabot/54) for `soupsieve` as dismissed for `tolerable_risk`. The pin serves the local mockup tools (UD-47).
+
 Generic-pattern and partner-validity options were not enabled: their current individual setup documentation requires organization-owned repositories with Secret Protection. Full-history Gitleaks provides the separate generic-pattern scan without a paid entitlement. [Generic patterns](https://docs.github.com/en/code-security/how-tos/secure-your-secrets/detect-secret-leaks/enabling-secret-scanning-for-generic-patterns), [partner validity checks](https://docs.github.com/en/code-security/how-tos/secure-your-secrets/customize-leak-detection/enable-validity-checks).
 
 No runtime application tests, deployments, real-model evaluations or design approvals are claimed.

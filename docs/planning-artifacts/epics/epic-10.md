@@ -21,7 +21,7 @@ As the maintainer, I want a walking skeleton with the secure request path so tha
 
 **AT-038-A:** Given a clean checkout and Aymen's development authorization, when the skeleton is built and run, then one request path resolves session, membership or portal link, capability and resource ownership, opens a transaction with practice context, and commits domain change, audit and outbox together. Module boundaries are verified by the tool chosen at the spike, ArchUnit or Spring Modulith (UD-35).
 
-**AT-038-B:** Given absent context, a pooled connection reused after an error or a missing capability, when the same path runs, then access is denied and no audit or outbox row is committed for the failed attempt.
+**AT-038-B:** Given absent context or a missing capability, when the protected path runs, then access is denied and no domain audit or outbox row is committed. An eligible authenticated authorization denial writes a bounded, separate security audit row in the actor’s practice under BR-017 and UD-47. When a pooled connection is reused after an error, the next request runs only in its own authorized practice context.
 
 **AT-038-C:** Not applicable: operational evidence only (reports, logs and recorded measurements); no visual review is required.
 

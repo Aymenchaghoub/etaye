@@ -1,6 +1,6 @@
 # ADR-013 — Web component behaviour layer: React Aria Components
 
-Status: Accepted by Aymen on 2026-11-20 (UD-43) **under condition**: the choice becomes final only if the spike of point 5 passes; otherwise the fallback applies. He chose it after comparing two interactive cases (calendar or not) and answering "Calendrier : oui". Date: 2026-11-20. Amends the "UI primitives" row of [ADR-002](ADR-002-stack-and-tooling.md). Related: UD-16, UD-27 (this is the mini-ADR it requires), UD-28, ADR-010, ADR-014, [design system](../design/design-system.md) section 6, [review record](../design/reviews/2026-11-20-design-system-review.md), D-42 to D-49.
+Status: Accepted by Aymen on 2026-11-20 (UD-43) under condition, **confirmed by him on 2026-11-20 (UD-47)** after the spike of point 5 ([record](../design/reviews/2026-11-20-react-aria-spike.md)), with two reservations: screen readers were not tested, and the combobox `aria-hidden-focus` finding must be resolved in the first UI story that uses it. He chose it after comparing two interactive cases (calendar or not) and answering "Calendrier : oui". Date: 2026-11-20. Amends the "UI primitives" row of [ADR-002](ADR-002-stack-and-tooling.md). Related: UD-16, UD-27 (this is the mini-ADR it requires), UD-28, ADR-010, ADR-014, [design system](../design/design-system.md) section 6, [review record](../design/reviews/2026-11-20-design-system-review.md), D-42 to D-49.
 
 [ADR-002](ADR-002-stack-and-tooling.md) proposed "Radix Primitives plus CSS tokens and components authored from Figma", and left the rest open. The design needs behaviours that are the usual source of accessibility defects when written by hand: dialogs and drawers with a focus trap and focus return (23 mentions of dialogs and 14 of drawers in the interaction catalog; 9 dialogs and 6 drawers among its 28 interactions), a patient lookup combobox (I-10, S-07), a source preview popover on every citation marker, and date handling for the agenda navigation (S-14) and the date of birth (S-08).
 
@@ -16,7 +16,7 @@ Status: Accepted by Aymen on 2026-11-20 (UD-43) **under condition**: the choice 
 2. **Native HTML stays** for buttons, fields, checkboxes, radios and selects (the received CSS already styles them), tables, banners, chronology, source viewer and diff. Panel tabs and tooltips are not retained until a screen needs them; page navigation stays links with `aria-current`.
 3. **A calendar is in the product** (Aymen's choice): a month calendar with closed days, French labels and full keyboard navigation for the agenda (S-14) and the date of birth (S-08). Its interaction specification is deferred (D-48); the patient app has no calendar in its first version.
 4. **Base UI is the documented fallback**, with the calendar written by hand. **Radix is not retained.**
-5. **A spike precedes the commitment**: before the first UI story is authorised, a throwaway spike outside the repository checks the `Sheet` (released six weeks before this decision), French labels and date formats, keyboard and screen-reader behaviour with the Étaye CSS, and bundle weight. A failure moves to the fallback (D-49).
+5. **A spike precedes the commitment**: before the first UI story is authorised, a throwaway spike outside the repository checks the `Sheet` (released six weeks before this decision), French labels and date formats, keyboard and screen-reader behaviour with the Étaye CSS, and bundle weight. A failure moves to the fallback (D-49). **Result (2026-11-20):** Aymen confirmed the library with the recorded reservations (UD-47). The standalone `Sheet` needs full-height desktop layout and a full-width closure check before use (D-49).
 
 **Alternatives:**
 
@@ -29,4 +29,4 @@ Status: Accepted by Aymen on 2026-11-20 (UD-43) **under condition**: the choice 
 
 - Nothing is installed or written in code by this decision; development stays gated by UD-28. ADR-002 gains the row below; its React line is aligned with the verified `apps/web` version.
 - The Apache-2.0 licence needs its notice when the package ships. `@internationalized/date` has no React dependency, so it could be shared with the Expo app under ADR-010 if a native date need appears (none in the first version).
-- **To verify:** everything listed in the spike, plus the quality of the French strings, which is not established.
+- **To verify:** screen readers, the combobox focus issue, and the right-hand drawer layout and close paths noted in the [spike record](../design/reviews/2026-11-20-react-aria-spike.md).
