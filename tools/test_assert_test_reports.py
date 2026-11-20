@@ -107,6 +107,16 @@ class AssertTestReportsTests(unittest.TestCase):
         self.check_report("surefire", self.root, 1, "Missing required Surefire suites: example.Missing",
                           options=("--require-suite", "example.Suite", "--require-suite", "example.Missing"))
 
+    def test_surefire_matches_required_suite_by_suite_name_for_archunit_style_reports(self):
+        # Real ArchUnit reports: the suite name is the full class name, the testcases carry the simple name.
+        (self.root / "TEST-example.ArchSuite.xml").write_text(
+            '<testsuite name="example.ArchSuite" tests="2" failures="0" errors="0" skipped="0">'
+            '<testcase name="ruleOne" classname="ArchSuite"/><testcase name="ruleTwo" classname="ArchSuite"/></testsuite>',
+            encoding="utf-8")
+        self.check_report("surefire", self.root, 0, "tests=2", minimum=2, options=("--require-suite", "example.ArchSuite"))
+        self.check_report("surefire", self.root, 1, "Missing required Surefire suites: example.Other",
+                          minimum=2, options=("--require-suite", "example.Other"))
+
     def test_surefire_rejects_failures_errors_and_skips(self):
         for field in ("failures", "errors", "skipped"):
             with self.subTest(field=field):

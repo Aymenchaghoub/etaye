@@ -15,6 +15,7 @@ def read_surefire(directory, required_suites=()):
     fields = ("tests", "failures", "errors", "skipped")
     totals = dict.fromkeys(fields, 0)
     seen_cases = set()
+    suite_names = set()
     for report in reports:
         try:
             source = report.read_text(encoding="utf-8-sig")
@@ -54,9 +55,13 @@ def read_surefire(directory, required_suites=()):
             if element.tag in {"skipped", "failure", "error"}:
                 raise ValueError(f"Found <{element.tag}> in Surefire report {report.name}")
         seen_cases.update(unique_cases)
+        # JUnit engines other than Jupiter (ArchUnit) write simple class names in testcase elements,
+        # while the suite name always holds the full class name.
+        suite_names.add(suite.get("name", ""))
         for field in fields:
             totals[field] += counts[field]
-    missing = sorted(set(required_suites) - {classname for classname, _ in seen_cases})
+    present = suite_names | {classname for classname, _ in seen_cases}
+    missing = sorted(set(required_suites) - present)
     if missing:
         raise ValueError(f"Missing required Surefire suites: {', '.join(missing)}")
     return totals
