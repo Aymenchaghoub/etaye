@@ -2,6 +2,8 @@
 
 Status: Prepared; the authorization is UD-45 (2026-11-20) and covers story 10.2 only. This packet itself authorizes nothing. Date 2026-11-20.
 
+The [phase 0 plan](story-10-2-phase-0.md) records current code and CI evidence and the choices awaiting approval.
+
 ## 1. Objective and traceability
 
 Give the web, installed web and future Expo clients one typed API contract and one visual token source (UD-12, UD-38). Story 10.2 is in increment 1, milestone M1 (ADR-011 point 2). It depends on 10.1 and traces to FR-016, FR-020, BR-002, BR-013, BR-016, J-06, J-08 and AD-11. Evidence is operational. [Epic 10](../planning-artifacts/epics/epic-10.md#story-102-generated-client-token-bridge-and-multi-client-foundations)
@@ -47,7 +49,7 @@ Each row becomes a test. Record synthetic fixture, commit, environment, exact co
 
 1. **[Proposal] Plan.** Recheck the authorization, dependency, contract gaps and token inputs. Confirm the generator, flag and evidence plan against the open points below.
 2. **[Proposal] Contract and foundations.** Land the contract preparation first. Update `docs/contracts/openapi.yaml`, `docs/contracts/README.md` and `docs/contracts/operation-index.json` together. In `docs/planning-artifacts/roadmap-assignments.json`, change `getApiMeta` from `planned` to `contract` and assign the readiness probe to increment 1 with status `contract`. Regenerate the tables in `docs/planning-artifacts/roadmap.md` from those assignments. The validator checks the operation index and roadmap operation assignments against the contract. Generate the client and migrate the probe call. Implement metadata, CORS and the push boundary. Run C1–C6 and C8. [Roadmap source](../planning-artifacts/roadmap-assignments.json), [roadmap](../planning-artifacts/roadmap.md), [tools/validate_docs.py](../../tools/validate_docs.py)
-3. **[Proposal] Tokens and evidence.** Build the bridge, review the one-time baseline diff and freeze it. Run C7 and C9. Wire drift and report checks into CI. D-40 leaves API and Web informational on GitHub.
+3. **[Proposal] Tokens and evidence.** Build the bridge, review the one-time baseline diff and freeze it. Run C7 and C9. Wire drift and report checks into CI. D-40 requires API and Web on GitHub. Check the actual runs for the exact PR head.
 4. **Review.** Use a short-lived feature branch and PR to main. Review silent failures, edge cases and acceptance criteria. Record exact-head evidence and limits in the implementation record and continuation. AT-039-C requires operational evidence. If existing visible output changes, follow the separate delivery rule for Aymen's review of the running result.
 
 ## 7. Risks and open points

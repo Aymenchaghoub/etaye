@@ -2,7 +2,7 @@
 
 [Explore the five interactive diagrams](https://aymenchaghoub.github.io/etaye/). From a local checkout, open [site/index.html](site/index.html) in a browser. Select **Live** in a diagram to animate its connections.
 
-The diagrams reflect the planning baseline at commit `f05b30b527d910872da79bd62f55f68447921961` (React Native native app, ADR-010). They show the proposed application and identify deferred capabilities. The [architecture spine](../planning-artifacts/architecture/ARCHITECTURE-SPINE.md) and [ADRs](../decisions/README.md) remain authoritative.
+The diagrams reflect the planning baseline at commit `f05b30b527d910872da79bd62f55f68447921961` (React Native native app, ADR-010). They show the proposed application and identify deferred capabilities. The [architecture spine](../planning-artifacts/architecture/ARCHITECTURE-SPINE.md) and [ADRs](../decisions/README.md) remain authoritative. The [API contract guide](../contracts/README.md) tracks the current operation count and runtime coverage, including `getApiMeta` and `getReadiness`.
 
 ## Updating the diagrams
 

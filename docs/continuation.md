@@ -2,6 +2,24 @@
 
 Updated: 2026-11-20. Owner: Aymen Chaghoub.
 
+## Story 10.2 implemented and locally reviewed — 2026-11-20
+
+**Phase.** Authorized implementation under UD-45 after Aymen approved phase 0. The contract and its indexes were committed before application changes. [PR #44](https://github.com/Aymenchaghoub/etaye/pull/44) contains the generated SDK, readiness migration, version discovery, origin and transport foundations, content-free push port and the web token bridge. The [implementation record](implementation-artifacts/story-10-2-implementation-record.md) follows C1–C9 and explains the ownership of 426 in story 10.4.
+
+**Actual verification.** The API suite passed 143 tests with PostgreSQL Testcontainers. The Web passed 13 Chromium tests, including two retained axe scans, and the real Spring/React/PostgreSQL stop/start/pause test passed after the review fixes. Six opened captures matched the 10.1 smoke page byte for byte at desktop, tablet and phone widths. The compiler, token golden check, 94 tooling tests and documentary validator passed. The five required GitHub checks passed on the implementation revision and the exact-origin correction. See PR #44 for the current head checks.
+
+**Reviews and integration.** The local Zcode review covered all three lenses. Aymen manually requested CodeRabbit on draft PR #44 and accepted the smoke-page captures. His merge authorization requires resolved review findings and green required checks. CodeRabbit returned two findings, addressed in the OpenAPI 403 declarations and the D-50 resumption trigger. See the implementation record for the review details and PR #44 for integration status. The [delivery rules](operations/delivery-rules.md) require one manual CodeRabbit request on every implementation story PR.
+
+**Next proposed story.** The [story delivery order](planning-artifacts/story-delivery-order.md) lists the M1–M6 sequence, the later increments, and the direct prerequisites for all 45 stories. Prepare 1.2 next by reviewing the remaining recovery and session expiry designs and obtaining Aymen's written development authorization. S-02 is approved. S-04, S-38 and I-22 are pending.
+
+## Story 10.2 phase 0 prepared — 2026-11-20
+
+**Phase.** Planning and owner review for story 10.2 under UD-45. The [phase 0 plan and implementation prompt](implementation-artifacts/story-10-2-phase-0.md) record the contract-first sequence, SDK and token bridge, metadata and transport proposals, C1–C9 evidence and scope limits. Aymen requested one local Zcode review per implementation story, with silent failures, edge cases and acceptance criteria in one report. The [delivery rules](operations/delivery-rules.md) carry that decision.
+
+**Actual verification.** The sources and authorization were checked at `8afd51c2a7e41a29bfa9825620fc6cafaaaaf1e1`. In a disposable directory, Hey API 0.99.0 generated 96 deterministic SDK operations from the current contract, strict TypeScript compilation passed and the synthetic probe exercise confirmed header-first handling and forward-compatible decoding. The design-system reference check and the linked JSON comparison passed. The Zcode CLI reports version 0.17.1 and advertises plan mode in its help. The implementation review uses guarded mode after checking runtime support. Documentary validation reported zero errors and all 91 tooling tests passed. This phase generated no application test results.
+
+**Open choices and next action.** Review the proposed 426 ownership, version and transport defaults, and delivery plan with Aymen. After approval, prepare the contract commit before application changes. No review run is due until there is an implementation diff.
+
 ## Story 10.1 authorization-denial audit verified — 2026-11-20
 
 **Phase:** story 10.1 maintenance. **Completed:** the decision and acceptance amendment are on `main` as `13f6d12` (PR #42). The audit follow-up implements the decision and is documented in the [implementation record](implementation-artifacts/story-10-1-implementation-record.md#10-authorization-denial-audit-follow-up-ud-47-2026-11-20). The D-40 path checks use Git pathspecs so a rename out of an application directory still runs its verification.

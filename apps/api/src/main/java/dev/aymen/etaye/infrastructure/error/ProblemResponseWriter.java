@@ -5,6 +5,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Shared serializer component for application/problem+json used by security filters
@@ -13,9 +16,9 @@ import java.io.IOException;
 @Component
 public class ProblemResponseWriter {
 
-    private static final java.util.List<String> RETAINED_SECURITY_HEADERS = java.util.List.of(
+    private static final List<String> RETAINED_SECURITY_HEADERS = List.of(
             "Strict-Transport-Security", "X-Content-Type-Options", "X-Frame-Options", "X-XSS-Protection",
-            "Referrer-Policy", "Content-Security-Policy", "Permissions-Policy");
+            "Referrer-Policy", "Content-Security-Policy", "Permissions-Policy", "Access-Control-Allow-Origin", "Vary");
 
     private final ObjectMapper objectMapper;
 
@@ -35,16 +38,16 @@ public class ProblemResponseWriter {
             return false;
         }
         // reset() clears the stale headers of a half-built success response (Content-Length, ETag, Set-Cookie)
-        // but also the security headers the chain may already have set, so those are restored afterwards.
-        java.util.Map<String, String> retained = new java.util.LinkedHashMap<>();
+        // Preserve the validated CORS decision and the other headers already set by the security chain.
+        Map<String, List<String>> retained = new LinkedHashMap<>();
         for (String name : RETAINED_SECURITY_HEADERS) {
-            String value = response.getHeader(name);
-            if (value != null) {
-                retained.put(name, value);
+            List<String> values = List.copyOf(response.getHeaders(name));
+            if (!values.isEmpty()) {
+                retained.put(name, values);
             }
         }
         response.reset();
-        retained.forEach(response::setHeader);
+        retained.forEach((name, values) -> values.forEach(value -> response.addHeader(name, value)));
         if (!retained.containsKey("X-Content-Type-Options")) {
             response.setHeader("X-Content-Type-Options", "nosniff");
         }

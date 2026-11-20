@@ -4,11 +4,14 @@ import dev.aymen.etaye.AbstractPostgresTest;
 import dev.aymen.etaye.TestSessionHelper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
@@ -61,6 +64,65 @@ public class SecurityIntegrationTest extends AbstractPostgresTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    void anonymousMetadataIsStatelessAndVersioned() {
+        int sessions = countSpringSessions();
+        var response = client().get().uri("/api/v1/meta")
+                .header("X-Client-Version", "web/0.0.1").retrieve().toEntity(Map.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).containsExactlyInAnyOrderEntriesOf(Map.of(
+                "apiVersion", "v1", "minimumClientVersion", "0.0.1", "latestClientVersion", "0.0.1"));
+        assertThat(response.getHeaders().getCacheControl()).isEqualTo("no-store");
+        assertThat(response.getHeaders().getFirst(HttpHeaders.SET_COOKIE)).isNull();
+        assertThat(countSpringSessions()).isEqualTo(sessions);
+    }
+
+    @Test
+    void defaultOriginPolicyRejectsPreflightAndActualRequests() {
+        String origin = "https://browser.example.test";
+        var preflight = client().options().uri("/api/v1/csrf")
+                .header(HttpHeaders.ORIGIN, origin)
+                .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET")
+                .retrieve().onStatus(HttpStatus.FORBIDDEN::equals, (req, res) -> {}).toBodilessEntity();
+        var actual = client().get().uri("/api/v1/meta").header(HttpHeaders.ORIGIN, origin)
+                .retrieve().onStatus(HttpStatus.FORBIDDEN::equals, (req, res) -> {}).toBodilessEntity();
+        assertThat(preflight.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        assertThat(preflight.getHeaders().getFirst(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)).isNull();
+        assertThat(actual.getHeaders().getFirst(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)).isNull();
+    }
+
+    @Test
+    void sameOriginCookieWorksAndMixedBearerIsRefused() {
+        UUID actor = createAccountAsOwner("transport.fixture." + UUID.randomUUID() + "@example.com", "Transport Fixture");
+        String cookie = testSessionHelper.createSessionCookie(actor);
+        String origin = "http://localhost:" + port;
+        var allowed = client().get().uri("/api/v1/csrf").header(HttpHeaders.ORIGIN, origin)
+                .header(HttpHeaders.COOKIE, cookie).retrieve().toEntity(Map.class);
+        assertThat(allowed.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(allowed.getBody()).containsEntry("headerName", "X-CSRF-TOKEN");
+
+        for (String path : new String[]{"/api/v1/csrf", "/api/v1/meta", "/api/v1/probes/readiness"}) {
+            var rejected = client().get().uri(path).header(HttpHeaders.COOKIE, cookie)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer synthetic-fixture")
+                    .retrieve().onStatus(HttpStatus.FORBIDDEN::equals, (req, res) -> {}).toEntity(Map.class);
+            assertThat(rejected.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+            assertThat(rejected.getHeaders().getContentType())
+                    .matches(MediaType.APPLICATION_PROBLEM_JSON::includes);
+            assertThat(rejected.getBody()).containsEntry("code", "FORBIDDEN");
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/api/v1/probes/readiness", "/api/v1/meta", "/api/v1/csrf"})
+    void unsupportedPublicResponseFormatReturnsDocumentedProblem(String path) {
+        var response = client().get().uri(path).accept(MediaType.TEXT_PLAIN)
+                .retrieve().onStatus(HttpStatus.NOT_ACCEPTABLE::equals, (req, res) -> {}).toEntity(Map.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_ACCEPTABLE);
+        assertThat(response.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
+        assertThat(response.getBody()).containsEntry("code", "NOT_ACCEPTABLE");
     }
 
     @Test

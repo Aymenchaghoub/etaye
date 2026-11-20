@@ -1,6 +1,6 @@
 # Documentation index
 
-Status: Planning package ready for complete design work. Documents are reviewed for planning consistency, not user-approved designs or implemented features. The [review report](review-report.md) records checks and limits. Aymen's explicit development authorization is still required after complete design review.
+The planning, design and implementation records cover different stages of Étaye. Story 10.1 provides the runnable platform foundation. Story 10.2 adds the generated client and token bridge. See [implementation records](implementation-artifacts/README.md) for the verified scope and [design coverage](design/coverage.csv) for approved surfaces. Development authorization is granted per story.
 
 | Authority / purpose | Artifact |
 |---|---|
@@ -22,7 +22,7 @@ Status: Planning package ready for complete design work. Documents are reviewed 
 | Future delivery and recovery | [CI/CD/deployment](operations/cicd-deployment-strategy.md), [GitHub delivery rules](operations/delivery-rules.md) |
 | Dated compatibility/cost evidence | [Hosting assessment](operations/hosting-cost-assessment.md), [official source evidence](operations/technology-and-hosting-sources.md) |
 | Verification design | [Test strategy](test-artifacts/test-strategy.md), [acceptance scenarios](test-artifacts/acceptance-scenarios.md) |
-| Planning backlog and roadmap | [10 epics / 45 stories](planning-artifacts/epics/README.md), [roadmap by increment](planning-artifacts/roadmap.md), [implementation stopping point](implementation-artifacts/README.md) |
+| Planning backlog and roadmap | [Story delivery order](planning-artifacts/story-delivery-order.md), [10 epics / 45 stories](planning-artifacts/epics/README.md), [roadmap by increment](planning-artifacts/roadmap.md), [implementation stopping point](implementation-artifacts/README.md) |
 | UX spines | [DESIGN](planning-artifacts/ux/DESIGN.md), [EXPERIENCE](planning-artifacts/ux/EXPERIENCE.md) |
 | Existing visual source and assets | [Figma inventory](design/figma-inventory.md), [tokens/assets](design/token-reference.md), [snapshot/export manifest](design/figma/manifest.json), [offline design-system reference](design/design-system.md) |
 | Design surfaces | [Screens](design/screen-catalog.md), [interactions/modals](design/interaction-catalog.md), [PDFs/emails](design/pdf-email-specifications.md) |

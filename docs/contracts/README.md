@@ -1,6 +1,10 @@
 # Documentary API contract
 
-Status: Proposed, ready for design and review. `openapi.yaml` is OpenAPI 3.1 written in JSON syntax (valid YAML 1.2); no endpoint is implemented. [Operation index](operation-index.json) maps all operations. [Business rules](../planning-artifacts/business-rules.md), [access matrix](../planning-artifacts/access-matrix.md), [data dictionary](../planning-artifacts/data-dictionary.md) and ADRs are authoritative companions. Version 0.2.1-planning (2026-11-17): 96 operations.
+Status: Versioned contract with implemented and planned operations. `openapi.yaml` is OpenAPI 3.1 written in JSON syntax (valid YAML 1.2). [Operation index](operation-index.json) maps all operations. [Business rules](../planning-artifacts/business-rules.md), [access matrix](../planning-artifacts/access-matrix.md), [data dictionary](../planning-artifacts/data-dictionary.md) and ADRs are authoritative companions. Version 0.2.2-planning (2026-11-20) contains 98 operations.
+
+## Runtime coverage
+
+Story 10.1 serves `getReadiness`, `getCsrfToken`, `createPatient` and `getPatientRecord`. Story 10.2 adds `getApiMeta`. Remaining operations describe planned behavior. Readiness returns JSON `UP` on 200 and `DOWN` on 503 without opening a session. The versions endpoint is public and stateless. The Web SDK sends `X-Client-Version: web/<semantic-version>` using its package version. This is compatibility metadata. The 426 enforcement belongs to story 10.4.
 
 ## Common transport and permissions
 
@@ -10,7 +14,7 @@ Future same-origin base `/api/v1`, opaque secure session cookie, CSRF token head
 
 ## Declared error responses
 
-Error responses are declared per operation, never copied onto all of them. A GET declares no 409, 412, 422 or 428. 400 appears when an operation has a body, a query or a path parameter; 401 on every operation except public ones (sign-in keeps it for bad credentials); 403 on authenticated operations and wherever a CSRF header is required; 404 when a path parameter or a token can refer to a hidden resource; 409 on unsafe operations except sign-in, sign-out and recovery; 412 and 428 exactly on operations that require `If-Match`; 422 on operations with a body or a state transition; 429 and 503 everywhere. `tools/validate_docs.py` enforces the rule.
+Error responses are declared per operation, never copied onto all of them. A GET declares no 409, 412, 422 or 428. 400 appears when an operation has a body, a query or a path parameter; 401 on every operation except public ones (sign-in keeps it for bad credentials); 403 on authenticated operations and wherever a CSRF header is required; 404 when a path parameter or a token can refer to a hidden resource; 409 on unsafe operations except sign-in, sign-out and recovery; 412 and 428 exactly on operations that require `If-Match`; 422 on operations with a body or a state transition; 429 and 503 are general domain API responses. The stateless metadata and readiness operations declare their observed or specified outcomes. The router responds with 405 and `Allow` for unsupported methods rather than declaring a 405 on the supported operation. The carrier read’s conditional 304 includes `ETag` and has no body. The documentary validator checks contract and index consistency.
 
 ## Business error codes
 
@@ -43,7 +47,7 @@ Error responses are declared per operation, never copied onto all of them. A GET
 - Acknowledgements: `acknowledgePreparation` (visit preparation) and `acknowledgeBrief` (CLINICIAN_BRIEF only) append an acknowledgement to the exact current version under `If-Match`. They never change authorship, content or visibility.
 - `asOf` (UD-32) is an optional query parameter of the record read operations (timeline, assertions, measurements, laboratory results, sources): it returns each lineage's latest revision recorded at or before a past instant, read-only and under the same authorization; a future instant is a 400.
 - `Citation.mechanicalCheck` (UD-31) is computed by the server and read-only; it is a flag, never a score.
-- Operations owned by ADR-008 and ADR-009 (`createNativeSession`, `registerDevice`, `listOwnDevices`, `revokeDevice`, `getApiMeta`) are accepted but not in this contract yet; they are added before the stories that need them (see section 8.3 of the [roadmap](../planning-artifacts/roadmap.md)).
+- The native operations owned by ADR-008 (`createNativeSession`, `registerDevice`, `listOwnDevices`, `revokeDevice`) are planned for the 10.5 contract preparation (see section 8.3 of the [roadmap](../planning-artifacts/roadmap.md)).
 
 ## Pagination, filters and ordering
 

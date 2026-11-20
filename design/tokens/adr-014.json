@@ -1,0 +1,128 @@
+{
+  "colorScheme": {
+    "clair": "light",
+    "sombre": "dark"
+  },
+  "scrim": {
+    "clair": "rgba(15, 16, 18, 0.48)",
+    "sombre": "rgba(15, 16, 18, 0.48)"
+  },
+  "motion": {
+    "duree-trace": "1200ms"
+  },
+  "typography": [
+    {
+      "name": "doc-citation",
+      "family": "document",
+      "fontSize": "15px",
+      "lineHeight": "26px",
+      "fontWeight": 400
+    },
+    {
+      "name": "donnee-secondaire",
+      "family": "donnee",
+      "fontSize": "13px",
+      "lineHeight": "20px",
+      "fontWeight": 400
+    },
+    {
+      "name": "donnee-meta",
+      "family": "donnee",
+      "fontSize": "12px",
+      "lineHeight": "16px",
+      "fontWeight": 400
+    },
+    {
+      "name": "repere",
+      "family": "donnee",
+      "fontSize": "11px",
+      "lineHeight": "16px",
+      "fontWeight": 600
+    },
+    {
+      "name": "ui-aide",
+      "family": "texte",
+      "fontSize": "13px",
+      "lineHeight": "20px",
+      "fontWeight": 400
+    },
+    {
+      "name": "ui-corps-fort",
+      "family": "texte",
+      "fontSize": "15px",
+      "lineHeight": "22px",
+      "fontWeight": 500
+    },
+    {
+      "name": "ui-lecture",
+      "family": "texte",
+      "fontSize": "16px",
+      "lineHeight": "24px",
+      "fontWeight": 400
+    },
+    {
+      "name": "ui-action",
+      "family": "texte",
+      "fontSize": "14px",
+      "lineHeight": "20px",
+      "fontWeight": 500
+    },
+    {
+      "name": "meta-aere",
+      "family": "texte",
+      "fontSize": "12px",
+      "lineHeight": "18px",
+      "fontWeight": 400
+    },
+    {
+      "name": "meta-fort",
+      "family": "texte",
+      "fontSize": "12px",
+      "lineHeight": "16px",
+      "fontWeight": 500
+    },
+    {
+      "name": "ui-dense-aere",
+      "family": "texte",
+      "fontSize": "14px",
+      "lineHeight": "22px",
+      "fontWeight": 400
+    },
+    {
+      "name": "ui-sous-titre",
+      "family": "texte",
+      "fontSize": "20px",
+      "lineHeight": "28px",
+      "fontWeight": 500
+    },
+    {
+      "name": "ui-titre-page",
+      "family": "texte",
+      "fontSize": "26px",
+      "lineHeight": "32px",
+      "fontWeight": 500
+    },
+    {
+      "name": "donnee-action",
+      "family": "donnee",
+      "fontSize": "16px",
+      "lineHeight": "24px",
+      "fontWeight": 500
+    },
+    {
+      "name": "donnee-jour",
+      "family": "donnee",
+      "fontSize": "18px",
+      "lineHeight": "24px",
+      "fontWeight": 500
+    }
+  ],
+  "layout": {
+    "navigationWidth": 248,
+    "dialogWidth": 560,
+    "wideDialogWidth": 720,
+    "drawerWidth": 480,
+    "wideDrawerWidth": 640,
+    "sourcePreviewWidth": 328
+  }
+}

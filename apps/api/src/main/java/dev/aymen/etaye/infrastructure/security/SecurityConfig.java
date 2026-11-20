@@ -6,18 +6,20 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.context.SecurityContextHolderFilter;
+import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.session.SessionRepository;
 import org.springframework.session.jdbc.config.annotation.web.http.EnableJdbcHttpSession;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -63,10 +65,12 @@ public class SecurityConfig {
 
     @Bean
     @Order(1)
-    public SecurityFilterChain probesSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain publicMetadataSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-            .securityMatcher("/api/v1/probes/**")
-            .addFilterBefore(new StatelessProbeFilter(), org.springframework.security.web.session.DisableEncodeUrlFilter.class)
+            .securityMatcher("/api/v1/probes/**", "/api/v1/meta")
+            .cors(Customizer.withDefaults())
+            .addFilterAfter(new RejectBearerFilter(accessDeniedHandler), CorsFilter.class)
+            .addFilterBefore(new StatelessRequestFilter(), org.springframework.security.web.session.DisableEncodeUrlFilter.class)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .csrf(AbstractHttpConfigurer::disable)
             .requestCache(AbstractHttpConfigurer::disable)
@@ -77,7 +81,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-    private static final class StatelessProbeFilter extends org.springframework.web.filter.OncePerRequestFilter {
+    private static final class StatelessRequestFilter extends org.springframework.web.filter.OncePerRequestFilter {
         @Override
         protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request,
                                         jakarta.servlet.http.HttpServletResponse response,
@@ -114,6 +118,8 @@ public class SecurityConfig {
         HeaderOnlyCsrfTokenRequestAttributeHandler csrfRequestHandler = new HeaderOnlyCsrfTokenRequestAttributeHandler();
 
         http
+            .cors(Customizer.withDefaults())
+            .addFilterAfter(new RejectBearerFilter(accessDeniedHandler), CorsFilter.class)
             .requestCache(AbstractHttpConfigurer::disable)
             .logout(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)
@@ -134,14 +140,14 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/csrf").permitAll()
                 .anyRequest().authenticated()
             )
-            .addFilterAfter(
+            .addFilterBefore(
                 new IdentityResolutionFilter(
                         identityLookupService,
                         authenticationEntryPoint,
                         problemResponseWriter,
                         sessionRepositoryProvider.getIfAvailable()
                 ),
-                SecurityContextHolderFilter.class
+                CsrfFilter.class
             );
 
         return http.build();

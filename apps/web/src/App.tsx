@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { isApiReady } from './api/browser';
 
 type Readiness = 'LOADING' | 'READY' | 'UNAVAILABLE';
 
@@ -15,22 +16,12 @@ export default function App() {
     async function checkReadiness() {
       let nextState: Readiness = 'UNAVAILABLE';
       try {
-        const response = await fetch('/api/v1/probes/readiness', {
-          cache: 'no-store',
-          signal: controller.signal,
-        });
-        if (!response.ok) {
+        const ready = await isApiReady(controller.signal, () => {
           if (!controller.signal.aborted) {
             setReadiness('UNAVAILABLE');
           }
-          // Drain the body after updating the UI, with the abort timeout still active.
-          await response.text().catch(() => undefined);
-          return;
-        }
-        const body: unknown = await response.json();
-        if (typeof body === 'object' && body !== null && 'status' in body && body.status === 'UP') {
-          nextState = 'READY';
-        }
+        });
+        if (ready) nextState = 'READY';
       } catch {
         // Fetch and JSON parsing failures share the same public state.
       } finally {

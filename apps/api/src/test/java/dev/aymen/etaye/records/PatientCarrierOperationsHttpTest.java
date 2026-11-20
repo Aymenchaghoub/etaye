@@ -321,6 +321,38 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
     }
 
     @Test
+    void conditionalRecordReadReturnsEmpty304WithEtag() {
+        PatientResponse patient = client().post()
+                .uri("/api/v1/practices/{practiceId}/patients", practiceA)
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .header("X-CSRF-TOKEN", fetchCsrfToken(sessionCookieClinicalA))
+                .header("Idempotency-Key", "conditional-" + UUID.randomUUID())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new PatientEdit("Synthetic", "Conditional", LocalDate.of(1985, 5, 20), null, null))
+                .retrieve().body(PatientResponse.class);
+        assertThat(patient).isNotNull();
+        String path = "/api/v1/practices/{practiceId}/records/{recordId}";
+        var initial = client().get().uri(path, practiceA, patient.recordId())
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA).retrieve().toEntity(RecordResponse.class);
+        assertThat(initial.getStatusCode()).isEqualTo(HttpStatus.OK);
+        String etag = initial.getHeaders().getETag();
+        assertThat(etag).isNotBlank();
+        var conditional = client().get().uri(path, practiceA, patient.recordId())
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA).header(HttpHeaders.IF_NONE_MATCH, etag)
+                .retrieve().toEntity(String.class);
+        assertThat(conditional.getStatusCode()).isEqualTo(HttpStatus.NOT_MODIFIED);
+        assertThat(conditional.getHeaders().getETag()).isEqualTo(etag);
+        assertThat(conditional.getBody()).isNull();
+
+        var unsuitable = client().get().uri(path, practiceA, patient.recordId())
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA).accept(MediaType.TEXT_PLAIN)
+                .retrieve().onStatus(HttpStatus.NOT_ACCEPTABLE::equals, (req, res) -> {}).toEntity(Map.class);
+        assertThat(unsuitable.getStatusCode()).isEqualTo(HttpStatus.NOT_ACCEPTABLE);
+        assertThat(unsuitable.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
+        assertThat(unsuitable.getBody()).containsEntry("code", "NOT_ACCEPTABLE");
+    }
+
+    @Test
     @DisplayName("C1: Authorized create gives 201, quoted ETag, and exactly one row in all 5 tables")
     void c1_authorizedCreatePatient_commitsAllFiveTablesAndReturns201() {
         String csrfToken = fetchCsrfToken(sessionCookieClinicalA);

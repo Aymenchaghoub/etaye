@@ -1,5 +1,17 @@
 [
   {
+    "operationId": "getReadiness",
+    "method": "get",
+    "path": "/probes/readiness",
+    "permission": "PUBLIC"
+  },
+  {
+    "operationId": "getApiMeta",
+    "method": "get",
+    "path": "/meta",
+    "permission": "PUBLIC"
+  },
+  {
     "operationId": "getCsrfToken",
     "method": "get",
     "path": "/csrf",
