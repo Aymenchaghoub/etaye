@@ -254,6 +254,8 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
     @Test
     @DisplayName("C6 mutation: Excess DELETE on audit_event for etaye_runtime is detected")
     void c6_mutationExcessDeleteOnAuditEventDetected() {
+        assertThat(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'audit_event', 'DELETE')", Boolean.class))
+                .as("the migration must not already grant DELETE on audit_event").isFalse();
         try {
             executeAsOwner("GRANT DELETE ON audit_event TO etaye_runtime");
             assertThatThrownBy(() -> checkCatalogPrivileges())
@@ -267,6 +269,8 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
     @Test
     @DisplayName("C6 mutation: Excess SELECT on account for etaye_runtime is detected")
     void c6_mutationExcessSelectOnAccountDetected() {
+        assertThat(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', 'account', 'SELECT')", Boolean.class))
+                .as("the migration must not already grant SELECT on account").isFalse();
         try {
             executeAsOwner("GRANT SELECT ON account TO etaye_runtime");
             assertThatThrownBy(() -> checkCatalogPrivileges())

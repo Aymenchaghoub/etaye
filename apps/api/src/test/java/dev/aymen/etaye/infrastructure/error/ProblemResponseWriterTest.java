@@ -57,6 +57,27 @@ class ProblemResponseWriterTest {
     }
 
     @Test
+    @DisplayName("Security headers already set by the chain survive the reset, stale success headers do not")
+    void securityHeadersSurviveTheReset() throws Exception {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        response.setHeader("Strict-Transport-Security", "max-age=31536000");
+        response.setHeader("X-Frame-Options", "DENY");
+        response.setHeader("ETag", "\"0\"");
+        response.setHeader("Set-Cookie", "__Host-etaye-session=stale");
+
+        boolean written = writer.writeProblem(response, ApiProblem.of(503, "Service Unavailable",
+                "SERVICE_UNAVAILABLE", "Service temporarily unavailable", "corr-headers"));
+
+        assertThat(written).isTrue();
+        assertThat(response.getHeader("Strict-Transport-Security")).isEqualTo("max-age=31536000");
+        assertThat(response.getHeader("X-Frame-Options")).isEqualTo("DENY");
+        assertThat(response.getHeader("X-Content-Type-Options")).isEqualTo("nosniff");
+        assertThat(response.getHeader("Cache-Control")).isEqualTo("no-store");
+        assertThat(response.getHeader("ETag")).isNull();
+        assertThat(response.getHeader("Set-Cookie")).isNull();
+    }
+
+    @Test
     @DisplayName("C1: Not-yet-committed response with partial body bytes ends with ONLY problem JSON")
     void notCommittedResponseWithPartialBytes_endsOnlyWithProblemJson() throws Exception {
         MockHttpServletResponse response = new MockHttpServletResponse();

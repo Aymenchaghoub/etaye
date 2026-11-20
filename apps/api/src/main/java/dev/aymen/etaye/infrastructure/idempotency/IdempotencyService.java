@@ -49,7 +49,8 @@ public class IdempotencyService {
      */
     public String computeCanonicalBodyHash(Map<String, Object> fields) {
         Objects.requireNonNull(fields, "fields must not be null");
-        Map<String, Object> sorted = (fields instanceof TreeMap) ? fields : new TreeMap<>(fields);
+        // Always the natural key order: a TreeMap built with another comparator must give the same hash
+        Map<String, Object> sorted = new TreeMap<>(fields);
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, Object> entry : sorted.entrySet()) {
             String key = entry.getKey();
@@ -141,6 +142,7 @@ public class IdempotencyService {
         Objects.requireNonNull(operation, "operation must not be null");
         Objects.requireNonNull(keyDigest, "keyDigest must not be null");
         Objects.requireNonNull(bodyHash, "bodyHash must not be null");
+        Objects.requireNonNull(responseResource, "responseResource must not be null for a CREATED receipt");
 
         jdbcTemplate.update("""
             INSERT INTO idempotency_receipt (

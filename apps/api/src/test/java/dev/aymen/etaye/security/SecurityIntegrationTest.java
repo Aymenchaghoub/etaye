@@ -162,6 +162,24 @@ public class SecurityIntegrationTest extends AbstractPostgresTest {
                 .toEntity(Map.class);
 
         assertThat(protectedResponse.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+        // 5. The replacement session is anonymous: even after the account is reactivated it carries no authentication
+        try (var conn = java.sql.DriverManager.getConnection(
+                POSTGRES_CONTAINER.getJdbcUrl(), OWNER_USER, OWNER_PASSWORD);
+             var ps = conn.prepareStatement("UPDATE account SET state = 'ACTIVE' WHERE id = ?")) {
+            ps.setObject(1, accountId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        String replacementCookie = newSetCookie.split(";")[0];
+        ResponseEntity<Map> replacementResponse = client().get()
+                .uri("/api/v1/practices/" + practiceId + "/records/" + UUID.randomUUID())
+                .header(HttpHeaders.COOKIE, replacementCookie)
+                .retrieve()
+                .onStatus(status -> status.value() == 401, (req, res) -> {})
+                .toEntity(Map.class);
+        assertThat(replacementResponse.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
 
     @Test

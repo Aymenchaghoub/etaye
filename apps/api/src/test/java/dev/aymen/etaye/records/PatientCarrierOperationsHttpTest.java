@@ -411,7 +411,7 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
 
         // 3. The same record id requested through an existing practice where the caller has no membership (member of A calls practice B route)
         ResponseEntity<Map> resRecordAViaPracticeB = client().get()
-                .uri("/api/v1/practices/" + practiceB + "/records/" + recordAId)
+                .uri("/api/v1/practices/" + practiceB + "/records/" + recordBId)
                 .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
                 .retrieve()
                 .onStatus(status -> status.value() == 404, (req, res) -> {})
@@ -1232,7 +1232,7 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         PatientEdit edit = new PatientEdit(
                 "Future",
                 "Baby",
-                LocalDate.now().plusDays(1),
+                LocalDate.now().plusYears(1),
                 null,
                 null
         );
@@ -1264,7 +1264,7 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         String csrfToken = fetchCsrfToken(sessionCookieClinicalA);
         String idempotencyKey = "key-malformed-" + UUID.randomUUID();
 
-        String malformedJson = "{ \"firstName\": \"Jean\", \"invalid\": ";
+        String malformedJson = "{ \"firstName\": \"Jean\", \"lastName\": \"Dupont\", \"dateOfBirth\": \"1990-0";
 
         ResponseEntity<Map> response = client().post()
                 .uri("/api/v1/practices/" + practiceA + "/patients")
@@ -1706,6 +1706,9 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         assertThat(replayResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
         assertThat(replayResponse.getBody().get("code")).isEqualTo("FORBIDDEN");
         assertThat(replayResponse.getBody().get("detail")).isEqualTo("Access denied");
+        assertThat(replayResponse.getBody().keySet())
+                .as("a denied replay must carry only problem fields, never a patient projection")
+                .isSubsetOf("type", "title", "status", "detail", "instance", "code", "correlationId", "fieldErrors");
 
         // Verify zero new writes across all 5 tables
         assertThat(countRowsInTableDirectly("patient", "practice_id", practiceA)).isEqualTo(patientCount);

@@ -105,6 +105,8 @@ public class HttpConnectionReuseIsolationTest extends AbstractPostgresTest {
 
             assertThat(errorResponse.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
             assertThat(errorResponse.getBody().get("code")).isEqualTo("INTERNAL_ERROR");
+            assertThat(testFailureHelper.getReachedCount())
+                    .as("the beforeCommit failure hook must have run for this request").isGreaterThan(0);
         } finally {
             testFailureHelper.disableFailureInBeforeCommit();
         }

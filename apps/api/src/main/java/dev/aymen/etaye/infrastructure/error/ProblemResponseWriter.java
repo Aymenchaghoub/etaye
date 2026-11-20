@@ -13,6 +13,10 @@ import java.io.IOException;
 @Component
 public class ProblemResponseWriter {
 
+    private static final java.util.List<String> RETAINED_SECURITY_HEADERS = java.util.List.of(
+            "Strict-Transport-Security", "X-Content-Type-Options", "X-Frame-Options", "X-XSS-Protection",
+            "Referrer-Policy", "Content-Security-Policy", "Permissions-Policy");
+
     private final ObjectMapper objectMapper;
 
     public ProblemResponseWriter(ObjectMapper objectMapper) {
@@ -30,8 +34,21 @@ public class ProblemResponseWriter {
         if (response.isCommitted()) {
             return false;
         }
-        // reset() also clears stale headers (Content-Length, ETag, Set-Cookie) of a half-built success response
+        // reset() clears the stale headers of a half-built success response (Content-Length, ETag, Set-Cookie)
+        // but also the security headers the chain may already have set, so those are restored afterwards.
+        java.util.Map<String, String> retained = new java.util.LinkedHashMap<>();
+        for (String name : RETAINED_SECURITY_HEADERS) {
+            String value = response.getHeader(name);
+            if (value != null) {
+                retained.put(name, value);
+            }
+        }
         response.reset();
+        retained.forEach(response::setHeader);
+        if (!retained.containsKey("X-Content-Type-Options")) {
+            response.setHeader("X-Content-Type-Options", "nosniff");
+        }
+        response.setHeader("Cache-Control", "no-store");
         response.setStatus(problem.status());
         response.setHeader("Content-Type", "application/problem+json");
         response.setCharacterEncoding("UTF-8");

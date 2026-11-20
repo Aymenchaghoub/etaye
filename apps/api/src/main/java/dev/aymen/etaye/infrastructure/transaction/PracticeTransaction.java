@@ -124,8 +124,9 @@ public class PracticeTransaction {
         template.setName(PRACTICE_TX_PREFIX + practiceId);
 
         return template.execute(status -> {
-            TransactionSynchronizationManager.registerSynchronization(new PracticeTransactionMarker(practiceId));
             setTransactionPracticeContext(practiceId);
+            // Registered only after the SQL context exists, so a listener never sees a marker without its context
+            TransactionSynchronizationManager.registerSynchronization(new PracticeTransactionMarker(practiceId));
             return action.get();
         });
     }
