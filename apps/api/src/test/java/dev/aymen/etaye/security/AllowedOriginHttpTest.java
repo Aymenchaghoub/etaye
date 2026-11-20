@@ -30,11 +30,13 @@ class AllowedOriginHttpTest extends AbstractPostgresTest {
                 .isEqualTo("https://browser.example.test");
         assertThat(allowed.getHeaders().getFirst(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS)).isNull();
 
-        var rejected = client.options().uri("/api/v1/meta")
-                .header(HttpHeaders.ORIGIN, "https://browser.example.test:8443")
-                .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET")
-                .retrieve().onStatus(HttpStatus.FORBIDDEN::equals, (req, res) -> {}).toBodilessEntity();
-        assertThat(rejected.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-        assertThat(rejected.getHeaders().getFirst(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)).isNull();
+        for (String origin : new String[]{"https://browser.example.test:8443", "https://browser.example.test/"}) {
+            var rejected = client.options().uri("/api/v1/meta")
+                    .header(HttpHeaders.ORIGIN, origin)
+                    .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET")
+                    .retrieve().onStatus(HttpStatus.FORBIDDEN::equals, (req, res) -> {}).toBodilessEntity();
+            assertThat(rejected.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+            assertThat(rejected.getHeaders().getFirst(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN)).isNull();
+        }
     }
 }

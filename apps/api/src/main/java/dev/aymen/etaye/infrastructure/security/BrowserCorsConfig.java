@@ -22,8 +22,13 @@ class BrowserCorsConfig {
                 .map(BrowserCorsConfig::exactOrigin)
                 .toList();
 
-        var policy = new CorsConfiguration();
-        policy.setAllowedOrigins(origins);
+        var policy = new CorsConfiguration() {
+            @Override
+            public String checkOrigin(String origin) {
+                // Spring's default matcher also accepts a trailing slash. Compare the configured origin exactly.
+                return origins.contains(origin) ? origin : null;
+            }
+        };
         policy.setAllowedMethods(List.of("GET", "HEAD", "POST", "PATCH", "DELETE"));
         policy.setAllowedHeaders(List.of("Accept", "Content-Type", "X-CSRF-TOKEN", "X-Client-Version",
                 "X-Correlation-Id", "Idempotency-Key", "If-Match", "If-None-Match"));
