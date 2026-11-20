@@ -437,7 +437,7 @@ them starts.
 ## 9. Core design families and evidence policy (UD-16)
 
 Named exception accepted by Aymen on 2026-11-17: only the families below must be designed, reviewed and approved
-before the increment 1 build; every other family is built desktop-first in the code and checked with a sample of
+before the increment 1 build (all 19 were approved by Aymen as a design reference on 2026-11-20, UD-46); every other family is built desktop-first in the code and checked with a sample of
 visual evidence.
 
 - Screens: S-01, S-02, S-05, S-06, S-09, S-10, S-18, S-19, S-21, S-22, S-23, S-25, S-28, S-29, S-36.

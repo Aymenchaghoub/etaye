@@ -1,6 +1,6 @@
 # Interaction, modal and panel catalog
 
-Status: Ready for design; no interaction is designed or approved. 2026-11-02. Each I-ID is linked to a surface and requirement. [Business rules](../planning-artifacts/business-rules.md) own transitions; [API contract](../contracts/openapi.yaml) owns transport. French copy below is proposed new copy, existing Figma copy remains untouched.
+Status: Ready for design; I-09, I-15, I-16 and I-17 (CORE) were approved by Aymen as a design reference on 2026-11-20 (UD-46); no other interaction is approved. 2026-11-02. Each I-ID is linked to a surface and requirement. [Business rules](../planning-artifacts/business-rules.md) own transitions; [API contract](../contracts/openapi.yaml) owns transport. French copy below is proposed new copy, existing Figma copy remains untouched.
 
 ## Shared behavior contract (applies to every entry)
 
