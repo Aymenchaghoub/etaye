@@ -2,7 +2,7 @@
 
 **Date:** 2026-11-19
 **Branch:** `feat/10.1-walking-skeleton`
-**Status:** Spike source recorded at `51c7c98`. Runtime exit criteria are pending verification against execution evidence.
+**Status:** Spike source recorded at `51c7c98`. The runtime exit criteria were verified later on 2026-11-19 on the finished story; the evidence is in the [implementation record](../implementation-artifacts/story-10-1-implementation-record.md), section 5, and the status column below was updated from it.
 **Author:** Implementation Agent (Headless execution)
 
 ---
@@ -13,10 +13,10 @@ The spike implements a transaction-local PostgreSQL Row-Level Security (RLS) bou
 
 | # | Exit Criterion | Status | Evidence Summary |
 |---|---|---|---|
-| 1 | Backend builds with Testcontainers PostgreSQL | **Unverified** | The Maven wrapper, Spring Boot and Testcontainers declarations, and the PostgreSQL test fixture are in the repository. |
-| 2 | Adversarial isolation succeeds for two practices under a non-owner role on one pooled connection | **Unverified** | `PracticeIsolationTest` defines the connection-reuse, absent-context and catalog assertions. |
-| 3 | Playwright smoke passes on the real stack (browser, React, API, PostgreSQL) | **Unverified** | The committed negative smoke in `3096c1d` stubs the readiness probe. The separate real-stack outage spec supplies the test procedure for this criterion. |
-| 4 | ArchUnit verifies module boundaries and detects a deliberate violation | **Unverified** | `ArchitectureTest` declares three module dependency rules at the spike revision. |
+| 1 | Backend builds with Testcontainers PostgreSQL | **Verified** (83 tests, `./mvnw -B -ntp verify`, `f6db2bd`) | The Maven wrapper, Spring Boot and Testcontainers declarations, and the PostgreSQL test fixture are in the repository. |
+| 2 | Adversarial isolation succeeds for two practices under a non-owner role on one pooled connection | **Verified** (`PracticeIsolationTest`, `HttpConnectionReuseIsolationTest`, mutation matrices) | `PracticeIsolationTest` defines the connection-reuse, absent-context and catalog assertions. |
+| 3 | Playwright smoke passes on the real stack (browser, React, API, PostgreSQL) | **Verified** (`pnpm test:e2e-real` passed against the compose stack; the stubbed suite is separate) | The committed negative smoke in `3096c1d` stubs the readiness probe. The separate real-stack outage spec supplies the test procedure for this criterion. |
+| 4 | ArchUnit verifies module boundaries and detects a deliberate violation | **Verified** (11 rules; injected violations turned them red) | `ArchitectureTest` declares three module dependency rules at the spike revision. |
 | 5 | Workspace tooling decided, including React and Expo SDK alignment | **Partial** | The pnpm pin, workspace globs, composite TypeScript references and per-app workflow definitions are in the repository. The Expo alignment still needs evidence. |
 
 ---
@@ -74,7 +74,7 @@ The spike Compose file mounts the data volume at `/var/lib/postgresql` and mount
 ## 4. Test Evidence & Mutation Matrix
 
 ### 4.1 Backend Test Execution Output (`apps/api`)
-From `apps/api`, `./mvnw test` is the spike test command. At `51c7c98`, the repository defines seven `PracticeIsolationTest` cases and three ArchUnit rules. It contains no independently retained runtime reports for that command.
+`./mvnw -B -ntp verify` in `apps/api` ran 83 tests with 0 failures at `f6db2bd` on a clean worktree (2026-11-19); the per-class counts are in the [implementation record](../implementation-artifacts/story-10-1-implementation-record.md), section 4 and 5. At the spike revision `51c7c98` the repository defined seven `PracticeIsolationTest` cases and three ArchUnit rules and no retained runtime report; that is superseded.
 
 ### 4.2 Detailed Invariant Assertions (`PracticeIsolationTest`)
 1. **C8 Catalog Check**: Asserts runtime role identity, absence of superuser and BYPASSRLS privileges, `etaye_owner` table ownership, forced RLS on `patient`, and restrictions on `patient`, `account` and `membership` privileges.
@@ -84,16 +84,16 @@ From `apps/api`, `./mvnw test` is the spike test command. At `51c7c98`, the repo
 5. **JDBC and JPA Connection Identity**: Asserts `assertSame(jdbcConn, jpaConn)` within `PracticeTransaction`.
 
 ### 4.3 Deliberate ArchUnit Violation Evidence
-The rule `communicationsShouldNotDependOnPatients` is committed. The deliberate violation and its runtime result require separate execution evidence.
+Executed on 2026-11-19: a service importing a web class turned `servicesNeverDependOnWeb` red (matrix layer 8, `f248190` and `f6db2bd`); an infrastructure class referencing a `records` repository turned `recordsDomainAndRepositoryArePrivate`, `controllersNeverCallRepositories` and `noCyclesBetweenModules` red. Both were removed afterwards.
 
 ### 4.4 Mutation Matrix (Quality Rule 4 Verification)
 
 | # | Mutation | Committed assertion to exercise | Run evidence |
 |---|---|---|---|
-| **(i)** | Remove transaction-local context binding | `checkC6_AdversarialTwoPracticesAndConnectionReuse` | Pending verification |
-| **(ii)** | Permit all rows in the RLS policy | `checkDirectSqlIsolation` | Pending verification |
-| **(iii)** | Enable BYPASSRLS for the runtime role | `checkC8_RuntimeRoleCatalogVerification` | Pending verification |
-| **(iv)** | Remove the application predicate while keeping RLS, then remove RLS as well | `checkDefenseInDepthApplicationPredicateAndRls` | Pending verification |
+| **(i)** | Remove transaction-local context binding | `checkC6_AdversarialTwoPracticesAndConnectionReuse`, C5, C1 | Red, then green (layer 4, `f248190` and `f6db2bd`) |
+| **(ii)** | Permit all rows in the RLS policy | `checkDirectSqlIsolation_*` (one test per table) | Red, then green (layer 1); the HTTP C3 stays green by design because the application predicate still filters |
+| **(iii)** | Enable BYPASSRLS for the runtime role | `checkC8_RuntimeRoleCatalogVerification`, C5, C6 | Red, then green (`f6db2bd`); membership of the owner role also turns C8 red |
+| **(iv)** | Remove the application predicate while keeping RLS, then remove RLS as well | `checkDefenseInDepthApplicationPredicateAndRls` | Committed test; its first step stays green and its second goes red by construction. Layered mutants of the production code are in the implementation record |
 
 ---
 
