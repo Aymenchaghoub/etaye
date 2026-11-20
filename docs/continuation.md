@@ -2,13 +2,17 @@
 
 Updated: 2026-11-20. Owner: Aymen Chaghoub.
 
-## Full-stack CodeQL configuration (PR #46) — 2026-11-20
+## Full-stack CodeQL delivered and ruleset updated (PR #46) — 2026-11-20
 
-**Phase.** Expansion of GitHub CodeQL code scanning across Java 25 (API), TypeScript/React (Web), and Python (Tooling) using the `security-and-quality` ruleset on branch `ci/codeql-full-stack`. This anticipates SonarQube Cloud quality and security analysis (D-29 / Increment 4).
+**Integration.** [PR #46](https://github.com/Aymenchaghoub/etaye/pull/46) squash-merged to `main` as `372fda61f2d9dcda6e5d71f612856519673ba911`. Full-stack CodeQL code scanning is established with the `security-and-quality` ruleset across Java 25 (`apps/api`), TypeScript (`apps/web`), and Python (`tools/`, `design/`), anticipating SonarQube Cloud quality analysis (D-29 / Increment 4, UD-49).
 
-**Actual verification.** All three analysis matrices executed and succeeded in GitHub Actions (`Analyze API Java 25`, `Analyze Web TypeScript`, `Analyze tooling Python`). Code scanning is active and reporting 0 alerts across all severities.
+**Branch protection ruleset.** Ruleset 26390376 (`Protect main with reviewed planning checks`) updated to enforce `Analyze API (Java)` and `Analyze Web (TypeScript)` alongside `Analyze tooling`, `Planning package checks`, `API verify`, `Web verify`, and `CodeQL` results. All 7 checks are required on pull requests targeting `main`.
 
-**Next action.** Complete PR #46 documentation, update PR description with template sections and verification commands, request CodeRabbit review, and await Aymen's explicit validation before merging.
+**AI review quota status.** CodeRabbit has exhausted its free OSS tier review quota (rate limited on recent dispatches). Do not loop on re-requesting CodeRabbit reviews until quota replenishment; rely on local verification, Copilot (where quota permits), and mandatory CI gates.
+
+**Actual verification.** Post-merge workflow run on `main` (`44838305850`) executed all three matrix analyses (`Analyze API (Java)` in 2m26s, `Analyze Web (TypeScript)` in 53s, `Analyze tooling` in 56s) and completed with success. All 3 historical code scanning alerts were triaged and dismissed with technical justifications (open alert count: 0).
+
+**Next step.** Story 1.1 (first clinical preparation story) is next; await Aymen's explicit green light before starting.
 
 ## Story 1.2 post-merge robustness audit merged (PR #47) — 2026-11-20
 
