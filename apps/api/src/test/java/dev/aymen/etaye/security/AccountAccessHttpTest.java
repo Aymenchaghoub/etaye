@@ -161,6 +161,19 @@ class AccountAccessHttpTest extends AbstractPostgresTest {
         assertThat(request(HttpMethod.GET, "/session", idleCookie, null, null, null).getStatusCode().value())
                 .isEqualTo(401);
 
+        // A legacy session without LAST_ACTIVITY attribute: routine inspection does not push idle expiry.
+        String legacySession = legacySessions.createSessionCookie(account(syntheticEmail()));
+        var firstLegacyRead = request(HttpMethod.GET, "/session", legacySession, null, null, null);
+        assertThat(firstLegacyRead.getStatusCode().value()).isEqualTo(200);
+        Instant legacyInitialExpiry = Instant.parse((String) firstLegacyRead.getBody().get("expiresAt"));
+        clock.advanceSeconds(10);
+        var secondLegacyRead = request(HttpMethod.GET, "/session", legacySession, null, null, null);
+        assertThat(secondLegacyRead.getStatusCode().value()).isEqualTo(200);
+        assertThat(secondLegacyRead.getBody()).containsEntry("expiresAt", legacyInitialExpiry.toString());
+        clock.advanceSeconds(31);
+        assertThat(request(HttpMethod.GET, "/session", legacySession, null, null, null).getStatusCode().value())
+                .isEqualTo(401);
+
         String activeEmail = syntheticEmail();
         account(activeEmail);
         Instant signedInAt = clock.instant();
@@ -255,6 +268,15 @@ class AccountAccessHttpTest extends AbstractPostgresTest {
                 Map.of("email", syntheticEmail(), "password", OLD_PASSWORD), null);
         assertThat(noSession.getStatusCode().value()).isEqualTo(403);
         assertThat(noSession.getHeaders().getFirst(HttpHeaders.SET_COOKIE)).isNull();
+
+        var anonymous = csrf(null);
+        clock.advanceSeconds(301);
+        var expiredAnonymous = request(HttpMethod.POST, "/session", anonymous.cookie(), anonymous.csrf(),
+                Map.of("email", syntheticEmail(), "password", OLD_PASSWORD), null);
+        assertThat(expiredAnonymous.getStatusCode().value()).isEqualTo(403);
+        assertThat(expiredAnonymous.getHeaders().getFirst(HttpHeaders.SET_COOKIE)).contains("Max-Age=0");
+        assertThat(request(HttpMethod.GET, "/session", anonymous.cookie(), null, null, null).getStatusCode().value())
+                .isEqualTo(401);
 
         RestClient direct = RestClient.create("http://localhost:" + port + "/api/v1");
         var admitted = 0;
