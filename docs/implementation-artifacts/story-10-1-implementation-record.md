@@ -1,6 +1,6 @@
 # Story 10.1 — implementation record
 
-Status: implemented on branch `feat/10.1-walking-skeleton` (PR #33), verified locally and green on GitHub Actions; not merged. Date: 2026-11-19. Last code commit verified: `c6003e8` for the API suite and the real stack, plus `a783a89` for the report guard (base `0fc825f`). Authorization: UD-41, story 10.1 only, a named exception to the CORE design gate because the story has no screen. This record claims no clinical validation, certification or regulatory compliance; every person and value in the code, tests and screenshots is synthetic.
+Status: merged into `main` as `bfc4706` (squash of PR #33) on 2026-11-20 after Aymen validated the visible page; verified locally and green on GitHub Actions. Date: 2026-11-19. Last code commit verified: `c6003e8` for the API suite and the real stack, plus `a783a89` for the report guard (base `0fc825f`). Authorization: UD-41, story 10.1 only, a named exception to the CORE design gate because the story has no screen. This record claims no clinical validation, certification or regulatory compliance; every person and value in the code, tests and screenshots is synthetic.
 
 ## 1. Who did what
 

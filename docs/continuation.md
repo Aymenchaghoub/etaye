@@ -2,24 +2,23 @@
 
 Updated: 2026-11-19. Owner: Aymen Chaghoub.
 
-## Story 10.1 implemented, waiting for validation and merge — 2026-11-19
+## Story 10.1 merged — 2026-11-20
 
-**Phase:** story 10.1 (the only authorized story) is built and verified locally on `feat/10.1-walking-skeleton`. The pull request is opened by the orchestrator after the final review; merge waits for Aymen's validation of the running application, as the delivery rules require. No other story is authorized (UD-28).
+**Phase:** story 10.1, the only authorized story (UD-41), is merged into `main` as `bfc4706` (squash of PR #33). **Aymen validated the visible part** on 2026-11-20 after the orchestrator started the real stack for him (his words: "je valide"); that covers the readiness page only. `main` carries exactly the tree that was reviewed (checked identical to the pull request head `a0b6a50`).
 
-**Completed artifacts:** `apps/api` (83 tests on a real PostgreSQL 18), `apps/web` (readiness page, 8 stubbed tests, a real outage spec), `infra/local` (compose, provisioning script and its verification script), `api.yml` and `web.yml` workflows, `tools/assert_test_reports.py`, the TF-3 change of `tools/validate_docs.py` (60 Python tests), deferred items D-34 to D-40, the [implementation record](implementation-artifacts/story-10-1-implementation-record.md), screenshots in `docs/test-artifacts/story-10-1-screenshots/`.
+**Completed artifacts:** `apps/api` (117 tests on a real PostgreSQL 18), `apps/web` (readiness page, 9 stubbed tests, a real outage spec), `infra/local`, the `api.yml` and `web.yml` workflows, `tools/assert_test_reports.py`, the TF-3 change of `tools/validate_docs.py`, deferred items D-34 to D-41, the [implementation record](implementation-artifacts/story-10-1-implementation-record.md) and the screenshots in `docs/test-artifacts/story-10-1-screenshots/`.
 
-**Actual verification:** see section 5 of the implementation record. Documentary validation, the API suite, the web checks, the real-stack outage spec, the provisioning script and the mutation matrices were run by the orchestrator on 2026-11-19. Not verified: any GitHub Actions run of the new workflows, CodeQL and Gitleaks on this branch, Windows or macOS, load or memory.
+**Actual verification:** section 5 of the implementation record. Before the merge: GitHub Actions green on the pull request (Planning package checks, Analyze tooling, CodeQL, API, Web), the real stack including the outage spec, mutation matrices, five Codex reviews and one CodeRabbit review (19 findings: 18 fixed, 1 deferred as D-41). Not verified: Windows or macOS, load and memory, HawkScan, Expo alignment.
 
-**Open choices for Aymen:**
+**Still open for Aymen (the page validation did not decide them):**
 
-1. Validate what is visible: run the commands of section 9 of the implementation record, open http://localhost:5173 (READY), stop the database container and reload (UNAVAILABLE). The merge waits for your reply.
-2. BR-017 versus AT-038-B: the story follows AT-038-B literally, so denied attempts leave no audit row. Decide whether denials must be recorded.
-3. Toolchain: the code uses Java 21 and Node 22; ADR-002 proposes Java 25 and Node 26, which are not installed here. Keep the fallback or amend ADR-002.
-4. D-40: the new API and web workflows are informational. Turning them into required checks changes the branch rules and is your decision, after a first green run on GitHub.
-5. D-33: its trigger (the backend runs locally) is met. Starting HawkScan needs a StackHawk account and key and may start a time-limited trial; nothing was created. Say if and when.
-6. Deferred items D-33 and D-34 to D-40 keep their own resumption triggers.
+1. BR-017 versus AT-038-B: the story follows AT-038-B literally, so a denied attempt leaves no audit row. Decide whether denials must be recorded.
+2. Toolchain: the code uses Java 21 and Node 22; ADR-002 proposes Java 25 and Node 26. Keep the fallback or amend ADR-002.
+3. D-40: `api.yml` and `web.yml` stay informational; making them required checks changes the branch rules and is his decision.
+4. D-33: HawkScan needs a StackHawk account and key and may start a time-limited trial; nothing was created.
+5. Pull request #32 (functional motion, ADR-012) is open and not merged; it also edits this file, so it needs the latest `main` merged into it before it can merge.
 
-**Next action:** after the merge, verify main, record the merge in this file, then wait for a written authorization before any other story. The CORE design review remains Aymen's.
+**Next action:** wait for a written authorization before any other story (UD-28). The CORE design review remains Aymen's. Until then, work stays on design and the open decisions above.
 
 ## Development authorized for story 10.1 only — 2026-11-19
 
