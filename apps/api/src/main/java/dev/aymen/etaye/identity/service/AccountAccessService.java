@@ -48,10 +48,12 @@ public class AccountAccessService {
             return Optional.empty();
         }
         Credential valid = credential.get();
+        if (!repository.recordSignIn(valid.accountId(), valid.revision(), correlationId)) {
+            return Optional.empty();
+        }
         return identity.resolveAccountAndMemberships(valid.accountId())
                 .filter(account -> account.account().isActive()
-                        && account.account().credentialRevision() == valid.revision()
-                        && repository.recordSignIn(valid.accountId(), valid.revision(), correlationId));
+                        && account.account().credentialRevision() == valid.revision());
     }
 
     public void requestRecovery(String email, String key) {
