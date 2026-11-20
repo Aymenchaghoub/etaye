@@ -96,9 +96,10 @@ legend{padding:0;margin-bottom:var(--espace-2);font-size:13px;font-weight:500;co
 .btn{all:unset;box-sizing:border-box;min-height:var(--cible-soignant);padding:0 var(--espace-4);border-radius:var(--rayon-1);font-size:14px;font-weight:500;cursor:pointer;display:inline-grid;align-items:center;justify-items:center;
   background:var(--accent);color:var(--sur-accent);border:var(--trait-filet) solid var(--accent);
   transition:background-color calc(var(--duree-retour)*var(--m)) var(--courbe),border-color calc(var(--duree-retour)*var(--m)) var(--courbe),transform calc(var(--duree-retour)*var(--m)) var(--courbe)}
-.btn:active{transform:scale(calc(1 - 0.02*var(--m)))}
+.btn:not([aria-disabled="true"]):active{transform:scale(calc(1 - 0.02*var(--m)))}
 .btn:focus-visible{outline:var(--trait-focus) solid var(--accent);outline-offset:2px}
 .btn.secondary{background:var(--surface);color:var(--encre);border-color:var(--filet-controle)}
+.btn.secondary[aria-disabled="true"]{background:var(--surface-2);color:var(--encre-2);cursor:default}
 .btn .lbl{grid-area:1/1;display:inline-flex;align-items:center;gap:var(--espace-2);visibility:hidden}
 .btn[data-state="rest"] .lbl[data-for="rest"],.btn[data-state="pending"] .lbl[data-for="pending"],.btn[data-state="done"] .lbl[data-for="done"]{visibility:visible}
 .btn[data-state="pending"]{cursor:progress}
@@ -123,44 +124,48 @@ legend{padding:0;margin-bottom:var(--espace-2);font-size:13px;font-weight:500;co
 .dz{position:relative;border:var(--trait-filet) solid var(--filet-controle);background:var(--surface-2);padding:var(--espace-8) var(--espace-6);display:flex;flex-direction:column;align-items:center;gap:var(--espace-3);text-align:center;border-radius:var(--rayon-1);
   transition:background-color calc(var(--duree-flottant)*var(--m)) var(--courbe),box-shadow calc(var(--duree-flottant)*var(--m)) var(--courbe),border-color calc(var(--duree-flottant)*var(--m)) var(--courbe)}
 .dz svg{width:28px;height:28px;stroke:var(--encre-2);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform calc(var(--duree-flottant)*var(--m)) var(--courbe),stroke calc(var(--duree-flottant)*var(--m)) var(--courbe)}
-.dz[data-state="over"]{background:var(--accent-fond);border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.dz[data-state="over"]{background:var(--accent-fond);border-color:var(--accent);box-shadow:inset 0 0 0 var(--trait-filet) var(--accent)}
 .dz[data-state="over"] svg{stroke:var(--accent);transform:translateY(calc(-4px*var(--m)))}
 .dz[data-state="error"]{border-color:var(--critique);box-shadow:0 0 0 1px var(--critique)}
-.dz .t-over,.dz .t-rest{font-size:15px;font-weight:500}
-.dz .t-over{display:none}
-.dz[data-state="over"] .t-over{display:block}.dz[data-state="over"] .t-rest,.dz[data-state="over"] .pick{display:none}
+.dz-instruction{display:grid;width:100%}
+.dz-instruction p{grid-area:1/1;align-self:center;font-size:15px;font-weight:500}
+.dz .t-over,.dz[data-state="over"] .t-rest{visibility:hidden}
+.dz[data-state="over"] .t-over{visibility:visible}
 .files{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--espace-2)}
 .files li{display:flex;justify-content:space-between;gap:var(--espace-3);padding:var(--espace-2) var(--espace-3);border:var(--trait-filet) solid var(--filet);background:var(--surface);font-size:14px}
 .files li.bad{border-color:var(--critique);background:var(--critique-fond)}
-.files .st{font-size:12px;color:var(--encre-2);white-space:nowrap}
+.files li span:first-child{min-width:0;overflow-wrap:anywhere}
+.files .st{font-size:12px;color:var(--encre-2);text-align:end}
 .files li.bad .st{color:var(--critique);font-weight:600}
 
 /* C loader */
 .loader{border:var(--trait-filet) solid var(--filet);background:var(--papier);min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--espace-4);padding:var(--espace-6);text-align:center}
 .mark{width:96px;height:96px;overflow:visible}
-.mark path{vector-effect:non-scaling-stroke;stroke-width:1.6;stroke-linejoin:miter}
+/* With a scaled viewBox, non-scaling strokes leave part of the normalized trace undrawn. */
+.mark path{stroke-width:calc(1.6 * 56 / 96);stroke-linejoin:miter}
 .mark .bar{--c:var(--encre)}.mark .legs{--c:var(--accent)}
 .mark path{stroke:transparent;fill:var(--c);stroke-dasharray:1;stroke-dashoffset:0;transition:fill calc(var(--duree-entree)*var(--m)) var(--courbe),stroke calc(var(--duree-entree)*var(--m)) var(--courbe)}
 .loader[data-state="loading"] .mark path{fill:transparent;stroke:var(--c);animation:trace calc(var(--duree-trace)*var(--m)) var(--courbe) both}
-.loader[data-state="loading"] .mark .legs{animation-delay:calc(180ms*var(--m))}
-.loader[data-state="unavailable"] .mark path{fill:transparent;stroke:var(--encre-3)}
+.loader[data-state="loading"] .mark .legs{animation-delay:calc(var(--duree-flottant)*var(--m))}
+.loader[data-state="unavailable"] .mark path{fill:transparent;stroke:var(--encre-3);transition:none}
 .loader[data-state="idle"] .mark{opacity:.35}
 @keyframes trace{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
 .loader .out{min-height:44px;display:flex;flex-direction:column;gap:var(--espace-1);align-items:center}
-.loader[data-state="ready"] .out .ready{animation:rise calc(var(--duree-entree)*var(--m)) var(--courbe) both}
-@keyframes rise{from{opacity:0;transform:translateY(calc(6px*var(--m)))}to{opacity:1;transform:none}}
+.loader .retry[hidden]{display:none}
 .clock{font-family:var(--font-donnee);font-variant-numeric:tabular-nums;font-size:13px;color:var(--encre-3)}
 
 /* D scroll fade */
-.fade{position:relative;border:var(--trait-filet) solid var(--filet);background:var(--surface)}
-.fade ul{list-style:none;margin:0;padding:0;max-height:244px;overflow-y:auto;scroll-padding-block:32px}
+.fade{border:var(--trait-filet) solid var(--filet);background:var(--surface)}
+.fade-list{max-height:244px;overflow-y:auto;scroll-padding-block:var(--trait-focus)}
+.fade-list:focus-visible{outline:var(--trait-focus) solid var(--accent);outline-offset:calc(-1 * var(--trait-focus))}
+.fade ul{list-style:none;margin:0;padding:0}
 .fade li button{all:unset;box-sizing:border-box;width:100%;display:flex;justify-content:space-between;gap:var(--espace-3);min-height:44px;align-items:center;padding:0 var(--espace-4);cursor:pointer;font-size:14px;border-bottom:var(--trait-filet) solid var(--filet)}
 .fade li button:hover{background:var(--surface-2)}
 .fade li button:focus-visible{outline:var(--trait-focus) solid var(--accent);outline-offset:-4px}
-.fade::before,.fade::after{content:"";position:absolute;left:0;right:0;height:28px;pointer-events:none;z-index:1;opacity:0;transition:opacity calc(var(--duree-flottant)*var(--m)) var(--courbe)}
-.fade::before{top:0;background:linear-gradient(var(--surface),transparent)}
-.fade::after{bottom:0;background:linear-gradient(transparent,var(--surface))}
-.fade[data-top="more"]::before,.fade[data-bottom="more"]::after{opacity:1}
+.fade-edge{display:grid;align-items:center;min-height:var(--espace-8);padding-inline:var(--espace-4)}
+.fade-edge .meta{color:var(--encre-2);visibility:hidden;opacity:0;
+  transition:opacity calc(var(--duree-flottant)*var(--m)) var(--courbe),visibility calc(var(--duree-flottant)*var(--m)) var(--courbe)}
+.fade[data-top="more"] .fade-top .meta,.fade[data-bottom="more"] .fade-bottom .meta{visibility:visible;opacity:1}
 
 pre{margin:0;overflow-x:auto;background:var(--surface-2);border:var(--trait-filet) solid var(--filet);padding:var(--espace-4);font-family:var(--font-donnee);font-size:13px;line-height:20px;white-space:pre-wrap}
 ul.plain{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:var(--espace-1)}
@@ -211,7 +216,7 @@ th{font-size:13px;font-weight:500;color:var(--encre-2)}
           <span class="lbl" data-for="pending" aria-hidden="true"><span class="spin" aria-hidden="true"></span>Enregistrement…</span>
           <span class="lbl" data-for="done" aria-hidden="true"><svg class="tick" viewBox="0 0 24 24" aria-hidden="true"><path pathLength="1" d="M4 12.5 9.5 18 20 6.5"/></svg>Enregistré</span>
         </button>
-        <button class="btn secondary" type="button" id="cancel">Annuler les modifications</button>
+        <button class="btn secondary" type="button" id="cancel" aria-disabled="false">Annuler les modifications</button>
       </div>
       <div class="banner" id="saveErr" role="alert" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="color:var(--critique);flex:none;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/></svg>
         <div><b>L’enregistrement a échoué.</b> Vos modifications sont conservées dans le champ. <button class="btn secondary" type="button" id="retry" style="min-height:28px;margin-left:8px">Réessayer</button></div></div>
@@ -222,12 +227,12 @@ th{font-size:13px;font-weight:500;color:var(--encre-2)}
         <label class="radio"><input type="radio" name="srv" value="ok" checked> Succès (0,8 s)</label>
         <label class="radio"><input type="radio" name="srv" value="slow"> Lent (3 s)</label>
         <label class="radio"><input type="radio" name="srv" value="fail"> Échec</label></fieldset>
-      <p class="meta">Pendant « Enregistrement… » le bouton ne se déclenche plus (pas de double envoi). Le succès n’est affiché qu’après la réponse, jamais avant.</p>
+      <p class="meta">Pendant « Enregistrement… », l’enregistrement et l’annulation sont indisponibles. La confirmation concerne la version envoyée.</p>
     </div>
   </div>
   <dl class="foot"><div><dt>Tokens</dt><dd>--duree-retour 140 ms (couleurs), --duree-flottant 180 ms (coche), 0,98 à l’appui déjà existant</dd></div>
-    <div><dt>Équivalent fixe</dt><dd>Libellé seul, point de suspension à la place du cercle, coche sans tracé</dd></div>
-    <div><dt>Annonce</dt><dd>« Modifications enregistrées » lue par le lecteur d’écran, sans voler le focus</dd></div></dl>
+    <div><dt>Équivalent fixe</dt><dd>Libellé d’état, anneau pointillé fixe pendant l’envoi, coche fixe après confirmation</dd></div>
+    <div><dt>Annonce prévue</dt><dd>« Modifications enregistrées », sans déplacer le focus</dd></div></dl>
 </section>
 
 <!-- B -->
@@ -239,7 +244,10 @@ th{font-size:13px;font-weight:500;color:var(--encre-2)}
     <div class="stage">
       <div class="dz" id="dz" data-state="rest">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
-        <p class="t-rest">Glissez un document ici</p><p class="t-over">Relâchez pour ajouter le document</p>
+        <div class="dz-instruction">
+          <p class="t-rest">Glissez un document ici</p>
+          <p class="t-over">Relâchez pour ajouter le document</p>
+        </div>
         <p class="meta">PDF, PNG ou JPEG · 20 Mo au plus (types et taille proposés)</p>
         <button class="btn secondary pick" type="button" id="pick">Choisir un fichier</button>
         <input type="file" id="file" multiple accept=".pdf,.png,.jpg,.jpeg" class="sr-only" tabindex="-1" aria-hidden="true">
@@ -249,7 +257,7 @@ th{font-size:13px;font-weight:500;color:var(--encre-2)}
     </div>
     <div class="controls">
       <label class="toolbtn"><input type="checkbox" id="forceover"> Forcer l’état « survol » (écrans tactiles)</label>
-      <p class="meta">Faites glisser un vrai fichier de votre poste sur la zone. Rien n’est envoyé : le navigateur lit seulement le nom, le type et la taille. Un fichier d’un autre type est refusé sans effacer le reste.</p>
+      <p class="meta">Faites glisser un fichier d’exemple fictif sur la zone. Rien n’est envoyé : le navigateur lit seulement le nom, le type et la taille. Un fichier d’un autre type est refusé sans effacer le reste.</p>
       <p class="meta">Dans l’application, un fichier ajouté reste « en attente » et invisible tant que l’inspection n’est pas terminée (règle déjà écrite pour I-08).</p>
     </div>
   </div>
@@ -265,13 +273,18 @@ th{font-size:13px;font-weight:500;color:var(--encre-2)}
     <p class="ui-dense" style="color:var(--encre-2)">Inspiré de « Logo Trace Loader ». Il ne s’affiche que si la préparation dure plus de 400 ms, et il se trace une seule fois : jamais de boucle infinie.</p></div>
   <div class="body">
     <div class="stage">
-      <div class="loader" id="loader" data-state="idle" aria-busy="false">
-        <svg class="mark" viewBox="4 5 56 56" role="img" aria-label="Étaye">
-          <path class="bar" pathLength="1" d="M8 14H56V20H8Z"/>
-          <path class="legs" pathLength="1" d="M29 20H35L48 52H42Z M29 20H35L22 52H16Z"/>
-        </svg>
-        <div class="out" id="out" role="status"><p class="ui-dense" style="color:var(--encre-2)">Choisissez une durée, puis lancez la préparation.</p></div>
-        <div class="clock" id="clock">0,0 s</div>
+      <div class="loader" id="loader" data-state="idle">
+        <div id="loader-visual" aria-busy="false">
+          <svg class="mark" viewBox="4 5 56 56" role="img" aria-label="Étaye">
+            <path class="bar" pathLength="1" d="M8 14H56V20H8Z"/>
+            <path class="legs" pathLength="1" d="M29 20H35L48 52H42Z M29 20H35L22 52H16Z"/>
+          </svg>
+        </div>
+        <div class="out" id="out" role="status">
+          <p class="ui-dense" id="loader-message">Choisissez une durée, puis lancez la préparation.</p>
+          <button class="btn secondary retry" type="button" id="again" hidden>Réessayer</button>
+        </div>
+        <div class="clock" id="clock" aria-hidden="true">0,0 s</div>
       </div>
     </div>
     <div class="controls">
@@ -284,8 +297,8 @@ th{font-size:13px;font-weight:500;color:var(--encre-2)}
       <p class="meta">Pas de faux délai pour faire joli : le loader suit le vrai chargement. Si l’animation est finie avant la fin, le tracé reste fixe en attendant.</p>
     </div>
   </div>
-  <dl class="foot"><div><dt>Tokens</dt><dd>--duree-trace 1200 ms [nouveau, à valider], --duree-entree 320 ms (remplissage), couleurs encre et accent du thème</dd></div>
-    <div><dt>Équivalent fixe</dt><dd>Signe plein, texte « Préparation du scénario… » ; aucun tracé</dd></div>
+  <dl class="foot"><div><dt>Tokens</dt><dd>--duree-trace 1200 ms (étude, à intégrer dans Figma), --duree-entree 320 ms (remplissage), couleurs encre et accent du thème</dd></div>
+    <div><dt>Équivalent fixe</dt><dd>Contour fixe pendant « Préparation du scénario… », puis signe plein</dd></div>
     <div><dt>Décision de marque</dt><dd>Animer le signe est une décision à toi : le signe lui-même n’est pas modifié</dd></div></dl>
 </section>
 
@@ -293,14 +306,20 @@ th{font-size:13px;font-weight:500;color:var(--encre-2)}
 <section class="panel" aria-labelledby="td">
   <div class="head"><div class="row"><span class="tag">D</span><span class="tag">Listes de sources, documents, historique</span><span class="tag prop">Proposition</span></div>
     <h2 id="td">Fondu qui signale qu’une liste continue</h2>
-    <p class="ui-dense" style="color:var(--encre-2)">Inspiré de « Scroll Fade List ». Le fondu n’apparaît que s’il reste du contenu au-dessus ou en dessous, et il ne cache jamais la ligne qui a le focus.</p></div>
+    <p class="ui-dense" style="color:var(--encre-2)">Une bande en bord de liste indique dans quelle direction d’autres documents sont disponibles.</p></div>
   <div class="body">
-    <div class="stage"><div class="fade" id="fade" data-top="end" data-bottom="more"><ul id="list" aria-label="Documents du dossier (exemples synthétiques)"></ul></div></div>
-    <div class="controls"><p class="meta">Faites défiler, ou parcourez les lignes avec la touche Tab : la ligne focalisée est toujours entièrement visible, hors du fondu. Le texte reste lisible sous le fondu (28 px au plus).</p></div>
+    <div class="stage">
+      <div class="fade" id="fade" data-top="end" data-bottom="end">
+        <div class="fade-edge fade-top"><p class="meta">D’autres documents au-dessus</p></div>
+        <div class="fade-list" id="list-scroll" role="region" aria-label="Documents du dossier (exemples synthétiques)" tabindex="0"><ul id="list"></ul></div>
+        <div class="fade-edge fade-bottom"><p class="meta">D’autres documents en dessous</p></div>
+      </div>
+    </div>
+    <div class="controls"><p class="meta">Faites défiler la liste ou parcourez les lignes avec Tab et Maj+Tab. Les indications de chaque bord ont leur propre place autour de la liste.</p></div>
   </div>
   <dl class="foot"><div><dt>Tokens</dt><dd>--surface, --duree-flottant 180 ms (opacité du fondu)</dd></div>
-    <div><dt>Équivalent fixe</dt><dd>Fondu sans transition</dd></div>
-    <div><dt>Limite connue</dt><dd>Un fondu peut masquer un anneau de focus : d’où l’anneau intérieur et le défilement réservé</dd></div></dl>
+    <div><dt>Équivalent fixe</dt><dd>Bande et texte immédiats</dd></div>
+    <div><dt>Clavier</dt><dd>La liste et ses lignes peuvent recevoir le focus. Les bandes restent hors de la zone défilante.</dd></div></dl>
 </section>
 
 <section aria-labelledby="te" style="display:flex;flex-direction:column;gap:var(--espace-4)">
@@ -361,20 +380,53 @@ th{font-size:13px;font-weight:500;color:var(--encre-2)}
   $('#rm').addEventListener('change',function(e){root.classList.toggle('reduce',e.target.checked)});
 
   /* A: save button */
-  var save=$('#save'),live=$('#live'),err=$('#saveErr'),st='rest',tmr=[];
+  var note=$('#note'),save=$('#save'),cancel=$('#cancel'),retry=$('#retry'),live=$('#live'),err=$('#saveErr');
+  var st='rest',revision=0,resetSave;
   function setS(s){st=s;save.dataset.state=s;save.setAttribute('aria-disabled',String(s==='pending'));
+    cancel.setAttribute('aria-disabled',String(s==='pending'));
     save.querySelectorAll('.lbl').forEach(function(l){l.setAttribute('aria-hidden',String(l.dataset['for']!==s))})}
+  function clearSaveError(){
+    if(document.activeElement===retry)save.focus();
+    err.hidden=true;
+  }
+  note.addEventListener('input',function(){
+    revision++;
+    if(st==='done'){
+      clearTimeout(resetSave);
+      setS('rest');
+      live.textContent='';
+    }
+  });
   save.addEventListener('click',function(){
     if(st==='pending')return;
-    tmr.forEach(clearTimeout);tmr=[];err.hidden=true;setS('pending');live.textContent='Enregistrement en cours.';
+    clearTimeout(resetSave);
+    clearSaveError();
+    setS('pending');
+    live.textContent='Enregistrement en cours.';
+    var sentRevision=revision;
     var mode=document.querySelector('input[name=srv]:checked').value;
-    tmr.push(setTimeout(function(){
-      if(mode==='fail'){setS('rest');err.hidden=false;live.textContent='L’enregistrement a échoué. Vos modifications sont conservées.'}
-      else{setS('done');live.textContent='Modifications enregistrées.';tmr.push(setTimeout(function(){setS('rest')},2400))}
-    },mode==='slow'?3000:800));
+    setTimeout(function(){
+      if(sentRevision!==revision||mode==='fail'){
+        setS('rest');
+        live.textContent='';
+        if(sentRevision===revision)err.hidden=false;
+        return;
+      }
+      setS('done');
+      live.textContent='Modifications enregistrées.';
+      resetSave=setTimeout(function(){setS('rest')},2400);
+    },mode==='slow'?3000:800);
   });
-  $('#retry').addEventListener('click',function(){save.click()});
-  $('#cancel').addEventListener('click',function(){$('#note').value='Contrôle à trois mois, tension stable.';err.hidden=true;setS('rest')});
+  retry.addEventListener('click',function(){save.click()});
+  cancel.addEventListener('click',function(){
+    if(st==='pending')return;
+    clearTimeout(resetSave);
+    revision++;
+    note.value=note.defaultValue;
+    clearSaveError();
+    live.textContent='';
+    setS('rest');
+  });
 
   /* B: drop zone */
   var dz=$('#dz'),file=$('#file'),files=$('#files'),dzmsg=$('#dzmsg'),forced=false;
@@ -394,42 +446,51 @@ th{font-size:13px;font-weight:500;color:var(--encre-2)}
       a.textContent=f.name+' · '+kb(f.size);b.className='st';
       if(!good){li.className='bad';b.textContent='Type non accepté';bad++}
       else if(big){li.className='bad';b.textContent='Trop volumineux';bad++}
-      else{b.textContent='Prêt (rien n’est envoyé ici)';ok++}
+      else{b.textContent='En attente d’inspection';ok++}
       li.appendChild(a);li.appendChild(b);files.appendChild(li);
     });
     if(!forced)setDz(bad?'error':'rest');
-    dzmsg.textContent=bad?(bad+' fichier(s) refusé(s). Les autres sont conservés.'):(ok?ok+' fichier(s) prêt(s).':'');
+    dzmsg.textContent=bad?(bad+' fichier(s) refusé(s). Les autres sont conservés.'):(ok?ok+' fichier(s) en attente d’inspection.':'');
   }
 
   /* C: loader */
-  var L=$('#loader'),out=$('#out'),clock=$('#clock'),ct=[],t0=0,raf=0;
+  var L=$('#loader'),visual=$('#loader-visual'),message=$('#loader-message'),launch=$('#launch'),again=$('#again');
+  var clock=$('#clock'),ct=[],t0=0,raf=0;
   function tick(){clock.textContent=((performance.now()-t0)/1000).toLocaleString('fr-FR',{minimumFractionDigits:1,maximumFractionDigits:1})+' s';raf=requestAnimationFrame(tick)}
   function stop(){cancelAnimationFrame(raf);ct.forEach(clearTimeout);ct=[]}
-  function show(state,html,busy){L.dataset.state=state;L.setAttribute('aria-busy',String(!!busy));out.innerHTML=html}
+  function show(state,caption,busy){
+    L.dataset.state=state;
+    visual.setAttribute('aria-busy',String(busy));
+    message.textContent=caption;
+    again.hidden=state!=='unavailable';
+  }
   function run(){
+    if(document.activeElement===again)launch.focus();
     stop();var v=document.querySelector('input[name=dur]:checked').value;t0=performance.now();tick();
-    show('idle','<p class="ui-dense" style="color:var(--encre-2)">Préparation…</p>',true);
+    show('idle','Préparation du scénario…',true);
     var d=v==='fail'?2500:parseInt(v,10);
-    ct.push(setTimeout(function(){
-      if(L.dataset.state==='idle')show('loading','<p class="ui-dense">Préparation du scénario…</p><p class="meta">Le tracé s’affiche après 400 ms</p>',true)
-    },400));
+    ct.push(setTimeout(function(){L.dataset.state='loading'},400));
     ct.push(setTimeout(function(){
       cancelAnimationFrame(raf);
-      if(v==='fail')show('unavailable','<p class="ui-dense"><b>La démo est momentanément indisponible.</b></p><button class="btn secondary" type="button" id="again" style="min-height:28px">Réessayer</button>',false);
-      else show('ready','<p class="ready ui-dense"><b>Scénario prêt.</b> Praticien, patient ou administrateur : à vous de choisir.</p>',false);
-      var a=$('#again');if(a)a.addEventListener('click',run);
+      if(v==='fail')show('unavailable','La démo est momentanément indisponible.',false);
+      else show('ready','Scénario prêt. Praticien, patient ou administrateur : à vous de choisir.',false);
     },d));
   }
-  $('#launch').addEventListener('click',run);
+  launch.addEventListener('click',run);
+  again.addEventListener('click',run);
 
   /* D: scroll fade */
-  var F=$('#fade'),ul=$('#list');
+  var F=$('#fade'),ul=$('#list'),scroll=$('#list-scroll');
   var docs=['Compte rendu de consultation','Bilan biologique','Courrier de suite','Radiographie thoracique','Ordonnance de renouvellement','Résultat d’analyse','Compte rendu opératoire','Note de synthèse','Échographie abdominale','Certificat médical','Bilan lipidique','Électrocardiogramme','Courrier du spécialiste','Mesure de la tension'];
   var mois=['12 mars','28 févr.','9 févr.','21 janv.','4 janv.','18 déc.','2 déc.','15 nov.','30 oct.','11 oct.','27 sept.','8 sept.','19 août','1 août'];
   docs.forEach(function(n,i){var li=document.createElement('li'),b=document.createElement('button'),a=document.createElement('span'),m=document.createElement('span');
     b.type='button';a.textContent=n+' (exemple '+(i+1)+')';m.className='meta num';m.textContent=mois[i]+' 2026';b.appendChild(a);b.appendChild(m);li.appendChild(b);ul.appendChild(li)});
-  function fade(){var top=ul.scrollTop>2,bot=ul.scrollTop+ul.clientHeight<ul.scrollHeight-2;F.dataset.top=top?'more':'end';F.dataset.bottom=bot?'more':'end'}
-  ul.addEventListener('scroll',fade,{passive:true});fade();
+  function fade(){var top=scroll.scrollTop>2,bot=scroll.scrollTop+scroll.clientHeight<scroll.scrollHeight-2;F.dataset.top=top?'more':'end';F.dataset.bottom=bot?'more':'end'}
+  scroll.addEventListener('scroll',fade,{passive:true});
+  var listSize=new ResizeObserver(fade);
+  listSize.observe(scroll);
+  listSize.observe(ul);
+  fade();
 })();
 </script>
 </body>
