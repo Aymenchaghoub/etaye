@@ -44,9 +44,9 @@ test('real browser signs in, consumes the committed recovery link and revokes an
     await inbox.locator('#r-pw').fill(replacement);
     await inbox.locator('#r-pw2').fill(replacement);
     await inbox.getByRole('button', { name: 'Enregistrer le mot de passe' }).click();
+    passwordChanged = true;
     await expect(inbox.getByRole('heading', { name: 'Mot de passe modifié' })).toBeVisible();
     expect(await inbox.evaluate(() => location.hash.length)).toBe(0);
-    passwordChanged = true;
 
     await page.evaluate(() => window.dispatchEvent(new Event('pageshow')));
     await expect(page.getByRole('heading', { name: 'Votre session a expiré' })).toBeVisible();
@@ -79,12 +79,14 @@ test('real browser signs in, consumes the committed recovery link and revokes an
         await recovering.getByRole('link', { name: 'Mot de passe oublié ?' }).click();
         await recovering.locator('#r-mail').fill(address);
         await recovering.getByRole('button', { name: 'Recevoir un lien' }).click();
+        await expect(recovering.getByRole('heading', { name: 'Demande de récupération reçue' })).toBeVisible();
         const inbox = await recoveryContext.newPage();
         await inbox.goto(inboxOrigin + '/');
         await inbox.getByRole('link', { name: address, exact: true }).click();
         await inbox.locator('#r-pw').fill(password);
         await inbox.locator('#r-pw2').fill(password);
         await inbox.getByRole('button', { name: 'Enregistrer le mot de passe' }).click();
+        await expect(inbox.getByRole('heading', { name: 'Mot de passe modifié' })).toBeVisible();
       } catch {
         // Best effort restore
       }

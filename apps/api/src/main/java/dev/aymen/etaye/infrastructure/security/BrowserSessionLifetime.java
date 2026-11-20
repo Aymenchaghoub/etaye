@@ -64,10 +64,17 @@ public class BrowserSessionLifetime {
     }
 
     public boolean isExpiredAnonymous(HttpSession session) {
-        return session != null
-                && session.getAttribute(SIGNED_IN_AT) == null
-                && !clock.instant().isBefore(
-                        Instant.ofEpochMilli(session.getCreationTime()).plus(ANONYMOUS_LIFETIME));
+        if (session == null || session.getAttribute(SIGNED_IN_AT) != null) {
+            return false;
+        }
+        Object contextObj = session.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+        if (contextObj instanceof org.springframework.security.core.context.SecurityContext context
+                && context.getAuthentication() != null
+                && context.getAuthentication().isAuthenticated()) {
+            return false;
+        }
+        return !clock.instant().isBefore(
+                Instant.ofEpochMilli(session.getCreationTime()).plus(ANONYMOUS_LIFETIME));
     }
 
     public void retireExpiredAnonymousSession(HttpServletRequest request) {

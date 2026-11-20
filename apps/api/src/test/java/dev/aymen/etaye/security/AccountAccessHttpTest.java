@@ -162,7 +162,7 @@ class AccountAccessHttpTest extends AbstractPostgresTest {
                 .isEqualTo(401);
 
         // A legacy session without LAST_ACTIVITY attribute: routine inspection does not push idle expiry.
-        String legacySession = legacySessions.createSessionCookie(account(syntheticEmail()));
+        String legacySession = legacySessions.createSessionCookie(account(syntheticEmail()), java.time.Duration.ofSeconds(20));
         var firstLegacyRead = request(HttpMethod.GET, "/session", legacySession, null, null, null);
         assertThat(firstLegacyRead.getStatusCode().value()).isEqualTo(200);
         Instant legacyInitialExpiry = Instant.parse((String) firstLegacyRead.getBody().get("expiresAt"));
@@ -170,7 +170,7 @@ class AccountAccessHttpTest extends AbstractPostgresTest {
         var secondLegacyRead = request(HttpMethod.GET, "/session", legacySession, null, null, null);
         assertThat(secondLegacyRead.getStatusCode().value()).isEqualTo(200);
         assertThat(secondLegacyRead.getBody()).containsEntry("expiresAt", legacyInitialExpiry.toString());
-        clock.advanceSeconds(31);
+        clock.advanceSeconds(11);
         assertThat(request(HttpMethod.GET, "/session", legacySession, null, null, null).getStatusCode().value())
                 .isEqualTo(401);
 
