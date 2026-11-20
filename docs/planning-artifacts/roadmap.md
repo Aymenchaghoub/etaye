@@ -300,10 +300,12 @@ CORE families need the full evidence of the named design exception (UD-16); ever
 | S-39 | screen | Export options and print preview | 1 | SAMPLED | Export options for P-01 and P-02 → Inc 2 (D-27) |
 | S-40 | screen | AI processing activity and task detail | 1 | SAMPLED | — |
 
-### 8.3 API operations (96 in the contract, 5 planned)
+### 8.3 API operations (98 in the contract, 4 planned)
 
 | Inc | Operation | Method and path | Permission | State |
 |---|---|---|---|---|
+| 1 | getReadiness | GET /probes/readiness | PUBLIC | in contract |
+| 1 | getApiMeta | GET /meta | PUBLIC | in contract |
 | 1 | getCsrfToken | GET /csrf | PUBLIC | in contract |
 | 1 | signIn | POST /session | PUBLIC | in contract |
 | 1 | getSession | GET /session | AUTHENTICATED | in contract |
@@ -378,7 +380,6 @@ CORE families need the full evidence of the named design exception (UD-16); ever
 | 1 | listPractitioners | GET /practices/{practiceId}/practitioners | SCHEDULE_MANAGE_OR_PORTAL_SLOTS | in contract |
 | 1 | searchSchedulingPatients | GET /practices/{practiceId}/scheduling/patients | SCHEDULE_MANAGE | in contract |
 | 1 | registerSchedulingPatient | POST /practices/{practiceId}/scheduling/patients | SCHEDULE_MANAGE AND PATIENT_REGISTER | in contract |
-| 1 | getApiMeta | — | — | planned: Report the supported API version and minimum client version; owned by ADR-009, needed by story 10.2. |
 | 2 | editOwnAccount | PATCH /account | AUTHENTICATED | in contract |
 | 2 | editPractice | PATCH /practices/{practiceId} | PRACTICE_SETTINGS | in contract |
 | 2 | listMemberships | GET /practices/{practiceId}/memberships | TEAM_MANAGE | in contract |
@@ -519,7 +520,7 @@ is working there. These alignments are needed; items DF-11 to DF-13 were observe
 | ID | Item | State |
 |---|---|---|
 | CF-1 | Error responses per operation, ETag only on versioned aggregates, `operationId` names, `/tasks` collection, `Capability` schema, conditional schemas, acknowledgement operations, manifest rule | Done in this change |
-| CF-2 | Five planned operations (section 8.3) | Pending: add `getApiMeta` before story 10.2 and the other four before story 10.5 (ADR-008 and ADR-009 are accepted) |
+| CF-2 | Multi-client operations in section 8.3 | `getApiMeta` is in the contract for 10.2. Add the four native-session operations before 10.5 under accepted ADR-008 and ADR-009. |
 | CF-3 | Update `docs/design/synthetic-data.json` if Aymen wants an acknowledgement fixture | Optional, design owner |
 | CF-4 | Version comparison is computed on the client in increment 1 (no diff operation) | Decided in the contract README |
 | CF-5 | `AsOf` parameter on five record read operations and `Citation.mechanicalCheck` (contract 0.2.1-planning) | Done in this change |

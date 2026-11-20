@@ -1070,8 +1070,7 @@
     },
     "getApiMeta": {
       "increment": 1,
-      "status": "planned",
-      "description": "Report the supported API version and minimum client version; owned by ADR-009, needed by story 10.2."
+      "status": "contract"
     },
     "createNativeSession": {
       "increment": 3,
@@ -1092,6 +1091,10 @@
       "increment": 3,
       "status": "planned",
       "description": "Revoke one device, its native session and its push token; ADR-008, story 10.5."
+    },
+    "getReadiness": {
+      "increment": 1,
+      "status": "contract"
     }
   }
 }
