@@ -81,7 +81,7 @@ def check_application_scope(root, errors):
         workflows.update({"api.yml", "web.yml"})
         forbidden += ("packages",)
     else:
-        forbidden += ("package.json", "apps")
+        forbidden += ("package.json", "apps", "infra")
     workflow_dir = root / ".github/workflows"
     if authorized or workflow_dir.exists():
         if ((authorized and workflow_dir.is_symlink()) or not workflow_dir.is_dir()
@@ -103,10 +103,9 @@ def check_application_scope(root, errors):
         decision = row[1].casefold() if row else ""
     except (OSError, UnicodeError):
         decision = ""
-    if (not re.search(r"\b10\.1\b(?!\.\d)", decision)
+    if (not re.search(r"\bauthorized for \*{0,2}story 10\.1 only\b\*{0,2}", decision)
             or set(re.findall(r"\b\d{1,2}\.\d{1,2}\b", decision)) != {"10.1"}
-            or not re.search(r"\bauthorized\b", decision)
-            or re.search(r"\bnot\s+authorized\b|refus", decision)):
+            or re.search(r"\b(?:not|no\s+longer)\s+authorized\b|refus", decision)):
         errors.append(f"Story 10.1 authorization requires UD-41 in {register} to authorize only story 10.1")
 
     apps = root / "apps"

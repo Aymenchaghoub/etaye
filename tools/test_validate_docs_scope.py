@@ -18,6 +18,15 @@ BUILD_DIRECTORIES = ("node_modules", "target", "test-results", "playwright-repor
 DOC_WORKFLOWS = ("documentation.yml", "codeql.yml", "architecture-pages.yml")
 
 
+if yaml is not None:
+    class UniqueKeySafeLoader(yaml.SafeLoader):
+        def construct_mapping(self, node, deep=False):
+            mapping = super().construct_mapping(node, deep=deep)
+            if len(mapping) != len(node.value):
+                raise yaml.constructor.ConstructorError(None, None, "duplicate mapping key", node.start_mark)
+            return mapping
+
+
 class ApplicationScopeTests(unittest.TestCase):
     def setUp(self):
         directory = tempfile.TemporaryDirectory()
@@ -37,7 +46,7 @@ class ApplicationScopeTests(unittest.TestCase):
 
     def authorize(self):
         self.configure('authorized_stories = ["10.1"]')
-        self.write("docs/planning-artifacts/decisions-assumptions.md", "| UD-41 | Authorized story 10.1 |\n")
+        self.write("docs/planning-artifacts/decisions-assumptions.md", "| UD-41 | Authorized for story 10.1 only |\n")
         for name in ("apps/api/pom.xml", "apps/api/mvnw", "apps/web/package.json", "infra/local/docker-compose.yml",
                      "package.json", "pnpm-workspace.yaml", "pnpm-lock.yaml", "tsconfig.base.json",
                      ".github/workflows/api.yml", ".github/workflows/web.yml"):
@@ -72,6 +81,14 @@ class ApplicationScopeTests(unittest.TestCase):
                         if parent == self.root:
                             break
                         parent.rmdir()
+
+    def test_strict_scope_rejects_local_infra_with_empty_or_absent_story_list(self):
+        self.write("infra/local/docker-compose.yml")
+        for config in ("", "authorized_stories = []"):
+            with self.subTest(config=config):
+                self.configure(config)
+                _, errors = self.check_scope()
+                self.assertEqual(errors, ["Application implementation artifact created: infra"])
 
     def test_authorized_scope_accepts_story_tree_and_ignores_untracked_build_output(self):
         self.authorize()
@@ -204,19 +221,44 @@ class ApplicationScopeTests(unittest.TestCase):
         for decision in ("", "| UD-41 | Authorized story 10.10 | See story 10.1. |\n",
                          "| UD-41 | Authorized story 10.1.123 |\n",
                          "UD-41 authorizes story 10.1.\n",
-                         "| UD-41 | Development is not authorized for story 10.1 |\n",
-                         "| UD-41 | Authorized story 10.1 and 10.2 |\n",
-                         "| UD-41 | Development is authorized for story 10.1, but refused |\n",
-                         "| UD-41 | Pending decision for story 10.1 | Authorized |\n"):
+                         "| UD-41 | Development is not authorized for story 10.1 only. |\n",
+                         "| UD-41 | Development is no longer authorized for story 10.1. |\n",
+                         "| UD-41 | Development is no longer authorized for story 10.1 only. |\n",
+                         "| UD-41 | Authorized for story 10.1 only. Also authorized for story 10.2. |\n",
+                         "| UD-41 | Development is authorized for story 10.1 only, but refused |\n",
+                         "| UD-41 | Pending decision for story 10.1 | Authorized for story 10.1 only |\n"):
             with self.subTest(decision=decision):
                 self.write(register, reference + decision)
                 scope, errors = self.check_scope()
                 self.assertIn("skipped", scope["trackedBuildOutputCheck"])
                 self.assertEqual(errors, [f"Story 10.1 authorization requires UD-41 in {register} to authorize only story 10.1"])
 
+    def test_authorized_scope_accepts_real_ud_41_row(self):
+        self.authorize()
+        register = "docs/planning-artifacts/decisions-assumptions.md"
+        rows = (ROOT / register).read_text(encoding="utf-8").splitlines()
+        row = next(line for line in rows if line.startswith("| UD-41 |"))
+        self.write(register, row + "\n")
+        _, errors = self.check_scope()
+        self.assertEqual(errors, [])
+
 
 @unittest.skipIf(yaml is None, "PyYAML is unavailable")
 class ApplicationWorkflowTests(unittest.TestCase):
+    def test_workflow_yaml_rejects_duplicate_with_keys(self):
+        workflow = """\
+jobs:
+  test:
+    steps:
+      - uses: actions/checkout
+        with:
+          persist-credentials: true
+        with:
+          persist-credentials: false
+"""
+        with self.assertRaisesRegex(yaml.constructor.ConstructorError, "duplicate mapping key"):
+            yaml.load(workflow, Loader=UniqueKeySafeLoader)
+
     def test_workflows_use_allowlisted_pinned_actions_with_read_only_permissions(self):
         allowed_actions = {"actions/checkout", "actions/setup-java", "actions/setup-node", "actions/upload-artifact"}
 
@@ -236,7 +278,8 @@ class ApplicationWorkflowTests(unittest.TestCase):
 
         for name in ("api.yml", "web.yml"):
             with self.subTest(path=name):
-                workflow = yaml.safe_load((ROOT / ".github/workflows" / name).read_text(encoding="utf-8"))
+                path = ROOT / ".github/workflows" / name
+                workflow = yaml.load(path.read_text(encoding="utf-8"), Loader=UniqueKeySafeLoader)
                 self.assertEqual(workflow["permissions"], {"contents": "read"})
                 self.assertIs(workflow["concurrency"]["cancel-in-progress"], True)
                 for job in workflow["jobs"].values():
