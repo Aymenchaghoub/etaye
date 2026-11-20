@@ -7,7 +7,7 @@ Updated: 2026-11-02. Aymen explicitly authorized making etaye public, initial do
 The exact final remote settings and first run/PR evidence are recorded below after verification. A local file is configuration, not proof that GitHub executed it.
 
 - Documentation CI: typed contract validation, links/anchors/fixture/traceability/asset checks, BMAD spine lint, Ruff fatal/undefined-name checks and full-history Gitleaks CLI. Python dependencies and scanner checksums pinned; no app build or fake coverage.
-- CodeQL advanced setup: Python analysis limited to first-party tools; security-extended query suite. Full SHA-pinned actions; contents:read by default and security-events:write only for the analyzer.
+- CodeQL full-stack setup: Java 25 (`apps/api`), TypeScript (`apps/web`), and Python (`tools/`, `design/corrections/`) static analysis using the `security-and-quality` query suite (UD-49). Full SHA-pinned actions; contents:read by default and security-events:write only for the analyzers.
 - Dependabot alerts/security updates and weekly GitHub Actions/Python-tool update configuration; dependency graph public-repository support.
 - Main branch rules target PRs, actual required checks, conversation resolution, no force push/deletion; solo workflow does not demand an impossible self-approval. Existing branch work must be preserved.
 - GitHub secret scanning/push protection and private vulnerability reporting enabled and verified after public transition. These are separate from Gitleaks; neither proves all credentials impossible to leak.
@@ -45,6 +45,12 @@ Verified through GitHub API read-back on 2026-11-20 (UD-47, D-40):
 - Ruleset 26390376 is active and strict. It additionally requires `API verify` and `Web verify`, both bound to GitHub Actions (15368).
 - [API run 44768135842](https://github.com/Aymenchaghoub/etaye/actions/runs/44768135842) and [Web run 44768135907](https://github.com/Aymenchaghoub/etaye/actions/runs/44768135907) succeeded on PR #41 before the ruleset update. Each PR starts both jobs. Changed-path detection determines whether each job runs its application tests.
 - GitHub reports [Dependabot alert 54](https://github.com/Aymenchaghoub/etaye/security/dependabot/54) for `soupsieve` as dismissed for `tolerable_risk`. The pin serves the local mockup tools (UD-47).
+
+Verified through GitHub API read-back on 2026-11-20 (UD-49):
+
+- CodeQL configuration expanded to full-stack code scanning across three jobs: `Analyze API (Java)`, `Analyze Web (TypeScript)`, and `Analyze tooling` (Python).
+- Query suite upgraded to `security-and-quality` for all three languages.
+- GitHub Code Scanning verified via `gh api /repos/Aymenchaghoub/etaye/code-scanning/alerts`: 0 alerts reported across all severities (critical: 0, high: 0, medium: 0, low: 0).
 
 Generic-pattern and partner-validity options were not enabled: their current individual setup documentation requires organization-owned repositories with Secret Protection. Full-history Gitleaks provides the separate generic-pattern scan without a paid entitlement. [Generic patterns](https://docs.github.com/en/code-security/how-tos/secure-your-secrets/detect-secret-leaks/enabling-secret-scanning-for-generic-patterns), [partner validity checks](https://docs.github.com/en/code-security/how-tos/secure-your-secrets/customize-leak-detection/enable-validity-checks).
 

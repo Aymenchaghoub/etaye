@@ -32,12 +32,15 @@ assert all(command in path.read_text() for command in [
 assert "pull_request_target" not in workflow["on"]
 codeql = yaml.load((root / ".github/workflows/codeql.yml").read_text(), Loader=yaml.BaseLoader)
 assert codeql["permissions"] == {"contents": "read"}
-assert codeql["jobs"]["analyze"]["permissions"] == {"contents": "read", "security-events": "write"}
-assert "continue-on-error" not in codeql["jobs"]["analyze"]
-for step in codeql["jobs"]["analyze"]["steps"]:
-    if "uses" in step:
-        assert re.fullmatch(r"[A-Za-z0-9_./-]+@[a-f0-9]{40}", step["uses"])
-    assert "continue-on-error" not in step, "Required checks must not suppress failure"
+assert set(codeql["jobs"].keys()) == {"analyze", "analyze-api", "analyze-web"}
+for job_name, job_def in codeql["jobs"].items():
+    assert job_def["permissions"] == {"contents": "read", "security-events": "write"}
+    assert "continue-on-error" not in job_def
+    assert int(job_def["timeout-minutes"]) <= 15
+    for step in job_def["steps"]:
+        if "uses" in step:
+            assert re.fullmatch(r"[A-Za-z0-9_./-]+@[a-f0-9]{40}", step["uses"])
+        assert "continue-on-error" not in step, "Required checks must not suppress failure"
 pages = yaml.load((root / ".github/workflows/architecture-pages.yml").read_text(), Loader=yaml.BaseLoader)
 assert set(pages["on"]) == {"push", "workflow_dispatch"}
 assert pages["on"]["push"]["branches"] == ["main"]
@@ -56,6 +59,10 @@ assert steps[0]["with"]["persist-credentials"] == "false"
 assert steps[2]["with"] == {"path": "docs/architecture-views/site"}
 config = yaml.load((root / ".github/codeql-config.yml").read_text(), Loader=yaml.BaseLoader)
 assert config["paths"] == ["tools", "design/corrections"], "CodeQL covers first-party planning/design tooling"
+api_config = yaml.load((root / ".github/codeql-api-config.yml").read_text(), Loader=yaml.BaseLoader)
+assert api_config["paths"] == ["apps/api"], "CodeQL API config covers apps/api"
+web_config = yaml.load((root / ".github/codeql-web-config.yml").read_text(), Loader=yaml.BaseLoader)
+assert web_config["paths"] == ["apps/web"], "CodeQL Web config covers apps/web"
 rabbit = yaml.safe_load((root / ".coderabbit.yaml").read_text())
 assert rabbit["language"] == "en-US" and rabbit["early_access"] is False
 assert rabbit["reviews"]["auto_approvals"]["enabled"] is False

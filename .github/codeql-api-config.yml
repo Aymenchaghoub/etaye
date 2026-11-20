@@ -1,0 +1,5 @@
+name: Étaye API
+paths:
+  - apps/api
+queries:
+  - uses: security-and-quality

@@ -87,9 +87,16 @@ Figma MCP login succeeded but Starter/View read quota was exhausted. Authorized 
 
 If skills are missing, launch in repository root, verify symlink/actual SKILL.md names/frontmatter, resolve configuration and reload native discovery. Select project path when personal plugins have the same name. Do not repair by mixing versions. If uv is absent, install via official uv instructions before running workflow scripts. A usage-limit interruption is not evidence of completed review; resume from saved files and label limits.
 
-## Authorized documentation CI
+## Authorized documentation CI and code scanning
 
-Aymen explicitly requested the initial CI and first PR after planning. `.github/workflows/documentation.yml` validates this package, runs Ruff on tools/ and design/corrections and runs a checksum-pinned Gitleaks CLI against committed history. `.github/workflows/codeql.yml` analyzes `tools/` and `design/corrections` with CodeQL Python security queries. Neither builds the application. Actions are pinned to full commit SHAs, the ordinary job has contents:read and no repository secrets; CodeQL alone has security-events:write. Dependencies are hash-locked in tools/requirements.txt, derived from tools/requirements.in. Dependabot watches Python tooling and action pins.
+Aymen explicitly requested the initial CI and first PR after planning. `.github/workflows/documentation.yml` validates this package, runs Ruff on tools/ and design/corrections and runs a checksum-pinned Gitleaks CLI against committed history. Actions are pinned to full commit SHAs, the ordinary job has contents:read and no repository secrets; CodeQL alone has security-events:write. Dependencies are hash-locked in tools/requirements.txt, derived from tools/requirements.in. Dependabot watches Python tooling and action pins.
+
+`.github/workflows/codeql.yml` runs full-stack CodeQL static analysis with the `security-and-quality` ruleset across three distinct matrices:
+- **Java 25 (API):** Analyzes `apps/api` with Java security and quality queries (240 rules), built via Temurin 25 (`./mvnw -B -ntp clean test-compile -DskipTests`) under `.github/codeql-api-config.yml`.
+- **TypeScript / React (Web):** Analyzes `apps/web` with JavaScript/TypeScript security and quality queries (201 rules) under `.github/codeql-web-config.yml`, excluding build output (`dist/`) and node modules.
+- **Python (Tooling):** Analyzes `tools/` and `design/corrections` with Python security and quality queries (172 rules) under `.github/codeql-config.yml`.
+
+This multi-language CodeQL configuration provides native GitHub Code Scanning without external token dependencies, anticipating SonarQube Cloud quality analysis deferred to Increment 4 (D-29, UD-49).
 
 Verified local equivalents (CI execution has its own actual run evidence): create `.venv-docs` with `uv venv --python 3.14 .venv-docs`, then `uv pip sync --python .venv-docs/bin/python --require-hashes tools/requirements.txt`. Run `.venv-docs/bin/ruff check --select E9,F tools design/corrections`, `.venv-docs/bin/python tools/validate_docs.py --report reports/document-validation.json`, `.venv-docs/bin/python -m openapi_spec_validator docs/contracts/openapi.yaml`, the installed lint_spine.py with output under reports/, `tools/check_doc_workflow.py`, `git diff --check` and `bash tools/run_secret_scan.sh` after commits exist. Gitleaks scan failure must block the PR; redact report contents and do not silently suppress findings.
 
