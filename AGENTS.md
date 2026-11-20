@@ -27,7 +27,7 @@
   - API (Java 21, Maven wrapper; Docker is required because tests use Testcontainers): `cd apps/api && ./mvnw -B -ntp verify`.
   - Web (Node 22, pnpm 12.21.0 through Corepack): `corepack pnpm install --frozen-lockfile`, then in `apps/web` `corepack pnpm exec tsc -b`, `corepack pnpm build` and `corepack pnpm test:smoke` (stubbed probe). The real outage spec `ETAYE_E2E_DB_CONTAINER=<compose container> corepack pnpm test:e2e-real` needs the real stack and stops and pauses its database.
   - Local database: `infra/local/docker-compose.yml` needs the four generated passwords documented in the implementation record; `infra/local/verify-init-roles.sh` exercises the provisioning script in throwaway containers.
-  - The `api.yml` and `web.yml` workflows have not run on GitHub yet; do not cite them as evidence.
+  - The `api.yml` and `web.yml` workflows ran green on GitHub on 2026-11-20 and are informational, not required checks (D-40); cite a run, never the file.
 - For this package run `python3 tools/validate_docs.py`; it checks documentary links/references/invariants, not application behavior. Never report documentary checks as passing application tests.
 
 ## Domain and architecture constraints

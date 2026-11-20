@@ -69,4 +69,4 @@ Never by hand: the generated tables stay at the 14 Figma-resolved roles until th
 
 ## 8. Limits
 
-One script run on one commit; the selector lists are truncated to the first usages. A rendered specimen of the 29 roles, the 9 normalisations (before and after) and the 2 kept values was reviewed by Aymen on 2026-11-20 and accepted (a local page, not committed); the effect on a running interface is not measured.
+One script run on one commit; the selector lists are truncated to the first usages. A rendered specimen of the 29 roles, the 9 normalisations (before and after) and the 2 kept values was reviewed by Aymen on 2026-11-20 and accepted (a local page, not committed); the effect on a running interface is not measured. Chart axes are set at 11 px through a separate `font-size` (`.etaye-courbe .axe`) and are not counted; 11 px is below the 12 px minimum of `meta`, so it is a defect to correct (to 12 px), not a role. The count of 29 is therefore provisional until it is recounted with separate declarations (D-50).

@@ -15,7 +15,7 @@ Aymen asked for one last design-system review and a look at component libraries 
 | The "14 roles" rule is contradicted by the component CSS | Confirmed and larger: 26 of 39 combinations, 63 of 130 usages, once the weight is counted ([type roles](../typography-closure.md)); the review estimated about 20 |
 | `.etaye-touche` has `opacity: .8` and fails 4.5:1 | Confirmed: it inherits `encre-3` in `.etaye-nav__recherche` over `surface`; 3.72:1 light, 3.99:1 dark at 12 px; 5.78 and 5.45 without the opacity |
 | No code in the repository generates `tokens.css` | Confirmed: four files mention it, none writes it |
-| No `forced-colors`, no `color-scheme`, no `prefers-color-scheme`, no `z-index`; a 1200 px breakpoint in `ext-consult.css`; `.etaye-a4` has no `max-width`; scrim `rgba(15,16,18,.48)` hard-coded; `.etaye-fond-flou { filter: none }` | All confirmed |
+| No `forced-colors`, no `color-scheme`, no `prefers-color-scheme`, no `z-index` (all in the received CSS; the corrections overlay sets `z-index` only on its own prototype notices and on the open mobile navigation); a 1200 px breakpoint in `ext-consult.css`; `.etaye-a4` has no `max-width`; scrim `rgba(15,16,18,.48)` hard-coded; `.etaye-fond-flou { filter: none }` | All confirmed |
 | `tokens.json` has no layout group; `.etaye-repere` is 16 px high | Confirmed |
 | ADR-010 DF-19 says "approved 390×844 designs" while no family is approved | Confirmed; reworded in the ADR-010 amendment |
 | "23 dialogs" in the interaction catalog | **Wrong**: 23 was a keyword count of mentions; the inventory has 28 interactions: 9 dialogs, 6 drawers, 7 pages, 6 inline |
@@ -45,7 +45,7 @@ Compatibility of the native styling libraries with Expo SDK 58, bundle weights a
 
 ## 5. Weighted comparison
 
-On the project weights (accessibility 25, style freedom 20, project health 15, agent predictability 10, web-native parity 10, lock-in 10, complexity 5, portfolio value 5), the external review scored React Aria 86.5, Base UI 72.5, Radix 70.5, shadcn 70.0, Ark UI 65.0, Mantine 57.0 (the arithmetic and three weight scenarios were reproduced exactly). The lead rests on three subjective points: accessibility 5 against 4 supported by vendor statements, a web-native parity credit for sharing `@internationalized/date` although no native date need exists in the first version, and a calendar the review assumed to be central. With equal accessibility evidence, no native parity and no calendar, React Aria 78.5 and Base UI 76.0; with Base UI credited for being the shadcn default, 78.5 and 77.0. Radix stays at about 70 in every variant. Aymen then chose to have a calendar, which makes React Aria the clear choice ([ADR-013](../../decisions/ADR-013-web-component-behaviour-layer.md)).
+On the project weights (accessibility 25, style freedom 20, project health 15, agent predictability 10, web-native parity 10, lock-in 10, complexity 5, portfolio value 5), the external review scored React Aria 86.5, Base UI 72.5, Radix 70.5, shadcn 70.0, Ark UI 65.0, Mantine 57.0 (the arithmetic and three weight scenarios were reproduced exactly). The lead rests on three subjective points: accessibility 5 against 4 supported by vendor statements, a web-native parity credit for sharing `@internationalized/date` although no native date need exists in the first version, and a calendar the review assumed to be central. With equal accessibility evidence, no native parity and no calendar, React Aria 78.5 and Base UI 76.0; with Base UI credited for being the shadcn default, 78.5 and 77.0. Radix stays at about 70 in every variant. Aymen then chose to have a calendar. That was the external review's reading of what separates the two; [ADR-013](../../decisions/ADR-013-web-component-behaviour-layer.md) supersedes it: the choice rests on the combobox, the sheet and the dialog, the calendar is a product intent, and the spike decides.
 
 ## 6. Visuals reviewed by Aymen (local pages, not committed)
 
@@ -54,3 +54,15 @@ A page comparing the two cases (native date field against an Étaye calendar) an
 ## 7. Not done
 
 No application code, no package installed, no Figma access, no screen-reader test, no measurement on a running interface, no real device.
+
+## 8. Four independent reviews of the closed package (2026-11-20)
+
+After the merge of the closure, Aymen sent the final package (nine bundles, 29 pieces) to four other assistants with an explicit request for a harsh, honest review (DeepSeek, Grok, GPT, GLM). DeepSeek received only the last three bundles (pieces 22 and 26 to 28) and said so; its verdicts on everything else are void. Each finding was checked against the repository before use.
+
+**Confirmed and corrected by UD-44:** known component-CSS defects with no application path (`.etaye-touche` opacity; `animation` not cut under reduced motion, which the first review had flagged and the closure had left out; `white-space: nowrap` on buttons; `.etaye-bouton--retrait` using `--critique` against the token rule; no open state for the mobile navigation in the received CSS, D-46; the design-prototype overlay opens it visually with `.etaye-nav[data-open="true"]` and `prototype.js`, but no document specifies focus, Escape or the return to the button); D-44, D-47 and D-48 triggered by reviews of families that are not CORE (roadmap section 9), so they could never fire; ADR-013 accepted before its spike; an ambiguous golden-file reference; D-50 mixing the token generator with component CSS; `AGENTS.md` and design-system section 12 out of date; a count of type roles that ignores separate `font-size` declarations. A mistake of the project assistant was also found: it recommended editing the received CSS by hand, which `provenance.json` and `tools/rebuild_design_receipt.py` forbid.
+
+**Already tracked, nothing new:** D-41, Java 21 and Node 22 against ADR-002, BR-017 against AT-038-B, D-40, the Dependabot alert, the Figma access window, the portfolio README (UD-34).
+
+**Rejected or wrong:** React Aria "web-only, so no native parity" (ADR-010 shares no UI); `--duree-trace` as a drift (ADR-012 documents its promotion); an overlay contradiction between I-06 and I-09 (no document says one opens the other); ADR-010 headers read as proof of a native client (the ADR says a declaration, never proof); D-41 as a blocker (bounded, no real user).
+
+**Convergent opinions kept for the owner:** the documentation weight against the code (about 152 000 words, 8 400 lines, one real screen, first commit 2026-11-02) and the calendar weighing too much in the library argument. The first became the process rule of UD-44; the second is in ADR-013.

@@ -17,3 +17,9 @@ dialog[data-source-preview]::backdrop { background:rgba(0,0,0,.45); }
  .etaye-dialogue__pied { padding-bottom: max(12px,env(safe-area-inset-bottom)); }
 }
 @media print { .design-notes,.prototype-notice,.guided-design { display:none; } }
+/* Component-CSS corrections decided by ADR-014 (2026-11-20, UD-44). Overlay only: the received files keep their hashes. Figma to reconcile. */
+.etaye-touche { opacity: 1; }
+.etaye-a4 { max-width: 100%; }
+.etaye-bouton { white-space: normal; max-width: 100%; height: auto; text-align: left; }
+.etaye-bouton--retrait { color: var(--encre); border-color: var(--encre); }
+@media (prefers-reduced-motion: reduce) { .etaye-root *, .etaye-app * { animation: none !important; } }
