@@ -1212,6 +1212,65 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
     }
 
     @Test
+    @DisplayName("C4: Strict date validation for dateOfBirth field only")
+    void c4_strictDateValidation_dateOfBirthOnly() {
+        String csrfToken = fetchCsrfToken(sessionCookieClinicalA);
+
+        List<String> invalidDates = List.of(
+                " 1990-01-01",
+                "1990-01-01 ",
+                "+19900-01-01",
+                "1990-1-1",
+                "1990-02-30"
+        );
+
+        for (String invalidDate : invalidDates) {
+            String payload = String.format("{\"firstName\": \"Alice\", \"lastName\": \"Martin\", \"dateOfBirth\": \"%s\"}", invalidDate);
+            String idempotencyKey = "key-strict-date-" + UUID.randomUUID();
+
+            ResponseEntity<Map> response = client().post()
+                    .uri("/api/v1/practices/" + practiceA + "/patients")
+                    .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                    .header("X-CSRF-TOKEN", csrfToken)
+                    .header("Idempotency-Key", idempotencyKey)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(payload)
+                    .retrieve()
+                    .onStatus(status -> status.value() == 400 || status.value() == 422, (req, res) -> {})
+                    .toEntity(Map.class);
+
+            assertThat(response.getStatusCode())
+                    .as("Date '%s' must give 400 Bad Request", invalidDate)
+                    .isEqualTo(HttpStatus.BAD_REQUEST);
+
+            Map<?, ?> body = response.getBody();
+            assertThat(body).isNotNull();
+            assertThat(body.get("code"))
+                    .as("Date '%s' must have code MALFORMED_REQUEST", invalidDate)
+                    .isEqualTo("MALFORMED_REQUEST");
+
+            // Response must NOT contain the submitted value
+            assertThat(body.toString()).doesNotContain(invalidDate);
+        }
+
+        // Positive case: "1990-01-01" still gives 201 Created
+        String validPayload = "{\"firstName\": \"Alice\", \"lastName\": \"Martin\", \"dateOfBirth\": \"1990-01-01\"}";
+        String validIdempKey = "key-strict-date-valid-" + UUID.randomUUID();
+        ResponseEntity<PatientResponse> validResponse = client().post()
+                .uri("/api/v1/practices/" + practiceA + "/patients")
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA)
+                .header("X-CSRF-TOKEN", csrfToken)
+                .header("Idempotency-Key", validIdempKey)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(validPayload)
+                .retrieve()
+                .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(), (req, res) -> {})
+                .toEntity(PatientResponse.class);
+
+        assertThat(validResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    }
+
+    @Test
     @DisplayName("A8: Strict typing: non-string value for dateOfBirth (number, array, object) gives 400 MALFORMED_REQUEST")
     void strictTyping_nonStringForDateOfBirth_returns400MalformedRequest() {
         String csrfToken = fetchCsrfToken(sessionCookieClinicalA);
