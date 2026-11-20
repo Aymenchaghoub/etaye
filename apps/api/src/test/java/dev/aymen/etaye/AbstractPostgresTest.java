@@ -11,6 +11,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Statement;
 import java.util.UUID;
 
 @ActiveProfiles("test")
@@ -193,6 +194,18 @@ public abstract class AbstractPostgresTest {
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to update account state as owner", e);
+        }
+    }
+
+    protected static void executeAsOwner(String sql) {
+        try (Connection conn = DriverManager.getConnection(
+                POSTGRES_CONTAINER.getJdbcUrl(),
+                OWNER_USER,
+                OWNER_PASSWORD);
+             Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to execute SQL as owner: " + sql, e);
         }
     }
 

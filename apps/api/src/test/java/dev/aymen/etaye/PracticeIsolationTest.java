@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -126,14 +127,15 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
         }
 
         // B4(4): Ownership and both RLS flags (relrowsecurity AND relforcerowsecurity) using schema-qualified to_regclass
-        List<String> expectedTables = List.of(
-                "practice", "account", "membership",
-                "patient", "patient_record", "audit_event", "outbox_event", "idempotency_receipt",
-                "spring_session", "spring_session_attributes"
-        );
-        List<String> rlsTables = List.of("account", "membership", "patient", "patient_record", "audit_event", "outbox_event", "idempotency_receipt");
+        List<String> allRelations = jdbcTemplate.queryForList(
+                "SELECT c.relname FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace " +
+                        "WHERE n.nspname = 'public' AND c.relkind IN ('r', 'p') ORDER BY c.relname",
+                String.class);
 
-        for (String tbl : expectedTables) {
+        Set<String> rlsTables = Set.of(
+                "account", "membership", "patient", "patient_record", "audit_event", "outbox_event", "idempotency_receipt");
+
+        for (String tbl : allRelations) {
             String qualifiedTable = "public." + tbl;
             jdbcTemplate.query("SELECT c.relrowsecurity, c.relforcerowsecurity, r.rolname " +
                             "FROM pg_class c JOIN pg_roles r ON c.relowner = r.oid " +
@@ -141,101 +143,137 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
                     ps -> ps.setString(1, qualifiedTable),
                     rs -> {
                         assertEquals("etaye_owner", rs.getString("rolname"), "Table " + qualifiedTable + " must be owned by etaye_owner");
-                        if (rlsTables.contains(tbl)) {
-                            assertTrue(rs.getBoolean("relrowsecurity"), "relrowsecurity must be true on " + qualifiedTable);
-                            assertTrue(rs.getBoolean("relforcerowsecurity"), "relforcerowsecurity (FORCE RLS) must be true on " + qualifiedTable);
-                        }
+                        boolean expectRls = rlsTables.contains(tbl);
+                        assertEquals(expectRls, rs.getBoolean("relrowsecurity"), "relrowsecurity mismatch on " + qualifiedTable);
+                        assertEquals(expectRls, rs.getBoolean("relforcerowsecurity"), "relforcerowsecurity (FORCE RLS) mismatch on " + qualifiedTable);
                     });
         }
 
-        // B4(2): No TRUNCATE, REFERENCES, or TRIGGER privilege on any table for runtime or identity
-        for (String tbl : expectedTables) {
-            String qualifiedTable = "public." + tbl;
-            assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', to_regclass(?), 'TRUNCATE')", Boolean.class, qualifiedTable),
-                    "etaye_runtime must not have TRUNCATE on " + qualifiedTable);
-            assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', to_regclass(?), 'REFERENCES')", Boolean.class, qualifiedTable),
-                    "etaye_runtime must not have REFERENCES on " + qualifiedTable);
-            assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_runtime', to_regclass(?), 'TRIGGER')", Boolean.class, qualifiedTable),
-                    "etaye_runtime must not have TRIGGER on " + qualifiedTable);
+        // C6/C8: Catalog verification against explicit expected privilege maps
+        checkCatalogPrivileges();
+    }
 
-            assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_identity', to_regclass(?), 'TRUNCATE')", Boolean.class, qualifiedTable),
-                    "etaye_identity must not have TRUNCATE on " + qualifiedTable);
-            assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_identity', to_regclass(?), 'REFERENCES')", Boolean.class, qualifiedTable),
-                    "etaye_identity must not have REFERENCES on " + qualifiedTable);
-            assertFalse(jdbcTemplate.queryForObject("SELECT has_table_privilege('etaye_identity', to_regclass(?), 'TRIGGER')", Boolean.class, qualifiedTable),
-                    "etaye_identity must not have TRIGGER on " + qualifiedTable);
+    private void checkCatalogPrivileges() {
+        List<String> allRelations = jdbcTemplate.queryForList(
+                "SELECT c.relname FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace " +
+                        "WHERE n.nspname = 'public' AND c.relkind IN ('r', 'p') ORDER BY c.relname",
+                String.class);
+
+        List<String> tablePrivileges = List.of(
+                "SELECT", "INSERT", "UPDATE", "DELETE", "TRUNCATE", "REFERENCES", "TRIGGER", "MAINTAIN"
+        );
+
+        Map<String, Map<String, Set<String>>> expectedTablePrivileges = Map.of(
+                "etaye_runtime", Map.of(
+                        "patient", Set.of("SELECT", "INSERT"),
+                        "patient_record", Set.of("SELECT", "INSERT"),
+                        "audit_event", Set.of("INSERT"),
+                        "outbox_event", Set.of("INSERT"),
+                        "idempotency_receipt", Set.of("SELECT", "INSERT"),
+                        "spring_session", Set.of("SELECT", "INSERT", "UPDATE", "DELETE"),
+                        "spring_session_attributes", Set.of("SELECT", "INSERT", "UPDATE", "DELETE")
+                ),
+                "etaye_identity", Map.of()
+        );
+
+        for (String role : List.of("etaye_runtime", "etaye_identity")) {
+            for (String table : allRelations) {
+                String qualifiedTable = "public." + table;
+                Set<String> expectedPrivs = expectedTablePrivileges
+                        .getOrDefault(role, Map.of())
+                        .getOrDefault(table, Set.of());
+
+                for (String priv : tablePrivileges) {
+                    boolean hasPriv = jdbcTemplate.queryForObject(
+                            "SELECT has_table_privilege(?, to_regclass(?), ?)",
+                            Boolean.class, role, qualifiedTable, priv);
+                    boolean expected = expectedPrivs.contains(priv);
+                    assertEquals(expected, hasPriv,
+                            String.format("Role %s on table %s for privilege %s expected %s but was %s",
+                                    role, table, priv, expected, hasPriv));
+                }
+            }
         }
 
-        // B4(1) & B4(5): Column privileges for every column of every table from runtime datasource
-        List<Map<String, Object>> columns = jdbcTemplate.queryForList(
-                "SELECT table_name, column_name FROM information_schema.columns WHERE table_schema = 'public' ORDER BY table_name, ordinal_position");
+        // Column privileges from pg_attribute / pg_class
+        String colSql = """
+                SELECT c.relname AS table_name, a.attname AS column_name
+                FROM pg_attribute a
+                JOIN pg_class c ON a.attrelid = c.oid
+                JOIN pg_namespace n ON n.oid = c.relnamespace
+                WHERE n.nspname = 'public' AND c.relkind IN ('r', 'p') AND a.attnum > 0 AND NOT a.attisdropped
+                ORDER BY c.relname, a.attnum
+                """;
+        List<Map<String, Object>> columns = jdbcTemplate.queryForList(colSql);
+
+        List<String> columnPrivileges = List.of("SELECT", "INSERT", "UPDATE", "REFERENCES");
+
+        Set<String> identityAccountCols = Set.of("id", "normalized_email", "display_name", "state", "locale", "created_at", "updated_at");
+        Set<String> identityMembershipCols = Set.of("id", "account_id", "practice_id", "state", "capabilities", "created_at", "updated_at");
+
         for (Map<String, Object> colRow : columns) {
             String table = (String) colRow.get("table_name");
             String col = (String) colRow.get("column_name");
             String qualifiedTable = "public." + table;
 
-            // Runtime role column privileges
-            boolean rtSelect = jdbcTemplate.queryForObject("SELECT has_column_privilege('etaye_runtime', to_regclass(?), ?, 'SELECT')", Boolean.class, qualifiedTable, col);
-            boolean rtInsert = jdbcTemplate.queryForObject("SELECT has_column_privilege('etaye_runtime', to_regclass(?), ?, 'INSERT')", Boolean.class, qualifiedTable, col);
-            boolean rtUpdate = jdbcTemplate.queryForObject("SELECT has_column_privilege('etaye_runtime', to_regclass(?), ?, 'UPDATE')", Boolean.class, qualifiedTable, col);
-            boolean rtReferences = jdbcTemplate.queryForObject("SELECT has_column_privilege('etaye_runtime', to_regclass(?), ?, 'REFERENCES')", Boolean.class, qualifiedTable, col);
-
-            assertFalse(rtReferences, "etaye_runtime must never have REFERENCES on " + qualifiedTable + "." + col);
-
-            if (List.of("patient", "patient_record", "idempotency_receipt").contains(table)) {
-                assertTrue(rtSelect, "etaye_runtime should have SELECT on " + qualifiedTable + "." + col);
-                assertTrue(rtInsert, "etaye_runtime should have INSERT on " + qualifiedTable + "." + col);
-                assertFalse(rtUpdate, "etaye_runtime must not have UPDATE on " + qualifiedTable + "." + col);
-            } else if (List.of("audit_event", "outbox_event").contains(table)) {
-                assertFalse(rtSelect, "etaye_runtime must not have SELECT on " + qualifiedTable + "." + col);
-                assertTrue(rtInsert, "etaye_runtime should have INSERT on " + qualifiedTable + "." + col);
-                assertFalse(rtUpdate, "etaye_runtime must not have UPDATE on " + qualifiedTable + "." + col);
-            } else if (List.of("spring_session", "spring_session_attributes").contains(table)) {
-                assertTrue(rtSelect, "etaye_runtime should have SELECT on " + qualifiedTable + "." + col);
-                assertTrue(rtInsert, "etaye_runtime should have INSERT on " + qualifiedTable + "." + col);
-                assertTrue(rtUpdate, "etaye_runtime should have UPDATE on " + qualifiedTable + "." + col);
-            } else {
-                // practice, account, membership: NO column privileges for runtime role
-                assertFalse(rtSelect, "etaye_runtime must not have SELECT on " + qualifiedTable + "." + col);
-                assertFalse(rtInsert, "etaye_runtime must not have INSERT on " + qualifiedTable + "." + col);
-                assertFalse(rtUpdate, "etaye_runtime must not have UPDATE on " + qualifiedTable + "." + col);
-            }
-
-            // password_hash must NEVER have any privilege under etaye_runtime or etaye_identity
-            if ("password_hash".equals(col)) {
-                assertFalse(rtSelect, "etaye_runtime must NEVER have SELECT on password_hash");
-                assertFalse(rtInsert, "etaye_runtime must NEVER have INSERT on password_hash");
-                assertFalse(rtUpdate, "etaye_runtime must NEVER have UPDATE on password_hash");
-                boolean idSelectPw = jdbcTemplate.queryForObject("SELECT has_column_privilege('etaye_identity', to_regclass(?), ?, 'SELECT')", Boolean.class, qualifiedTable, col);
-                assertFalse(idSelectPw, "etaye_identity must NEVER have SELECT on password_hash");
-            }
-
-            // Identity role privileges (B4(5))
-            boolean idSelect = jdbcTemplate.queryForObject("SELECT has_column_privilege('etaye_identity', to_regclass(?), ?, 'SELECT')", Boolean.class, qualifiedTable, col);
-            boolean idInsert = jdbcTemplate.queryForObject("SELECT has_column_privilege('etaye_identity', to_regclass(?), ?, 'INSERT')", Boolean.class, qualifiedTable, col);
-            boolean idUpdate = jdbcTemplate.queryForObject("SELECT has_column_privilege('etaye_identity', to_regclass(?), ?, 'UPDATE')", Boolean.class, qualifiedTable, col);
-            boolean idReferences = jdbcTemplate.queryForObject("SELECT has_column_privilege('etaye_identity', to_regclass(?), ?, 'REFERENCES')", Boolean.class, qualifiedTable, col);
-
-            assertFalse(idInsert, "etaye_identity must never have INSERT on " + qualifiedTable + "." + col);
-            assertFalse(idUpdate, "etaye_identity must never have UPDATE on " + qualifiedTable + "." + col);
-            assertFalse(idReferences, "etaye_identity must never have REFERENCES on " + qualifiedTable + "." + col);
-
-            if ("account".equals(table)) {
-                if (List.of("id", "normalized_email", "display_name", "state", "locale", "created_at", "updated_at").contains(col)) {
-                    assertTrue(idSelect, "etaye_identity should have SELECT on account." + col);
-                } else {
-                    assertFalse(idSelect, "etaye_identity must not have SELECT on account." + col);
+            for (String role : List.of("etaye_runtime", "etaye_identity")) {
+                Set<String> expectedColPrivs;
+                if ("etaye_runtime".equals(role)) {
+                    if (Set.of("patient", "patient_record", "idempotency_receipt").contains(table)) {
+                        expectedColPrivs = Set.of("SELECT", "INSERT");
+                    } else if (Set.of("audit_event", "outbox_event").contains(table)) {
+                        expectedColPrivs = Set.of("INSERT");
+                    } else if (Set.of("spring_session", "spring_session_attributes").contains(table)) {
+                        expectedColPrivs = Set.of("SELECT", "INSERT", "UPDATE");
+                    } else {
+                        expectedColPrivs = Set.of();
+                    }
+                } else { // etaye_identity
+                    if ("account".equals(table) && identityAccountCols.contains(col)) {
+                        expectedColPrivs = Set.of("SELECT");
+                    } else if ("membership".equals(table) && identityMembershipCols.contains(col)) {
+                        expectedColPrivs = Set.of("SELECT");
+                    } else {
+                        expectedColPrivs = Set.of();
+                    }
                 }
-            } else if ("membership".equals(table)) {
-                if (List.of("id", "account_id", "practice_id", "state", "capabilities", "created_at", "updated_at").contains(col)) {
-                    assertTrue(idSelect, "etaye_identity should have SELECT on membership." + col);
-                } else {
-                    assertFalse(idSelect, "etaye_identity must not have SELECT on membership." + col);
+
+                for (String priv : columnPrivileges) {
+                    boolean hasPriv = jdbcTemplate.queryForObject(
+                            "SELECT has_column_privilege(?, to_regclass(?), ?, ?)",
+                            Boolean.class, role, qualifiedTable, col, priv);
+                    boolean expected = expectedColPrivs.contains(priv);
+                    assertEquals(expected, hasPriv,
+                            String.format("Role %s on column %s.%s for privilege %s expected %s but was %s",
+                                    role, table, col, priv, expected, hasPriv));
                 }
-            } else {
-                // All other tables: etaye_identity has NO SELECT on any column
-                assertFalse(idSelect, "etaye_identity must not have SELECT on " + qualifiedTable + "." + col);
             }
+        }
+    }
+
+    @Test
+    @DisplayName("C6 mutation: Excess DELETE on audit_event for etaye_runtime is detected")
+    void c6_mutationExcessDeleteOnAuditEventDetected() {
+        try {
+            executeAsOwner("GRANT DELETE ON audit_event TO etaye_runtime");
+            assertThatThrownBy(() -> checkCatalogPrivileges())
+                    .isInstanceOf(AssertionError.class)
+                    .hasMessageContaining("Role etaye_runtime on table audit_event for privilege DELETE expected false but was true");
+        } finally {
+            executeAsOwner("REVOKE DELETE ON audit_event FROM etaye_runtime");
+        }
+    }
+
+    @Test
+    @DisplayName("C6 mutation: Excess SELECT on account for etaye_runtime is detected")
+    void c6_mutationExcessSelectOnAccountDetected() {
+        try {
+            executeAsOwner("GRANT SELECT ON account TO etaye_runtime");
+            assertThatThrownBy(() -> checkCatalogPrivileges())
+                    .isInstanceOf(AssertionError.class)
+                    .hasMessageContaining("Role etaye_runtime on table account for privilege SELECT expected false but was true");
+        } finally {
+            executeAsOwner("REVOKE SELECT ON account FROM etaye_runtime");
         }
     }
 
