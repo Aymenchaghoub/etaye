@@ -3,8 +3,8 @@
   "date": "2026-11-20",
   "ok": true,
   "checks": {
-    "markdownFiles": 118,
-    "localLinks": 1445,
+    "markdownFiles": 119,
+    "localLinks": 1451,
     "apiOperations": 98,
     "apiSchemas": 90,
     "planningStories": 45,
@@ -25,7 +25,7 @@
       ],
       "trackedBuildOutputCheck": "checked with git ls-files"
     },
-    "projectFilesSecretScanned": 202
+    "projectFilesSecretScanned": 203
   },
   "errors": [],
   "applicationTestsExecuted": false,

@@ -216,6 +216,8 @@ class AccountAccessHttpTest extends AbstractPostgresTest {
                 .containsEntry("code", "INVALID_RECOVERY_LINK");
         assertThat(query("SELECT count(*) FROM account_access_audit WHERE account_id = ? AND event_type = 'PASSWORD_RESET'",
                 account)).isEqualTo("1");
+        assertThat(query("SELECT starts_with(password_hash, '{pbkdf2-sha256-600000}') FROM account WHERE id = ?",
+                account)).isEqualTo("t");
         assertThat(query("SELECT count(*) FROM spring_session WHERE principal_name = ?::text", account)).isEqualTo("0");
         assertThat(request(HttpMethod.GET, "/session", firstSession, null, null, null).getStatusCode().value()).isEqualTo(401);
         assertThat(request(HttpMethod.GET, "/session", secondSession, null, null, null).getStatusCode().value()).isEqualTo(401);

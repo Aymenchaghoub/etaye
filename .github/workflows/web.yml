@@ -21,6 +21,8 @@ on:
       - 'design/received/2026-11-03/export/etaye-design-system/tokens/tokens.css'
       - 'design/received/2026-11-03/export/etaye-design-system/fonts/**'
       - 'design/received/2026-11-03/licenses/*-OFL.txt'
+      - 'design/received/2026-11-03/licenses/Lucide-LICENSE.txt'
+      - 'design/offline-reference/site/logos/**'
       - 'tools/fixtures/etaye-tokens.golden.css'
       - 'tools/generate_web_tokens.py'
       - 'tools/test_generate_web_tokens.py'
@@ -59,6 +61,7 @@ jobs:
                 design/received/2026-11-03/export/etaye-design-system/tokens/tokens.css \
                 design/received/2026-11-03/export/etaye-design-system/fonts/ \
                 'design/received/2026-11-03/licenses/*-OFL.txt' \
+                design/received/2026-11-03/licenses/Lucide-LICENSE.txt design/offline-reference/site/logos/ \
                 tools/fixtures/etaye-tokens.golden.css tools/generate_web_tokens.py tools/test_generate_web_tokens.py \
                 tools/assert_test_reports.py .github/workflows/web.yml; then
             relevant=false
