@@ -2,13 +2,26 @@
 
 Updated: 2026-11-20. Owner: Aymen Chaghoub.
 
-## Story 1.2 post-merge robustness audit (CodeRabbit review on PR #45) — 2026-11-20
+## Full-stack CodeQL configuration (PR #46) — 2026-11-20
 
-**Phase.** Post-merge review findings from PR #45 (story 1.2) triaged and addressed on branch `fix/1.2-session-and-test-robustness`. Addressed legacy session polling idle extension, prevented unbudgeted session allocation on expired anonymous CSRF rejection, verified non-empty idempotency receipts, added retry state retention in AuthApp, restored test account credentials at E2E test teardown, and documented single-instance proxy boundaries in `story-1-2-implementation-record.md`.
+**Phase.** Expansion of GitHub CodeQL code scanning across Java 25 (API), TypeScript/React (Web), and Python (Tooling) using the `security-and-quality` ruleset on branch `ci/codeql-full-stack`. This anticipates SonarQube Cloud quality and security analysis (D-29 / Increment 4).
 
-**Actual verification.** Java 25 executed `AccountAccessHttpTest` and `AccountRequestBudgetTest` successfully (7 tests passed with Testcontainers PostgreSQL 18). Web Chromium smoke suite passed (19 tests). Web TypeScript check and production build passed. Documentary validator passed with 0 errors.
+**Actual verification.** All three analysis matrices executed and succeeded in GitHub Actions (`Analyze API Java 25`, `Analyze Web TypeScript`, `Analyze tooling Python`). Code scanning is active and reporting 0 alerts across all severities.
 
-**Next action.** Open fix pull request targeting `main`, report comment-by-comment triage to Aymen, and await Aymen's explicit validation before merging. Full-stack CodeQL configuration on `ci/codeql-full-stack` (PR #46) resumes next.
+**Next action.** Complete PR #46 documentation, update PR description with template sections and verification commands, request CodeRabbit review, and await Aymen's explicit validation before merging.
+
+## Story 1.2 post-merge robustness audit merged (PR #47) — 2026-11-20
+
+**Integration.** [PR #47](https://github.com/Aymenchaghoub/etaye/pull/47) squash-merged to `main`. Addressed post-merge review findings from PR #45 (story 1.2) across session lifecycle, budget management, and E2E test teardown:
+- Preserved authenticated legacy sessions in `ExistingSessionCsrfFilter` without classifying them as expired anonymous.
+- Enforced session idle expiry boundaries in `AccountAccessHttpTest` without extending via routine polling.
+- Guarded E2E recovery test cleanup in `account-access.spec.ts` with immediate flag assignment and explicit heading waits.
+- Documented single-instance in-memory rate limiting boundaries in `story-1-2-implementation-record.md`.
+All review threads were resolved, and all required checks passed (`API verify`, `Web verify`, `CodeQL`, `Documentation`).
+
+## Story 1.2 merged — 2026-11-20
+
+**Integration.** [PR #45](https://github.com/Aymenchaghoub/etaye/pull/45) merged as `05ae963286395fbfe2d48bf5b35c05c6d3df3e4d`. All review threads were resolved and all 5 required checks passed (`API verify`, `Web verify`, `Planning package checks`, `Analyze tooling`, `CodeQL`). Aymen approved the live screens and authorized the merge. Desktop tracking file `Etaye-Ordre-US-Suivi.html` updated (Story 1.2 Mergé, Story 1.3 next).
 
 ## Story 1.2 implemented and live screens approved — 2026-11-20
 

@@ -1,0 +1,7 @@
+name: Étaye Web
+paths:
+  - apps/web
+paths-ignore:
+  - 'apps/web/src/api/generated/**'
+queries:
+  - uses: security-and-quality
