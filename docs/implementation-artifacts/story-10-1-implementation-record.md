@@ -112,9 +112,9 @@ Passwords are generated per run and never committed.
 ```bash
 export POSTGRES_ADMIN_PASSWORD=$(openssl rand -hex 12) ETAYE_OWNER_PASSWORD=$(openssl rand -hex 12) \
        ETAYE_RUNTIME_PASSWORD=$(openssl rand -hex 12) ETAYE_IDENTITY_PASSWORD=$(openssl rand -hex 12)
-docker compose -f infra/local/docker-compose.yml up -d
-(cd apps/api && ./mvnw -B -ntp flyway:migrate -Dflyway.url=jdbc:postgresql://localhost:5432/etaye \
-   -Dflyway.user=etaye_owner -Dflyway.password="$ETAYE_OWNER_PASSWORD")
+docker compose -f infra/local/docker-compose.yml up -d --wait   # waits for the health check, which also verifies the role attributes
+(cd apps/api && FLYWAY_PASSWORD="$ETAYE_OWNER_PASSWORD" ./mvnw -B -ntp flyway:migrate \
+   -Dflyway.url=jdbc:postgresql://localhost:5432/etaye -Dflyway.user=etaye_owner)
 (cd apps/api && ./mvnw -B -ntp verify && SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/etaye \
    SPRING_DATASOURCE_USERNAME=etaye_runtime SPRING_DATASOURCE_PASSWORD="$ETAYE_RUNTIME_PASSWORD" \
    ETAYE_IDENTITY_DATASOURCE_PASSWORD="$ETAYE_IDENTITY_PASSWORD" java -jar target/etaye-api-0.0.1-SNAPSHOT.jar)

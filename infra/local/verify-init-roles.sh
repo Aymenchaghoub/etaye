@@ -100,6 +100,32 @@ verify_literal_password() {
   [[ "$result" == etaye_owner ]]
 }
 
+healthcheck_command() {
+  POSTGRES_ADMIN_PASSWORD=x ETAYE_OWNER_PASSWORD=x ETAYE_RUNTIME_PASSWORD=x ETAYE_IDENTITY_PASSWORD=x \
+    docker compose -f "$script_dir/docker-compose.yml" config --format json |
+    python3 -c 'import json, sys; print(json.load(sys.stdin)["services"]["postgres"]["healthcheck"]["test"][1])'
+}
+
+verify_health_follows_role_attributes() {
+  # Healthy after a correct initialization; unhealthy on a volume whose application role is a superuser,
+  # which the init hook (it runs only once) can no longer correct.
+  local command healthy="$prefix-healthy" compromised="$prefix-compromised" password
+  command=$(healthcheck_command) || return 1
+  password=$(openssl rand -hex 24) || return 1
+  start_postgres "$healthy" postgres "$password" && wait_for_init "$healthy" || return 1
+  docker exec "$healthy" sh -c "$command" >/dev/null || return 1
+
+  containers+=("$compromised")
+  docker run --detach --name "$compromised" --env POSTGRES_USER=etaye_runtime --env POSTGRES_DB=etaye \
+    --env POSTGRES_PASSWORD="$(openssl rand -hex 24)" postgres:18 >/dev/null || return 1
+  local deadline=$((SECONDS + 60))
+  until docker exec "$compromised" pg_isready --username=etaye_runtime --dbname=etaye >/dev/null 2>&1; do
+    (( SECONDS < deadline )) || return 1
+    sleep 1
+  done
+  ! docker exec "$compromised" sh -c "$command" >/dev/null 2>&1
+}
+
 verify_compose_settings() {
   # The administrator name must stay fixed even when an override is supplied, and the port must stay on the loopback.
   local json
@@ -130,4 +156,5 @@ run_case "Application role attributes and public schema owner" verify_roles_and_
 run_case "Admin collision with etaye_runtime is refused" verify_admin_collision
 run_case "Owner can authenticate with the literal password" verify_literal_password
 run_case "Compose fixes the administrator name and binds the port to the loopback" verify_compose_settings
+run_case "Health check follows the role attributes on every start" verify_health_follows_role_attributes
 exit "$failed"

@@ -18,7 +18,9 @@ services:
     ports:
       - "127.0.0.1:5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d ${POSTGRES_DB:-etaye}"]
+      # Also checked on every start: the init hook runs only once, so a volume initialized by an older
+      # configuration could keep a privileged application role. The container then reports unhealthy.
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ${POSTGRES_DB:-etaye} && psql -U postgres -d ${POSTGRES_DB:-etaye} -Atc \"select not exists (select from pg_roles where rolname in ('etaye_owner', 'etaye_runtime', 'etaye_identity') and (rolsuper or rolbypassrls or rolcreaterole or rolcreatedb or rolreplication))\" | grep -qx t"]
       interval: 5s
       timeout: 5s
       retries: 5
