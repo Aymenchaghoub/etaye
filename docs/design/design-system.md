@@ -249,11 +249,11 @@ Compare a rebuilt screen and your implementation at the same viewport and theme,
 - **Not drawn:** the functional motion states of the [motion study](motion-study/README.md) (save button, drop target, sign trace, overflow fade) exist only as a playable HTML prototype and still need Figma variants and review.
 - **Not verified:** Figma effect style `2:73` values, the full variable collections (REST variables need Enterprise), Safari and Android WebView rendering, real devices, measured WCAG conformance, forced-colors and print rendering of the background layer.
 - **Open decisions:** Aymen's design approval of the received screens, responsive frames for the corrected states, the clear-space rule for the logo, and any application of the background layer.
-- **No development is authorized.** All 45 stories stay in backlog; this file does not change that.
+- **Development is authorized story by story** (`authorized_stories` in `_bmad/custom/config.toml`; UD-28, UD-41); every other story stays in backlog; this file does not change that.
 
 ## 13. Maintenance
 
-Change the sources first (Figma, then `tokens.css`, `resolved-tokens.json` or the component CSS), then run `python3 tools/design_system_reference.py --write` and review the diff; the token tables are never edited by hand. Hand-written sections change only with Aymen's validation. Without Figma, a deliberate change of an existing value needs Aymen's decision; it is made in `tokens.css` or the component CSS, recorded with its date and reason, and listed in [continuation.md](../continuation.md) as "Figma to reconcile". The check fails on purpose until a recorded deviation is supported by the tool, so an unrecorded change cannot slip in. Update the status line and [continuation.md](../continuation.md) when a limit in section 12 is lifted.
+Change the sources first (Figma, then `tokens.css`, `resolved-tokens.json` or the component CSS), then run `python3 tools/design_system_reference.py --write` and review the diff; the token tables are never edited by hand. Hand-written sections change only with Aymen's validation. Without Figma, a deliberate change of an existing value needs Aymen's decision; it is made in `tokens.css` or the component CSS, recorded with its date and reason, and listed in [continuation.md](../continuation.md) as "Figma to reconcile". The check fails on purpose until a recorded deviation is supported by the tool, so an unrecorded change cannot slip in. **Since ADR-014 (2026-11-20):** component CSS corrections are written in the overlay `design/corrections/review-corrections.css`, never in the received files (their hashes are checked by `tools/rebuild_design_receipt.py`), and token changes go through the generator. Update the status line and [continuation.md](../continuation.md) when a limit in section 12 is lifted.
 
 ## 14. Implementing the mockups without Figma
 
@@ -292,7 +292,7 @@ Change the sources first (Figma, then `tokens.css`, `resolved-tokens.json` or th
 |---|---|---|
 | 1 | Web behaviour layer: React Aria Components with `@internationalized/date`, Étaye tokens and CSS as the only style, native HTML controls elsewhere, Base UI as fallback, Radix not retained, a calendar in the product, a spike at the first UI story | [ADR-013](../decisions/ADR-013-web-component-behaviour-layer.md), ADR-002 row, D-49 |
 | 2 | Type roles follow the mockups: 14 roles become 29, 9 values are normalised, A4 keeps its scale | [type roles](typography-closure.md), [ADR-014](../decisions/ADR-014-design-system-closure.md) point 1 |
-| 3 | Six corrections: `.etaye-touche` opacity (4.5:1 failure), `.etaye-a4` width, the 1200 px breakpoint, the stacking policy, a scrim token, `.etaye-fond-flou` | ADR-014 point 4; section 5 |
+| 3 | Nine corrections: `.etaye-touche` opacity (4.5:1 failure), `.etaye-a4` width, `animation` under reduced motion, button wrapping, the withdrawal button without `--critique`, the 1200 px breakpoint, the stacking policy, a scrim token, `.etaye-fond-flou`; applied in the overlay (UD-44) | ADR-014 point 4; section 5 |
 | 4 | Web theme: system preference by default, manual override, script before first paint, `color-scheme` per theme | ADR-014 point 2 |
 | 5 | Tokens: `tokens.json` stays the source, the token bridge of story 10.2 extended into the generator (CSS output, golden-file test) with the native module at story 10.6, DTCG only if a second consumer appears | ADR-014 point 3, D-50 |
 | 6 | Native: ADR-010 confirmed with five execution precisions, no component library | ADR-010 point 7, D-51 |

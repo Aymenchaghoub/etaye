@@ -54,3 +54,15 @@ A page comparing the two cases (native date field against an Étaye calendar) an
 ## 7. Not done
 
 No application code, no package installed, no Figma access, no screen-reader test, no measurement on a running interface, no real device.
+
+## 8. Four independent reviews of the closed package (2026-11-20)
+
+After the merge of the closure, Aymen sent the final package (nine bundles, 29 pieces) to four other assistants with an explicit request for a harsh, honest review (DeepSeek, Grok, GPT, GLM). DeepSeek received only the last three bundles (pieces 22 and 26 to 28) and said so; its verdicts on everything else are void. Each finding was checked against the repository before use.
+
+**Confirmed and corrected by UD-44:** known component-CSS defects with no application path (`.etaye-touche` opacity; `animation` not cut under reduced motion, which the first review had flagged and the closure had left out; `white-space: nowrap` on buttons; `.etaye-bouton--retrait` using `--critique` against the token rule; no open state for the mobile navigation, D-46); D-44, D-47 and D-48 triggered by reviews of families that are not CORE (roadmap section 9), so they could never fire; ADR-013 accepted before its spike; an ambiguous golden-file reference; D-50 mixing the token generator with component CSS; `AGENTS.md` and design-system section 12 out of date; a count of type roles that ignores separate `font-size` declarations. A mistake of the project assistant was also found: it recommended editing the received CSS by hand, which `provenance.json` and `tools/rebuild_design_receipt.py` forbid.
+
+**Already tracked, nothing new:** D-41, Java 21 and Node 22 against ADR-002, BR-017 against AT-038-B, D-40, the Dependabot alert, the Figma access window, the portfolio README (UD-34).
+
+**Rejected or wrong:** React Aria "web-only, so no native parity" (ADR-010 shares no UI); `--duree-trace` as a drift (ADR-012 documents its promotion); an overlay contradiction between I-06 and I-09 (no document says one opens the other); ADR-010 headers read as proof of a native client (the ADR says a declaration, never proof); D-41 as a blocker (bounded, no real user).
+
+**Convergent opinions kept for the owner:** the documentation weight against the code (about 152 000 words, 8 400 lines, one real screen, first commit 2026-11-02) and the calendar weighing too much in the library argument. The first became the process rule of UD-44; the second is in ADR-013.
