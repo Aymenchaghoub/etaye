@@ -28,6 +28,20 @@ test.describe('Étaye smoke with a stubbed probe', () => {
     });
   }
 
+  test('HTTP 503 with an unfinished body shows UNAVAILABLE within 2 seconds', async ({ page }) => {
+    await page.addInitScript((path) => {
+      const fetch = window.fetch.bind(window);
+      window.fetch = (input, init) => {
+        if (input !== path) return fetch(input, init);
+        return Promise.resolve(new Response(new ReadableStream<Uint8Array>(), { status: 503 }));
+      };
+    }, probePath);
+    await page.goto('/');
+
+    await expect(page.getByRole('status')).toHaveText('UNAVAILABLE', { timeout: 2_000 });
+    await expect(page.getByTestId('probe-error')).toHaveText(unavailableMessage);
+  });
+
   test('a refused connection shows UNAVAILABLE', async ({ page }) => {
     await page.route(probePath, (route) => route.abort('connectionrefused'));
     await page.goto('/');

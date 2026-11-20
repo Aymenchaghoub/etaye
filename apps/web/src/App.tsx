@@ -19,21 +19,25 @@ export default function App() {
           cache: 'no-store',
           signal: controller.signal,
         });
-        // Always consume the body: an unread fetch body keeps the request open in the browser.
-        const text = await response.text();
-        if (response.ok) {
-          const body: unknown = JSON.parse(text);
-          if (typeof body === 'object' && body !== null && 'status' in body && body.status === 'UP') {
-            nextState = 'READY';
+        if (!response.ok) {
+          if (!controller.signal.aborted) {
+            setReadiness('UNAVAILABLE');
           }
+          // Drain the body after updating the UI, with the abort timeout still active.
+          await response.text().catch(() => undefined);
+          return;
+        }
+        const body: unknown = await response.json();
+        if (typeof body === 'object' && body !== null && 'status' in body && body.status === 'UP') {
+          nextState = 'READY';
         }
       } catch {
         // Fetch and JSON parsing failures share the same public state.
       } finally {
         window.clearTimeout(timeout);
-        if (!controller.signal.aborted) {
-          setReadiness(nextState);
-        }
+      }
+      if (!controller.signal.aborted) {
+        setReadiness(nextState);
       }
     }
 
