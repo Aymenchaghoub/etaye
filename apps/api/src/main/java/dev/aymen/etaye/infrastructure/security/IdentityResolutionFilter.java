@@ -128,7 +128,10 @@ public class IdentityResolutionFilter extends OncePerRequestFilter {
                         "Service temporarily unavailable",
                         correlationId
                 );
-                problemResponseWriter.writeProblem(response, problem);
+                boolean written = problemResponseWriter.writeProblem(response, problem);
+                if (!written) {
+                    rethrow(e);
+                }
                 return;
             }
             if (e instanceof ServletException se) {
@@ -139,6 +142,16 @@ public class IdentityResolutionFilter extends OncePerRequestFilter {
             }
             throw new ServletException(e);
         }
+    }
+
+    private void rethrow(Exception ex) throws ServletException, IOException {
+        if (ex instanceof ServletException se) {
+            throw se;
+        }
+        if (ex instanceof IOException ioe) {
+            throw ioe;
+        }
+        throw new ServletException(ex);
     }
 
     private boolean isCsrfEndpoint(HttpServletRequest request) {

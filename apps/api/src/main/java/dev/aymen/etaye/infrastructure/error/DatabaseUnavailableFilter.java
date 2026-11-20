@@ -55,7 +55,10 @@ public class DatabaseUnavailableFilter extends OncePerRequestFilter {
                         "Service temporarily unavailable",
                         correlationId
                 );
-                problemResponseWriter.writeProblem(response, problem);
+                boolean written = problemResponseWriter.writeProblem(response, problem);
+                if (!written) {
+                    rethrow(ex);
+                }
                 return;
             }
             if (ex instanceof ServletException se) {
@@ -66,5 +69,15 @@ public class DatabaseUnavailableFilter extends OncePerRequestFilter {
             }
             throw new ServletException(ex);
         }
+    }
+
+    private void rethrow(Exception ex) throws ServletException, IOException {
+        if (ex instanceof ServletException se) {
+            throw se;
+        }
+        if (ex instanceof IOException ioe) {
+            throw ioe;
+        }
+        throw new ServletException(ex);
     }
 }
