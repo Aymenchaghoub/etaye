@@ -1,6 +1,6 @@
 # Architecture decision records
 
-Date: 2026-11-02. Status: Draft / internally reviewed when recorded in the review report. **ADR-001 to ADR-007 are not approved by Aymen; ADR-008 and ADR-009 were accepted by him on 2026-11-17 (UD-29) and ADR-010 on 2026-11-19 (UD-38, UD-39); ADR-011 on the same day (UD-40).** The user selected the product boundaries and three core technologies; the concrete choices here are proposals for design continuity.
+Date: 2026-11-02. Status: Draft / internally reviewed when recorded in the review report. **ADR-001 to ADR-007 are not approved by Aymen; ADR-008 and ADR-009 were accepted by him on 2026-11-17 (UD-29) and ADR-010 on 2026-11-19 (UD-38, UD-39); ADR-011 on the same day (UD-40), ADR-012 on 2026-11-20 (UD-42) and ADR-013 and ADR-014 on 2026-11-20 (UD-43).** The user selected the product boundaries and three core technologies; the concrete choices here are proposals for design continuity.
 
 | ADR | Decision |
 |---|---|
@@ -16,5 +16,7 @@ Date: 2026-11-02. Status: Draft / internally reviewed when recorded in the revie
 | [010](ADR-010-native-client-react-native-expo.md) | Native client: React Native with Expo, distributed as a demo |
 | [011](ADR-011-delivery-order-and-milestones.md) | Delivery order and increment 1 milestones, without calendar dates |
 | [012](ADR-012-functional-motion.md) | Functional motion for state feedback |
+| [013](ADR-013-web-component-behaviour-layer.md) | Web component behaviour layer: React Aria Components |
+| [014](ADR-014-design-system-closure.md) | Design-system closure: type roles, web theme, tokens and CSS corrections |
 
 The [architecture spine](../planning-artifacts/architecture/ARCHITECTURE-SPINE.md) owns cross-domain constraints; ADRs explain the tradeoffs. Update both when an invariant changes, preserving IDs and supersession history.

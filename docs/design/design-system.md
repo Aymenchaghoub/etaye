@@ -1,6 +1,6 @@
 # Étaye design system: offline reference
 
-Status: **Proposal, written 2026-11-18 as the offline working reference for agents. Not a design approval and not a development authorization.** It restates existing verified values and the received HTML design reference so that work can continue, with the same rendering, when Figma cannot be read. It was written from files in this repository only; no Figma call was made. It creates no token, no color and no component: everything below points to a source. Evidence labels follow [AGENTS.md](../../AGENTS.md): **User decision**, **Verified observation**, **Proposal**, **[ASSUMPTION]**, **To verify**.
+Status: **Proposal, written 2026-11-18 as the offline working reference for agents. Not a design approval and not a development authorization.** It restates existing verified values and the received HTML design reference so that work can continue, with the same rendering, when Figma cannot be read. It was written from files in this repository only; no Figma call was made. It creates no token, no color and no component: everything below points to a source. Evidence labels follow [AGENTS.md](../../AGENTS.md): **User decision**, **Verified observation**, **Proposal**, **[ASSUMPTION]**, **To verify**. The closure decisions of 2026-11-20 (UD-43) are in section 15.
 
 ## 1. Purpose and precedence
 
@@ -32,7 +32,7 @@ Status: **Proposal, written 2026-11-18 as the offline working reference for agen
 
 1. Only `var(--…)` custom properties of `tokens.css`; no literal color or size, except in e-mail and print, where the reference uses literal values.
 2. One shell per audience: practitioner and administration (`.etaye-app`), sign-in (`.etaye-auth`), patient (`.etaye-papp`), A4 documents (`doc-a4`), e-mail (`.mail`).
-3. Text only from the 14 roles of section 4.3; spacing only from the 10 steps and radii only from the 4 values of section 4.4.
+3. Text only from the 14 roles of section 4.3 and the 15 roles added by [ADR-014](../decisions/ADR-014-design-system-closure.md) (section 15 and [type roles](typography-closure.md)); spacing only from the 10 steps and radii only from the 4 values of section 4.4.
 4. Every state in both themes, with the focus ring, and never meaning by color alone.
 5. French interface copy, synthetic data, original logo files.
 6. Compare at 1440×1024, 1024×768, 768×1024, 390×844 and a 320 px reflow check, both themes.
@@ -49,6 +49,7 @@ Status: **Proposal, written 2026-11-18 as the offline working reference for agen
 | [screen-catalog.md](screen-catalog.md), [interaction-catalog.md](interaction-catalog.md), [pdf-email-specifications.md](pdf-email-specifications.md) | What each surface contains | Reviewed specifications |
 | [background-study](background-study/README.md) | Paper and blueprint background layer | **Proposal** (section 10) |
 | [motion-study](motion-study/README.md) | Functional motion patterns and one proposed token | **Proposal**, validated by Aymen on 2026-11-20 (section 4.5, ADR-012) |
+| [typography-closure.md](typography-closure.md) | The 15 type roles added to the 14 of section 4.3, the 9 normalised values and the A4 exception | **User decision** (UD-43, ADR-014); not yet in the token files (D-50) |
 
 Figma file: see [figma-inventory.md](figma-inventory.md) for its identifier and the nodes. Pages: Couverture, Étaye — Import HTML (`15:2`, the 456 imported states), Fondations (`2:74`), Composants (`2:75`). The two last pages and the imported roots are protected: never modify them to "fix" an offline mismatch. Saved versions: desktop import `2423132943961499284`; final corrected state `2423224260331333575`.
 
@@ -111,6 +112,8 @@ Set `data-theme="clair"` (default) or `data-theme="sombre"` on `<html>`; every c
 | `patient-action` | `.patient-action` | Atkinson Hyperlegible Next | 18 / 24 px | 500 | 0 |
 <!-- generated:typography:end -->
 
+**Roles added by ADR-014 (2026-11-20).** The table above is generated and lists the 14 Figma-resolved roles. The component CSS uses 26 further combinations of size, line height and weight; 15 of them become roles and 9 are normalised ([type roles](typography-closure.md)). The new roles are written into the tokens by the generator (D-50) and, until then, are valid as recorded there. They have no Figma text style: Figma to reconcile.
+
 **Where each role is used.** `ui-titre` page title (h1); `ui-section` panel and section headings; `ui-corps` default body and navigation rows; `ui-dense` tables and dense blocks; `ui-libelle` field labels (0.01 em); `meta` dates, origins and fine print; `donnee` and `donnee-forte` measurements, identifiers and source numbers (with `font-variant-numeric: tabular-nums`, class `.etaye-num`); `doc-*` reading and report text in Source Serif 4; `patient-*` the patient portal, larger by design.
 
 **Fonts.** Atkinson Hyperlegible Next (Regular 400, Medium 500, SemiBold 600), Atkinson Hyperlegible Mono (Regular 400, SemiBold 600), Source Serif 4 (Regular 400, Medium 500), as WOFF2 files in the [exported design system](../../design/received/2026-11-03/export/etaye-design-system/fonts/) with `font-display: swap`. Licenses (SIL OFL 1.1 for the three families, ISC for Lucide) are in [LICENCES.md](../../design/received/2026-11-03/export/etaye-design-system/LICENCES.md). Never substitute a similar family or style: a fallback stack is for loading only.
@@ -162,13 +165,13 @@ Only the color transitions of links and buttons (`--duree-retour`) and a 0.98 pr
 
 **Practitioner and administration shell** (`.etaye-app`): a two-column grid, 248 px navigation on `fond` with a right hairline and a fluid main region on `surface`; the top bar is 56 px, on `fond`, with the logo (22 px high), the practice context button (40 px) and the account. `.etaye-page` pads 24 px with a 24 px gap (16 px padding and 20 px gap below 760 px, 12 px padding below 360 px); `.etaye-page--large` caps at 1440 px. The page header (`.etaye-entete`) holds a breadcrumb (13/20), the title (22/28) and the actions; tabs (`.etaye-onglets`) are 40 px high with a 2 px `encre` underline on the current one.
 
-**Columns:** `.etaye-cols--2` is fluid plus 360 px, `--2g` is 360 px plus fluid, `--3` is 300 px, fluid and 340 px, `--egal` is two equal columns. Below 1180 px the three-column layout becomes 280 px plus fluid with the third column full width; below 1100 px the navigation narrows to 216 px and every column stacks; below 760 px the layout is a single column, the navigation is hidden behind a menu button, tables restack into labelled rows, dialogs and drawers become full pages and the scrim disappears.
+**Columns:** `.etaye-cols--2` is fluid plus 360 px, `--2g` is 360 px plus fluid, `--3` is 300 px, fluid and 340 px, `--egal` is two equal columns. Below 1180 px the three-column layout becomes 280 px plus fluid with the third column full width; below 1100 px the navigation narrows to 216 px and every column stacks; below 760 px the layout is a single column, the navigation is hidden behind a menu button, tables restack into labelled rows, dialogs and drawers become full pages and the scrim disappears. `ext-consult.css` also reduces the padding of the report editor (`.etaye-redaction`) below 1200 px, a breakpoint outside this list (ADR-014).
 
 **Sign-in shell** (`.etaye-auth`): `papier` background, a card (`surface`, 1 px `filet-controle`, 8 px radius, 24 px padding) at most 440 px wide (640 px for the wide variant), title 26/32.
 
 **Patient shell** (`.etaye-papp`, mobile first): `papier`, body 18/28, content at most 720 px wide, tabs with 48 px targets, a 24 px logo; larger type and touch targets than the practitioner side.
 
-**Overlays:** one at a time. Dialog `min(560px, 100% − 48px)` wide, 96 px from the top, `surface`, 8 px radius, floating shadow; drawer `min(480px, 100%)` from the right; scrim `rgba(15, 16, 18, 0.48)`. Long reading or editing uses a page, not a dialog. Focus moves to the heading or first field, is trapped, and returns to the trigger.
+**Overlays:** one at a time. Dialog `min(560px, 100% − 48px)` wide, 96 px from the top, `surface`, 8 px radius, floating shadow; drawer `min(480px, 100%)` from the right; scrim `rgba(15, 16, 18, 0.48)`. Long reading or editing uses a page, not a dialog. Focus moves to the heading or first field, is trapped, and returns to the trigger. **Stacking (ADR-014):** the CSS has no `z-index`; the policy is one overlay at a time, rendered in a portal above the page, with the toast above it, so that no screen sets its own order.
 
 ## 6. Components
 
@@ -242,7 +245,7 @@ Compare a rebuilt screen and your implementation at the same viewport and theme,
 
 ## 12. Gaps and open items
 
-- **Not designed as approved Figma components:** everything in section 6.2 exists as received HTML and flat imported frames, not as a Figma component library; practitioner navigation and selectors, fields, calendar and date controls, paginated tables, source drawers, version comparison, dialogs, drawers and print blocks still need design completion with interactive, focus, disabled, read-only, loading, error, restricted and long-content variants.
+- **Not designed as approved Figma components:** everything in section 6.2 exists as received HTML and flat imported frames, not as a Figma component library; practitioner navigation and selectors, fields, calendar and date controls (decided in [ADR-013](../decisions/ADR-013-web-component-behaviour-layer.md), specification deferred, D-48), paginated tables, source drawers, version comparison, dialogs, drawers and print blocks still need design completion with interactive, focus, disabled, read-only, loading, error, restricted and long-content variants.
 - **Not drawn:** the functional motion states of the [motion study](motion-study/README.md) (save button, drop target, sign trace, overflow fade) exist only as a playable HTML prototype and still need Figma variants and review.
 - **Not verified:** Figma effect style `2:73` values, the full variable collections (REST variables need Enterprise), Safari and Android WebView rendering, real devices, measured WCAG conformance, forced-colors and print rendering of the background layer.
 - **Open decisions:** Aymen's design approval of the received screens, responsive frames for the corrected states, the clear-space rule for the logo, and any application of the background layer.
@@ -280,3 +283,21 @@ Change the sources first (Figma, then `tokens.css`, `resolved-tokens.json` or th
 7. Record the evidence in the tracker (`visual_evidence`, `exceptions`); never mark a row approved without Aymen.
 
 **Ready:** generated and checked tokens, component recipes, shells and breakpoints, the snapshot identity, this procedure. **Missing before a first screen can be built:** design approval, the development authorization, the frontend scaffolding (not authorized), a decision on how the tokens reach the React code (the proposal is to reuse `tokens.css` unchanged) and a harness that compares running-UI screenshots with the reference (the measurement tools of the [background study](background-study/README.md) show a workable method). **Verified on 2026-11-19:** a fresh rebuild reproduced all 456 state HTML files. The committed snapshot preserves the exact PDF and preview bytes for visual review.
+
+## 15. Closure of the design-system review (2026-11-20)
+
+**User decision (UD-43).** After a last review ([record](reviews/2026-11-20-design-system-review.md)) and two interactive pages built with the real tokens and CSS, Aymen answered OK to seven decisions and chose a calendar. They change no token, colour, font, logo or CSS file: the values are applied through the token generator (D-50). **They do not approve any design and do not authorize development.**
+
+| # | Decision | Recorded in |
+|---|---|---|
+| 1 | Web behaviour layer: React Aria Components with `@internationalized/date`, Étaye tokens and CSS as the only style, native HTML controls elsewhere, Base UI as fallback, Radix not retained, a calendar in the product, a spike at the first UI story | [ADR-013](../decisions/ADR-013-web-component-behaviour-layer.md), ADR-002 row, D-49 |
+| 2 | Type roles follow the mockups: 14 roles become 29, 9 values are normalised, A4 keeps its scale | [type roles](typography-closure.md), [ADR-014](../decisions/ADR-014-design-system-closure.md) point 1 |
+| 3 | Six corrections: `.etaye-touche` opacity (4.5:1 failure), `.etaye-a4` width, the 1200 px breakpoint, the stacking policy, a scrim token, `.etaye-fond-flou` | ADR-014 point 4; section 5 |
+| 4 | Web theme: system preference by default, manual override, script before first paint, `color-scheme` per theme | ADR-014 point 2 |
+| 5 | Tokens: `tokens.json` stays the source, the token bridge of story 10.2 extended into the generator (CSS output, golden-file test) with the native module at story 10.6, DTCG only if a second consumer appears | ADR-014 point 3, D-50 |
+| 6 | Native: ADR-010 confirmed with five execution precisions, no component library | ADR-010 point 7, D-51 |
+| 7 | Missing interaction specifications are deferred, not written (UD-27 is not lifted) | D-42 to D-48 |
+
+**Not retained until a screen needs them:** panel tabs (page navigation stays links with `aria-current`) and tooltips (information shown only on hover is already forbidden by EXPERIENCE.md).
+
+**For an implementation:** follow these decisions when consuming the tokens and the component CSS, and do not copy the known defects (the `.etaye-touche` opacity, the fixed A4 width, off-role text values). Until the generator exists, the added roles are valid as recorded in [type roles](typography-closure.md). Measured accessibility work remains open (D-52).
