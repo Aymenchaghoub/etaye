@@ -8,7 +8,7 @@
   "servers": [
     {
       "url": "/api/v1",
-      "description": "Future same-origin path; not a deployed API"
+      "description": "Same-origin API path used by the Web client."
     }
   ],
   "security": [
@@ -25,7 +25,11 @@
         "x-required-permissions": [
           "PUBLIC"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ClientVersion"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Database is available.",
@@ -93,7 +97,11 @@
         "x-required-permissions": [
           "PUBLIC"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ClientVersion"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful outcome; no automatic review or publication.",
@@ -1386,6 +1394,9 @@
           },
           {
             "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/ClientVersion"
           }
         ],
         "responses": {
@@ -1581,6 +1592,9 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "$ref": "#/components/parameters/ClientVersion"
           }
         ],
         "responses": {

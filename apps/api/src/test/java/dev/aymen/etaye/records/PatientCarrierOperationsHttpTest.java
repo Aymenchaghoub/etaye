@@ -343,6 +343,13 @@ public class PatientCarrierOperationsHttpTest extends AbstractPostgresTest {
         assertThat(conditional.getStatusCode()).isEqualTo(HttpStatus.NOT_MODIFIED);
         assertThat(conditional.getHeaders().getETag()).isEqualTo(etag);
         assertThat(conditional.getBody()).isNull();
+
+        var unsuitable = client().get().uri(path, practiceA, patient.recordId())
+                .header(HttpHeaders.COOKIE, sessionCookieClinicalA).accept(MediaType.TEXT_PLAIN)
+                .retrieve().onStatus(HttpStatus.NOT_ACCEPTABLE::equals, (req, res) -> {}).toEntity(Map.class);
+        assertThat(unsuitable.getStatusCode()).isEqualTo(HttpStatus.NOT_ACCEPTABLE);
+        assertThat(unsuitable.getHeaders().getContentType()).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
+        assertThat(unsuitable.getBody()).containsEntry("code", "NOT_ACCEPTABLE");
     }
 
     @Test

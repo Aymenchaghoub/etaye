@@ -863,6 +863,12 @@ export type ClientVersion = string;
 
 export type GetReadinessData = {
     body?: never;
+    headers?: {
+        /**
+         * Client kind followed by a slash and its semantic version. The current browser kind is web. This metadata grants no authority.
+         */
+        'X-Client-Version'?: string;
+    };
     path?: never;
     query?: never;
     url: '/probes/readiness';
@@ -923,6 +929,12 @@ export type GetApiMetaResponse = GetApiMetaResponses[keyof GetApiMetaResponses];
 
 export type GetCsrfTokenData = {
     body?: never;
+    headers?: {
+        /**
+         * Client kind followed by a slash and its semantic version. The current browser kind is web. This metadata grants no authority.
+         */
+        'X-Client-Version'?: string;
+    };
     path?: never;
     query?: never;
     url: '/csrf';
@@ -2021,6 +2033,10 @@ export type CreatePatientData = {
          * Scoped to account/practice/operation/body hash. Same key/body returns prior outcome; changed body 409.
          */
         'Idempotency-Key': string;
+        /**
+         * Client kind followed by a slash and its semantic version. The current browser kind is web. This metadata grants no authority.
+         */
+        'X-Client-Version'?: string;
     };
     path: {
         practiceId: string;
@@ -2161,6 +2177,10 @@ export type GetPatientRecordData = {
          * A matching quoted record ETag can produce an empty 304 after authorization.
          */
         'If-None-Match'?: string;
+        /**
+         * Client kind followed by a slash and its semantic version. The current browser kind is web. This metadata grants no authority.
+         */
+        'X-Client-Version'?: string;
     };
     path: {
         practiceId: string;

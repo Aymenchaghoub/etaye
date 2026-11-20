@@ -49,7 +49,9 @@ class BrowserCorsConfig {
         if (!("http".equals(uri.getScheme()) || "https".equals(uri.getScheme()))
                 || uri.getHost() == null || uri.getRawUserInfo() != null
                 || !uri.getRawPath().isEmpty() || uri.getRawQuery() != null || uri.getRawFragment() != null
-                || uri.getPort() == 0 || uri.getPort() > 65535) {
+                || uri.getPort() == 0 || uri.getPort() > 65535
+                || ("http".equals(uri.getScheme()) && uri.getPort() == 80)
+                || ("https".equals(uri.getScheme()) && uri.getPort() == 443)) {
             throw new IllegalArgumentException("Configure only exact HTTP or HTTPS browser origins");
         }
         return origin;

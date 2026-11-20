@@ -12,13 +12,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.context.SecurityContextHolderFilter;
+import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.session.SessionRepository;
 import org.springframework.session.jdbc.config.annotation.web.http.EnableJdbcHttpSession;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -68,7 +69,7 @@ public class SecurityConfig {
         http
             .securityMatcher("/api/v1/probes/**", "/api/v1/meta")
             .cors(Customizer.withDefaults())
-            .addFilterBefore(new RejectBearerFilter(accessDeniedHandler), SecurityContextHolderFilter.class)
+            .addFilterAfter(new RejectBearerFilter(accessDeniedHandler), CorsFilter.class)
             .addFilterBefore(new StatelessRequestFilter(), org.springframework.security.web.session.DisableEncodeUrlFilter.class)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .csrf(AbstractHttpConfigurer::disable)
@@ -118,7 +119,7 @@ public class SecurityConfig {
 
         http
             .cors(Customizer.withDefaults())
-            .addFilterBefore(new RejectBearerFilter(accessDeniedHandler), SecurityContextHolderFilter.class)
+            .addFilterAfter(new RejectBearerFilter(accessDeniedHandler), CorsFilter.class)
             .requestCache(AbstractHttpConfigurer::disable)
             .logout(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)
@@ -139,14 +140,14 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/csrf").permitAll()
                 .anyRequest().authenticated()
             )
-            .addFilterAfter(
+            .addFilterBefore(
                 new IdentityResolutionFilter(
                         identityLookupService,
                         authenticationEntryPoint,
                         problemResponseWriter,
                         sessionRepositoryProvider.getIfAvailable()
                 ),
-                SecurityContextHolderFilter.class
+                CsrfFilter.class
             );
 
         return http.build();
