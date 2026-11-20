@@ -268,7 +268,7 @@ Change the sources first (Figma, then `resolved-tokens.json`, the token source o
 | Fallback | When Figma is readable again, compare the implemented surfaces with the corrected Figma frames and record node IDs in the tracker |
 | Resumption trigger | Figma read access returns (MCP quota or REST window), or Aymen asks for the reconciliation |
 
-**What still blocks development (verified 2026-11-18):** the explicit development authorization (not given); design approval (`coverage.csv`: 76 of 76 "Not approved"; `html-reception.csv`: 76 of 76 "No approval recorded"); and the design reviews of the coverage guide (desktop, tablet, mobile, A4 and functional). Figma access is not one of the blockers.
+**What still blocks development (verified 2026-11-18):** the explicit development authorization (given story by story, UD-41 and UD-45; none for the other stories); design approval (updated 2026-11-20: the 19 CORE families were approved by Aymen as a design reference, UD-46; `coverage.csv` and `html-reception.csv` record 19 approved and 57 not approved); and the design reviews of the coverage guide (desktop, tablet, mobile, A4 and functional). Figma access is not one of the blockers.
 
 **In BMAD.** Team overrides in `_bmad/custom/` load this file, a short rule summary and the development gate into the UX, build, review, test, story and sprint-planning workflows and into the dev and UX agents (list and verification in [agent-setup.md](../agent-setup.md)). The gate is `[etaye] development_authorized` in `_bmad/custom/config.toml`, currently `false`: while it is false the build workflows are told to refuse implementation.
 

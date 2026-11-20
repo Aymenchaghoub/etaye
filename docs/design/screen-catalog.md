@@ -1,6 +1,6 @@
 # Screen and surface catalog
 
-Status: Draft / Ready for design. Updated 2026-11-02. **40 required surface families**. These are functional design specifications, not completed Figma screens. Minor variants live inside the relevant family. Existing source file: [Étaye Figma](https://www.figma.com/design/vfh4BSnbRAbaDE1q0CyssL/Etaye?node-id=0-1).
+Status: Draft / Ready for design. Updated 2026-11-02. **40 required surface families**. These are functional design specifications, not completed Figma screens. The 15 CORE screens were approved by Aymen as a design reference on 2026-11-20 (UD-46); no other screen is approved. Minor variants live inside the relevant family. Existing source file: [Étaye Figma](https://www.figma.com/design/vfh4BSnbRAbaDE1q0CyssL/Etaye?node-id=0-1).
 
 Authoritative links: [PRD](../planning-artifacts/prd/prd.md), [business rules](../planning-artifacts/business-rules.md), [access matrix](../planning-artifacts/access-matrix.md), [UX behavior](../planning-artifacts/ux/EXPERIENCE.md), [synthetic dataset](synthetic-data.md), [interactions](interaction-catalog.md), [PDF/email surfaces](pdf-email-specifications.md), [design coverage](coverage.csv).
 
