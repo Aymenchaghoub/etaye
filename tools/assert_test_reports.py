@@ -16,6 +16,7 @@ def read_surefire(directory, required_suites=()):
     totals = dict.fromkeys(fields, 0)
     seen_cases = set()
     suite_names = set()
+    unnamed_case_classes = set()
     for report in reports:
         try:
             source = report.read_text(encoding="utf-8-sig")
@@ -31,6 +32,13 @@ def read_surefire(directory, required_suites=()):
             raise ValueError(f"Malformed XML in Surefire report {report.name}") from exc
         if suite.tag != "testsuite" or any(not re.fullmatch(r"[0-9]+", suite.get(field, "")) for field in fields):
             raise ValueError(f"Invalid testsuite or counters in Surefire report {report.name}")
+        suite_name = suite.get("name")
+        if suite_name is not None:
+            if suite_name in suite_names:
+                raise ValueError(f"Duplicate Surefire suite name {suite_name!r} in {report.name}")
+            if not suite_name.strip() or report.name != f"TEST-{suite_name}.xml":
+                raise ValueError(f"Surefire suite name {suite_name!r} does not match its filename {report.name}")
+            suite_names.add(suite_name)
         counts = {field: int(suite.attrib[field]) for field in fields}
         if counts["tests"] == 0:
             raise ValueError(f"Zero tests in Surefire report {report.name}")
@@ -55,13 +63,12 @@ def read_surefire(directory, required_suites=()):
             if element.tag in {"skipped", "failure", "error"}:
                 raise ValueError(f"Found <{element.tag}> in Surefire report {report.name}")
         seen_cases.update(unique_cases)
-        # JUnit engines other than Jupiter (ArchUnit) write simple class names in testcase elements,
-        # while the suite name always holds the full class name.
-        suite_names.add(suite.get("name", ""))
+        # ArchUnit testcases carry simple class names. The named suite provides the full class name.
+        if suite_name is None:
+            unnamed_case_classes.update(classname for classname, _ in unique_cases)
         for field in fields:
             totals[field] += counts[field]
-    present = suite_names | {classname for classname, _ in seen_cases}
-    missing = sorted(set(required_suites) - present)
+    missing = sorted(set(required_suites) - suite_names - unnamed_case_classes)
     if missing:
         raise ValueError(f"Missing required Surefire suites: {', '.join(missing)}")
     return totals
@@ -104,7 +111,8 @@ def read_playwright(report, required_files=()):
     if playwright_entries(data, "errors", []):
         raise ValueError(f"Playwright report contains global errors: {report.name}")
 
-    test_keys = set()
+    test_ids_by_title = {}
+    counted_tests = {}
     suites = [(suite, ()) for suite in playwright_entries(data, "suites")]
     while suites:
         suite, parent_titles = suites.pop()
@@ -120,14 +128,18 @@ def read_playwright(report, required_files=()):
             title = spec.get("title")
             if not isinstance(title, str) or not title.strip():
                 raise ValueError("Invalid Playwright spec title")
+            spec_id = spec.get("id")
+            if "id" in spec and (not isinstance(spec_id, str) or not spec_id.strip()):
+                raise ValueError("Invalid Playwright spec ID")
             report_file = PurePosixPath(file.replace("\\", "/"))
             for test in playwright_entries(spec, "tests"):
                 project_id = test.get("projectId")
                 if not isinstance(project_id, str):
                     raise ValueError("Invalid Playwright project ID")
-                key = (report_file, (*suite_titles, title), project_id)
-                if key in test_keys:
-                    raise ValueError(f"Duplicate Playwright test in {file}: {key[1]!r} (project {project_id!r})")
+                title_key = (report_file, (*suite_titles, title), project_id)
+                if title_key in test_ids_by_title and (spec_id is None or test_ids_by_title[title_key] != spec_id):
+                    raise ValueError(f"Duplicate Playwright test in {file}: {title_key[1]!r} (project {project_id!r})")
+                test_ids_by_title[title_key] = spec_id
                 if test.get("expectedStatus") != "passed" or test.get("status") != "expected":
                     raise ValueError(
                         f"Playwright test in {file} must expect a pass and finish as expected "
@@ -136,14 +148,18 @@ def read_playwright(report, required_files=()):
                 results = playwright_entries(test, "results")
                 if not results or any(result.get("status") != "passed" for result in results):
                     raise ValueError(f"Playwright test in {file} must have only passed results and at least one result")
-                test_keys.add(key)
+                key = (spec_id, project_id) if spec_id is not None else title_key
+                evidence = (report_file, results)
+                if key in counted_tests and counted_tests[key] != evidence:
+                    raise ValueError(f"Conflicting Playwright results or files for spec {spec_id!r} (project {project_id!r})")
+                counted_tests[key] = evidence
 
-    count = len(test_keys)
+    count = len(counted_tests)
     if stats["expected"] != count or any(stats[field] for field in fields[1:]):
         summary = ", ".join(f"{field}={stats[field]}" for field in fields)
         raise ValueError(f"Playwright stats ({summary}) do not match the {count} passing tests in the results")
     file_base = playwright_file_base(data.get("config"))
-    files = {file for file, _, _ in test_keys}
+    files = {file for file, _ in counted_tests.values()}
     available_paths = {file_base / file for file in files} | {PurePosixPath(file.name) for file in files}
     required_paths = {PurePosixPath(file.replace("\\", "/")) for file in required_files}
     missing = sorted(required_paths - available_paths)

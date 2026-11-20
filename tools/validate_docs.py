@@ -99,15 +99,15 @@ def check_application_scope(root, errors):
     register = "docs/planning-artifacts/decisions-assumptions.md"
     try:
         decisions = (root / register).read_text(encoding="utf-8")
-        has_decision = re.search(
-            r"^[ \t]*\|[ \t]*UD-41[ \t]*\|[^|\n]*\bstory[ \t]+10\.1\b(?!\.\d)[^|\n]*\|",
-            decisions,
-            re.MULTILINE,
-        )
+        row = re.search(r"^[ \t]*\|[ \t]*UD-41[ \t]*\|([^|\n]*)\|", decisions, re.MULTILINE)
+        decision = row[1].casefold() if row else ""
     except (OSError, UnicodeError):
-        has_decision = False
-    if not has_decision:
-        errors.append(f"Story 10.1 authorization requires UD-41 in {register}")
+        decision = ""
+    if (not re.search(r"\b10\.1\b(?!\.\d)", decision)
+            or set(re.findall(r"\b\d{1,2}\.\d{1,2}\b", decision)) != {"10.1"}
+            or not re.search(r"\bauthorized\b", decision)
+            or re.search(r"\bnot\s+authorized\b|refus", decision)):
+        errors.append(f"Story 10.1 authorization requires UD-41 in {register} to authorize only story 10.1")
 
     apps = root / "apps"
     if apps.is_symlink() or not apps.is_dir() or {path.name for path in apps.iterdir()} != {"api", "web"}:
@@ -140,12 +140,19 @@ def check_application_scope(root, errors):
         scope["trackedBuildOutputCheck"] = "skipped: no Git index at validation root"
         return scope
     try:
-        index = subprocess.run(["git", "ls-files", "-z"], cwd=root, capture_output=True, check=True)
+        index = subprocess.run(["git", "ls-files", "-s", "-z"], cwd=root, capture_output=True, check=True)
     except (OSError, subprocess.CalledProcessError):
         scope["trackedBuildOutputCheck"] = "skipped: git ls-files unavailable"
     else:
         scope["trackedBuildOutputCheck"] = "checked with git ls-files"
-        for name in os.fsdecode(index.stdout).split("\0"):
+        for entry in os.fsdecode(index.stdout).split("\0"):
+            if not entry:
+                continue
+            metadata, name = entry.split("\t", 1)
+            mode = metadata.split(" ", 1)[0]
+            if mode == "120000" and name.startswith(("apps/api/", "apps/web/", "infra/local/")):
+                errors.append("Tracked symlink for story 10.1: " + name)
+                continue
             if build_directories.intersection(name.split("/")):
                 errors.append("Tracked build output: " + name)
                 continue

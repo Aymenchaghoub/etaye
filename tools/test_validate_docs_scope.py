@@ -1,4 +1,5 @@
 """Exercise the documentary authorization boundary and application workflow policy."""
+import os
 import subprocess
 import tempfile
 import unittest
@@ -131,10 +132,11 @@ class ApplicationScopeTests(unittest.TestCase):
         self.authorize()
         self.write(".git")
         tracked = "apps/web/dist/bundle name.js"
-        index = subprocess.CompletedProcess([], 0, f"apps/web/src/App.tsx\0{tracked}\0".encode())
+        entries = "".join(f"100644 {'0' * 40} 0\t{name}\0" for name in ("apps/web/src/App.tsx", tracked))
+        index = subprocess.CompletedProcess([], 0, entries.encode())
         with patch("validate_docs.subprocess.run", return_value=index) as run:
             scope, errors = self.check_scope()
-        run.assert_called_once_with(["git", "ls-files", "-z"], cwd=self.root, capture_output=True, check=True)
+        run.assert_called_once_with(["git", "ls-files", "-s", "-z"], cwd=self.root, capture_output=True, check=True)
         self.assertEqual(scope["trackedBuildOutputCheck"], "checked with git ls-files")
         self.assertEqual(errors, [f"Tracked build output: {tracked}"])
 
@@ -171,22 +173,46 @@ class ApplicationScopeTests(unittest.TestCase):
             if name != "apps/api/src" and not name.startswith("apps/web/package.json/"):
                 self.write(name)
         (self.root / "apps/api/src/main/resources/binary.txt").write_bytes(b"\0\xff")
-        index = subprocess.CompletedProcess([], 0, "\0".join((*allowed, *unlisted, "")).encode())
+        entries = "".join(f"100644 {'0' * 40} 0\t{name}\0" for name in (*allowed, *unlisted))
+        index = subprocess.CompletedProcess([], 0, entries.encode())
         with patch("validate_docs.subprocess.run", return_value=index):
             _, errors = self.check_scope()
         self.assertEqual(errors, [f"Unexpected tracked path for story 10.1: {name}" for name in unlisted])
+
+    def test_authorized_scope_rejects_tracked_symlinks_with_allowed_names(self):
+        self.authorize()
+        links = ("apps/api/src/main/java/dev/aymen/etaye/Link.java", "apps/web/src/Link.tsx",
+                 "infra/local/init-roles.sh")
+        for name in links:
+            path = self.root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            os.symlink(self.root / ".gitignore", path)
+
+        subprocess.run(["git", "init", "--quiet", "--template="], cwd=self.root, check=True)
+        subprocess.run(["git", "-c", "core.symlinks=true", "update-index", "--add", "--", *links],
+                       cwd=self.root, check=True)
+        # The index must still reject a link if its worktree copy has been replaced by a regular file.
+        (self.root / links[0]).unlink()
+        self.write(links[0])
+        _, errors = self.check_scope()
+        self.assertEqual(errors, [f"Tracked symlink for story 10.1: {name}" for name in links])
 
     def test_authorized_scope_requires_ud_41_even_without_git(self):
         self.authorize()
         register = "docs/planning-artifacts/decisions-assumptions.md"
         reference = "| UD-28 | Partly lifted by UD-41 for story 10.1 only. |\n"
         for decision in ("", "| UD-41 | Authorized story 10.10 | See story 10.1. |\n",
-                         "UD-41 authorizes story 10.1.\n"):
+                         "| UD-41 | Authorized story 10.1.123 |\n",
+                         "UD-41 authorizes story 10.1.\n",
+                         "| UD-41 | Development is not authorized for story 10.1 |\n",
+                         "| UD-41 | Authorized story 10.1 and 10.2 |\n",
+                         "| UD-41 | Development is authorized for story 10.1, but refused |\n",
+                         "| UD-41 | Pending decision for story 10.1 | Authorized |\n"):
             with self.subTest(decision=decision):
                 self.write(register, reference + decision)
                 scope, errors = self.check_scope()
                 self.assertIn("skipped", scope["trackedBuildOutputCheck"])
-                self.assertEqual(errors, [f"Story 10.1 authorization requires UD-41 in {register}"])
+                self.assertEqual(errors, [f"Story 10.1 authorization requires UD-41 in {register} to authorize only story 10.1"])
 
 
 @unittest.skipIf(yaml is None, "PyYAML is unavailable")

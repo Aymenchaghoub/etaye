@@ -107,6 +107,21 @@ class AssertTestReportsTests(unittest.TestCase):
         self.check_report("surefire", self.root, 1, "Missing required Surefire suites: example.Missing",
                           options=("--require-suite", "example.Suite", "--require-suite", "example.Missing"))
 
+    def test_surefire_rejects_suite_name_that_does_not_match_filename(self):
+        self.write_suite("TEST-example.Other.xml", name="example.Suite")
+        self.check_report("surefire", self.root, 1, "does not match its filename",
+                          options=("--require-suite", "example.Suite"))
+
+    def test_surefire_rejects_duplicate_named_suites(self):
+        self.write_suite("TEST-example.Suite.xml", name="example.Suite")
+        self.write_suite("TEST-example.ZCopy.xml", name="example.Suite", classname="example.ZCopy")
+        self.check_report("surefire", self.root, 1, "Duplicate Surefire suite name")
+
+    def test_surefire_named_report_cannot_credit_another_suite_via_testcase_classname(self):
+        self.write_suite("TEST-example.Other.xml", name="example.Other")
+        self.check_report("surefire", self.root, 1, "Missing required Surefire suites: example.Suite",
+                          options=("--require-suite", "example.Suite"))
+
     def test_surefire_matches_required_suite_by_suite_name_for_archunit_style_reports(self):
         # Real ArchUnit reports: the suite name is the full class name, the testcases carry the simple name.
         (self.root / "TEST-example.ArchSuite.xml").write_text(
@@ -182,6 +197,38 @@ class AssertTestReportsTests(unittest.TestCase):
         suites[0]["suites"].append({"title": "group B", "specs": [spec]})
         path = self.write_playwright(suites=suites, expected=5)
         self.check_report("playwright", path, 1, "Duplicate Playwright test", minimum=5)
+
+    def test_playwright_counts_a_spec_id_once_per_project_across_title_hierarchies(self):
+        test = {"projectId": "chromium", "expectedStatus": "passed",
+                "status": "expected", "results": [{"status": "passed"}]}
+        spec = {"id": "probe-id", "file": "stubbed-probe.spec.ts", "title": "probe", "tests": [test]}
+        suites = [
+            {"title": "group A", "specs": [dict(spec, tests=[test, dict(test, projectId="firefox")])]},
+            {"title": "group B", "specs": [spec]},
+        ]
+        self.check_report("playwright", self.write_playwright(suites=suites, expected=3), 1,
+                          "do not match the 2 passing tests")
+        self.check_report("playwright", self.write_playwright(suites=suites, expected=2), 0, "tests=2", minimum=2)
+
+    def test_playwright_rejects_conflicting_results_for_the_same_spec_id_and_project(self):
+        test = {"projectId": "chromium", "expectedStatus": "passed",
+                "status": "expected", "results": [{"status": "passed", "duration": 1}]}
+        spec = {"id": "probe-id", "file": "stubbed-probe.spec.ts", "title": "probe", "tests": [test]}
+        conflicting_test = dict(test, results=[{"status": "passed", "duration": 2}])
+        suites = [
+            {"title": "group A", "specs": [spec]},
+            {"title": "group B", "specs": [dict(spec, tests=[conflicting_test])]},
+        ]
+        self.check_report("playwright", self.write_playwright(suites=suites, expected=2), 1,
+                          "Conflicting Playwright results")
+
+    def test_playwright_rejects_different_ids_for_the_same_file_title_and_project(self):
+        test = {"projectId": "chromium", "expectedStatus": "passed",
+                "status": "expected", "results": [{"status": "passed"}]}
+        spec = {"id": "probe-id", "file": "stubbed-probe.spec.ts", "title": "probe", "tests": [test]}
+        suites = [{"title": "group", "specs": [spec, dict(spec, id="other-id")]}]
+        self.check_report("playwright", self.write_playwright(suites=suites, expected=2), 1,
+                          "Duplicate Playwright test")
 
     def test_playwright_requires_spec_title(self):
         test = {"projectId": "", "expectedStatus": "passed", "status": "expected", "results": [{"status": "passed"}]}
