@@ -559,6 +559,42 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
     }
 
     @Test
+    @DisplayName("C12 patient_record: WITH CHECK policy prevents mismatched practice_id and missing context; matching succeeds")
+    void checkDirectSqlIsolation_patientRecord_writePath() {
+        UUID directPatientA = UUID.randomUUID();
+        practiceTransaction.executeVoid(practiceAId, () -> {
+            jdbcTemplate.update("INSERT INTO patient (id, practice_id, first_name, last_name, date_of_birth) VALUES (?, ?, 'PatientRecWrite', 'A', ?)",
+                    directPatientA, practiceAId, java.sql.Date.valueOf(java.time.LocalDate.of(1982, 3, 10)));
+        });
+
+        // 1. Without context: inserting patient_record violates RLS WITH CHECK
+        UUID recordNoCtx = UUID.randomUUID();
+        assertThatThrownBy(() -> testTransactionHelper.executeVoidWithoutContext(() -> {
+            jdbcTemplate.update("INSERT INTO patient_record (id, practice_id, patient_id) VALUES (?, ?, ?)",
+                    recordNoCtx, practiceAId, directPatientA);
+        })).isInstanceOf(DataAccessException.class)
+                .getRootCause()
+                .hasMessageFindingMatch("(?i).*row-level security policy.*");
+
+        // 2. Under Practice A context: inserting row with foreign practice_id (practiceBId) violates RLS WITH CHECK
+        UUID recordForeign = UUID.randomUUID();
+        assertThatThrownBy(() -> practiceTransaction.executeVoid(practiceAId, () -> {
+            jdbcTemplate.update("INSERT INTO patient_record (id, practice_id, patient_id) VALUES (?, ?, ?)",
+                    recordForeign, practiceBId, directPatientA);
+        })).isInstanceOf(DataAccessException.class)
+                .getRootCause()
+                .hasMessageFindingMatch("(?i).*row-level security policy.*");
+
+        // 3. Under Practice A context: inserting row with matching practice_id (practiceAId) succeeds
+        UUID recordOk = UUID.randomUUID();
+        practiceTransaction.executeVoid(practiceAId, () -> {
+            int inserted = jdbcTemplate.update("INSERT INTO patient_record (id, practice_id, patient_id) VALUES (?, ?, ?)",
+                    recordOk, practiceAId, directPatientA);
+            assertThat(inserted).isEqualTo(1);
+        });
+    }
+
+    @Test
     @DisplayName("C12 idempotency_receipt: Direct SQL isolation, invisible to other practice, counted with and without context")
     void checkDirectSqlIsolation_idempotencyReceipt() {
         UUID directPatientA = UUID.randomUUID();
@@ -598,6 +634,47 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
         Integer countInA = practiceTransaction.execute(practiceAId, () ->
                 jdbcTemplate.queryForObject("SELECT count(*) FROM idempotency_receipt WHERE key_digest = ?", Integer.class, keyDigest));
         assertThat(countInA).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("C12 idempotency_receipt: WITH CHECK policy prevents mismatched practice_id and missing context; matching succeeds")
+    void checkDirectSqlIsolation_idempotencyReceipt_writePath() {
+        UUID directPatientA = UUID.randomUUID();
+        practiceTransaction.executeVoid(practiceAId, () -> {
+            jdbcTemplate.update("INSERT INTO patient (id, practice_id, first_name, last_name, date_of_birth) VALUES (?, ?, 'IdempWrite', 'A', ?)",
+                    directPatientA, practiceAId, java.sql.Date.valueOf(java.time.LocalDate.of(1985, 4, 12)));
+        });
+
+        UUID actorId = UUID.randomUUID();
+        String digestNoCtx = "digest-noctx-" + UUID.randomUUID();
+        String digestForeign = "digest-foreign-" + UUID.randomUUID();
+        String digestOk = "digest-ok-" + UUID.randomUUID();
+
+        // 1. Without context: inserting idempotency_receipt violates RLS WITH CHECK
+        assertThatThrownBy(() -> testTransactionHelper.executeVoidWithoutContext(() -> {
+            jdbcTemplate.update("INSERT INTO idempotency_receipt (practice_id, actor_id, operation, key_digest, body_hash, response_resource, outcome, expires_at) " +
+                            "VALUES (?, ?, 'createPatient', ?, 'bodyhash', ?, 'SUCCESS', CURRENT_TIMESTAMP + interval '1 day')",
+                    practiceAId, actorId, digestNoCtx, directPatientA);
+        })).isInstanceOf(DataAccessException.class)
+                .getRootCause()
+                .hasMessageFindingMatch("(?i).*row-level security policy.*");
+
+        // 2. Under Practice A context: inserting row with foreign practice_id (practiceBId) violates RLS WITH CHECK
+        assertThatThrownBy(() -> practiceTransaction.executeVoid(practiceAId, () -> {
+            jdbcTemplate.update("INSERT INTO idempotency_receipt (practice_id, actor_id, operation, key_digest, body_hash, response_resource, outcome, expires_at) " +
+                            "VALUES (?, ?, 'createPatient', ?, 'bodyhash', ?, 'SUCCESS', CURRENT_TIMESTAMP + interval '1 day')",
+                    practiceBId, actorId, digestForeign, directPatientA);
+        })).isInstanceOf(DataAccessException.class)
+                .getRootCause()
+                .hasMessageFindingMatch("(?i).*row-level security policy.*");
+
+        // 3. Under Practice A context: inserting row with matching practice_id (practiceAId) succeeds
+        practiceTransaction.executeVoid(practiceAId, () -> {
+            int inserted = jdbcTemplate.update("INSERT INTO idempotency_receipt (practice_id, actor_id, operation, key_digest, body_hash, response_resource, outcome, expires_at) " +
+                            "VALUES (?, ?, 'createPatient', ?, 'bodyhash', ?, 'SUCCESS', CURRENT_TIMESTAMP + interval '1 day')",
+                    practiceAId, actorId, digestOk, directPatientA);
+            assertThat(inserted).isEqualTo(1);
+        });
     }
 
     @Test
