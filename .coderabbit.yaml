@@ -17,13 +17,26 @@ reviews:
     - "!.claude/skills/**"
     - "!docs/design/figma/file-snapshot.json"
     - "!docs/design/figma/assets/**"
+    - "!docs/test-artifacts/story-10-1-screenshots/**"
+    - "!pnpm-lock.yaml"
+    - "!apps/api/mvnw"
+    - "!apps/api/mvnw.cmd"
+    - "!apps/api/.mvn/**"
   path_instructions:
     - path: "**"
       instructions: >-
-        Read AGENTS.md as the shared policy. The repository is planning and design only.
-        Review silent failures, edge cases and acceptance-criteria compliance with concrete
-        file references. Do not recommend starting an implementation story or replacing
+        Read AGENTS.md as the shared policy. The repository is mostly planning and design;
+        story 10.1 (apps/api, apps/web, infra/local) is the only authorized implementation
+        (UD-41). Review silent failures, edge cases and acceptance-criteria compliance with
+        concrete file references. Do not recommend implementing any other story or replacing
         the existing identity. A successful document check is not an application test.
+    - path: "apps/api/**"
+      instructions: >-
+        Check tenant isolation first: every query and write must run in a practice-scoped
+        transaction under row-level security, and a route practiceId is never authorization.
+        Look for swallowed exceptions, leaked context across pooled connections, idempotency
+        races, error responses or logs that expose identifiers or SQL, and tests that would
+        still pass on a broken implementation.
     - path: "docs/**"
       instructions: >-
         Follow the authoritative definitions linked from docs/README.md. Check consistency
