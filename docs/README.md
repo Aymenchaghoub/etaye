@@ -33,6 +33,8 @@ Status: Planning package ready for complete design work. Documents are reviewed 
 | Earlier local editable Figma import | [Plugin/export guide](../design/figma-local-import/README.md); Windows queue execution and closure recorded separately below |
 | Isolated native MCP import test | [2026-11-17 pilot](design/reviews/2026-11-17-figma-mcp-import.md); one editable S-06/nora state, fidelity reconciliation pending |
 | Windows Figma Desktop import | [Native run](design/reviews/2026-11-17-windows-native-run.md), [closure](design/reviews/2026-11-18-figma-native-closure.md), [queue plugin](../design/figma-windows-import/README.md); 456 desktop states imported; 52 targeted states corrected/exported; broader review and Aymen approval pending |
+| Background layer study (paper and blueprint) | [Background study](design/background-study/README.md), [calm-zones report](design/reviews/2026-11-17-background-calm-zones.md); Proposal: working direction accepted by Aymen, applied to the offline copies of S-01, S-02 and S-25, not a design approval |
+| Functional motion for state feedback | [Motion study](design/motion-study/README.md), [ADR-012](decisions/ADR-012-functional-motion.md); Proposal validated by Aymen on 2026-11-20 (UD-42), playable prototype; Figma variants not drawn |
 | End-to-end mapping | [Traceability](traceability.md), [review](review-report.md), [documentary validation](test-artifacts/document-validation.json) |
 | Agent installation and policy | [Setup/troubleshooting](agent-setup.md), [workflow execution record](workflow-record.md), [AGENTS](../AGENTS.md), [CLAUDE](../CLAUDE.md) |
 
