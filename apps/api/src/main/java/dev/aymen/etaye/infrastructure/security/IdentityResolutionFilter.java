@@ -82,8 +82,40 @@ public class IdentityResolutionFilter extends OncePerRequestFilter {
                 Optional<AuthenticatedAccount> resolved = identityLookupService.resolveAccountAndMemberships(accountId);
 
                 if (resolved.isEmpty() || !resolved.get().account().isActive()) {
-                    // Account suspended or revoked: delete persisted session, clear context, return 401
                     HttpSession session = request.getSession(false);
+
+                    if (isCsrfEndpoint(request)) {
+                        if (session != null) {
+                            String sessionId = session.getId();
+                            try {
+                                session.invalidate();
+                                if (sessionRepository != null) {
+                                    sessionRepository.deleteById(sessionId);
+                                }
+                            } catch (Exception ex) {
+                                log.error("Failed to delete revoked session: class={}, code={}",
+                                        ex.getClass().getName(), "SESSION_DELETION_FAILED");
+                                String correlationId = CorrelationIdFilter.getCorrelationId(request);
+                                ApiProblem problem = ApiProblem.of(
+                                        HttpStatus.SERVICE_UNAVAILABLE.value(),
+                                        "Service Unavailable",
+                                        "SERVICE_UNAVAILABLE",
+                                        "Service temporarily unavailable",
+                                        correlationId
+                                );
+                                boolean written = problemResponseWriter.writeProblem(response, problem);
+                                if (!written) {
+                                    rethrow(ex);
+                                }
+                                return;
+                            }
+                        }
+                        SecurityContextHolder.clearContext();
+                        filterChain.doFilter(request, response);
+                        return;
+                    }
+
+                    // Every other path keeps its 401
                     if (session != null) {
                         String sessionId = session.getId();
                         try {
@@ -102,10 +134,6 @@ public class IdentityResolutionFilter extends OncePerRequestFilter {
                         }
                     }
                     SecurityContextHolder.clearContext();
-                    if (isCsrfEndpoint(request)) {
-                        filterChain.doFilter(request, response);
-                        return;
-                    }
                     authenticationEntryPoint.commence(request, response,
                             new AuthenticationCredentialsNotFoundException("Account is inactive or does not exist"));
                     return;

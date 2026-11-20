@@ -178,6 +178,24 @@ public abstract class AbstractPostgresTest {
         }
     }
 
+    protected static void updateAccountStateAsOwner(UUID accountId, String newState) {
+        try (Connection conn = DriverManager.getConnection(
+                POSTGRES_CONTAINER.getJdbcUrl(),
+                OWNER_USER,
+                OWNER_PASSWORD);
+             PreparedStatement ps = conn.prepareStatement(
+                     "UPDATE account SET state = ? WHERE id = ?")) {
+            ps.setString(1, newState);
+            ps.setObject(2, accountId);
+            int updated = ps.executeUpdate();
+            if (updated == 0) {
+                throw new IllegalStateException("No account row updated for account " + accountId);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update account state as owner", e);
+        }
+    }
+
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
         // HTTP application datasource connects strictly under the non-owner runtime role
