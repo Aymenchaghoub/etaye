@@ -100,10 +100,7 @@ Executed on 2026-11-19: a service importing a web class turned `servicesNeverDep
 ## 5. Playwright Real Stack Smoke Test Evidence
 
 ### 5.1 Component Startup Order
-1. **PostgreSQL 18**: Start the local Compose database with passwords generated per run.
-2. **Flyway Migration (as owner)**: Run the migrations using the owner role for this run.
-3. **Backend API (as runtime role)**: Start the API with the runtime database role for this run.
-4. **Frontend Web**: From `apps/web`, run `pnpm dev --port 5173`.
+The exact commands, with the Flyway call, the runtime and identity variables and the generated passwords, are in section 9 of the [implementation record](../implementation-artifacts/story-10-1-implementation-record.md). Order: PostgreSQL 18 through `infra/local/docker-compose.yml` (the init script creates the three roles), Flyway as `etaye_owner`, the API as `etaye_runtime` with the identity password in `ETAYE_IDENTITY_DATASOURCE_PASSWORD`, then the web app (`pnpm dev --port 5173` in `apps/web`).
 
 ### 5.2 Test Execution Output
 From `apps/web`, `pnpm test:smoke` runs the Playwright suite with a stubbed readiness probe. Its results cover browser behavior for the supplied probe responses. Record real-stack evidence with the separate outage run.
