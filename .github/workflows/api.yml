@@ -1,11 +1,10 @@
 name: API
 
 on:
+  # No path filter on pull requests: "API verify" is a required check (D-40), and a required check that
+  # never starts blocks every documentation-only pull request. The job always runs and reports; its
+  # heavy steps run only when a relevant path changed.
   pull_request:
-    paths:
-      - 'apps/api/**'
-      - 'tools/assert_test_reports.py'
-      - '.github/workflows/api.yml'
   push:
     branches: [main]
     paths:
@@ -22,21 +21,46 @@ concurrency:
 
 jobs:
   verify:
+    name: API verify
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
+          # The pull request merge commit and its first parent (the base tip) are enough to list the changed files.
+          fetch-depth: 2
+      - name: Detect relevant changes
+        id: changes
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          # Fail closed: anything unexpected runs the full verification.
+          relevant=true
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            if changed=$(git diff --name-only HEAD^1 HEAD); then
+              printf 'Changed files:\n%s\n' "$changed"
+              if ! printf '%s\n' "$changed" | grep -Eq '^(apps/api/|tools/assert_test_reports\.py$|\.github/workflows/api\.yml$)'; then
+                relevant=false
+              fi
+            else
+              echo 'Could not list the changed files; running the full verification.'
+            fi
+          fi
+          echo "relevant=$relevant" >> "$GITHUB_OUTPUT"
+          echo "Full API verification needed: $relevant"
+      - if: steps.changes.outputs.relevant == 'true'
+        uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
         with:
           distribution: temurin
           java-version: '25'
           cache: maven
       - name: Verify API with Testcontainers
+        if: steps.changes.outputs.relevant == 'true'
         working-directory: apps/api
         run: ./mvnw -B -ntp verify
       - name: Verify Surefire test counts
+        if: steps.changes.outputs.relevant == 'true'
         # Raise the minimum whenever the suite grows.
         run: >-
           python3 tools/assert_test_reports.py surefire apps/api/target/surefire-reports --min-tests 117
@@ -57,7 +81,7 @@ jobs:
           --require-suite dev.aymen.etaye.infrastructure.idempotency.IdempotencyServiceTest
           --require-suite dev.aymen.etaye.security.CsrfRevocationFailureTest
       - name: Upload Surefire reports
-        if: failure()
+        if: failure() && steps.changes.outputs.relevant == 'true'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: api-surefire-reports
