@@ -2,11 +2,11 @@
 <!-- Verified 2026-11-02 against bootstrap 2dba30c plus reviewed planning working tree. Shared policy authored under Aymen's explicit initial mission. Refresh against actual Git history and current planning artifacts. -->
 # Étaye shared agent policy
 
-Étaye supports consultation preparation, evidence inspection and clinician-reviewed documentation for isolated multi-practitioner practices. Spring Boot, React TypeScript and PostgreSQL are user decisions; the current repository is planning and design only. Start from docs/README.md and docs/continuation.md; architecture/data/API documents describe a proposed future application.
+Étaye supports consultation preparation, evidence inspection and clinician-reviewed documentation for isolated multi-practitioner practices. Start from docs/README.md and docs/continuation.md for the current Spring Boot, React TypeScript and PostgreSQL scope.
 
 ## Policy
 
-- Do not scaffold, implement, migrate, deploy or activate the application pipeline before complete required design review and Aymen's explicit development authorization. Documentation/design completion does not authorize development; keep stories in planning/backlog. Authorization is per story: `development_authorized` stays false in `_bmad/custom/config.toml`, a story may be implemented only if it is listed in `[etaye] authorized_stories` and its scope and named exceptions are in the decision register (UD-41, UD-45); a story that is not listed is not authorized.
+- Implement only after the required design review and Aymen's written story authorization. Check `[etaye] authorized_stories` in `_bmad/custom/config.toml` and verify the scope and exceptions in the decision register. Leave the global `development_authorized` flag false.
 - Speak French with Aymen. Write repository documents, requirements, ADRs, stories, reports and handoffs in English. Use English technical identifiers/comments and Conventional Commits/PR text. Preserve Étaye and existing French interface copy; English demo language remains a product decision.
 - User decisions govern scope. docs/planning-artifacts/business-rules.md owns domain behavior; prd/prd.md owns requirements; ADRs own technical choices; verified Figma properties own existing visual values. Surface conflicts explicitly; a newer file or previous AI answer is not automatic authority. Distinguish User decision, Verified observation, Proposal, [ASSUMPTION] and To verify.
 - Legacy source is read-only reference; inspect its actual current commit when needed. Never copy professional reference content, infrastructure, URLs, credentials or business rules into Étaye. Use GitHub, not organizational GitLab procedures.
@@ -23,7 +23,7 @@
 ## Running and verifying
 
 - Before each BMAD workflow, resolve effective core and module config with `uv run --no-cache _bmad/scripts/resolve_config.py --project-root "$PWD" --key core` and `--key modules.bmm`; also run the workflow's resolve_customization.py invocation. Respect team/personal override layers; do not rely only on generated YAML/defaults. Paths containing {project-root} expand once.
-- Node20.12+, Python3.10+ and uv are BMAD prerequisites; current verified installation is in docs/agent-setup.md. Stories 10.1 (UD-41) and 10.2 (UD-45) are the only authorized stories; story 10.1 created `apps/api`, `apps/web` and `infra/local`; the commands below were executed on 2026-11-19 and their results are in docs/implementation-artifacts/story-10-1-implementation-record.md. Any other command remains planned until actually executed.
+- Node20.12+, Python3.10+ and uv are BMAD prerequisites. See docs/agent-setup.md for the installed tools and docs/implementation-artifacts/ for executed verification.
   - API (Java 25, Maven wrapper; Docker is required because tests use Testcontainers): `cd apps/api && ./mvnw -B -ntp verify`.
   - Web (Node 26, pnpm 12.21.0 through Corepack, which Node 26 no longer bundles: `npm install --global corepack@0.36.0` once): `corepack pnpm install --frozen-lockfile`, then in `apps/web` `corepack pnpm exec tsc -b`, `corepack pnpm build` and `corepack pnpm test:smoke` (stubbed probe). The real outage spec `ETAYE_E2E_DB_CONTAINER=<compose container> corepack pnpm test:e2e-real` needs the real stack and stops and pauses its database.
   - Local database: `infra/local/docker-compose.yml` needs the four generated passwords documented in the implementation record; `infra/local/verify-init-roles.sh` exercises the provisioning script in throwaway containers.

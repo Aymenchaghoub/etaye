@@ -58,7 +58,9 @@ def check_application_scope(root, errors):
         (): "planning-only",
         ("10.1",): "story-10.1",
         ("10.1", "10.2"): "stories-10.1-10.2",
+        ("10.1", "10.2", "1.2"): "stories-10.1-10.2-1.2",
     }
+    decision_ids = {"10.1": "UD-41", "10.2": "UD-45", "1.2": "UD-48"}
     scope = {"mode": "planning-only", "authorizedStories": []}
     try:
         config = tomllib.loads((root / "_bmad/custom/config.toml").read_text(encoding="utf-8"))
@@ -73,21 +75,23 @@ def check_application_scope(root, errors):
         if not isinstance(stories, list) or any(not isinstance(story, str) for story in stories):
             raise ValueError("[etaye] authorized_stories must be a list of story IDs")
         story_ids = set(stories)
-        if story_ids - {"10.1", "10.2"}:
+        if story_ids - decision_ids.keys():
             raise ValueError("unknown authorized story in [etaye] authorized_stories")
         if len(story_ids) != len(stories):
             raise ValueError("[etaye] authorized_stories contains duplicate story IDs")
         mode = modes.get(tuple(stories))
         if mode is None:
-            raise ValueError('[etaye] authorized_stories must be [], ["10.1"] or ["10.1", "10.2"]')
+            raise ValueError('[etaye] authorized_stories must be [], ["10.1"], ["10.1", "10.2"] or ["10.1", "10.2", "1.2"]')
         scope = {"mode": mode, "authorizedStories": stories}
     except (OSError, ValueError) as exc:
         errors.append(f"Invalid authorization in _bmad/custom/config.toml: {exc}")
         scope["mode"] = "invalid-authorization"
 
-    combined = scope["mode"] == "stories-10.1-10.2"
-    authorized = scope["mode"] == "story-10.1" or combined
-    scope_label = "stories 10.1 and 10.2" if combined else "story 10.1"
+    authorized_stories = scope["authorizedStories"]
+    authorized = bool(authorized_stories)
+    scope_label = "story 10.1"
+    if len(authorized_stories) > 1:
+        scope_label = f"stories {', '.join(authorized_stories[:-1])} and {authorized_stories[-1]}"
     workflows = {"documentation.yml", "codeql.yml", "architecture-pages.yml"}
     forbidden = ("pom.xml", "src", "compose.yaml", "docker-compose.yml")
     if authorized:
@@ -122,10 +126,8 @@ def check_application_scope(root, errors):
         decisions,
         flags=re.MULTILINE | re.DOTALL,
     )
-    required_decisions = [("10.1", "UD-41")]
-    if combined:
-        required_decisions.append(("10.2", "UD-45"))
-    for story, decision_id in required_decisions:
+    for story in authorized_stories:
+        decision_id = decision_ids[story]
         rows = re.findall(rf"^[ \t]*\|[ \t]*{decision_id}[ \t]*\|(?:([^|\n]*)\|)?", decisions, re.MULTILINE)
         decision = rows[0].casefold() if len(rows) == 1 else ""
         if (not re.search(rf"\bauthorized for \*{{0,2}}story {re.escape(story)} only\b\*{{0,2}}", decision)
@@ -186,7 +188,7 @@ def check_application_scope(root, errors):
                 continue
             if not application_path:
                 continue
-            if combined and STORY_10_2_TRACKED_PATH.fullmatch(name):
+            if "10.2" in authorized_stories and STORY_10_2_TRACKED_PATH.fullmatch(name):
                 continue
             match = STORY_10_1_TRACKED_PATH.fullmatch(name)
             if not match or (match["resource"] and not is_story_resource(root / name)):

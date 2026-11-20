@@ -2,11 +2,13 @@
 
 Updated: 2026-11-20. Owner: Aymen Chaghoub.
 
-## Story 1.2 design approval with one revision pending — 2026-11-20
+## Story 1.2 design approved and technical plan drafted — 2026-11-20
 
-**Phase.** Aymen approved S-38 with the neutral background, I-22 and the S-04 recovery variants except the invalid password state. He requested a color for the error summary. The revised preview uses the existing attention banner colors and preserves the link to the invalid field. Chromium rendered both themes from desktop through 320 CSS px and verified the text contrast. [Design review record](design/reviews/2026-11-20-story-1-2-review.md)
+**Phase.** Aymen approved S-38 with the neutral background, I-22 and S-04 with the revised amber error summary. S-02 carries its prior approval under UD-46. UD-48 is encoded in `[etaye] authorized_stories`, and global authorization stays false. [Design review record](design/reviews/2026-11-20-story-1-2-review.md)
 
-**Next action.** Obtain approval of the revised S-04 state. Then complete the design gate, encode the written authorization (UD-48) in the per-story configuration and continue implementation preparation.
+**Actual verification.** The authorization validator accepts the new scope only with UD-48, and all 95 tooling tests passed. No application code changed. [Draft implementation spec](implementation-artifacts/spec-1-2-sign-in-recovery-expiry.md)
+
+**Next action.** Resolve the manual recovery demonstration boundary before implementation. Story 8.3 owns the branded recovery email. The open choice is automated capture in the real-stack tests or a local-only inbox that Aymen can use during this story.
 
 ## Story 10.2 merged and story 1.2 design review prepared — 2026-11-20
 

@@ -1,11 +1,11 @@
 # Story 1.2 design review
 
-On 2026-11-20, Aymen approved the story 1.2 gallery with one requested change. The error summary in the password reset validation state needs a colored treatment consistent with other Étaye pages. [Story 1.2](../../planning-artifacts/epics/epic-1.md#story-12-sign-in-recover-and-expire-safely)
+On 2026-11-20, Aymen approved the story 1.2 gallery after requesting a colored error summary in the password reset validation state. He accepted the revised amber preview with “parfait”. [Story 1.2](../../planning-artifacts/epics/epic-1.md#story-12-sign-in-recover-and-expire-safely)
 
 | Surface | Decision |
 |---|---|
 | S-02 sign-in | Approved with the CORE families under UD-46. |
-| S-04 access recovery | Approved as shown except for `nouveau-erreur`. The revised state awaits approval. |
+| S-04 access recovery | Approved with the revised amber `nouveau-erreur` error summary. |
 | S-38 expired session and return | Approved with a neutral background. Remove the protected content from the rendered page when the session expires. |
 | I-22 session expiration | Approved as shown. |
 | M-03 recovery email | Shown for journey context. Its delivery belongs to story 8.3. |
