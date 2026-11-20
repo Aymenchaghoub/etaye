@@ -1,6 +1,6 @@
 # Story 10.1 — implementation record
 
-Status: implemented on branch `feat/10.1-walking-skeleton` and verified locally; not merged, never run on GitHub Actions. Date: 2026-11-19. Last code commit verified: `c6003e8` for the API suite and the real stack, plus `a783a89` for the report guard (base `0fc825f`). Authorization: UD-41, story 10.1 only, a named exception to the CORE design gate because the story has no screen. This record claims no clinical validation, certification or regulatory compliance; every person and value in the code, tests and screenshots is synthetic.
+Status: implemented on branch `feat/10.1-walking-skeleton` (PR #33), verified locally and green on GitHub Actions; not merged. Date: 2026-11-19. Last code commit verified: `c6003e8` for the API suite and the real stack, plus `a783a89` for the report guard (base `0fc825f`). Authorization: UD-41, story 10.1 only, a named exception to the CORE design gate because the story has no screen. This record claims no clinical validation, certification or regulatory compliance; every person and value in the code, tests and screenshots is synthetic.
 
 ## 1. Who did what
 
@@ -29,7 +29,7 @@ The context packet ([story-10-1-context-packet.md](story-10-1-context-packet.md)
 
 ## 4. Verification of the behavior checks (packet section 6)
 
-All tests run on a real PostgreSQL 18 (Testcontainers) through real HTTP. Total at `c6003e8`: 102 tests, 0 failures, 0 skipped (my own run; the per-class counts printed by the code agent were repeatedly wrong and are not used).
+All tests run on a real PostgreSQL 18 (Testcontainers) through real HTTP. Total at `79cfe7a`: 117 tests, 0 failures, 0 skipped (my own run; the per-class counts printed by the code agent were repeatedly wrong and are not used).
 
 | Check | Proof |
 |---|---|
@@ -51,11 +51,12 @@ All tests run on a real PostgreSQL 18 (Testcontainers) through real HTTP. Total 
 
 | Command | Result |
 |---|---|
-| `cd apps/api && ./mvnw -B -ntp verify` (clean worktree and the clone at `c6003e8`) | 102 tests, BUILD SUCCESS. |
+| `cd apps/api && ./mvnw -B -ntp verify` (the clone at `79cfe7a`; 102 tests at `c6003e8`, where the real stack below was run) | 117 tests, BUILD SUCCESS. |
 | `corepack pnpm install --frozen-lockfile`, `corepack pnpm exec tsc -b`, `corepack pnpm build`, `corepack pnpm test:smoke` in `apps/web` | Pass; 9 smoke tests. |
 | Real stack: compose PostgreSQL 18 with the real init script, Flyway as owner, API jar as runtime role, Vite dev server, `ETAYE_E2E_DB_CONTAINER=etaye-local-postgres corepack pnpm test:e2e-real` | 1 passed (9.3 s) on `c6003e8`, after the fixes below. |
-| `infra/local/verify-init-roles.sh` | 4 PASS: attributes and schema owner, reserved administrator name refused, password with special characters accepted, compose keeps the administrator name fixed and the port on the loopback even with an override. |
-| `python3 -m unittest discover -s tools -p 'test_*.py'` | 69 tests OK. |
+| `infra/local/verify-init-roles.sh` | 5 PASS: attributes and schema owner, reserved administrator name refused, password with special characters accepted, compose keeps the administrator name fixed and the port on the loopback even with an override, and the health check goes unhealthy for a single privileged attribute or an inherited membership and healthy again when it is removed. |
+| `python3 -m unittest discover -s tools -p 'test_*.py'` | 79 tests OK. |
+| GitHub Actions on PR #33 | First run: `web.yml` green, `api.yml` red (PostgreSQL closes connections with SQLSTATE 57P01 when it stops, the classifier no longer recognised it, and the exception became a 401 at the error dispatch; fixed with unit tests). Next runs: Planning package checks, Analyze tooling, CodeQL, API (117 tests) and Web all green. The web job is slow on some runners because of the Chromium install (9 min 20 s once), so its timeout is 25 minutes. |
 | The exact commands of `api.yml` and `web.yml` replayed on real reports | Surefire guard `PASS surefire: tests=102` with the 14 required suites; Playwright JSON guard `PASS playwright: tests=9` with the required spec file. The first replay on real Surefire reports failed (see below) and was fixed. |
 | `python3 tools/validate_docs.py` | `ok: true`, scope mode `story-10.1`. Documentary check only. |
 | `git diff --check 0fc825f..HEAD` | Silent. |
@@ -98,8 +99,9 @@ Effect on acceptance: AT-038-A is met for the membership path; the "portal link"
 
 ## 8. Not verified, and limits
 
-- The `api.yml` and `web.yml` workflows have never run on GitHub; their required suite names and minimum counts match the local runs only. Making them required checks is Aymen's decision (D-40).
-- Gitleaks, CodeQL and the existing documentation checks run only when the pull request is opened.
+- `api.yml` and `web.yml` ran on GitHub for the first time on 2026-11-20 and are green after one fix; they stay informational. Making them required checks is Aymen's decision (D-40).
+- No test pins Spring Session's own transaction: re-adding `withoutTransaction()` (a change that would make a session and its attributes non-atomic) does not turn any test red.
+- CodeQL and the documentation checks passed on the pull request; Gitleaks ran as part of the documentation job.
 - No Windows or macOS run. No load, soak or memory measurement (story 10.3).
 - HawkScan was not run: no account, key or paid plan exists, and D-33 keeps it deferred.
 - Expo alignment: React 19.3.1 matches the peer range recorded in ADR-010 from the official documentation; `apps/mobile` does not exist, so nothing was built against it.
