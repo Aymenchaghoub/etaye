@@ -8,7 +8,7 @@ Updated: 2026-11-20. Owner: Aymen Chaghoub.
 
 **Actual verification.** The API suite passed 143 tests with PostgreSQL Testcontainers. The Web passed 13 Chromium tests, including two retained axe scans, and the real Spring/React/PostgreSQL stop/start/pause test passed after the review fixes. Six opened captures matched the 10.1 smoke page byte for byte at desktop, tablet and phone widths. The compiler, token golden check, 94 tooling tests and documentary validator passed. The five required GitHub checks passed on the implementation revision and the exact-origin correction. See PR #44 for the current head checks.
 
-**Review and next action.** The single Zcode review reported in all three lenses. Its low and informational findings were addressed with the dependency graph, version validation, CORS, response-contract and test corrections listed in the implementation record. The draft protects the single-review workflow from the repository’s automatic review trigger. Review PR #44 for integration when requested.
+**Review and next action.** The local Zcode review covered all three lenses. Its low and informational findings were addressed with the dependency graph, version validation, CORS, response-contract and test corrections listed in the implementation record. Aymen manually requested CodeRabbit on draft PR #44 and accepted the smoke-page captures. He authorized merging once the review findings are resolved and the required checks are green. GitHub showed CodeRabbit in progress on `9294bc808dbf869db64de3ec69d048e384b5018f` when this note was updated. The [delivery rules](operations/delivery-rules.md) record his decision to request a manual CodeRabbit review on every implementation story PR.
 
 ## Story 10.2 phase 0 prepared — 2026-11-20
 

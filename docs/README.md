@@ -1,6 +1,6 @@
 # Documentation index
 
-Status: Planning package ready for complete design work. Documents are reviewed for planning consistency, not user-approved designs or implemented features. The [review report](review-report.md) records checks and limits. Aymen's explicit development authorization is still required after complete design review.
+The planning, design and implementation records cover different stages of Étaye. Story 10.1 provides the runnable platform foundation. Story 10.2 adds the generated client and token bridge. See [implementation records](implementation-artifacts/README.md) for the verified scope and [design coverage](design/coverage.csv) for approved surfaces. Development authorization is granted per story.
 
 | Authority / purpose | Artifact |
 |---|---|
