@@ -2,6 +2,8 @@
 
 Status as of 2026-11-21: phase-0 preparation **arbitrated by Aymen the same day (UD-56)** — the SAMPLED design path and the packet choices A1/B1/C1/D2/E1/F1/G1 are user decisions, and development is authorized for this story only, encoded in `_bmad/custom/config.toml` (`authorized_stories` gains `"9.1"`; `development_authorized` stays false). The reviewed contract commit precedes any application change (10.2/1.1/1.3 precedent) and the installed BMAD readiness check still precedes implementation. A packet does not grant development authorization. Verified baseline: local `main` at `997ecade08e979746fb446cf4752c5cdb8fb2ef2` (clean tree before this preparation), three documentation commits ahead of `origin/main` (`dced4f7`). [Delivery rules](../operations/delivery-rules.md)
 
+The [implementation record](story-9-1-implementation-record.md) records the subsequent reference approvals, runtime decisions and executed evidence.
+
 ## 1. Objective and gates
 
 A public demo visitor chooses a named fictional actor and practice, sees the demo limits before entry, and follows a bounded journey; an authorized operator reset restores the known fixture version and every active session receives the reset/version invalidation notice. No real data can be submitted and no unbounded paid provider call can be triggered from the public scenario.

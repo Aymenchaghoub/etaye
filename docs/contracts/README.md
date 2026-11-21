@@ -4,7 +4,7 @@ Status: Versioned contract with implemented and planned operations. `openapi.yam
 
 ## Runtime coverage
 
-Story 10.1 serves `getReadiness`, `getCsrfToken`, `createPatient` and `getPatientRecord`. Story 10.2 adds `getApiMeta`. Story 1.2 serves `signIn`, `getSession`, `signOut`, `requestRecovery` and `completeRecovery`. Story 1.1 adds `inspectInvitation` and `acceptInvitation`. Remaining operations describe planned behavior. Readiness returns JSON `UP` on 200 and `DOWN` on 503 without opening a session. The versions endpoint is public and stateless. The Web SDK sends `X-Client-Version: web/<semantic-version>` using its package version. This is compatibility metadata. The 426 enforcement belongs to story 10.4.
+Story 10.1 serves `getReadiness`, `getCsrfToken`, `createPatient` and `getPatientRecord`. Story 10.2 adds `getApiMeta`. Story 1.2 serves `signIn`, `getSession`, `signOut`, `requestRecovery` and `completeRecovery`. Story 1.1 adds `inspectInvitation` and `acceptInvitation`. The local story 9.1 package serves `listDemoScenarios` and `resetSyntheticDemo` and supplies the demo metadata. Remaining operations describe planned behavior. Readiness returns JSON `UP` on 200 and `DOWN` on 503 without opening a session. The versions endpoint is public and stateless. The Web SDK sends `X-Client-Version: web/<semantic-version>` using its package version. This is compatibility metadata. The 426 enforcement belongs to story 10.4.
 
 ## Web sign-in and recovery
 
@@ -39,7 +39,7 @@ Refusals: an expired, revoked or already-used invitation answers `422 INVITATION
 Story 9.1 specifies these operations for the loopback-only synthetic demo package (UD-56). `PUBLIC_SYNTHETIC` and `OPERATOR_DEMO_RESET` are policy predicates. The latter requires the current seeded operator identity, which has no clinical grant. The ordinary application keeps its existing stateless metadata and exposes no demo catalogue or reset.
 
 - `listDemoScenarios` returns the fixed Nora, Claire and Mila journeys in that order, paginated by an opaque cursor. It discloses the fictional actor, role, practice, journey, limits and published synthetic sign-in identifier before entry. Scenario selection supplies presentation context to sign-in. The regular session and current access checks govern entry. The local demo README publishes the shared synthetic password.
-- The administration card describes the delivered boundary: « Ouvrir l’espace administratif du cabinet et constater que les dossiers cliniques restent réservés aux personnes habilitées. » The catalogue advertises only the journeys available in this slice.
+- The administration card describes the delivered boundary: « Ouvrir l’espace administratif du cabinet et constater que les dossiers cliniques restent réservés aux personnes habilitées. » The catalogue advertises only the journeys available in this slice. The live package supplies all six disclosure fields. The planning schema keeps the additions optional for client compatibility.
 - `resetSyntheticDemo` requires an authenticated operator, valid CSRF, a nonblank reason and an idempotency key. A successful reset atomically restores the supported fixture rows and revokes open sessions, including the initiating session. The operator may sign in again to replay the same key and reason for the original acknowledgement. Reusing that key with a different reason returns `409 IDEMPOTENCY_CONFLICT`. A concurrent reset returns `409 DEMO_RESET_IN_PROGRESS`, and a new reset inside the operator cooldown returns `429 RATE_LIMITED` with `Retry-After`. An invalid input or database failure cannot advance the generation.
 - The no-store `getApiMeta` read supplies `demoDatasetVersion` and `demoResetGeneration` together in demo mode. The generation starts at 1 and advances once per committed reset, including a restore of the same fixture version. The client combines the changed marker with the existing session-expiry path. A busy fixture or database failure can return `503`. The `202` response remains a correlation acknowledgement and the marker is the observable completion evidence.
 
@@ -63,7 +63,7 @@ Error responses are declared per operation, never copied onto all of them. A GET
 | SLOT_CONFLICT | 409 | The practitioner is already booked on an overlapping interval |
 | PATIENT_OVERLAP | 409 | The patient record already has an overlapping active appointment (UD-23) |
 | IDEMPOTENCY_CONFLICT | 409 | Same idempotency key with a different body |
-| DEMO_RESET_IN_PROGRESS | 409 | Another synthetic fixture reset is in progress |
+| DEMO_RESET_IN_PROGRESS | 409 or 503 | A concurrent reset is in progress or a fixture request arrived during the reset |
 | LAST_ADMINISTRATOR | 409 | The change would remove the last active practice administrator |
 | STALE_VERSION | 412 | The `If-Match` version is not the current one |
 | PRECONDITION_REQUIRED | 428 | A required `If-Match` header is missing |

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="fr" data-theme="clair">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Étaye · Validation de la story 9.1</title>
+  <link rel="stylesheet" href="../../../../design/offline-reference/site/tokens/tokens.css">
+  <link rel="stylesheet" href="../../../../design/offline-reference/site/css/etaye.css">
+  <style>
+    body { margin: 0; background: var(--fond); color: var(--encre); }
+    main { max-width: 1120px; margin-inline: auto; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: var(--espace-3); flex-wrap: wrap; }
+    header img { height: 28px; }
+    .preuve { margin: 0; padding: var(--espace-4); border: var(--trait-filet) solid var(--filet); background: var(--surface); }
+    .preuve img, .preuve video { width: 100%; display: block; }
+    .actions { display: flex; flex-wrap: wrap; gap: var(--espace-3); }
+    textarea { width: 100%; min-height: 64px; font: inherit; }
+  </style>
+</head>
+<body class="etaye-root">
+<main class="etaye-page">
+  <header>
+    <div>
+      <img src="../../../../design/offline-reference/site/logos/etaye-logo.svg" class="etaye-logo-c" alt="Étaye">
+      <img src="../../../../design/offline-reference/site/logos/etaye-logo-sombre.svg" class="etaye-logo-s" alt="Étaye">
+    </div>
+    <button type="button" id="theme" class="etaye-bouton etaye-bouton--secondaire" aria-pressed="false">Thème sombre</button>
+  </header>
+  <section aria-labelledby="titre" class="etaye-pile">
+    <h1 id="titre">Validation de la démonstration en fonctionnement</h1>
+    <p>Les comparaisons montrent la référence approuvée à gauche et l’application exécutée à droite. Sur mobile, les actions « Choisir » se placent sous leur scénario. L’alerte et « Réessayer » restent en haut de la vitrine en cas d’indisponibilité.</p>
+    <p><a href="http://localhost:4189/">Ouvrir la démo locale</a> · <a href="../../../../infra/demo/README.md">Guide et comptes fictifs</a></p>
+  </section>
+  <section aria-labelledby="choix" class="etaye-pile">
+    <h2 id="choix">Décision sur l’interface en fonctionnement</h2>
+    <p>Vérifie la présentation des scénarios, la confirmation opérateur et l’avis reçu par Nora après la réinitialisation.</p>
+    <div class="actions">
+      <button type="button" class="etaye-bouton etaye-bouton--principal" data-response="Je valide l’interface en fonctionnement de la story 9.1.">Valider cette interface</button>
+      <button type="button" class="etaye-bouton etaye-bouton--secondaire" data-response="Corrections demandées sur la story 9.1 : ">Demander des corrections</button>
+    </div>
+    <label for="reponse">Réponse à reporter dans la conversation</label>
+    <textarea id="reponse" rows="2"></textarea>
+  </section>
+  <section aria-labelledby="fiche" class="etaye-pile">
+    <h2 id="fiche">Captures de comparaison</h2>
+    <ul>
+      <li><a href="S-01-entree.webp">Vitrine sur ordinateur, tablette et mobile</a></li>
+      <li><a href="S-01-etats.webp">Préparation, indisponibilité et fin de réinitialisation</a></li>
+      <li><a href="S-01-reflow.webp">Texte long, focus à 320 px et catalogue vide</a></li>
+      <li><a href="I-26.webp">Scénario, confirmation et refus de réinitialisation</a></li>
+      <li><a href="S-37.webp">Indisponibilité, réinitialisation en cours et limite temporaire</a> · <a href="S-37-complement.webp">Comparaisons complémentaires</a></li>
+      <li><a href="demarrage.webp">Démarrage à froid avec l’API à l’arrêt</a></li>
+    </ul>
+  </section>
+  <section aria-labelledby="parcours" class="etaye-pile">
+    <h2 id="parcours">Parcours réel enregistré</h2>
+    <figure class="preuve">
+      <figcaption>Nora choisit son scénario, se connecte et reçoit l’avis de réinitialisation.</figcaption>
+      <video controls preload="metadata" src="parcours-nora.webm"></video>
+    </figure>
+    <figure class="preuve">
+      <figcaption>L’opérateur confirme la réinitialisation et voit la version restaurée.</figcaption>
+      <video controls preload="metadata" src="reset-operateur.webm"></video>
+    </figure>
+  </section>
+</main>
+<script>
+  const theme = document.querySelector('#theme');
+  theme.addEventListener('click', () => {
+    const dark = theme.getAttribute('aria-pressed') !== 'true';
+    document.documentElement.dataset.theme = dark ? 'sombre' : 'clair';
+    theme.setAttribute('aria-pressed', String(dark));
+  });
+  const answer = document.querySelector('#reponse');
+  for (const action of document.querySelectorAll('[data-response]')) {
+    action.addEventListener('click', () => {
+      answer.value = action.dataset.response;
+      answer.focus();
+      answer.select();
+    });
+  }
+</script>
+</body>
+</html>
