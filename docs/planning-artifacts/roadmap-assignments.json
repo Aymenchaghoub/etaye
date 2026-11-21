@@ -712,6 +712,10 @@
       "increment": 1,
       "status": "contract"
     },
+    "inspectInvitation": {
+      "increment": 1,
+      "status": "contract"
+    },
     "getOwnAccount": {
       "increment": 1,
       "status": "contract"

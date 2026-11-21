@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Étaye documentary API contract",
-    "version": "0.2.3-planning",
+    "version": "0.3.0-planning",
     "description": "OpenAPI contract for current and planned endpoints. See README for runtime coverage. All examples are synthetic."
   },
   "servers": [
@@ -429,11 +429,79 @@
         }
       }
     },
+    "/invitations/inspect": {
+      "post": {
+        "operationId": "inspectInvitation",
+        "summary": "inspectInvitation",
+        "description": "Requires INTENDED_RECIPIENT. Return the masked preview of an invitation token without consuming or altering it. An unknown token is 404, indistinguishable from any other unknown resource.",
+        "x-required-permissions": [
+          "INTENDED_RECIPIENT"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Csrf"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Masked preview; carries no practice, invitation or record identifier.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvitationPreview"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem400"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem404"
+          },
+          "429": {
+            "$ref": "#/components/responses/Problem429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Problem503"
+          },
+          "406": {
+            "$ref": "#/components/responses/Problem406"
+          },
+          "415": {
+            "$ref": "#/components/responses/Problem415"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvitationInspect"
+              }
+            }
+          }
+        }
+      }
+    },
     "/invitations/accept": {
       "post": {
         "operationId": "acceptInvitation",
         "summary": "acceptInvitation",
-        "description": "Requires INTENDED_RECIPIENT. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
+        "description": "Requires INTENDED_RECIPIENT. Atomic single-use acceptance: mark the invitation ACCEPTED and create exactly the intended membership or portal link plus the account when eligible in one transaction. Success returns the rotated session like sign-in. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
         "x-required-permissions": [
           "INTENDED_RECIPIENT"
         ],
@@ -447,11 +515,20 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful outcome; no automatic review or publication.",
+            "description": "Acceptance committed; the opaque session cookie and CSRF value rotate as at sign-in.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Acknowledgement"
+                  "$ref": "#/components/schemas/Session"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
                 }
               }
             }
@@ -8060,18 +8137,84 @@
           "recipientVerification": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 512
+            "maxLength": 512,
+            "description": "PATIENT_PORTAL: the record patient's birth date. TEAM_MEMBERSHIP in increment 1: token possession is the verification and the field is absent."
+          },
+          "displayName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Required when the acceptance creates a new account (the increment-1 seeded invitations); ignored-irrelevant for a signed-in matching recipient."
           },
           "password": {
             "type": "string",
             "minLength": 12,
             "maxLength": 1024,
+            "writeOnly": true,
+            "description": "At least 12 Unicode code points; required when the acceptance creates a new account."
+          }
+        },
+        "required": [
+          "token"
+        ]
+      },
+      "InvitationInspect": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "token": {
+            "type": "string",
+            "minLength": 32,
+            "maxLength": 512,
             "writeOnly": true
           }
         },
         "required": [
-          "token",
-          "recipientVerification"
+          "token"
+        ]
+      },
+      "InvitationPreview": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "purpose": {
+            "type": "string",
+            "enum": [
+              "TEAM_MEMBERSHIP",
+              "PATIENT_PORTAL"
+            ]
+          },
+          "practiceName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "recipientHint": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "description": "Masked hint of the intended recipient; never a full address, identifier or patient name."
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "eligibility": {
+            "type": "string",
+            "enum": [
+              "USABLE",
+              "EXPIRED",
+              "REVOKED",
+              "ALREADY_USED"
+            ]
+          }
+        },
+        "required": [
+          "purpose",
+          "practiceName",
+          "recipientHint",
+          "expiresAt",
+          "eligibility"
         ]
       },
       "Account": {

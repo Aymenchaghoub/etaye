@@ -48,6 +48,12 @@
     "permission": "PUBLIC"
   },
   {
+    "operationId": "inspectInvitation",
+    "method": "post",
+    "path": "/invitations/inspect",
+    "permission": "INTENDED_RECIPIENT"
+  },
+  {
     "operationId": "acceptInvitation",
     "method": "post",
     "path": "/invitations/accept",
