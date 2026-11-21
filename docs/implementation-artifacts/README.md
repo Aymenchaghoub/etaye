@@ -6,6 +6,6 @@ Story 1.2 has written authorization (UD-48) and approved design references. The 
 
 Story 1.1 (UD-50) implements seeded team and patient invitation activation. Aymen approved its running UI on 2026-11-21. Integration is tracked in PR #49. [1.1 implementation record](story-1-1-implementation-record.md)
 
-Story 1.3 has an approved phase-0 direction (UD-52) and written development authorization (UD-53). The additional design states are approved under UD-54. [1.3 context packet](story-1-3-context-packet.md)
+Story 1.3 is implemented on the scoped feature branch under UD-52–54. Local verification passed and the running UI is awaiting Aymen's review. [Context packet](story-1-3-context-packet.md) · [Implementation record](story-1-3-implementation-record.md)
 
 The other 41 stories remain in the backlog under UD-28. Design progress lives in [coverage.csv](../design/coverage.csv). Generate sprint status through the installed BMAD sprint-planning workflow once its readiness gate passes. Verify implementation progress against story, Git history and test evidence.

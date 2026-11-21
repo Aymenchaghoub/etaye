@@ -2,7 +2,7 @@
 title: 'Story 1.3 — Select and switch practice context'
 type: 'feature'
 created: '2026-11-21'
-status: 'ready-for-dev'
+status: 'in-review'
 baseline_commit: 'ab7ebcc9093014f1eed57ae1257719b6fc2b4b6e'
 context:
   - '{project-root}/AGENTS.md'

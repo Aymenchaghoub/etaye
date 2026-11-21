@@ -2,6 +2,14 @@
 
 Updated: 2026-11-21. Owner: Aymen Chaghoub.
 
+## Story 1.3 implementation verified locally — 2026-11-21
+
+**Phase.** The design approval and authorization are preserved on `docs/story-1-3-phase-0` at `ab7ebcc`. The dedicated feature worktree passed the story readiness check and delivered the contract at `0b24129` and application candidate at `309891e`. The cockpit was regenerated from the documentary worktree and reports 1.3 authorized.
+
+**Actual verification.** API verify passed 160 tests, web smoke passed 45, and five real-stack browser cases passed. The [implementation record](implementation-artifacts/story-1-3-implementation-record.md) gives the scope and limits. The [running UI comparisons](design/reviews/2026-11-21-story-1-3-runtime.md) preserve the S-05 and I-20 review evidence.
+
+**Next action.** Triage the three-lens Zcode report and obtain Aymen's review of the running screens. Verify the GitHub checks and request CodeRabbit on the published draft. Merge requires the recorded running UI review.
+
 ## Story 1.3 design approved — 2026-11-21
 
 **User decision (UD-54).** Aymen approved the S-05 and I-20 additions (“oui je valide”) after receiving the [interactive gallery and contact sheets](design/reviews/2026-11-21-story-1-3-variants.md). Coverage records design approval for the 1.3 slice. UD-53 supplies written development authorization and the Zcode review rule.
