@@ -22,7 +22,7 @@ function readFragment() {
 }
 
 export function Invitation({ onAccepted }: Accepted) {
-  const [token, setToken] = useState(readFragment);
+  const [link, setLink] = useState(() => ({ token: readFragment(), opening: 0 }));
   useEffect(() => {
     function clearFragment() {
       if (window.location.hash) {
@@ -31,15 +31,16 @@ export function Invitation({ onAccepted }: Accepted) {
     }
     clearFragment();
     function followNewLink() {
-      setToken(readFragment());
+      const token = readFragment();
+      setLink(({ opening }) => ({ token, opening: opening + 1 }));
       clearFragment();
     }
     window.addEventListener('hashchange', followNewLink);
     return () => window.removeEventListener('hashchange', followNewLink);
   }, []);
 
-  return token
-    ? <InvitationLookup key={token} token={token} onAccepted={onAccepted} />
+  return link.token
+    ? <InvitationLookup key={link.opening} token={link.token} onAccepted={onAccepted} />
     : <InvitationStop state="invalid" />;
 }
 

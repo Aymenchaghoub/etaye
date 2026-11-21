@@ -77,6 +77,13 @@ test('S-03 team preview keeps the token off URLs and focuses the password confir
   expect(result.violations).toEqual([]);
   await page.getByRole('link', { name: /Confirmation : les deux mots de passe/ }).press('Enter');
   await expect(page.getByLabel('Confirmer le mot de passe')).toBeFocused();
+
+  await page.unroute('**/api/v1/invitations/inspect');
+  await page.route('**/api/v1/invitations/inspect', (route) =>
+    route.fulfill({ json: preview('TEAM_MEMBERSHIP', 'REVOKED') }));
+  await page.evaluate((token) => { window.location.hash = token; }, fragment);
+  await expect(page.getByRole('heading', { name: "Cette invitation n'est plus valable" })).toBeFocused();
+  await expect(page).toHaveURL(/\/invitation$/);
 });
 
 const terminalStates = [
