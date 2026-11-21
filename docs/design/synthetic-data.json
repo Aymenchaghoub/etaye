@@ -54,6 +54,12 @@
       "name": "Alex Rivière",
       "email": "alex.riviere@example.test",
       "status": "PENDING_ACTIVATION"
+    },
+    {
+      "id": "ACC-LEA",
+      "name": "Léa Marchand",
+      "email": "lea.marchand@example.test",
+      "status": "PENDING_ACTIVATION"
     }
   ],
   "memberships": [
@@ -184,6 +190,18 @@
       "portalAccountId": null,
       "scenario": "practice-isolation",
       "version": 2
+    },
+    {
+      "id": "R-A-003",
+      "practiceId": "PRA-A",
+      "name": {
+        "given": "Marie",
+        "family": "Collet"
+      },
+      "birthDate": "1990-03-12",
+      "portalAccountId": null,
+      "scenario": "portal-activation",
+      "version": 1
     }
   ],
   "invitations": [
@@ -210,6 +228,33 @@
       "kind": "PORTAL_LINK",
       "status": "EXPIRED",
       "expiresAt": "2026-10-30T12:00:00+01:00"
+    },
+    {
+      "id": "INV-PORTAL-03",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-003",
+      "kind": "PORTAL_LINK",
+      "recipientEmail": "marie.collet@example.test",
+      "status": "PENDING",
+      "expiresAt": "2026-11-05T12:00:00+01:00"
+    },
+    {
+      "id": "INV-TEAM-02",
+      "practiceId": "PRA-A",
+      "accountId": "ACC-LEA",
+      "kind": "MEMBERSHIP",
+      "recipientEmail": "lea.marchand@example.test",
+      "status": "REVOKED"
+    },
+    {
+      "id": "INV-PORTAL-04",
+      "practiceId": "PRA-A",
+      "recordId": "R-A-002",
+      "kind": "PORTAL_LINK",
+      "recipientEmail": "chloe.dumas@example.test",
+      "status": "PENDING",
+      "expiresAt": "2026-11-05T12:00:00+01:00",
+      "note": "Issued in error to a person who is not the record's patient; demonstrates the generic recipient-mismatch stop."
     }
   ],
   "sources": [

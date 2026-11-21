@@ -127,7 +127,7 @@ public class AccountAccessController {
 
     private SessionView sessionView(AuthenticatedAccount account, HttpSession session, String returnTo) {
         return new SessionView(AccountView.from(account.account()), account.activeMembershipIds(),
-                account.activePortalLinkIds(), lifetime.expiresAt(session), returnTo);
+                account.activePortalLinkIds(), lifetime.expiresAt(session), returnTo, null);
     }
 
     private static String safeReturn(String candidate, AuthenticatedAccount account) {
@@ -175,11 +175,11 @@ public class AccountAccessController {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public record SessionView(AccountView account, List<UUID> membershipIds, List<UUID> portalLinkIds,
-                              Instant expiresAt, String returnTo) {}
+                              Instant expiresAt, String returnTo, UUID activatedPortalLinkId) {}
 
     public record AccountView(UUID id, long version, Instant createdAt, Instant updatedAt,
                               String displayName, String email, String state, String locale) {
-        private static AccountView from(AccountProfile account) {
+        static AccountView from(AccountProfile account) {
             String locale = account.locale().toLowerCase(Locale.ROOT).startsWith("en") ? "en-GB" : "fr-FR";
             return new AccountView(account.id(), account.version(), account.createdAt(), account.updatedAt(),
                     account.displayName(), account.normalizedEmail(), account.state(), locale);

@@ -1,4 +1,4 @@
-import { type ComponentPropsWithoutRef, type ReactNode, useEffect, useRef, useState } from 'react';
+import { type ComponentPropsWithoutRef, type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import logoLight from '../../../../design/offline-reference/site/logos/etaye-logo.svg?url';
 import logoDark from '../../../../design/offline-reference/site/logos/etaye-logo-sombre.svg?url';
 import patientLight from '../../../../design/offline-reference/site/logos/etaye-logo-espace-patient.svg?url';
@@ -108,5 +108,6 @@ export function useRetryDelay() {
     const timer = window.setTimeout(() => setWait(0), wait * 1000);
     return () => window.clearTimeout(timer);
   }, [wait]);
-  return { waiting: wait > 0, block: (seconds: number) => setWait(seconds || 60) };
+  const block = useCallback((seconds: number) => setWait(seconds || 60), []);
+  return { waiting: wait > 0, block };
 }

@@ -1,10 +1,10 @@
 # Documentary API contract
 
-Status: Versioned contract with implemented and planned operations. `openapi.yaml` is OpenAPI 3.1 written in JSON syntax (valid YAML 1.2). [Operation index](operation-index.json) maps all operations. [Business rules](../planning-artifacts/business-rules.md), [access matrix](../planning-artifacts/access-matrix.md), [data dictionary](../planning-artifacts/data-dictionary.md) and ADRs are authoritative companions. Version 0.2.3-planning (2026-11-20) contains 98 operations.
+Status: Versioned contract with implemented and planned operations. `openapi.yaml` is OpenAPI 3.1 written in JSON syntax (valid YAML 1.2). [Operation index](operation-index.json) maps all operations. [Business rules](../planning-artifacts/business-rules.md), [access matrix](../planning-artifacts/access-matrix.md), [data dictionary](../planning-artifacts/data-dictionary.md) and ADRs are authoritative companions. Version 0.3.0-planning (2026-11-21) contains 99 operations.
 
 ## Runtime coverage
 
-Story 10.1 serves `getReadiness`, `getCsrfToken`, `createPatient` and `getPatientRecord`. Story 10.2 adds `getApiMeta`. Story 1.2 serves `signIn`, `getSession`, `signOut`, `requestRecovery` and `completeRecovery`. Remaining operations describe planned behavior. Readiness returns JSON `UP` on 200 and `DOWN` on 503 without opening a session. The versions endpoint is public and stateless. The Web SDK sends `X-Client-Version: web/<semantic-version>` using its package version. This is compatibility metadata. The 426 enforcement belongs to story 10.4.
+Story 10.1 serves `getReadiness`, `getCsrfToken`, `createPatient` and `getPatientRecord`. Story 10.2 adds `getApiMeta`. Story 1.2 serves `signIn`, `getSession`, `signOut`, `requestRecovery` and `completeRecovery`. Story 1.1 adds `inspectInvitation` and `acceptInvitation`. Remaining operations describe planned behavior. Readiness returns JSON `UP` on 200 and `DOWN` on 503 without opening a session. The versions endpoint is public and stateless. The Web SDK sends `X-Client-Version: web/<semantic-version>` using its package version. This is compatibility metadata. The 426 enforcement belongs to story 10.4.
 
 ## Web sign-in and recovery
 
@@ -15,6 +15,16 @@ The exact local return paths are `/compte`, `/compte/pratiques/{membershipId}` a
 Account mutations require the session-bound CSRF header, including anonymous sign-in and recovery. Missing, suspended and incorrect credentials share `401 INVALID_CREDENTIALS`. Anonymous CSRF issuance and account submissions have bounded request budgets and return `429 RATE_LIMITED` with a delta-seconds `Retry-After`. Use a 16–128 character recovery key consisting of ASCII letters, digits, underscore or hyphen. `POST /access-recovery` gives the same 202 for all valid addresses and deduplicates the normalized address and key for 15 minutes. The response never confirms a delivery. A reset token has a 15-minute lifetime and can be consumed once. Redemption revokes all of the account's existing sessions. Expired, already-used and ineligible tokens share `422 INVALID_RECOVERY_LINK`. A password under 12 Unicode code points receives `422 PASSWORD_TOO_SHORT`.
 
 For a local synthetic demonstration, set `ETAYE_DEMO_RECOVERY_INBOX=true` on the API process, start the web app at `http://localhost:5173` and open the separate listener at `http://127.0.0.1:8025/` from the address bar. Its in-memory capture is restricted to `@example.test` addresses. The link carries the token in the reset page fragment. Branded mail and external delivery belong to story 8.3.
+
+## Invitation activation
+
+Both invitation operations are anonymous and return `Cache-Control: no-store`. `inspectInvitation` returns the masked preview (`purpose`, `practiceName`, `recipientHint`, `expiresAt`, `eligibility`) with an optional `acceptedAt` for an already-used token, without consuming anything or exposing a practice, invitation or record identifier; a well-formed unknown token is `404` byte-identical to any other unknown resource. The raw token travels only in the request body and the page fragment, never in a URL, query, log or audit row; the server stores a digest (72-hour invitation lifetime, UD-26).
+
+`acceptInvitation` is atomic and single-use per BR-005: one transaction marks the invitation `ACCEPTED` (+`acceptedAt`), creates exactly the intended membership with the invitation's capabilities (TEAM_MEMBERSHIP) or exactly one active portal link to the invited record (PATIENT_PORTAL), creates the account when the recipient has none, and writes the audit event and the idempotency receipt. A team invitation never creates a portal link; a portal invitation never grants a staff capability. Success returns `Session` and rotates the opaque cookie and the CSRF value exactly as `signIn` does (`returnTo` stays sign-in-only); the client routes by purpose to `/compte` (team) or `/compte/patient/{activatedPortalLinkId}` when the exact portal link remains active (patient).
+
+Input modes: when the recipient has no account, `password` is required and creates the account (`422 PASSWORD_TOO_SHORT`); a new TEAM account also requires `displayName` (`422 DISPLAY_NAME_REQUIRED`) while a new PATIENT_PORTAL account derives its display name from the record's patient identity; a signed-in account whose normalized email matches the intended recipient may accept without them; an unsigned-in existing account receives `422 SIGN_IN_REQUIRED` and the client offers sign-in within the activation flow. A suspended practice makes the invitation unavailable without consuming it (`422 INVITATION_UNAVAILABLE`). A suspended recipient account or membership never regains access through acceptance; the same `422 SIGN_IN_REQUIRED` applies and sign-in keeps refusing. `recipientVerification` is the record patient's birth date for PATIENT_PORTAL (required); for TEAM_MEMBERSHIP in increment 1 token possession is the verification and the field is absent — the recipient email check returns with issuance in increment 2 (D-23).
+
+Refusals: an expired, revoked or already-used invitation answers `422 INVITATION_EXPIRED`, `422 INVITATION_REVOKED` or `422 INVITATION_ALREADY_USED` (the holder may know the history); a wrong or missing verification answers one generic `422 RECIPIENT_MISMATCH` whose wording never says which input differed; a portal invitation whose record already holds an active link answers `409 PORTAL_LINK_EXISTS`; a team invitation conflicting with the capabilities of an existing active membership answers `409 MEMBERSHIP_EXISTS`; an unknown token stays `404`. Anonymous submissions share the bounded account budgets (`429 RATE_LIMITED` with delta-seconds `Retry-After`). The idempotency key of an anonymous acceptance is scoped to the invitation digest, the operation and the body hash; the replay memory lives on the invitation row and never stores the raw token or the password. Authenticated acceptances can only be replayed by their original account. Anonymous acceptance replay is bounded by the invitation expiry and the credential revision at acceptance.
 
 ## Common transport and permissions
 
@@ -45,6 +55,15 @@ Error responses are declared per operation, never copied onto all of them. A GET
 | CITATION_UNSUPPORTED | 422 | A required citation support review is missing or negative |
 | PUBLICATION_INELIGIBLE | 422 | The version cannot be published (brief, not validated, not current) |
 | TASK_QUOTA_EXCEEDED | 429 | The processing quota is exhausted |
+| INVITATION_EXPIRED | 422 | The invitation lifetime (72 hours) has passed |
+| INVITATION_UNAVAILABLE | 422 | The practice cannot currently grant access |
+| INVITATION_REVOKED | 422 | The invitation was revoked by an authorized issuer |
+| INVITATION_ALREADY_USED | 422 | The invitation was already accepted once |
+| MEMBERSHIP_EXISTS | 409 | An existing membership holds a different grant and is left intact |
+| PORTAL_LINK_EXISTS | 409 | The invited record already holds an active portal link |
+| RECIPIENT_MISMATCH | 422 | Intended-recipient verification failed; never says which input differed |
+| DISPLAY_NAME_REQUIRED | 422 | A new-account acceptance lacks the display name |
+| SIGN_IN_REQUIRED | 422 | The recipient account exists; sign in before accepting |
 | CLIENT_TOO_OLD | 426 | The client version is below the minimum (ADR-009; planned, not yet a declared response) |
 
 ## Contract conventions
@@ -73,7 +92,7 @@ Cursor page `{items,nextCursor}`, default 25, maximum 100. Cursor is opaque and 
 
 | Group | Required semantic checks |
 |---|---|
-| Identity/invitations | Normalize email by defined policy, strong supported password policy/hash, single-use token digest and expiry; intended-recipient verification. Portal invitation requires recordId, team invitation explicit permitted capabilities; reject irrelevant grant fields. Recovery response remains generic. |
+| Identity/invitations | Normalize email by defined policy, strong supported password policy/hash, single-use token digest and expiry; intended-recipient verification. Portal invitation requires recordId, team invitation explicit permitted capabilities; reject irrelevant grant fields. Recovery response remains generic. Activation: PATIENT_PORTAL requires the record patient's birth date as `recipientVerification`; TEAM in increment 1 verifies token possession; `password` for any new account and `displayName` for a new TEAM_MEMBERSHIP account. |
 | Patients/records | Birth date not future; required identity fields; practice-local duplicate suggestions only; stable patient/record identity on corrections. Contact email is not proof of account linkage. |
 | Assertions/source dates | PRESENT/EXPLICITLY_ABSENT/UNKNOWN/NOT_ASKED are distinct. UNKNOWN event date forbids fabricated instant/date; DATE carries a date, INSTANT an instant. Recorded time always server-provided. Corrections require reason and prior current revision. |
 | Measurements/labs | Finite decimal with concept/unit and actual observed time; retain original values. BP is grouped systolic/diastolic observations. Labs require exactly numericValue or qualitativeValue according to valueKind, comparator only for numeric, supplied unit/interval preserved and ordered bounds. No invented universal medical range or implicit normal result. |

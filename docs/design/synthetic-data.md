@@ -1,6 +1,6 @@
 # Shared synthetic design dataset
 
-Status: Draft / Ready for design. Dataset `etaye-design-v1`, frozen baseline **2 November 2026, 16:00 Europe/Paris**. Authoritative machine-readable content: [synthetic-data.json](synthetic-data.json). All people, practices, events and clinical values are fictional; examples are not medical advice. Existing Figma clinical text is illustration, not a medical rule.
+Status: Draft / Ready for design. Dataset `etaye-design-v1`, frozen baseline **2 November 2026, 16:00 Europe/Paris**; invitation fixtures extended on 2026-11-21 for story 1.1 (dated additions only, existing entries unchanged). Authoritative machine-readable content: [synthetic-data.json](synthetic-data.json). All people, practices, events and clinical values are fictional; examples are not medical advice. Existing Figma clinical text is illustration, not a medical rule.
 
 ## Reuse rules
 
@@ -21,6 +21,7 @@ Dates in the dataset are ISO 8601 with offsets. French UI renders `3 novembre 20
 | R-A-001 | Claire Martin, born 18 April 1978 | Rich record, portal linked to ACC-CLAIRE |
 | R-A-002 | Louis Bernard, born 9 July 1991 | Minimal history, expired portal invitation, no portal access |
 | R-B-001 | Hugo Petit, born 25 February 1986 | Record inaccessible from PRA-A |
+| R-A-003 | Marie Collet, born 12 March 1990 | Minimal unlinked record for the pending portal activation (added 2026-11-21) |
 
 Practice-wide practitioner sharing and multi-practice accounts are `[ASSUMPTION]` baselines; see [decisions and assumptions](../planning-artifacts/decisions-assumptions.md). No shared clinical record is inferred from a shared account.
 
@@ -34,6 +35,10 @@ Practice-wide practitioner sharing and multi-practice accounts are `[ASSUMPTION]
 6. The patient explanation v2 preserves Dr Lefebvre's correction of an unsupported generated statement. It is separately validated at 14:20 and explicitly published at 14:25. Publication v1 is atomically REPLACED; its document freshness remains STALE for the record history. No version is silently overwritten.
 7. Louis demonstrates minimal inputs and `AI-A-002` demonstrates timeout without a generated output, a risk classification or a reassuring substitute.
 8. `SC-ISOLATION`, `SC-ADMIN-CLINICAL`, `SC-NOT-PUBLISHED` and `SC-BOOKING-RACE` supply explicit denial, publication and concurrency design states.
+
+## Invitation fixtures (added 2026-11-21, story 1.1)
+
+Invitation activation uses the seeded states the epic requires. `INV-TEAM-01` (PENDING, Alex Rivière `ACC-NEW`) activates a team membership; `INV-PORTAL-03` (PENDING, Marie Collet `R-A-003`) activates a patient portal link; `INV-PORTAL-02` (EXPIRED, Louis Bernard `R-A-002`) and `INV-TEAM-02` (REVOKED, Léa Marchand `ACC-LEA`) demonstrate the terminal refusals; `INV-PORTAL-04` (PENDING for `R-A-002` but issued in error to `chloe.dumas@example.test`) demonstrates the generic recipient-mismatch stop. `INV-PORTAL-01` (ACCEPTED) is Claire's historical link. The frozen dates are narrative: runtime seeds and test fixtures regenerate the PENDING expiry relative to load (72 hours, UD-26) so the states stay reproducible; the recipient-mismatch case is exercised by verifying with an identity that is not the record's patient.
 
 ## Fixture variations
 

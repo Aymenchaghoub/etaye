@@ -44,7 +44,33 @@ export type RecoveryComplete = {
 };
 
 export type Activation = {
-    recipientVerification: string;
+    /**
+     * PATIENT_PORTAL: the record patient's birth date. TEAM_MEMBERSHIP in increment 1: token possession is the verification and the field is absent.
+     */
+    recipientVerification?: string;
+    /**
+     * Required when a new TEAM account is created; a new PATIENT_PORTAL account derives its display name from the record; absent for a signed-in matching recipient.
+     */
+    displayName?: string;
+};
+
+export type InvitationInspect = {
+    token: string;
+};
+
+export type InvitationPreview = {
+    purpose: 'TEAM_MEMBERSHIP' | 'PATIENT_PORTAL';
+    practiceName: string;
+    /**
+     * Masked hint of the intended recipient; never a full address, identifier or patient name.
+     */
+    recipientHint: string;
+    expiresAt: string;
+    /**
+     * Present for an accepted token; the time at which this invitation was used.
+     */
+    acceptedAt?: string;
+    eligibility: 'USABLE' | 'EXPIRED' | 'REVOKED' | 'UNAVAILABLE' | 'ALREADY_USED';
 };
 
 export type Account = {
@@ -68,6 +94,10 @@ export type Session = {
     membershipIds: Array<string>;
     portalLinkIds: Array<string>;
     expiresAt: string;
+    /**
+     * Only returned by portal invitation acceptance when its exact link remains active for the authenticated account.
+     */
+    activatedPortalLinkId?: string;
     /**
      * Only returned by sign-in. Server-authorized local path.
      */
@@ -797,7 +827,17 @@ export type CredentialsWritable = {
 
 export type ActivationWritable = {
     token: string;
-    recipientVerification: string;
+    /**
+     * PATIENT_PORTAL: the record patient's birth date. TEAM_MEMBERSHIP in increment 1: token possession is the verification and the field is absent.
+     */
+    recipientVerification?: string;
+    /**
+     * Required when a new TEAM account is created; a new PATIENT_PORTAL account derives its display name from the record; absent for a signed-in matching recipient.
+     */
+    displayName?: string;
+    /**
+     * At least 12 Unicode code points; required when the acceptance creates a new account.
+     */
     password?: string;
 };
 
@@ -1231,6 +1271,58 @@ export type CompleteRecoveryResponses = {
 
 export type CompleteRecoveryResponse = CompleteRecoveryResponses[keyof CompleteRecoveryResponses];
 
+export type InspectInvitationData = {
+    body: InvitationInspect;
+    headers: {
+        'X-CSRF-TOKEN': string;
+    };
+    path?: never;
+    query?: never;
+    url: '/invitations/inspect';
+};
+
+export type InspectInvitationErrors = {
+    /**
+     * Malformed request
+     */
+    400: Problem;
+    /**
+     * Forbidden action on visible resource or CSRF failure
+     */
+    403: Problem;
+    /**
+     * Not found or inaccessible resource
+     */
+    404: Problem;
+    /**
+     * No supported response media type matches Accept.
+     */
+    406: Problem;
+    /**
+     * The request media type is unsupported.
+     */
+    415: Problem;
+    /**
+     * Rate limit or quota exceeded
+     */
+    429: Problem;
+    /**
+     * Service temporarily unavailable
+     */
+    503: Problem;
+};
+
+export type InspectInvitationError = InspectInvitationErrors[keyof InspectInvitationErrors];
+
+export type InspectInvitationResponses = {
+    /**
+     * Masked preview; carries no practice, invitation or record identifier.
+     */
+    200: InvitationPreview;
+};
+
+export type InspectInvitationResponse = InspectInvitationResponses[keyof InspectInvitationResponses];
+
 export type AcceptInvitationData = {
     body: ActivationWritable;
     headers: {
@@ -1284,9 +1376,9 @@ export type AcceptInvitationError = AcceptInvitationErrors[keyof AcceptInvitatio
 
 export type AcceptInvitationResponses = {
     /**
-     * Successful outcome; no automatic review or publication.
+     * Acceptance committed; the opaque session cookie and CSRF value rotate as at sign-in.
      */
-    200: Acknowledgement;
+    200: Session;
 };
 
 export type AcceptInvitationResponse = AcceptInvitationResponses[keyof AcceptInvitationResponses];

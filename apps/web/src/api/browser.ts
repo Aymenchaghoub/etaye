@@ -1,7 +1,7 @@
 import { version } from '../../package.json';
 import { createClient } from './generated/client';
-import { completeRecovery, getCsrfToken, getReadiness, getSession, requestRecovery, signIn, signOut } from './generated/sdk.gen';
-import type { CredentialsWritable } from './generated/types.gen';
+import { acceptInvitation, completeRecovery, inspectInvitation, getCsrfToken, getReadiness, getSession, requestRecovery, signIn, signOut } from './generated/sdk.gen';
+import type { ActivationWritable, CredentialsWritable } from './generated/types.gen';
 
 type AccountResult<T> =
   | { ok: true; data: T }
@@ -74,6 +74,16 @@ export function createBrowserApi(origin: string, transportEnabled: boolean, tran
       return withCsrf((csrf, deadline) => completeRecovery({
         client, headers: { ...csrf, 'Idempotency-Key': key }, body: { token, newPassword },
         signal: deadline, cache: 'no-store',
+      }), signal);
+    },
+    inspectInvitation(token: string, signal?: AbortSignal) {
+      return withCsrf((headers, deadline) => inspectInvitation({
+        client, headers, body: { token }, signal: deadline, cache: 'no-store',
+      }), signal);
+    },
+    acceptInvitation(body: ActivationWritable, key: string, signal?: AbortSignal) {
+      return withCsrf((headers, deadline) => acceptInvitation({
+        client, headers: { ...headers, 'Idempotency-Key': key }, body, signal: deadline, cache: 'no-store',
       }), signal);
     },
     async isReady(signal: AbortSignal, onHttpFailure: () => void): Promise<boolean> {

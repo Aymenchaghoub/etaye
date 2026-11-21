@@ -66,12 +66,16 @@ public class AccountAccessService {
         if (!RECOVERY_TOKEN.matcher(token).matches()) {
             return false;
         }
-        String encoded = PASSWORD_VERSION + passwordEncoder.encode(newPassword);
+        String encoded = encodePassword(newPassword);
         boolean redeemed = repository.redeemRecovery(digest(token), encoded, correlationId);
         if (redeemed) {
             inbox.ifPresent(delivery -> delivery.remove(token));
         }
         return redeemed;
+    }
+
+    String encodePassword(String password) {
+        return PASSWORD_VERSION + passwordEncoder.encode(password);
     }
 
     private boolean matchesPassword(String password, String encoded) {

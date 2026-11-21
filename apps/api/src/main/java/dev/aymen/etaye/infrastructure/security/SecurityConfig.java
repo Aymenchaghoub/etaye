@@ -140,7 +140,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/v1/csrf").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/session", "/api/v1/access-recovery",
-                        "/api/v1/access-recovery/complete").permitAll()
+                        "/api/v1/access-recovery/complete", "/api/v1/invitations/inspect",
+                        "/api/v1/invitations/accept").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(new ExistingSessionCsrfFilter(accessDeniedHandler, lifetime), CsrfFilter.class)

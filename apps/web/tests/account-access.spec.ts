@@ -98,7 +98,9 @@ test('recovery keeps the address and receipt on an explicit retry after an outag
   expect(receipts).toHaveLength(1);
   await axe(page);
   await page.getByRole('button', { name: 'Réessayer' }).click();
-  await expect(page.getByRole('heading', { name: 'Demande de récupération reçue' })).toBeFocused();
+  const confirmation = page.getByRole('heading', { name: 'Demande de récupération reçue' });
+  await expect(confirmation).toBeFocused();
+  await expect(confirmation).toHaveCSS('outline-style', 'none');
   expect(receipts).toHaveLength(2);
   expect(typeof receipts[0]).toBe('string');
   expect(receipts[0].length).toBeGreaterThan(0);

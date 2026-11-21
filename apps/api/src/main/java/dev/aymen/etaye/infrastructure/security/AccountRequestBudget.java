@@ -10,7 +10,8 @@ import java.util.Map;
 public class AccountRequestBudget {
 
     public enum Operation {
-        CSRF(120, 12, 0), SIGN_IN(120, 20, 8), REQUEST_RECOVERY(120, 12, 5), RESET(120, 12, 0);
+        CSRF(120, 12, 0), SIGN_IN(120, 20, 8), REQUEST_RECOVERY(120, 12, 5), RESET(120, 12, 0),
+        INVITE_INSPECT(120, 12, 0), INVITE_ACCEPT(120, 12, 0);
 
         private final int global;
         private final int byAddress;
