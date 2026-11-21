@@ -2,6 +2,14 @@
 
 Updated: 2026-11-21. Owner: Aymen Chaghoub.
 
+## Story 1.1 implementation and delivery review — 2026-11-21
+
+**Phase.** Implementation under UD-50 is on `feat/1.1-activate-invitation`. Application candidate `5ec9e4a483785301f9742c2c4026e35e9e7d43a9` implements the narrowly scoped invitation endpoints, V3 and the S-03/I-03 Web flow. Issuance and email stay deferred under D-23. [Implementation record](implementation-artifacts/story-1-1-implementation-record.md)
+
+**Actual verification.** Java 25 Maven verify passed 157 tests, including 7 invitation HTTP cases. The isolated PostgreSQL V2-to-V3 migration preserved a synthetic account. Both disposable regression mutations were detected. Node 26 build, SDK drift check and 30 Chromium smoke cases passed. Three real-stack invitation journeys passed. The visual run produced 200 captures and 11 opened pairs. [Running UI comparisons](design/reviews/2026-11-21-story-1-1-rendered.md)
+
+**Access and next action.** Figma returned `UNAUTHORIZED / TRIGGER_REAUTHENTICATION`; the approved HTML exception applies. The local running UI is ready for Aymen’s review. Codex CLI review and GitHub delivery checks are in progress. The merge requires Aymen’s reply on the running UI.
+
 ## Story 1.1 design approved; implementation starting — 2026-11-21
 
 **User decisions.** Aymen opened the offline reference states himself (entry `design/offline-reference/site/index.html`) and answered "approuvé, tu peux y aller": S-03 and I-03 are approved as shown ([review record](design/reviews/2026-11-21-story-1-1-review.md)); I-01 stays deferred (D-23). He also set the end-of-story three-lens review rule: it runs with the Codex CLI, never with subagents — the [delivery rules](operations/delivery-rules.md) now say so, replacing the local Zcode review of 2026-11-20.

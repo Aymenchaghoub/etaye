@@ -1,6 +1,6 @@
 # Story 1.1 — implementation context packet
 
-Status: Phase-0 preparation only; this packet authorizes nothing (delivery rules). Date: 2026-11-21. Prepared by ZCode at Aymen's request from `main` at `447fe57`. Story text and acceptance designs stay in [epic 1](../planning-artifacts/epics/epic-1.md); where this packet adds detail it says so, and a [Proposal] is not a decision. No application change, migration, contract edit or service activation accompanies this packet. **Arbitration outcome (2026-11-21, UD-50):** Aymen validated points 2–4 below (the six contract points, the dataset fixtures and the development authorization); the S-03/I-03 design review is pending his own answer on the reference states.
+Status: Phase-0 preparation only; this packet authorizes nothing (delivery rules). Date: 2026-11-21. Prepared by ZCode at Aymen's request from `main` at `447fe57`. Story text and acceptance designs stay in [epic 1](../planning-artifacts/epics/epic-1.md); where this packet adds detail it says so, and a [Proposal] is not a decision. No application change, migration, contract edit or service activation accompanies this packet. **Arbitration outcome (2026-11-21, UD-50):** Aymen validated points 2–4 below (the six contract points, the dataset fixtures and the development authorization); Aymen subsequently approved both reference state sets. See the [design review](../design/reviews/2026-11-21-story-1-1-review.md) and the [implementation record](story-1-1-implementation-record.md) for delivery evidence.
 
 ## 1. Objective and traceability
 
@@ -79,7 +79,7 @@ Gaps found against S-03/I-03 and BR-005 — each needs an additive contract deci
 - `apps/api` (Testcontainers, Java 25): new suite(s) beside `AccountAccessHttpTest`/`PracticeIsolationTest` covering C1–C8, with at least two mutation checks (single-use guard removed → C6 red; identity digest lookup widened → C7 red). Expected count grows from 150.
 - `apps/web`: `tsc -b`, `build`, smoke suite extended from 19 tests with the S-03/I-03 states and their axe scans; the stubbed probe is untouched; the real outage spec stays as is, and the invitation journey joins the real-stack evidence (C10).
 - Documentary: `tools/validate_docs.py`, coverage/hybrid evidence rows, this packet's file, implementation record, continuation note.
-- GitHub: `API verify`, `Web verify`, `Planning package checks`, `Analyze tooling`, `CodeQL` required; one local Zcode three-lens review; manual CodeRabbit request per delivery rules — [Verified observation] CodeRabbit's free-OSS quota was exhausted on 2026-11-20, so request once, record the outcome, and do not loop.
+- GitHub: `API verify`, `Web verify`, `Planning package checks`, `Analyze tooling`, `CodeQL` required; one local Codex CLI three-lens review; manual CodeRabbit request per delivery rules — [Verified observation] CodeRabbit's free-OSS quota was exhausted on 2026-11-20, so request once, record the outcome, and do not loop.
 
 ## 9. Gaps and open questions (each qualified)
 
