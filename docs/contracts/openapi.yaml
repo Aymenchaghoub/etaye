@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Étaye documentary API contract",
-    "version": "0.3.0-planning",
+    "version": "0.4.0-planning",
     "description": "OpenAPI contract for current and planned endpoints. See README for runtime coverage. All examples are synthetic."
   },
   "servers": [
@@ -214,14 +214,14 @@
       "get": {
         "operationId": "getSession",
         "summary": "getSession",
-        "description": "Re-resolve account state, session lifetime and current grants from the server.",
+        "description": "Re-resolve account state, session lifetime and current grants from the server. The session status includes the current account-scoped context projection.",
         "x-required-permissions": [
           "AUTHENTICATED"
         ],
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Current account and grants with the nearer idle or absolute deadline.",
+            "description": "Current account and grants with their access contexts and the nearer idle or absolute deadline.",
             "content": {
               "application/json": {
                 "schema": {
@@ -8334,6 +8334,13 @@
           "returnTo": {
             "type": "string",
             "description": "Only returned by sign-in. Server-authorized local path."
+          },
+          "contexts": {
+            "description": "Returned by GET /session. Exactly one entry per active membership or verified portal link in the associated ID arrays. An empty array means the current account has no eligible context. Separate grants in the same practice remain distinct.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccessContext"
+            }
           }
         },
         "required": [
@@ -8341,6 +8348,49 @@
           "membershipIds",
           "portalLinkIds",
           "expiresAt"
+        ]
+      },
+      "AccessContext": {
+        "description": "Current minimal access-context projection. The kind and grant ID identify the browser context. A display role or practice ID does not authorize any resource.",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "MEMBERSHIP",
+              "PORTAL"
+            ]
+          },
+          "grantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "practiceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "practiceName": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "displayRole": {
+            "type": "string",
+            "enum": [
+              "CLINICAL",
+              "ADMINISTRATION",
+              "SCHEDULING",
+              "TEAM",
+              "PATIENT"
+            ]
+          }
+        },
+        "required": [
+          "kind",
+          "grantId",
+          "practiceId",
+          "practiceName",
+          "displayRole"
         ]
       },
       "Csrf": {

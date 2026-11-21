@@ -5,7 +5,7 @@ Status: Reviewed planning coverage, not implementation or design completion.2026
 | Requirement | Rule | Journey | Required screen families | Data | API operations / boundary | Planning stories | Acceptance test design |
 |---|---|---|---|---|---|---|---|
 | [FR-001](planning-artifacts/prd/prd.md#fr-001--account-access) | BR-003, BR-005 | J-01 | S-02, S-03, S-04, S-36, S-38 | Account, Session, Invitation | signIn, acceptInvitation, requestRecovery | 1.1, 1.2, 8.3, 10.5 | AT-001, AT-002, AT-034, AT-042 |
-| [FR-002](planning-artifacts/prd/prd.md#fr-002--practice-isolation) | BR-001–004 | J-01 | S-05, S-36 | Practice, Membership, PortalLink | listAuthorizedPractices, listOwnPortalLinks | 1.3, 1.4, 10.1 | AT-003, AT-004, AT-038 |
+| [FR-002](planning-artifacts/prd/prd.md#fr-002--practice-isolation) | BR-001–004 | J-01 | S-05, S-36 | Practice, Membership, PortalLink | getSession, listAuthorizedPractices, listOwnPortalLinks | 1.3, 1.4, 10.1 | AT-003, AT-004, AT-038 |
 | [FR-003](planning-artifacts/prd/prd.md#fr-003--team-administration) | BR-002–005 | J-07 | S-31, S-32 | Membership, Invitation | listMemberships, editMembershipCapabilities, suspendMembership | 2.1, 2.2 | AT-005, AT-006 |
 | [FR-004](planning-artifacts/prd/prd.md#fr-004--patient-identity) | BR-004 | J-02, J-03 | S-03, S-07, S-08 | Patient, PatientRecord, PortalLink | searchPatients, createPatient, editPatient, searchSchedulingPatients, registerSchedulingPatient | 1.1, 3.1, 4.2 | AT-001, AT-009, AT-015-D/E |
 | [FR-005](planning-artifacts/prd/prd.md#fr-005--longitudinal-record) | BR-008 | J-02 | S-07, S-09, S-10 | ClinicalAssertion, SourceRevision | getTimeline, appendAssertion, correctAssertion | 3.1, 3.2 | AT-009, AT-010 |
