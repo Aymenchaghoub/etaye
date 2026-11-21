@@ -3,6 +3,7 @@ import logoLight from '../../../../design/offline-reference/site/logos/etaye-log
 import logoDark from '../../../../design/offline-reference/site/logos/etaye-logo-sombre.svg?url';
 import patientLight from '../../../../design/offline-reference/site/logos/etaye-logo-espace-patient.svg?url';
 import patientDark from '../../../../design/offline-reference/site/logos/etaye-logo-espace-patient-sombre.svg?url';
+import { demoEntry, SHOWCASE } from '../demo/demo-entry';
 
 export function AuthLogo({ patient = false }: { patient?: boolean }) {
   const name = patient ? 'Étaye — Espace patient' : 'Étaye';
@@ -21,6 +22,7 @@ export function AuthShell({ children, patient = false, wide = false }: {
       <main className={`etaye-auth__corps${wide ? ' etaye-auth__corps--large' : ''}`} id="contenu">{children}</main>
       <footer className="etaye-auth__pied">
         <span className="etaye-demo">Démonstration — personnes et données fictives</span>
+        {demoEntry() && <a href={SHOWCASE}>Retour à la démonstration</a>}
         <span className="etaye-3 etaye-auth__usage">Projet de démonstration — aucun usage clinique</span>
       </footer>
     </div>

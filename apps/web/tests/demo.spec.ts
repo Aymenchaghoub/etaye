@@ -1,0 +1,140 @@
+import AxeBuilder from '@axe-core/playwright';
+import { expect, test, type Page } from '@playwright/test';
+
+const version = 'etaye-design-v1';
+const meta = {
+  apiVersion: 'v1', minimumClientVersion: '0.0.1', latestClientVersion: '0.0.1',
+  demoDatasetVersion: version, demoResetGeneration: 1,
+};
+const items = [
+  ['praticienne', 'Praticienne', 'Dr Nora Lefebvre', 'nora.lefebvre@example.test'],
+  ['patiente', 'Patiente', 'Claire Martin', 'claire.martin@example.test'],
+  ['administration', 'Administration', 'Mila Dubois', 'mila.dubois@example.test'],
+].map(([id, roleLabel, actorName, signInIdentifier]) => ({
+  id, name: roleLabel, roleLabel, actorName, signInIdentifier,
+  practiceName: 'Cabinet des Tilleuls',
+  journeySummary: 'Ouvrir son espace fictif puis vérifier les accès actuels au Cabinet des Tilleuls.',
+  limitsNotice: 'Données fictives uniquement. Les modifications disparaissent à la réinitialisation.',
+  datasetVersion: version, synthetic: true, available: true,
+}));
+
+async function stub(page: Page, operator = false) {
+  await page.route('**/api/v1/meta', (route) => route.fulfill({ json: meta }));
+  await page.route('**/api/v1/demo/scenarios', (route) => route.fulfill({ json: { items, nextCursor: null } }));
+  await page.route('**/api/v1/session', (route) => operator
+    ? route.fulfill({ json: { account: { email: 'operateur@example.test' } } })
+    : route.fulfill({ status: 401, json: { code: 'UNAUTHORIZED' } }));
+  await page.route('**/api/v1/csrf', (route) => route.fulfill({ json: { token: 'fictional-fixture-csrf' } }));
+}
+
+async function accessible(page: Page) {
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+}
+
+test('the scenario page discloses the fictional identity and keeps normal sign-in', async ({ page }) => {
+  await stub(page);
+  await page.setViewportSize({ width: 320, height: 844 });
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.goto('/demonstration');
+  const choose = page.getByRole('button', { name: 'Choisir · Claire Martin' });
+  await expect(choose).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(320);
+  await expect(page.getByRole('button', { name: 'Réinitialiser la démonstration' })).toHaveCount(0);
+  await accessible(page);
+  await choose.focus();
+  await page.keyboard.press('Enter');
+  const panel = page.getByRole('main');
+  const heading = panel.getByRole('heading', { name: 'Scénario patiente' });
+  await expect(heading).toBeFocused();
+  await expect(panel).toContainText('Ne saisissez aucune donnée réelle');
+  await expect(panel).toContainText('claire.martin@example.test');
+  await expect(panel.getByRole('link', { name: 'README de la démonstration' })).toBeVisible();
+  await accessible(page);
+  await page.keyboard.press('Escape');
+  await expect(heading).toHaveCount(0);
+  await expect(choose).toBeFocused();
+  await choose.click();
+  await panel.getByRole('link', { name: 'Ouvrir la démonstration' }).click();
+  await expect(page).toHaveURL(/\/connexion\/patient$/);
+  await expect(page.getByLabel('Adresse e-mail')).toHaveValue('claire.martin@example.test');
+  await expect(page.locator('input[name="password"]')).toHaveValue('');
+});
+
+test('the one-shot preparation trace is delayed and remains static under reduced motion', async ({ page }) => {
+  await stub(page);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  let unblock!: () => void;
+  const paused = new Promise<void>((resolve) => { unblock = resolve; });
+  await page.route('**/api/v1/demo/scenarios', async (route) => {
+    await paused;
+    await route.fulfill({ json: { items, nextCursor: null } });
+  });
+  await page.goto('/demonstration');
+  await expect(page.getByRole('status')).toContainText('Préparation du scénario');
+  const sign = page.locator('.etaye-demo-sign path').first();
+  await expect(sign).toHaveCSS('animation-name', 'none');
+  await accessible(page);
+  unblock();
+  await expect(page.getByRole('button', { name: 'Choisir · Dr Nora Lefebvre' })).toBeVisible();
+  await expect(sign).toHaveCount(0);
+});
+
+for (const boundary of [
+  { status: 503, code: 'SERVICE_UNAVAILABLE', title: 'Démonstration indisponible' },
+  { status: 503, code: 'DEMO_RESET_IN_PROGRESS', title: 'Réinitialisation en cours' },
+  { status: 429, code: 'RATE_LIMITED', title: 'Demande temporairement limitée' },
+]) {
+  test(`the showcase recovers after ${boundary.code}`, async ({ page }) => {
+    await stub(page);
+    await page.route('**/api/v1/demo/scenarios', (route) => route.fulfill({
+      status: boundary.status, headers: { 'Retry-After': '1' }, json: { code: boundary.code },
+    }), { times: 1 });
+    await page.goto('/demonstration');
+    await expect(page.getByRole('alert')).toContainText(boundary.title);
+    await expect(page.getByRole('button', { name: 'Choisir · Dr Nora Lefebvre' })).toHaveCount(0);
+    const retry = page.getByRole('button', { name: 'Réessayer' });
+    if (boundary.status === 429) await expect(retry).toBeDisabled();
+    await accessible(page);
+    await retry.click();
+    await expect(page.getByRole('button', { name: 'Choisir · Dr Nora Lefebvre' })).toBeVisible();
+  });
+}
+
+test('the reset confirmation keeps focus, survives a busy response and reports a subsequent refusal', async ({ page }) => {
+  await stub(page, true);
+  let complete!: () => void;
+  const paused = new Promise<void>((resolve) => { complete = resolve; });
+  const keys: (string | undefined)[] = [];
+  await page.route('**/api/v1/demo/reset', async (route) => {
+    keys.push(route.request().headers()['idempotency-key']);
+    if (keys.length === 1) {
+      await paused;
+      await route.fulfill({ status: 409, json: { code: 'DEMO_RESET_IN_PROGRESS' } });
+    } else {
+      await route.fulfill({ status: 403, json: { code: 'ACCESS_DENIED' } });
+    }
+  });
+  await page.goto('/demonstration');
+  const launch = page.getByRole('button', { name: 'Réinitialiser la démonstration' });
+  await launch.click();
+  const panel = page.getByRole('main');
+  const heading = panel.getByRole('heading', { name: 'Réinitialiser la démonstration' });
+  await expect(heading).toBeFocused();
+  await accessible(page);
+  const confirm = panel.getByRole('button', { name: 'Confirmer la réinitialisation' });
+  await confirm.click();
+  await expect(panel.getByRole('status')).toContainText('Réinitialisation en cours');
+  await page.keyboard.press('Escape');
+  await expect(heading).toBeVisible();
+  await accessible(page);
+  complete();
+  await expect(panel.getByRole('alert')).toContainText('Réinitialisation en cours');
+  await accessible(page);
+  await confirm.click();
+  await expect(panel.getByRole('alert')).toContainText('Accès réservé');
+  await expect(confirm).toBeDisabled();
+  expect(keys).toHaveLength(2);
+  expect(keys[1]).toBe(keys[0]);
+  await accessible(page);
+  await expect(page.getByText('Démonstration réinitialisée')).toHaveCount(0);
+});
