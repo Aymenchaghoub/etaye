@@ -8,7 +8,9 @@ Updated: 2026-11-21. Owner: Aymen Chaghoub.
 
 **Actual verification.** API verify passed 160 tests, web smoke passed 45, and five real-stack browser cases passed. The [implementation record](implementation-artifacts/story-1-3-implementation-record.md) gives the scope and limits. The [running UI comparisons](design/reviews/2026-11-21-story-1-3-runtime.md) preserve the S-05 and I-20 review evidence.
 
-**Next action.** Triage the three-lens Zcode report and obtain Aymen's review of the running screens. Verify the GitHub checks and request CodeRabbit on the published draft. Merge requires the recorded running UI review.
+**Review.** Zcode reported on `309891e`. Follow-up `ffc88f4` corrects the account-home alias, tests revocation on the polling path and strengthens the visual evidence. The implementation record records the three review angles and remaining evidence limits. [Draft PR #50](https://github.com/Aymenchaghoub/etaye/pull/50)
+
+**Next action.** Obtain Aymen's review of the running screens. Check the exact tip of PR #50 and the manual CodeRabbit response. Merge requires the recorded running UI review.
 
 ## Story 1.3 design approved — 2026-11-21
 
