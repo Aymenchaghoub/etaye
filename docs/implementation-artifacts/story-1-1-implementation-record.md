@@ -22,13 +22,15 @@ On 2026-11-21, UD-50 authorized team and patient invitation activation. Aymen ap
 
 ## Delivery review
 
-The read-only Codex CLI reviewed candidate `5ec9e4a483785301f9742c2c4026e35e9e7d43a9` against `447fe579af1fdc43b5a4e16a0e0565be82c350d0`. The implementation follow-up `54921b1fd2696cf010b56c326316257e9040e8e9` closes its seven findings. Follow-up `528cfa402d429e7c213e7375fe3f6ef7f8bd9de3` also refreshes the preview when the same link is opened again in the current tab. Chromium and the isolated running UI verified that refresh. Final application candidate `75c69dc3b0fb65631f5ba2433429cb722e9a00fb` keeps automatic heading focus without drawing an outline around static text. Chromium verified the title and the visible Tab focus on controls in the shared auth shell. Aymen approved the running UI after this correction.
+The read-only Codex CLI reviewed candidate `5ec9e4a483785301f9742c2c4026e35e9e7d43a9` against `447fe579af1fdc43b5a4e16a0e0565be82c350d0`. The implementation follow-up `54921b1fd2696cf010b56c326316257e9040e8e9` closes its seven findings. Follow-up `528cfa402d429e7c213e7375fe3f6ef7f8bd9de3` also refreshes the preview when the same link is opened again in the current tab. Chromium and the isolated running UI verified that refresh. Visual candidate `75c69dc3b0fb65631f5ba2433429cb722e9a00fb` keeps automatic heading focus without drawing an outline around static text. Chromium verified the title and the visible Tab focus on controls in the shared auth shell. Aymen approved the running UI after this correction.
 
 | Review lens | Disposition and regression evidence |
 |---|---|
 | Silent failures | A suspended practice prevents consumption, account creation and audit. The PostgreSQL HTTP test verifies the preview and acceptance refusal. |
 | Edge cases | Acceptance rechecks time after the record and recipient locks. The lock-expiry test verifies that the invitation and grants remain intact. The web restores account-creation fields when the prior session ends, offers direct sign-in and sends conflicting portal links to practice contact. |
 | Acceptance criteria | Invitation idempotency accepts the OpenAPI header length range. HTTP tests exercise a key with punctuation. Chromium verifies loading, pending submission, throttling, retry, restrictions and focus with axe. |
+
+CodeRabbit reviewed `a40c4683cc3bf36ccf2d1d3d73fd541e132a5963` and returned five findings. The final candidate `f615a1b4f4562f6bbe33bf7e4d9d1b98a67e40c7` bounds the derived account name while preserving the original patient names, verifies both concurrent HTTP requests wait on the invitation, clears stale form errors after sign-in, aligns the display-name requirement and links historical verification instructions to the current review rules. CodeRabbit reported a rate limit on the later request. [CodeRabbit review](https://github.com/Aymenchaghoub/etaye/pull/49#pullrequestreview-6004835578) · [Rate-limit response](https://github.com/Aymenchaghoub/etaye/pull/49#issuecomment-7061766049)
 
 The final review and integration status are tracked in the [continuation note](../continuation.md) and [PR #49](https://github.com/Aymenchaghoub/etaye/pull/49).
 
