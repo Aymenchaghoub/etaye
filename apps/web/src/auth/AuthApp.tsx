@@ -4,7 +4,7 @@ import { accountApi } from '../api/browser';
 import type { AccessContext, Session } from '../api/generated/types.gen';
 import { AuthShell, Banner, FocusedHeading } from './AuthComponents';
 import { contextPath, currentContexts } from './access-contexts';
-import { PracticeChooser, PracticeDestination } from './PracticeContext';
+import { PracticeChooser, PracticeChooserHeading, PracticeDestination } from './PracticeContext';
 import { Invitation } from './Invitation';
 import { RecoveryRequest, ResetPassword } from './Recovery';
 import { SignIn } from './SignIn';
@@ -18,6 +18,11 @@ function isAccountArea(path: string) {
   return path === ACCOUNT_PATH || path.startsWith(`${ACCOUNT_PATH}/`);
 }
 
+function readPath() {
+  const { pathname } = window.location;
+  return pathname === `${ACCOUNT_PATH}/` ? ACCOUNT_PATH : pathname;
+}
+
 export function usesAuth(path: string): boolean {
   return isAccountArea(path) || [
     '/connexion', '/connexion/patient', '/recuperation', '/recuperation/nouveau', '/invitation',
@@ -25,7 +30,7 @@ export function usesAuth(path: string): boolean {
 }
 
 export function AuthApp() {
-  const [path, setPath] = useState(window.location.pathname);
+  const [path, setPath] = useState(readPath);
   const [notice, setNotice] = useState<Notice>();
   const [returning, setReturning] = useState(false);
   const [initial, setInitial] = useState<Session>();
@@ -53,7 +58,7 @@ export function AuthApp() {
       setReturning(false);
       setInitial(undefined);
       setRetry((attempt) => attempt + 1);
-      setPath(window.location.pathname);
+      setPath(readPath());
     };
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
@@ -310,7 +315,7 @@ function AccountGate({ target, initial, onHalt, leave, enter, askToSignIn }: {
   const retryRead = () => setRetry((attempt) => attempt + 1);
   if (!view) return (
     <AuthShell wide>
-      <FocusedHeading>{leaving ? 'Se déconnecter' : 'Choisir un contexte de travail'}</FocusedHeading>
+      {leaving ? <FocusedHeading>Se déconnecter</FocusedHeading> : <PracticeChooserHeading />}
       {unavailable ? <>
         <Banner title="Impossible de charger vos accès">
           <p>Le service est temporairement indisponible.</p>

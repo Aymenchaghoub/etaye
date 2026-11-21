@@ -5,6 +5,17 @@ import { contextPath, practiceLabel, roleLabel } from './access-contexts';
 import { ACCOUNT_PATH } from './session-work';
 import './practice-context.css';
 
+export function PracticeChooserHeading({ restricted = false }: { restricted?: boolean }) {
+  return (
+    <div>
+      <FocusedHeading>{restricted ? 'Accès modifié' : 'Choisir un contexte de travail'}</FocusedHeading>
+      <p className="etaye-2 etaye-auth__introduction">
+        Chaque cabinet a ses propres dossiers. Les recherches et brouillons ouverts restent dans leur contexte.
+      </p>
+    </div>
+  );
+}
+
 export function PracticeChooser({ session, contexts, restricted, select, retry, signOut }: {
   session: Session;
   contexts: AccessContext[];
@@ -15,12 +26,7 @@ export function PracticeChooser({ session, contexts, restricted, select, retry, 
 }) {
   return (
     <AuthShell wide>
-      <div>
-        <FocusedHeading>{restricted ? 'Accès modifié' : 'Choisir un contexte de travail'}</FocusedHeading>
-        <p className="etaye-2 etaye-auth__introduction">
-          Chaque cabinet a ses propres dossiers. Les recherches et brouillons ouverts restent dans leur contexte.
-        </p>
-      </div>
+      <PracticeChooserHeading restricted={restricted} />
       {restricted && <Banner title="Ce contexte n’est plus disponible">
         <p>Votre accès a changé. Choisissez un contexte encore disponible.</p>
       </Banner>}

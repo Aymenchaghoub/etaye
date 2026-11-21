@@ -114,9 +114,20 @@ test('a late status response from an abandoned switch cannot enter the current v
 
 test('a removed choice and an unrecognized route omit the former practice and show safe recovery', async ({ page }) => {
   let current = [tilleuls, canal];
+  await page.clock.install();
   await page.route('**/api/v1/session', (route) => route.fulfill({ json: snapshot(current) }));
-  await page.goto('/compte');
+  await page.goto('/compte/');
+  await expect(page.getByRole('heading', { name: 'Choisir un contexte de travail' })).toBeFocused();
+  await expect(page.getByRole('alert')).toHaveCount(0);
   const open = page.getByRole('button', { name: /Ouvrir · Administration/ });
+  await expect(open).toBeVisible();
+  await page.getByRole('button', { name: /Ouvrir · Praticien/ }).click();
+  await expect(page.locator('header')).toContainText(tilleuls.practiceName);
+  current = [canal];
+  await page.clock.fastForward(20_001);
+  await expect(page.getByRole('heading', { name: 'Accès modifié' })).toBeFocused();
+  await expect(page.getByText(tilleuls.practiceName)).toHaveCount(0);
+  await expect(page.getByTestId('protected-account')).toHaveCount(0);
   await expect(open).toBeVisible();
   current = [tilleuls];
   await open.click();
