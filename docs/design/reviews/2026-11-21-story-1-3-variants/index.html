@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="fr" data-theme="clair">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Étaye · Revue du changement de contexte</title>
+  <link rel="stylesheet" href="../../../../design/offline-reference/site/tokens/tokens.css">
+  <link rel="stylesheet" href="../../../../design/offline-reference/site/css/etaye.css">
+  <link rel="stylesheet" href="../../../../design/offline-reference/site/css/review-corrections.css">
+  <style>
+    body { margin: 0; background: var(--fond); color: var(--encre); }
+    .etaye-auth__corps { min-width: 0; overflow-wrap: anywhere; }
+    .etaye-top { min-height: var(--espace-16); flex-wrap: wrap; padding-block: var(--espace-2); }
+    .etaye-top .etaye-contexte { min-width: 0; max-width: 100%; }
+    .etaye-contexte__cabinet { overflow-wrap: anywhere; }
+    .etaye-pliste > li .etaye-bouton { justify-self: start; flex-shrink: 0; }
+    .etaye-auth__corps .etaye-pliste__txt small { font-size: 14px; line-height: 20px; }
+    .etaye-revue-logo img { height: 22px; }
+    .etaye-revue-actions { display: flex; flex-wrap: wrap; gap: var(--espace-2); }
+    .etaye-revue-menu { display: grid; gap: var(--espace-4); }
+    .etaye-revue-menu ul { margin: var(--espace-2) 0 0; padding-inline-start: var(--espace-6); }
+    .etaye-revue-menu li { margin-block: var(--espace-2); }
+    .etaye-root .etaye-revue-focus[tabindex="-1"]:focus { outline: none; }
+    dialog.etaye-dialogue { border: 0; margin: 0; position: fixed; }
+    /* The received mobile overlay forces display: grid on dialogue shells. */
+    dialog.etaye-dialogue:not([open]) { display: none !important; }
+    dialog.etaye-dialogue::backdrop { background: var(--etaye-revue-scrim); }
+    @media (max-width: 760px) {
+      dialog.etaye-dialogue { max-width: 100%; }
+      dialog.etaye-dialogue::backdrop { background: var(--surface); }
+    }
+  </style>
+</head>
+<body class="etaye-root">
+  <div id="surface"></div>
+
+  <template id="selection">
+    <div class="etaye-auth">
+      <header class="etaye-revue-logo" data-logo></header>
+      <main class="etaye-auth__corps etaye-auth__corps--large" id="contenu">
+        <div>
+          <h1 class="etaye-revue-focus" tabindex="-1"></h1>
+          <p class="etaye-2" style="margin-top:var(--espace-2)" data-intro hidden></p>
+        </div>
+        <div data-state></div>
+      </main>
+      <footer class="etaye-auth__pied">
+        <span class="etaye-demo">Démonstration — personnes et données fictives</span>
+        <span class="etaye-3">Projet de démonstration — aucun usage clinique</span>
+      </footer>
+    </div>
+  </template>
+
+  <template id="destination">
+    <header class="etaye-top">
+      <div class="etaye-top__logo" data-logo></div>
+      <a class="etaye-contexte" data-switch>
+        <span aria-hidden="true" class="etaye-icone etaye-icone--18 etaye-icone--cabinet"></span>
+        <span>
+          <strong class="etaye-contexte__cabinet" data-practice></strong>
+          <span class="etaye-contexte__role" data-role></span>
+        </span>
+        <span aria-hidden="true" class="etaye-icone etaye-icone--deplier"></span>
+      </a>
+      <div class="etaye-top__droite"><span class="etaye-demo">Démonstration — personnes et données fictives</span></div>
+    </header>
+    <main class="etaye-auth__corps etaye-auth__corps--large etaye-page">
+      <h1 class="etaye-revue-focus" tabindex="-1"></h1>
+      <div data-state></div>
+    </main>
+  </template>
+
+  <template id="notice">
+    <div class="etaye-bandeau etaye-bandeau--attention" role="alert">
+      <span aria-hidden="true" class="etaye-icone etaye-icone--18 etaye-icone--alerte"></span>
+      <div><div class="etaye-bandeau__titre"></div><p></p></div>
+    </div>
+  </template>
+
+  <template id="option">
+    <li>
+      <span aria-hidden="true" class="etaye-icone etaye-icone--24 etaye-icone--cabinet etaye-2"></span>
+      <div class="etaye-pliste__txt"><strong></strong><small></small></div>
+      <a class="etaye-bouton etaye-bouton--secondaire">Ouvrir</a>
+    </li>
+  </template>
+
+  <template id="guard">
+    <dialog class="etaye-dialogue" aria-labelledby="dlg-t">
+      <div class="etaye-dialogue__tete">
+        <h2 id="dlg-t" class="etaye-revue-focus" tabindex="-1" autofocus>Modifications non enregistrées</h2>
+        <button type="button" class="etaye-fermer" aria-label="Fermer">
+          <span aria-hidden="true" class="etaye-icone etaye-icone--18 etaye-icone--fermer"></span>
+        </button>
+      </div>
+      <div class="etaye-dialogue__corps">
+        <p>Vous avez des modifications en cours dans le contexte actuel.</p>
+        <p class="etaye-2">Destination · <strong>Cabinet du Canal</strong></p>
+        <div data-result></div>
+      </div>
+      <div class="etaye-dialogue__pied">
+        <button type="button" class="etaye-bouton etaye-bouton--principal" data-save>Enregistrer et continuer</button>
+        <button type="button" class="etaye-bouton etaye-bouton--secondaire" data-stay>Rester sur cette page</button>
+        <button type="button" class="etaye-bouton etaye-bouton--discret" data-discard>Quitter sans enregistrer</button>
+      </div>
+    </dialog>
+  </template>
+
+  <script src="preview.js" defer></script>
+</body>
+</html>
