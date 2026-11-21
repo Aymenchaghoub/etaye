@@ -17,6 +17,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.validator.constraints.CodePointLength;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -45,12 +46,15 @@ public class InvitationController {
     private final InvitationAccessService invitations;
     private final AccountRequestBudget budget;
     private final BrowserSessionLifetime lifetime;
+    private final boolean demoEnabled;
 
     public InvitationController(InvitationAccessService invitations, AccountRequestBudget budget,
-                                BrowserSessionLifetime lifetime) {
+                                BrowserSessionLifetime lifetime,
+                                @Value("${etaye.demo.enabled:false}") boolean demoEnabled) {
         this.invitations = invitations;
         this.budget = budget;
         this.lifetime = lifetime;
+        this.demoEnabled = demoEnabled;
     }
 
     @PostMapping(path = "/api/v1/invitations/inspect", consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -89,6 +93,10 @@ public class InvitationController {
                 && payload.password().codePointCount(0, payload.password().length()) < 12) {
             return AccountAccessProblem.response(request, HttpStatus.UNPROCESSABLE_ENTITY,
                     "PASSWORD_TOO_SHORT", "The password requires at least 12 characters");
+        }
+        if (demoEnabled && payload.displayName() != null && !"Alex Rivière".equals(payload.displayName().strip())) {
+            return AccountAccessProblem.response(request, HttpStatus.UNPROCESSABLE_ENTITY,
+                    "RECIPIENT_MISMATCH", "Use the published fictional identity");
         }
         LocalDate birthDate = parseBirthDate(payload.recipientVerification());
 

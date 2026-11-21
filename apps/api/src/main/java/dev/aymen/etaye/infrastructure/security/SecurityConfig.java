@@ -2,6 +2,8 @@ package dev.aymen.etaye.infrastructure.security;
 
 import dev.aymen.etaye.identity.service.IdentityLookupService;
 import dev.aymen.etaye.infrastructure.error.ProblemResponseWriter;
+import dev.aymen.etaye.infrastructure.demo.DemoFixture;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,17 +34,20 @@ public class SecurityConfig {
     private final ProblemResponseWriter problemResponseWriter;
     private final IdentityLookupService identityLookupService;
     private final ObjectProvider<SessionRepository<?>> sessionRepositoryProvider;
+    private final boolean demoEnabled;
 
     public SecurityConfig(ProblemAuthenticationEntryPoint authenticationEntryPoint,
                           ProblemAccessDeniedHandler accessDeniedHandler,
                           ProblemResponseWriter problemResponseWriter,
                           IdentityLookupService identityLookupService,
-                          ObjectProvider<SessionRepository<?>> sessionRepositoryProvider) {
+                          ObjectProvider<SessionRepository<?>> sessionRepositoryProvider,
+                          @Value("${etaye.demo.enabled:false}") boolean demoEnabled) {
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.accessDeniedHandler = accessDeniedHandler;
         this.problemResponseWriter = problemResponseWriter;
         this.identityLookupService = identityLookupService;
         this.sessionRepositoryProvider = sessionRepositoryProvider;
+        this.demoEnabled = demoEnabled;
     }
 
     @Bean
@@ -67,8 +72,11 @@ public class SecurityConfig {
     @Bean
     @Order(1)
     public SecurityFilterChain publicMetadataSecurityFilterChain(HttpSecurity http) throws Exception {
+        String[] paths = demoEnabled
+                ? new String[] {"/api/v1/probes/**", "/api/v1/meta", DemoFixture.CATALOGUE_PATH}
+                : new String[] {"/api/v1/probes/**", "/api/v1/meta"};
         http
-            .securityMatcher("/api/v1/probes/**", "/api/v1/meta")
+            .securityMatcher(paths)
             .cors(Customizer.withDefaults())
             .addFilterAfter(new RejectBearerFilter(accessDeniedHandler), CorsFilter.class)
             .addFilterBefore(new StatelessRequestFilter(), org.springframework.security.web.session.DisableEncodeUrlFilter.class)
@@ -137,14 +145,19 @@ public class SecurityConfig {
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
             )
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/csrf").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/v1/session", "/api/v1/access-recovery",
-                        "/api/v1/access-recovery/complete", "/api/v1/invitations/inspect",
-                        "/api/v1/invitations/accept").permitAll()
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(new ExistingSessionCsrfFilter(accessDeniedHandler, lifetime), CsrfFilter.class)
+            .authorizeHttpRequests(auth -> {
+                auth.requestMatchers("/api/v1/csrf").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/v1/session", "/api/v1/access-recovery",
+                            "/api/v1/access-recovery/complete", "/api/v1/invitations/inspect",
+                            "/api/v1/invitations/accept").permitAll();
+                if (demoEnabled) {
+                    // The public demo identities never have an arbitrary patient-input surface.
+                    auth.requestMatchers(HttpMethod.POST, "/api/v1/practices/{practiceId}/patients").denyAll();
+                }
+                auth.anyRequest().authenticated();
+            })
+            .addFilterBefore(new ExistingSessionCsrfFilter(accessDeniedHandler, lifetime,
+                    demoEnabled ? authenticationEntryPoint : null), CsrfFilter.class)
             .addFilterBefore(
                 new IdentityResolutionFilter(
                         identityLookupService,

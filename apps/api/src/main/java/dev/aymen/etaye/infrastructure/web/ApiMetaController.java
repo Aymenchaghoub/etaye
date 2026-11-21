@@ -1,5 +1,8 @@
 package dev.aymen.etaye.infrastructure.web;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import dev.aymen.etaye.infrastructure.demo.DemoFixture;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
@@ -20,21 +23,32 @@ public class ApiMetaController {
                     + "(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?");
 
     private final ApiMeta metadata;
+    private final DemoFixture fixture;
 
     public ApiMetaController(
             @Value("${etaye.compatibility.minimum-client-version:0.0.1}") String minimumClientVersion,
-            @Value("${etaye.compatibility.latest-client-version:0.0.1}") String latestClientVersion) {
+            @Value("${etaye.compatibility.latest-client-version:0.0.1}") String latestClientVersion,
+            ObjectProvider<DemoFixture> fixture) {
         if (!SEMANTIC_VERSION.matcher(minimumClientVersion).matches()
                 || !SEMANTIC_VERSION.matcher(latestClientVersion).matches()) {
             throw new IllegalArgumentException("Configure client versions using SemVer 2.0.0");
         }
-        metadata = new ApiMeta("v1", minimumClientVersion, latestClientVersion);
+        metadata = new ApiMeta("v1", minimumClientVersion, latestClientVersion, null, null);
+        this.fixture = fixture.getIfAvailable();
     }
 
     @GetMapping(value = "/api/v1/meta", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiMeta> getApiMeta() {
-        return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(metadata);
+        ApiMeta response = metadata;
+        if (fixture != null) {
+            var version = fixture.version();
+            response = new ApiMeta(metadata.apiVersion(), metadata.minimumClientVersion(), metadata.latestClientVersion(),
+                    version.version(), version.generation());
+        }
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(response);
     }
 
-    public record ApiMeta(String apiVersion, String minimumClientVersion, String latestClientVersion) {}
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record ApiMeta(String apiVersion, String minimumClientVersion, String latestClientVersion,
+                          String demoDatasetVersion, Long demoResetGeneration) {}
 }
