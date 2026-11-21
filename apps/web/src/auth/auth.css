@@ -23,6 +23,9 @@ body:has(.etaye-root) { margin: 0; }
   outline-offset: 2px;
 }
 
+/* Page headings receive focus for navigation announcements. */
+.etaye-root h1[tabindex="-1"]:focus { outline: none; }
+
 .etaye-auth {
   min-height: 100dvh;
   background: var(--papier);

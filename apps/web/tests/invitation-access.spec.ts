@@ -48,7 +48,9 @@ async function axe(page: Page) {
 }
 
 async function accessibility(page: Page) {
-  await expect(page.locator('h1')).toBeFocused();
+  const heading = page.getByRole('heading', { level: 1 });
+  await expect(heading).toBeFocused();
+  await expect(heading).toHaveCSS('outline-style', 'none');
   await axe(page);
 }
 
@@ -60,7 +62,9 @@ test('S-03 team preview keeps the token off URLs and focuses the password confir
   await expect(page.getByText('a•••@example.test')).toBeVisible();
   await accessibility(page);
   await page.keyboard.press('Tab');
-  await expect(page.getByLabel('Nom affiché')).toBeFocused();
+  const displayName = page.getByLabel('Nom affiché');
+  await expect(displayName).toBeFocused();
+  await expect(displayName).toHaveCSS('outline-style', 'solid');
   await page.keyboard.type('Alex Rivière');
   await page.keyboard.press('Tab');
   await expect(page.locator('#a-pw')).toBeFocused();
