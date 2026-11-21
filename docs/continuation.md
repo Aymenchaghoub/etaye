@@ -4,11 +4,11 @@ Updated: 2026-11-21. Owner: Aymen Chaghoub.
 
 ## Story 1.1 implementation and delivery review — 2026-11-21
 
-**Phase.** Implementation under UD-50 is on `feat/1.1-activate-invitation`. Application candidate `528cfa402d429e7c213e7375fe3f6ef7f8bd9de3` implements the narrowly scoped invitation endpoints, V3 and the S-03/I-03 Web flow. Issuance and email stay deferred under D-23. [Implementation record](implementation-artifacts/story-1-1-implementation-record.md)
+**Phase.** Implementation under UD-50 is on `feat/1.1-activate-invitation`. Application candidate `75c69dc3b0fb65631f5ba2433429cb722e9a00fb` implements the narrowly scoped invitation endpoints, V3 and the S-03/I-03 Web flow. Issuance and email stay deferred under D-23. [Implementation record](implementation-artifacts/story-1-1-implementation-record.md)
 
 **Actual verification.** Java 25 Maven verify passed 159 tests, including 9 invitation HTTP cases. The isolated PostgreSQL V2-to-V3 migration preserved a synthetic account. Both disposable regression mutations were detected. Node 26 build, SDK drift check and 33 Chromium smoke cases passed. Three real-stack invitation journeys passed. The visual run produced 200 matched captures and 11 opened pairs. A separate running capture shows the unavailable invitation with keyboard focus. [Running UI comparisons](design/reviews/2026-11-21-story-1-1-rendered.md)
 
-**Access and next action.** Figma returned `UNAUTHORIZED / TRIGGER_REAUTHENTICATION`. The approved HTML exception applies. The local running UI is ready for Aymen’s review. The seven Codex CLI findings have been addressed and the final GitHub review is tracked on [PR #49](https://github.com/Aymenchaghoub/etaye/pull/49). The merge requires Aymen’s reply on the running UI.
+**Access and next action.** Figma returned `UNAUTHORIZED / TRIGGER_REAUTHENTICATION`. The approved HTML exception applies. Aymen reported an outline on page headings. The shared auth shell now keeps semantic heading focus and shows the outline on keyboard-focusable controls. Aymen approved the running UI after that correction. The seven Codex CLI findings have been addressed. Required checks, CodeRabbit and integration are tracked on [PR #49](https://github.com/Aymenchaghoub/etaye/pull/49).
 
 ## Story 1.1 design approved; implementation starting — 2026-11-21
 
