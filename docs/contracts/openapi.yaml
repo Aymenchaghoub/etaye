@@ -8144,7 +8144,7 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 200,
-            "description": "Required when the acceptance creates a new account (the increment-1 seeded invitations); ignored-irrelevant for a signed-in matching recipient."
+            "description": "Required when a new TEAM account is created; a new PATIENT_PORTAL account derives its display name from the record; absent for a signed-in matching recipient."
           },
           "password": {
             "type": "string",
@@ -8198,6 +8198,11 @@
           "expiresAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "acceptedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Present for an accepted token; the time at which this invitation was used."
           },
           "eligibility": {
             "type": "string",
@@ -8319,6 +8324,11 @@
           "expiresAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "activatedPortalLinkId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Only returned by portal invitation acceptance when its exact link remains active for the authenticated account."
           },
           "returnTo": {
             "type": "string",
