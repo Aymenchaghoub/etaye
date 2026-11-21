@@ -14,6 +14,6 @@ project_knowledge = "{project-root}/docs"
 test_artifacts = "{project-root}/docs/test-artifacts"
 phase = "planning-design"
 development_authorized = false
-# Per-story authorization: UD-41 (10.1), UD-45 (10.2) and UD-48 (1.2).
+# Per-story authorization: UD-41 (10.1), UD-45 (10.2), UD-48 (1.2) and UD-50 (1.1).
 # Default deny: a story that is not listed is not authorized.
-authorized_stories = ["10.1", "10.2", "1.2"]
+authorized_stories = ["10.1", "10.2", "1.2", "1.1"]

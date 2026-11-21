@@ -1,6 +1,38 @@
 # Session continuation
 
-Updated: 2026-11-20. Owner: Aymen Chaghoub.
+Updated: 2026-11-21. Owner: Aymen Chaghoub.
+
+## Story 1.1 design approved; implementation starting — 2026-11-21
+
+**User decisions.** Aymen opened the offline reference states himself (entry `design/offline-reference/site/index.html`) and answered "approuvé, tu peux y aller": S-03 and I-03 are approved as shown ([review record](design/reviews/2026-11-21-story-1-1-review.md)); I-01 stays deferred (D-23). He also set the end-of-story three-lens review rule: it runs with the Codex CLI, never with subagents — the [delivery rules](operations/delivery-rules.md) now say so, replacing the local Zcode review of 2026-11-20.
+
+**Completed artifacts.** `coverage.csv` and `html-reception.csv` rows for S-03 and I-03 moved to `Approved by Aymen` / `Approved on 2026-11-21` with the honest review limits (his browser width and theme not recorded; tablet/mobile/keyboard not judged there; functional review Pending); the review record cites his words and what stayed unjudged.
+
+**Next action.** Branch `feat/1.1-activate-invitation` from `main`: first commit the authorization encoding and design records, then the contract commit (inspect preview, `displayName`, `recipientVerification` semantics, `Session` response, typed 422 codes, anonymous idempotency scope, README rows, operation index, dataset fixtures) before any application change, then V3 migration and the implementation phases of the [context packet](implementation-artifacts/story-1-1-context-packet.md).
+
+## Story 1.1 authorized (UD-50) — 2026-11-21
+
+**Phase.** Arbitration of the phase-0 packet. **User decision (UD-50):** Aymen asked for the design paths to review S-03/I-03 himself ("donne moi le chemin vers le design a valider") and validated the other arbitration points ("les autres points je te valide"): the six additive contract points of packet section 4 (including the recommended `Session` response on `acceptInvitation`), the synthetic-dataset invitation fixtures, and the development authorization for story 1.1 only.
+
+**Completed artifacts.** UD-50 row in the [decision register](planning-artifacts/decisions-assumptions.md) (new 2026-11-21 section); `authorized_stories = ["10.1", "10.2", "1.2", "1.1"]` in `_bmad/custom/config.toml` (`development_authorized` stays false); `tools/validate_docs.py` extended with the `stories-10.1-10.2-1.2-1.1` mode requiring UD-50, plus its scope test; the packet's status line records the outcome; `agent-setup.md` UD list synchronized.
+
+**Design review paths given to Aymen** (offline reference, 2026-11-18 Figma exception): open `design/offline-reference/site/index.html` and navigate to S-03 (6 states) and I-03 (4 states), or directly `design/offline-reference/site/ecrans/S-03/{equipe,expiree,deja-utilisee,revoquee,invalide,erreur}.html` and `design/offline-reference/site/ecrans/I-03/{ouvert,deja-active,expiree,erreur}.html`; add `?theme=sombre` for the dark theme. I-01 states exist but stay deferred (D-23). His approval (or silence plus UD-16's SAMPLED path) closes the design point.
+
+**Actual verification.** `python3 tools/validate_docs.py` reports `ok: true` with mode `stories-10.1-10.2-1.2-1.1`; `python3 -m unittest discover -s tools -p 'test_*.py'` passes including the new scope test. Documentary only; no application change exists yet.
+
+**Next action.** Aymen's S-03/I-03 design answer. Then branch `feat/1.1-activate-invitation` from `main`: first commit carries the authorization encoding with the contract changes (inspect preview, `displayName`, `recipientVerification` semantics, `Session` response, refusal codes, idempotency scope, README rows, dataset fixtures) before any application change, per the 10.2 precedent; then V3 migration and the implementation phases of the packet.
+
+## Story 1.1 phase 0 prepared — 2026-11-21
+
+**Phase.** Documentary preparation only for story 1.1 (Activate an intended invitation), following the context-packet rule of the [delivery rules](operations/delivery-rules.md). No application change, contract edit, migration or service activation; the packet authorizes nothing.
+
+**Completed artifacts.** [Story 1.1 context packet](implementation-artifacts/story-1-1-context-packet.md): objective and traceability (FR-001/FR-004, BR-004/005, J-01, AT-001, M1 of ADR-011), unmet preconditions (authorization absent: `authorized_stories = ["10.1", "10.2", "1.2"]`, default deny; S-03/I-01/I-03 not approved in coverage.csv under the 2026-11-18 Figma exception), scope with the D-23 deferral, contract gaps and additive proposals (no preview operation; `Activation` lacks `displayName`; `recipientVerification` semantics undeclared; session-on-acceptance decision; typed refusal codes; anonymous idempotency scope), the V3 invitation-table and identity-digest design (ADR-003 bootstrap exception), ten behavior checks C1–C10 mapped to AT-001, test/CI impact, thirteen qualified gaps, risks, exact source versions at `447fe57`, and the arbitration request.
+
+**Open choices for Aymen** (packet section 12): S-03/I-03 design approval or UD-16 sampled path; the six contract points; the synthetic-dataset invitation fixtures (`INV-TEAM-01` Alex Rivière, `INV-PORTAL-01`, `INV-PORTAL-02` Louis Bernard are named by the HTML reference but absent from `synthetic-data.json`); then the written development authorization and its `_bmad/custom/config.toml` encoding.
+
+**Actual verification.** `python3 tools/validate_docs.py` reports `ok: true` (0 errors) with the new file; documentary only, no application test ran. Verified observations in the packet come from reading the current `main` at `447fe57` (migrations V1–V2, `apps/web/src/auth/*`, the offline reference states `design/offline-reference/site/ecrans/{S-03,I-01,I-03}/`, coverage/html-reception rows, roadmap assignments).
+
+**Next action.** Aymen's arbitration on packet section 12; on approval, the contract commit precedes any application change (10.2 precedent) and the S-03/I-03 state set is prepared for his design review. The packet file is not yet committed; propose `docs/story-1-1-phase-0` for the documentation PR.
 
 ## Full-stack CodeQL delivered and ruleset updated (PR #46) — 2026-11-20
 
