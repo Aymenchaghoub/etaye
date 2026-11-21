@@ -7575,6 +7575,9 @@
           },
           "503": {
             "$ref": "#/components/responses/Problem503"
+          },
+          "406": {
+            "$ref": "#/components/responses/Problem406"
           }
         },
         "security": []
@@ -7627,6 +7630,12 @@
           },
           "503": {
             "$ref": "#/components/responses/Problem503"
+          },
+          "406": {
+            "$ref": "#/components/responses/Problem406"
+          },
+          "415": {
+            "$ref": "#/components/responses/Problem415"
           }
         },
         "requestBody": {
@@ -11012,12 +11021,6 @@
         "required": [
           "id",
           "name",
-          "actorName",
-          "roleLabel",
-          "practiceName",
-          "journeySummary",
-          "limitsNotice",
-          "signInIdentifier",
           "datasetVersion",
           "synthetic",
           "available"
@@ -11802,9 +11805,7 @@
         "required": [
           "apiVersion",
           "minimumClientVersion",
-          "latestClientVersion",
-          "demoDatasetVersion",
-          "demoResetGeneration"
+          "latestClientVersion"
         ],
         "properties": {
           "apiVersion": {

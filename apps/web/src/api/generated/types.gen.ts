@@ -646,27 +646,27 @@ export type DemoScenario = {
     /**
      * Named fictional actor the visitor will play (AC-S01-F).
      */
-    actorName: string;
+    actorName?: string;
     /**
      * Presentation label of the actor's role, for example the French practitioner or patient wording.
      */
-    roleLabel: string;
+    roleLabel?: string;
     /**
      * Fictional practice name shown before entry; never an authorization grant.
      */
-    practiceName: string;
+    practiceName?: string;
     /**
      * Honest description of the bounded journey this scenario covers.
      */
-    journeySummary: string;
+    journeySummary?: string;
     /**
      * Synthetic-data limits visible before entry (BR-018).
      */
-    limitsNotice: string;
+    limitsNotice?: string;
     /**
      * Published synthetic sign-in identifier of the scenario actor; the shared synthetic password lives in the demo package README (UD-56 D2).
      */
-    signInIdentifier: string;
+    signInIdentifier?: string;
     datasetVersion: string;
     synthetic: true;
     available: boolean;
@@ -856,11 +856,11 @@ export type ApiMeta = {
     /**
      * Current synthetic demonstration dataset version (UD-56 E1), present only in the local demo package; a reset that restores the same version stays detectable through demoResetGeneration.
      */
-    demoDatasetVersion: string;
+    demoDatasetVersion?: string;
     /**
      * Monotonic generation of the synthetic demonstration fixture in the local demo package; incremented by each completed reset (UD-56 E1). Clients compare the generation observed at entry to detect a reset.
      */
-    demoResetGeneration: number;
+    demoResetGeneration?: number;
 };
 
 export type CredentialsWritable = {
@@ -6625,6 +6625,10 @@ export type ListDemoScenariosErrors = {
      */
     400: Problem;
     /**
+     * No supported response media type matches Accept.
+     */
+    406: Problem;
+    /**
      * Rate limit or quota exceeded
      */
     429: Problem;
@@ -6673,9 +6677,17 @@ export type ResetSyntheticDemoErrors = {
      */
     403: Problem;
     /**
+     * No supported response media type matches Accept.
+     */
+    406: Problem;
+    /**
      * Business/idempotency/scheduling conflict
      */
     409: Problem;
+    /**
+     * The request media type is unsupported.
+     */
+    415: Problem;
     /**
      * Semantic validation or disallowed transition
      */
