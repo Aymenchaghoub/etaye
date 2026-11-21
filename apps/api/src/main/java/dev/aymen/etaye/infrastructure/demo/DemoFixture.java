@@ -66,7 +66,8 @@ public class DemoFixture {
         if (!isOperator(accountId)) return new Reset(Outcome.FORBIDDEN, correlation, 0);
         if (!resetPending.compareAndSet(false, true)) return new Reset(Outcome.BUSY, correlation, 0);
         try {
-            if (!barrier.writeLock().tryLock(2, TimeUnit.SECONDS)) {
+            var resetLock = barrier.writeLock();
+            if (!resetLock.tryLock(2, TimeUnit.SECONDS)) {
                 return new Reset(Outcome.BUSY, correlation, 0);
             }
             try {
@@ -86,7 +87,7 @@ public class DemoFixture {
             } catch (QueryTimeoutException ex) {
                 return new Reset(Outcome.UNAVAILABLE, correlation, 0);
             } finally {
-                barrier.writeLock().unlock();
+                resetLock.unlock();
             }
         } finally {
             resetPending.set(false);
