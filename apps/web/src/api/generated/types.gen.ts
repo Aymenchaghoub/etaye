@@ -102,6 +102,21 @@ export type Session = {
      * Only returned by sign-in. Server-authorized local path.
      */
     returnTo?: string;
+    /**
+     * Returned by GET /session. Exactly one entry per active membership or verified portal link in the associated ID arrays. An empty array means the current account has no eligible context. Separate grants in the same practice remain distinct.
+     */
+    contexts?: Array<AccessContext>;
+};
+
+/**
+ * Current minimal access-context projection. The kind and grant ID identify the browser context. A display role or practice ID does not authorize any resource.
+ */
+export type AccessContext = {
+    kind: 'MEMBERSHIP' | 'PORTAL';
+    grantId: string;
+    practiceId: string;
+    practiceName: string;
+    displayRole: 'CLINICAL' | 'ADMINISTRATION' | 'SCHEDULING' | 'TEAM' | 'PATIENT';
 };
 
 export type Csrf = {
@@ -1104,7 +1119,7 @@ export type GetSessionError = GetSessionErrors[keyof GetSessionErrors];
 
 export type GetSessionResponses = {
     /**
-     * Current account and grants with the nearer idle or absolute deadline.
+     * Current account and grants with their access contexts and the nearer idle or absolute deadline.
      */
     200: Session;
 };

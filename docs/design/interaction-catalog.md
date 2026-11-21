@@ -321,7 +321,7 @@ Disable duplicate submits while pending, keep a stable idempotency key, and do n
 - **Actions:** primary “Enregistrer et continuer”; secondary “Rester sur cette page”. Any destructive choice is explicitly labeled, separate from safe cancel, and never default-focused.
 - **Business result:** Discard is explicit destructive alternative; preserve safe account/practice memory.
 - **Loading/error/duplicate behavior:** shared contract; show safe processing state and exact failure without erasing entered information. Invalid input has field error; permission denial removes protected content. Ambiguous response checks operation outcome.
-- **Closing/input/focus/mobile:** shared contract applies fully; preserve safe entered work on validation/network failure, require explicit discard for dirty work, restore trigger focus. This long action becomes a full-width mobile page when content does not fit.
+- **Closing/input/focus/mobile:** At opening, focus the dialog title programmatically. Keep its ordinary heading appearance and keep it outside the Tab sequence. Show the standard focus outline when the keyboard reaches the close button. Trap focus in the dialog and restore it to the trigger on safe dismissal. Preserve safe entered work on validation/network failure and require explicit discard for dirty work. This long action becomes a full-width mobile page when content does not fit. [Design review](reviews/2026-11-21-story-1-3-i-20.md)
 - **Acceptance:** keyboard completion and error recovery work; result follows the exact allowed lifecycle, no duplicate side effect, no premature visibility. Capture opened desktop/tablet/mobile review evidence under I-20.
 
 <a id="i-21"></a>

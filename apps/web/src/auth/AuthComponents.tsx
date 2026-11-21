@@ -4,15 +4,21 @@ import logoDark from '../../../../design/offline-reference/site/logos/etaye-logo
 import patientLight from '../../../../design/offline-reference/site/logos/etaye-logo-espace-patient.svg?url';
 import patientDark from '../../../../design/offline-reference/site/logos/etaye-logo-espace-patient-sombre.svg?url';
 
-export function AuthShell({ children, patient = false }: { children: ReactNode; patient?: boolean }) {
+export function AuthLogo({ patient = false }: { patient?: boolean }) {
   const name = patient ? 'Étaye — Espace patient' : 'Étaye';
+  return <>
+    <img src={patient ? patientLight : logoLight} className="etaye-logo-c" alt={name} />
+    <img src={patient ? patientDark : logoDark} className="etaye-logo-s" alt={name} />
+  </>;
+}
+
+export function AuthShell({ children, patient = false, wide = false }: {
+  children: ReactNode; patient?: boolean; wide?: boolean;
+}) {
   return (
-    <div className={`etaye-root etaye-auth${patient ? ' etaye-patient patient-corps' : ''}`}>
-      <header>
-        <img src={patient ? patientLight : logoLight} className="etaye-logo-c" alt={name} />
-        <img src={patient ? patientDark : logoDark} className="etaye-logo-s" alt={name} />
-      </header>
-      <main className="etaye-auth__corps" id="contenu">{children}</main>
+    <div className={`etaye-root etaye-auth${wide ? ' etaye-auth--wide' : ''}${patient ? ' etaye-patient patient-corps' : ''}`}>
+      <header><AuthLogo patient={patient} /></header>
+      <main className={`etaye-auth__corps${wide ? ' etaye-auth__corps--large' : ''}`} id="contenu">{children}</main>
       <footer className="etaye-auth__pied">
         <span className="etaye-demo">Démonstration — personnes et données fictives</span>
         <span className="etaye-3 etaye-auth__usage">Projet de démonstration — aucun usage clinique</span>

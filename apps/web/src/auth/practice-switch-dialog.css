@@ -1,0 +1,74 @@
+.etaye-switch-overlay {
+  position: fixed;
+  z-index: 1;
+  inset: 0;
+  padding: calc(var(--espace-16) + var(--espace-8)) var(--espace-6);
+  background: var(--voile);
+}
+
+.etaye-switch-modal {
+  width: min(560px, 100%);
+  max-height: 100%;
+  margin-inline: auto;
+  display: grid;
+  border-radius: var(--rayon-2);
+  background: var(--surface);
+  box-shadow: var(--ombre-flottant);
+}
+
+.etaye-switch-dialog {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-height: 0;
+  outline: none;
+}
+
+.etaye-switch-dialog h2 { font: 500 20px/28px var(--font-texte); }
+.etaye-root .etaye-switch-dialog h2[tabindex="-1"]:focus { outline: none; }
+.etaye-switch-dialog__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--espace-4);
+  padding: var(--espace-5) var(--espace-6) var(--espace-3);
+}
+
+.etaye-switch-dialog__close {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: var(--espace-10);
+  height: var(--espace-10);
+  border: 0;
+  border-radius: var(--rayon-1);
+  background: transparent;
+  color: var(--encre-2);
+  cursor: pointer;
+}
+
+.etaye-switch-dialog__body {
+  display: grid;
+  align-content: start;
+  gap: var(--espace-4);
+  min-height: 0;
+  overflow: auto;
+  padding: var(--espace-2) var(--espace-6) var(--espace-5);
+}
+
+.etaye-switch-dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--espace-2);
+  padding: var(--espace-4) var(--espace-6);
+  border-top: var(--trait-filet) solid var(--filet);
+}
+
+@media (max-width: 760px) {
+  .etaye-switch-overlay { padding: 0; background: var(--surface); }
+  .etaye-switch-modal { width: 100%; height: 100%; border-radius: 0; box-shadow: none; }
+}
+
+@media (max-width: 480px) {
+  .etaye-switch-dialog__actions { flex-direction: column; align-items: flex-end; }
+}

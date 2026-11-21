@@ -28,6 +28,8 @@ function session(expires = 90_000): Session {
     },
     membershipIds: [grant],
     portalLinkIds: [],
+    contexts: [{ kind: 'MEMBERSHIP', displayRole: 'CLINICAL', grantId: grant, practiceId: grant,
+      practiceName: 'Cabinet des Tilleuls' }],
     expiresAt: new Date(Date.now() + expires).toISOString(),
   };
 }
@@ -189,7 +191,7 @@ test('grant loss or an outage clears protected content on reauthorization', asyn
   await page.evaluate(() => window.dispatchEvent(new Event('pageshow')));
   await expect(page.getByTestId('protected-account')).toHaveCount(0);
   await expect(page.getByRole('alert')).toContainText('Le service est temporairement indisponible');
-  response = { status: 200, json: { ...session(), membershipIds: [] } };
+  response = { status: 200, json: { ...session(), membershipIds: [], contexts: [] } };
   await page.getByRole('button', { name: 'Réessayer' }).click();
   await expect(page.getByRole('heading', { name: 'Accès modifié' })).toBeFocused();
   await expect(page.getByTestId('protected-account')).toHaveCount(0);

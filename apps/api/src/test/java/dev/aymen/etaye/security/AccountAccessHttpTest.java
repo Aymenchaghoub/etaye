@@ -96,7 +96,7 @@ class AccountAccessHttpTest extends AbstractPostgresTest {
                 .containsEntry("membershipIds", List.of(membership.toString()))
                 .containsEntry("portalLinkIds", List.of(portal.toString()))
                 .containsEntry("returnTo", target)
-                .doesNotContainKeys("csrf", "password", "token");
+                .doesNotContainKeys("contexts", "csrf", "password", "token");
         var cookie = cookie(login);
         assertThat(cookie.equals(anonymous.cookie())).isFalse();
         assertThat(request(HttpMethod.GET, "/session", anonymous.cookie(), null, null, null).getStatusCode().value())
@@ -105,6 +105,14 @@ class AccountAccessHttpTest extends AbstractPostgresTest {
         assertThat(rotated.csrf().equals(anonymous.csrf())).isFalse();
         assertThat(request(HttpMethod.DELETE, "/session", cookie, anonymous.csrf(), null, null).getStatusCode().value())
                 .isEqualTo(403);
+
+        var active = request(HttpMethod.GET, "/session", cookie, null, null, null);
+        assertThat(active.getHeaders().getCacheControl()).isEqualTo("no-store");
+        assertThat(active.getBody()).containsEntry("contexts", List.of(
+                context("MEMBERSHIP", membership, practice, "Cabinet fictif", "CLINICAL"),
+                context("PORTAL", portal, practice, "Cabinet fictif", "PATIENT")).stream()
+                .sorted(java.util.Comparator.comparing(entry -> entry.get("grantId")))
+                .toList());
 
         String recordPath = "/practices/" + practice + "/records/" + record;
         assertThat(request(HttpMethod.GET, recordPath, cookie, null, null, null).getStatusCode().value()).isEqualTo(200);
@@ -115,7 +123,7 @@ class AccountAccessHttpTest extends AbstractPostgresTest {
         executeAsOwner("UPDATE portal_link SET state = 'REVOKED' WHERE id = '" + portal + "'");
         var current = request(HttpMethod.GET, "/session", cookie, null, null, null);
         assertThat(current.getBody()).containsEntry("membershipIds", List.of()).containsEntry("portalLinkIds", List.of())
-                .doesNotContainKey("returnTo");
+                .containsEntry("contexts", List.of()).doesNotContainKey("returnTo");
 
         var external = signIn(rotated, email, OLD_PASSWORD, "//untrusted.example.test");
         assertThat(external.getBody()).containsEntry("returnTo", "/compte");
@@ -128,6 +136,37 @@ class AccountAccessHttpTest extends AbstractPostgresTest {
                 .getStatusCode().value()).isEqualTo(204);
         assertThat(request(HttpMethod.GET, "/session", signedInCookie, null, null, null).getStatusCode().value())
                 .isEqualTo(401);
+    }
+
+    @Test
+    void sessionContextProjectionReflectsCurrentPracticeAndMembership() {
+        String email = syntheticEmail();
+        UUID actor = account(email);
+        UUID foreign = account(syntheticEmail());
+        UUID adminPractice = createPracticeAsOwner("Administration fictive");
+        UUID schedulingPractice = createPracticeAsOwner("Agenda fictif");
+        UUID admin = createMembershipAsOwner(actor, adminPractice, "ACTIVE", new String[]{"TEAM_MANAGE"});
+        UUID scheduler = createMembershipAsOwner(actor, schedulingPractice, "ACTIVE", new String[]{"SCHEDULE_MANAGE"});
+        createMembershipAsOwner(foreign, createPracticeAsOwner("Cabinet extérieur"), "ACTIVE", new String[]{"CLINICAL_READ"});
+        String cookie = cookie(signIn(csrf(null), email, OLD_PASSWORD, null));
+
+        assertThat(request(HttpMethod.GET, "/session", cookie, null, null, null).getBody())
+                .containsEntry("contexts", List.of(
+                        context("MEMBERSHIP", admin, adminPractice, "Administration fictive", "ADMINISTRATION"),
+                        context("MEMBERSHIP", scheduler, schedulingPractice, "Agenda fictif", "SCHEDULING")).stream()
+                        .sorted(java.util.Comparator.comparing(entry -> entry.get("grantId")))
+                        .toList());
+
+        executeAsOwner("UPDATE practice SET state = 'SUSPENDED' WHERE id = '" + adminPractice + "'");
+        var refreshed = request(HttpMethod.GET, "/session", cookie, null, null, null);
+        assertThat(refreshed.getBody()).containsEntry("membershipIds", List.of(scheduler.toString()))
+                .containsEntry("contexts", List.of(context("MEMBERSHIP", scheduler, schedulingPractice,
+                        "Agenda fictif", "SCHEDULING")));
+    }
+
+    private static Map<String, String> context(String kind, UUID grant, UUID practice, String name, String role) {
+        return Map.of("kind", kind, "grantId", grant.toString(), "practiceId", practice.toString(),
+                "practiceName", name, "displayRole", role);
     }
 
     @Test

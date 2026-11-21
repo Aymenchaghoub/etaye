@@ -1,6 +1,6 @@
 # Documentary API contract
 
-Status: Versioned contract with implemented and planned operations. `openapi.yaml` is OpenAPI 3.1 written in JSON syntax (valid YAML 1.2). [Operation index](operation-index.json) maps all operations. [Business rules](../planning-artifacts/business-rules.md), [access matrix](../planning-artifacts/access-matrix.md), [data dictionary](../planning-artifacts/data-dictionary.md) and ADRs are authoritative companions. Version 0.3.0-planning (2026-11-21) contains 99 operations.
+Status: Versioned contract with implemented and planned operations. `openapi.yaml` is OpenAPI 3.1 written in JSON syntax (valid YAML 1.2). [Operation index](operation-index.json) maps all operations. [Business rules](../planning-artifacts/business-rules.md), [access matrix](../planning-artifacts/access-matrix.md), [data dictionary](../planning-artifacts/data-dictionary.md) and ADRs are authoritative companions. Version 0.4.0-planning (2026-11-21) contains 99 operations.
 
 ## Runtime coverage
 
@@ -10,11 +10,19 @@ Story 10.1 serves `getReadiness`, `getCsrfToken`, `createPatient` and `getPatien
 
 The sign-in and recovery operations return `Cache-Control: no-store`. A valid sign-in rotates the opaque session cookie and the CSRF value, and returns current active membership and verified portal link IDs. The browser obtains the rotated CSRF value from `GET /csrf` before its next write. The nearer of the 30-minute inactivity deadline and the 8-hour absolute deadline is reported in `expiresAt`. Reading session status rechecks account state and grants without renewing inactivity.
 
-The exact local return paths are `/compte`, `/compte/pratiques/{membershipId}` and `/compte/patient/{portalLinkId}`. A scoped path requires its current grant. Sign-in falls back to `/compte` for any other destination. Native sessions, practice selection and protected clinical workflows have separate operations.
+The exact local return paths are `/compte`, `/compte/pratiques/{membershipId}` and `/compte/patient/{portalLinkId}`. A scoped path requires its current grant. Sign-in falls back to `/compte` for any other destination. Native sessions and protected clinical workflows have separate operations.
 
 Account mutations require the session-bound CSRF header, including anonymous sign-in and recovery. Missing, suspended and incorrect credentials share `401 INVALID_CREDENTIALS`. Anonymous CSRF issuance and account submissions have bounded request budgets and return `429 RATE_LIMITED` with a delta-seconds `Retry-After`. Use a 16–128 character recovery key consisting of ASCII letters, digits, underscore or hyphen. `POST /access-recovery` gives the same 202 for all valid addresses and deduplicates the normalized address and key for 15 minutes. The response never confirms a delivery. A reset token has a 15-minute lifetime and can be consumed once. Redemption revokes all of the account's existing sessions. Expired, already-used and ineligible tokens share `422 INVALID_RECOVERY_LINK`. A password under 12 Unicode code points receives `422 PASSWORD_TOO_SHORT`.
 
 For a local synthetic demonstration, set `ETAYE_DEMO_RECOVERY_INBOX=true` on the API process, start the web app at `http://localhost:5173` and open the separate listener at `http://127.0.0.1:8025/` from the address bar. Its in-memory capture is restricted to `@example.test` addresses. The link carries the token in the reset page fragment. Branded mail and external delivery belong to story 8.3.
+
+## Practice context selection
+
+Story 1.3 extends `GET /session` with `Session.contexts` (UD-52). The response maintains `Cache-Control: no-store` and the existing session/grant fields. It returns just the grant kind and ID, practice ID and label, and a display role. Memberships and verified patient links appear only while the account, grant and practice are active. List entries correspond exactly to the respective membership/link IDs in the same response. A valid account with no contexts receives an empty array. Sign-in and invitation acceptance retain their existing response semantics.
+
+The display role summarizes a grant for presentation. A portal link is `PATIENT`. Staff membership categories prefer clinical capabilities, then administrative capabilities, then scheduling, then `TEAM`. The server still checks the actual capability and the ownership of each resource. The selector sends no patient or record details. The exact link ID keeps two portal grants at the same practice distinct.
+
+The web route selects the context in its own tab and rechecks it through `getSession` before rendering the protected destination. It never stores an active practice in the session. A missing or inconsistent projection is an unavailable state for a context-aware client. Unknown kinds cannot be selected. A denied or removed target enters generic recovery without exposing its previous label or payload. The two standalone discovery lists remain planned.
 
 ## Invitation activation
 

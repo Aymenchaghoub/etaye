@@ -1,0 +1,62 @@
+.etaye-auth__corps.etaye-auth__corps--large { max-width: 640px; }
+.etaye-auth.etaye-auth--wide header img { height: 22px; }
+
+.etaye-pliste {
+  padding: 0;
+  border-top: var(--trait-filet) solid var(--filet);
+  list-style: none;
+}
+
+.etaye-pliste > li {
+  display: flex;
+  align-items: center;
+  gap: var(--espace-3);
+  min-height: var(--espace-16);
+  padding-block: var(--espace-3);
+  border-bottom: var(--trait-filet) solid var(--filet);
+}
+
+.etaye-pliste__txt { flex: 1; min-width: 0; }
+.etaye-pliste__txt small { display: block; color: var(--encre-2); font: 400 14px/20px var(--font-texte); }
+.etaye-pliste button { flex-shrink: 0; }
+
+.etaye-context-destination { min-height: 100dvh; background: var(--fond); }
+.etaye-context-destination h1 { font: 500 26px/32px var(--font-texte); }
+.etaye-context-destination main { padding-inline: var(--espace-4); }
+
+.etaye-context-top {
+  min-height: var(--espace-16);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espace-4);
+  padding: var(--espace-2) var(--espace-6) var(--espace-2) var(--espace-4);
+  border-bottom: var(--trait-filet) solid var(--filet);
+}
+
+.etaye-context-top img { height: 22px; max-width: 100%; }
+.etaye-context-top .etaye-demo { margin-inline-start: auto; }
+
+.etaye-contexte {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espace-3);
+  min-height: var(--espace-10);
+  min-width: 0;
+  max-width: 100%;
+  padding: var(--espace-1) var(--espace-3);
+  border: var(--trait-filet) solid var(--filet-controle);
+  border-radius: var(--rayon-1);
+  background: var(--surface);
+  color: var(--encre);
+  text-align: left;
+}
+button.etaye-contexte { cursor: pointer; }
+.etaye-contexte__cabinet { display: block; font: 500 14px/18px var(--font-texte); }
+.etaye-contexte__role { display: block; color: var(--encre-2); font: 400 12px/16px var(--font-texte); }
+
+@media (max-width: 760px) {
+  .etaye-context-top { gap: var(--espace-2); padding-inline: var(--espace-3); }
+  .etaye-context-top .etaye-contexte { order: 1; width: 100%; justify-content: space-between; }
+  .etaye-context-top .etaye-demo { display: none; }
+}

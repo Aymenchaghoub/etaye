@@ -2,6 +2,62 @@
 
 Updated: 2026-11-21. Owner: Aymen Chaghoub.
 
+## Story 1.3 running UI approved — 2026-11-21
+
+**Phase.** The design approval and authorization are preserved on `docs/story-1-3-phase-0` at `ab7ebcc`. The dedicated feature worktree passed the story readiness check and delivered the contract at `0b24129` and application candidate at `309891e`. The cockpit was regenerated from the documentary worktree and reports 1.3 authorized.
+
+**Actual verification.** API verify passed 160 tests, web smoke passed 45, and five real-stack browser cases passed. The [implementation record](implementation-artifacts/story-1-3-implementation-record.md) gives the scope and limits. The [running UI comparisons](design/reviews/2026-11-21-story-1-3-runtime.md) preserve the S-05 and I-20 review evidence.
+
+**Review.** Zcode reported on `309891e`. Follow-up `ffc88f4` corrects the account-home alias, tests revocation on the polling path and strengthens the visual evidence. The implementation record records the three review angles and remaining evidence limits. [Draft PR #50](https://github.com/Aymenchaghoub/etaye/pull/50)
+
+**User decision (UD-55).** Aymen approved the running S-05 and I-20 comparisons for application revision `ffc88f4`. All seven required GitHub checks passed on PR head `12e9a2d`. [Runtime review](design/reviews/2026-11-21-story-1-3-runtime.md) · [GitHub checks](https://github.com/Aymenchaghoub/etaye/pull/50/checks)
+
+**CodeRabbit.** The manual review on `12e9a2d` published one finding. The tablet I-20 confirmation and failed-save pairs were opened at 1024×768 and preserved with observations. [Tablet comparison](design/reviews/2026-11-21-story-1-3-runtime/I-20-tablet.webp) · [Finding](https://github.com/Aymenchaghoub/etaye/pull/50#discussion_r4654520017)
+
+**Next action.** Verify the exact PR head and required checks before any merge.
+
+## Story 1.3 design approved — 2026-11-21
+
+**User decision (UD-54).** Aymen approved the S-05 and I-20 additions (“oui je valide”) after receiving the [interactive gallery and contact sheets](design/reviews/2026-11-21-story-1-3-variants.md). Coverage records design approval for the 1.3 slice. UD-53 supplies written development authorization and the Zcode review rule.
+
+**Next action.** Preserve the preparation on its documentation branch, regenerate the cockpit and confirm readiness for the authorized story. Begin the feature branch with the reviewed contract, before application changes.
+
+## Story 1.3 authorized and design additions ready for review — 2026-11-21
+
+**Phase.** UD-53 records written authorization for 1.3. The scoped allowlist includes the story while global authorization remains false. Delivery policy calls for one local read-only Zcode review of the completed implementation at all three review angles. The local CLI identifies Zcode 0.17.1 and exposes `--mode plan`. No implementation review has run.
+
+**Design and access.** The [S-05 and I-20 review record](design/reviews/2026-11-21-story-1-3-variants.md) links the local gallery and two opened contact sheets. Use the approved offline reference exception while Figma access remains unavailable. UD-46 and UD-51 still govern the earlier reference approvals.
+
+**Actual verification.** Chromium passed 170 preview state/viewport/theme combinations and 34 axe-core scans with zero violations. The keyboard checks cover visible focus on ×, safe dismissal and trigger focus return, pending dismissal refusal and draft retention. The preview generated 100 full-size captures. The scope unit suite passed 30 tests and the documentary validator returned zero errors. The temporary cockpit generation from this worktree reports 1.3 authorized and I-20 pending.
+
+**Next action.** Aymen reviews the new design states. After approval, record the design disposition, commit the preparation in this worktree, regenerate the cockpit from it and run the installed BMAD readiness gate. The reviewed contract precedes application changes.
+
+## Story 1.3 phase-0 recommendations approved — 2026-11-21
+
+**User decision (UD-52).** Aymen approved the phase-0 recommendations. The [arbitration outcome](implementation-artifacts/story-1-3-context-packet.md#7-arbitration-outcome-and-open-gates) records the optional current-context projection on `getSession`, tab-local selection with fresh authorization, generic restricted recovery, the minimal header and the I-20 test-only form. UD-51 records approval of the shown focus correction. The additional S-05 CORE and I-20 SAMPLED design states still need review.
+
+**Actual verification.** The documentary validator and whitespace check passed. The story 1.3 worktree holds the decision and packet updates. The allowlist and application contract retain the baseline versions.
+
+**Next action.** Present the additions listed in the packet for design review. Obtain explicit written authorization for 1.3 and record it before contract or application implementation.
+
+## Story 1.3 I-20 focus disposition — 2026-11-21
+
+**User decision (UD-51).** Aymen accepted the presented S-05/I-20 references and confirmed “je valide” after receiving the corrected I-20 opening and keyboard-focus captures. The [review record](design/reviews/2026-11-21-story-1-3-i-20.md) and tracker capture the limits. The frozen reference uses automatic close-button focus. The corrected review copy focuses the dialog title and shows an outline on the close button when reached by keyboard. The [interaction catalog](design/interaction-catalog.md#i-20) records the requirement.
+
+**Actual verification.** Chromium confirmed that the original outline occurred without hover and checked the corrected initial, hover and keyboard states at desktop, tablet, mobile and 320 CSS px in both themes. Opened the two recorded tablet captures and the mobile opening view. Documentary validation passed. The phase remains documentary.
+
+**Next action.** Review the outstanding S-05 additions and I-20 practice-switch variants, arbitrate the contract and obtain explicit written development authorization for 1.3 before changing the allowlist.
+
+## Story 1.3 phase 0 prepared — 2026-11-21
+
+**Phase.** Documentary preparation, awaiting Aymen's arbitration. The [context packet](implementation-artifacts/story-1-3-context-packet.md) records the exact main baseline, S-05/I-20 inventories, contract alternatives and evidence for AT-003-A/B/C. Story 1.2 and its follow-up are merged. Story 1.3 is absent from the development allowlist.
+
+**Design and access.** UD-46 covers the approved S-05 reference. Its additional selection and recovery states need review. I-20 has one specimen and is SAMPLED under UD-16. Its switch-specific variants and catalog evidence need a disposition. The Figma session returned `UNAUTHORIZED` with a reauthentication requirement. Use the dated offline reference exception and reconcile when Figma read access returns or Aymen requests it.
+
+**Actual verification.** Git verified remote main at `d58dde93e4016769fda5ce854711da4f12020d73` and the dependency merge ancestry. Headless Chromium rendered 20 light-theme reference captures across four widths. Five representative views were opened in a contact sheet. Documentary validation returned zero errors. The design-system token reference and whitespace checks passed. Application tests and the readiness gate were outside this phase.
+
+**Next action.** Aymen reviews the S-05 additions and arbitrates the I-20 design path, disclosure, tab-local switch contract and dirty-work test scope. After his explicit written authorization for 1.3, record a dated UD, append `"1.3"` to `[etaye] authorized_stories` with the global flag false and run the installed BMAD readiness gate. The reviewed contract precedes application changes.
+
 ## Story 1.1 implementation and delivery review — 2026-11-21
 
 **Phase.** Implementation under UD-50 is on `feat/1.1-activate-invitation`. Application candidate `f615a1b4f4562f6bbe33bf7e4d9d1b98a67e40c7` implements the narrowly scoped invitation endpoints, V3 and the S-03/I-03 Web flow. Issuance and email stay deferred under D-23. [Implementation record](implementation-artifacts/story-1-1-implementation-record.md)

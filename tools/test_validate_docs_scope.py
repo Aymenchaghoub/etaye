@@ -162,6 +162,25 @@ class ApplicationScopeTests(unittest.TestCase):
         _, errors = self.check_scope()
         self.assertEqual(errors, [])
 
+    def test_story_1_3_scope_requires_its_own_decision(self):
+        self.authorize(story_10_2=True)
+        self.configure('authorized_stories = ["10.1", "10.2", "1.2", "1.1", "1.3"]')
+        decisions = self.root / "docs/planning-artifacts/decisions-assumptions.md"
+        with decisions.open("a", encoding="utf-8") as stream:
+            stream.write("| UD-48 | Authorized for **story 1.2 only**. |\n")
+            stream.write("| UD-50 | Authorized for **story 1.1 only**. |\n")
+
+        scope, errors = self.check_scope()
+        self.assertEqual(scope["mode"], "stories-10.1-10.2-1.2-1.1-1.3")
+        self.assertEqual(scope["authorizedStories"], ["10.1", "10.2", "1.2", "1.1", "1.3"])
+        self.assertEqual(len(errors), 1)
+        self.assertIn("Story 1.3 authorization requires UD-53", errors[0])
+
+        with decisions.open("a", encoding="utf-8") as stream:
+            stream.write("| UD-53 | Authorized for **story 1.3 only**. |\n")
+        _, errors = self.check_scope()
+        self.assertEqual(errors, [])
+
     def test_authorized_scopes_reject_top_level_packages(self):
         for story_10_2 in (False, True):
             with self.subTest(story_10_2=story_10_2):

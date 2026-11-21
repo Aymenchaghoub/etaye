@@ -33,6 +33,8 @@ STORY_10_1_TRACKED_PATH = re.compile(
 STORY_10_2_TRACKED_PATH = re.compile(
     r"apps/web/(?:scripts/[^/]+\.(?:mjs|ts)|(?:openapi|codegen)[^/]*\.config\.(?:ts|mjs))"
 )
+STORY_1_3_WEB_FIXTURES = {"apps/web/tests/fixtures/practice-switch.html",
+                          "apps/web/tests/fixtures/practice-switch.tsx"}
 RESOURCE_ARTIFACT_SUFFIXES = {
     ".sh", ".bash", ".cmd", ".bat", ".ps1",
     ".class", ".jar", ".war", ".ear", ".exe", ".dll", ".so", ".bin",
@@ -60,8 +62,9 @@ def check_application_scope(root, errors):
         ("10.1", "10.2"): "stories-10.1-10.2",
         ("10.1", "10.2", "1.2"): "stories-10.1-10.2-1.2",
         ("10.1", "10.2", "1.2", "1.1"): "stories-10.1-10.2-1.2-1.1",
+        ("10.1", "10.2", "1.2", "1.1", "1.3"): "stories-10.1-10.2-1.2-1.1-1.3",
     }
-    decision_ids = {"10.1": "UD-41", "10.2": "UD-45", "1.2": "UD-48", "1.1": "UD-50"}
+    decision_ids = {"10.1": "UD-41", "10.2": "UD-45", "1.2": "UD-48", "1.1": "UD-50", "1.3": "UD-53"}
     scope = {"mode": "planning-only", "authorizedStories": []}
     try:
         config = tomllib.loads((root / "_bmad/custom/config.toml").read_text(encoding="utf-8"))
@@ -83,7 +86,8 @@ def check_application_scope(root, errors):
         mode = modes.get(tuple(stories))
         if mode is None:
             raise ValueError('[etaye] authorized_stories must be [], ["10.1"], ["10.1", "10.2"], '
-                             '["10.1", "10.2", "1.2"] or ["10.1", "10.2", "1.2", "1.1"]')
+                             '["10.1", "10.2", "1.2"], ["10.1", "10.2", "1.2", "1.1"] or '
+                             '["10.1", "10.2", "1.2", "1.1", "1.3"]')
         scope = {"mode": mode, "authorizedStories": stories}
     except (OSError, ValueError) as exc:
         errors.append(f"Invalid authorization in _bmad/custom/config.toml: {exc}")
@@ -191,6 +195,8 @@ def check_application_scope(root, errors):
             if not application_path:
                 continue
             if "10.2" in authorized_stories and STORY_10_2_TRACKED_PATH.fullmatch(name):
+                continue
+            if "1.3" in authorized_stories and name in STORY_1_3_WEB_FIXTURES:
                 continue
             match = STORY_10_1_TRACKED_PATH.fullmatch(name)
             if not match or (match["resource"] and not is_story_resource(root / name)):

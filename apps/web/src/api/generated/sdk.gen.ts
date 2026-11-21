@@ -57,7 +57,7 @@ export const signOut = <ThrowOnError extends boolean = false>(options: Options<S
 /**
  * getSession
  *
- * Re-resolve account state, session lifetime and current grants from the server.
+ * Re-resolve account state, session lifetime and current grants from the server. The session status includes the current account-scoped context projection.
  */
 export const getSession = <ThrowOnError extends boolean = false>(options?: Options<GetSessionData, ThrowOnError>): RequestResult<GetSessionResponses, GetSessionErrors, ThrowOnError> => (options?.client ?? client).get<GetSessionResponses, GetSessionErrors, ThrowOnError>({
     security: [{

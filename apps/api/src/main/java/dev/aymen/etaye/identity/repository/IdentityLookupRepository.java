@@ -1,5 +1,6 @@
 package dev.aymen.etaye.identity.repository;
 
+import dev.aymen.etaye.identity.dto.AccessContext;
 import dev.aymen.etaye.identity.dto.AccountProfile;
 import dev.aymen.etaye.identity.dto.AuthenticatedAccount;
 import dev.aymen.etaye.identity.dto.MembershipGrant;
@@ -26,7 +27,7 @@ import java.util.UUID;
 /**
  * Dedicated bootstrap identity repository operating strictly under the restricted
  * etaye_identity role.
- * Queries only account and membership tables via identityDataSource.
+ * Reads identity rows and the narrow current-grant projection via identityDataSource.
  * Column-level grants guarantee that password_hash can never be selected.
  * RLS enforces that queries see only the row of the account set by transaction-local
  * set_config('etaye.account_id', ?, true).
@@ -104,14 +105,20 @@ public class IdentityLookupRepository {
 
             var membershipIds = new ArrayList<UUID>();
             var portalLinkIds = new ArrayList<UUID>();
+            var contexts = new ArrayList<AccessContext>();
             try (PreparedStatement ps = conn.prepareStatement("""
-                    SELECT grant_id, grant_type FROM public.current_session_grants(?) ORDER BY grant_id
+                    SELECT grant_id, grant_type, practice_id, practice_name, display_role
+                    FROM public.current_access_contexts(?) ORDER BY grant_id, grant_type
                     """)) {
                 ps.setObject(1, accountId);
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         UUID id = rs.getObject("grant_id", UUID.class);
-                        if ("MEMBERSHIP".equals(rs.getString("grant_type"))) {
+                        var kind = AccessContext.Kind.valueOf(rs.getString("grant_type"));
+                        contexts.add(new AccessContext(kind, id, rs.getObject("practice_id", UUID.class),
+                                rs.getString("practice_name"),
+                                AccessContext.DisplayRole.valueOf(rs.getString("display_role"))));
+                        if (kind == AccessContext.Kind.MEMBERSHIP) {
                             membershipIds.add(id);
                         } else {
                             portalLinkIds.add(id);
@@ -120,7 +127,7 @@ public class IdentityLookupRepository {
                 }
             }
             return Optional.of(new AuthenticatedAccount(profile.get(), findMemberships(conn, accountId),
-                    List.copyOf(membershipIds), List.copyOf(portalLinkIds)));
+                    List.copyOf(membershipIds), List.copyOf(portalLinkIds), List.copyOf(contexts)));
         });
     }
 
