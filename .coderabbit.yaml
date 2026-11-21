@@ -31,11 +31,11 @@ reviews:
   path_instructions:
     - path: "**"
       instructions: >-
-        Read AGENTS.md as the shared policy. The repository is mostly planning and design;
-        story 10.1 (apps/api, apps/web, infra/local) is the only authorized implementation
-        (UD-41). Review silent failures, edge cases and acceptance-criteria compliance with
-        concrete file references. Do not recommend implementing any other story or replacing
-        the existing identity. A successful document check is not an application test.
+        Read AGENTS.md as the shared policy. Verify the story's authorization in
+        _bmad/custom/config.toml and its scope in docs/planning-artifacts/decisions-assumptions.md.
+        Review silent failures, edge cases and acceptance-criteria compliance with concrete file
+        references. Limit implementation recommendations to the authorized scope and preserve
+        the existing identity. Report documentary checks and application tests separately.
     - path: "apps/api/**"
       instructions: >-
         Check tenant isolation first: every query and write must run in a practice-scoped
