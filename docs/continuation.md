@@ -12,7 +12,9 @@ Updated: 2026-11-21. Owner: Aymen Chaghoub.
 
 **User decision (UD-55).** Aymen approved the running S-05 and I-20 comparisons for application revision `ffc88f4`. All seven required GitHub checks passed on PR head `12e9a2d`. [Runtime review](design/reviews/2026-11-21-story-1-3-runtime.md) · [GitHub checks](https://github.com/Aymenchaghoub/etaye/pull/50/checks)
 
-**Next action.** Track the manual CodeRabbit review for PR #50 and triage its findings. Verify the exact PR head and required checks before any merge.
+**CodeRabbit.** The manual review on `12e9a2d` published one finding. The tablet I-20 confirmation and failed-save pairs were opened at 1024×768 and preserved with observations. [Tablet comparison](design/reviews/2026-11-21-story-1-3-runtime/I-20-tablet.webp) · [Finding](https://github.com/Aymenchaghoub/etaye/pull/50#discussion_r4654520017)
+
+**Next action.** Verify the exact PR head and required checks before any merge.
 
 ## Story 1.3 design approved — 2026-11-21
 
