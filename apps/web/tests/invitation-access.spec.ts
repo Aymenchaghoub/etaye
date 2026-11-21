@@ -24,7 +24,11 @@ function session(): Session {
       email: 'marie.collet@example.test', createdAt: '2026-11-03T11:00:00Z', updatedAt: '2026-11-03T11:00:00Z',
       version: 0, state: 'ACTIVE', locale: 'fr-FR',
     },
-    membershipIds: [], portalLinkIds: [otherLink, portalLink], expiresAt: new Date(Date.now() + 120_000).toISOString(),
+    membershipIds: [], portalLinkIds: [otherLink, portalLink],
+    contexts: [otherLink, portalLink].map((grantId) => ({
+      kind: 'PORTAL', displayRole: 'PATIENT', grantId, practiceId: portalLink, practiceName: practice,
+    })),
+    expiresAt: new Date(Date.now() + 120_000).toISOString(),
   };
 }
 
@@ -207,14 +211,18 @@ test('an existing recipient can sign in without reopening the original invitatio
   await page.unroute('**/api/v1/session');
   await page.route('**/api/v1/session', (route) => {
     if (route.request().method() === 'POST') signedIn = true;
-    return signedIn ? route.fulfill({ json: { ...session(), membershipIds: hasGrant ? [membershipId] : [] } })
+    return signedIn ? route.fulfill({ json: {
+      ...session(), membershipIds: hasGrant ? [membershipId] : [], portalLinkIds: [],
+      contexts: hasGrant ? [{ kind: 'MEMBERSHIP', displayRole: 'CLINICAL', grantId: membershipId,
+        practiceId: membershipId, practiceName: practice }] : [],
+    } })
       : route.fulfill({ status: 401, json: { code: 'UNAUTHENTICATED' } });
   });
   await page.route('**/api/v1/invitations/accept', (route) => {
     if (!signedIn) return route.fulfill({ status: 422, json: { code: 'SIGN_IN_REQUIRED' } });
     expect(route.request().postDataJSON()).toEqual({ token: fragment });
     hasGrant = true;
-    return route.fulfill({ json: { ...session(), membershipIds: [membershipId] } });
+    return route.fulfill({ json: { ...session(), membershipIds: [membershipId], portalLinkIds: [] } });
   });
   await page.goto(url);
   await page.getByRole('button', { name: 'J’ai déjà un compte' }).click();
@@ -230,7 +238,7 @@ test('an existing recipient can sign in without reopening the original invitatio
   await expect(page.getByRole('alert')).toHaveCount(0);
   await expect(page.locator('#a-pw')).toHaveCount(0);
   await page.getByRole('button', { name: 'Activer mon compte' }).click();
-  await expect(page).toHaveURL(/\/compte$/);
+  await expect(page).toHaveURL(new RegExp(`/compte/pratiques/${membershipId}$`));
   await expect(page.getByTestId('protected-account')).toBeVisible();
 });
 

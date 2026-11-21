@@ -106,7 +106,7 @@ public class InvitationController {
                     .body(new AccountAccessController.SessionView(
                             AccountAccessController.AccountView.from(account.account()),
                             account.activeMembershipIds(), account.activePortalLinkIds(),
-                            lifetime.expiresAt(session), null, acceptance.portalLinkId()));
+                            lifetime.expiresAt(session), null, acceptance.portalLinkId(), null));
         }
         return refusal(acceptance.outcome(), request);
     }

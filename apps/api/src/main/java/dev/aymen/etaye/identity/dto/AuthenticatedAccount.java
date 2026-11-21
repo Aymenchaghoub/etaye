@@ -13,7 +13,8 @@ public record AuthenticatedAccount(
         AccountProfile account,
         List<MembershipGrant> memberships,
         List<UUID> activeMembershipIds,
-        List<UUID> activePortalLinkIds
+        List<UUID> activePortalLinkIds,
+        List<AccessContext> contexts
 ) {
     public Optional<MembershipGrant> getMembershipForPractice(UUID practiceId) {
         if (!account.isActive()) {

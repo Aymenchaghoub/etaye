@@ -33,6 +33,8 @@ STORY_10_1_TRACKED_PATH = re.compile(
 STORY_10_2_TRACKED_PATH = re.compile(
     r"apps/web/(?:scripts/[^/]+\.(?:mjs|ts)|(?:openapi|codegen)[^/]*\.config\.(?:ts|mjs))"
 )
+STORY_1_3_WEB_FIXTURES = {"apps/web/tests/fixtures/practice-switch.html",
+                          "apps/web/tests/fixtures/practice-switch.tsx"}
 RESOURCE_ARTIFACT_SUFFIXES = {
     ".sh", ".bash", ".cmd", ".bat", ".ps1",
     ".class", ".jar", ".war", ".ear", ".exe", ".dll", ".so", ".bin",
@@ -193,6 +195,8 @@ def check_application_scope(root, errors):
             if not application_path:
                 continue
             if "10.2" in authorized_stories and STORY_10_2_TRACKED_PATH.fullmatch(name):
+                continue
+            if "1.3" in authorized_stories and name in STORY_1_3_WEB_FIXTURES:
                 continue
             match = STORY_10_1_TRACKED_PATH.fullmatch(name)
             if not match or (match["resource"] and not is_story_resource(root / name)):

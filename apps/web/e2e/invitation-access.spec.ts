@@ -83,7 +83,7 @@ test('real invited team member activates the grant and can sign back in', async 
   const accepted = page.waitForResponse((response) => response.url().endsWith('/invitations/accept'));
   await page.getByRole('button', { name: 'Activer mon compte' }).click();
   expect((await (await accepted).json()).membershipIds).toHaveLength(1);
-  await expect(page).toHaveURL(/\/compte$/);
+  await expect(page).toHaveURL(/\/compte\/pratiques\/[0-9a-f-]+$/);
   await expect(page.getByTestId('protected-account')).toContainText('Alex Rivière');
 
   await page.getByRole('button', { name: 'Se déconnecter' }).click();

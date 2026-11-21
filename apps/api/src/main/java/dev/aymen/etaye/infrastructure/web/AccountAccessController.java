@@ -1,6 +1,7 @@
 package dev.aymen.etaye.infrastructure.web;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import dev.aymen.etaye.identity.dto.AccessContext;
 import dev.aymen.etaye.identity.dto.AccountProfile;
 import dev.aymen.etaye.identity.dto.AuthenticatedAccount;
 import dev.aymen.etaye.identity.service.AccountAccessService;
@@ -74,14 +75,14 @@ public class AccountAccessController {
 
         var account = verified.get();
         HttpSession session = lifetime.establish(request, response, account.account());
-        return json(HttpStatus.OK, sessionView(account, session, safeReturn(credentials.returnTo(), account)));
+        return json(HttpStatus.OK, sessionView(account, session, safeReturn(credentials.returnTo(), account), null));
     }
 
     @GetMapping(path = "/session", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SessionView> getSession(
             @RequestAttribute(IdentityResolutionFilter.AUTHENTICATED_ACCOUNT_ATTR) AuthenticatedAccount account,
             HttpServletRequest request) {
-        return json(HttpStatus.OK, sessionView(account, request.getSession(false), null));
+        return json(HttpStatus.OK, sessionView(account, request.getSession(false), null, account.contexts()));
     }
 
     @DeleteMapping("/session")
@@ -125,9 +126,10 @@ public class AccountAccessController {
         return json(HttpStatus.OK, acknowledgement(request));
     }
 
-    private SessionView sessionView(AuthenticatedAccount account, HttpSession session, String returnTo) {
+    private SessionView sessionView(AuthenticatedAccount account, HttpSession session, String returnTo,
+                                    List<AccessContext> contexts) {
         return new SessionView(AccountView.from(account.account()), account.activeMembershipIds(),
-                account.activePortalLinkIds(), lifetime.expiresAt(session), returnTo, null);
+                account.activePortalLinkIds(), lifetime.expiresAt(session), returnTo, null, contexts);
     }
 
     private static String safeReturn(String candidate, AuthenticatedAccount account) {
@@ -175,7 +177,7 @@ public class AccountAccessController {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public record SessionView(AccountView account, List<UUID> membershipIds, List<UUID> portalLinkIds,
-                              Instant expiresAt, String returnTo, UUID activatedPortalLinkId) {}
+                              Instant expiresAt, String returnTo, UUID activatedPortalLinkId, List<AccessContext> contexts) {}
 
     public record AccountView(UUID id, long version, Instant createdAt, Instant updatedAt,
                               String displayName, String email, String state, String locale) {

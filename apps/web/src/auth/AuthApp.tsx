@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { accountApi } from '../api/browser';
-import type { Session } from '../api/generated/types.gen';
-import { AuthHeading, AuthShell, Banner, FocusedHeading } from './AuthComponents';
+import type { AccessContext, Session } from '../api/generated/types.gen';
+import { AuthShell, Banner, FocusedHeading } from './AuthComponents';
+import { contextPath, currentContexts } from './access-contexts';
+import { PracticeChooser, PracticeDestination } from './PracticeContext';
 import { Invitation } from './Invitation';
 import { RecoveryRequest, ResetPassword } from './Recovery';
 import { SignIn } from './SignIn';
@@ -11,8 +14,12 @@ import './auth.css';
 type Notice = 'expired' | 'grant-changed' | 'account-changed';
 type Resume = ReturnType<typeof pauseWork<undefined>>;
 
+function isAccountArea(path: string) {
+  return path === ACCOUNT_PATH || path.startsWith(`${ACCOUNT_PATH}/`);
+}
+
 export function usesAuth(path: string): boolean {
-  return isAccountPath(path) || [
+  return isAccountArea(path) || [
     '/connexion', '/connexion/patient', '/recuperation', '/recuperation/nouveau', '/invitation',
   ].includes(path);
 }
@@ -45,6 +52,7 @@ export function AuthApp() {
       setNotice(undefined);
       setReturning(false);
       setInitial(undefined);
+      setRetry((attempt) => attempt + 1);
       setPath(window.location.pathname);
     };
     window.addEventListener('popstate', onPopState);
@@ -55,6 +63,14 @@ export function AuthApp() {
     window.history.replaceState(null, '', target);
     setPath(target);
   }
+
+  const navigateContext = useCallback((target: string, session: Session, replace = false) => {
+    if (target === window.location.pathname) return;
+    setInitial(session);
+    if (replace) window.history.replaceState(null, '', target);
+    else window.history.pushState(null, '', target);
+    setPath(target);
+  }, []);
 
   const halt = useCallback((reason: Notice, target: string, previous?: Session) => {
     paused.current = reason === 'expired' && previous ? pauseWork(previous, target, undefined) : undefined;
@@ -116,10 +132,10 @@ export function AuthApp() {
   if (path === '/recuperation') {
     return <RecoveryRequest patient={new URLSearchParams(window.location.search).get('espace') === 'patient'} />;
   }
-  if (!isAccountPath(path)) return null;
+  if (!isAccountArea(path)) return null;
 
   return <AccountGate key={`${path}-${retry}`} target={path} initial={initial} onHalt={halt} leave={leave}
-    askToSignIn={() => setReturning(true)} />;
+    enter={navigateContext} askToSignIn={() => setReturning(true)} />;
 }
 
 function SessionNotice({ reason, standalone, reconnect, leave, continueToAccount }: {
@@ -172,14 +188,15 @@ function SessionNotice({ reason, standalone, reconnect, leave, continueToAccount
   );
 }
 
-function AccountGate({ target, initial, onHalt, leave, askToSignIn }: {
+function AccountGate({ target, initial, onHalt, leave, enter, askToSignIn }: {
   target: string;
   initial?: Session;
   onHalt: (reason: Notice, target: string, previous?: Session) => void;
   leave: () => void;
+  enter: (path: string, session: Session, replace?: boolean) => void;
   askToSignIn: () => void;
 }) {
-  const [session, setSession] = useState<Session>();
+  const [view, setView] = useState<{ session: Session; contexts: AccessContext[] }>();
   const [unavailable, setUnavailable] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [retry, setRetry] = useState(0);
@@ -202,14 +219,17 @@ function AccountGate({ target, initial, onHalt, leave, askToSignIn }: {
     }
 
     async function check(hideWhileChecking = false) {
-      if (hideWhileChecking) setSession(undefined);
+      if (hideWhileChecking) {
+        setView(undefined);
+        setUnavailable(false);
+      }
       pending?.abort();
       const request = new AbortController();
       pending = request;
       const result = await accountApi.readSession(request.signal);
       if (request.signal.aborted) return;
       if (!result.ok) {
-        setSession(undefined);
+        setView(undefined);
         if (result.status === 401) {
           if (current) halt('expired');
           else signIn.current();
@@ -221,12 +241,14 @@ function AccountGate({ target, initial, onHalt, leave, askToSignIn }: {
         return;
       }
       const latest = result.data;
-      if (current && current.account.id !== latest.account.id) {
-        halt('account-changed');
+      const contexts = latest?.account && currentContexts(latest);
+      if (!contexts) {
+        setView(undefined);
+        setUnavailable(true);
         return;
       }
-      if (!allowsAccountPath(latest, target)) {
-        halt('grant-changed');
+      if (current && current.account.id !== latest.account.id) {
+        halt('account-changed');
         return;
       }
       const remaining = Date.parse(latest.expiresAt) - Date.now();
@@ -237,7 +259,12 @@ function AccountGate({ target, initial, onHalt, leave, askToSignIn }: {
       current = latest;
       verifiedAccount.current = latest;
       setUnavailable(false);
-      setSession(latest);
+      if (target === ACCOUNT_PATH && contexts.length === 1 && latest.contexts?.length === 1) {
+        // A direct entry still gates the exact grant through a fresh status read.
+        enter(contextPath(contexts[0]), latest, true);
+        return;
+      }
+      setView({ session: latest, contexts });
       window.clearTimeout(deadline);
       deadline = window.setTimeout(() => halt('expired'), remaining);
     }
@@ -245,23 +272,34 @@ function AccountGate({ target, initial, onHalt, leave, askToSignIn }: {
     const poll = window.setInterval(() => {
       if (document.visibilityState === 'visible') void check();
     }, 20_000);
+    const clearBeforeHide = () => {
+      pending?.abort();
+      // Do not let the browser restore a protected view from its history snapshot.
+      flushSync(() => setView(undefined));
+    };
     const checkOnReturn = () => {
       if (document.visibilityState === 'visible') void check(true);
     };
-    document.addEventListener('visibilitychange', checkOnReturn);
+    const visibilityChanged = () => {
+      if (document.visibilityState === 'hidden') clearBeforeHide();
+      else checkOnReturn();
+    };
+    document.addEventListener('visibilitychange', visibilityChanged);
     window.addEventListener('pageshow', checkOnReturn);
+    window.addEventListener('pagehide', clearBeforeHide);
     return () => {
       pending?.abort();
       window.clearTimeout(deadline);
       window.clearInterval(poll);
-      document.removeEventListener('visibilitychange', checkOnReturn);
+      document.removeEventListener('visibilitychange', visibilityChanged);
       window.removeEventListener('pageshow', checkOnReturn);
+      window.removeEventListener('pagehide', clearBeforeHide);
     };
-  }, [initial, leaving, onHalt, retry, target]);
+  }, [enter, initial, leaving, onHalt, retry, target]);
 
   async function signOut() {
     verifiedAccount.current = undefined;
-    setSession(undefined);
+    setView(undefined);
     setUnavailable(false);
     setLeaving(true);
     const result = await accountApi.signOut();
@@ -269,26 +307,28 @@ function AccountGate({ target, initial, onHalt, leave, askToSignIn }: {
     else setUnavailable(true);
   }
 
-  if (!session) return (
-    <AuthShell>
-      <AuthHeading title={leaving ? 'Se déconnecter' : 'Votre session'} />
+  const retryRead = () => setRetry((attempt) => attempt + 1);
+  if (!view) return (
+    <AuthShell wide>
+      <FocusedHeading>{leaving ? 'Se déconnecter' : 'Choisir un contexte de travail'}</FocusedHeading>
       {unavailable ? <>
-        <Banner title="Le service est temporairement indisponible" />
+        <Banner title="Impossible de charger vos accès">
+          <p>Le service est temporairement indisponible.</p>
+        </Banner>
         <button type="button" className="etaye-bouton etaye-bouton--secondaire"
-          onClick={() => leaving ? void signOut() : setRetry((attempt) => attempt + 1)}>Réessayer</button>
-      </> : <p role="status">{leaving ? 'Déconnexion en cours…' : 'Vérification de votre session…'}</p>}
+          onClick={() => leaving ? void signOut() : retryRead()}>Réessayer</button>
+      </> : <p role="status">
+        {leaving ? 'Déconnexion en cours…' : target === ACCOUNT_PATH ? 'Chargement de vos accès…' : 'Vérification de l’accès…'}
+      </p>}
     </AuthShell>
   );
 
-  return (
-    <AuthShell patient={target.startsWith('/compte/patient/')}>
-      <AuthHeading title="Vous êtes connecté" />
-      <div className="etaye-auth__carte" data-testid="protected-account">
-        <p>{session.account.displayName}</p>
-        <p className="etaye-2">{session.account.email}</p>
-        {!session.membershipIds.length && !session.portalLinkIds.length && <p>Aucun espace autorisé.</p>}
-        <button type="button" onClick={signOut} className="etaye-bouton etaye-bouton--secondaire">Se déconnecter</button>
-      </div>
-    </AuthShell>
+  const { session, contexts } = view;
+  const select = (path: string) => enter(path, session);
+  const selected = contexts.find((context) => contextPath(context) === target);
+  if (selected) return (
+    <PracticeDestination context={selected} contexts={contexts} session={session} select={select} signOut={signOut} />
   );
+  return <PracticeChooser session={session} contexts={contexts} restricted={target !== ACCOUNT_PATH}
+    select={select} retry={retryRead} signOut={signOut} />;
 }
