@@ -17,6 +17,7 @@
 ## Where things are and required reading
 
 - Before creating, editing or reviewing a story, read current relevant PRD, business rules, access matrix, functional journeys, epic, UX, architecture, data/API, AI/security, test strategy, deferred register and dependency stories in full. Record consulted source versions/dates, assumptions and effects on acceptance criteria. A summary or older story is insufficient.
+- When delegation is authorized, give the delegate the approved scope, the relevant source files and revisions, and the verification evidence to return. Apply the same project policy and source-reading requirements to the delegated work.
 - Before future implementation, additionally verify the development authorization, approved exact Figma nodes/tokens, design coverage/exceptions and current implementation tracking. Read the whole story and relevant ADRs; do not infer completion from file existence.
 - Planning: docs/planning-artifacts/. Design evidence/progress: docs/design/coverage.csv and handoff-claude.md. Future implementation tracking: docs/implementation-artifacts/. Test strategy/evidence: docs/test-artifacts/. Record deferred scope, rationale, dependencies, impact and resumption trigger in docs/planning-artifacts/deferred-work.md. Name the target increment or record the pending decision.
 - Shared skills are authoritative in .claude/skills/; .agents/skills is the Codex discovery symlink. Read the exact local SKILL.md and referenced files before execution. Do not mix project BMAD6.12.4 with personal preview plugins or invent command names.
