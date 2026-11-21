@@ -2,12 +2,19 @@ import { useEffect, useRef, useState } from 'react';
 import { accountApi } from '../api/browser';
 import type { DemoScenario } from '../api/generated/types.gen';
 import { AuthLogo, AuthShell, Banner, FocusedHeading, useRetryDelay } from '../auth/AuthComponents';
-import { applyDemoTheme, type FixtureMarker, fixtureChanged, fixtureMarker, OPERATOR_EMAIL, rememberDemo } from './demo-entry';
+import { applyDemoTheme, type FixtureMarker, fixtureChanged, fixtureMarker, OPERATOR_EMAIL, pendingReset, rememberDemo, storeReset } from './demo-entry';
 import { demoSign } from './demo-sign';
 import './demo.css';
 
 type Failure = 'unavailable' | 'busy' | 'limited' | 'restricted';
-type Snapshot = { scenarios: DemoScenario[]; marker: FixtureMarker; operator: boolean };
+type Scenario = DemoScenario & Required<Pick<DemoScenario,
+  'actorName' | 'roleLabel' | 'practiceName' | 'journeySummary' | 'limitsNotice' | 'signInIdentifier'>>;
+type Snapshot = { scenarios: Scenario[]; marker: FixtureMarker; operator: 'present' | 'absent' | 'unavailable' };
+
+function isScenario(value: DemoScenario): value is Scenario {
+  return value?.synthetic === true && [value.actorName, value.roleLabel, value.practiceName, value.journeySummary,
+    value.limitsNotice, value.signInIdentifier].every((field) => typeof field === 'string' && field.length > 0);
+}
 
 function failureFor(status: number, code?: string): Failure {
   if (code === 'DEMO_RESET_IN_PROGRESS') return 'busy';
@@ -29,7 +36,7 @@ function DemoProblem({ failure }: { failure: Failure }) {
 
 export function DemoShowcase() {
   const [snapshot, setSnapshot] = useState<Snapshot>();
-  const [scenario, setScenario] = useState<DemoScenario>();
+  const [scenario, setScenario] = useState<Scenario>();
   const [loading, setLoading] = useState(true);
   const [trace, setTrace] = useState(false);
   const [failure, setFailure] = useState<Failure>();
@@ -37,7 +44,7 @@ export function DemoShowcase() {
   const [confirming, setConfirming] = useState(false);
   const [pending, setPending] = useState(false);
   const [resetVersion, setResetVersion] = useState<FixtureMarker>();
-  const unconfirmedReset = useRef<{ key: string; marker: FixtureMarker } | undefined>(undefined);
+  const unconfirmedReset = useRef(pendingReset());
   const loadRequest = useRef<AbortController | undefined>(undefined);
   const mutation = useRef<AbortController | undefined>(undefined);
   const { block, waiting } = useRetryDelay();
@@ -46,8 +53,10 @@ export function DemoShowcase() {
 
   useEffect(() => {
     if (detailOpen || !previousAction.current) return;
-    const action = document.getElementById(previousAction.current) ?? document.getElementById('contenu');
-    action?.focus({ preventScroll: true });
+    const action = document.getElementById(previousAction.current);
+    const target = !action || (action instanceof HTMLButtonElement && action.disabled)
+      ? document.getElementById('contenu') : action;
+    target?.focus({ preventScroll: true });
     previousAction.current = undefined;
   }, [detailOpen]);
 
@@ -70,7 +79,7 @@ export function DemoShowcase() {
     return () => window.clearTimeout(timer);
   }, [loading]);
 
-  async function refresh(expectedReset?: FixtureMarker) {
+  async function refresh(accepted = false) {
     loadRequest.current?.abort();
     const request = new AbortController();
     loadRequest.current = request;
@@ -90,19 +99,22 @@ export function DemoShowcase() {
       if (problem?.status === 429) block(problem.retryAfter);
       return;
     }
-    if (!marker || !Array.isArray(catalogue.data?.items) ||
-      catalogue.data.items.some((item) => item.synthetic !== true || item.datasetVersion !== marker.version)) {
+    const scenarios = catalogue.data?.items;
+    if (!marker || !Array.isArray(scenarios) || !scenarios.every(isScenario)
+      || scenarios.some((item) => item.datasetVersion !== marker.version)) {
       setFailure('unavailable');
       return;
     }
-    setSnapshot({
-      marker, scenarios: catalogue.data.items,
-      operator: session.ok && session.data?.account?.email === OPERATOR_EMAIL,
-    });
-    if (expectedReset && fixtureChanged(expectedReset, marker)) {
+    const operator = session.ok
+      ? session.data?.account?.email === OPERATOR_EMAIL ? 'present' : 'absent'
+      : session.status === 401 ? 'absent' : 'unavailable';
+    setSnapshot({ marker, scenarios, operator });
+    const attempt = unconfirmedReset.current;
+    if (attempt && fixtureChanged(attempt.marker, marker)) {
       unconfirmedReset.current = undefined;
+      storeReset();
       setResetVersion(marker);
-    } else if (expectedReset) {
+    } else if (accepted) {
       setFailure('unavailable');
     }
   }
@@ -121,18 +133,28 @@ export function DemoShowcase() {
     mutation.current = request;
     const attempt = unconfirmedReset.current ?? { key: crypto.randomUUID(), marker: snapshot.marker };
     unconfirmedReset.current = attempt;
+    storeReset(attempt);
     setPending(true);
     setResetFailure(undefined);
     const result = await accountApi.resetDemo(attempt.key, request.signal);
     if (request.signal.aborted) return;
+    const accepted = result.ok && result.data?.accepted === true;
+    let fixtureRestored = false;
+    if (!result.ok && (result.status === 0 || result.status >= 500 || result.status === 401 || result.status === 403)) {
+      const meta = await accountApi.readMeta(request.signal);
+      if (request.signal.aborted) return;
+      const marker = meta.ok ? fixtureMarker(meta.data) : undefined;
+      fixtureRestored = Boolean(marker && fixtureChanged(attempt.marker, marker));
+    }
     setPending(false);
-    if (result.ok && result.data?.accepted) {
+    if (accepted || fixtureRestored) {
+      previousAction.current = 'contenu';
       setConfirming(false);
-      void refresh(attempt.marker);
+      void refresh(accepted);
       return;
     }
     if (!result.ok && (result.status === 401 || result.status === 403)) {
-      setSnapshot({ ...snapshot, operator: false });
+      setSnapshot({ ...snapshot, operator: 'absent' });
     }
     if (!result.ok && result.status === 429) block(result.retryAfter);
     setResetFailure(result.ok ? 'unavailable' : failureFor(result.status, result.code));
@@ -177,7 +199,7 @@ export function DemoShowcase() {
           <button className="etaye-bouton etaye-bouton--secondaire" type="button" disabled={pending}
             onClick={() => setConfirming(false)}>Retour</button>
           <button className="etaye-bouton etaye-bouton--destructif" type="button"
-            disabled={pending || waiting || !snapshot.operator} onClick={() => void reset()}>Confirmer la réinitialisation</button>
+            disabled={pending || waiting || snapshot.operator !== 'present'} onClick={() => void reset()}>Confirmer la réinitialisation</button>
         </div>
       </div>
     </AuthShell>
@@ -192,7 +214,10 @@ export function DemoShowcase() {
       {failure && <div className="etaye-showcase__pile">
         <DemoProblem failure={failure} />
         <button type="button" className="etaye-bouton etaye-bouton--principal etaye-showcase__retry" disabled={waiting || loading}
-          onClick={() => void refresh(unconfirmedReset.current?.marker)}>Réessayer</button>
+          onClick={() => {
+            document.getElementById('contenu')?.focus({ preventScroll: true });
+            void refresh();
+          }}>Réessayer</button>
       </div>}
       <div className="etaye-showcase__intro">
         <div className="etaye-showcase__pile">
@@ -243,7 +268,7 @@ export function DemoShowcase() {
         <p className="etaye-3">Personnes et cabinets entièrement fictifs{snapshot ? ` (jeu ${snapshot.marker.version})` : ''}.
           La démonstration peut être réinitialisée à tout moment.</p>
       </section>
-      {snapshot?.operator && !failure && <div className="etaye-showcase__operator">
+      {snapshot?.operator === 'present' && !failure && <div className="etaye-showcase__operator">
         <button type="button" className="etaye-bouton etaye-bouton--secondaire" disabled={loading} id="demo-reset"
           onClick={(event) => {
             previousAction.current = event.currentTarget.id;
@@ -251,7 +276,17 @@ export function DemoShowcase() {
             setConfirming(true);
           }}>Réinitialiser la démonstration</button>
       </div>}
-      {snapshot && !snapshot.operator && !failure && <a className="etaye-bouton etaye-bouton--discret etaye-showcase__operator"
+      {snapshot?.operator === 'unavailable' && !failure && <div className="etaye-showcase__pile">
+        <Banner title="Session opérateur indisponible">
+          <p>La vérification de la session a échoué.</p>
+        </Banner>
+        <button type="button" className="etaye-bouton etaye-bouton--secondaire etaye-showcase__retry" disabled={loading}
+          onClick={() => {
+            document.getElementById('contenu')?.focus({ preventScroll: true });
+            void refresh();
+          }}>Vérifier la session</button>
+      </div>}
+      {snapshot?.operator === 'absent' && !failure && <a className="etaye-bouton etaye-bouton--discret etaye-showcase__operator"
         href="/connexion" onClick={() => rememberDemo(snapshot.marker)}>Connexion opérateur</a>}
     </main>
   </div>;

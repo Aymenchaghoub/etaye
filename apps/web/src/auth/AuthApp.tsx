@@ -10,11 +10,12 @@ import { RecoveryRequest, ResetPassword } from './Recovery';
 import { SignIn } from './SignIn';
 import { ACCOUNT_PATH, allowsAccountPath, checkPausedWork, isAccountPath, pauseWork } from './session-work';
 import { applyDemoTheme, clearDemoEntry, demoEntry, type FixtureMarker, fixtureChanged,
-  fixtureMarker, rememberDemo, SHOWCASE } from '../demo/demo-entry';
+  fixtureMarker, LOCAL_DEMO, rememberDemo, SHOWCASE } from '../demo/demo-entry';
 import './auth.css';
 
 type Notice = 'expired' | 'grant-changed' | 'account-changed' | 'demo-reset';
 type Resume = ReturnType<typeof pauseWork<undefined>>;
+type DemoTracking = { marker?: FixtureMarker; freshSignIn: boolean };
 
 function isAccountArea(path: string) {
   return path === ACCOUNT_PATH || path.startsWith(`${ACCOUNT_PATH}/`);
@@ -39,6 +40,7 @@ export function AuthApp() {
   const [initial, setInitial] = useState<Session>();
   const [retry, setRetry] = useState(0);
   const paused = useRef<Resume>(undefined);
+  const demo = useRef<DemoTracking>({ marker: demoEntry(), freshSignIn: false });
   const requestedPath = new URLSearchParams(window.location.search).get('retour');
   const patient = path === '/connexion/patient' || path.startsWith('/compte/patient/');
 
@@ -47,6 +49,7 @@ export function AuthApp() {
   useEffect(() => {
     const onPopState = () => {
       paused.current = undefined;
+      demo.current.freshSignIn = false;
       setNotice(undefined);
       setReturning(false);
       setInitial(undefined);
@@ -78,6 +81,7 @@ export function AuthApp() {
 
   const onDemoReset = useCallback((marker: FixtureMarker) => {
     clearDemoEntry();
+    demo.current = { freshSignIn: false };
     paused.current = undefined;
     setInitial(undefined);
     setResetVersion(marker.version);
@@ -89,8 +93,9 @@ export function AuthApp() {
     setNotice(undefined);
     setReturning(false);
     setInitial(undefined);
-    if (demoEntry()) {
+    if (LOCAL_DEMO || demo.current.marker) {
       clearDemoEntry();
+      demo.current = { freshSignIn: false };
       window.location.assign(SHOWCASE);
       return;
     }
@@ -98,8 +103,7 @@ export function AuthApp() {
   }
 
   function signedIn(session: Session) {
-    const demo = demoEntry();
-    if (demo?.email && demo.email !== session.account.email) rememberDemo(demo);
+    demo.current.freshSignIn = true;
     const safe = session.returnTo && allowsAccountPath(session, session.returnTo) ? session.returnTo : ACCOUNT_PATH;
     const work = paused.current;
     paused.current = undefined;
@@ -148,6 +152,7 @@ export function AuthApp() {
       onSignedIn={signedIn} />;
   }
   if (path === '/invitation') return <Invitation onAccepted={(session) => {
+    demo.current.freshSignIn = true;
     const portal = session.activatedPortalLinkId;
     const target = portal ? `/compte/patient/${portal}` : ACCOUNT_PATH;
     setInitial(session);
@@ -160,7 +165,7 @@ export function AuthApp() {
   if (!isAccountArea(path)) return null;
 
   return <AccountGate key={`${path}-${retry}`} target={path} initial={initial} onHalt={halt} onDemoReset={onDemoReset} leave={leave}
-    enter={navigateContext} askToSignIn={() => setReturning(true)} />;
+    enter={navigateContext} demo={demo} askToSignIn={() => setReturning(true)} />;
 }
 
 function SessionNotice({ reason, standalone, reconnect, leave, continueToAccount }: {
@@ -213,11 +218,12 @@ function SessionNotice({ reason, standalone, reconnect, leave, continueToAccount
   );
 }
 
-function AccountGate({ target, initial, onHalt, onDemoReset, leave, enter, askToSignIn }: {
+function AccountGate({ target, initial, onHalt, onDemoReset, leave, enter, demo, askToSignIn }: {
   target: string;
   initial?: Session;
   onHalt: (reason: Notice, target: string, previous?: Session) => void;
   onDemoReset: (marker: FixtureMarker) => void;
+  demo: { current: DemoTracking };
   leave: () => void;
   enter: (path: string, session: Session, replace?: boolean) => void;
   askToSignIn: () => void;
@@ -252,25 +258,40 @@ function AccountGate({ target, initial, onHalt, onDemoReset, leave, enter, askTo
       pending?.abort();
       const request = new AbortController();
       pending = request;
-      const result = await accountApi.readSession(request.signal);
-      if (request.signal.aborted) return;
-      const entry = demoEntry();
-      if (entry || import.meta.env.VITE_ETAYE_LOCAL_DEMO === 'true') {
+      const entry = demo.current.marker;
+      let marker: FixtureMarker | undefined;
+      if (entry || LOCAL_DEMO) {
         const meta = await accountApi.readMeta(request.signal);
         if (request.signal.aborted) return;
-        const marker = meta.ok ? fixtureMarker(meta.data) : undefined;
+        marker = meta.ok ? fixtureMarker(meta.data) : undefined;
         if (!marker) {
           setView(undefined);
           setUnavailable(true);
           return;
         }
-        if (!entry && result.ok) rememberDemo(marker);
-        if (entry && fixtureChanged(entry, marker)) {
-          verifiedAccount.current = undefined;
-          window.clearTimeout(deadline);
-          setView(undefined);
-          onDemoReset(marker);
-          return;
+      }
+      // Sample the fixture before reading the session so an old session is never
+      // associated with a generation published after its authorization check.
+      const result = await accountApi.readSession(request.signal);
+      if (request.signal.aborted) return;
+      if (entry && marker && !result.ok && result.status === 401 && !fixtureChanged(entry, marker)) {
+        const latest = await accountApi.readMeta(request.signal);
+        if (request.signal.aborted) return;
+        if (latest.ok) marker = fixtureMarker(latest.data) ?? marker;
+      }
+      const fresh = demo.current.freshSignIn && result.ok;
+      if (entry && marker && !fresh && fixtureChanged(entry, marker)) {
+        window.clearTimeout(deadline);
+        verifiedAccount.current = undefined;
+        setView(undefined);
+        onDemoReset(marker);
+        return;
+      }
+      if (result.ok) {
+        demo.current.freshSignIn = false;
+        if (marker && (!entry || fresh)) {
+          demo.current.marker = marker;
+          rememberDemo(marker);
         }
       }
       if (!result.ok) {
@@ -340,7 +361,7 @@ function AccountGate({ target, initial, onHalt, onDemoReset, leave, enter, askTo
       window.removeEventListener('pageshow', checkOnReturn);
       window.removeEventListener('pagehide', clearBeforeHide);
     };
-  }, [enter, initial, leaving, onDemoReset, onHalt, retry, target]);
+  }, [demo, enter, initial, leaving, onDemoReset, onHalt, retry, target]);
 
   async function signOut() {
     verifiedAccount.current = undefined;

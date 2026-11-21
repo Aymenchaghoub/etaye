@@ -1,11 +1,17 @@
 package dev.aymen.etaye.infrastructure.demo;
 
 import dev.aymen.etaye.AbstractPostgresTest;
+import jakarta.servlet.Filter;
+import jakarta.servlet.http.HttpServletRequest;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.Ordered;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -21,6 +27,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -43,6 +50,39 @@ class DemoHttpTest {
 
     @LocalServerPort private int port;
     @Autowired private DemoFixture fixture;
+    @Autowired private LoginPause loginPause;
+
+    @TestConfiguration
+    static class PauseConfiguration {
+        @Bean
+        LoginPause loginPause() {
+            return new LoginPause(new CountDownLatch(1), new CountDownLatch(1));
+        }
+
+        @Bean
+        FilterRegistrationBean<Filter> pauseInFlightLogin(LoginPause pause) {
+            Filter filter = (request, response, chain) -> {
+                if ("true".equals(((HttpServletRequest) request).getHeader("X-Test-Hold-Login"))) {
+                    pause.entered().countDown();
+                    try {
+                        if (!pause.release().await(4, TimeUnit.SECONDS)) {
+                            throw new IllegalStateException("Test did not release the in-flight login");
+                        }
+                    } catch (InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                        throw new IllegalStateException(ex);
+                    }
+                }
+                chain.doFilter(request, response);
+            };
+            var registration = new FilterRegistrationBean<>(filter);
+            registration.setOrder(Ordered.HIGHEST_PRECEDENCE + 3);
+            registration.addUrlPatterns("/api/v1/session");
+            return registration;
+        }
+    }
+
+    private record LoginPause(CountDownLatch entered, CountDownLatch release) {}
 
     @Test
     void catalogueIsPublicStatelessAndPaginated() {
@@ -87,11 +127,19 @@ class DemoHttpTest {
         assertThat(request(HttpMethod.POST, create, csrf(nora),
                 key, patient).getStatusCode().value()).isEqualTo(403);
 
+        assertThat(request(HttpMethod.POST, create, csrf(mila), key, patient).getStatusCode().value()).isEqualTo(403);
         assertThat(reset(null, key, REASON).getStatusCode().value()).isEqualTo(401);
-        assertThat(reset(csrf(nora), key, REASON).getStatusCode().value()).isEqualTo(403);
+        var noraCsrf = csrf(nora);
+        assertThat(reset(noraCsrf, key, REASON).getStatusCode().value()).isEqualTo(403);
+        assertThat(request(HttpMethod.POST, RESET_PATH, noraCsrf, null, Map.of()).getStatusCode().value()).isEqualTo(403);
         assertThat(reset(new Browser(operator.cookie(), null), key, REASON).getStatusCode().value()).isEqualTo(403);
         assertThat(reset(csrf(operator), key, " ").getStatusCode().value()).isBetween(400, 422);
         assertThat(fixture.version()).isEqualTo(before);
+        var portal = request(HttpMethod.POST, "/invitations/accept", csrf(null), UUID.randomUUID().toString(),
+                Map.of("token", "etaye-fictional-invitation-INV-PORTAL-03",
+                        "recipientVerification", "1990-03-12", "displayName", "Marie Collet", "password", PASSWORD));
+        assertThat(portal.getStatusCode().value()).isEqualTo(200);
+        assertThat(portal.getBody()).containsKey("activatedPortalLinkId");
 
         ownerExecute("UPDATE public.practice SET display_name = 'Cabinet fictif modifié' WHERE id = '" + practice + "'");
         ownerExecute("""
@@ -102,11 +150,15 @@ class DemoHttpTest {
                 """);
         var operatorCsrf = csrf(operator);
         var otherCsrf = csrf(anotherOperator);
+        var lateLoginCsrf = csrf(null);
         ResponseEntity<Map<String, Object>> reset;
+        String lateCookie;
         try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
-            assertThat(fixture.tryEnter()).isTrue();
+            var lateLogin = executor.submit(() -> request(HttpMethod.POST, "/session", lateLoginCsrf, null,
+                    Map.of("email", "claire.martin@example.test", "password", PASSWORD), true));
             java.util.concurrent.Future<ResponseEntity<Map<String, Object>>> first;
             try {
+                assertThat(loginPause.entered().await(3, TimeUnit.SECONDS)).isTrue();
                 first = executor.submit(() -> reset(operatorCsrf, key, REASON));
                 var waiting = System.nanoTime() + TimeUnit.SECONDS.toNanos(1);
                 while (request(HttpMethod.GET, "/meta", null, null, null).getStatusCode().value() == 200
@@ -120,8 +172,11 @@ class DemoHttpTest {
                 assertThat(concurrent.getStatusCode().value()).isEqualTo(409);
                 assertThat(concurrent.getBody()).containsEntry("code", "DEMO_RESET_IN_PROGRESS");
             } finally {
-                fixture.leave();
+                loginPause.release().countDown();
             }
+            var login = lateLogin.get(5, TimeUnit.SECONDS);
+            assertThat(login.getStatusCode().value()).isEqualTo(200);
+            lateCookie = cookie(login);
             reset = first.get(5, TimeUnit.SECONDS);
         }
 
@@ -144,6 +199,8 @@ class DemoHttpTest {
         }
         assertThat(request(HttpMethod.GET, "/session", nora, null, null).getStatusCode().value()).isEqualTo(401);
         assertThat(request(HttpMethod.GET, "/session", operator, null, null).getStatusCode().value()).isEqualTo(401);
+        assertThat(request(HttpMethod.GET, "/session", new Browser(lateCookie, null), null, null)
+                .getStatusCode().value()).isEqualTo(401);
         assertThat(request(HttpMethod.POST, "/access-recovery", operatorCsrf, key,
                 Map.of("email", OPERATOR)).getStatusCode().value()).isIn(401, 403);
 
@@ -190,7 +247,13 @@ class DemoHttpTest {
 
     private ResponseEntity<Map<String, Object>> request(HttpMethod method, String path, Browser browser, String key,
                                                          Map<String, String> body) {
+        return request(method, path, browser, key, body, false);
+    }
+
+    private ResponseEntity<Map<String, Object>> request(HttpMethod method, String path, Browser browser, String key,
+                                                         Map<String, String> body, boolean pauseLogin) {
         var call = RestClient.create("http://localhost:" + port + "/api/v1").method(method).uri(path);
+        if (pauseLogin) call.header("X-Test-Hold-Login", "true");
         if (browser != null) {
             call.header(HttpHeaders.COOKIE, browser.cookie());
             if (browser.csrf() != null) call.header("X-CSRF-TOKEN", browser.csrf());

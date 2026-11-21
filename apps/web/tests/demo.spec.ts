@@ -96,6 +96,7 @@ for (const boundary of [
     if (boundary.status === 429) await expect(retry).toBeDisabled();
     await accessible(page);
     await retry.click();
+    await expect(page.getByRole('main')).toBeFocused();
     await expect(page.getByRole('button', { name: 'Choisir · Dr Nora Lefebvre' })).toBeVisible();
   });
 }
@@ -137,4 +138,74 @@ test('the reset confirmation keeps focus, survives a busy response and reports a
   expect(keys[1]).toBe(keys[0]);
   await accessible(page);
   await expect(page.getByText('Démonstration réinitialisée')).toHaveCount(0);
+});
+
+test('a new sign-in after a reset opens the current fixture', async ({ page }) => {
+  await stub(page);
+  let generation = 1;
+  let authenticated = false;
+  const membership = '11111111-1111-4111-8111-111111111111';
+  const session = {
+    account: { id: '22222222-2222-4222-8222-222222222222', displayName: 'Nora Lefebvre', email: items[0].signInIdentifier },
+    membershipIds: [membership], portalLinkIds: [], expiresAt: new Date(Date.now() + 600_000).toISOString(),
+    contexts: [{
+      grantId: membership, kind: 'MEMBERSHIP', practiceId: '33333333-3333-4333-8333-333333333333',
+      practiceName: 'Cabinet des Tilleuls', displayRole: 'CLINICAL',
+    }],
+  };
+  await page.route('**/api/v1/meta', (route) => route.fulfill({ json: { ...meta, demoResetGeneration: generation } }));
+  await page.route('**/api/v1/session', (route) => {
+    if (route.request().method() === 'POST') authenticated = true;
+    return authenticated ? route.fulfill({ json: session }) : route.fulfill({ status: 401, json: { code: 'UNAUTHORIZED' } });
+  });
+  await page.goto('/demonstration');
+  await page.getByRole('button', { name: 'Choisir · Dr Nora Lefebvre' }).click();
+  await page.getByRole('link', { name: 'Ouvrir la démonstration' }).click();
+  generation = 2;
+  await page.locator('input[name="password"]').fill('Mot de passe fictif');
+  await page.getByRole('button', { name: 'Se connecter' }).click();
+  await expect(page.getByRole('heading', { name: 'Votre espace de travail' })).toBeVisible();
+  await expect(page.getByText('Démonstration réinitialisée')).toHaveCount(0);
+});
+
+test('a lost reset response is reconciled across a showcase reload', async ({ page }) => {
+  await stub(page, true);
+  let generation = 1;
+  let readsFail = false;
+  let writes = 0;
+  await page.route('**/api/v1/meta', (route) => readsFail
+    ? route.fulfill({ status: 503, json: { code: 'SERVICE_UNAVAILABLE' } })
+    : route.fulfill({ json: { ...meta, demoResetGeneration: generation } }));
+  await page.route('**/api/v1/session', (route) => generation === 1
+    ? route.fulfill({ json: { account: { email: 'operateur@example.test' } } })
+    : route.fulfill({ status: 401, json: { code: 'UNAUTHORIZED' } }));
+  await page.route('**/api/v1/demo/reset', (route) => {
+    writes++;
+    generation++;
+    readsFail = true;
+    return route.abort('failed');
+  });
+  await page.goto('/demonstration');
+  await page.getByRole('button', { name: 'Réinitialiser la démonstration' }).click();
+  await page.getByRole('button', { name: 'Confirmer la réinitialisation' }).click();
+  await expect(page.getByRole('alert')).toContainText('Démonstration indisponible');
+  readsFail = false;
+  await page.reload();
+  await expect(page.getByRole('status').filter({ hasText: 'Démonstration réinitialisée' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Réinitialiser la démonstration' })).toHaveCount(0);
+  expect(writes).toBe(1);
+});
+
+test('an unavailable operator session check offers verification without hiding the catalogue', async ({ page }) => {
+  await stub(page, true);
+  await page.route('**/api/v1/session', (route) =>
+    route.fulfill({ status: 503, json: { code: 'SERVICE_UNAVAILABLE' } }), { times: 1 });
+  await page.goto('/demonstration');
+  await expect(page.getByRole('alert')).toContainText('Session opérateur indisponible');
+  await expect(page.getByRole('button', { name: 'Choisir · Dr Nora Lefebvre' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Connexion opérateur' })).toHaveCount(0);
+  await accessible(page);
+  await page.getByRole('button', { name: 'Vérifier la session' }).click();
+  await expect(page.getByRole('main')).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Réinitialiser la démonstration' })).toBeVisible();
 });

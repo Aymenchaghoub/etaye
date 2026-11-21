@@ -1,10 +1,13 @@
 import type { ApiMeta, DemoScenario } from '../api/generated/types.gen';
 
 export const SHOWCASE = '/demonstration';
+export const LOCAL_DEMO = import.meta.env.VITE_ETAYE_LOCAL_DEMO === 'true';
 export const OPERATOR_EMAIL = 'operateur@example.test';
 const ENTRY_KEY = 'etaye-demo-entry';
+const RESET_KEY = 'etaye-demo-pending-reset';
 
 export type FixtureMarker = { version: string; generation: number };
+export type ResetAttempt = { key: string; marker: FixtureMarker };
 type DemoEntry = FixtureMarker & { actor?: string; email?: string };
 
 export function fixtureMarker(meta: ApiMeta | undefined): FixtureMarker | undefined {
@@ -57,4 +60,25 @@ export function applyDemoTheme() {
   updateTheme();
   media.addEventListener('change', updateTheme);
   return () => media.removeEventListener('change', updateTheme);
+}
+
+export function pendingReset(): ResetAttempt | undefined {
+  try {
+    const stored = sessionStorage.getItem(RESET_KEY);
+    if (!stored) return;
+    const value = JSON.parse(stored) as ResetAttempt;
+    if (typeof value?.key === 'string' && typeof value.marker?.version === 'string'
+      && Number.isSafeInteger(value.marker.generation)) return value;
+  } catch {
+    // The reset remains reconcilable in memory while this screen stays active.
+  }
+}
+
+export function storeReset(attempt?: ResetAttempt) {
+  try {
+    if (attempt) sessionStorage.setItem(RESET_KEY, JSON.stringify(attempt));
+    else sessionStorage.removeItem(RESET_KEY);
+  } catch {
+    // Storage failures do not affect the API or the live fixture metadata.
+  }
 }

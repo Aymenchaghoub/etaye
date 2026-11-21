@@ -2,6 +2,7 @@ package dev.aymen.etaye.infrastructure.demo;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.dao.QueryTimeoutException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -48,7 +49,7 @@ public class DemoFixture {
                 (row, index) -> new Version(row.getString(1), row.getLong(2)));
     }
 
-    public boolean isOperator(UUID accountId) {
+    public static boolean isOperator(UUID accountId) {
         return OPERATOR.equals(accountId);
     }
 
@@ -69,9 +70,21 @@ public class DemoFixture {
                 return new Reset(Outcome.BUSY, correlation, 0);
             }
             try {
-                return jdbc.queryForObject("SELECT * FROM etaye_demo.reset_fixture(?, ?, ?, ?, ?)",
-                        (row, index) -> new Reset(Outcome.valueOf(row.getString(1)), row.getString(2), row.getInt(3)),
-                        accountId, sessionId, digest(key), digest(reason), correlation);
+                return jdbc.query(connection -> {
+                    var statement = connection.prepareStatement("SELECT * FROM etaye_demo.reset_fixture(?, ?, ?, ?, ?)");
+                    statement.setQueryTimeout(2);
+                    statement.setObject(1, accountId);
+                    statement.setString(2, sessionId);
+                    statement.setString(3, digest(key));
+                    statement.setString(4, digest(reason));
+                    statement.setString(5, correlation);
+                    return statement;
+                }, result -> {
+                    if (!result.next()) throw new IllegalStateException("The fixture reset returned no outcome");
+                    return new Reset(Outcome.valueOf(result.getString(1)), result.getString(2), result.getInt(3));
+                });
+            } catch (QueryTimeoutException ex) {
+                return new Reset(Outcome.UNAVAILABLE, correlation, 0);
             } finally {
                 barrier.writeLock().unlock();
             }
@@ -91,7 +104,7 @@ public class DemoFixture {
 
     public record Version(String version, long generation) {}
 
-    enum Outcome { RESET, REPLAYED, BUSY, RATE_LIMITED, CONFLICT, UNAUTHENTICATED, FORBIDDEN }
+    enum Outcome { RESET, REPLAYED, BUSY, RATE_LIMITED, CONFLICT, UNAUTHENTICATED, FORBIDDEN, UNAVAILABLE }
 
     record Reset(Outcome outcome, String correlationId, int retryAfter) {}
 }

@@ -94,7 +94,9 @@ public class InvitationController {
             return AccountAccessProblem.response(request, HttpStatus.UNPROCESSABLE_ENTITY,
                     "PASSWORD_TOO_SHORT", "The password requires at least 12 characters");
         }
-        if (demoEnabled && payload.displayName() != null && !"Alex Rivière".equals(payload.displayName().strip())) {
+        // The pending team fixture accepts a user-entered name. The portal path derives its name from the record.
+        if (demoEnabled && "etaye-fictional-invitation-INV-TEAM-01".equals(payload.token())
+                && payload.displayName() != null && !"Alex Rivière".equals(payload.displayName().strip())) {
             return AccountAccessProblem.response(request, HttpStatus.UNPROCESSABLE_ENTITY,
                     "RECIPIENT_MISMATCH", "Use the published fictional identity");
         }

@@ -8,7 +8,9 @@ export default defineConfig({
     rollupOptions: {
       input: {
         app: fileURLToPath(new URL('./index.html', import.meta.url)),
-        warmup: fileURLToPath(new URL('./warmup.html', import.meta.url)),
+        ...(process.env.VITE_ETAYE_LOCAL_DEMO === 'true'
+          ? { warmup: fileURLToPath(new URL('./warmup.html', import.meta.url)) }
+          : {}),
       },
     },
   },

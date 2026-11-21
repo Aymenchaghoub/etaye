@@ -1,5 +1,6 @@
 package dev.aymen.etaye.infrastructure.security;
 
+import dev.aymen.etaye.identity.dto.AuthenticatedAccount;
 import dev.aymen.etaye.identity.service.IdentityLookupService;
 import dev.aymen.etaye.infrastructure.error.ProblemResponseWriter;
 import dev.aymen.etaye.infrastructure.demo.DemoFixture;
@@ -9,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -151,6 +153,12 @@ public class SecurityConfig {
                             "/api/v1/access-recovery/complete", "/api/v1/invitations/inspect",
                             "/api/v1/invitations/accept").permitAll();
                 if (demoEnabled) {
+                    auth.requestMatchers(HttpMethod.POST, DemoFixture.RESET_PATH)
+                        .access((authentication, context) -> {
+                            var account = context.getRequest().getAttribute(IdentityResolutionFilter.AUTHENTICATED_ACCOUNT_ATTR);
+                            return new AuthorizationDecision(account instanceof AuthenticatedAccount resolved
+                                    && DemoFixture.isOperator(resolved.account().id()));
+                        });
                     // The public demo identities never have an arbitrary patient-input surface.
                     auth.requestMatchers(HttpMethod.POST, "/api/v1/practices/{practiceId}/patients").denyAll();
                 }

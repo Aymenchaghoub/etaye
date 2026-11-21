@@ -70,9 +70,6 @@ public class DemoController {
     public ResponseEntity<?> reset(@RequestHeader("Idempotency-Key") String key, @Valid @RequestBody ResetReason body,
                                    @RequestAttribute(IdentityResolutionFilter.AUTHENTICATED_ACCOUNT_ATTR)
                                    AuthenticatedAccount account, HttpServletRequest request) throws InterruptedException {
-        if (!fixture.isOperator(account.account().id())) {
-            return AccountAccessProblem.response(request, HttpStatus.FORBIDDEN, "ACCESS_DENIED", "Access denied");
-        }
         if (!KEY.matcher(key).matches()) {
             throw new InvalidIdempotencyKeyException("Invalid demo reset idempotency key");
         }
@@ -88,6 +85,8 @@ public class DemoController {
                 yield json(HttpStatus.ACCEPTED, new Acknowledgement(true, result.correlationId()));
             }
             case REPLAYED -> json(HttpStatus.ACCEPTED, new Acknowledgement(true, result.correlationId()));
+            case UNAVAILABLE -> AccountAccessProblem.response(request, HttpStatus.SERVICE_UNAVAILABLE,
+                    "SERVICE_UNAVAILABLE", "The synthetic fixture could not be restored");
             case BUSY -> AccountAccessProblem.response(request, HttpStatus.CONFLICT,
                     "DEMO_RESET_IN_PROGRESS", "The synthetic fixture is being restored");
             case RATE_LIMITED -> AccountAccessProblem.rateLimited(request, result.retryAfter());
