@@ -85,7 +85,7 @@ Source: Aymen's statements in the working session of that date. He wanted the ap
 
 ### User decisions recorded on 2026-11-21
 
-Sources: Aymen's story 1.1 arbitration reply recorded under UD-50 and his story 1.3 replies on the design specimens, focus correction, phase-0 recommendations and development approval recorded under UD-51 through UD-54.
+Sources: Aymen's story 1.1 arbitration reply recorded under UD-50 and his story 1.3 replies on the design specimens, focus correction, phase-0 recommendations, development authorization and running UI recorded under UD-51 through UD-55.
 
 | ID | Decision | Consequence |
 |---|---|---|
@@ -94,6 +94,7 @@ Sources: Aymen's story 1.1 arbitration reply recorded under UD-50 and his story 
 | UD-52 | Aymen accepted the story 1.3 phase-0 recommendations (“je valide tout tes recommendations”). The agreed contract direction is an optional projection of currently eligible contexts on `getSession`. Selection stays local to the tab and route, with fresh verification before rendering the selected context and generic unavailable-context recovery. Retain a minimal header with an accessible switch control. Use a test-only dirty form for the I-20 guard. Preserve the S-05 CORE evidence and I-20 SAMPLED path with its catalog review. | [Arbitration packet](../implementation-artifacts/story-1-3-context-packet.md#7-arbitration-outcome-and-open-gates). UD-51 covers the shown I-20 specimen. Review of the additional S-05 and I-20 designs and explicit 1.3 development authorization are separate gates. |
 | UD-53 | Development is authorized for **story 1.3 only**. Aymen wrote “je t’approuve et je t’autorise a developper” after approving the phase-0 recommendations. He specified Zcode for the three-lens implementation review. The authorization covers the accepted phase-0 scope. Additional visual variants are subject to the existing design review gate. | [Story packet](../implementation-artifacts/story-1-3-context-packet.md) · [Delivery rules](../operations/delivery-rules.md). Add the story to the allowlist and keep global authorization false. This review-tool decision supersedes the Codex CLI instruction recorded during the invitation story. |
 | UD-54 | Aymen approved the S-05 additions and I-20 practice-switch variants after receiving the interactive review page and both contact sheets. His answer was “oui je valide”. Apply the approved keyboard behavior, current-context header, recovery states and scoped dirty-work examples. | [Variant review and evidence](../design/reviews/2026-11-21-story-1-3-variants.md). The design gate for 1.3 is satisfied together with UD-46 and UD-51. Use the offline Figma exception and preserve runtime verification as delivery evidence. |
+| UD-55 | Aymen approved the running S-05 and I-20 interface presented for story 1.3 in PR #50. The approval covers the comparison sheets for application revision `ffc88f4`, including the keyboard focus on the I-20 close button. | The running UI review gate is satisfied for the approved rendering. [Runtime evidence](../design/reviews/2026-11-21-story-1-3-runtime.md) · [PR #50](https://github.com/Aymenchaghoub/etaye/pull/50) |
 
 ### Corrections applied on 2026-11-17 under Aymen's authorization to correct the package
 

@@ -17,7 +17,7 @@ V4 projects current roles and labels from active staff memberships and verified 
 | Web | Node 26.13.1 and pnpm 12.21.0 completed a frozen install, TypeScript check, generated SDK verification and production build. Chromium smoke passed 45 cases including 12 S-05 and I-20 cases and axe assertions. The CI evidence gates require 160 API and 45 smoke tests, including the new practice context smoke file. |
 | AT-003-A | The real account switched among clinical, administration and patient contexts. A second tab kept its independent selection. The prior header disappeared and the delayed response smoke case could not restore a superseded view. |
 | AT-003-B | The real browser saw 200 for its clinical record, 403 for a disallowed capability and 404 for a record under the wrong practice without that record's payload. It refused a suspended practice on re-entry and offered a surviving choice. The smoke suite also checked guessed context, independently revoked grants and failed change recovery. |
-| AT-003-C | The [opened running UI comparison](../design/reviews/2026-11-21-story-1-3-runtime.md) records actual states, viewports and visual differences. The smoke suite covered keyboard focus and reflow. I-20 starts focus on the title, keeps the close control reachable by Tab and retains input after a failed save. Aymen's running UI review remains open. |
+| AT-003-C | The [opened running UI comparison](../design/reviews/2026-11-21-story-1-3-runtime.md) records actual states, viewports and visual differences. The smoke suite covered keyboard focus and reflow. I-20 starts focus on the title, keeps the close control reachable by Tab and retains input after a failed save. Aymen approved the running UI under UD-55. |
 
 Five Playwright cases passed on the real Spring Boot, React and PostgreSQL stack. They covered 1.3, the existing invitation slice and recovery after stopping or pausing PostgreSQL. The final run used a fixed loopback port for the disposable database and seeded each practice's records under its RLS context. The separate 1.2 inbox browser case was outside this run because its fixed local inbox port was already occupied. Account recovery still ran in the API and smoke suites.
 
@@ -37,7 +37,7 @@ The sign-in route is `/connexion`. With the local web dev server, I-20's test fo
 
 ## Three-lens review
 
-Zcode 0.17.1 returned one read-only report on the complete contract and application diff from `ab7ebcc` to `309891e`. The headless startup rejected `--mode plan`. The review ran using guarded mode in an isolated directory with execution, writing and delegation disabled. The report found no high or critical implementation defect. Aymen's running UI approval remains the release evidence gate for AT-003-C.
+Zcode 0.17.1 returned one read-only report on the complete contract and application diff from `ab7ebcc` to `309891e`. The headless startup rejected `--mode plan`. The review ran using guarded mode in an isolated directory with execution, writing and delegation disabled. The report found no high or critical implementation defect. Aymen subsequently closed the running UI review under UD-55.
 
 | Angle | Triage and follow-up |
 | --- | --- |

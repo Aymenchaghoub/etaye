@@ -2,7 +2,7 @@
 
 Updated: 2026-11-21. Owner: Aymen Chaghoub.
 
-## Story 1.3 implementation verified locally — 2026-11-21
+## Story 1.3 running UI approved — 2026-11-21
 
 **Phase.** The design approval and authorization are preserved on `docs/story-1-3-phase-0` at `ab7ebcc`. The dedicated feature worktree passed the story readiness check and delivered the contract at `0b24129` and application candidate at `309891e`. The cockpit was regenerated from the documentary worktree and reports 1.3 authorized.
 
@@ -10,7 +10,9 @@ Updated: 2026-11-21. Owner: Aymen Chaghoub.
 
 **Review.** Zcode reported on `309891e`. Follow-up `ffc88f4` corrects the account-home alias, tests revocation on the polling path and strengthens the visual evidence. The implementation record records the three review angles and remaining evidence limits. [Draft PR #50](https://github.com/Aymenchaghoub/etaye/pull/50)
 
-**Next action.** Obtain Aymen's review of the running screens. Check the exact tip of PR #50 and the manual CodeRabbit response. Merge requires the recorded running UI review.
+**User decision (UD-55).** Aymen approved the running S-05 and I-20 comparisons for application revision `ffc88f4`. All seven required GitHub checks passed on PR head `12e9a2d`. [Runtime review](design/reviews/2026-11-21-story-1-3-runtime.md) · [GitHub checks](https://github.com/Aymenchaghoub/etaye/pull/50/checks)
+
+**Next action.** Track the manual CodeRabbit review for PR #50 and triage its findings. Verify the exact PR head and required checks before any merge.
 
 ## Story 1.3 design approved — 2026-11-21
 
