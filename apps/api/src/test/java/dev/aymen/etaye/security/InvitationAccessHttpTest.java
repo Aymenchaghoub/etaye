@@ -17,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
@@ -231,19 +232,8 @@ class InvitationAccessHttpTest extends AbstractPostgresTest {
 
             var result = executor.submit(() -> accept(browser, Map.of("token", token,
                     "recipientVerification", "1990-03-12", "password", PASSWORD), UUID.randomUUID().toString()));
-            boolean waiting = false;
             try {
-                for (int attempt = 0; attempt < 20 && !waiting; attempt++) {
-                    try (var sessions = watch.executeQuery("""
-                            SELECT EXISTS (SELECT 1 FROM pg_stat_activity
-                                WHERE usename = 'etaye_identity' AND wait_event_type = 'Lock'
-                                  AND query LIKE '%public.accept_invitation%')
-                            """)) {
-                        waiting = sessions.next() && sessions.getBoolean(1);
-                    }
-                    if (!waiting) Thread.sleep(100);
-                }
-                assertThat(waiting).as("acceptance is waiting on the patient record").isTrue();
+                awaitBlockedAcceptances(watch, 1);
                 statement.execute("SET LOCAL statement_timeout = '12s'");
                 statement.execute("""
                         SELECT pg_sleep(GREATEST(0, EXTRACT(epoch FROM expires_at - clock_timestamp())) + 0.05)
@@ -257,6 +247,23 @@ class InvitationAccessHttpTest extends AbstractPostgresTest {
             assertThat(refused.getBody()).containsEntry("code", "INVITATION_EXPIRED");
         }
         assertNoActivation(practice, recipient);
+    }
+
+    private static void awaitBlockedAcceptances(Statement observer, int expected) throws Exception {
+        int blocked = 0;
+        for (int attempt = 0; attempt < 20; attempt++) {
+            try (var sessions = observer.executeQuery("""
+                    SELECT count(*) FROM pg_stat_activity
+                    WHERE usename = 'etaye_identity' AND wait_event_type = 'Lock'
+                      AND query LIKE '%public.accept_invitation%'
+                    """)) {
+                sessions.next();
+                blocked = sessions.getInt(1);
+            }
+            if (blocked == expected) return;
+            Thread.sleep(100);
+        }
+        assertThat(blocked).as("acceptances waiting on a database lock").isEqualTo(expected);
     }
 
     private static void assertNoActivation(UUID practice, String recipient) throws Exception {
@@ -338,9 +345,22 @@ class InvitationAccessHttpTest extends AbstractPostgresTest {
         String firstKey = UUID.randomUUID().toString();
         String secondKey = UUID.randomUUID().toString();
         String key;
-        try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+        try (var gate = DriverManager.getConnection(POSTGRES_CONTAINER.getJdbcUrl(), OWNER_USER, OWNER_PASSWORD);
+             var lock = gate.createStatement();
+             var observer = DriverManager.getConnection(POSTGRES_CONTAINER.getJdbcUrl(),
+                     POSTGRES_CONTAINER.getUsername(), POSTGRES_CONTAINER.getPassword());
+             var watch = observer.createStatement();
+             var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            gate.setAutoCommit(false);
+            lock.execute("SELECT set_config('etaye.practice_id', '" + practice + "', true)");
+            lock.execute("SELECT id FROM invitation WHERE token_digest = '" + digest(token) + "' FOR UPDATE");
             var a = executor.submit(() -> accept(first, payload, firstKey));
             var b = executor.submit(() -> accept(second, payload, secondKey));
+            try {
+                awaitBlockedAcceptances(watch, 2);
+            } finally {
+                gate.rollback();
+            }
             int firstStatus = a.get(10, TimeUnit.SECONDS).getStatusCode().value();
             int secondStatus = b.get(10, TimeUnit.SECONDS).getStatusCode().value();
             assertThat(List.of(firstStatus, secondStatus)).containsExactlyInAnyOrder(200, 422);
@@ -372,7 +392,9 @@ class InvitationAccessHttpTest extends AbstractPostgresTest {
         UUID issuer = createAccountAsOwner(syntheticEmail(), "Nora Lefebvre");
         seedInvitation(practiceA, issuer, "TEAM_MEMBERSHIP", syntheticEmail(), randomToken(), null,
                 new String[]{"CLINICAL_READ"}, "PENDING", "72 hours");
-        UUID recordB = seedPatientAndRecord(practiceB, "1986-02-25");
+        String firstName = "É".repeat(100);
+        String lastName = "ç".repeat(100);
+        UUID recordB = seedPatientAndRecord(practiceB, "1986-02-25", firstName, lastName);
         String token = randomToken();
         seedInvitation(practiceB, issuer, "PATIENT_PORTAL", syntheticEmail(), token, recordB,
                 new String[]{}, "PENDING", "72 hours");
@@ -380,6 +402,9 @@ class InvitationAccessHttpTest extends AbstractPostgresTest {
         var accepted = accept(csrf(null), Map.of("token", token,
                 "recipientVerification", "1986-02-25", "password", PASSWORD), UUID.randomUUID().toString());
         assertThat(accepted.getStatusCode().value()).isEqualTo(200);
+        var account = (Map<?, ?>) accepted.getBody().get("account");
+        assertThat(account.get("displayName")).isEqualTo(firstName + " " + lastName.substring(0, 99));
+        assertThat(queryPractice(practiceB, "SELECT last_name FROM patient")).isEqualTo(lastName);
         assertThat(queryPractice(practiceA, "SELECT count(*) FROM audit_event"))
                 .isEqualTo("0");
         assertThat(query("SELECT l.practice_id::text FROM portal_link l WHERE l.record_id = '" + recordB + "'"))
@@ -474,16 +499,20 @@ class InvitationAccessHttpTest extends AbstractPostgresTest {
     }
 
     private static UUID seedPatientAndRecord(UUID practiceId, String birthDate) {
+        return seedPatientAndRecord(practiceId, birthDate, "Marie", "Collet");
+    }
+
+    private static UUID seedPatientAndRecord(UUID practiceId, String birthDate, String firstName, String lastName) {
         UUID patient = UUID.randomUUID();
         UUID record = UUID.randomUUID();
         executeAsOwner("""
                 BEGIN;
                 SELECT set_config('etaye.practice_id', '%s', true);
                 INSERT INTO patient (id, practice_id, first_name, last_name, date_of_birth)
-                    VALUES ('%s', '%s', 'Marie', 'Collet', '%s');
+                    VALUES ('%s', '%s', '%s', '%s', '%s');
                 INSERT INTO patient_record (id, practice_id, patient_id) VALUES ('%s', '%s', '%s');
                 COMMIT;
-                """.formatted(practiceId, patient, practiceId, birthDate, record, practiceId, patient));
+                """.formatted(practiceId, patient, practiceId, firstName, lastName, birthDate, record, practiceId, patient));
         return record;
     }
 

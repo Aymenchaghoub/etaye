@@ -137,7 +137,7 @@ BEGIN
 
     IF inv.purpose = 'PATIENT_PORTAL' THEN
         -- Serialize invitations to the same record and verify current demographics before any writes.
-        SELECT pa.date_of_birth, pa.first_name || ' ' || pa.last_name
+        SELECT pa.date_of_birth, left(pa.first_name || ' ' || pa.last_name, 200)
         INTO target_birth_date, derived_name
         FROM public.patient_record pr
         JOIN public.patient pa ON pa.id = pr.patient_id AND pa.practice_id = pr.practice_id

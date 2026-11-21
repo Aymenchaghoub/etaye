@@ -67,4 +67,4 @@ Baseline inspected on 2026-11-20 at `da7ff5ae3f0f39840e279d94d633b78ce8dedd30`. 
 
 ## Verification
 
-Run Maven verify with PostgreSQL, generated SDK drift/build, browser smoke and the isolated authentication journey. Open matching captures at 1440, 1024, 768, 390 and 320 CSS px. Run documentary validation. Use one local Zcode review across all three lenses and manually request CodeRabbit on the story PR.
+Run Maven verify with PostgreSQL, generated SDK drift/build, browser smoke and the isolated authentication journey. Open matching captures at 1440, 1024, 768, 390 and 320 CSS px. Run documentary validation. Follow the [delivery rules](../operations/delivery-rules.md) for the three-lens local review and manual CodeRabbit request.

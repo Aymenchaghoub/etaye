@@ -268,6 +268,7 @@ function InvitationForm({ token, preview, initiallySignedIn, onAccepted }: Accep
     onCancel={() => setSigningIn(false)} onSignedIn={() => {
     receipt.current = undefined;
     setSignedIn(true);
+    setErrors([]);
     setSigningIn(false);
     setIssue(undefined);
   }} />;

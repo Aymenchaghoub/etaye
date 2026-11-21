@@ -73,7 +73,7 @@ All review threads were resolved, and all required checks passed (`API verify`, 
 
 **Actual verification.** A real-stack sign-in, recovery and second-session revocation journey and the PostgreSQL outage test passed. The isolated V1 upgrade retained the synthetic account and membership. Java 25 passed 150 tests, Chromium smoke passed 19, and the build and documentary validator passed. The local gallery contains the visible runtime comparison.
 
-**Next action.** Complete the single Zcode review, triage and verify the findings, and manually request CodeRabbit on the final pull request revision. Verify current checks and resolved threads before merging.
+**Historical review gate.** The story used the review procedure in effect before PR #45 merged. Apply the current [delivery rules](operations/delivery-rules.md) to later stories.
 
 ## Story 1.2 design approved and technical plan drafted — 2026-11-20
 
@@ -89,7 +89,7 @@ All review threads were resolved, and all required checks passed (`API verify`, 
 
 **Current phase.** Aymen authorized starting story 1.2 after the 10.2 merge (UD-48). Branch `feat/1.2-sign-in-recovery-expiry` starts at the verified merge. The current work is design review. The local gallery uses the corrected HTML snapshot and includes 96 light and dark captures of S-04, S-38, I-22 and the related M-03 reference at desktop, tablet and phone widths. Figma was not read for this review. The S-38 source shows clinical content through a pale overlay, so the gallery presents additional captures with the underlying content removed. M-03 remains assigned to 8.3. The visual gallery is outside the repository.
 
-**Next action.** Obtain Aymen's S-04, S-38 and I-22 design decisions. Then record the evidence, encode the 1.2 authorization and prepare the implementation spec against the current contract and security decisions. S-02 already has UD-46 approval. No story 1.2 application changes have started. Use one local Zcode review covering silent failures, edge cases and acceptance criteria, then request the manual CodeRabbit review on the story PR.
+**Next action.** Obtain Aymen's S-04, S-38 and I-22 design decisions. Then record the evidence, encode the 1.2 authorization and prepare the implementation spec against the current contract and security decisions. S-02 already has UD-46 approval. No story 1.2 application changes have started. The current review workflow is in the [delivery rules](operations/delivery-rules.md).
 
 ## Story 10.2 implemented and locally reviewed — 2026-11-20
 

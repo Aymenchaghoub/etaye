@@ -217,6 +217,8 @@ test('an existing recipient can sign in without reopening the original invitatio
     return route.fulfill({ json: { ...session(), membershipIds: [membershipId] } });
   });
   await page.goto(url);
+  await page.getByRole('button', { name: 'Activer mon compte' }).click();
+  await expect(page.getByRole('alert')).toContainText('2 champs à corriger');
   await page.getByRole('button', { name: 'J’ai déjà un compte' }).click();
   await page.getByRole('button', { name: 'Revenir à l’invitation' }).click();
   await expect(page.getByRole('heading', { name: /Rejoindre/ })).toBeFocused();
@@ -225,6 +227,7 @@ test('an existing recipient can sign in without reopening the original invitatio
   await page.locator('#l-pw').fill(password);
   await page.getByRole('button', { name: 'Se connecter', exact: true }).click();
   await expect(page.getByRole('heading', { name: /Rejoindre/ })).toBeFocused();
+  await expect(page.getByRole('alert')).toHaveCount(0);
   await expect(page.locator('#a-pw')).toHaveCount(0);
   await page.getByRole('button', { name: 'Activer mon compte' }).click();
   await expect(page).toHaveURL(/\/compte$/);
