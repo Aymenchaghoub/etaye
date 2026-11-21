@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="clair">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Étaye — Story 9.1 · Arbitrage phase 0 (2026-11-21)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,500;0,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500&display=swap" rel="stylesheet">
+<style>
+/* Étaye tokens — docs/design/design-system.md §4 (snapshot d2f0800e) */
+:root, [data-theme="clair"]{
+  --fond:#efeeea; --surface:#ffffff; --surface-2:#f7f6f3; --papier:#f6f4ee;
+  --encre:#1b1b18; --encre-2:#57534a; --encre-3:#6b655a; --encre-inverse:#f6f4ee;
+  --filet:#dedad0; --filet-controle:#8c877c;
+  --accent:#2b4c7e; --accent-fond:#e8edf5; --sur-accent:#ffffff;
+  --critique:#b42318; --critique-fond:#fcebe9;
+  --attention:#a6470a; --attention-fond:#fdf1e3;
+  --espace-1:4px; --espace-2:8px; --espace-3:12px; --espace-4:16px; --espace-5:20px; --espace-6:24px; --espace-8:32px;
+  --rayon-1:4px; --rayon-2:8px; --rayon-3:12px;
+  --trait-filet:1px; --trait-focus:2px;
+  --courbe:cubic-bezier(0.22,1,0.36,1); --duree-retour:140ms; --duree-entree:320ms;
+  --font-texte:"Atkinson Hyperlegible Next",system-ui,sans-serif;
+  --font-document:"Source Serif 4",Georgia,serif;
+  color-scheme:light;
+}
+[data-theme="sombre"]{
+  --fond:#0f1012; --surface:#1a1c1f; --surface-2:#222529; --papier:#17181a;
+  --encre:#ece9e1; --encre-2:#aba69b; --encre-3:#969189; --encre-inverse:#1b1b18;
+  --filet:#2e3136; --filet-controle:#767b82;
+  --accent:#8faadb; --accent-fond:#1d2738; --sur-accent:#0f1012;
+  --critique:#ff8f85; --critique-fond:#3b1613;
+  --attention:#f5a524; --attention-fond:#36260e;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--fond);color:var(--encre);font-family:var(--font-texte);font-size:15px;line-height:22px}
+main{max-width:1060px;margin:0 auto;padding:var(--espace-6) var(--espace-5) 96px}
+h1{font-size:22px;line-height:28px;font-weight:500;margin:0 0 var(--espace-2)}
+h2{font-size:16px;line-height:24px;font-weight:500;margin:var(--espace-8) 0 var(--espace-3);
+   border-bottom:var(--trait-filet) solid var(--filet);padding-bottom:var(--espace-2)}
+p{margin:0 0 var(--espace-3)}
+a{color:var(--accent)}
+code,.mono{font-family:ui-monospace,"Atkinson Hyperlegible Mono",monospace;font-size:13px}
+.meta{font-size:12px;line-height:16px;color:var(--encre-3)}
+.bandeau{display:flex;gap:var(--espace-3);align-items:flex-start;background:var(--accent-fond);
+  border:var(--trait-filet) solid var(--accent);border-radius:var(--rayon-1);
+  padding:var(--espace-3) var(--espace-4);margin:var(--espace-4) 0}
+.bandeau.attention{background:var(--attention-fond);border-color:var(--attention)}
+.bandeau.critique{background:var(--critique-fond);border-color:var(--critique)}
+.bandeau b{display:block;font-size:13px;line-height:20px;font-weight:500}
+.bandeau span{font-size:13px;line-height:20px;color:var(--encre-2)}
+.statuts{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:var(--espace-3);margin:var(--espace-4) 0}
+.statut{background:var(--surface);border:var(--trait-filet) solid var(--filet);border-radius:var(--rayon-1);padding:var(--espace-3) var(--espace-4)}
+.statut .t{font-size:13px;font-weight:500;line-height:20px}
+.puce{display:inline-block;font-size:13px;line-height:20px;font-weight:500;border-radius:var(--rayon-1);padding:1px var(--espace-2);margin-left:var(--espace-2)}
+.puce.ok{background:var(--accent-fond);color:var(--accent)}
+.puce.ko{background:var(--attention-fond);color:var(--attention)}
+.puce.na{background:transparent;color:var(--encre-2);box-shadow:inset 0 0 0 1px var(--filet)}
+/* Cartes de choix */
+.carte{background:var(--surface);border:var(--trait-filet) solid var(--filet);border-radius:var(--rayon-1);
+  padding:var(--espace-4);margin:var(--espace-4) 0}
+.carte > h3{font-size:16px;line-height:24px;font-weight:500;margin:0 0 var(--espace-2)}
+.carte .q{color:var(--encre-2);margin-bottom:var(--espace-3)}
+.choix{display:flex;gap:var(--espace-3);align-items:flex-start;border:var(--trait-filet) solid var(--filet-controle);
+  border-radius:var(--rayon-1);background:var(--surface);padding:var(--espace-3);margin:var(--espace-2) 0;cursor:pointer;
+  transition:border-color var(--duree-retour) var(--courbe),background var(--duree-retour) var(--courbe)}
+.choix:hover{background:var(--surface-2)}
+.choix[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-fond)}
+.choix input{position:absolute;opacity:0;pointer-events:none}
+.choix .radio{flex:none;width:16px;height:16px;border:var(--trait-filet) solid var(--filet-controle);border-radius:50%;margin-top:3px;
+  transition:box-shadow var(--duree-retour) var(--courbe)}
+.choix[aria-pressed="true"] .radio{box-shadow:inset 0 0 0 4px var(--accent)}
+.choix .lab{font-weight:500}
+.choix .desc{color:var(--encre-2);font-size:13px;line-height:20px}
+.choix .rec{font-size:12px;color:var(--accent);font-weight:500}
+:focus-visible{outline:var(--trait-focus) solid var(--accent);outline-offset:2px}
+/* Boutons */
+.boutons{display:flex;flex-wrap:wrap;gap:var(--espace-3);margin:var(--espace-4) 0}
+button{font-family:inherit;font-size:14px;line-height:20px;font-weight:500;border-radius:var(--rayon-1);
+  min-height:32px;padding:0 12px;border:var(--trait-filet) solid var(--filet-controle);background:var(--surface);color:var(--encre);cursor:pointer}
+button.principal{background:var(--encre);color:var(--encre-inverse);border-color:var(--encre)}
+button:hover{background:var(--surface-2)}
+button.principal:hover{background:var(--encre);opacity:.92}
+/* Maquette S-01 (tokens, contenu de la référence) */
+.maquette{background:var(--papier);border:var(--trait-filet) solid var(--filet);border-radius:var(--rayon-2);
+  padding:var(--espace-6);margin:var(--espace-4) 0}
+.maquette .demo-notice{display:flex;align-items:center;gap:var(--espace-2);font-size:12px;line-height:16px;color:var(--encre-3)}
+.maquette .demo-notice::before{content:"";width:6px;height:6px;background:var(--encre-3);flex:none}
+.maquette h4{font-family:var(--font-document);font-size:26px;line-height:32px;font-weight:500;margin:var(--espace-4) 0 var(--espace-2)}
+.scenarios{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--espace-3);margin:var(--espace-4) 0}
+.scenario{background:var(--surface);border:var(--trait-filet) solid var(--filet-controle);border-radius:var(--rayon-1);padding:var(--espace-4)}
+.scenario .role{font-size:13px;font-weight:500;line-height:20px;color:var(--encre-2)}
+.scenario .nom{font-size:16px;font-weight:500;line-height:24px;margin:var(--espace-1) 0}
+.scenario .desc{font-size:13px;line-height:20px;color:var(--encre-2)}
+.etat-demo{min-height:76px;border:var(--trait-filet) solid var(--filet);border-radius:var(--rayon-1);
+  background:var(--surface);padding:var(--espace-3) var(--espace-4);margin-top:var(--espace-3);
+  transition:opacity var(--duree-entree) var(--courbe)}
+.etat-demo b{display:block;font-size:14px;line-height:20px;font-weight:500}
+.etat-demo span{font-size:13px;line-height:20px;color:var(--encre-2)}
+.etat-demo .pastille{float:right;font-size:12px;line-height:16px;color:var(--encre-3)}
+.trace-signe{display:inline-block;width:14px;height:11px;border:var(--trait-filet) solid var(--accent);border-radius:2px;
+  animation:trace 1.2s var(--courbe) 1 forwards}
+@keyframes trace{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* Récapitulatif */
+#recap{width:100%;min-height:180px;background:var(--surface-2);color:var(--encre);border:1px dashed var(--filet-controle);
+  border-radius:var(--rayon-1);padding:var(--espace-3);font-family:ui-monospace,monospace;font-size:13px;line-height:20px;resize:vertical}
+.themetoggle{position:fixed;right:var(--espace-4);bottom:var(--espace-4);box-shadow:0 8px 24px rgba(27,27,24,.08),0 0 0 1px rgba(27,27,24,.10)}
+.pied{margin-top:var(--espace-8);border-top:var(--trait-filet) solid var(--filet);padding-top:var(--espace-3)}
+</style>
+</head>
+<body>
+<main>
+  <h1>Étaye — Story 9.1 « Enter and reset bounded synthetic journeys » · Arbitrage phase 0</h1>
+  <p class="meta">Page locale d'arbitrage, 2026-11-21 · Révision de base <code>997ecad</code> (main local) · Snapshot design <code>d2f0800e…</code> ·
+  Packet complet : <code>docs/implementation-artifacts/story-9-1-context-packet.md</code> · Cette page n'autorise rien par elle-même.</p>
+
+  <div class="statuts">
+    <div class="statut"><div class="t">Autorisation développement <span class="puce ko">ABSENTE</span></div>
+      <span class="meta">UD-28 en vigueur · <code>authorized_stories</code> = 10.1, 10.2, 1.2, 1.1, 1.3 (défaut : refus)</span></div>
+    <div class="statut"><div class="t">Dépendance 10.1 <span class="puce ok">satisfaite</span></div>
+      <span class="meta">Fusionnée ; 10.2, 1.2, 1.1 et 1.3 aussi (non exigées par 9.1)</span></div>
+    <div class="statut"><div class="t">S-01 (CORE) <span class="puce ok">approuvée UD-46</span></div>
+      <span class="meta">Ajouts 9.1 à revoir : copie carte Administration, entrée scénario, échauffement</span></div>
+    <div class="statut"><div class="t">S-37 · I-26 (SAMPLED) <span class="puce na">non approuvées</span></div>
+      <span class="meta">Voie SAMPLED UD-16 disponible (précédent story 1.1 / UD-50)</span></div>
+  </div>
+
+  <div class="bandeau attention">
+    <div><b>Règle absolue</b>
+    <span>Cette mission est strictement documentaire : aucun code applicatif, aucun commit applicatif, aucun service activé.
+    Le packet ne vaut pas autorisation (« A packet does not grant development authorization »).</span></div>
+  </div>
+
+  <h2>1. État actuel vs proposé — familles design</h2>
+  <p><strong>Actuel :</strong> S-01 approuvée comme référence (4 états offline : accueil, préparation, réinitialisation, indisponible) ;
+  S-37 (8 états) et I-26 (2 états) existent comme référence HTML, vérifiées desktop uniquement, non approuvées.
+  <strong>Proposé :</strong> construire S-37/I-26 par la voie SAMPLED (desktop-first + axe-core par état + 8–10 écrans échantillonnés à 2 largeurs, UD-16/UD-37),
+  et faire relire par toi les seuls ajouts S-01 ci-dessous. La maquette en bas de page fait défiler les 4 états S-01 de la référence approuvée.</p>
+
+  <h2>2. Décisions demandées</h2>
+
+  <div class="carte" id="cA">
+    <h3>A · Voie design pour S-37 et I-26</h3>
+    <div class="q">Comment franchit-on la porte design de la story 9.1 ?</div>
+    <div class="choix" data-carte="A" data-opt="A1" role="button" tabindex="0" aria-pressed="true">
+      <span class="radio"></span><div><span class="lab">A1 — Voie SAMPLED (recommandé)</span> <span class="rec">recommandé</span>
+      <div class="desc">Comme pour la story 1.1 (UD-50) : S-01 CORE approuvée tient la porte UD-16 ; S-37/I-26 se construisent desktop-first avec axe-core et échantillonnage UD-37 ; preuves visuelles à la livraison.</div></div>
+    </div>
+    <div class="choix" data-carte="A" data-opt="A2" role="button" tabindex="0" aria-pressed="false">
+      <span class="radio"></span><div><span class="lab">A2 — Produire d'abord des états de design</span>
+      <div class="desc">Je produis les états S-37/I-26 manquants (variantes patient/administration de I-26, refus de réinitialisation, version de fixture) et tu les approuves avant tout code.</div></div>
+    </div>
+  </div>
+
+  <div class="carte" id="cB">
+    <h3>B · Copie de la carte « Administration » sur S-01</h3>
+    <div class="q">La référence approuvée dit « Inviter une personne dans l'équipe, régler le cabinet et consulter l'audit administratif » —
+    des capacités de l'incrément 2 (D-23, D-31). En incrément 1, Mila démontre : accès clinique refusé, recherche/enregistrement scheduling (PD-001), invitations seedées à activer.</div>
+    <div class="choix" data-carte="B" data-opt="B1" role="button" tabindex="0" aria-pressed="true">
+      <span class="radio"></span><div><span class="lab">B1 — Reformulation honnête incrément 1 (recommandé)</span> <span class="rec">recommandé</span>
+      <div class="desc">Ex. : « Voir le refus d'accès aux dossiers, chercher et enregistrer un patient pour la prise de rendez-vous, activer une invitation préparée. » Le catalogue exige d'expliquer la capacité réelle honnêtement.</div></div>
+    </div>
+    <div class="choix" data-carte="B" data-opt="B2" role="button" tabindex="0" aria-pressed="false">
+      <span class="radio"></span><div><span class="lab">B2 — Garder le texte cible (incrément 2)</span>
+      <div class="desc">La carte décrit le produit fini ; le parcours incrément 1 reste borné. Écart assumé entre promesse affichée et démo réelle.</div></div>
+    </div>
+  </div>
+
+  <div class="carte" id="cC">
+    <h3>C · Entrée dans un scénario</h3>
+    <div class="q">La feuille de route dit : choisir l'acteur fictif (S-01, I-26), puis se connecter (S-02). Aucune opération d'entrée n'existe dans le contrat.</div>
+    <div class="choix" data-carte="C" data-opt="C1" role="button" tabindex="0" aria-pressed="true">
+      <span class="radio"></span><div><span class="lab">C1 — Entrée côté client via la connexion existante (recommandé)</span> <span class="rec">recommandé</span>
+      <div class="desc">« Ouvrir la démonstration » mène à S-02 avec le scénario retenu comme contexte de présentation ; aucune nouvelle voie d'émission de session, AD-4 préservé, <code>signIn</code> inchangé.</div></div>
+    </div>
+    <div class="choix" data-carte="C" data-opt="C2" role="button" tabindex="0" aria-pressed="false">
+      <span class="radio"></span><div><span class="lab">C2 — Opération dédiée d'entrée</span>
+      <div class="desc">Un <code>POST /demo/scenarios/{id}/enter</code> ouvre directement la session de l'acteur. Confort maximal, mais seconde voie de session à sécuriser.</div></div>
+    </div>
+  </div>
+
+  <div class="carte" id="cD">
+    <h3>D · Identifiants de démonstration affichés</h3>
+    <div class="q">La page I-26 montre la distribution et les limites, pas d'identifiants. Le visiteur doit pourtant entrer comme Nora, Claire ou Mila.</div>
+    <div class="choix" data-carte="D" data-opt="D1" role="button" tabindex="0" aria-pressed="false">
+      <span class="radio"></span><div><span class="lab">D1 — Afficher identifiant + mot de passe synthétique (copiables)</span>
+      <div class="desc">Portfolio local, données 100 % fictives (UD-03/UD-05) : les identifiants démo ne sont pas des secrets. Entrée en un clic copier-coller.</div></div>
+    </div>
+    <div class="choix" data-carte="D" data-opt="D2" role="button" tabindex="0" aria-pressed="true">
+      <span class="radio"></span><div><span class="lab">D2 — Indice visible, identifiants dans le README démo (recommandé)</span> <span class="rec">recommandé</span>
+      <div class="desc">La page montre l'identifiant et indique où trouver le mot de passe (README du paquet démo) ; la page publique reste sobre.</div></div>
+    </div>
+    <div class="choix" data-carte="D" data-opt="D3" role="button" tabindex="0" aria-pressed="false">
+      <span class="radio"></span><div><span class="lab">D3 — Rien d'affiché</span>
+      <div class="desc">Tout est dans le README ; la page renvoie simplement vers S-02.</div></div>
+    </div>
+  </div>
+
+  <div class="carte" id="cE">
+    <h3>E · Avis de réinitialisation / version de fixture</h3>
+    <div class="q">AT-035-B : « les sessions actives reçoivent un avis d'invalidation reset/version ». La réinitialisation ferme les sessions (401 → S-38), mais l'onglet ouvert doit aussi apprendre la nouvelle version du jeu.</div>
+    <div class="choix" data-carte="E" data-opt="E1" role="button" tabindex="0" aria-pressed="true">
+      <span class="radio"></span><div><span class="lab">E1 — Champ additif sur <code>getApiMeta</code> (recommandé)</span> <span class="rec">recommandé</span>
+      <div class="desc">Version du jeu de démonstration dans la réponse meta publique, no-store ; additif donc compatible ADR-009 ; aucun endpoint de plus.</div></div>
+    </div>
+    <div class="choix" data-carte="E" data-opt="E2" role="button" tabindex="0" aria-pressed="false">
+      <span class="radio"></span><div><span class="lab">E2 — <code>GET /demo/status</code> public</span>
+      <div class="desc">Point de lecture dédié (état, version, disponibilité). Plus explicite, un endpoint de plus à maintenir.</div></div>
+    </div>
+    <div class="choix" data-carte="E" data-opt="E3" role="button" tabindex="0" aria-pressed="false">
+      <span class="radio"></span><div><span class="lab">E3 — Re-listing des scénarios uniquement</span>
+      <div class="desc">Le client relit <code>listDemoScenarios</code> après invalidation. Insuffisant pour un onglet déjà ouvert (à n'utiliser qu'en complément).</div></div>
+    </div>
+  </div>
+
+  <div class="carte" id="cF">
+    <h3>F · Modèle opérateur de la réinitialisation</h3>
+    <div class="q">Qui détient <code>OPERATOR_DEMO_RESET</code> en incrément 1 ? La matrice d'accès en fait un accès opérationnel, pas un rôle produit.</div>
+    <div class="choix" data-carte="F" data-opt="F1" role="button" tabindex="0" aria-pressed="true">
+      <span class="radio"></span><div><span class="lab">F1 — Compte opérateur seedé, réservé au paquet local (recommandé)</span> <span class="rec">recommandé</span>
+      <div class="desc">Un compte synthétique dédié, sans aucun accès clinique, utilisable depuis la page I-26 de la démo locale ; identifiants dans le README du paquet.</div></div>
+    </div>
+    <div class="choix" data-carte="F" data-opt="F2" role="button" tabindex="0" aria-pressed="false">
+      <span class="radio"></span><div><span class="lab">F2 — CLI compose dédiée</span>
+      <div class="desc"><code>docker compose run reset</code> appelle l'opération avec un jeton opérateur embarqué ; pas d'interface produit du tout.</div></div>
+    </div>
+    <div class="choix" data-carte="F" data-opt="F3" role="button" tabindex="0" aria-pressed="false">
+      <span class="radio"></span><div><span class="lab">F3 — Route liée à localhost</span>
+      <div class="desc">L'API n'accepte la réinitialisation que depuis l'hôte local. Simple, mais dépend du déploiement (à revoir pour 10.3).</div></div>
+    </div>
+  </div>
+
+  <div class="carte" id="cG">
+    <h3>G · Parcours scripté dans CI</h3>
+    <div class="q">UD-34 : le parcours Playwright scripté est à la fois test et enregistreur vidéo. Le critère de sortie incrément 1 demande son passage dans CI.</div>
+    <div class="choix" data-carte="G" data-opt="G1" role="button" tabindex="0" aria-pressed="true">
+      <span class="radio"></span><div><span class="lab">G1 — Local en 9.1, CI au jalon M6 (recommandé)</span> <span class="rec">recommandé</span>
+      <div class="desc">Exécution locale avec compose + preuve vidéo à la livraison ; l'intégration CI (poids, durée) relève de M6/9.2/10.3 qui possède le critère de sortie.</div></div>
+    </div>
+    <div class="choix" data-carte="G" data-opt="G2" role="button" tabindex="0" aria-pressed="false">
+      <span class="radio"></span><div><span class="lab">G2 — CI dès 9.1</span>
+      <div class="desc">Le parcours s'exécute dans GitHub Actions dès cette story (stack compose dans CI, allonge <code>API verify</code>/<code>Web verify</code>).</div></div>
+    </div>
+  </div>
+
+  <div class="carte" id="cH">
+    <h3>H · Autorisation de développement</h3>
+    <div class="q">Décision finale : après arbitrage des points ci-dessus.</div>
+    <div class="choix" data-carte="H" data-opt="H1" role="button" tabindex="0" aria-pressed="false">
+      <span class="radio"></span><div><span class="lab">H1 — J'AUTORISE la story 9.1 uniquement</span>
+      <div class="desc">UD datée enregistrée dans le registre, <code>"9.1"</code> ajouté à <code>authorized_stories</code> (global reste false), mode validateur dédié, contrôle de préparation BMAD ; le commit de contrat relu précède le code (précédent 10.2/1.1/1.3).</div></div>
+    </div>
+    <div class="choix" data-carte="H" data-opt="H2" role="button" tabindex="0" aria-pressed="true">
+      <span class="radio"></span><div><span class="lab">H2 — Je n'autorise pas encore</span>
+      <div class="desc">La préparation reste documentaire ; indique ce qu'il manque (design, contrat, périmètre) et je le prépare.</div></div>
+    </div>
+  </div>
+
+  <div class="boutons">
+    <button class="principal" id="reco">Sélectionner toutes les recommandations</button>
+    <button id="copier">Copier ma réponse</button>
+    <button id="reinit">Réinitialiser mes choix</button>
+  </div>
+
+  <h2>3. Ma réponse (à copier-coller)</h2>
+  <p class="meta">Chaque ligne reprend tes choix ; réponds par exemple « A1, B1, C1, D2, E1, F1, G1 et H1 » ou colle le texte tel quel.</p>
+  <textarea id="recap" readonly aria-label="Récapitulatif de l'arbitrage"></textarea>
+
+  <h2>4. Référence approuvée S-01 — états (défilement automatique)</h2>
+  <p class="meta">Contenu des 4 états de la référence offline approuvée (UD-46), rendu avec les tokens Étaye. L'état actif change toutes les 4 secondes ;
+  l'état « préparation » porte la trace du signe unique (ADR-012, motif C, 1200 ms, statique si mouvement réduit).</p>
+  <div class="maquette">
+    <div class="demo-notice">Étaye Démonstration — personnes et données fictives</div>
+    <h4>Préparer une consultation avec des informations datées et vérifiables</h4>
+    <p style="color:var(--encre-2)">Étaye aide un cabinet à préparer ses consultations, à tenir le dossier et à rédiger des comptes rendus.
+    Les brouillons générés citent leurs sources et restent des brouillons tant qu'un praticien ne les a pas relus et validés.</p>
+    <div class="scenarios">
+      <div class="scenario"><div class="role">Praticienne</div><div class="nom">Dr Nora Lefebvre</div>
+        <div class="desc">Cabinet des Tilleuls · Préparer la consultation de Claire Martin du 03/11/2026, relire un brouillon généré et ses sources, valider puis publier une explication.</div></div>
+      <div class="scenario"><div class="role">Patiente</div><div class="nom">Claire Martin</div>
+        <div class="desc">Cabinet des Tilleuls · Préparer sa visite sur téléphone, voir son rendez-vous, lire l'explication publiée et ouvrir un extrait de source autorisé.</div></div>
+      <div class="scenario"><div class="role">Administration</div><div class="nom">Mila Dubois</div>
+        <div class="desc" id="carte-admin">Cabinet des Tilleuls · <em>copie incrément 2 de la référence (« Inviter une personne dans l'équipe, régler le cabinet et consulter l'audit administratif ») — point B ci-dessus</em></div></div>
+    </div>
+    <p class="meta">Personnes, cabinets et données entièrement fictifs (jeu etaye-design-v1). La démonstration peut être réinitialisée à tout moment.</p>
+    <div class="etat-demo" id="etat-demo" aria-live="polite">
+      <span class="pastille" id="etat-nom">état : accueil</span>
+      <b>Choisir un scénario de démonstration</b>
+      <span>Trois parcours fictifs sont proposés ; chaque carte nomme l'acteur, le cabinet et le but du parcours.</span>
+    </div>
+  </div>
+
+  <div class="pied">
+    <p class="meta">Packet : <code>docs/implementation-artifacts/story-9-1-context-packet.md</code> (anglais, sources et versions datées) ·
+    Registre des décisions : <code>docs/planning-artifacts/decisions-assumptions.md</code> ·
+    Aucun fichier d'application modifié ; rien n'est commité à ce stade. Thème : bouton en bas à droite (ou <code>?theme=sombre</code>).</p>
+  </div>
+</main>
+<button class="themetoggle" id="themetoggle" aria-label="Changer de thème">Thème</button>
+<script>
+(function(){
+  var etats=[
+    {nom:"accueil",t:"Choisir un scénario de démonstration",d:"Trois parcours fictifs sont proposés ; chaque carte nomme l'acteur, le cabinet et le but du parcours."},
+    {nom:"préparation (prêt dans un instant)",t:"Démonstration en préparation",d:"Les données fictives sont chargées. Cela prend généralement moins d'une minute.",trace:true},
+    {nom:"réinitialisation",t:"Réinitialisation en cours",d:"Toutes les modifications sont effacées, le jeu etaye-design-v1 est rechargé et les sessions ouvertes sont fermées."},
+    {nom:"indisponible",t:"Démonstration indisponible",d:"Le service de démonstration ne répond pas. Les maquettes restent lisibles ; réessayer plus tard."}
+  ];
+  var i=0,box=document.getElementById("etat-demo"),nom=document.getElementById("etat-nom");
+  function affiche(){
+    var e=etats[i%etats.length];
+    box.style.opacity=0;
+    setTimeout(function(){
+      nom.textContent="état : "+e.nom;
+      box.innerHTML='<span class="pastille" id="etat-nom2">état : '+e.nom+'</span><b>'+e.t+(e.trace?' <span class="trace-signe" aria-hidden="true"></span>':'')+'</b><span>'+e.d+'</span>';
+      box.style.opacity=1;i++;
+    },260);
+  }
+  affiche();
+  if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){setInterval(affiche,4000);}
+  else{box.style.opacity=1;}
+
+  var reco={A:"A1",B:"B1",C:"C1",D:"D2",E:"E1",F:"F1",G:"G1"};
+  var sel={A:"A1",B:"B1",C:"C1",D:"D2",E:"E1",F:"F1",G:"G1",H:"H2"};
+  var lib={A:"Voie design S-37/I-26",B:"Copie carte Administration S-01",C:"Entrée de scénario",D:"Identifiants démo affichés",E:"Avis reset/version",F:"Modèle opérateur",G:"Parcours scripté CI",H:"Autorisation développement"};
+  function rendRecap(){
+    var t="Arbitrage story 9.1 (phase 0) — 2026-11-21\n";
+    ["A","B","C","D","E","F","G","H"].forEach(function(c){t+=lib[c]+" : "+sel[c]+"\n";});
+    t+="Remarques libres : …";
+    document.getElementById("recap").value=t;
+    document.querySelectorAll(".choix").forEach(function(el){
+      el.setAttribute("aria-pressed", sel[el.dataset.carte]===el.dataset.opt ? "true":"false");
+    });
+  }
+  document.querySelectorAll(".choix").forEach(function(el){
+    function act(){sel[el.dataset.carte]=el.dataset.opt;rendRecap();}
+    el.addEventListener("click",act);
+    el.addEventListener("keydown",function(ev){if(ev.key===" "||ev.key==="Enter"){ev.preventDefault();act();}});
+  });
+  document.getElementById("reco").addEventListener("click",function(){for(var k in reco)sel[k]=reco[k];sel.H="H1";rendRecap();});
+  document.getElementById("reinit").addEventListener("click",function(){sel={A:"A1",B:"B1",C:"C1",D:"D2",E:"E1",F:"F1",G:"G1",H:"H2"};rendRecap();});
+  document.getElementById("copier").addEventListener("click",function(){
+    var r=document.getElementById("recap");r.select();
+    if(navigator.clipboard){navigator.clipboard.writeText(r.value);}
+    else{document.execCommand("copy");}
+  });
+  rendRecap();
+  var html=document.documentElement;
+  if(new URLSearchParams(location.search).get("theme")==="sombre"){html.setAttribute("data-theme","sombre");}
+  document.getElementById("themetoggle").addEventListener("click",function(){
+    html.setAttribute("data-theme",html.getAttribute("data-theme")==="sombre"?"clair":"sombre");
+  });
+})();
+</script>
+</body>
+</html>
