@@ -1,6 +1,6 @@
 # Documentary API contract
 
-Status: Versioned contract with implemented and planned operations. `openapi.yaml` is OpenAPI 3.1 written in JSON syntax (valid YAML 1.2). [Operation index](operation-index.json) maps all operations. [Business rules](../planning-artifacts/business-rules.md), [access matrix](../planning-artifacts/access-matrix.md), [data dictionary](../planning-artifacts/data-dictionary.md) and ADRs are authoritative companions. Version 0.4.0-planning (2026-11-21) contains 99 operations.
+Status: Versioned contract with implemented and planned operations. `openapi.yaml` is OpenAPI 3.1 written in JSON syntax (valid YAML 1.2). [Operation index](operation-index.json) maps all operations. [Business rules](../planning-artifacts/business-rules.md), [access matrix](../planning-artifacts/access-matrix.md), [data dictionary](../planning-artifacts/data-dictionary.md) and ADRs are authoritative companions. Version 0.5.0-planning (2026-11-21) contains 99 operations.
 
 ## Runtime coverage
 
@@ -34,6 +34,15 @@ Input modes: when the recipient has no account, `password` is required and creat
 
 Refusals: an expired, revoked or already-used invitation answers `422 INVITATION_EXPIRED`, `422 INVITATION_REVOKED` or `422 INVITATION_ALREADY_USED` (the holder may know the history); a wrong or missing verification answers one generic `422 RECIPIENT_MISMATCH` whose wording never says which input differed; a portal invitation whose record already holds an active link answers `409 PORTAL_LINK_EXISTS`; a team invitation conflicting with the capabilities of an existing active membership answers `409 MEMBERSHIP_EXISTS`; an unknown token stays `404`. Anonymous submissions share the bounded account budgets (`429 RATE_LIMITED` with delta-seconds `Retry-After`). The idempotency key of an anonymous acceptance is scoped to the invitation digest, the operation and the body hash; the replay memory lives on the invitation row and never stores the raw token or the password. Authenticated acceptances can only be replayed by their original account. Anonymous acceptance replay is bounded by the invitation expiry and the credential revision at acceptance.
 
+## Synthetic demonstration
+
+Story 9.1 specifies these operations for the loopback-only synthetic demo package (UD-56). `PUBLIC_SYNTHETIC` and `OPERATOR_DEMO_RESET` are policy predicates. The latter requires the current seeded operator identity, which has no clinical grant. The ordinary application keeps its existing stateless metadata and exposes no demo catalogue or reset.
+
+- `listDemoScenarios` returns the fixed Nora, Claire and Mila journeys in that order, paginated by an opaque cursor. It discloses the fictional actor, role, practice, journey, limits and published synthetic sign-in identifier before entry. Scenario selection supplies presentation context to sign-in. The regular session and current access checks govern entry. The local demo README publishes the shared synthetic password.
+- The administration card describes the delivered boundary: « Ouvrir l’espace administratif du cabinet et constater que les dossiers cliniques restent réservés aux personnes habilitées. » The catalogue advertises only the journeys available in this slice.
+- `resetSyntheticDemo` requires an authenticated operator, valid CSRF, a nonblank reason and an idempotency key. A successful reset atomically restores the supported fixture rows and revokes open sessions, including the initiating session. The operator may sign in again to replay the same key and reason for the original acknowledgement. Reusing that key with a different reason returns `409 IDEMPOTENCY_CONFLICT`. A concurrent reset returns `409 DEMO_RESET_IN_PROGRESS`, and a new reset inside the operator cooldown returns `429 RATE_LIMITED` with `Retry-After`. An invalid input or database failure cannot advance the generation.
+- The no-store `getApiMeta` read supplies `demoDatasetVersion` and `demoResetGeneration` together in demo mode. The generation starts at 1 and advances once per committed reset, including a restore of the same fixture version. The client combines the changed marker with the existing session-expiry path. A busy fixture or database failure can return `503`. The `202` response remains a correlation acknowledgement and the marker is the observable completion evidence.
+
 ## Common transport and permissions
 
 Future same-origin base `/api/v1`, opaque secure session cookie, CSRF token header on unsafe methods. Obtain `/csrf` before login/mutation. Login rotates session; logout/reset/suspension revokes applicable sessions. `x-required-permissions` entries are conjunctive (all entries must pass) and describe the resource policy in addition to session authentication. Composite labels such as AUTHORIZED_REQUESTER are policy predicates, not assignable roles; derive them from current capability plus ownership. Never trust a client role or route practice ID. For every practice path, establish active membership or verified own portal link, capability and resource practice/record. A body recordId must match its path/authorized context. One tab's context cannot silently redirect another tab's writes.
@@ -54,6 +63,7 @@ Error responses are declared per operation, never copied onto all of them. A GET
 | SLOT_CONFLICT | 409 | The practitioner is already booked on an overlapping interval |
 | PATIENT_OVERLAP | 409 | The patient record already has an overlapping active appointment (UD-23) |
 | IDEMPOTENCY_CONFLICT | 409 | Same idempotency key with a different body |
+| DEMO_RESET_IN_PROGRESS | 409 | Another synthetic fixture reset is in progress |
 | LAST_ADMINISTRATOR | 409 | The change would remove the last active practice administrator |
 | STALE_VERSION | 412 | The `If-Match` version is not the current one |
 | PRECONDITION_REQUIRED | 428 | A required `If-Match` header is missing |

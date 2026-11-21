@@ -300,7 +300,7 @@ CORE families need the full evidence of the named design exception (UD-16); ever
 | S-39 | screen | Export options and print preview | 1 | SAMPLED | Export options for P-01 and P-02 → Inc 2 (D-27) |
 | S-40 | screen | AI processing activity and task detail | 1 | SAMPLED | — |
 
-### 8.3 API operations (98 in the contract, 4 planned)
+### 8.3 API operations (99 in the contract, 4 planned)
 
 | Inc | Operation | Method and path | Permission | State |
 |---|---|---|---|---|
@@ -312,6 +312,7 @@ CORE families need the full evidence of the named design exception (UD-16); ever
 | 1 | signOut | DELETE /session | AUTHENTICATED | in contract |
 | 1 | requestRecovery | POST /access-recovery | PUBLIC | in contract |
 | 1 | completeRecovery | POST /access-recovery/complete | PUBLIC | in contract |
+| 1 | inspectInvitation | POST /invitations/inspect | INTENDED_RECIPIENT | in contract |
 | 1 | acceptInvitation | POST /invitations/accept | INTENDED_RECIPIENT | in contract |
 | 1 | getOwnAccount | GET /account | AUTHENTICATED | in contract |
 | 1 | listAuthorizedPractices | GET /practices | AUTHENTICATED | in contract |
