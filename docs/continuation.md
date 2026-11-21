@@ -2,6 +2,12 @@
 
 Updated: 2026-11-21. Owner: Aymen Chaghoub.
 
+## S-37 and I-26 reference designs approved — 2026-11-21
+
+**User decision.** Aymen explicitly approved the S-37 and I-26 reference designs. [Coverage](design/coverage.csv) records both approvals and links to the existing [design inventory](implementation-artifacts/story-9-1-context-packet.md#3-design-inventory-and-evidence-to-produce). Responsive comparisons and functional review remain pending. Figma reconciliation resumes when read access returns or Aymen requests it.
+
+**Actual verification and next action.** The documentary validator and targeted CSV check passed. Chromium captured all ten offline reference states with a 1440×1024 viewport in the light theme. Both contact sheets were opened and delivered with the individual images for Aymen's reference. The next story 9.1 step is the readiness check under UD-56.
+
 ## Story 9.1 phase 0 prepared and arbitrated (UD-56) — 2026-11-21
 
 **Phase.** Documentary phase-0 preparation for story 9.1 (Enter and reset bounded synthetic journeys), then arbitration in the same session. **User decision (UD-56):** Aymen pasted the recap "A1, B1, C1, D2, E1, F1, G1, H1" — SAMPLED design path for S-37/I-26 on top of the approved S-01 CORE reference (UD-46) with the B1 honest increment-1 rewording of the administration card; client-side scenario entry through the existing sign-in (C1); synthetic identifier shown and password in the demo README (D2); additive demo dataset-version field on `getApiMeta` for the reset/version notice (E1); seeded local operator account with no clinical access (F1); scripted Playwright journey local in 9.1, CI with the increment-exit evidence work (G1); and development authorization for story 9.1 only (H1). He also set this story's review rule: **one single Codex CLI three-lens review at implementation end** ("pour codex tu le lance une seule fois la fin de l'us"), superseding the Zcode rule of UD-53 for 9.1.
