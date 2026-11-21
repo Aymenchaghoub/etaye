@@ -65,7 +65,7 @@ class InvitationAccessHttpTest extends AbstractPostgresTest {
                 .hasEntrySatisfying("expiresAt", value -> assertThat(value).isInstanceOf(String.class))
                 .doesNotContainKeys("id", "practiceId", "recordId", "intendedRecipient", "token");
 
-        String key = UUID.randomUUID().toString();
+        String key = "invitation.acceptance." + UUID.randomUUID();
         var accepted = accept(anonymous, Map.of("token", token,
                 "displayName", "Alex Rivière", "password", PASSWORD), key);
         assertThat(accepted.getStatusCode().value()).isEqualTo(200);
@@ -187,6 +187,83 @@ class InvitationAccessHttpTest extends AbstractPostgresTest {
                 .containsEntry("detail", otherUnknown.getBody().get("detail"))
                 .containsEntry("status", 404);
         assertThat(inspectBodyEqualsAcceptRefusal(unknownInspect)).isTrue();
+        assertThat(queryPractice(practice, "SELECT count(*) FROM audit_event")).isEqualTo("0");
+    }
+
+    @Test
+    void c3_suspendedPracticeCannotConsumeAnInvitationOrCreateAnAccount() throws Exception {
+        UUID practice = createPracticeAsOwner("Cabinet suspendu");
+        UUID issuer = createAccountAsOwner(syntheticEmail(), "Nora Lefebvre");
+        String recipient = syntheticEmail();
+        String token = randomToken();
+        seedInvitation(practice, issuer, "TEAM_MEMBERSHIP", recipient, token, null,
+                new String[]{"CLINICAL_READ"}, "PENDING", "72 hours");
+        executeAsOwner("UPDATE practice SET state = 'SUSPENDED' WHERE id = '" + practice + "'");
+        var browser = csrf(null);
+
+        assertThat(inspect(browser, token).getBody()).containsEntry("eligibility", "UNAVAILABLE");
+        var refused = accept(browser, Map.of("token", token, "displayName", "Alex", "password", PASSWORD),
+                UUID.randomUUID().toString());
+        assertThat(refused.getStatusCode().value()).isEqualTo(422);
+        assertThat(refused.getBody()).containsEntry("code", "INVITATION_UNAVAILABLE");
+        assertNoActivation(practice, recipient);
+    }
+
+    @Test
+    void c3_invitationExpiringWhileWaitingForTheRecordLockCannotGrantAccess() throws Exception {
+        UUID practice = createPracticeAsOwner("Cabinet des Tilleuls");
+        UUID issuer = createAccountAsOwner(syntheticEmail(), "Nora Lefebvre");
+        String recipient = syntheticEmail();
+        String token = randomToken();
+        UUID record = seedPatientAndRecord(practice, "1990-03-12");
+        var browser = csrf(null);
+
+        seedInvitation(practice, issuer, "PATIENT_PORTAL", recipient, token, record, new String[]{}, "PENDING", "2.5 seconds");
+        try (var connection = DriverManager.getConnection(POSTGRES_CONTAINER.getJdbcUrl(), OWNER_USER, OWNER_PASSWORD);
+             var statement = connection.createStatement();
+             var observer = DriverManager.getConnection(POSTGRES_CONTAINER.getJdbcUrl(),
+                     POSTGRES_CONTAINER.getUsername(), POSTGRES_CONTAINER.getPassword());
+             var watch = observer.createStatement();
+             var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            connection.setAutoCommit(false);
+            statement.execute("SELECT set_config('etaye.practice_id', '" + practice + "', true)");
+            statement.execute("SELECT id FROM patient_record WHERE id = '" + record + "' FOR UPDATE");
+
+            var result = executor.submit(() -> accept(browser, Map.of("token", token,
+                    "recipientVerification", "1990-03-12", "password", PASSWORD), UUID.randomUUID().toString()));
+            boolean waiting = false;
+            try {
+                for (int attempt = 0; attempt < 20 && !waiting; attempt++) {
+                    try (var sessions = watch.executeQuery("""
+                            SELECT EXISTS (SELECT 1 FROM pg_stat_activity
+                                WHERE usename = 'etaye_identity' AND wait_event_type = 'Lock'
+                                  AND query LIKE '%public.accept_invitation%')
+                            """)) {
+                        waiting = sessions.next() && sessions.getBoolean(1);
+                    }
+                    if (!waiting) Thread.sleep(100);
+                }
+                assertThat(waiting).as("acceptance is waiting on the patient record").isTrue();
+                statement.execute("SET LOCAL statement_timeout = '12s'");
+                statement.execute("""
+                        SELECT pg_sleep(GREATEST(0, EXTRACT(epoch FROM expires_at - clock_timestamp())) + 0.05)
+                        FROM invitation WHERE token_digest = '%s'
+                        """.formatted(digest(token)));
+            } finally {
+                connection.rollback();
+            }
+            var refused = result.get(10, TimeUnit.SECONDS);
+            assertThat(refused.getStatusCode().value()).isEqualTo(422);
+            assertThat(refused.getBody()).containsEntry("code", "INVITATION_EXPIRED");
+        }
+        assertNoActivation(practice, recipient);
+    }
+
+    private static void assertNoActivation(UUID practice, String recipient) throws Exception {
+        assertThat(query("SELECT count(*) FROM account WHERE normalized_email = '" + recipient + "'")).isEqualTo("0");
+        assertThat(query("SELECT count(*) FROM membership WHERE practice_id = '" + practice + "'")).isEqualTo("0");
+        assertThat(query("SELECT count(*) FROM portal_link WHERE practice_id = '" + practice + "'")).isEqualTo("0");
+        assertThat(queryPractice(practice, "SELECT state FROM invitation")).isEqualTo("PENDING");
         assertThat(queryPractice(practice, "SELECT count(*) FROM audit_event")).isEqualTo("0");
     }
 

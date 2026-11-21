@@ -40,8 +40,6 @@ import java.util.regex.Pattern;
 @RestController
 public class InvitationController {
 
-    private static final Pattern IDEMPOTENCY_KEY = Pattern.compile("[A-Za-z0-9_-]{16,128}");
-
     private static final Pattern BIRTH_DATE = Pattern.compile("[0-9]{4}-[0-9]{2}-[0-9]{2}");
 
     private final InvitationAccessService invitations;
@@ -79,7 +77,7 @@ public class InvitationController {
                                     @RequestAttribute(name = IdentityResolutionFilter.AUTHENTICATED_ACCOUNT_ATTR,
                                             required = false) AuthenticatedAccount signedIn,
                                     HttpServletRequest request, HttpServletResponse response) {
-        if (!IDEMPOTENCY_KEY.matcher(key).matches()) {
+        if (key.length() < 16 || key.length() > 128) {
             throw new InvalidIdempotencyKeyException("Invalid invitation idempotency key");
         }
         int retryAfter = budget.retryAfter(AccountRequestBudget.Operation.INVITE_ACCEPT,
@@ -117,6 +115,8 @@ public class InvitationController {
         return switch (outcome) {
             case "EXPIRED" -> AccountAccessProblem.response(request, HttpStatus.UNPROCESSABLE_ENTITY,
                     "INVITATION_EXPIRED", "This invitation has expired");
+            case "UNAVAILABLE" -> AccountAccessProblem.response(request, HttpStatus.UNPROCESSABLE_ENTITY,
+                    "INVITATION_UNAVAILABLE", "This practice cannot currently grant access");
             case "REVOKED" -> AccountAccessProblem.response(request, HttpStatus.UNPROCESSABLE_ENTITY,
                     "INVITATION_REVOKED", "This invitation is no longer valid");
             case "ALREADY_USED" -> AccountAccessProblem.response(request, HttpStatus.UNPROCESSABLE_ENTITY,

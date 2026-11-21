@@ -3,8 +3,8 @@ import { accountApi } from '../api/browser';
 import type { Session } from '../api/generated/types.gen';
 import { AuthHeading, AuthShell, Banner, emailError, ErrorSummary, Field, type FieldError, useRetryDelay } from './AuthComponents';
 
-export function SignIn({ patient, returning, returnTo, onSignedIn }: {
-  patient: boolean; returning: boolean; returnTo?: string; onSignedIn: (session: Session) => void;
+export function SignIn({ patient, returning, returnTo, onCancel, onSignedIn }: {
+  patient: boolean; returning: boolean; returnTo?: string; onCancel?: () => void; onSignedIn: (session: Session) => void;
 }) {
   const [showPassword, setShowPassword] = useState(false);
   const [pending, setPending] = useState(false);
@@ -92,6 +92,8 @@ export function SignIn({ patient, returning, returnTo, onSignedIn }: {
           </button>
         </form>
       </div>
+      {onCancel && <button type="button" className="etaye-bouton etaye-bouton--discret" disabled={pending}
+        onClick={onCancel}>Revenir à l’invitation</button>}
       <p className="etaye-auth__first etaye-3">
         Première connexion ? Ouvrez le lien d'invitation reçu par e-mail.{' '}
         <a href={patient ? '/connexion' : '/connexion/patient'}>{patient ? 'Espace professionnel' : 'Espace patient'}</a>

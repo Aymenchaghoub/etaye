@@ -63,9 +63,11 @@ BEGIN
     RETURN QUERY
         SELECT p.display_name::text, i.purpose,
                left(i.intended_recipient, 1) || '•••@' || split_part(i.intended_recipient, '@', 2),
-               CASE WHEN i.state = 'ACCEPTED' THEN 'ALREADY_USED'
-                    WHEN i.state = 'REVOKED' THEN 'REVOKED'
-                    WHEN i.state = 'EXPIRED' OR i.expires_at <= clock_timestamp() THEN 'EXPIRED'
+               CASE WHEN i.state = 'REVOKED' THEN 'REVOKED'
+                    WHEN i.state = 'EXPIRED' OR (i.state = 'PENDING' AND i.expires_at <= clock_timestamp())
+                        THEN 'EXPIRED'
+                    WHEN p.state <> 'ACTIVE' THEN 'UNAVAILABLE'
+                    WHEN i.state = 'ACCEPTED' THEN 'ALREADY_USED'
                     ELSE 'USABLE' END,
                i.expires_at, i.accepted_at
         FROM public.invitation i
@@ -87,6 +89,7 @@ DECLARE
     inv public.invitation%ROWTYPE;
     actor public.account%ROWTYPE;
     existing_membership public.membership%ROWTYPE;
+    practice_state text;
     target_birth_date date;
     derived_name text;
     granted_link uuid;
@@ -100,6 +103,18 @@ BEGIN
 
     IF inv.state = 'REVOKED' THEN
         RETURN QUERY SELECT 'REVOKED'::text, NULL::uuid, NULL::uuid, NULL::bigint;
+        RETURN;
+    END IF;
+
+    IF inv.state = 'EXPIRED' OR (inv.state = 'PENDING' AND inv.expires_at <= clock_timestamp()) THEN
+        RETURN QUERY SELECT 'EXPIRED'::text, NULL::uuid, NULL::uuid, NULL::bigint;
+        RETURN;
+    END IF;
+
+    -- Keep practice suspension and grant activation ordered in the same transaction.
+    SELECT p.state INTO practice_state FROM public.practice p WHERE p.id = inv.practice_id FOR SHARE;
+    IF practice_state IS DISTINCT FROM 'ACTIVE' THEN
+        RETURN QUERY SELECT 'UNAVAILABLE'::text, NULL::uuid, NULL::uuid, NULL::bigint;
         RETURN;
     END IF;
 
@@ -117,11 +132,6 @@ BEGIN
         ELSE
             RETURN QUERY SELECT 'ALREADY_USED'::text, NULL::uuid, NULL::uuid, NULL::bigint;
         END IF;
-        RETURN;
-    END IF;
-
-    IF inv.state = 'EXPIRED' OR inv.expires_at <= clock_timestamp() THEN
-        RETURN QUERY SELECT 'EXPIRED'::text, NULL::uuid, NULL::uuid, NULL::bigint;
         RETURN;
     END IF;
 
@@ -171,12 +181,7 @@ BEGIN
             RETURN QUERY SELECT 'PASSWORD_REQUIRED'::text, NULL::uuid, NULL::uuid, NULL::bigint;
             RETURN;
         END IF;
-        INSERT INTO public.account (normalized_email, display_name, password_hash, state)
-        VALUES (inv.intended_recipient, derived_name, password_hash, 'ACTIVE')
-        RETURNING * INTO actor;
-    END IF;
-
-    IF inv.purpose = 'TEAM_MEMBERSHIP' THEN
+    ELSIF inv.purpose = 'TEAM_MEMBERSHIP' THEN
         SELECT * INTO existing_membership FROM public.membership m
         WHERE m.account_id = actor.id AND m.practice_id = inv.practice_id FOR UPDATE;
         IF FOUND THEN
@@ -189,11 +194,25 @@ BEGIN
                 RETURN QUERY SELECT 'MEMBERSHIP_EXISTS'::text, NULL::uuid, NULL::uuid, NULL::bigint;
                 RETURN;
             END IF;
-        ELSE
-            INSERT INTO public.membership (account_id, practice_id, state, capabilities)
-            VALUES (actor.id, inv.practice_id, 'ACTIVE', inv.capabilities);
         END IF;
-    ELSE
+    END IF;
+
+    -- The invitation may have expired while waiting for the patient or recipient locks.
+    IF inv.expires_at <= clock_timestamp() THEN
+        RETURN QUERY SELECT 'EXPIRED'::text, NULL::uuid, NULL::uuid, NULL::bigint;
+        RETURN;
+    END IF;
+
+    IF actor.id IS NULL THEN
+        INSERT INTO public.account (normalized_email, display_name, password_hash, state)
+        VALUES (inv.intended_recipient, derived_name, password_hash, 'ACTIVE')
+        RETURNING * INTO actor;
+    END IF;
+
+    IF inv.purpose = 'TEAM_MEMBERSHIP' AND existing_membership.id IS NULL THEN
+        INSERT INTO public.membership (account_id, practice_id, state, capabilities)
+        VALUES (actor.id, inv.practice_id, 'ACTIVE', inv.capabilities);
+    ELSIF inv.purpose = 'PATIENT_PORTAL' THEN
         INSERT INTO public.portal_link (account_id, practice_id, record_id, verified_by, state)
         VALUES (actor.id, inv.practice_id, inv.record_id, inv.issuer_id, 'ACTIVE')
         RETURNING id INTO granted_link;

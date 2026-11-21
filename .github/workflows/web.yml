@@ -99,7 +99,7 @@ jobs:
         if: steps.changes.outputs.relevant == 'true'
         # Raise the minimum whenever the suite grows.
         run: >-
-          python3 tools/assert_test_reports.py playwright apps/web/playwright-report/smoke.json --min-tests 30
+          python3 tools/assert_test_reports.py playwright apps/web/playwright-report/smoke.json --min-tests 33
           --require-file tests/stubbed-probe.spec.ts
           --require-file tests/account-access.spec.ts
           --require-file tests/invitation-access.spec.ts

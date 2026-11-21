@@ -41,11 +41,15 @@ async function stubInvitation(page: Page, view?: InvitationPreview) {
   await page.route('**/api/v1/session', (route) => route.fulfill({ status: 401, json: { code: 'UNAUTHENTICATED' } }));
 }
 
-async function accessibility(page: Page) {
-  await expect(page.locator('h1')).toBeFocused();
+async function axe(page: Page) {
   const result = await new AxeBuilder({ page }).analyze();
   expect(result.passes.length).toBeGreaterThan(0);
   expect(result.violations.map(({ id, nodes }) => ({ id, targets: nodes.map(({ target }) => target) }))).toEqual([]);
+}
+
+async function accessibility(page: Page) {
+  await expect(page.locator('h1')).toBeFocused();
+  await axe(page);
 }
 
 test('S-03 team preview keeps the token off URLs and focuses the password confirmation error', async ({ page }) => {
@@ -79,6 +83,7 @@ const terminalStates = [
   { name: 'team expired', purpose: 'TEAM_MEMBERSHIP', state: 'EXPIRED', heading: 'Cette invitation a expiré' },
   { name: 'team revoked', purpose: 'TEAM_MEMBERSHIP', state: 'REVOKED', heading: "Cette invitation n'est plus valable" },
   { name: 'team already used', purpose: 'TEAM_MEMBERSHIP', state: 'ALREADY_USED', heading: "Cette invitation vient d'être utilisée" },
+  { name: 'practice suspended', purpose: 'TEAM_MEMBERSHIP', state: 'UNAVAILABLE', heading: 'Cette invitation est indisponible' },
   { name: 'unknown', heading: "Lien d'invitation invalide" },
   { name: 'portal expired', purpose: 'PATIENT_PORTAL', state: 'EXPIRED', heading: "Ce lien d'activation a expiré" },
   { name: 'portal already active', purpose: 'PATIENT_PORTAL', state: 'ALREADY_USED', heading: 'Votre espace patient est déjà activé' },
@@ -95,7 +100,7 @@ for (const state of terminalStates) {
     await expect(page.getByText('a•••@example.test')).toHaveCount(0);
     await accessibility(page);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(320);
-    if (state.name === 'portal expired') {
+    if (state.name === 'portal expired' || state.name === 'practice suspended') {
       await page.keyboard.press('Tab');
       await page.keyboard.press('Enter');
       await expect(page.getByText(/Utilisez les coordonnées de votre cabinet/)).toBeVisible();
@@ -165,8 +170,10 @@ test('S-03 holds the form through throttling and displays a concurrent-use refus
   await submit.click();
   await expect(page.getByRole('alert')).toContainText('Trop de demandes');
   await expect(submit).toBeDisabled();
+  await axe(page);
   await expect(submit).toBeEnabled();
-  await submit.click();
+  await submit.focus();
+  await submit.press('Enter');
   await expect(page.getByRole('heading', { name: "Cette invitation vient d'être utilisée" })).toBeFocused();
 });
 
@@ -199,11 +206,10 @@ test('an existing recipient can sign in without reopening the original invitatio
     return route.fulfill({ json: { ...session(), membershipIds: [membershipId] } });
   });
   await page.goto(url);
-  await page.getByLabel('Nom affiché').fill('Alex Rivière');
-  await page.locator('#a-pw').fill(password);
-  await page.getByLabel('Confirmer le mot de passe').fill(password);
-  await page.getByRole('button', { name: 'Activer mon compte' }).click();
-  await page.getByRole('button', { name: 'Se connecter', exact: true }).click();
+  await page.getByRole('button', { name: 'J’ai déjà un compte' }).click();
+  await page.getByRole('button', { name: 'Revenir à l’invitation' }).click();
+  await expect(page.getByRole('heading', { name: /Rejoindre/ })).toBeFocused();
+  await page.getByRole('button', { name: 'J’ai déjà un compte' }).click();
   await page.locator('#l-mail').fill('marie.collet@example.test');
   await page.locator('#l-pw').fill(password);
   await page.getByRole('button', { name: 'Se connecter', exact: true }).click();
@@ -212,4 +218,69 @@ test('an existing recipient can sign in without reopening the original invitatio
   await page.getByRole('button', { name: 'Activer mon compte' }).click();
   await expect(page).toHaveURL(/\/compte$/);
   await expect(page.getByTestId('protected-account')).toBeVisible();
+});
+
+test('a lost session restores the new-account fields without losing the patient verification', async ({ page }) => {
+  await stubInvitation(page, preview('PATIENT_PORTAL'));
+  await page.unroute('**/api/v1/session');
+  await page.route('**/api/v1/session', (route) => route.fulfill({ json: session() }));
+  await page.route('**/api/v1/invitations/accept', (route) => {
+    expect(route.request().postDataJSON()).toEqual({ token: fragment, recipientVerification: '1990-03-12' });
+    return route.fulfill({ status: 422, json: { code: 'PASSWORD_TOO_SHORT' } });
+  });
+  await page.goto(url);
+  await page.getByLabel('Votre date de naissance').fill('12/03/1990');
+  await expect(page.getByLabel('Créer un mot de passe')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Activer mon espace' }).click();
+  await expect(page.getByRole('status')).toContainText('Votre session est terminée');
+  await expect(page.getByLabel('Votre date de naissance')).toHaveValue('12/03/1990');
+  await expect(page.getByLabel('Créer un mot de passe')).toBeVisible();
+  await axe(page);
+});
+
+test('preview reload and pending activation maintain a recovery path for a conflicting link', async ({ page }) => {
+  await stubInvitation(page, preview('PATIENT_PORTAL'));
+  let releaseInspection = () => {};
+  let releaseActivation = () => {};
+  const inspection = new Promise<void>((resolve) => { releaseInspection = resolve; });
+  const activation = new Promise<void>((resolve) => { releaseActivation = resolve; });
+  let inspections = 0;
+  await page.unroute('**/api/v1/invitations/inspect');
+  await page.route('**/api/v1/invitations/inspect', async (route) => {
+    if (++inspections === 1) {
+      await inspection;
+      return route.fulfill({ status: 503, json: { code: 'SERVICE_UNAVAILABLE' } });
+    }
+    return route.fulfill({ json: preview('PATIENT_PORTAL') });
+  });
+  await page.route('**/api/v1/invitations/accept', async (route) => {
+    await activation;
+    return route.fulfill({ status: 409, json: { code: 'PORTAL_LINK_EXISTS' } });
+  });
+  try {
+    await page.goto(url);
+    await expect(page.getByRole('status')).toContainText("Vérification de l'invitation");
+    await axe(page);
+    releaseInspection();
+    await expect(page.getByRole('alert')).toContainText("La vérification de l'invitation a échoué");
+    await axe(page);
+    await page.getByRole('button', { name: 'Réessayer' }).press('Enter');
+    await expect(page.getByRole('heading', { name: 'Activer mon espace patient' })).toBeFocused();
+    await page.getByLabel('Votre date de naissance').fill('12/03/1990');
+    await page.getByLabel('Créer un mot de passe').fill(password);
+    await page.getByRole('button', { name: 'Activer mon espace' }).click();
+    await expect(page.getByRole('button', { name: 'Activation en cours…' })).toBeDisabled();
+    await expect(page.getByLabel('Votre date de naissance')).toHaveAttribute('readonly', '');
+    await axe(page);
+    releaseActivation();
+    await expect(page.getByRole('heading', { name: 'Contactez votre cabinet' })).toBeFocused();
+    await expect(page.getByRole('link', { name: 'Me connecter' })).toHaveCount(0);
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Enter');
+    await expect(page.getByText(/Utilisez les coordonnées de votre cabinet/)).toBeVisible();
+    await axe(page);
+  } finally {
+    releaseInspection();
+    releaseActivation();
+  }
 });

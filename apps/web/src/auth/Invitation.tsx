@@ -13,7 +13,7 @@ const shortDate = new Intl.DateTimeFormat('fr-FR', {
   timeZone: 'Europe/Paris', dateStyle: 'short', timeStyle: 'short',
 });
 
-type Terminal = 'invalid' | 'EXPIRED' | 'REVOKED' | 'ALREADY_USED' | 'already-active';
+type Terminal = 'invalid' | 'EXPIRED' | 'REVOKED' | 'ALREADY_USED' | 'UNAVAILABLE' | 'portal-conflict';
 type Accepted = { onAccepted: (session: Session) => void };
 
 function readFragment() {
@@ -93,10 +93,10 @@ function InvitationLookup({ token, onAccepted }: Accepted & { token: string }) {
   );
 }
 
-function ContactPractice() {
+function ContactPractice({ patient = true }: { patient?: boolean }) {
   return (
     <details className="etaye-invitation__contact">
-      <summary className="etaye-bouton etaye-bouton--secondaire etaye-bouton--patient">Contacter le cabinet</summary>
+      <summary className={`etaye-bouton etaye-bouton--secondaire${patient ? ' etaye-bouton--patient' : ''}`}>Contacter le cabinet</summary>
       <p>Utilisez les coordonnées de votre cabinet ou répondez à l'e-mail d'invitation.</p>
     </details>
   );
@@ -124,7 +124,6 @@ function InvitationStop({ state, preview }: { state: Terminal; preview?: Invitat
       description = "Elle a été annulée par le cabinet. Aucun compte n'a été activé.";
       break;
     case 'ALREADY_USED':
-    case 'already-active':
       heading = patient ? 'Votre espace patient est déjà activé' : "Cette invitation vient d'être utilisée";
       description = patient
         ? preview?.acceptedAt
@@ -132,6 +131,14 @@ function InvitationStop({ state, preview }: { state: Terminal; preview?: Invitat
           : 'Ce lien ne peut plus servir. Contactez le cabinet si vous avez besoin d’aide.'
         : "Elle a déjà servi à activer un compte, peut-être dans un autre onglet. Connectez-vous pour continuer.";
       action = patient ? 'Me connecter' : 'Se connecter';
+      break;
+    case 'UNAVAILABLE':
+      heading = 'Cette invitation est indisponible';
+      description = "Le cabinet ne peut pas activer cet accès pour le moment.";
+      break;
+    case 'portal-conflict':
+      heading = 'Contactez votre cabinet';
+      description = "Ce lien ne permet pas d’activer votre espace. Le cabinet peut vérifier votre accès.";
       break;
     default:
       heading = "Lien d'invitation invalide";
@@ -145,7 +152,8 @@ function InvitationStop({ state, preview }: { state: Terminal; preview?: Invitat
         {patient && state === 'EXPIRED' ? <>
           <p>{preview && practiceWithArticle(preview.practiceName, true)} peut vous envoyer un nouveau lien.</p>
           <ContactPractice />
-        </> : <a className={`etaye-bouton etaye-bouton--secondaire${patient ? ' etaye-bouton--patient' : ''}`}
+        </> : state === 'UNAVAILABLE' || state === 'portal-conflict' ? <ContactPractice patient={patient} />
+          : <a className={`etaye-bouton etaye-bouton--secondaire${patient ? ' etaye-bouton--patient' : ''}`}
           href={signIn}>{action}</a>}
       </div>
     </AuthShell>
@@ -154,7 +162,7 @@ function InvitationStop({ state, preview }: { state: Terminal; preview?: Invitat
 
 const terminalByCode: Partial<Record<string, Terminal>> = {
   INVITATION_EXPIRED: 'EXPIRED', INVITATION_REVOKED: 'REVOKED', INVITATION_ALREADY_USED: 'ALREADY_USED',
-  PORTAL_LINK_EXISTS: 'already-active', NOT_FOUND: 'invalid',
+  INVITATION_UNAVAILABLE: 'UNAVAILABLE', PORTAL_LINK_EXISTS: 'portal-conflict', NOT_FOUND: 'invalid',
 };
 
 function InvitationForm({ token, preview, initiallySignedIn, onAccepted }: Accepted & {
@@ -165,7 +173,7 @@ function InvitationForm({ token, preview, initiallySignedIn, onAccepted }: Accep
   const [signingIn, setSigningIn] = useState(false);
   const [pending, setPending] = useState(false);
   const [terminal, setTerminal] = useState<Terminal>();
-  const [issue, setIssue] = useState<'verify' | 'sign-in' | 'unavailable' | 'membership'>();
+  const [issue, setIssue] = useState<'verify' | 'sign-in' | 'session-ended' | 'unavailable' | 'membership'>();
   const [errors, setErrors] = useState<FieldError[]>([]);
   const [birthDate, setBirthDate] = useState('');
   const [name, setName] = useState('');
@@ -228,8 +236,11 @@ function InvitationForm({ token, preview, initiallySignedIn, onAccepted }: Accep
       if (passwordField) passwordField.value = '';
       receipt.current = undefined;
       setIssue('verify');
-    }
-    else if (result.code === 'SIGN_IN_REQUIRED' || result.status === 401) setIssue('sign-in');
+    } else if (signedIn && (result.code === 'DISPLAY_NAME_REQUIRED' || result.code === 'PASSWORD_TOO_SHORT' || result.status === 401)) {
+      receipt.current = undefined;
+      setSignedIn(false);
+      setIssue('session-ended');
+    } else if (result.code === 'SIGN_IN_REQUIRED' || result.status === 401) setIssue('sign-in');
     else if (result.code === 'MEMBERSHIP_EXISTS') setIssue('membership');
     else if (result.status === 429) block(result.retryAfter);
     else setIssue('unavailable');
@@ -252,7 +263,8 @@ function InvitationForm({ token, preview, initiallySignedIn, onAccepted }: Accep
   }
 
   if (terminal) return <InvitationStop state={terminal} preview={preview} />;
-  if (signingIn) return <SignIn patient={patient} returning={false} onSignedIn={() => {
+  if (signingIn) return <SignIn patient={patient} returning={false}
+    onCancel={() => setSigningIn(false)} onSignedIn={() => {
     receipt.current = undefined;
     setSignedIn(true);
     setSigningIn(false);
@@ -295,6 +307,9 @@ function InvitationForm({ token, preview, initiallySignedIn, onAccepted }: Accep
                 disabled={pending} onClick={useNewAccount}>Continuer avec un nouveau compte</button>}
             </div>
           </Banner>}
+          {issue === 'session-ended' && <Banner title="Votre session est terminée" information>
+            Vous pouvez vous reconnecter ou renseigner les champs pour créer votre accès.
+          </Banner>}
           {issue === 'membership' && <Banner title="Vous avez déjà accès à ce cabinet">
             Contactez le cabinet pour toute modification de vos droits.
           </Banner>}
@@ -318,6 +333,9 @@ function InvitationForm({ token, preview, initiallySignedIn, onAccepted }: Accep
             disabled={pending || waiting}>{pending ? 'Activation en cours…' : patient ? 'Activer mon espace' : 'Activer mon compte'}</button>
         </form>
         {patient && <ContactPractice />}
+        {!signedIn && issue !== 'sign-in' && <button type="button"
+          className={`etaye-bouton etaye-bouton--discret${patient ? ' etaye-bouton--patient' : ''}`}
+          disabled={pending} onClick={() => setSigningIn(true)}>J’ai déjà un compte</button>}
       </div>
       {!patient && <p className="etaye-auth__first etaye-3">Ce n'est pas vous ? Ne créez pas de compte et prévenez le cabinet.</p>}
     </AuthShell>

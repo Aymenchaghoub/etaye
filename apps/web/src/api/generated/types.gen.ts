@@ -70,7 +70,7 @@ export type InvitationPreview = {
      * Present for an accepted token; the time at which this invitation was used.
      */
     acceptedAt?: string;
-    eligibility: 'USABLE' | 'EXPIRED' | 'REVOKED' | 'ALREADY_USED';
+    eligibility: 'USABLE' | 'EXPIRED' | 'REVOKED' | 'UNAVAILABLE' | 'ALREADY_USED';
 };
 
 export type Account = {
