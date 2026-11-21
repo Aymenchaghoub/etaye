@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { accountApi } from '../api/browser';
 import type { Session } from '../api/generated/types.gen';
 import { AuthHeading, AuthShell, Banner, FocusedHeading } from './AuthComponents';
+import { Invitation } from './Invitation';
 import { RecoveryRequest, ResetPassword } from './Recovery';
 import { SignIn } from './SignIn';
 import { ACCOUNT_PATH, allowsAccountPath, checkPausedWork, isAccountPath, pauseWork } from './session-work';
@@ -12,7 +13,7 @@ type Resume = ReturnType<typeof pauseWork<undefined>>;
 
 export function usesAuth(path: string): boolean {
   return isAccountPath(path) || [
-    '/connexion', '/connexion/patient', '/recuperation', '/recuperation/nouveau',
+    '/connexion', '/connexion/patient', '/recuperation', '/recuperation/nouveau', '/invitation',
   ].includes(path);
 }
 
@@ -105,6 +106,12 @@ export function AuthApp() {
       returnTo={isAccountPath(path) ? path : requestedPath && isAccountPath(requestedPath) ? requestedPath : undefined}
       onSignedIn={signedIn} />;
   }
+  if (path === '/invitation') return <Invitation onAccepted={(session) => {
+    const portal = session.activatedPortalLinkId;
+    const target = portal ? `/compte/patient/${portal}` : ACCOUNT_PATH;
+    setInitial(session);
+    navigate(allowsAccountPath(session, target) ? target : ACCOUNT_PATH);
+  }} />;
   if (path === '/recuperation/nouveau') return <ResetPassword />;
   if (path === '/recuperation') {
     return <RecoveryRequest patient={new URLSearchParams(window.location.search).get('espace') === 'patient'} />;

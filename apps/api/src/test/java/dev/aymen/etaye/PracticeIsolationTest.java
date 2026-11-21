@@ -133,7 +133,8 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
                 String.class);
 
         Set<String> rlsTables = Set.of(
-                "account", "membership", "patient", "patient_record", "portal_link", "audit_event", "outbox_event", "idempotency_receipt");
+                "account", "membership", "patient", "patient_record", "portal_link", "invitation",
+                "audit_event", "outbox_event", "idempotency_receipt");
 
         for (String tbl : allRelations) {
             String qualifiedTable = "public." + tbl;
