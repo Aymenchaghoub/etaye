@@ -8,7 +8,7 @@ Updated: 2026-11-22. Owner: Aymen Chaghoub.
 
 **Actual verification.** 163 API tests, 54 browser smoke tests, two real Playwright cases and the Compose cold-start check passed. The opened comparisons record S-01 CORE and the I-26 and S-37 sampled demo states. The local package and both video views are available for Aymen's review. [Running-UI review and evidence](design/reviews/2026-11-22-story-9-1-runtime.md)
 
-**Review and next action.** Aymen permitted Zcode for the final review. The provider reached its usage limit. The single completed Codex review led to compatibility, reset recovery, session notice and keyboard focus fixes. Running-UI and merge decisions remain with Aymen. The public hosting and full clinical fixture scope retain their documented owners.
+**Review and next action.** Aymen permitted Zcode for the final review. The provider reached its usage limit. The single completed Codex review led to compatibility, reset recovery, session notice and keyboard focus fixes. The candidate is in [draft PR #52](https://github.com/Aymenchaghoub/etaye/pull/52). Verify the required jobs and the manual CodeRabbit response on the exact PR head. Running-UI and merge decisions remain with Aymen. The public hosting and full clinical fixture scope retain their documented owners.
 
 ## S-37 and I-26 reference designs approved — 2026-11-21
 

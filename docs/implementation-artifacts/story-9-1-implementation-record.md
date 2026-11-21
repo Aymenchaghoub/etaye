@@ -1,6 +1,6 @@
 # Story 9.1 implementation record
 
-2026-11-22. Branch `feat/9.1-enter-and-reset-bounded-synthetic-journeys`. Baseline `7d46654` (PR #51). Reference approvals are recorded at `d4444ea`. UD-56 authorizes story 9.1 and the story's BMAD readiness gate passed before implementation. Global development authorization stays false. [Context and consulted sources](story-9-1-context-packet.md) · [Story and AT-035](../planning-artifacts/epics/epic-9.md#story-91-enter-and-reset-bounded-synthetic-journeys)
+2026-11-22. Branch `feat/9.1-enter-and-reset-bounded-synthetic-journeys`. Baseline `7d46654` (PR #51). Reference approvals are recorded at `d4444ea`. UD-56 authorizes story 9.1 and the story's BMAD readiness gate passed before implementation. Global development authorization stays false. [Context and consulted sources](story-9-1-context-packet.md) · [Story and AT-035](../planning-artifacts/epics/epic-9.md#story-91-enter-and-reset-bounded-synthetic-journeys) · [Draft PR #52 and checks](https://github.com/Aymenchaghoub/etaye/pull/52/checks)
 
 | Revision | Delivered evidence |
 |---|---|
