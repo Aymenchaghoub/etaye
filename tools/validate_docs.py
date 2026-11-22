@@ -103,7 +103,7 @@ def check_application_scope(root, errors):
     workflows = {"documentation.yml", "codeql.yml", "architecture-pages.yml"}
     forbidden = ("pom.xml", "src", "compose.yaml", "docker-compose.yml")
     if authorized:
-        workflows.update({"api.yml", "web.yml"})
+        workflows.update({"api.yml", "web.yml", "dependency-review.yml"})
         forbidden += ("packages",)
     else:
         forbidden += ("package.json", "apps", "infra")
@@ -195,6 +195,8 @@ def check_application_scope(root, errors):
                 errors.append(f"Tracked non-regular entry for {scope_label}: {name}")
                 continue
             if not application_path:
+                continue
+            if name == "apps/web/vitest.config.ts":
                 continue
             if "10.2" in authorized_stories and STORY_10_2_TRACKED_PATH.fullmatch(name):
                 continue

@@ -27,6 +27,7 @@ on:
       - 'tools/generate_web_tokens.py'
       - 'tools/test_generate_web_tokens.py'
       - 'tools/assert_test_reports.py'
+      - 'tools/assert_coverage_reports.py'
       - '.github/workflows/web.yml'
 
 permissions:
@@ -63,7 +64,7 @@ jobs:
                 'design/received/2026-11-03/licenses/*-OFL.txt' \
                 design/received/2026-11-03/licenses/Lucide-LICENSE.txt design/offline-reference/site/logos/ \
                 tools/fixtures/etaye-tokens.golden.css tools/generate_web_tokens.py tools/test_generate_web_tokens.py \
-                tools/assert_test_reports.py .github/workflows/web.yml; then
+                tools/assert_test_reports.py tools/assert_coverage_reports.py .github/workflows/web.yml; then
             relevant=false
           fi
           echo "relevant=$relevant" >> "$GITHUB_OUTPUT"
@@ -73,6 +74,7 @@ jobs:
         with:
           node-version: '26'
       - name: Install Corepack (no longer bundled with Node 26), enable it and install locked dependencies
+        id: dependencies
         if: steps.changes.outputs.relevant == 'true'
         run: |
           npm install --global corepack@0.36.0
@@ -110,4 +112,25 @@ jobs:
         with:
           name: web-playwright-report
           path: apps/web/playwright-report/smoke.json
+          retention-days: 7
+      - name: Run Web unit tests with coverage
+        id: unit-tests
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
+        working-directory: apps/web
+        run: pnpm test:coverage --reporter=json --outputFile=reports/unit-tests.json
+      - name: Verify Web coverage report
+        id: unit-coverage
+        if: ${{ !cancelled() && steps.unit-tests.outcome == 'success' }}
+        run: |
+          python3 tools/assert_test_reports.py vitest apps/web/reports/unit-tests.json --min-tests 5 --require-file src/auth/session-work.test.ts
+          python3 tools/assert_coverage_reports.py lcov apps/web/reports/unit-coverage/lcov.info
+      - name: Upload Web unit coverage
+        if: ${{ !cancelled() && steps.unit-coverage.outcome == 'success' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: web-unit-coverage
+          path: |
+            apps/web/reports/unit-coverage/
+            apps/web/reports/unit-tests.json
+          if-no-files-found: error
           retention-days: 7

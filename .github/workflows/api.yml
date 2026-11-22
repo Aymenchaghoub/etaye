@@ -10,6 +10,7 @@ on:
     paths:
       - 'apps/api/**'
       - 'tools/assert_test_reports.py'
+      - 'tools/assert_coverage_reports.py'
       - '.github/workflows/api.yml'
 
 permissions:
@@ -38,7 +39,7 @@ jobs:
           # Fail closed: anything unexpected runs the full verification.
           relevant=true
           if [ "$EVENT_NAME" = "pull_request" ] &&
-              git diff --quiet HEAD^1 HEAD -- apps/api/ tools/assert_test_reports.py .github/workflows/api.yml; then
+              git diff --quiet HEAD^1 HEAD -- apps/api/ tools/assert_test_reports.py tools/assert_coverage_reports.py .github/workflows/api.yml; then
             relevant=false
           fi
           echo "relevant=$relevant" >> "$GITHUB_OUTPUT"
@@ -82,6 +83,17 @@ jobs:
           --require-suite dev.aymen.etaye.communications.push.PushNotificationsTest
           --require-suite dev.aymen.etaye.infrastructure.security.BrowserCorsConfigTest
           --require-suite dev.aymen.etaye.infrastructure.web.ApiMetaControllerTest
+      - name: Verify API coverage report
+        if: steps.changes.outputs.relevant == 'true'
+        run: python3 tools/assert_coverage_reports.py jacoco apps/api/target/site/jacoco/jacoco.xml
+      - name: Upload API coverage
+        if: steps.changes.outputs.relevant == 'true'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: api-coverage
+          path: apps/api/target/site/jacoco/
+          if-no-files-found: error
+          retention-days: 7
       - name: Upload Surefire reports
         if: failure() && steps.changes.outputs.relevant == 'true'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

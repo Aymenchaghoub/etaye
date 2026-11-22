@@ -1,6 +1,6 @@
 # Session continuation
 
-Updated: 2026-11-21. Owner: Aymen Chaghoub.
+Updated: 2026-11-22. Owner: Aymen Chaghoub.
 
 ## Story 9.1 phase 0 prepared and arbitrated (UD-56) — 2026-11-21
 
@@ -13,6 +13,10 @@ Updated: 2026-11-21. Owner: Aymen Chaghoub.
 **Actual verification.** `python3 tools/validate_docs.py` reports `ok: true` with mode `stories-10.1-10.2-1.2-1.1-1.3-9.1`; `python3 -m unittest discover -s tools -p 'test_*.py'` passes 98 tests. One read-only Codex CLI (0.171.0) documentary review of the packet ran before the arbitration reply; its confirmed findings are triaged and applied in the packet (§10). No application code, contract file, migration or service changed; the phase-0 artifacts were committed and pushed to `origin/main` at Aymen's request on 2026-11-21.
 
 **Next action.** Run the installed BMAD readiness check, then open `feat/9.1-enter-reset-demo-journeys` from current `main`; the first commit carries the reviewed contract change (DemoScenario extension, meta version field, README "Synthetic demonstration" section, operation index and roadmap 98/99 sync) before any application change, per the 10.2/1.1/1.3 precedent.
+
+## CI quality checks authorized — 2026-11-22
+
+Aymen authorized coverage and dependency protection in a separate CI change. Local verification of the initial baseline measured 1,293 of 1,507 API lines with 160 tests and 29 of 622 Web lines with five unit tests. The additional Web smoke suite remains separate. The targeted `js-yaml` upgrade passed the native pnpm audit and the SDK drift check. Verify the GitHub job results before making the dependency status required. The hosted quality gate needs project binding and analysis credentials. [Coverage and dependency checks](operations/cicd-deployment-strategy.md#coverage-and-dependency-checks)
 
 ## Story 1.3 running UI approved — 2026-11-21
 

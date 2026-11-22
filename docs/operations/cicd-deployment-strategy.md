@@ -1,6 +1,16 @@
 # Future CI/CD and deployment strategy
 
-Status: Application delivery planned only. Initial documentation/tooling CI and free repository security setup were subsequently authorized and are separately recorded in github-security.md. No application workflow, image or deployment exists. 2026-11-02. [Delivery rules](delivery-rules.md), ADR-007 and [test strategy](../test-artifacts/test-strategy.md) govern future implementation.
+Status: API and Web validation run through GitHub Actions. The promotion, deployment and rollback stages below are planned. [GitHub security](github-security.md), [delivery rules](delivery-rules.md), ADR-007 and the [test strategy](../test-artifacts/test-strategy.md) provide the repository and acceptance evidence.
+
+## Coverage and dependency checks
+
+Aymen authorized CI quality improvements on 2026-11-22. `API verify` generates JaCoCo XML and HTML when the API suite runs. Run `./mvnw -B -ntp clean verify` in `apps/api` to reproduce the report locally under `target/site/jacoco/`. GitHub retains the `api-coverage` artifact.
+
+`Web verify` keeps the Chromium smoke suite and generates a separate Vitest unit coverage report. Run `corepack pnpm --filter etaye-web test:coverage` from the repository root. `apps/web/reports/unit-coverage/lcov.info` includes eligible handwritten TypeScript sources even when unit tests never import them. Generated SDK and test files are excluded. GitHub retains `web-unit-coverage`. These results measure unit coverage. Browser journey evidence is recorded separately.
+
+`Dependency review` checks new dependency advisories exposed by GitHub's dependency graph at high or critical severity. When the pnpm graph changes, the job also runs `corepack pnpm audit --audit-level high` against the complete locked graph. Branch protection can require `Dependency review` after a successful run is observed on the repository. Maven build-resolved transitive coverage depends on dependency submission or a dedicated scanner.
+
+The first release of these checks publishes baselines. SonarQube Cloud imports Java XML and Web LCOV into separate projects once the owner links those projects and supplies analysis credentials. Store an analysis-only token in GitHub repository Actions secrets as `SONAR_TOKEN`. The proposed threshold is 80% on new or changed code after verifying the report inputs and the exact quality gate in CI. [SonarQube Cloud setup](https://docs.sonarsource.com/sonarqube-cloud/getting-started/github)
 
 ## Validation and promotion graph
 
@@ -33,4 +43,4 @@ The installable web app is part of the validated web artifact. The Expo Android 
 
 Retain previous known-good image/static digest and release manifest. Prefer expand/contract migrations that permit old/new app versions during rollback window. On failure: stop promotion, inspect safe smoke/log evidence, choose compatible app rollback or forward fix. Never automatically reverse a destructive migration or edit an applied checksum. If data restore is necessary, restore into isolated database/store first, verify lineage/attachments, then switch deliberately; account for new writes since backup and document loss. Rehearse recovery against synthetic state. Proposed RPO/RTO are NFR targets, not measured guarantees.
 
-Only the authorized documentation/tooling and CodeQL security workflows are created now; no application pipeline is implemented. Future credentials (SONAR_TOKEN, deploy/registry/store secrets) are requested only when needed for explicitly authorized setup, with minimum scopes and official instructions.
+Deployment, registry and store credentials require explicit setup authorization and minimum permissions. Keep promotion separate from untrusted PR validation.

@@ -169,9 +169,39 @@ def read_playwright(report, required_files=()):
             "unexpected": stats["unexpected"], "flaky": stats["flaky"], "skipped": stats["skipped"]}
 
 
+def read_vitest(report, required_files=()):
+    data = json.loads(report.read_text(encoding="utf-8"))
+    if not isinstance(data, dict) or data.get("success") is not True:
+        raise ValueError("Vitest did not report success")
+    counters = ("numTotalTests", "numPassedTests", "numFailedTests", "numPendingTests", "numTodoTests")
+    if any(type(data.get(field)) is not int or data[field] < 0 for field in counters):
+        raise ValueError("Invalid Vitest test counters")
+    results = data.get("testResults")
+    if not isinstance(results, list):
+        raise ValueError("Vitest testResults must be an array")
+    count = 0
+    files = set()
+    for result in results:
+        if not isinstance(result, dict) or result.get("status") != "passed" or not isinstance(result.get("name"), str):
+            raise ValueError("Invalid or unsuccessful Vitest suite")
+        cases = result.get("assertionResults")
+        if not isinstance(cases, list) or not cases or any(
+                not isinstance(case, dict) or case.get("status") != "passed" for case in cases):
+            raise ValueError("Each Vitest suite must contain only passed test cases")
+        count += len(cases)
+        files.add(result["name"].replace("\\", "/"))
+    if data["numTotalTests"] != count or data["numPassedTests"] != count or any(data[field] for field in counters[2:]):
+        raise ValueError("Vitest counters do not match the passing test cases")
+    for required in required_files:
+        required = required.replace("\\", "/")
+        if not any(path == required or path.endswith("/" + required) for path in files):
+            raise ValueError(f"Missing required Vitest file: {required}")
+    return {"tests": count}
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("kind", choices=("surefire", "playwright"))
+    parser.add_argument("kind", choices=("surefire", "playwright", "vitest"))
     parser.add_argument("path", type=Path)
     parser.add_argument("--min-tests", type=int, required=True)
     parser.add_argument("--require-suite", action="append", metavar="CLASSNAME", default=[])
@@ -183,12 +213,13 @@ def main(argv=None):
             raise ValueError("--min-tests must be at least 1")
         if args.kind == "surefire":
             if args.require_file:
-                raise ValueError("--require-file is only supported for Playwright reports")
+                raise ValueError("--require-file is supported for Playwright and Vitest reports")
             totals = read_surefire(args.path, args.require_suite)
         else:
             if args.require_suite:
                 raise ValueError("--require-suite is only supported for Surefire reports")
-            totals = read_playwright(args.path, args.require_file)
+            reader = read_playwright if args.kind == "playwright" else read_vitest
+            totals = reader(args.path, args.require_file)
         summary = ", ".join(f"{field}={count}" for field, count in totals.items())
         if totals["tests"] < args.min_tests or any(totals[field] for field in totals if field != "tests"):
             raise ValueError(f"{summary} (required minimum: {args.min_tests}, all tests must pass without skips)")

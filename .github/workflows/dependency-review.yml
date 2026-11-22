@@ -1,0 +1,48 @@
+name: Dependency Review
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dependency-review-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: Dependency review
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        id: checkout
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: actions/dependency-review-action@bbc44d14a204704ccc493733616cd1e93a0321ec # v5.0.1
+        with:
+          fail-on-severity: high
+      - name: Detect changes to the pnpm dependency graph
+        id: changes
+        if: ${{ !cancelled() && steps.checkout.outcome == 'success' }}
+        run: |
+          relevant=true
+          if git diff --quiet HEAD^1 HEAD -- package.json pnpm-workspace.yaml pnpm-lock.yaml \
+              ':(glob)apps/**/package.json' ':(glob)packages/**/package.json'; then
+            relevant=false
+          fi
+          echo "pnpm=$relevant" >> "$GITHUB_OUTPUT"
+      - if: ${{ !cancelled() && steps.changes.outputs.pnpm == 'true' }}
+        id: node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '26'
+      - name: Audit the locked pnpm dependency graph
+        if: ${{ !cancelled() && steps.node.outcome == 'success' }}
+        run: |
+          npm install --global corepack@0.36.0
+          corepack pnpm audit --audit-level high
