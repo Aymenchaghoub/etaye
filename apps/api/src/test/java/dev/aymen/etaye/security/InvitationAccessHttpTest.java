@@ -3,6 +3,9 @@ package dev.aymen.etaye.security;
 import dev.aymen.etaye.AbstractPostgresTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -66,9 +69,13 @@ class InvitationAccessHttpTest extends AbstractPostgresTest {
                 .hasEntrySatisfying("expiresAt", value -> assertThat(value).isInstanceOf(String.class))
                 .doesNotContainKeys("id", "practiceId", "recordId", "intendedRecipient", "token");
 
-        String key = "invitation.acceptance." + UUID.randomUUID();
-        var accepted = accept(anonymous, Map.of("token", token,
-                "displayName", "Alex Rivière", "password", PASSWORD), key);
+        var payload = Map.of("token", token, "displayName", "Alex Rivière", "password", PASSWORD);
+        for (String invalidKey : List.of("k".repeat(15), "k".repeat(129))) {
+            var rejected = accept(anonymous, payload, invalidKey);
+            assertThat(rejected.getStatusCode().value()).isEqualTo(400);
+            assertThat(rejected.getBody()).containsEntry("code", "INVALID_IDEMPOTENCY_KEY");
+        }
+        var accepted = accept(anonymous, payload, "invite.accept.01");
         assertThat(accepted.getStatusCode().value()).isEqualTo(200);
         assertThat(accepted.getHeaders().getCacheControl()).isEqualTo("no-store");
         assertThat(accepted.getHeaders().getFirst(HttpHeaders.SET_COOKIE))
@@ -92,7 +99,7 @@ class InvitationAccessHttpTest extends AbstractPostgresTest {
 
         // Single use: a second attempt under another key grants nothing.
         var second = accept(csrf(null), Map.of("token", token,
-                "displayName", "Alex Rivière", "password", PASSWORD), UUID.randomUUID().toString());
+                "displayName", "Alex Rivière", "password", PASSWORD), "k".repeat(128));
         assertThat(second.getStatusCode().value()).isEqualTo(422);
         assertThat(second.getBody()).containsEntry("code", "INVITATION_ALREADY_USED");
         assertThat(query("SELECT count(*) FROM membership WHERE practice_id = '" + practice + "'")).isEqualTo("1");
@@ -148,6 +155,45 @@ class InvitationAccessHttpTest extends AbstractPostgresTest {
                 "recipientVerification", "1990-03-12", "password", PASSWORD), key);
         assertThat(stale.getBody()).containsEntry("code", "SIGN_IN_REQUIRED");
         assertThat(stale.getHeaders().getFirst(HttpHeaders.SET_COOKIE)).isNull();
+    }
+
+    @Test
+    void c4_portalConflictRequiresVerificationAndPreservesTheExistingGrant() throws Exception {
+        UUID practice = createPracticeAsOwner("Cabinet des Tilleuls");
+        UUID issuer = createAccountAsOwner(syntheticEmail(), "Nora Lefebvre");
+        UUID record = seedPatientAndRecord(practice, "1990-03-12");
+        String linkedToken = randomToken();
+        seedInvitation(practice, issuer, "PATIENT_PORTAL", syntheticEmail(), linkedToken,
+                record, new String[]{}, "PENDING", "72 hours");
+        var linked = accept(csrf(null), Map.of("token", linkedToken, "recipientVerification", "1990-03-12",
+                "password", PASSWORD), UUID.randomUUID().toString());
+        assertThat(linked.getStatusCode().value()).isEqualTo(200);
+        String linkId = (String) linked.getBody().get("activatedPortalLinkId");
+
+        String recipient = syntheticEmail();
+        String token = randomToken();
+        seedInvitation(practice, issuer, "PATIENT_PORTAL", recipient, token,
+                record, new String[]{}, "PENDING", "72 hours");
+        var browser = csrf(null);
+        var wrong = accept(browser, Map.of("token", token, "recipientVerification", "1991-03-12", "password", PASSWORD),
+                UUID.randomUUID().toString());
+        assertThat(wrong.getStatusCode().value()).isEqualTo(422);
+        assertThat(wrong.getBody()).containsEntry("code", "RECIPIENT_MISMATCH");
+
+        var conflict = accept(browser, Map.of("token", token, "recipientVerification", "1990-03-12", "password", PASSWORD),
+                UUID.randomUUID().toString());
+        assertThat(conflict.getStatusCode().value()).isEqualTo(409);
+        assertThat(conflict.getHeaders().getCacheControl()).isEqualTo("no-store");
+        assertThat(conflict.getHeaders().getFirst(HttpHeaders.SET_COOKIE)).isNull();
+        assertThat(conflict.getBody()).containsEntry("code", "PORTAL_LINK_EXISTS");
+        assertThat(conflict.getBody().toString()).doesNotContain(record.toString(), linkId, recipient);
+        assertThat(query("SELECT id::text FROM portal_link WHERE practice_id = '" + practice + "' AND state = 'ACTIVE'"))
+                .isEqualTo(linkId);
+        assertThat(query("SELECT count(*) FROM account WHERE normalized_email = '" + recipient + "'")).isEqualTo("0");
+        assertThat(queryPractice(practice, "SELECT state FROM invitation WHERE token_digest = '" + digest(token) + "'"))
+                .isEqualTo("PENDING");
+        assertThat(queryPractice(practice, "SELECT count(*) FROM audit_event WHERE event_type = 'INVITATION_ACCEPTED'"))
+                .isEqualTo("1");
     }
 
     @Test
@@ -210,8 +256,11 @@ class InvitationAccessHttpTest extends AbstractPostgresTest {
         assertNoActivation(practice, recipient);
     }
 
-    @Test
-    void c3_invitationExpiringWhileWaitingForTheRecordLockCannotGrantAccess() throws Exception {
+    private enum ActivationLock { PATIENT_RECORD, ISSUER_ACCOUNT }
+
+    @ParameterizedTest
+    @EnumSource(ActivationLock.class)
+    void c3_invitationExpiringWhileWaitingOnALockCannotGrantAccess(ActivationLock blocker) throws Exception {
         UUID practice = createPracticeAsOwner("Cabinet des Tilleuls");
         UUID issuer = createAccountAsOwner(syntheticEmail(), "Nora Lefebvre");
         String recipient = syntheticEmail();
@@ -228,7 +277,10 @@ class InvitationAccessHttpTest extends AbstractPostgresTest {
              var executor = Executors.newVirtualThreadPerTaskExecutor()) {
             connection.setAutoCommit(false);
             statement.execute("SELECT set_config('etaye.practice_id', '" + practice + "', true)");
-            statement.execute("SELECT id FROM patient_record WHERE id = '" + record + "' FOR UPDATE");
+            statement.execute(switch (blocker) {
+                case PATIENT_RECORD -> "SELECT id FROM patient_record WHERE id = '" + record + "' FOR UPDATE";
+                case ISSUER_ACCOUNT -> "SELECT id FROM account WHERE id = '" + issuer + "' FOR UPDATE";
+            });
 
             var result = executor.submit(() -> accept(browser, Map.of("token", token,
                     "recipientVerification", "1990-03-12", "password", PASSWORD), UUID.randomUUID().toString()));
@@ -271,6 +323,9 @@ class InvitationAccessHttpTest extends AbstractPostgresTest {
         assertThat(query("SELECT count(*) FROM membership WHERE practice_id = '" + practice + "'")).isEqualTo("0");
         assertThat(query("SELECT count(*) FROM portal_link WHERE practice_id = '" + practice + "'")).isEqualTo("0");
         assertThat(queryPractice(practice, "SELECT state FROM invitation")).isEqualTo("PENDING");
+        assertThat(queryPractice(practice, "SELECT count(*) FROM invitation WHERE accepted_at IS NOT NULL "
+                + "OR accepted_by IS NOT NULL OR accept_key_digest IS NOT NULL OR accept_body_hash IS NOT NULL"))
+                .isEqualTo("0");
         assertThat(queryPractice(practice, "SELECT count(*) FROM audit_event")).isEqualTo("0");
     }
 
@@ -330,8 +385,9 @@ class InvitationAccessHttpTest extends AbstractPostgresTest {
                 + "' AND practice_id = '" + practice + "'")).isEqualTo("SUSPENDED");
     }
 
-    @Test
-    void c6_concurrentAcceptanceHasExactlyOneWinnerAndReplayStaysStable() throws Exception {
+    @ParameterizedTest(name = "concurrent requests share the same key: {0}")
+    @ValueSource(booleans = {false, true})
+    void c6_concurrentAcceptanceCreatesOneGrantAndReplayStaysStable(boolean sameKey) throws Exception {
         UUID practice = createPracticeAsOwner("Cabinet des Tilleuls");
         UUID issuer = createAccountAsOwner(syntheticEmail(), "Nora Lefebvre");
         String recipient = syntheticEmail();
@@ -343,7 +399,7 @@ class InvitationAccessHttpTest extends AbstractPostgresTest {
         var first = csrf(null);
         var second = csrf(null);
         String firstKey = UUID.randomUUID().toString();
-        String secondKey = UUID.randomUUID().toString();
+        String secondKey = sameKey ? firstKey : UUID.randomUUID().toString();
         String key;
         try (var gate = DriverManager.getConnection(POSTGRES_CONTAINER.getJdbcUrl(), OWNER_USER, OWNER_PASSWORD);
              var lock = gate.createStatement();
@@ -363,14 +419,21 @@ class InvitationAccessHttpTest extends AbstractPostgresTest {
             }
             int firstStatus = a.get(10, TimeUnit.SECONDS).getStatusCode().value();
             int secondStatus = b.get(10, TimeUnit.SECONDS).getStatusCode().value();
-            assertThat(List.of(firstStatus, secondStatus)).containsExactlyInAnyOrder(200, 422);
+            assertThat(List.of(firstStatus, secondStatus)).containsExactlyInAnyOrder(200, sameKey ? 200 : 422);
             key = firstStatus == 200 ? firstKey : secondKey;
         }
         assertThat(query("SELECT count(*) FROM membership WHERE practice_id = '" + practice + "'")).isEqualTo("1");
         assertThat(query("SELECT count(*) FROM account WHERE normalized_email = '" + recipient + "'")).isEqualTo("1");
+        assertThat(queryPractice(practice, "SELECT count(*) FROM audit_event WHERE event_type = 'INVITATION_ACCEPTED'"))
+                .isEqualTo("1");
         assertThat(accept(csrf(null), payload, key).getStatusCode().value()).isEqualTo(200);
 
-        // Only the winning key can replay; changing its body fails.
+        var invalidRetry = accept(csrf(null),
+                Map.of("token", token, "displayName", "Alex Rivière", "password", "short"), key);
+        assertThat(invalidRetry.getStatusCode().value()).isEqualTo(422);
+        assertThat(invalidRetry.getBody()).containsEntry("code", "PASSWORD_TOO_SHORT");
+
+        // A changed body under the winning key conflicts after request validation.
         var conflict = accept(csrf(null),
                 Map.of("token", token, "displayName", "Other Name", "password", PASSWORD), key);
         assertThat(conflict.getStatusCode().value()).isEqualTo(409);

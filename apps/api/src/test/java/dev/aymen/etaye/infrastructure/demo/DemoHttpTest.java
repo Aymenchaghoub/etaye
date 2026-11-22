@@ -233,7 +233,8 @@ class DemoHttpTest {
 
     @Test
     void ordinaryDatabaseCannotInstallDemoReset() {
-        assertThatThrownBy(() -> DemoDatabase.flyway(DemoDatabase.ordinaryUrl()).migrate())
+        // Exercise the SQL guard even on ordinary databases past the demo-only versions.
+        assertThatThrownBy(() -> DemoDatabase.flyway(DemoDatabase.ordinaryUrl(), true).migrate())
                 .hasStackTraceContaining("The synthetic fixture requires its dedicated PostgreSQL database");
     }
 
@@ -314,7 +315,7 @@ class DemoHttpTest {
             } catch (SQLException ex) {
                 throw new ExceptionInInitializerError(ex);
             }
-            flyway(URL).migrate();
+            flyway(URL, false).migrate();
         }
 
         static void configureDemo(DynamicPropertyRegistry registry) {
@@ -328,9 +329,9 @@ class DemoHttpTest {
             return POSTGRES_CONTAINER.getJdbcUrl();
         }
 
-        static Flyway flyway(String url) {
+        static Flyway flyway(String url, boolean outOfOrder) {
             return Flyway.configure().dataSource(url, OWNER_USER, OWNER_PASSWORD)
-                    .locations("classpath:db/migration", "classpath:db/demo").load();
+                    .locations("classpath:db/migration", "classpath:db/demo").outOfOrder(outOfOrder).load();
         }
 
         static java.sql.Connection ownerConnection() throws SQLException {
