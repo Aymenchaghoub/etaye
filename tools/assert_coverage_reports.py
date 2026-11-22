@@ -3,6 +3,7 @@
 
 import argparse
 from pathlib import Path
+import sys
 import xml.etree.ElementTree as ET
 
 
@@ -48,7 +49,8 @@ def main(argv: list[str] | None = None) -> int:
         if not covered:
             raise ValueError("coverage report contains zero covered lines")
     except (ET.ParseError, KeyError, OSError, ValueError) as exc:
-        parser.error(str(exc))
+        print(f"FAIL {args.format}: {exc}", file=sys.stderr)
+        return 1
     print(f"Covered lines {covered}/{total} ({100 * covered / total:.2f}%)")
     return 0
 

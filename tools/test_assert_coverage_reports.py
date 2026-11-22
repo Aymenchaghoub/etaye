@@ -28,6 +28,6 @@ class CoverageReportsTest(unittest.TestCase):
         ):
             with self.subTest(kind=kind, body=body):
                 self.report.write_text(body)
-                with redirect_stderr(StringIO()), self.assertRaises(SystemExit) as error:
-                    main([kind, str(self.report)])
-                self.assertEqual(error.exception.code, 2)
+                with redirect_stderr(StringIO()) as error:
+                    self.assertEqual(main([kind, str(self.report)]), 1)
+                self.assertIn(f"FAIL {kind}", error.getvalue())
