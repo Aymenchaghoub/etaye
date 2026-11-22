@@ -2,6 +2,12 @@
 
 Updated: 2026-11-22. Owner: Aymen Chaghoub.
 
+## Visual identity across page states — 2026-11-22
+
+**Decision and artifacts.** UD-60 makes the approved shell and background part of the visual contract for every future visible story. Preparation records the reference, UI work reuses it and visual reviews verify continuity across states in both themes. AGENTS, the UX spine and delivery rules point to the design-system rule. BMAD's existing design context already loads the same reference. [Design rule](design/design-system.md#continuity-across-page-states) · [Decision register](planning-artifacts/decisions-assumptions.md)
+
+**Verification and next action.** The documentation branch `docs/visual-continuity` is based on `590b7e3`. Documentary validation, the design reference check and the installed BMAD override regression checks passed. Integrate this branch before assigning future visual stories. Story 1.4's phase-0 record is in its own worktree.
+
 ## Story 1.1 review follow-up — 2026-11-22
 
 **Phase.** Follow-up to the seven findings on `5ec9e4a483785301f9742c2c4026e35e9e7d43a9`, audited against main `88e88d53bfb058af0eff3078452816be5eea5f86`. V7 closes the late database lock path. The invitation contract and Web recovery now describe and handle the verified outcomes. The [implementation record](implementation-artifacts/story-1-1-implementation-record.md#review-follow-up-on-main) records the evidence and limits. D-23 remains deferred.

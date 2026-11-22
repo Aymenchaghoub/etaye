@@ -1,6 +1,6 @@
 # Étaye design system: offline reference
 
-Status: **Proposal, written 2026-11-18 as the offline working reference for agents. Not a design approval and not a development authorization.** It restates existing verified values and the received HTML design reference so that work can continue, with the same rendering, when Figma cannot be read. It was written from files in this repository only; no Figma call was made. It creates no token, no color and no component: everything below points to a source. Evidence labels follow [AGENTS.md](../../AGENTS.md): **User decision**, **Verified observation**, **Proposal**, **[ASSUMPTION]**, **To verify**. The closure decisions of 2026-11-20 (UD-43) are in section 15.
+Status: **Proposal, written 2026-11-18 as the offline working reference for agents. Not a design approval and not a development authorization.** It restates existing verified values and the received HTML design reference so that work can continue, with the same rendering, when Figma cannot be read. It was written from files in this repository only; no Figma call was made. It creates no token, no color and no component: everything below points to a source. Evidence labels follow [AGENTS.md](../../AGENTS.md): **User decision**, **Verified observation**, **Proposal**, **[ASSUMPTION]**, **To verify**. The closure decisions of 2026-11-20 (UD-43) are in section 15. UD-60 governs continuity across page states in section 5.
 
 ## 1. Purpose and precedence
 
@@ -31,7 +31,7 @@ Status: **Proposal, written 2026-11-18 as the offline working reference for agen
 ### Consistency checklist
 
 1. Only `var(--…)` custom properties of `tokens.css`; no literal color or size, except in e-mail and print, where the reference uses literal values.
-2. One shell per audience: practitioner and administration (`.etaye-app`), sign-in (`.etaye-auth`), patient (`.etaye-papp`), A4 documents (`doc-a4`), e-mail (`.mail`).
+2. Reuse the approved shell and background for the destination and its states, following [page-state continuity](#continuity-across-page-states).
 3. Text only from the 14 roles of section 4.3 and the 15 roles added by [ADR-014](../decisions/ADR-014-design-system-closure.md) (section 15 and [type roles](typography-closure.md)); spacing only from the 10 steps and radii only from the 4 values of section 4.4.
 4. Every state in both themes, with the focus ring, and never meaning by color alone.
 5. French interface copy, synthetic data, original logo files.
@@ -172,6 +172,17 @@ Only the color transitions of links and buttons (`--duree-retour`) and a 0.98 pr
 **Patient shell** (`.etaye-papp`, mobile first): `papier`, body 18/28, content at most 720 px wide, tabs with 48 px targets, a 24 px logo; larger type and touch targets than the practitioner side.
 
 **Overlays:** one at a time. Dialog `min(560px, 100% − 48px)` wide, 96 px from the top, `surface`, 8 px radius, floating shadow; drawer `min(480px, 100%)` from the right; scrim `rgba(15, 16, 18, 0.48)`. Long reading or editing uses a page, not a dialog. Focus moves to the heading or first field, is trapped, and returns to the trigger. **Stacking (ADR-014):** the received CSS has no `z-index` (the design-prototype overlay sets one only on its own notices and the open mobile navigation); the policy is one overlay at a time, rendered in a portal above the page, with the toast above it, so that no screen sets its own order.
+
+
+### Continuity across page states
+
+**User decision (UD-60, 2026-11-22).** Étaye’s visual identity includes the approved page background and the shell around the content. Apply this rule to every story that adds or changes a visible screen, from mockup through implementation and review.
+
+1. In the context packet, pin the approved reference for each affected destination or audience. Record its shell or reusable component, light and dark background tokens, content width and header treatment. Use the current approved Figma properties or the applicable offline reference and dated approvals. If the reference is missing or the sources conflict, resolve the design gap before building that variant.
+2. Reuse the same shell, background, header and spacing across success, loading, empty, failure, restricted and recovery states that stay in that destination. Use the defined component surface or semantic status colors for the content that changes. When a transition leads to a different shell, use the reference for the actual destination. For example, expiry moves to the approved neutral session screen and removes protected content.
+3. Open matching light and dark comparisons at the story’s required viewports during design review and on the running UI. Compare the page canvas and its transitions alongside the state content, including reflow, keyboard focus and recovery. Record the reference and observed differences. Obtain explicit design approval for a deliberate deviation.
+
+**Reference example.** The M1 signed-in context from story 1.3 uses `--fond` in both themes, the practice and role header, and a centered content column. Nora’s confirmed read and the S-36 demo states follow that context. Existing practitioner workspaces use their defined `--surface` work area, and sign-in and the full patient portal have their own `--papier` recipes. Apply background texture only under its documented design scope. [Approved 1.3 comparison](reviews/2026-11-21-story-1-3-runtime.md)
 
 ## 6. Components
 
