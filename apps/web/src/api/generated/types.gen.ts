@@ -947,6 +947,11 @@ export type IfMatch = string;
  */
 export type IdempotencyKey = string;
 
+/**
+ * Scoped to the invitation digest and acceptance operation. The key is recorded with committed activation. Before invitation expiry, a request that passes validation and the original identity constraints replays acceptance with the winning key and same body, or returns 409 IDEMPOTENCY_CONFLICT for a changed body. Authenticated acceptances require the original account. An anonymous replay without a session also requires the credential revision at acceptance.
+ */
+export type InvitationIdempotencyKey = string;
+
 export type Csrf2 = string;
 
 export type Cursor = string;
@@ -1379,7 +1384,7 @@ export type AcceptInvitationData = {
     headers: {
         'X-CSRF-TOKEN': string;
         /**
-         * Scoped to account/practice/operation/body hash. Same key/body returns prior outcome; changed body 409.
+         * Scoped to the invitation digest and acceptance operation. The key is recorded with committed activation. Before invitation expiry, a request that passes validation and the original identity constraints replays acceptance with the winning key and same body, or returns 409 IDEMPOTENCY_CONFLICT for a changed body. Authenticated acceptances require the original account. An anonymous replay without a session also requires the credential revision at acceptance.
          */
         'Idempotency-Key': string;
     };

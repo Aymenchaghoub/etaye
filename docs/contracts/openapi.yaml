@@ -513,7 +513,7 @@
             "$ref": "#/components/parameters/Csrf"
           },
           {
-            "$ref": "#/components/parameters/IdempotencyKey"
+            "$ref": "#/components/parameters/InvitationIdempotencyKey"
           }
         ],
         "responses": {
@@ -7923,6 +7923,17 @@
           "maxLength": 128
         },
         "description": "Scoped to account/practice/operation/body hash. Same key/body returns prior outcome; changed body 409."
+      },
+      "InvitationIdempotencyKey": {
+        "name": "Idempotency-Key",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 128
+        },
+        "description": "Scoped to the invitation digest and acceptance operation. The key is recorded with committed activation. Before invitation expiry, a request that passes validation and the original identity constraints replays acceptance with the winning key and same body, or returns 409 IDEMPOTENCY_CONFLICT for a changed body. Authenticated acceptances require the original account. An anonymous replay without a session also requires the credential revision at acceptance."
       },
       "Csrf": {
         "name": "X-CSRF-TOKEN",

@@ -64,6 +64,11 @@ function InvitationLookup({ token, onAccepted }: Accepted & { token: string }) {
       if (result.data.eligibility === 'USABLE') {
         const session = await accountApi.readSession(request.signal);
         if (request.signal.aborted) return;
+        if (!session.ok && session.status !== 401) {
+          if (session.status === 429) block(session.retryAfter);
+          setStatus('failed');
+          return;
+        }
         setSignedIn(session.ok);
       }
       setPreview(result.data);
@@ -78,17 +83,23 @@ function InvitationLookup({ token, onAccepted }: Accepted & { token: string }) {
       : <InvitationStop state={preview.eligibility} preview={preview} />;
   }
   if (status === 'invalid') return <InvitationStop state="invalid" />;
+  const loading = status === 'loading';
   return (
     <AuthShell>
       <FocusedHeading>Invitation</FocusedHeading>
-      <div className="etaye-auth__carte" aria-busy={status === 'loading'}>
-        {status === 'loading' ? <p role="status">Vérification de l'invitation…</p> : <>
-          <Banner title={waiting ? 'Trop de demandes' : "La vérification de l'invitation a échoué"}>
-            {waiting ? 'Réessayez dans quelques minutes.' : 'Le service est temporairement indisponible.'}
-          </Banner>
-          <button type="button" className="etaye-bouton etaye-bouton--secondaire" disabled={waiting}
-            onClick={() => { setStatus('loading'); setAttempt((value) => value + 1); }}>Réessayer</button>
-        </>}
+      <div className="etaye-auth__carte">
+        <p role="status" className={loading ? undefined : 'etaye-invitation__announcement'}>
+          {loading && "Vérification de l'invitation…"}
+        </p>
+        {!loading && <Banner title={waiting ? 'Trop de demandes' : "La vérification de l'invitation a échoué"}>
+          {waiting ? 'Réessayez dans quelques minutes.' : 'Le service est temporairement indisponible.'}
+        </Banner>}
+        {(!loading || attempt > 0) && <button type="button" className="etaye-bouton etaye-bouton--secondaire"
+          aria-disabled={loading || waiting} onClick={() => {
+            if (loading || waiting) return;
+            setStatus('loading');
+            setAttempt((value) => value + 1);
+          }}>Réessayer</button>}
       </div>
     </AuthShell>
   );
@@ -172,16 +183,25 @@ function InvitationForm({ token, preview, initiallySignedIn, onAccepted }: Accep
   const patient = preview.purpose === 'PATIENT_PORTAL';
   const [signedIn, setSignedIn] = useState(initiallySignedIn);
   const [signingIn, setSigningIn] = useState(false);
-  const [pending, setPending] = useState(false);
+  const [pendingAction, setPendingAction] = useState<'activation' | 'sign-out'>();
+  const pending = pendingAction !== undefined;
   const [terminal, setTerminal] = useState<Terminal>();
-  const [issue, setIssue] = useState<'verify' | 'sign-in' | 'session-ended' | 'unavailable' | 'membership'>();
+  const [issue, setIssue] = useState<'verify' | 'sign-in' | 'sign-out-failed' | 'session-ended' | 'unavailable' | 'membership'>();
   const [errors, setErrors] = useState<FieldError[]>([]);
   const [birthDate, setBirthDate] = useState('');
   const [name, setName] = useState('');
   const { waiting, block } = useRetryDelay();
   const receipt = useRef<string | undefined>(undefined);
   const request = useRef<AbortController | undefined>(undefined);
+  const form = useRef<HTMLFormElement>(null);
+  const focusNewAccountField = useRef(false);
   useEffect(() => () => request.current?.abort(), []);
+  useEffect(() => {
+    if (signedIn || !focusNewAccountField.current) return;
+    focusNewAccountField.current = false;
+    const field = form.current?.elements.namedItem(patient ? 'password' : 'displayName');
+    if (field instanceof HTMLInputElement) field.focus();
+  }, [signedIn, patient]);
 
   function fieldError(id: string, summary: string, detail: string) {
     return { id, summary, detail: `Erreur : ${detail}` };
@@ -223,10 +243,10 @@ function InvitationForm({ token, preview, initiallySignedIn, onAccepted }: Accep
     receipt.current ??= crypto.randomUUID();
     const controller = new AbortController();
     request.current = controller;
-    setPending(true);
+    setPendingAction('activation');
     const result = await accountApi.acceptInvitation(body, receipt.current, controller.signal);
     if (controller.signal.aborted) return;
-    setPending(false);
+    setPendingAction(undefined);
     if (result.ok) {
       onAccepted(result.data);
       return;
@@ -235,6 +255,7 @@ function InvitationForm({ token, preview, initiallySignedIn, onAccepted }: Accep
     if (stop) setTerminal(stop);
     else if (result.code === 'RECIPIENT_MISMATCH') {
       if (passwordField) passwordField.value = '';
+      if (confirmationField) confirmationField.value = '';
       receipt.current = undefined;
       setIssue('verify');
     } else if (signedIn && (result.code === 'DISPLAY_NAME_REQUIRED' || result.code === 'PASSWORD_TOO_SHORT' || result.status === 401)) {
@@ -247,19 +268,21 @@ function InvitationForm({ token, preview, initiallySignedIn, onAccepted }: Accep
     else setIssue('unavailable');
   }
 
-  async function useNewAccount() {
+  async function useNewAccount(button: HTMLButtonElement) {
+    if (pending) return;
     const controller = new AbortController();
     request.current = controller;
-    setPending(true);
+    setPendingAction('sign-out');
     const result = await accountApi.signOut(controller.signal);
     if (controller.signal.aborted) return;
-    setPending(false);
+    setPendingAction(undefined);
     if (result.ok || result.status === 401) {
       receipt.current = undefined;
+      focusNewAccountField.current = document.activeElement === button;
       setSignedIn(false);
       setIssue(undefined);
     } else {
-      setIssue('unavailable');
+      setIssue('sign-out-failed');
     }
   }
 
@@ -274,6 +297,7 @@ function InvitationForm({ token, preview, initiallySignedIn, onAccepted }: Accep
   }} />;
 
   const error = (id: string) => errors.find((item) => item.id === id);
+  const showSignIn = issue === 'sign-in' || issue === 'sign-out-failed';
   return (
     <AuthShell patient={patient}>
       <div className="etaye-invitation__heading">
@@ -294,19 +318,27 @@ function InvitationForm({ token, preview, initiallySignedIn, onAccepted }: Accep
         </dl>
       </div>
       <div className="etaye-auth__carte">
-        <form className="etaye-form" noValidate aria-busy={pending} onSubmit={submit}
+        <p role="status" className="etaye-invitation__announcement">
+          {pendingAction === 'activation' && 'Activation en cours…'}
+          {pendingAction === 'sign-out' && 'Déconnexion en cours…'}
+        </p>
+        <form ref={form} className="etaye-form" noValidate aria-busy={pending} onSubmit={submit}
           onChange={() => { receipt.current = undefined; }}>
           {errors.length > 0 && <ErrorSummary errors={errors} />}
           {issue === 'verify' && <Banner title="Activation impossible avec ces informations">
             Pour protéger votre dossier, nous ne pouvons pas vous dire quelle information ne correspond pas. Contactez le cabinet.
           </Banner>}
-          {issue === 'sign-in' && <Banner title="Connectez-vous pour continuer">
-            Utilisez le compte auquel cette invitation a été envoyée.
+          {showSignIn && <Banner title={issue === 'sign-out-failed' ? 'La déconnexion a échoué' : 'Connectez-vous pour continuer'}>
+            {issue === 'sign-out-failed'
+              ? 'Réessayez ou connectez-vous avec le compte auquel cette invitation a été envoyée.'
+              : 'Utilisez le compte auquel cette invitation a été envoyée.'}
             <div className="etaye-auth__actions">
               <button type="button" className="etaye-bouton etaye-bouton--secondaire" disabled={pending}
                 onClick={() => setSigningIn(true)}>Se connecter</button>
               {signedIn && <button type="button" className="etaye-bouton etaye-bouton--secondaire"
-                disabled={pending} onClick={useNewAccount}>Continuer avec un nouveau compte</button>}
+                aria-disabled={pending} onClick={(event) => void useNewAccount(event.currentTarget)}>
+                Continuer avec un nouveau compte
+              </button>}
             </div>
           </Banner>}
           {issue === 'session-ended' && <Banner title="Votre session est terminée" information>
@@ -332,10 +364,10 @@ function InvitationForm({ token, preview, initiallySignedIn, onAccepted }: Accep
           {!patient && !signedIn && <Field id="a-pw-confirm" name="confirmation" label="Confirmer le mot de passe"
             type="password" autoComplete="new-password" maxLength={2048} readOnly={pending} error={error('a-pw-confirm')} />}
           <button type="submit" className={`etaye-bouton etaye-bouton--principal${patient ? ' etaye-bouton--patient' : ''}`}
-            disabled={pending || waiting}>{pending ? 'Activation en cours…' : patient ? 'Activer mon espace' : 'Activer mon compte'}</button>
+            aria-disabled={pending || waiting}>{pendingAction === 'activation' ? 'Activation en cours…' : patient ? 'Activer mon espace' : 'Activer mon compte'}</button>
         </form>
         {patient && <ContactPractice />}
-        {!signedIn && issue !== 'sign-in' && <button type="button"
+        {!signedIn && !showSignIn && <button type="button"
           className={`etaye-bouton etaye-bouton--discret${patient ? ' etaye-bouton--patient' : ''}`}
           disabled={pending} onClick={() => setSigningIn(true)}>J’ai déjà un compte</button>}
       </div>
