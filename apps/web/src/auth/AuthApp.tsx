@@ -332,7 +332,10 @@ function AccountGate({ target, initial, onHalt, onDemoReset, leave, enter, demo,
       }
       setView({ session: latest, contexts });
       window.clearTimeout(deadline);
-      deadline = window.setTimeout(() => halt('expired'), remaining);
+      deadline = window.setTimeout(() => {
+        if (demo.current.marker || LOCAL_DEMO) void check(true);
+        else halt('expired');
+      }, remaining);
     }
     void check(true);
     const poll = window.setInterval(() => {

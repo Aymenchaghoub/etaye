@@ -29,7 +29,7 @@
   <section aria-labelledby="titre" class="etaye-pile">
     <h1 id="titre">Validation de la démonstration en fonctionnement</h1>
     <p>Les comparaisons montrent la référence approuvée à gauche et l’application exécutée à droite. Sur mobile, les actions « Choisir » se placent sous leur scénario. L’alerte et « Réessayer » restent en haut de la vitrine en cas d’indisponibilité.</p>
-    <p><a href="http://localhost:4189/">Ouvrir la démo locale</a> · <a href="../../../../infra/demo/README.md">Guide et comptes fictifs</a></p>
+    <p><a href="http://localhost:4179/">Ouvrir la démo standard (4179)</a> · <a href="http://localhost:4189/">Ouvrir le stack de revue (4189)</a> · <a href="../../../../infra/demo/README.md">Guide et comptes fictifs</a></p>
   </section>
   <section aria-labelledby="choix" class="etaye-pile">
     <h2 id="choix">Décision sur l’interface en fonctionnement</h2>
@@ -40,6 +40,17 @@
     </div>
     <label for="reponse">Réponse à reporter dans la conversation</label>
     <textarea id="reponse" rows="2"></textarea>
+  </section>
+  <section id="perimetre" aria-labelledby="titre-perimetre" class="etaye-pile">
+    <h2 id="titre-perimetre">Périmètre des vérifications du reset</h2>
+    <p>Le reset de la story 9.1 restaure les données fictives actuellement stockées, dont les dossiers et les invitations. Le dossier de préparation prévoyait aussi de vérifier l’historique du poids corrigé et la publication v2. Leur stockage relève des stories 3.3, 7.2 et 7.3.</p>
+    <p>Aymen a validé le report D-54 le 22 novembre 2026.</p>
+    <div class="actions">
+      <button type="button" class="etaye-bouton etaye-bouton--principal" data-response="Je valide D-54. Pour AT-035-A, on vérifie le reset des données déjà stockées et on reporte le poids corrigé et la publication v2 aux stories 3.3, 7.2 et 7.3.">Valider le report D-54</button>
+      <button type="button" class="etaye-bouton etaye-bouton--secondaire" data-response="Je maintiens le poids corrigé et la publication v2 dans les vérifications de 9.1. L’acceptation attend leurs dépendances.">Maintenir les vérifications dans 9.1</button>
+    </div>
+    <label for="reponse-perimetre">Décision sur le périmètre à reporter dans la conversation</label>
+    <textarea id="reponse-perimetre" rows="3"></textarea>
   </section>
   <section aria-labelledby="fiche" class="etaye-pile">
     <h2 id="fiche">Captures de comparaison</h2>
@@ -71,9 +82,9 @@
     document.documentElement.dataset.theme = dark ? 'sombre' : 'clair';
     theme.setAttribute('aria-pressed', String(dark));
   });
-  const answer = document.querySelector('#reponse');
   for (const action of document.querySelectorAll('[data-response]')) {
     action.addEventListener('click', () => {
+      const answer = action.closest('section').querySelector('textarea');
       answer.value = action.dataset.response;
       answer.focus();
       answer.select();

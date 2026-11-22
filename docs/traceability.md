@@ -75,6 +75,10 @@ Status: Reviewed planning coverage, not implementation or design completion.2026
 | [10.7](planning-artifacts/epics/epic-10.md) | FR-009, FR-015 | BR-006, BR-013, BR-016 | J-05, J-06 | Operational evidence | — | AT-044-A/B/C |
 | [10.8](planning-artifacts/epics/epic-10.md) | FR-016, FR-020 | BR-016, BR-018 | J-08 | Operational evidence | — | AT-045-A/B/C |
 
+### Story 9.1 demo fixture verification
+
+AT-035-A remains mapped to story 9.1. Its runtime reset evidence covers the delivered practice, account, membership, patient, record, portal link and invitation tables. The phase-0 packet also proposes reset assertions on corrected weight lineage and publication v2. Those anchors exist in the design dataset. Runtime assertions require measurement storage from story 3.3 and publication storage and replacement from stories 7.2 and 7.3. UD-58 approves D-54 and allocates those two runtime assertions to the stories that deliver their storage. [Decision register](planning-artifacts/decisions-assumptions.md#story-91-approvals-2026-11-22) · [D-54](planning-artifacts/deferred-work.md) · [Implementation evidence](implementation-artifacts/story-9-1-implementation-record.md#executed-verification)
+
 ## Print/email and event lineage
 
 | Surface | Requirements / rule | Data and permission | Trigger | Story / test |

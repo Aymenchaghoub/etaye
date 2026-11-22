@@ -1,10 +1,10 @@
 {
   "kind": "documentary-validation-only",
-  "date": "2026-11-21",
+  "date": "2026-11-22",
   "ok": true,
   "checks": {
     "markdownFiles": 132,
-    "localLinks": 1666,
+    "localLinks": 1681,
     "apiOperations": 99,
     "apiSchemas": 93,
     "planningStories": 45,

@@ -2,6 +2,14 @@
 
 Updated: 2026-11-22. Owner: Aymen Chaghoub.
 
+## Story 9.1 running-UI and scope approvals with CodeRabbit follow-up — 2026-11-22
+
+**Decisions.** Aymen approved the presented running interface on PR #52 under UD-57. On the [local decision page](design/reviews/2026-11-22-story-9-1-runtime/index.html#perimetre), he accepted D-54 under UD-58. The AT-035-A runtime reset checks cover the currently stored fixture. The corrected weight and publication v2 assertions follow the stories that implement their storage. [Decision register](planning-artifacts/decisions-assumptions.md#story-91-approvals-2026-11-22) · [Acceptance map](traceability.md#story-91-demo-fixture-verification)
+
+**CodeRabbit follow-up.** The demo session deadline now rechecks the fixture and session while the protected view is hidden. The retry test asserts the presence of its idempotency key. The review page labels both demo ports. The record traces all four comments to the corrections. [Implementation record](implementation-artifacts/story-9-1-implementation-record.md#coderabbit-follow-up)
+
+**Actual verification and next action.** The isolated Web verification passed the type check, production build and all 56 browser smoke tests. Both real scripted Compose cases and the documentary checks passed. Check GitHub and the manual CodeRabbit review on the exact head of [draft PR #52](https://github.com/Aymenchaghoub/etaye/pull/52/checks). Merge requires Aymen's separate authorization.
+
 ## Story 9.1 local demonstration candidate — 2026-11-22
 
 **Phase.** Resumed the authorized story from the incomplete contract. Contract `27abfe2` precedes API, web and package implementation. Candidate `0939819b9ce637b34103fb40e2d32bde9c0fc401` restores the dedicated fixture, closes sessions and reaches the existing account destinations for Nora, Claire and Mila. [Implementation record](implementation-artifacts/story-9-1-implementation-record.md)

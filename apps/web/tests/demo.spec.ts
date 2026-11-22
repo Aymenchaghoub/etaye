@@ -135,6 +135,7 @@ test('the reset confirmation keeps focus, survives a busy response and reports a
   await expect(panel.getByRole('alert')).toContainText('Accès réservé');
   await expect(confirm).toBeDisabled();
   expect(keys).toHaveLength(2);
+  expect(keys[0]).toMatch(/\S/);
   expect(keys[1]).toBe(keys[0]);
   await accessible(page);
   await expect(page.getByText('Démonstration réinitialisée')).toHaveCount(0);
@@ -209,3 +210,52 @@ test('an unavailable operator session check offers verification without hiding t
   await expect(page.getByRole('main')).toBeFocused();
   await expect(page.getByRole('button', { name: 'Réinitialiser la démonstration' })).toBeVisible();
 });
+
+for (const reset of [true, false]) {
+  test(`the session deadline shows ${reset ? 'the intervening demo reset' : 'ordinary expiry for the same generation'}`, async ({ page }) => {
+    const start = new Date();
+    await page.clock.install({ time: start });
+    await page.clock.pauseAt(new Date(start.getTime() + 500));
+    await stub(page);
+    await page.addInitScript((fixture) => sessionStorage.setItem('etaye-demo-entry', JSON.stringify(fixture)),
+      { version, generation: 1 });
+
+    const membership = '11111111-1111-4111-8111-111111111111';
+    let expired = false;
+    let releaseMeta!: () => void;
+    const heldMeta = new Promise<void>((resolve) => { releaseMeta = resolve; });
+    await page.route('**/api/v1/meta', async (route) => {
+      if (expired) await heldMeta;
+      await route.fulfill({ json: { ...meta, demoResetGeneration: expired && reset ? 2 : 1 } });
+    });
+    await page.route('**/api/v1/session', (route) => expired
+      ? route.fulfill({ status: 401, json: { code: 'UNAUTHORIZED' } })
+      : route.fulfill({ json: {
+        account: { id: '22222222-2222-4222-8222-222222222222', displayName: 'Nora Lefebvre' },
+        membershipIds: [membership], portalLinkIds: [], expiresAt: new Date(start.getTime() + 10_000).toISOString(),
+        contexts: [{
+          grantId: membership, kind: 'MEMBERSHIP', practiceId: '33333333-3333-4333-8333-333333333333',
+          practiceName: 'Cabinet des Tilleuls', displayRole: 'CLINICAL',
+        }],
+      } }));
+
+    try {
+      await page.goto(`/compte/pratiques/${membership}`);
+      const workspace = page.getByRole('heading', { name: 'Votre espace de travail' });
+      await expect(workspace).toBeVisible();
+      expired = true;
+      await page.clock.fastForward(10_000);
+      await expect(workspace).toHaveCount(0);
+    } finally {
+      releaseMeta();
+    }
+
+    await expect(page.getByRole('heading', { name: 'Votre session a expiré' })).toBeFocused();
+    if (reset) {
+      await expect(page.getByText('Démonstration réinitialisée')).toBeVisible();
+    } else {
+      await expect(page.getByRole('button', { name: 'Se reconnecter' })).toBeVisible();
+      await expect(page.getByText('Démonstration réinitialisée')).toHaveCount(0);
+    }
+  });
+}
