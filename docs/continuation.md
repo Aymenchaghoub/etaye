@@ -2,6 +2,12 @@
 
 Updated: 2026-11-22. Owner: Aymen Chaghoub.
 
+## Story 1.1 review follow-up — 2026-11-22
+
+**Phase.** Follow-up to the seven findings on `5ec9e4a483785301f9742c2c4026e35e9e7d43a9`, audited against main `88e88d53bfb058af0eff3078452816be5eea5f86`. V7 closes the late database lock path. The invitation contract and Web recovery now describe and handle the verified outcomes. The [implementation record](implementation-artifacts/story-1-1-implementation-record.md#review-follow-up-on-main) records the evidence and limits. D-23 remains deferred.
+
+**Delivery decision.** Aymen authorized publishing and squash-merging this follow-up after local verification, a clean scoped diff and all required checks on the final PR head. The historical V3 stays immutable. This authorization applies only to Étaye story 1.1.
+
 ## Story 9.1 and CI quality PRs merged — 2026-11-22
 
 **Merges.** [PR #52](https://github.com/Aymenchaghoub/etaye/pull/52) (story 9.1, head `2853d5e`) squash-merged as `44c657d` after all seven required checks passed on the follow-up head and Aymen, out of CodeRabbit credit, explicitly authorized merging without a fourth review. The three CodeRabbit passes and their corrections stay recorded in the [implementation record](implementation-artifacts/story-9-1-implementation-record.md). [PR #53](https://github.com/Aymenchaghoub/etaye/pull/53) (CI quality, authorized by Aymen separately) was updated to the post-#52 main — resolving continuation.md, `api.yml` and `tsconfig.json` in favour of both sides: the `DemoHttpTest` required suite and `demo-e2e` include from 9.1 plus the coverage publication steps and `vitest.config.ts` — then squash-merged as `436d0da` with all checks green, including the executed API Testcontainers run, the 163-test Surefire gate and the new coverage assertions. Both squash trees were verified identical to their branch heads before branch deletion.
