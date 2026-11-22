@@ -119,7 +119,7 @@ class DemoHttpTest {
 
         assertThat(request(HttpMethod.GET, allowed, nora, null, null).getStatusCode().value()).isEqualTo(200);
         assertThat(request(HttpMethod.GET, "/practices/" + other + "/records/" + hugo, nora, null, null)
-                .getStatusCode().value()).isIn(403, 404);
+                .getStatusCode().value()).isEqualTo(404);
         assertThat(request(HttpMethod.GET, allowed, mila, null, null).getStatusCode().value()).isEqualTo(403);
         assertThat(request(HttpMethod.GET, "/session", operator, null, null).getBody())
                 .containsEntry("contexts", List.of());
@@ -199,6 +199,16 @@ class DemoHttpTest {
                     "SELECT state FROM public.invitation WHERE id = etaye_demo.fixture_id('INV-TEAM-01')")) {
                 assertThat(row.next()).isTrue();
                 assertThat(row.getString(1)).isEqualTo("PENDING");
+            }
+            try (var row = command.executeQuery("""
+                    SELECT count(*) FROM public.invitation WHERE
+                        (id = etaye_demo.fixture_id('INV-PORTAL-01') AND created_at < accepted_at
+                            AND updated_at = accepted_at AND accepted_at < expires_at)
+                        OR (id = etaye_demo.fixture_id('INV-PORTAL-02') AND created_at < expires_at
+                            AND updated_at = expires_at)
+                    """)) {
+                assertThat(row.next()).isTrue();
+                assertThat(row.getInt(1)).isEqualTo(2);
             }
         }
         assertThat(request(HttpMethod.GET, "/session", nora, null, null).getStatusCode().value()).isEqualTo(401);

@@ -67,6 +67,18 @@ CodeRabbit reviewed `82f5589706640cdaf4bb0eff786f51d19dc02d25` and raised four f
 
 The encoded reset regression previously returned 409. After the fixes, Maven verified all 163 API tests. The web type check and production build passed, as did all 58 Chromium smoke tests. Both real scripted journeys passed on a fresh Compose project with an isolated synthetic database. The documentary validator and 99 tooling tests also passed.
 
+### Third CodeRabbit review
+
+CodeRabbit reviewed `c3a08142e8f173b1b90e07c1833196d0658b7ff1`. [Review](https://github.com/Aymenchaghoub/etaye/pull/52#pullrequestreview-6011580584)
+
+| Finding | Disposition |
+|---|---|
+| Historical invitation dates | Demo-only V6 repairs the accepted and expired seed dates on upgrade and on every reset. V5 remains immutable. The upgrade adjusts existing fixture rows without resetting the database or invalidating its sessions. Pending expiry still derives from the restore time. |
+| Cross-practice existence hiding | The real HTTP test now requires 404 for Nora's cross-practice read and retains 403 for Mila's forbidden clinical access in her own practice. |
+| Stale reset baseline | A new attempt samples live metadata before sending a reset. A failed baseline read allows retry without a write. An ambiguous transport or server failure is reconciled against that attempt's marker, while an explicit authorization refusal is displayed as such. Retries retain the saved marker and idempotency key. |
+
+All 163 API tests passed, including the date order after a real reset. The Web type check, production build and all 59 Chromium smoke tests passed. Parallel local browser runs timed out on unrelated tests. The complete passing run used one worker with retries disabled. Both scripted journeys also passed on a fresh Compose database with V6.
+
 ## Running it
 
 From the repository root run `./infra/demo/start.sh` and open `http://localhost:4179`. The recorded review stack uses `http://localhost:4189`. Credentials and reset instructions are in the [local demo README](../../infra/demo/README.md). The running-UI review is a separate decision from the design approvals and merge authorization. [Review page](../design/reviews/2026-11-22-story-9-1-runtime/index.html)

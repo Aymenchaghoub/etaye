@@ -131,16 +131,28 @@ export function DemoShowcase() {
     if (!snapshot || pending || waiting) return;
     const request = new AbortController();
     mutation.current = request;
-    const attempt = unconfirmedReset.current ?? { key: crypto.randomUUID(), marker: snapshot.marker };
-    unconfirmedReset.current = attempt;
-    storeReset(attempt);
     setPending(true);
     setResetFailure(undefined);
+    let attempt = unconfirmedReset.current;
+    if (!attempt) {
+      const baseline = await accountApi.readMeta(request.signal);
+      if (request.signal.aborted) return;
+      const marker = baseline.ok ? fixtureMarker(baseline.data) : undefined;
+      if (!marker) {
+        setPending(false);
+        setResetFailure(baseline.ok ? 'unavailable' : failureFor(baseline.status, baseline.code));
+        if (!baseline.ok && baseline.status === 429) block(baseline.retryAfter);
+        return;
+      }
+      attempt = { key: crypto.randomUUID(), marker };
+      unconfirmedReset.current = attempt;
+      storeReset(attempt);
+    }
     const result = await accountApi.resetDemo(attempt.key, request.signal);
     if (request.signal.aborted) return;
     const accepted = result.ok && result.data?.accepted === true;
     let fixtureRestored = false;
-    if (!result.ok && (result.status === 0 || result.status >= 500 || result.status === 401 || result.status === 403)) {
+    if (!result.ok && (result.status === 0 || result.status >= 500)) {
       const meta = await accountApi.readMeta(request.signal);
       if (request.signal.aborted) return;
       const marker = meta.ok ? fixtureMarker(meta.data) : undefined;

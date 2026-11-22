@@ -141,6 +141,36 @@ test('the reset confirmation keeps focus, survives a busy response and reports a
   await expect(page.getByText('Démonstration réinitialisée')).toHaveCount(0);
 });
 
+test('a new reset uses live metadata and leaves an unrelated reset unconfirmed', async ({ page }) => {
+  await stub(page, true);
+  let generation = 1;
+  let baselineUnavailable = false;
+  let resetRequests = 0;
+  await page.route('**/api/v1/meta', (route) => baselineUnavailable
+    ? route.fulfill({ status: 503, json: { code: 'SERVICE_UNAVAILABLE' } })
+    : route.fulfill({ json: { ...meta, demoResetGeneration: generation } }));
+  await page.route('**/api/v1/demo/reset', (route) => {
+    resetRequests++;
+    return route.abort('failed');
+  });
+  await page.goto('/demonstration');
+  await page.getByRole('button', { name: 'Réinitialiser la démonstration' }).click();
+  generation = 2;
+  baselineUnavailable = true;
+
+  const confirm = page.getByRole('button', { name: 'Confirmer la réinitialisation' });
+  const unavailable = page.getByRole('alert').filter({ hasText: 'Démonstration indisponible' });
+  await confirm.click();
+  await expect(unavailable).toBeVisible();
+  expect(resetRequests).toBe(0);
+
+  baselineUnavailable = false;
+  await confirm.click();
+  await expect(unavailable).toBeVisible();
+  await expect(page.getByText('Démonstration réinitialisée')).toHaveCount(0);
+  expect(resetRequests).toBe(1);
+});
+
 test('a new sign-in after a reset opens the current fixture', async ({ page }) => {
   await stub(page);
   let generation = 1;

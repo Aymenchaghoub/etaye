@@ -2,6 +2,12 @@
 
 Updated: 2026-11-22. Owner: Aymen Chaghoub.
 
+## Story 9.1 third CodeRabbit review — 2026-11-22
+
+**Phase.** The follow-up corrects the historical invitation date order with an additive demo migration, verifies the exact cross-practice 404, and reads the current fixture marker before a new reset attempt. The subsequent CI quality work authorized by Aymen is scoped to a separate branch. [Implementation record](implementation-artifacts/story-9-1-implementation-record.md#third-coderabbit-review) · [PR #52 checks](https://github.com/Aymenchaghoub/etaye/pull/52/checks)
+
+**Actual verification and next action.** Maven passed 163 API tests. The web type check, production build, 59 Chromium smoke tests in a serial run, and both scripted journeys on a fresh Compose database passed. Run the final checks on the follow-up head and merge once the conditional approval is satisfied.
+
 ## Story 9.1 second CodeRabbit review and conditional merge approval — 2026-11-22
 
 **Decision.** Aymen authorized merging PR #52 once all checks are green. The second CodeRabbit review on `82f5589` identified three reproducible issues. The follow-up aligns API reset admission with servlet routing, offers retry after an inconclusive session check, and stops demo startup on credential generation failure. The documentary count of 216 was reproduced from a clean checkout of the reviewed commit. [Implementation record](implementation-artifacts/story-9-1-implementation-record.md#second-coderabbit-review)
