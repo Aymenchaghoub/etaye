@@ -56,6 +56,20 @@ class AssertTestReportsTests(unittest.TestCase):
         self.check_report("surefire", self.root, 0, "tests=5", minimum=5,
                           options=("--require-suite", "example.Suite", "--require-suite", "example.Other"))
 
+    def test_vitest_requires_passing_cases_in_the_expected_file(self):
+        report = self.root / "vitest.json"
+        file = "src/auth/session-work.test.ts"
+        suite = {"name": "/workspace/apps/web/" + file, "status": "passed",
+                 "assertionResults": [{"status": "passed"}]}
+        data = {"success": True, "numTotalTests": 1, "numPassedTests": 1, "numFailedTests": 0,
+                "numPendingTests": 0, "numTodoTests": 0, "testResults": [suite]}
+        report.write_text(json.dumps(data), encoding="utf-8")
+        self.check_report("vitest", report, 0, "tests=1", options=("--require-file", file))
+        self.check_report("vitest", report, 1, "Missing required Vitest file", options=("--require-file", "missing.ts"))
+        suite["assertionResults"][0]["status"] = "skipped"
+        report.write_text(json.dumps(data), encoding="utf-8")
+        self.check_report("vitest", report, 1, "only passed test cases")
+
     def test_surefire_requires_report_files(self):
         for directory in (self.root, self.root / "absent"):
             with self.subTest(directory=directory):

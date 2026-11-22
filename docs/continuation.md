@@ -48,6 +48,10 @@ Updated: 2026-11-22. Owner: Aymen Chaghoub.
 
 **Next action.** Run the installed BMAD readiness check, then open `feat/9.1-enter-reset-demo-journeys` from current `main`; the first commit carries the reviewed contract change (DemoScenario extension, meta version field, README "Synthetic demonstration" section, operation index and roadmap 98/99 sync) before any application change, per the 10.2/1.1/1.3 precedent.
 
+## CI quality checks authorized — 2026-11-22
+
+Aymen authorized coverage and dependency protection in a separate CI change. Local verification of the initial baseline measured 1,293 of 1,507 API lines with 160 tests and 29 of 622 Web lines with five unit tests. The additional Web smoke suite remains separate. The targeted `js-yaml` upgrade passed the native pnpm audit and the SDK drift check. Verify the GitHub job results before making the dependency status required. The hosted quality gate needs project binding and analysis credentials. [Coverage and dependency checks](operations/cicd-deployment-strategy.md#coverage-and-dependency-checks)
+
 ## Story 1.3 running UI approved — 2026-11-21
 
 **Phase.** The design approval and authorization are preserved on `docs/story-1-3-phase-0` at `ab7ebcc`. The dedicated feature worktree passed the story readiness check and delivered the contract at `0b24129` and application candidate at `309891e`. The cockpit was regenerated from the documentary worktree and reports 1.3 authorized.
