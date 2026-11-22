@@ -2,6 +2,14 @@
 
 Updated: 2026-11-22. Owner: Aymen Chaghoub.
 
+## Story 9.1 and CI quality PRs merged — 2026-11-22
+
+**Merges.** [PR #52](https://github.com/Aymenchaghoub/etaye/pull/52) (story 9.1, head `2853d5e`) squash-merged as `44c657d` after all seven required checks passed on the follow-up head and Aymen, out of CodeRabbit credit, explicitly authorized merging without a fourth review. The three CodeRabbit passes and their corrections stay recorded in the [implementation record](implementation-artifacts/story-9-1-implementation-record.md). [PR #53](https://github.com/Aymenchaghoub/etaye/pull/53) (CI quality, authorized by Aymen separately) was updated to the post-#52 main — resolving continuation.md, `api.yml` and `tsconfig.json` in favour of both sides: the `DemoHttpTest` required suite and `demo-e2e` include from 9.1 plus the coverage publication steps and `vitest.config.ts` — then squash-merged as `436d0da` with all checks green, including the executed API Testcontainers run, the 163-test Surefire gate and the new coverage assertions. Both squash trees were verified identical to their branch heads before branch deletion.
+
+**Effects.** JaCoCo and LCOV coverage artifacts are published behind measured-line assertions, the dependency-review workflow fails on high/critical advisories, and the `js-yaml` workspace override to 4.3.2 closed Dependabot alerts 55 and 56 on merge; alert 57 (CVE-2026-84375, patched exactly by 4.3.2) remained open pending Dependabot's next default-branch scan — the lockfile contains only 4.3.2. Housekeeping completed: integrated worktree and local branches removed, the principal checkout is back on a fast-forwarded clean `main`, and the cockpit was regenerated (9.1 merged with PR #52, next candidate 1.4 missing only BMAD authorization), its suites pass and the Desktop copy is updated.
+
+**Open follow-ups.** Make `Dependency review` a required status after observing further runs; the hosted SonarQube gate still needs project binding and analysis credentials; story 1.4 phase 0 requires Aymen's written authorization before any code.
+
 ## Story 9.1 third CodeRabbit review — 2026-11-22
 
 **Phase.** The follow-up corrects the historical invitation date order with an additive demo migration, verifies the exact cross-practice 404, and reads the current fixture marker before a new reset attempt. The subsequent CI quality work authorized by Aymen is scoped to a separate branch. [Implementation record](implementation-artifacts/story-9-1-implementation-record.md#third-coderabbit-review) · [PR #52 checks](https://github.com/Aymenchaghoub/etaye/pull/52/checks)
