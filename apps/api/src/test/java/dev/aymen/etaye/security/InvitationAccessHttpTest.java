@@ -169,6 +169,7 @@ class InvitationAccessHttpTest extends AbstractPostgresTest {
                 "password", PASSWORD), UUID.randomUUID().toString());
         assertThat(linked.getStatusCode().value()).isEqualTo(200);
         String linkId = (String) linked.getBody().get("activatedPortalLinkId");
+        String linkedAccountId = (String) ((Map<?, ?>) linked.getBody().get("account")).get("id");
 
         String recipient = syntheticEmail();
         String token = randomToken();
@@ -189,6 +190,10 @@ class InvitationAccessHttpTest extends AbstractPostgresTest {
         assertThat(conflict.getBody().toString()).doesNotContain(record.toString(), linkId, recipient);
         assertThat(query("SELECT id::text FROM portal_link WHERE practice_id = '" + practice + "' AND state = 'ACTIVE'"))
                 .isEqualTo(linkId);
+        assertThat(query("SELECT account_id::text FROM portal_link WHERE id = '" + linkId + "'"))
+                .isEqualTo(linkedAccountId);
+        assertThat(query("SELECT record_id::text FROM portal_link WHERE id = '" + linkId + "'"))
+                .isEqualTo(record.toString());
         assertThat(query("SELECT count(*) FROM account WHERE normalized_email = '" + recipient + "'")).isEqualTo("0");
         assertThat(queryPractice(practice, "SELECT state FROM invitation WHERE token_digest = '" + digest(token) + "'"))
                 .isEqualTo("PENDING");
