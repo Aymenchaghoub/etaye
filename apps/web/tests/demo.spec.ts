@@ -211,8 +211,8 @@ test('an unavailable operator session check offers verification without hiding t
   await expect(page.getByRole('button', { name: 'Réinitialiser la démonstration' })).toBeVisible();
 });
 
-for (const reset of [true, false]) {
-  test(`the session deadline shows ${reset ? 'the intervening demo reset' : 'ordinary expiry for the same generation'}`, async ({ page }) => {
+for (const outcome of ['reset', 'expiry', 'unavailable', 'invalid marker'] as const) {
+  test(`the session recheck at the deadline handles ${outcome}`, async ({ page }) => {
     const start = new Date();
     await page.clock.install({ time: start });
     await page.clock.pauseAt(new Date(start.getTime() + 500));
@@ -221,11 +221,21 @@ for (const reset of [true, false]) {
       { version, generation: 1 });
 
     const membership = '11111111-1111-4111-8111-111111111111';
+    const needsRetry = outcome === 'unavailable' || outcome === 'invalid marker';
     let expired = false;
+    let expiredMetaReads = 0;
     let releaseMeta!: () => void;
     const heldMeta = new Promise<void>((resolve) => { releaseMeta = resolve; });
     await page.route('**/api/v1/meta', async (route) => {
       if (expired) await heldMeta;
+      const read = expired ? ++expiredMetaReads : 0;
+      if (read === 2 && outcome === 'unavailable') {
+        return route.fulfill({ status: 503, json: { code: 'SERVICE_UNAVAILABLE' } });
+      }
+      if (read === 2 && outcome === 'invalid marker') {
+        return route.fulfill({ json: { ...meta, demoResetGeneration: 0 } });
+      }
+      const reset = outcome === 'reset' || (needsRetry && read > 2);
       await route.fulfill({ json: { ...meta, demoResetGeneration: expired && reset ? 2 : 1 } });
     });
     await page.route('**/api/v1/session', (route) => expired
@@ -250,8 +260,15 @@ for (const reset of [true, false]) {
       releaseMeta();
     }
 
-    await expect(page.getByRole('heading', { name: 'Votre session a expiré' })).toBeFocused();
-    if (reset) {
+    const expiryHeading = page.getByRole('heading', { name: 'Votre session a expiré' });
+    if (needsRetry) {
+      const retry = page.getByRole('button', { name: 'Réessayer' });
+      await expect(retry).toBeVisible();
+      await expect(expiryHeading).toHaveCount(0);
+      await retry.click();
+    }
+    await expect(expiryHeading).toBeFocused();
+    if (outcome !== 'expiry') {
       await expect(page.getByText('Démonstration réinitialisée')).toBeVisible();
     } else {
       await expect(page.getByRole('button', { name: 'Se reconnecter' })).toBeVisible();

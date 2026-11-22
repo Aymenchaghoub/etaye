@@ -2,6 +2,12 @@
 
 Updated: 2026-11-22. Owner: Aymen Chaghoub.
 
+## Story 9.1 second CodeRabbit review and conditional merge approval — 2026-11-22
+
+**Decision.** Aymen authorized merging PR #52 once all checks are green. The second CodeRabbit review on `82f5589` identified three reproducible issues. The follow-up aligns API reset admission with servlet routing, offers retry after an inconclusive session check, and stops demo startup on credential generation failure. The documentary count of 216 was reproduced from a clean checkout of the reviewed commit. [Implementation record](implementation-artifacts/story-9-1-implementation-record.md#second-coderabbit-review)
+
+**Actual verification and next action.** Maven passed 163 API tests. The web type check, production build and 58 browser smoke tests passed, as did both scripted journeys on an isolated Compose stack and the 99 documentary tooling tests. Verify the exact follow-up head and resolve any outstanding review findings, then merge and update the local checkout and cockpit. [PR checks](https://github.com/Aymenchaghoub/etaye/pull/52/checks)
+
 ## Story 9.1 running-UI and scope approvals with CodeRabbit follow-up — 2026-11-22
 
 **Decisions.** Aymen approved the presented running interface on PR #52 under UD-57. On the [local decision page](design/reviews/2026-11-22-story-9-1-runtime/index.html#perimetre), he accepted D-54 under UD-58. The AT-035-A runtime reset checks cover the currently stored fixture. The corrected weight and publication v2 assertions follow the stories that implement their storage. [Decision register](planning-artifacts/decisions-assumptions.md#story-91-approvals-2026-11-22) · [Acceptance map](traceability.md#story-91-demo-fixture-verification)

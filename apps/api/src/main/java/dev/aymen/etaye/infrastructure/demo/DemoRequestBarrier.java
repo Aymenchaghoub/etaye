@@ -30,7 +30,8 @@ public class DemoRequestBarrier extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
+        // Use the decoded servlet path so admission follows the container's routing.
+        String path = request.getServletPath();
         return !path.startsWith("/api/v1/") || path.startsWith("/api/v1/probes/")
                 || (DemoFixture.RESET_PATH.equals(path) && "POST".equals(request.getMethod()));
     }

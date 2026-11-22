@@ -7,7 +7,8 @@ if [[ ! -f .env ]]; then
     temp=$(mktemp .env.XXXXXX)
     trap 'rm -f -- "$temp"' EXIT
     for field in POSTGRES_ADMIN_PASSWORD ETAYE_OWNER_PASSWORD ETAYE_RUNTIME_PASSWORD ETAYE_IDENTITY_PASSWORD; do
-        printf '%s=%s\n' "$field" "$(openssl rand -hex 24)"
+        password=$(openssl rand -hex 24)
+        printf '%s=%s\n' "$field" "$password"
     done > "$temp"
     # A concurrent first start retains the first completed environment file.
     ln -- "$temp" .env 2>/dev/null || [[ -f .env ]]

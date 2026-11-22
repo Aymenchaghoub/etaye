@@ -22,6 +22,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.client.RestClient;
 
+import java.net.URI;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
@@ -129,6 +130,8 @@ class DemoHttpTest {
 
         assertThat(request(HttpMethod.POST, create, csrf(mila), key, patient).getStatusCode().value()).isEqualTo(403);
         assertThat(reset(null, key, REASON).getStatusCode().value()).isEqualTo(401);
+        assertThat(request(HttpMethod.POST, "/demo/%72eset", null, key, Map.of("reason", REASON))
+                .getStatusCode().value()).isEqualTo(401);
         var noraCsrf = csrf(nora);
         assertThat(reset(noraCsrf, key, REASON).getStatusCode().value()).isEqualTo(403);
         assertThat(request(HttpMethod.POST, RESET_PATH, noraCsrf, null, Map.of()).getStatusCode().value()).isEqualTo(403);
@@ -154,12 +157,13 @@ class DemoHttpTest {
         ResponseEntity<Map<String, Object>> reset;
         String lateCookie;
         try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
-            var lateLogin = executor.submit(() -> request(HttpMethod.POST, "/session", lateLoginCsrf, null,
+            var lateLogin = executor.submit(() -> requestAt(HttpMethod.POST, "/api/%761/session", lateLoginCsrf, null,
                     Map.of("email", "claire.martin@example.test", "password", PASSWORD), true));
             java.util.concurrent.Future<ResponseEntity<Map<String, Object>>> first;
             try {
                 assertThat(loginPause.entered().await(3, TimeUnit.SECONDS)).isTrue();
-                first = executor.submit(() -> reset(operatorCsrf, key, REASON));
+                first = executor.submit(() -> requestAt(HttpMethod.POST, "/api/v1/demo/%72eset", operatorCsrf, key,
+                        Map.of("reason", REASON), false));
                 var waiting = System.nanoTime() + TimeUnit.SECONDS.toNanos(1);
                 while (request(HttpMethod.GET, "/meta", null, null, null).getStatusCode().value() == 200
                         && System.nanoTime() < waiting) {
@@ -247,12 +251,12 @@ class DemoHttpTest {
 
     private ResponseEntity<Map<String, Object>> request(HttpMethod method, String path, Browser browser, String key,
                                                          Map<String, String> body) {
-        return request(method, path, browser, key, body, false);
+        return requestAt(method, "/api/v1" + path, browser, key, body, false);
     }
 
-    private ResponseEntity<Map<String, Object>> request(HttpMethod method, String path, Browser browser, String key,
-                                                         Map<String, String> body, boolean pauseLogin) {
-        var call = RestClient.create("http://localhost:" + port + "/api/v1").method(method).uri(path);
+    private ResponseEntity<Map<String, Object>> requestAt(HttpMethod method, String path, Browser browser, String key,
+                                                           Map<String, String> body, boolean pauseLogin) {
+        var call = RestClient.create().method(method).uri(URI.create("http://localhost:" + port + path));
         if (pauseLogin) call.header("X-Test-Hold-Login", "true");
         if (browser != null) {
             call.header(HttpHeaders.COOKIE, browser.cookie());

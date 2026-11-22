@@ -54,6 +54,19 @@ CodeRabbit reviewed `0a63feb990e7f400757c8aeadde4e51afc982be2` and raised four m
 
 Aymen approved the running interface separately under [UD-57](../planning-artifacts/decisions-assumptions.md#story-91-approvals-2026-11-22). The deadline regression reproduced the missing reset notice before the fix. A fresh isolated worktree passed the type check, the production build and all 56 Chromium smoke tests after the fix. Both scripted Compose journeys also passed against the rebuilt local package. The [PR checks](https://github.com/Aymenchaghoub/etaye/pull/52/checks) record results for the exact head.
 
+### Second CodeRabbit review
+
+CodeRabbit reviewed `82f5589706640cdaf4bb0eff786f51d19dc02d25` and raised four findings. [Review](https://github.com/Aymenchaghoub/etaye/pull/52#pullrequestreview-6011388203)
+
+| Finding | Disposition |
+|---|---|
+| Encoded request paths | The demo barrier and the reset authentication check use the container's decoded servlet path. The real HTTP regression verifies that reset waits for in-flight sign-in, closes the resulting session, and responds to an anonymous reset with 401. |
+| Failed second metadata read | If a session check returns 401 between metadata reads, an unavailable or invalid follow-up marker keeps the retry action available while protected content stays hidden. The browser tests verify retry into the reset notice and preserve ordinary expiration for the same generation. |
+| Documentary scan count | A fresh detached checkout of the reviewed commit returned 216 eligible files, including 194 under `docs/` and 22 Python files under `tools/`. The committed report already matched the validator output from that checkout. |
+| Credential generation failure | Startup exits before publishing `.env` when OpenSSL fails. A temporary-directory check verified cleanup, no Compose invocation on failure, and successful retry with four generated values and mode `0600`. |
+
+The encoded reset regression previously returned 409. After the fixes, Maven verified all 163 API tests. The web type check and production build passed, as did all 58 Chromium smoke tests. Both real scripted journeys passed on a fresh Compose project with an isolated synthetic database. The documentary validator and 99 tooling tests also passed.
+
 ## Running it
 
 From the repository root run `./infra/demo/start.sh` and open `http://localhost:4179`. The recorded review stack uses `http://localhost:4189`. Credentials and reset instructions are in the [local demo README](../../infra/demo/README.md). The running-UI review is a separate decision from the design approvals and merge authorization. [Review page](../design/reviews/2026-11-22-story-9-1-runtime/index.html)

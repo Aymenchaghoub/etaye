@@ -30,7 +30,7 @@ final class ExistingSessionCsrfFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        if (demoEntryPoint != null && DemoFixture.RESET_PATH.equals(request.getRequestURI())
+        if (demoEntryPoint != null && DemoFixture.RESET_PATH.equals(request.getServletPath())
                 && "POST".equals(request.getMethod())
                 && SecurityContextHolder.getContext().getAuthentication() == null) {
             demoEntryPoint.commence(request, response,

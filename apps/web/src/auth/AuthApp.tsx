@@ -277,7 +277,12 @@ function AccountGate({ target, initial, onHalt, onDemoReset, leave, enter, demo,
       if (entry && marker && !result.ok && result.status === 401 && !fixtureChanged(entry, marker)) {
         const latest = await accountApi.readMeta(request.signal);
         if (request.signal.aborted) return;
-        if (latest.ok) marker = fixtureMarker(latest.data) ?? marker;
+        marker = latest.ok ? fixtureMarker(latest.data) : undefined;
+        if (!marker) {
+          setView(undefined);
+          setUnavailable(true);
+          return;
+        }
       }
       const fresh = demo.current.freshSignIn && result.ok;
       if (entry && marker && !fresh && fixtureChanged(entry, marker)) {
