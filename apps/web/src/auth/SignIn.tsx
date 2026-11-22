@@ -1,10 +1,12 @@
 import { type FormEvent, useEffect, useRef, useState } from 'react';
 import { accountApi } from '../api/browser';
 import type { Session } from '../api/generated/types.gen';
+import { SHOWCASE } from '../demo/demo-entry';
 import { AuthHeading, AuthShell, Banner, emailError, ErrorSummary, Field, type FieldError, useRetryDelay } from './AuthComponents';
 
-export function SignIn({ patient, returning, returnTo, onCancel, onSignedIn }: {
-  patient: boolean; returning: boolean; returnTo?: string; onCancel?: () => void; onSignedIn: (session: Session) => void;
+export function SignIn({ patient, returning, returnTo, demo, onCancel, onSignedIn }: {
+  patient: boolean; returning: boolean; returnTo?: string; demo?: { actor?: string; email?: string };
+  onCancel?: () => void; onSignedIn: (session: Session) => void;
 }) {
   const [showPassword, setShowPassword] = useState(false);
   const [pending, setPending] = useState(false);
@@ -62,6 +64,9 @@ export function SignIn({ patient, returning, returnTo, onCancel, onSignedIn }: {
           ? 'Consultez vos rendez-vous et les informations que votre cabinet a publiées pour vous.'
           : "Espace des professionnels et de l'administration des cabinets."}
       </AuthHeading>
+      {demo?.actor && <Banner title="Scénario fictif" information>
+        <p>Vous avez choisi {demo.actor}. <a href={SHOWCASE}>Choisir un autre scénario</a></p>
+      </Banner>}
       {returning && <Banner title="Votre session a expiré" information>
         Reconnectez-vous pour revenir à la page demandée. Aucune information du dossier n'est affichée avant la connexion.
       </Banner>}
@@ -76,7 +81,7 @@ export function SignIn({ patient, returning, returnTo, onCancel, onSignedIn }: {
       <div className="etaye-auth__carte">
         <form className="etaye-form" noValidate onSubmit={submit} aria-busy={pending}>
           <Field id="l-mail" name="email" type="email" label="Adresse e-mail" autoComplete="username"
-            autoFocus maxLength={254} error={errors.find(({ id }) => id === 'l-mail')} />
+            autoFocus defaultValue={demo?.email} maxLength={254} error={errors.find(({ id }) => id === 'l-mail')} />
           <Field id="l-pw" name="password" type={showPassword ? 'text' : 'password'} label="Mot de passe"
             autoComplete="current-password" maxLength={2048} error={errors.find(({ id }) => id === 'l-pw')} />
           <div className="etaye-auth__options">

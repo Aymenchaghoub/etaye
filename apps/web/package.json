@@ -10,6 +10,7 @@
     "test:coverage": "vitest run --coverage",
     "test:smoke": "playwright test",
     "test:e2e-real": "playwright test --config=playwright.real.config.ts",
+    "test:demo": "playwright test --config=playwright.demo.config.ts",
     "generate:api": "node scripts/generate-api.mjs",
     "check:api": "node scripts/generate-api.mjs --check"
   },
