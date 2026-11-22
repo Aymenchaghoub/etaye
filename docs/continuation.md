@@ -1,6 +1,40 @@
 # Session continuation
 
-Updated: 2026-11-21. Owner: Aymen Chaghoub.
+Updated: 2026-11-22. Owner: Aymen Chaghoub.
+
+## Story 9.1 third CodeRabbit review — 2026-11-22
+
+**Phase.** The follow-up corrects the historical invitation date order with an additive demo migration, verifies the exact cross-practice 404, and reads the current fixture marker before a new reset attempt. The subsequent CI quality work authorized by Aymen is scoped to a separate branch. [Implementation record](implementation-artifacts/story-9-1-implementation-record.md#third-coderabbit-review) · [PR #52 checks](https://github.com/Aymenchaghoub/etaye/pull/52/checks)
+
+**Actual verification and next action.** Maven passed 163 API tests. The web type check, production build, 59 Chromium smoke tests in a serial run, and both scripted journeys on a fresh Compose database passed. Run the final checks on the follow-up head and merge once the conditional approval is satisfied.
+
+## Story 9.1 second CodeRabbit review and conditional merge approval — 2026-11-22
+
+**Decision.** Aymen authorized merging PR #52 once all checks are green. The second CodeRabbit review on `82f5589` identified three reproducible issues. The follow-up aligns API reset admission with servlet routing, offers retry after an inconclusive session check, and stops demo startup on credential generation failure. The documentary count of 216 was reproduced from a clean checkout of the reviewed commit. [Implementation record](implementation-artifacts/story-9-1-implementation-record.md#second-coderabbit-review)
+
+**Actual verification and next action.** Maven passed 163 API tests. The web type check, production build and 58 browser smoke tests passed, as did both scripted journeys on an isolated Compose stack and the 99 documentary tooling tests. Verify the exact follow-up head and resolve any outstanding review findings, then merge and update the local checkout and cockpit. [PR checks](https://github.com/Aymenchaghoub/etaye/pull/52/checks)
+
+## Story 9.1 running-UI and scope approvals with CodeRabbit follow-up — 2026-11-22
+
+**Decisions.** Aymen approved the presented running interface on PR #52 under UD-57. On the [local decision page](design/reviews/2026-11-22-story-9-1-runtime/index.html#perimetre), he accepted D-54 under UD-58. The AT-035-A runtime reset checks cover the currently stored fixture. The corrected weight and publication v2 assertions follow the stories that implement their storage. [Decision register](planning-artifacts/decisions-assumptions.md#story-91-approvals-2026-11-22) · [Acceptance map](traceability.md#story-91-demo-fixture-verification)
+
+**CodeRabbit follow-up.** The demo session deadline now rechecks the fixture and session while the protected view is hidden. The retry test asserts the presence of its idempotency key. The review page labels both demo ports. The record traces all four comments to the corrections. [Implementation record](implementation-artifacts/story-9-1-implementation-record.md#coderabbit-follow-up)
+
+**Actual verification and next action.** The isolated Web verification passed the type check, production build and all 56 browser smoke tests. Both real scripted Compose cases and the documentary checks passed. Check GitHub and the manual CodeRabbit review on the exact head of [draft PR #52](https://github.com/Aymenchaghoub/etaye/pull/52/checks). Merge requires Aymen's separate authorization.
+
+## Story 9.1 local demonstration candidate — 2026-11-22
+
+**Phase.** Resumed the authorized story from the incomplete contract. Contract `27abfe2` precedes API, web and package implementation. Candidate `0939819b9ce637b34103fb40e2d32bde9c0fc401` restores the dedicated fixture, closes sessions and reaches the existing account destinations for Nora, Claire and Mila. [Implementation record](implementation-artifacts/story-9-1-implementation-record.md)
+
+**Actual verification.** 163 API tests, 54 browser smoke tests, two real Playwright cases and the Compose cold-start check passed. The opened comparisons record S-01 CORE and the I-26 and S-37 sampled demo states. The local package and both video views are available for Aymen's review. [Running-UI review and evidence](design/reviews/2026-11-22-story-9-1-runtime.md)
+
+**Review and next action.** Aymen permitted Zcode for the final review. The provider reached its usage limit. The single completed Codex review led to compatibility, reset recovery, session notice and keyboard focus fixes. The candidate is in [draft PR #52](https://github.com/Aymenchaghoub/etaye/pull/52). Verify the required jobs and the manual CodeRabbit response on the exact PR head. Running-UI and merge decisions remain with Aymen. The public hosting and full clinical fixture scope retain their documented owners.
+
+## S-37 and I-26 reference designs approved — 2026-11-21
+
+**User decision.** Aymen explicitly approved the S-37 and I-26 reference designs. [Coverage](design/coverage.csv) records both approvals and links to the existing [design inventory](implementation-artifacts/story-9-1-context-packet.md#3-design-inventory-and-evidence-to-produce). Responsive comparisons and functional review remain pending. Figma reconciliation resumes when read access returns or Aymen requests it.
+
+**Actual verification and next action.** The documentary validator and targeted CSV check passed. Chromium captured all ten offline reference states with a 1440×1024 viewport in the light theme. Both contact sheets were opened and delivered with the individual images for Aymen's reference. The next story 9.1 step is the readiness check under UD-56.
 
 ## Story 9.1 phase 0 prepared and arbitrated (UD-56) — 2026-11-21
 

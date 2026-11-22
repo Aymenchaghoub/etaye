@@ -14,6 +14,10 @@
 - **Story 1.2** adds Web sign-in, access recovery with an optional local test inbox, and session expiry and return. [Implementation record](docs/implementation-artifacts/story-1-2-implementation-record.md)
 - The consultation screens, patient portal and Expo client are planned. [Story delivery order](docs/planning-artifacts/story-delivery-order.md) · [Roadmap](docs/planning-artifacts/roadmap.md) · [Design coverage](docs/design/coverage.csv)
 
+## Run the local demonstration
+
+Start the Compose package with `./infra/demo/start.sh` and open `http://localhost:4179`. Choose a fictional practitioner, patient or administration scenario. The guide lists the fictional accounts, the reset procedure and the recorded Playwright walkthrough. [Local demonstration guide](infra/demo/README.md)
+
 ## Develop locally
 
 Use Java 25, Node 26, Corepack, Python 3 and Docker. The repository pins pnpm 12.21.0 and includes a Maven wrapper. For the full stack and its generated local database credentials, follow [Running it locally](docs/implementation-artifacts/story-10-1-implementation-record.md#9-running-it-locally). The web server at `http://localhost:5173` proxies API calls to `http://127.0.0.1:8080`.

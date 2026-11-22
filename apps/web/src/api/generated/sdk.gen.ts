@@ -28,7 +28,7 @@ export const getReadiness = <ThrowOnError extends boolean = false>(options?: Opt
 /**
  * Discover supported API and client versions
  *
- * Public and stateless. Uses no session or practice data.
+ * Public and stateless: no session or practice data. In the local demo package this no-store response also exposes the synthetic fixture version and reset generation (UD-56 E1). The demo metadata can be unavailable during a reset or database outage.
  */
 export const getApiMeta = <ThrowOnError extends boolean = false>(options?: Options<GetApiMetaData, ThrowOnError>): RequestResult<GetApiMetaResponses, GetApiMetaErrors, ThrowOnError> => (options?.client ?? client).get<GetApiMetaResponses, GetApiMetaErrors, ThrowOnError>({ url: '/meta', ...options });
 
@@ -1572,14 +1572,14 @@ export const downloadPublishedAttachment = <ThrowOnError extends boolean = false
 /**
  * listDemoScenarios
  *
- * Requires PUBLIC_SYNTHETIC. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.
+ * Requires PUBLIC_SYNTHETIC. Anonymous synthetic scenario catalogue: every entry names its fictional actor, role, practice, journey and limits before entry (AC-S01-F), plus the published synthetic sign-in identifier (UD-56 D2). Establishes no session, practice context or clinical grant. See README Synthetic demonstration.
  */
 export const listDemoScenarios = <ThrowOnError extends boolean = false>(options?: Options<ListDemoScenariosData, ThrowOnError>): RequestResult<ListDemoScenariosResponses, ListDemoScenariosErrors, ThrowOnError> => (options?.client ?? client).get<ListDemoScenariosResponses, ListDemoScenariosErrors, ThrowOnError>({ url: '/demo/scenarios', ...options });
 
 /**
  * resetSyntheticDemo
  *
- * Requires OPERATOR_DEMO_RESET. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.
+ * Requires OPERATOR_DEMO_RESET, satisfied only by the seeded synthetic operator account of the local demo package (UD-56 F1). Bounded single-writer reset: restores the known fixture version in referential order, closes all open sessions, increments the public demo reset generation and answers 202; concurrent reset attempts answer 409 DEMO_RESET_IN_PROGRESS. See README Synthetic demonstration.
  */
 export const resetSyntheticDemo = <ThrowOnError extends boolean = false>(options: Options<ResetSyntheticDemoData, ThrowOnError>): RequestResult<ResetSyntheticDemoResponses, ResetSyntheticDemoErrors, ThrowOnError> => (options.client ?? client).post<ResetSyntheticDemoResponses, ResetSyntheticDemoErrors, ThrowOnError>({
     security: [{

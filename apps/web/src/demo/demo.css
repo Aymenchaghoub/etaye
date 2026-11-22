@@ -1,0 +1,144 @@
+.etaye-demo-page {
+  min-height: 100dvh;
+  padding-block-start: var(--espace-6);
+  background: var(--fond);
+}
+
+.etaye-showcase {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--espace-6);
+  display: grid;
+  gap: var(--espace-6);
+}
+
+.etaye-showcase__header, .etaye-showcase__loading, .etaye-demo-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--espace-3);
+}
+
+.etaye-showcase__header { justify-content: space-between; }
+.etaye-showcase__header img { height: 28px; }
+
+.etaye-showcase__intro {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: var(--espace-6);
+}
+
+.etaye-showcase__pile { display: grid; gap: var(--espace-3); }
+.etaye-showcase__pile[role="status"]:empty { position: absolute; }
+.etaye-showcase h1 { font: 500 clamp(26px, 5vw, 34px)/1.25 var(--font-texte); }
+.etaye-showcase h2 { font: 500 18px/28px var(--font-texte); }
+.etaye-showcase__lede { font: 400 18px/28px var(--font-texte); }
+.etaye-showcase .etaye-3 { font: 400 14px/20px var(--font-texte); }
+
+.etaye-showcase__document {
+  background: var(--papier);
+  border: var(--trait-filet) solid var(--filet);
+  padding: var(--espace-6);
+  font: 400 16px/28px var(--font-document);
+}
+
+.etaye-showcase__source {
+  margin: var(--espace-4) 0 0;
+  padding: var(--espace-3);
+  display: grid;
+  gap: var(--espace-2);
+  background: var(--surface);
+  border: var(--trait-filet) solid var(--filet);
+  border-radius: var(--rayon-2);
+  font: 400 12px/16px var(--font-texte);
+  box-shadow: var(--ombre-flottant);
+}
+
+.etaye-showcase__source figcaption { color: var(--encre-3); }
+.etaye-showcase__source blockquote {
+  margin: 0;
+  padding: var(--espace-2) var(--espace-3);
+  background: var(--papier);
+  border-radius: var(--rayon-1);
+  font: 400 15px/24px var(--font-document);
+}
+.etaye-showcase__source mark { color: var(--encre); background: var(--accent-fond); }
+.etaye-demo-citation { margin-inline-start: var(--espace-1); color: var(--accent); font: 500 12px/16px var(--font-donnee); }
+.etaye-demo-declared { color: var(--attention); }
+.etaye-showcase__retry { justify-self: start; }
+
+.etaye-showcase__list {
+  list-style: none;
+  padding: 0;
+  border-top: var(--trait-filet) solid var(--filet);
+}
+
+.etaye-showcase__list li {
+  display: flex;
+  align-items: center;
+  gap: var(--espace-3);
+  min-height: 64px;
+  padding: var(--espace-3) 0;
+  border-bottom: var(--trait-filet) solid var(--filet);
+}
+
+.etaye-showcase__list li > div { min-width: 0; flex: 1; }
+.etaye-showcase__list p { font: 400 14px/20px var(--font-texte); }
+.etaye-showcase__list button { flex-shrink: 0; }
+.etaye-showcase__operator { justify-self: start; display: flex; align-items: center; gap: var(--espace-3); flex-wrap: wrap; }
+
+.etaye-demo-mutation-status:empty { position: absolute; }
+
+.etaye-demo-facts {
+  display: grid;
+  grid-template-columns: minmax(0, max-content) 1fr;
+  gap: var(--espace-2) var(--espace-4);
+  margin: 0;
+  font: 400 14px/20px var(--font-texte);
+}
+
+.etaye-demo-facts dt { font-weight: 500; }
+.etaye-demo-facts dd { margin: 0; color: var(--encre-2); }
+
+.etaye-bouton--destructif { border-color: var(--critique); color: var(--critique); background: var(--critique-fond); }
+
+.etaye-warmup {
+  display: grid;
+  gap: var(--espace-4);
+  align-content: center;
+  justify-items: center;
+  padding: var(--espace-6);
+  text-align: center;
+}
+.etaye-warmup h1 { font: 500 26px/32px var(--font-texte); }
+.etaye-warmup [hidden] { display: none; }
+
+.etaye-demo-sign { width: 56px; height: 56px; }
+.etaye-demo-sign:not([data-state]) { visibility: hidden; }
+.etaye-demo-sign path { fill: none; stroke: var(--sign-color); stroke-width: 1.5; stroke-dasharray: 1; }
+.etaye-demo-sign__bar { --sign-color: var(--encre); }
+.etaye-demo-sign__mark { --sign-color: var(--accent); }
+.etaye-demo-sign[data-state="loading"] path { animation: etaye-demo-trace var(--duree-trace) var(--courbe) both; }
+.etaye-demo-sign[data-state="loading"] .etaye-demo-sign__mark { animation-delay: var(--duree-flottant); }
+
+@keyframes etaye-demo-trace { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .etaye-demo-sign[data-state="loading"] path { animation: none; }
+}
+
+@media (max-width: 760px) {
+  .etaye-demo-page { padding-block-start: 0; }
+  .etaye-showcase { padding: var(--espace-4); }
+  .etaye-showcase__intro { grid-template-columns: minmax(0, 1fr); }
+  .etaye-showcase__list li { flex-wrap: wrap; }
+  .etaye-showcase__list li > div { flex: 1 1 calc(100% - 36px); }
+  .etaye-showcase__list button { margin-inline-start: 36px; }
+}
+
+.etaye-demo-icon--praticienne { --demo-icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%221.5%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 %3E %3Cpath d=%22M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2%22 /%3E %3Ccircle cx=%229%22 cy=%227%22 r=%224%22 /%3E %3Cpath d=%22M22 21v-2a4 4 0 0 0-3-3.87%22 /%3E %3Cpath d=%22M16 3.13a4 4 0 0 1 0 7.75%22 /%3E %3C/svg%3E"); }
+.etaye-demo-icon--patiente { --demo-icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%221.5%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 %3E %3Cpath d=%22M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2%22 /%3E %3Ccircle cx=%2212%22 cy=%227%22 r=%224%22 /%3E %3C/svg%3E"); }
+.etaye-demo-icon--administration { --demo-icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22black%22 stroke-width=%221.5%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 %3E %3Ccircle cx=%2218%22 cy=%2215%22 r=%223%22 /%3E %3Ccircle cx=%229%22 cy=%227%22 r=%224%22 /%3E %3Cpath d=%22M10 15H6a4 4 0 0 0-4 4v2%22 /%3E %3Cpath d=%22m21.7 16.4-.9-.3%22 /%3E %3Cpath d=%22m15.2 13.9-.9-.3%22 /%3E %3Cpath d=%22m16.6 18.7.3-.9%22 /%3E %3Cpath d=%22m19.1 12.2.3-.9%22 /%3E %3Cpath d=%22m19.6 18.7-.4-1%22 /%3E %3Cpath d=%22m16.8 12.3-.4-1%22 /%3E %3Cpath d=%22m14.3 16.6 1-.4%22 /%3E %3Cpath d=%22m20.7 13.8 1-.4%22 /%3E %3C/svg%3E"); }
+.etaye-demo-icon { width: 24px; height: 24px; flex: none; background: var(--encre-2); mask: var(--demo-icon) center / contain no-repeat; }

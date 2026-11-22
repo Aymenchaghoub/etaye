@@ -1,6 +1,6 @@
 import { version } from '../../package.json';
 import { createClient } from './generated/client';
-import { acceptInvitation, completeRecovery, inspectInvitation, getCsrfToken, getReadiness, getSession, requestRecovery, signIn, signOut } from './generated/sdk.gen';
+import { acceptInvitation, completeRecovery, inspectInvitation, getApiMeta, getCsrfToken, getReadiness, getSession, listDemoScenarios, requestRecovery, resetSyntheticDemo, signIn, signOut } from './generated/sdk.gen';
 import type { ActivationWritable, CredentialsWritable } from './generated/types.gen';
 
 type AccountResult<T> =
@@ -59,6 +59,18 @@ export function createBrowserApi(origin: string, transportEnabled: boolean, tran
 
   return {
     readSession,
+    readMeta(signal?: AbortSignal) {
+      return accountRequest((deadline) => getApiMeta({ client, signal: deadline, cache: 'no-store' }), signal);
+    },
+    listDemoScenarios(signal?: AbortSignal) {
+      return accountRequest((deadline) => listDemoScenarios({ client, signal: deadline, cache: 'no-store' }), signal);
+    },
+    resetDemo(key: string, signal?: AbortSignal) {
+      return withCsrf((headers, deadline) => resetSyntheticDemo({
+        client, headers: { ...headers, 'Idempotency-Key': key }, body: { reason: 'Restaurer le jeu fictif' },
+        signal: deadline, cache: 'no-store',
+      }), signal);
+    },
     signIn(body: CredentialsWritable, signal?: AbortSignal) {
       return withCsrf((headers, deadline) => signIn({ client, headers, body, signal: deadline, cache: 'no-store' }), signal);
     },

@@ -35,6 +35,20 @@ STORY_10_2_TRACKED_PATH = re.compile(
 )
 STORY_1_3_WEB_FIXTURES = {"apps/web/tests/fixtures/practice-switch.html",
                           "apps/web/tests/fixtures/practice-switch.tsx"}
+STORY_9_1_TRACKED_PATHS = {
+    "apps/web/demo-e2e/journey.spec.ts",
+    "apps/web/playwright.demo.config.ts",
+    "apps/web/warmup.html",
+    "infra/demo/README.md",
+    "infra/demo/api.Dockerfile",
+    "infra/demo/compose.yml",
+    "infra/demo/mark-demo-database.sh",
+    "infra/demo/migrate.Dockerfile",
+    "infra/demo/nginx.conf",
+    "infra/demo/postgres.Dockerfile",
+    "infra/demo/start.sh",
+    "infra/demo/web.Dockerfile",
+}
 RESOURCE_ARTIFACT_SUFFIXES = {
     ".sh", ".bash", ".cmd", ".bat", ".ps1",
     ".class", ".jar", ".war", ".ear", ".exe", ".dll", ".so", ".bin",
@@ -155,12 +169,18 @@ def check_application_scope(root, errors):
         if not path.is_file() or path.is_symlink():
             errors.append(f"Missing or invalid {scope_label} file: {name}")
 
+    demo_authorized = "9.1" in authorized_stories
+    allowed_infra = {"local", "demo"} if demo_authorized else {"local"}
     infra = root / "infra"
     if infra.exists() or infra.is_symlink():
-        local = infra / "local"
-        if (infra.is_symlink() or not infra.is_dir() or {path.name for path in infra.iterdir()} != {"local"}
-                or local.is_symlink() or not local.is_dir()):
-            errors.append(f"{scope_label.capitalize()} only allows infra/local under infra/")
+        if infra.is_symlink() or not infra.is_dir():
+            entries = {}
+        else:
+            entries = {path.name: path for path in infra.iterdir()}
+        if ("local" not in entries or entries.keys() - allowed_infra
+                or any(path.is_symlink() or not path.is_dir() for path in entries.values())):
+            allowed = "infra/local and infra/demo" if demo_authorized else "infra/local"
+            errors.append(f"{scope_label.capitalize()} only allows {allowed} under infra/")
 
     build_directories = {"node_modules", "target", "test-results", "playwright-report", "dist"}
     try:
@@ -184,7 +204,7 @@ def check_application_scope(root, errors):
                 continue
             metadata, name = entry.split("\t", 1)
             mode = metadata.split(" ", 1)[0]
-            if mode == "120000" and name.startswith(("apps/api/", "apps/web/", "infra/local/")):
+            if mode == "120000" and name.startswith(("apps/api/", "apps/web/", "infra/local/", "infra/demo/")):
                 errors.append(f"Tracked symlink for {scope_label}: {name}")
                 continue
             if build_directories.intersection(name.split("/")):
@@ -199,6 +219,8 @@ def check_application_scope(root, errors):
             if "10.2" in authorized_stories and STORY_10_2_TRACKED_PATH.fullmatch(name):
                 continue
             if "1.3" in authorized_stories and name in STORY_1_3_WEB_FIXTURES:
+                continue
+            if demo_authorized and name in STORY_9_1_TRACKED_PATHS:
                 continue
             match = STORY_10_1_TRACKED_PATH.fullmatch(name)
             if not match or (match["resource"] and not is_story_resource(root / name)):

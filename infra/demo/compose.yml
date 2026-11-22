@@ -1,0 +1,59 @@
+name: etaye-demo
+
+services:
+  postgres:
+    build:
+      context: ../..
+      dockerfile: infra/demo/postgres.Dockerfile
+    environment:
+      POSTGRES_DB: etaye_demo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?Run ./start.sh to generate local passwords}
+      ETAYE_OWNER_PASSWORD: ${ETAYE_OWNER_PASSWORD:?Run ./start.sh first}
+      ETAYE_RUNTIME_PASSWORD: ${ETAYE_RUNTIME_PASSWORD:?Run ./start.sh first}
+      ETAYE_IDENTITY_PASSWORD: ${ETAYE_IDENTITY_PASSWORD:?Run ./start.sh first}
+    volumes:
+      - demo-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "127.0.0.1", "-d", "etaye_demo", "-U", "postgres"]
+      interval: 2s
+      timeout: 2s
+      retries: 20
+
+  migrate:
+    build:
+      context: ../..
+      dockerfile: infra/demo/migrate.Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      FLYWAY_URL: jdbc:postgresql://postgres:5432/etaye_demo
+      FLYWAY_USER: etaye_owner
+      FLYWAY_PASSWORD: ${ETAYE_OWNER_PASSWORD:?Run ./start.sh first}
+      FLYWAY_LOCATIONS: filesystem:/flyway/schema,filesystem:/flyway/demo
+    command: migrate
+
+  api:
+    build:
+      context: ../..
+      dockerfile: infra/demo/api.Dockerfile
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/etaye_demo
+      SPRING_DATASOURCE_USERNAME: etaye_runtime
+      SPRING_DATASOURCE_PASSWORD: ${ETAYE_RUNTIME_PASSWORD:?Run ./start.sh first}
+      ETAYE_IDENTITY_PASSWORD: ${ETAYE_IDENTITY_PASSWORD:?Run ./start.sh first}
+      ETAYE_DEMO_ENABLED: "true"
+
+  web:
+    build:
+      context: ../..
+      dockerfile: infra/demo/web.Dockerfile
+    ports:
+      - "127.0.0.1:${ETAYE_DEMO_WEB_PORT:-4179}:80"
+
+volumes:
+  demo-data:

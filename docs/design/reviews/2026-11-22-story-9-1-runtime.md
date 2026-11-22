@@ -1,0 +1,18 @@
+# Story 9.1 running UI review
+
+2026-11-22 · AT-035-C · Candidate `0939819b9ce637b34103fb40e2d32bde9c0fc401` · Chromium with the local Spring Boot, React and PostgreSQL Compose package.
+
+The left column shows the approved offline reference and the right column shows the running UI. UD-46 covers S-01. Aymen's 2026-11-21 approvals cover the S-37 and I-26 reference families. [Reference inventory and offline Figma exception](../../implementation-artifacts/story-9-1-context-packet.md#3-design-inventory-and-evidence-to-produce) · [Local running-UI review page](2026-11-22-story-9-1-runtime/index.html)
+
+| Family and opened evidence | Viewports and themes | Observed differences and checks |
+|---|---|---|
+| [S-01 entry](2026-11-22-story-9-1-runtime/S-01-entree.webp) | 1440×1024 light, 1024×768 dark, 390×844 light | The original logo, the sourced fictional excerpt and the three role icons identify the showcase. Card copy describes the available account destinations. Mobile actions wrap below the description. The operator sign-in link is visible. |
+| [S-01 preparation, failure and reset](2026-11-22-story-9-1-runtime/S-01-etats.webp) | 1024×768 light, 390×844 light, 1440×1024 dark | A held catalogue response shows preparation and the original sign. A browser-controlled service failure places the warning and retry above the showcase content. After a real reset the banner says the fixture was reloaded and sessions closed. |
+| [S-01 long text, keyboard focus and empty catalogue](2026-11-22-story-9-1-runtime/S-01-reflow.webp) | 320 CSS px dark, 390×844 dark | With longer French test copy, the scenario wraps and the keyboard outline remains visible. The browser-controlled empty response displays an explicit empty state. |
+| [I-26 scenario, reset and refusal](2026-11-22-story-9-1-runtime/I-26.webp) | 1440×1024 light and dark, 390×844 light and dark | The identity shell retains the standalone layout. The scenario shows the fictional identifier and README link. The confirmation names the restored version and closes sessions. On a browser-controlled 403 it shows a warning and disables confirmation. |
+| [S-37 demo boundary](2026-11-22-story-9-1-runtime/S-37.webp) and [complement](2026-11-22-story-9-1-runtime/S-37-complement.webp) | 1440×1024 and 390×844 in the labelled themes | Three controlled responses display unavailable, reset in progress and rate limiting. The original samples show some states inside a signed-in shell. The story uses the warnings and retry behavior at the public demo boundary. Retry stays disabled during the rate limit. |
+| [Static warm-up](2026-11-22-story-9-1-runtime/demarrage.webp) | 1024×768 light | With the API container stopped, nginx still served the preparation page. Chromium reached the showcase only after a successful readiness response. |
+
+The follow-up Vite change `fcfab6a` preserves the demo build inputs while restoring development dependency discovery. The full-size files at `/tmp/etaye-91-visual` include S-01 ready, loading and reset in both themes over the desktop, tablet and mobile sizes, plus 320 CSS px reflow and focus. The Playwright smoke suite exercises axe-core in each implemented S-37 boundary state. The full S-37 family belongs to later story 9.3. The browser evidence covers Chromium and the offline reference. Screen-reader behavior, real devices and Figma reconciliation remain open.
+
+The real Playwright run preserves both the [visitor view](2026-11-22-story-9-1-runtime/parcours-nora.webm) and the [operator view](2026-11-22-story-9-1-runtime/reset-operateur.webm). Aymen approved the running interface on 2026-11-22 under UD-57. [Decision register](../../planning-artifacts/decisions-assumptions.md#story-91-approvals-2026-11-22)
