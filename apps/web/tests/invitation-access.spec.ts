@@ -172,23 +172,35 @@ test('I-03 verifies birth date, preserves a generic refusal and opens the exact 
 });
 
 test('S-03 holds the form through throttling and displays a concurrent-use refusal', async ({ page }) => {
-  await stubInvitation(page, preview('TEAM_MEMBERSHIP'));
+  await page.setViewportSize({ width: 320, height: 844 });
+  await page.emulateMedia({ colorScheme: 'dark' });
+  const longName = 'Cabinet interdisciplinaire de la maison de santé des Tilleuls et des Hautes Rives';
+  await stubInvitation(page, { ...preview('TEAM_MEMBERSHIP'), practiceName: longName });
+  await page.clock.install();
   let attempts = 0;
   await page.route('**/api/v1/invitations/accept', (route) => ++attempts === 1
-    ? route.fulfill({ status: 429, headers: { 'Retry-After': '1' }, json: { code: 'RATE_LIMITED' } })
+    ? route.fulfill({ status: 429, headers: { 'Retry-After': '60' }, json: { code: 'RATE_LIMITED' } })
     : route.fulfill({ status: 422, json: { code: 'INVITATION_ALREADY_USED' } }));
   await page.goto(url);
   await page.getByLabel('Nom affiché').fill('Alex Rivière');
   await page.locator('#a-pw').fill(password);
   await page.getByLabel('Confirmer le mot de passe').fill(password);
   const submit = page.getByRole('button', { name: 'Activer mon compte' });
-  await submit.click();
+  await page.keyboard.press('Tab');
+  await expect(submit).toBeFocused();
+  await page.keyboard.press('Enter');
   await expect(page.getByRole('alert')).toContainText('Trop de demandes');
   await expect(submit).toBeDisabled();
+  await expect(submit).toBeFocused();
+  await expect(submit).toHaveCSS('outline-style', 'solid');
+  await page.keyboard.press('Enter');
   await axe(page);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(320);
+  expect(attempts).toBe(1);
+  await page.clock.fastForward(60_000);
   await expect(submit).toBeEnabled();
-  await submit.focus();
-  await submit.press('Enter');
+  await expect(submit).toBeFocused();
+  await page.keyboard.press('Enter');
   await expect(page.getByRole('heading', { name: "Cette invitation vient d'être utilisée" })).toBeFocused();
 });
 
@@ -254,10 +266,58 @@ test('a lost session restores the new-account fields without losing the patient 
   await page.getByLabel('Votre date de naissance').fill('12/03/1990');
   await expect(page.getByLabel('Créer un mot de passe')).toHaveCount(0);
   await page.getByRole('button', { name: 'Activer mon espace' }).click();
-  await expect(page.getByRole('status')).toContainText('Votre session est terminée');
+  await expect(page.getByRole('status').filter({ hasText: 'Votre session est terminée' })).toBeVisible();
   await expect(page.getByLabel('Votre date de naissance')).toHaveValue('12/03/1990');
   await expect(page.getByLabel('Créer un mot de passe')).toBeVisible();
   await axe(page);
+});
+
+test('switching to a new account preserves input and keyboard focus through a sign-out retry', async ({ page }) => {
+  await stubInvitation(page, preview('PATIENT_PORTAL'));
+  await page.unroute('**/api/v1/session');
+  let signOuts = 0;
+  let releaseSignOut = () => {};
+  const firstSignOut = new Promise<void>((resolve) => { releaseSignOut = resolve; });
+  await page.route('**/api/v1/session', async (route) => {
+    if (route.request().method() !== 'DELETE') return route.fulfill({ json: session() });
+    if (++signOuts === 1) {
+      await firstSignOut;
+      return route.fulfill({ status: 503, json: { code: 'SERVICE_UNAVAILABLE' } });
+    }
+    return route.fulfill({ status: 204 });
+  });
+  await page.route('**/api/v1/invitations/accept', (route) =>
+    route.fulfill({ status: 422, json: { code: 'SIGN_IN_REQUIRED' } }));
+  try {
+    await page.goto(url);
+    const birthDate = page.getByLabel('Votre date de naissance');
+    await birthDate.fill('12/03/1990');
+    await page.keyboard.press('Tab');
+    await expect(page.getByRole('button', { name: 'Activer mon espace' })).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('alert')).toContainText('Connectez-vous pour continuer');
+    await page.keyboard.press('Shift+Tab');
+    await page.keyboard.press('Shift+Tab');
+    const newAccount = page.getByRole('button', { name: 'Continuer avec un nouveau compte' });
+    await expect(newAccount).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('status')).toHaveText('Déconnexion en cours…');
+    await expect(newAccount).toBeDisabled();
+    await expect(newAccount).toBeFocused();
+    await page.keyboard.press('Enter');
+    await axe(page);
+    expect(signOuts).toBe(1);
+    releaseSignOut();
+    await expect(page.getByRole('alert')).toContainText('La déconnexion a échoué');
+    await expect(newAccount).toBeFocused();
+    await page.keyboard.press('Enter');
+    const passwordField = page.getByLabel('Créer un mot de passe');
+    await expect(passwordField).toBeFocused();
+    await expect(passwordField).toBeEmpty();
+    await expect(birthDate).toHaveValue('12/03/1990');
+  } finally {
+    releaseSignOut();
+  }
 });
 
 test('preview reload and pending activation maintain a recovery path for a conflicting link', async ({ page }) => {
@@ -267,6 +327,8 @@ test('preview reload and pending activation maintain a recovery path for a confl
   const inspection = new Promise<void>((resolve) => { releaseInspection = resolve; });
   const activation = new Promise<void>((resolve) => { releaseActivation = resolve; });
   let inspections = 0;
+  let sessionReads = 0;
+  let attempts = 0;
   await page.unroute('**/api/v1/invitations/inspect');
   await page.route('**/api/v1/invitations/inspect', async (route) => {
     if (++inspections === 1) {
@@ -275,7 +337,12 @@ test('preview reload and pending activation maintain a recovery path for a confl
     }
     return route.fulfill({ json: preview('PATIENT_PORTAL') });
   });
+  await page.unroute('**/api/v1/session');
+  await page.route('**/api/v1/session', (route) => ++sessionReads === 1
+    ? route.fulfill({ status: 503, json: { code: 'SERVICE_UNAVAILABLE' } })
+    : route.fulfill({ status: 401, json: { code: 'UNAUTHENTICATED' } }));
   await page.route('**/api/v1/invitations/accept', async (route) => {
+    attempts += 1;
     await activation;
     return route.fulfill({ status: 409, json: { code: 'PORTAL_LINK_EXISTS' } });
   });
@@ -286,14 +353,27 @@ test('preview reload and pending activation maintain a recovery path for a confl
     releaseInspection();
     await expect(page.getByRole('alert')).toContainText("La vérification de l'invitation a échoué");
     await axe(page);
-    await page.getByRole('button', { name: 'Réessayer' }).press('Enter');
+    await page.keyboard.press('Tab');
+    await expect(page.getByRole('button', { name: 'Réessayer' })).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect.poll(() => inspections).toBe(2);
+    await expect(page.getByRole('alert')).toContainText("La vérification de l'invitation a échoué");
+    await expect(page.getByLabel('Créer un mot de passe')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Réessayer' })).toBeFocused();
+    await page.keyboard.press('Enter');
     await expect(page.getByRole('heading', { name: 'Activer mon espace patient' })).toBeFocused();
     await page.getByLabel('Votre date de naissance').fill('12/03/1990');
     await page.getByLabel('Créer un mot de passe').fill(password);
-    await page.getByRole('button', { name: 'Activer mon espace' }).click();
+    await page.keyboard.press('Tab');
+    await expect(page.getByRole('button', { name: 'Activer mon espace' })).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('status')).toHaveText('Activation en cours…');
     await expect(page.getByRole('button', { name: 'Activation en cours…' })).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Activation en cours…' })).toBeFocused();
     await expect(page.getByLabel('Votre date de naissance')).toHaveAttribute('readonly', '');
+    await page.keyboard.press('Enter');
     await axe(page);
+    expect(attempts).toBe(1);
     releaseActivation();
     await expect(page.getByRole('heading', { name: 'Contactez votre cabinet' })).toBeFocused();
     await expect(page.getByRole('link', { name: 'Me connecter' })).toHaveCount(0);

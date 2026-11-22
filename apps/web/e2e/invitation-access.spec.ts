@@ -125,6 +125,38 @@ test('real patient sees the generic refusal and activates exactly the invited po
   await compare(page, reference, 'I-03/deja-active');
 });
 
+test('real invitation restores account creation when another tab signs out', async ({ page, context }) => {
+  test.setTimeout(30_000);
+  const team = seed('TEAM_MEMBERSHIP');
+  const patient = seed('PATIENT_PORTAL');
+  await page.goto(`/invitation#${team.token}`);
+  await page.getByLabel('Nom affiché').fill('Alex Rivière');
+  await page.locator('#a-pw').fill(password);
+  await page.getByLabel('Confirmer le mot de passe').fill(password);
+  await page.getByRole('button', { name: 'Activer mon compte' }).click();
+  await expect(page.getByTestId('protected-account')).toContainText('Alex Rivière');
+
+  const otherTab = await context.newPage();
+  await otherTab.goto(page.url());
+  await page.goto(`/invitation#${patient.token}`);
+  const birthDate = page.getByLabel('Votre date de naissance');
+  const newPassword = page.getByLabel('Créer un mot de passe');
+  await birthDate.fill('12/03/1990');
+  await expect(newPassword).toHaveCount(0);
+  await otherTab.getByRole('button', { name: 'Se déconnecter' }).click();
+  await expect(otherTab.getByRole('heading', { name: 'Se connecter' })).toBeVisible();
+
+  const activate = page.getByRole('button', { name: 'Activer mon espace' });
+  await activate.click();
+  await expect(page.getByRole('status').filter({ hasText: 'Votre session est terminée' })).toBeVisible();
+  await expect(birthDate).toHaveValue('12/03/1990');
+  await expect(newPassword).toBeEmpty();
+  await newPassword.fill(password);
+  await activate.click();
+  await expect(page).toHaveURL(/\/compte\/patient\/[0-9a-f-]+$/);
+  await expect(page.getByTestId('protected-account')).toContainText('Marie Collet');
+});
+
 test('real expired, revoked and unknown links recover without displaying input fields', async ({ page, context }) => {
   const reference = await context.newPage();
   const states = [
