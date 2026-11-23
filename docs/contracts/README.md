@@ -49,6 +49,17 @@ Future same-origin base `/api/v1`, opaque secure session cookie, CSRF token head
 
 404 hides resources outside authorized practice/record; 403 is a forbidden action on a visible resource or CSRF failure. 401 means missing/expired authentication; 400 malformed format; 422 invalid semantic input/transition; 409 scheduling/idempotency/business conflict; 412 stale expected version; 428 absent version precondition; 429 quota/rate limit with Retry-After; 503 unavailable dependency. Problems use RFC 9457 with stable code/correlationId and safe field errors. No stack trace, secret, source body or cross-practice existence detail in errors. Error variants share a schema but status/code must match actual outcome.
 
+### Carrier read refusals (story 1.4)
+
+`getPatientRecord` authorizes before it reads: session, then the actor's current membership in the route practice and `CLINICAL_READ`, then the record inside that practice, all re-resolved on every request. A conditional `If-None-Match` is evaluated only after that authorization, so a denied actor never receives a `304` or an `ETag`. The refusals carry no resource data and the same schema:
+
+- `401` — no session, an expired session or a suspended account; the session is closed.
+- `403 FORBIDDEN` — the actor holds a membership in the route practice (their context is already visible to them) but it is suspended or lacks `CLINICAL_READ`, for example an administrator without a clinical capability.
+- `404 NOT_FOUND` — every other case, with an identical problem body apart from `correlationId`: a practice where the actor holds no membership (including an unknown practice and any practice reached by a portal-only account), a record that is absent, or a record that belongs to another practice. A linked patient's portal link never grants this staff read, not even for the patient's own record.
+- `400` — a path identifier that is not a UUID.
+
+Only the actor's own memberships can establish the practice of the security audit event written for a denial, and a failed audit write never changes the response (BR-017). This clarifies the observed behavior of the planned `0.5.0-planning` contract; no operation, schema or status changes.
+
 ## Declared error responses
 
 Error responses are declared per operation, never copied onto all of them. A GET declares no 409, 412, 422 or 428. 400 appears when an operation has a body, a query or a path parameter; 401 on every operation except public ones (sign-in keeps it for bad credentials); 403 on authenticated operations and wherever a CSRF header is required; 404 when a path parameter or a token can refer to a hidden resource; 409 on unsafe operations except sign-in, sign-out and recovery; 412 and 428 exactly on operations that require `If-Match`; 422 on operations with a body or a state transition; 429 and 503 are general domain API responses. The stateless metadata and readiness operations declare their observed or specified outcomes. The router responds with 405 and `Allow` for unsupported methods rather than declaring a 405 on the supported operation. The carrier read’s conditional 304 includes `ETag` and has no body. The documentary validator checks contract and index consistency.
