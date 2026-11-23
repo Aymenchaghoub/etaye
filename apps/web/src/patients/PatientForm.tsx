@@ -4,7 +4,7 @@ import type { Patient, PatientRegistration, SchedulingPatient } from '../api/gen
 import { ErrorSummary, type FieldError } from '../auth/AuthComponents';
 import { ageLabel, formatDate, isoToParts, parseBirthDate } from './date';
 import { AttemptKey } from './attempt-key';
-import { clearDraft, type Draft, markStale, readDraft, rememberConfirmation, writeDraft } from './memory';
+import { clearDraft, type DraftValues, readDraft, rememberConfirmation, writeDraft } from './memory';
 import { clockTime, EntryHeader, Notice, patientName, Skeleton } from './patient-ui';
 import { useShell } from './PractitionerShell';
 import { patientsPath } from './routes';
@@ -13,7 +13,7 @@ type Phase = 'idle' | 'saving' | 'verifying' | 'confirmed' | 'failed' | 'unconfi
 type Duplicate = { candidates: SchedulingPatient[]; changed: boolean };
 type ServerField = 'lastName' | 'firstName' | 'dateOfBirth' | 'contactEmail' | 'phone';
 
-const EMPTY: Draft = { lastName: '', firstName: '', day: '', month: '', year: '', phone: '', email: '' };
+const EMPTY: DraftValues = { lastName: '', firstName: '', day: '', month: '', year: '', phone: '', email: '' };
 const CONFIRMED_DISPLAY_MS = 600;
 const FIELD_IDS: Record<ServerField, string> = {
   lastName: 'i-nom', firstName: 'i-pre', dateOfBirth: 'dn-j', contactEmail: 'i-mail', phone: 'i-tel',
@@ -23,13 +23,19 @@ const FIELD_LABELS: Record<ServerField, string> = {
   phone: 'Téléphone',
 };
 
-function fromPatient(patient: Patient): Draft {
+function fromPatient(patient: Patient): DraftValues {
   const { day, month, year } = isoToParts(patient.dateOfBirth);
   return { lastName: patient.lastName, firstName: patient.firstName, day, month, year,
     phone: patient.phone ?? '', email: patient.contactEmail ?? '' };
 }
 
-const same = (a: Draft, b: Draft) => (Object.keys(a) as (keyof Draft)[]).every((key) => a[key].trim() === b[key].trim());
+const same = (a: DraftValues, b: DraftValues) => (Object.keys(a) as (keyof DraftValues)[]).every((key) => a[key].trim() === b[key].trim());
+
+type Identity = { firstName: string; lastName: string; dateOfBirth: string; contactEmail: string | null; phone: string | null };
+/** Whether a saved patient carries exactly the identity that was sent, so a lost response is never read as a stranger's edit. */
+const carries = (saved: Patient, sent: Identity) => saved.firstName === sent.firstName && saved.lastName === sent.lastName
+  && saved.dateOfBirth === sent.dateOfBirth && (saved.contactEmail ?? '') === (sent.contactEmail ?? '')
+  && (saved.phone ?? '') === (sent.phone ?? '');
 
 function TextField({ id, label, value, onChange, required = false, kind = 'text', error, help, readOnly, maxLength, autoComplete }: {
   id: string; label: string; value: string; onChange: (value: string) => void; required?: boolean;
@@ -50,7 +56,7 @@ function TextField({ id, label, value, onChange, required = false, kind = 'text'
 }
 
 function BirthDate({ values, onChange, error, readOnly }: {
-  values: Draft; onChange: (patch: Partial<Draft>) => void; error?: string; readOnly: boolean;
+  values: DraftValues; onChange: (patch: Partial<DraftValues>) => void; error?: string; readOnly: boolean;
 }) {
   const bad = error ? true : undefined;
   return (
@@ -151,15 +157,24 @@ function IdentityForm({ mode, scope, practiceId, base, patient, expire }: {
 }) {
   const shell = useShell();
   const formId = patient ? patient.recordId : 'new';
-  const [baseline, setBaseline] = useState<Draft>(() => (patient ? fromPatient(patient) : EMPTY));
-  const [values, setValues] = useState<Draft>(() => readDraft(scope, formId) ?? (patient ? fromPatient(patient) : EMPTY));
+  const [restored] = useState(() => {
+    const draft = readDraft(scope, formId);
+    // A draft that already equals the saved identity has nothing left to protect.
+    if (!draft || (patient && same(draft.values, fromPatient(patient)))) return { draft: undefined, stale: false };
+    // A correction based on an older version is compared with the saved one, never silently re-based on it.
+    return { draft, stale: Boolean(patient && draft.baseVersion !== undefined && draft.baseVersion !== patient.version) };
+  });
+  const [baseline, setBaseline] = useState<DraftValues>(() => (patient ? fromPatient(patient) : EMPTY));
+  const [values, setValues] = useState<DraftValues>(() => restored.draft?.values ?? (patient ? fromPatient(patient) : EMPTY));
   const [version, setVersion] = useState(patient?.version ?? 0);
   const [errors, setErrors] = useState<FieldError[]>([]);
   const [phase, setPhase] = useState<Phase>('idle');
   const [duplicate, setDuplicate] = useState<Duplicate>();
-  const [conflict, setConflict] = useState<{ current?: Patient } | undefined>();
+  const [conflict, setConflict] = useState<{ current?: Patient } | undefined>(() => (restored.stale ? { current: patient } : undefined));
   const [wait, setWait] = useState(0);
-  const keys = useRef(new AttemptKey());
+  // The attempt and the confirmed candidates survive an unmount with the draft, so an unresolved send is replayed with its key.
+  const keys = useRef(new AttemptKey(undefined, restored.draft?.attempt));
+  const confirmed = useRef<string[] | undefined>(restored.draft?.confirmed);
   const request = useRef<AbortController | null>(null);
   const timer = useRef<number | undefined>(undefined);
   const expireRef = useRef(expire);
@@ -170,9 +185,12 @@ function IdentityForm({ mode, scope, practiceId, base, patient, expire }: {
   const busy = phase === 'saving' || phase === 'verifying' || phase === 'confirmed';
 
   useEffect(() => {
-    if (dirty) writeDraft(scope, formId, values);
-    else clearDraft(scope, formId);
-  }, [dirty, formId, scope, values]);
+    if (dirty) {
+      writeDraft(scope, formId, {
+        values, baseVersion: patient ? version : undefined, confirmed: confirmed.current, attempt: keys.current.snapshot(),
+      });
+    } else clearDraft(scope, formId);
+  }, [dirty, formId, patient, scope, values, version]);
 
   useEffect(() => {
     shell.setDirty(dirty ? {
@@ -186,8 +204,10 @@ function IdentityForm({ mode, scope, practiceId, base, patient, expire }: {
     window.clearTimeout(timer.current);
   }, []);
 
-  const change = useCallback((patch: Partial<Draft>) => {
+  const change = useCallback((patch: Partial<DraftValues>) => {
     setValues((current) => ({ ...current, ...patch }));
+    // The confirmation names candidates for one body: a changed body is a new registration to check again.
+    confirmed.current = undefined;
     // Any edit invalidates the duplicate warning and the previous field errors; the server re-evaluates on submit.
     setDuplicate(undefined);
     setErrors([]);
@@ -206,7 +226,7 @@ function IdentityForm({ mode, scope, practiceId, base, patient, expire }: {
     // Success is shown only after the server commit; the guard must not intercept the planned return to the list.
     shell.setDirty(null);
     clearDraft(scope, formId);
-    rememberConfirmation(scope, { kind, recordId: saved.recordId, name: patientName(saved) });
+    rememberConfirmation(scope, { kind, patient: saved });
     timer.current = window.setTimeout(() => shell.navigate(patientsPath(base)), CONFIRMED_DISPLAY_MS);
   }
 
@@ -225,7 +245,7 @@ function IdentityForm({ mode, scope, practiceId, base, patient, expire }: {
     return out;
   }
 
-  async function submit(confirmed?: string[]) {
+  async function submit(named?: string[]) {
     if (busy) return;
     const problems: FieldError[] = [];
     const lastName = values.lastName.trim();
@@ -251,12 +271,16 @@ function IdentityForm({ mode, scope, practiceId, base, patient, expire }: {
     const controller = new AbortController();
     request.current = controller;
     setPhase('saving');
-    if (mode === 'new') await create({ ...body, ...(confirmed ? { confirmedDistinctRecordIds: confirmed } : {}) }, controller, Boolean(confirmed));
+    // A retry of the same body repeats its confirmation, so the replayed key still names the same registration.
+    if (named) confirmed.current = named;
+    const sent = confirmed.current;
+    if (mode === 'new') await create({ ...body, ...(sent ? { confirmedDistinctRecordIds: sent } : {}) }, controller, Boolean(sent));
     else await edit(body, controller);
   }
 
   async function create(payload: PatientRegistration, controller: AbortController, confirmation: boolean) {
     const key = keys.current.keyFor(payload);
+    writeDraft(scope, formId, { values, confirmed: confirmed.current, attempt: keys.current.snapshot() });
     let result = await accountApi.createPatient(practiceId, payload, key, controller.signal);
     if (controller.signal.aborted) return;
     if (!result.ok && result.status === 0) {
@@ -275,8 +299,7 @@ function IdentityForm({ mode, scope, practiceId, base, patient, expire }: {
     handleFailure(result.status, result.retryAfter, result.problem);
   }
 
-  async function edit(body: { firstName: string; lastName: string; dateOfBirth: string; contactEmail: string | null; phone: string | null },
-    controller: AbortController) {
+  async function edit(body: Identity, controller: AbortController) {
     if (!patient) return;
     const result = await accountApi.editPatient(practiceId, patient.id, version, body, controller.signal);
     if (controller.signal.aborted) return;
@@ -284,9 +307,16 @@ function IdentityForm({ mode, scope, practiceId, base, patient, expire }: {
       setPhase('verifying');
       const read = await accountApi.readRecord(practiceId, patient.recordId, controller.signal);
       if (controller.signal.aborted) return;
-      if (read.ok && read.data.patient.version === version + 1) { finish('updated', read.data.patient); return; }
-      if (read.ok && read.data.patient.version !== version) { await openConflict(controller); return; }
-      setPhase(read.ok ? 'failed' : 'unconfirmed');
+      if (!read.ok) {
+        if (read.status === 401) expireRef.current();
+        else setPhase('unconfirmed');
+        return;
+      }
+      const now = read.data.patient;
+      // A newer version is proof of our save only when it carries exactly what we sent; otherwise it is someone else's.
+      if (now.version === version) { request.current = null; setPhase('failed'); return; }
+      if (carries(now, body)) { finish('updated', now); return; }
+      showConflict(now);
       return;
     }
     if (result.ok) { setVersion(result.data.version); finish('updated', result.data); return; }
@@ -294,17 +324,21 @@ function IdentityForm({ mode, scope, practiceId, base, patient, expire }: {
     handleFailure(result.status, result.retryAfter, result.problem);
   }
 
-  async function openConflict(controller: AbortController) {
-    markStale(scope);
-    const read = await accountApi.readRecord(practiceId, patient!.recordId, controller.signal);
-    if (controller.signal.aborted) return;
+  function showConflict(current: Patient) {
     request.current = null;
     setPhase('idle');
-    if (read.ok) {
-      // The next save carries the version the person has now seen, so the comparison is deliberate (BR-015).
-      setVersion(read.data.patient.version);
-      setConflict({ current: read.data.patient });
-    } else if (read.status === 401) expireRef.current();
+    // The next save carries the version the person has now seen, so the comparison is deliberate (BR-015).
+    setVersion(current.version);
+    setConflict({ current });
+  }
+
+  async function openConflict(controller: AbortController) {
+    const read = await accountApi.readRecord(practiceId, patient!.recordId, controller.signal);
+    if (controller.signal.aborted) return;
+    if (read.ok) { showConflict(read.data.patient); return; }
+    request.current = null;
+    setPhase('idle');
+    if (read.status === 401) expireRef.current();
     else setConflict({});
   }
 
@@ -482,6 +516,7 @@ function IdentityForm({ mode, scope, practiceId, base, patient, expire }: {
       <div className="etaye-ligne">
         <button className="etaye-bouton etaye-bouton--principal etaye-bouton--stable" type="submit" disabled={busy}
           aria-busy={busy || undefined}>{submitLabel}</button>
+        {/* Disabled while a request is in flight: leaving then would offer to discard input that may already be saved. */}
         <button className="etaye-bouton etaye-bouton--discret" type="button" disabled={busy}
           onClick={() => shell.navigate(patientsPath(base))}>Annuler</button>
       </div>

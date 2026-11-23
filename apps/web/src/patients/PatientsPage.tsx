@@ -17,27 +17,34 @@ export function PatientsPage({ scope, practiceId, base, expire }: {
   const shell = useShell();
   const [initial] = useState(() => readSearch(scope));
   const [confirmation] = useState(() => takeConfirmation(scope));
+  // Only the query is remembered: rows are shown after a successful response of this mount, never from memory.
   const [q, setQ] = useState(confirmation ? '' : initial?.q ?? '');
-  const [items, setItems] = useState<Patient[]>(confirmation ? [] : initial?.items ?? []);
-  const [next, setNext] = useState<string | null>(confirmation ? null : initial?.nextCursor ?? null);
-  const [loadedAt, setLoadedAt] = useState<number | undefined>(confirmation ? undefined : initial?.loadedAt);
-  const [staleAt, setStaleAt] = useState<number | undefined>(confirmation ? undefined : initial?.staleAt);
-  const [phase, setPhase] = useState<Phase>(!confirmation && initial?.items.length ? 'refreshing' : 'loading');
+  const [items, setItems] = useState<Patient[]>([]);
+  const [next, setNext] = useState<string | null>(null);
+  const [loadedAt, setLoadedAt] = useState<number | undefined>();
+  const [staleAt, setStaleAt] = useState<number | undefined>();
+  const [phase, setPhase] = useState<Phase>('loading');
   const [wait, setWait] = useState(0);
   const [more, setMore] = useState<'idle' | 'loading' | 'failed'>('idle');
-  const submitted = useRef(confirmation ? '' : initial?.q ?? '');
+  // The query of the last request sent, so a retry repeats what failed and not an older successful search.
+  const attempted = useRef(confirmation ? '' : initial?.q ?? '');
+  // The query of the rows on screen.
+  const submitted = useRef(attempted.current);
   const itemsRef = useRef(items);
   const controller = useRef<AbortController | null>(null);
-  const [queried, setQueried] = useState(submitted.current.trim() !== '');
+  const [queried, setQueried] = useState(false);
   itemsRef.current = items;
 
   const expireRef = useRef(expire);
   expireRef.current = expire;
   const fail = useCallback((status: number, retryAfter: number) => {
-    if (status === 401) expireRef.current();
-    else if (status === 403) setPhase('forbidden');
-    else if (status === 404) setPhase('hidden');
-    else if (status === 429) { setWait(retryAfter); setPhase('limited'); }
+    if (status === 401) { expireRef.current(); return; }
+    if (status === 403 || status === 404) {
+      // A refusal removes every row at once: nothing validated earlier stays visible.
+      setItems([]);
+      setNext(null);
+      setPhase(status === 403 ? 'forbidden' : 'hidden');
+    } else if (status === 429) { setWait(retryAfter); setPhase('limited'); }
     else setPhase('failed');
   }, []);
 
@@ -45,31 +52,32 @@ export function PatientsPage({ scope, practiceId, base, expire }: {
     controller.current?.abort();
     const request = new AbortController();
     controller.current = request;
+    const trimmed = query.trim();
+    attempted.current = trimmed;
+    writeSearch(scope, { q: trimmed });
     setMore('idle');
     setPhase(itemsRef.current.length ? 'refreshing' : 'loading');
-    const result = await accountApi.searchPatients(practiceId, { q: query.trim() || undefined, limit: PAGE }, request.signal);
+    const result = await accountApi.searchPatients(practiceId, { q: trimmed || undefined, limit: PAGE }, request.signal);
     if (request.signal.aborted) return;
     if (!result.ok) { fail(result.status, result.retryAfter); return; }
     const page = result.data;
-    const now = Date.now();
-    submitted.current = query.trim();
-    setQueried(submitted.current !== '');
+    submitted.current = trimmed;
+    setQueried(trimmed !== '');
     setItems(page.items);
     setNext(page.nextCursor);
-    setLoadedAt(now);
+    setLoadedAt(Date.now());
     setStaleAt(undefined);
     setPhase('ready');
-    writeSearch(scope, { q: submitted.current, items: page.items, nextCursor: page.nextCursor, loadedAt: now });
   }, [fail, practiceId, scope]);
 
   useEffect(() => {
-    // Leaving the form by any route already dropped its draft decision; a list never keeps another practice's data.
-    void load(submitted.current);
+    void load(attempted.current);
     return () => controller.current?.abort();
   }, [load]);
 
   async function showMore() {
-    if (!next || more === 'loading') return;
+    // The next page continues the rows on screen: it never starts while a refresh is pending (that would abort it).
+    if (!next || more === 'loading' || phase !== 'ready') return;
     controller.current?.abort();
     const request = new AbortController();
     controller.current = request;
@@ -78,17 +86,17 @@ export function PatientsPage({ scope, practiceId, base, expire }: {
       { q: submitted.current || undefined, cursor: next, limit: PAGE }, request.signal);
     if (request.signal.aborted) return;
     if (!result.ok) {
-      if (result.status === 401) expireRef.current();
-      else if (result.status === 403) setPhase('forbidden');
-      else if (result.status === 404) setPhase('hidden');
+      if (result.status === 401 || result.status === 403 || result.status === 404) fail(result.status, result.retryAfter);
       else setMore('failed');
       return;
     }
-    const merged = [...itemsRef.current, ...result.data.items];
-    setItems(merged);
+    // A corrected name can move a loaded patient past the cursor: a page that repeats a row shows the list changed.
+    const known = new Set(itemsRef.current.map((patient) => patient.id));
+    const fresh = result.data.items.filter((patient) => !known.has(patient.id));
+    if (fresh.length !== result.data.items.length) setStaleAt(Date.now());
+    setItems([...itemsRef.current, ...fresh]);
     setNext(result.data.nextCursor);
     setMore('idle');
-    writeSearch(scope, { q: submitted.current, items: merged, nextCursor: result.data.nextCursor, loadedAt: loadedAt ?? Date.now() });
   }
 
   function submit(event: FormEvent) {
@@ -101,6 +109,7 @@ export function PatientsPage({ scope, practiceId, base, expire }: {
     void load('');
   }
 
+  const retry = () => void load(attempted.current);
   const practice = shell.practiceName;
   const newPath = newPatientPath(base);
   const create = (
@@ -132,13 +141,15 @@ export function PatientsPage({ scope, practiceId, base, expire }: {
   </>;
 
   const trimmed = submitted.current;
-  const rows = items.map((patient) => {
+  const saved = confirmation?.patient;
+  // A patient that the loaded page does not contain (it sorts later) is pinned first, from the save response.
+  const pinned = saved && !items.some((patient) => patient.id === saved.id) ? saved : undefined;
+  const entry = (patient: Patient, marked: boolean) => {
     const name = patientName(patient);
     const edit = editPatientPath(base, patient.recordId);
-    const created = confirmation && confirmation.recordId === patient.recordId;
     const age = ageLabel(patient.dateOfBirth);
     return (
-      <li key={patient.id} className={created ? 'etaye-ligne--nouvelle' : undefined}>
+      <li key={patient.id} className={marked ? 'etaye-ligne--nouvelle' : undefined}>
         <span aria-hidden="true" className="etaye-lignes__heure">
           <span aria-hidden="true" className="etaye-icone etaye-icone--18 etaye-icone--compte etaye-2" />
         </span>
@@ -149,6 +160,9 @@ export function PatientsPage({ scope, practiceId, base, expire }: {
           </div>
         </div>
         <div className="etaye-lignes__actions">
+          {marked && <span className="etaye-statut etaye-statut--valide">
+            {confirmation?.kind === 'created' ? 'Dossier créé' : 'Identité enregistrée'}
+          </span>}
           <a className="etaye-bouton etaye-bouton--secondaire" href={edit}
             onClick={(event) => { event.preventDefault(); shell.navigate(edit); }}>
             Modifier l’identité<span className="etaye-vh"> de {name}</span>
@@ -156,10 +170,15 @@ export function PatientsPage({ scope, practiceId, base, expire }: {
         </div>
       </li>
     );
-  });
-  const countText = `${items.length} patient${items.length > 1 ? 's' : ''} affiché${items.length > 1 ? 's' : ''}`
+  };
+  const rows = [
+    ...(pinned ? [entry(pinned, true)] : []),
+    ...items.map((patient) => entry(patient, saved?.id === patient.id)),
+  ];
+  const shown = rows.length;
+  const countText = `${shown} patient${shown > 1 ? 's' : ''} affiché${shown > 1 ? 's' : ''}`
     + (next ? ' · d’autres patients existent' : '');
-  const showList = items.length > 0 && phase !== 'loading';
+  const showList = shown > 0 && phase !== 'loading';
   const refreshFailed = phase === 'failed' && items.length > 0;
   const hardFailed = phase === 'failed' && items.length === 0;
 
@@ -167,8 +186,8 @@ export function PatientsPage({ scope, practiceId, base, expire }: {
     {header}
     {confirmation && <Notice kind="info" icon="valide" title={confirmation.kind === 'created' ? 'Dossier créé' : 'Identité enregistrée'}>
       {confirmation.kind === 'created'
-        ? `${confirmation.name} existe dans ce cabinet uniquement. Aucun espace patient n’a été créé.`
-        : `L’identité de ${confirmation.name} a été enregistrée.`}
+        ? `${patientName(confirmation.patient)} existe dans ce cabinet uniquement. Aucun espace patient n’a été créé.`
+        : `L’identité de ${patientName(confirmation.patient)} a été enregistrée.`}
     </Notice>}
     <form aria-label="Rechercher un patient" className="etaye-filtres" role="search" noValidate onSubmit={submit}>
       <div style={{ flex: 1, minWidth: 240 }}>
@@ -192,15 +211,15 @@ export function PatientsPage({ scope, practiceId, base, expire }: {
       Un dossier a été modifié depuis votre recherche ({clockTime(staleAt)}).
     </Notice>}
     {phase === 'limited' && <Notice kind="attention" alert title="Trop de recherches"
-      actions={<button className="etaye-bouton etaye-bouton--secondaire" type="button" onClick={() => void load(submitted.current)}>Réessayer</button>}>
+      actions={<button className="etaye-bouton etaye-bouton--secondaire" type="button" onClick={retry}>Réessayer</button>}>
       Patientez {wait > 0 ? `${wait} secondes` : 'un instant'} avant de relancer la recherche.
     </Notice>}
     {refreshFailed && <Notice kind="attention" alert title="La liste n’a pas pu être chargée entièrement"
-      actions={<button className="etaye-bouton etaye-bouton--secondaire" type="button" onClick={() => void load(submitted.current)}>Réessayer</button>}>
+      actions={<button className="etaye-bouton etaye-bouton--secondaire" type="button" onClick={retry}>Réessayer</button>}>
       Les résultats affichés datent de {loadedAt ? clockTime(loadedAt) : 'tout à l’heure'}. Certains dossiers peuvent manquer.
     </Notice>}
     {hardFailed && <Notice kind="attention" alert title="La liste n’a pas pu être chargée"
-      actions={<button className="etaye-bouton etaye-bouton--secondaire" type="button" onClick={() => void load(submitted.current)}>Réessayer</button>}>
+      actions={<button className="etaye-bouton etaye-bouton--secondaire" type="button" onClick={retry}>Réessayer</button>}>
       Le service est momentanément indisponible. Aucune information n’est perdue.
     </Notice>}
     {more === 'failed' && <Notice kind="attention" alert title="La suite n’a pas pu être chargée"
@@ -216,11 +235,11 @@ export function PatientsPage({ scope, practiceId, base, expire }: {
       </div>
       <ul className="etaye-lignes">{rows}</ul>
       {next && more !== 'failed' && <div className="etaye-ligne">
-        <button className="etaye-bouton etaye-bouton--secondaire" type="button" disabled={more === 'loading'}
+        <button className="etaye-bouton etaye-bouton--secondaire" type="button" disabled={more === 'loading' || phase !== 'ready'}
           onClick={() => void showMore()}>{more === 'loading' ? 'Chargement…' : 'Afficher plus'}</button>
       </div>}
     </>}
-    {phase === 'ready' && items.length === 0 && (trimmed === '' ? (
+    {phase === 'ready' && shown === 0 && (trimmed === '' ? (
       <div className="etaye-vide">
         <strong>Aucun patient dans ce cabinet</strong>
         <span>Les dossiers créés ici n’apparaissent que dans ce cabinet.</span>

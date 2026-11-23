@@ -4,6 +4,7 @@ import type { AccessContext, Session } from '../api/generated/types.gen';
 import { contextPath, practiceLabel, roleLabel } from '../auth/access-contexts';
 import { AuthLogo } from '../auth/AuthComponents';
 import { ACCOUNT_PATH } from '../auth/session-work';
+import { setLeaveGuard } from './leave-guard';
 import { patientsPath } from './routes';
 import '../auth/practice-context.css';
 import './patients.css';
@@ -88,6 +89,16 @@ export function PractitionerShell({ session, context, contexts, select, signOut,
     if (pending) stay.current?.focus();
   }, [pending]);
 
+  useEffect(() => {
+    // Back and Forward with unsaved input ask first, like every other way of leaving the form (BR-015).
+    setLeaveGuard((target) => {
+      if (!dirty.current) return false;
+      setPending(() => () => select(target));
+      return true;
+    });
+    return () => setLeaveGuard(undefined);
+  }, [select]);
+
   const go = (path: string) => (event: { preventDefault: () => void }) => {
     event.preventDefault();
     setMenuOpen(false);
@@ -113,12 +124,12 @@ export function PractitionerShell({ session, context, contexts, select, signOut,
           </button>
           <a className="etaye-top__logo" href={patients} onClick={go(patients)}><AuthLogo /></a>
           {contexts.length > 1 ? (
-            <button className="etaye-contexte" type="button" onClick={() => navigate(ACCOUNT_PATH)}
+            <button className="etaye-contexte" type="button" inert={menuOpen} onClick={() => navigate(ACCOUNT_PATH)}
               aria-label={`${practice} ${role} · ${session.account.displayName} — Changer de contexte`}>
               {label}
               <span className="etaye-icone etaye-icone--deplier" aria-hidden="true" />
             </button>
-          ) : <div className="etaye-contexte">{label}</div>}
+          ) : <div className="etaye-contexte" inert={menuOpen}>{label}</div>}
           <div className="etaye-top__droite">
             <span className="etaye-demo">Démonstration — personnes et données fictives</span>
             <span className="etaye-compte__nom">{session.account.displayName}</span>
@@ -136,7 +147,8 @@ export function PractitionerShell({ session, context, contexts, select, signOut,
             </li>
           </ul>
         </nav>
-        <main className="etaye-main" id="contenu">
+        {/* While the menu covers the page, nothing behind it can take focus (focus not obscured). */}
+        <main className="etaye-main" id="contenu" inert={menuOpen}>
           <div className="etaye-page">
             {pending && dirty.current && (
               <div onKeyDown={(event) => { if (event.key === 'Escape') setPending(null); }}>
