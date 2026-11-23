@@ -2,15 +2,15 @@
 
 Updated: 2026-11-23. Owner: Aymen Chaghoub.
 
-## Story 1.4 implemented, awaiting running-UI approval and merge — 2026-11-23
+## Story 1.4 approved and merged — 2026-11-23
 
-**Phase.** Implementation of story 1.4 on `feat/1.4-demonstrate-server-side-resource-isolation` under UD-61. The contract review found no transport change (`30c026c`). The API job now measures 24 adversarial cases on the real synthetic fixture and publishes the `api-isolation-matrix` artifact behind `tools/assert_isolation_matrix.py` (`57732bd`). The web demo has the guided "Prouvez l’isolation" entry and a signed-in journey that performs the real record read for the current account and shows the S-36 and I-22 states (`5517805`, `dd73073`). [Implementation record](implementation-artifacts/story-1-4-implementation-record.md) · [Running-UI review](design/reviews/2026-11-23-story-1-4-runtime.md)
+**Decision (UD-62).** After the comparisons and the three flagged visual points, Aymen wrote “je valide l’interface, tu peux fusionner”. [PR #58](https://github.com/Aymenchaghoub/etaye/pull/58) is squash-merged once the required checks pass on the exact head. [Decision register](planning-artifacts/decisions-assumptions.md) · [Implementation record](implementation-artifacts/story-1-4-implementation-record.md) · [Running-UI review](design/reviews/2026-11-23-story-1-4-runtime.md)
 
-**Actual verification.** Java 25 Maven verify passed 176 tests including 9 matrix tests; two disposable guard mutations were detected. 117 tooling tests, the Web type check, build, 13 unit tests and 81 Chromium smoke tests (serial run) passed. The Compose package replayed Nora `200`, the foreign record `404`, Mila `403` and Claire `404`, tied to their matrix cases, and the 9.1 journey passed again. Not run: the real outage spec, HawkScan (no key), Firefox and WebKit. The CI artifact is observable only on the pull request.
+**Delivered.** The contract review found no transport change. `API verify` measures 24 adversarial cases on the real synthetic fixture, gates them with `tools/assert_isolation_matrix.py` and publishes the `api-isolation-matrix` artifact. The demo has the guided "Prouvez l’isolation" entry and a signed-in journey performing the real record read, with the S-36 and I-22 states. Source, task and export rows stay pending under D-55; the scripted browser replay joins CI at M6 (D-56).
 
-**Open choices.** Aymen said the rendering is "net" on 2026-11-23; that is not the running-UI approval, which the PR asks for explicitly together with three visual points: "Mila" and "Claire" as links in the guide, the "Praticien" role label and the 1.2 neutral shell geometry for I-22. Merge needs his separate authorization. His focus-ring report came from the design-phase captures, which pressed Tab before every image; the application shows the ring only on keyboard focus (regression check added).
+**Actual verification.** Java 25 Maven verify: 176 tests; tooling: 119; Web: type check, build, 13 unit tests and 81 Chromium smoke tests (serial run). The Compose package replayed Nora `200`, the foreign record `404`, Mila `403` and Claire `404`, and the 9.1 journey passed again. All required checks passed on PR head `87949bc` including the published matrix artifact. One Codex review and nine CodeRabbit comments were triaged and fixed. Not run: the real outage spec, HawkScan (no key), Firefox and WebKit, screen-reader and browser-zoom checks.
 
-**Next action.** Verify the exact PR head and the required checks, request the manual CodeRabbit review, triage its findings, obtain Aymen's running-UI decision and merge authorization, then update `main`, the cockpit and this file. The decision register records the approvals only once he gives them.
+**Next action.** After the merge update `main`, regenerate the cockpit from it and verify the 1.4 status and PR number, remove the integrated worktree branches and the local demo stack (`COMPOSE_PROJECT_NAME=etaye-demo-14`), then prepare the next authorized story with Aymen.
 
 ## Story 1.4 design approved and development authorized (UD-61) — 2026-11-23
 

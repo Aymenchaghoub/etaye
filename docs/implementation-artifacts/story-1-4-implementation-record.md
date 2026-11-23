@@ -1,6 +1,6 @@
 # Story 1.4 implementation record — Demonstrate server-side resource isolation
 
-Status: Implemented on `feat/1.4-demonstrate-server-side-resource-isolation`, started from `origin/main` at `f01288e94c0f23b2e8581fba48b82de69dc081bd` on 2026-11-23. Running-UI approval and merge are pending with Aymen. Authorization: UD-61 (story 1.4 only, global flag false). Scope, design approvals and arbitration are in the [context packet](story-1-4-context-packet.md); this record carries the implementation decisions and the executed evidence. Nothing here claims clinical validation, certification or readiness for real patients.
+Status: Implemented on `feat/1.4-demonstrate-server-side-resource-isolation`, started from `origin/main` at `f01288e94c0f23b2e8581fba48b82de69dc081bd` on 2026-11-23. Running UI approved and merge authorized by Aymen on 2026-11-23 (UD-62). Authorization: UD-61 (story 1.4 only, global flag false). Scope, design approvals and arbitration are in the [context packet](story-1-4-context-packet.md); this record carries the implementation decisions and the executed evidence. Nothing here claims clinical validation, certification or readiness for real patients.
 
 ## Contract review (first commit, before application code)
 
