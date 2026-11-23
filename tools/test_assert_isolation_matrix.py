@@ -94,11 +94,11 @@ class IsolationMatrixReportTest(unittest.TestCase):
         self.report["cases"][0]["label"] = "Record 13add2de-e7d5-342c-5ac5-7f718d04f6a4"
         self.assert_fails("no longer matches the manifest")
         self.report = valid_report(self.manifest)
-        self.report["note"] = "target 13add2de-e7d5-342c-5ac5-7f718d04f6a4"
+        self.report["cases"][0]["test"] = "Suite#13add2de-e7d5-342c-5ac5-7f718d04f6a4"
         self.assert_fails("must not contain an identifier")
         self.report = valid_report(self.manifest)
         self.report["cases"][0]["headers"] = {"cookie": "x"}
-        self.assert_fails("request or response material")
+        self.assert_fails("outside its schema")
 
     def test_requires_the_commit_and_fixture_version(self):
         self.report["commit"] = "unknown"
@@ -112,6 +112,28 @@ class IsolationMatrixReportTest(unittest.TestCase):
         self.assertEqual(status, 1, output)
         self.assertEqual(self.run_tool()[0], 0)
 
+    def test_rejects_fields_outside_the_schema_and_malformed_fingerprints(self):
+        self.report["debug"] = "response text"
+        self.assert_fails("does not match its schema")
+        self.report = valid_report(self.manifest)
+        self.report["cases"][0]["debugText"] = "response text"
+        self.assert_fails("case holds fields outside its schema")
+        self.report = valid_report(self.manifest)
+        self.report["pending"][0]["note"] = "x"
+        self.assert_fails("pending rows of the report differ")
+        self.report = valid_report(self.manifest)
+        for case in self.report["cases"]:
+            if case["fingerprint"]:
+                case["fingerprint"] = "   "
+        self.assert_fails("without a response fingerprint")
+
+    def test_never_echoes_an_unvalidated_observation(self):
+        self.report["cases"][1]["observed"] = "404 13add2de-e7d5-342c-5ac5-7f718d04f6a4"
+        status, output = self.run_tool()
+        self.assertEqual(status, 1, output)
+        self.assertIn("did not pass", output)
+        self.assertNotIn("13add2de", output)
+
     def test_rejects_drift_of_commit_fixture_parity_and_pending_rows(self):
         status, output = self.run_tool(None, "--expect-commit", "f" * 40)
         self.assertEqual(status, 1, output)
@@ -121,6 +143,9 @@ class IsolationMatrixReportTest(unittest.TestCase):
         self.assert_fails("another fixture version")
         self.report = valid_report(self.manifest)
         del self.report["parity"]
+        self.assert_fails("does not match its schema")
+        self.report = valid_report(self.manifest)
+        self.report["parity"] = {}
         self.assert_fails("parity groups of the report differ")
         self.report = valid_report(self.manifest)
         self.report["pending"][0]["owners"] = []

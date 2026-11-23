@@ -187,7 +187,7 @@ public class HttpConnectionReuseIsolationTest extends AbstractPostgresTest {
         connectionRecorder.clear();
 
         ResponseEntity<Map> hidden = client().get()
-                .uri("/api/v1/practices/{practiceId}/records/{recordId}", practiceA, UUID.randomUUID())
+                .uri("/api/v1/practices/{practiceId}/records/{recordId}", practiceA, patientB.recordId())
                 .header(HttpHeaders.COOKIE, cookieClinicalA)
                 .retrieve().onStatus(status -> status.value() == 404, (req, res) -> {}).toEntity(Map.class);
         ResponseEntity<Map> refused = client().get()

@@ -8,6 +8,10 @@ from pathlib import Path
 UUID = re.compile(r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
 COMMIT = re.compile(r"[0-9a-f]{40}")
 CASE_FIELDS = ("id", "group", "label", "expected", "observed", "result", "test")
+REPORT_KEYS = {"schemaVersion", "story", "commit", "fixtureVersion", "parity", "cases", "pending"}
+CASE_KEYS = set(CASE_FIELDS) | {"fingerprint"}
+PENDING_KEYS = {"id", "resource", "operations", "owners", "status", "trigger"}
+FINGERPRINT = re.compile(r"[0-9a-f]{16}")
 FORBIDDEN_KEYS = {"body", "headers", "header", "cookie", "token", "request", "response", "url", "path"}
 
 
@@ -37,6 +41,8 @@ def forbidden_keys(value):
 def check(report, manifest, require_commit, expect_commit=None):
     if report.get("schemaVersion") != 1 or report.get("story") != "1.4":
         raise ValueError("The report must declare schemaVersion 1 and story 1.4")
+    if set(report) != REPORT_KEYS:
+        raise ValueError("The report does not match its schema")
     cases = report.get("cases")
     if not isinstance(cases, list) or not cases:
         raise ValueError("The report holds no measured case")
@@ -60,6 +66,8 @@ def check(report, manifest, require_commit, expect_commit=None):
         if not isinstance(case, dict) or any(not isinstance(case.get(field), str) or not case[field].strip()
                                              for field in CASE_FIELDS):
             raise ValueError(f"A report case lacks one of {', '.join(CASE_FIELDS)}")
+        if not set(case) <= CASE_KEYS:
+            raise ValueError("A report case holds fields outside its schema")
         if case["id"] in seen:
             raise ValueError(f"Duplicate case {case['id']}")
         seen[case["id"]] = case
@@ -74,20 +82,21 @@ def check(report, manifest, require_commit, expect_commit=None):
         if case["expected"] != wanted["expected"] or case["label"] != wanted["label"] or case["group"] != wanted["group"]:
             raise ValueError(f"Case {case_id} no longer matches the manifest")
         if case["result"] != "PASS" or case["observed"] != case["expected"]:
-            raise ValueError(f"Case {case_id} did not pass: expected [{case['expected']}] observed [{case['observed']}]")
+            # The observation is not echoed: it is unvalidated text until the checks below have run.
+            raise ValueError(f"Case {case_id} did not pass: its result or outcome differs from the expectation")
 
     if report.get("parity") != manifest.get("parity"):
         raise ValueError("The parity groups of the report differ from the manifest")
     for group, members in manifest.get("parity", {}).items():
         fingerprints = {seen[member].get("fingerprint") for member in members}
-        if None in fingerprints or "" in fingerprints:
+        if any(not isinstance(value, str) or not FINGERPRINT.fullmatch(value) for value in fingerprints):
             raise ValueError(f"Parity group {group} has a case without a response fingerprint")
         if len(fingerprints) != 1:
             raise ValueError(f"Parity group {group} discloses a difference between refusals that must be identical")
 
     pending = report.get("pending")
     wanted_pending = [{**row, "status": "PENDING"} for row in manifest.get("pending", [])]
-    if not isinstance(pending, list) or any(not isinstance(row, dict) for row in pending):
+    if not isinstance(pending, list) or any(not isinstance(row, dict) or set(row) != PENDING_KEYS for row in pending):
         raise ValueError("The pending rows of the report differ from the manifest")
     if any(row.get("status") != "PENDING" for row in pending):
         raise ValueError("A resource without a real route must stay PENDING")

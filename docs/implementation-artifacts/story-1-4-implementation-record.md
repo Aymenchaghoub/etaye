@@ -83,3 +83,20 @@ Run on revision `dd73073` with `codex exec --sandbox read-only --skip-git-repo-c
 | Guide links, role label and I-22 shell geometry differ from the specimens; the CI artifact is unverified | Already recorded as open decisions and limits | The artifact can only be observed on the pull request run. |
 
 While preparing these captures the neutral auth shell was found to overflow the viewport by its padding (`min-height: 100dvh` plus padding on a content-box element), which pushed its fictional-data footer below the fold on tall screens; it is now border-box (`bedddc7`).
+
+## CodeRabbit review (manual request on draft PR #58, 2026-11-23)
+
+All required checks passed on the pull request head before the review (API verify ran the 176 tests, the matrix gate with `--expect-commit "$GITHUB_SHA"` and uploaded the 4.4 kB `api-isolation-matrix` artifact; Web verify ran the 81 smoke tests). CodeRabbit posted nine inline comments on `1aa4273`. Each was checked against the code and all were valid; none changes behavior.
+
+| Comment | Fix |
+|---|---|
+| The recorder keeps any syntactically valid problem code | Only the documented problem codes reach the report and assertion messages; anything else becomes `NON_STANDARD_CODE`. |
+| Parity compares header names, not values, so a differing `Location` could pass | Hidden refusals are asserted to carry none of `Location`, `Content-Location`, `Set-Cookie`, `Content-Disposition`, `Last-Modified`, `Retry-After` or `WWW-Authenticate`. |
+| The correlation value is set aside by the parity check and could echo a target | The header and body copies must not contain any practice or record identifier. |
+| The audit lookup builds SQL from a response value | The oracle uses a bound parameter on the superuser connection. |
+| The pooled-connection test reads a random id | The first read targets the existing record of practice B through practice A, the last read is its positive control. |
+| The README separates the demo suites by waiting but `test:demo` runs both | It now names one spec file per invocation. |
+| The gate accepts extra fields | The report, case and pending objects must match their exact schema. |
+| The gate prints an unvalidated observation | A failing case reports its identifier only. |
+| A whitespace fingerprint passes the parity group | Each parity member must carry a 16-character lowercase hexadecimal fingerprint. |
+

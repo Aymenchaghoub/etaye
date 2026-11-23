@@ -74,19 +74,22 @@ public final class IsolationMatrix {
         fixtureVersion = version;
     }
 
-    private static final java.util.regex.Pattern STABLE_CODE = java.util.regex.Pattern.compile("[A-Z][A-Z0-9_]{1,40}");
+    // Only the documented problem codes reach the report; any other value is replaced by a fixed marker.
+    private static final java.util.Set<String> KNOWN_CODES = java.util.Set.of("NOT_FOUND", "FORBIDDEN", "UNAUTHORIZED",
+            "INVALID_PARAMETER", "SERVICE_UNAVAILABLE", "INTERNAL_ERROR", "VALIDATION_FAILED", "MALFORMED_REQUEST",
+            "RATE_LIMITED");
     private static final java.util.regex.Pattern UUID_TEXT = java.util.regex.Pattern.compile(
             "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}");
 
     /**
-     * The compact outcome used by the report: the status and, when the problem carries one, its stable code. A code
-     * that is not a stable identifier is replaced, so a regression can never copy request data into the report.
+     * The compact outcome used by the report: the status and, when the problem carries one, its documented code. Any
+     * other value is replaced, so a regression can never copy request data into the report or an assertion message.
      */
     public static String outcome(int status, Object code) {
         if (code == null) {
             return Integer.toString(status);
         }
-        return status + " " + (STABLE_CODE.matcher(code.toString()).matches() ? code : "NON_STANDARD_CODE");
+        return status + " " + (KNOWN_CODES.contains(code.toString()) ? code : "NON_STANDARD_CODE");
     }
 
     /**

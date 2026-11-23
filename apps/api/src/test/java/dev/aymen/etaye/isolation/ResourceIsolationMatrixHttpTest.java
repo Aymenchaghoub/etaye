@@ -150,7 +150,17 @@ class ResourceIsolationMatrixHttpTest {
         hidden.forEach((id, response) -> {
             assertThat(response.headers().getContentType()).as(id).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
             assertThat(response.headers().getETag()).as("%s must carry no validator", id).isNull();
+            // None of these headers may ever appear on a hidden refusal, whatever their value.
+            for (String header : List.of("Location", "Content-Location", "Set-Cookie", "Content-Disposition",
+                    "Last-Modified", "Retry-After", "WWW-Authenticate")) {
+                assertThat(response.headers().containsHeader(header)).as("%s must not carry %s", id, header).isFalse();
+            }
             assertThat(response.body()).as(id).containsEntry("correlationId", response.headers().getFirst("X-Correlation-Id"));
+            // The per-request correlation value is set aside by the parity check, so it must not echo any target.
+            for (String target : List.of(practiceA, practiceB, recordA, recordA2, recordB)) {
+                assertThat(String.valueOf(response.body().get("correlationId"))).as(id).doesNotContain(target);
+                assertThat(String.valueOf(response.headers().getFirst("X-Correlation-Id"))).as(id).doesNotContain(target);
+            }
             Map<String, Object> problem = new java.util.LinkedHashMap<>(response.body());
             problem.remove("correlationId");
             assertThat(problem).as(id).isEqualTo(NOT_FOUND);
@@ -174,8 +184,8 @@ class ResourceIsolationMatrixHttpTest {
 
         List<Map<String, Object>> events = oracleRows("""
                 SELECT practice_id::text, actor_account_id::text, event_type, resource_type, resource_id::text,
-                       outcome, safe_metadata::text FROM audit_event WHERE correlation_id = '%s'
-                """.formatted(refusal.body().get("correlationId")));
+                       outcome, safe_metadata::text FROM audit_event WHERE correlation_id = ?
+                """, String.valueOf(refusal.body().get("correlationId")));
         assertThat(events).hasSize(1);
         Map<String, Object> event = events.getFirst();
         assertThat(event).containsEntry("practice_id", practiceA).containsEntry("event_type", "ACCESS_DENIED")
@@ -369,17 +379,21 @@ class ResourceIsolationMatrixHttpTest {
     }
 
     /** Reads through the superuser so that the oracle sees every practice despite forced row-level security. */
-    private List<Map<String, Object>> oracleRows(String sql) throws SQLException {
+    private List<Map<String, Object>> oracleRows(String sql, String... parameters) throws SQLException {
         List<Map<String, Object>> rows = new ArrayList<>();
-        try (var connection = DemoDatabase.adminConnection(); var command = connection.createStatement();
-             var result = command.executeQuery(sql)) {
-            var columns = result.getMetaData();
-            while (result.next()) {
-                Map<String, Object> row = new java.util.LinkedHashMap<>();
-                for (int index = 1; index <= columns.getColumnCount(); index++) {
-                    row.put(columns.getColumnLabel(index), result.getString(index));
+        try (var connection = DemoDatabase.adminConnection(); var command = connection.prepareStatement(sql)) {
+            for (int index = 0; index < parameters.length; index++) {
+                command.setString(index + 1, parameters[index]);
+            }
+            try (var result = command.executeQuery()) {
+                var columns = result.getMetaData();
+                while (result.next()) {
+                    Map<String, Object> row = new java.util.LinkedHashMap<>();
+                    for (int index = 1; index <= columns.getColumnCount(); index++) {
+                        row.put(columns.getColumnLabel(index), result.getString(index));
+                    }
+                    rows.add(row);
                 }
-                rows.add(row);
             }
         }
         return rows;
