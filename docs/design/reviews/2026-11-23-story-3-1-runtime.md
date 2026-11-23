@@ -34,7 +34,7 @@ All 24 sheets are in [the folder](2026-11-23-story-3-1-runtime/). They were rege
 
 ## Functional evidence for this revision
 
-- API: `./mvnw -B -ntp verify`, 206 tests, 0 failures (PostgreSQL 18.7 Testcontainers). Web: `tsc -b`, `build` with the SDK drift check, Vitest 40 tests, stubbed Chromium smoke 125 tests (44 new, each state scanned with axe-core, plus keyboard, focus, shell background, overflow, idempotency-key and review-regression assertions).
+- API: `./mvnw -B -ntp verify`, 206 tests, 0 failures (PostgreSQL 18.7 Testcontainers). Web: `tsc -b`, `build` with the SDK drift check, Vitest 40 tests, stubbed Chromium smoke 133 tests (52 new, each state scanned with axe-core, plus keyboard, focus, shell background, overflow, idempotency-key and review-regression assertions).
 - Real stack: five Playwright specs on the package rebuilt on a fresh database volume pass (after two clean runs before the review fixes) (registration with the duplicate warning and the named confirmation, practice scoping, a read-only member refused with the restricted state, a stale correction keeping the input, the unsaved-changes guard). Earlier runs failed for test reasons only (a list read before it rendered, the package treating a hard navigation as an expired session, the per-address sign-in limit) and the specs were corrected; no application defect was found by them.
 
 ## Not verified

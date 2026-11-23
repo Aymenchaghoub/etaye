@@ -1,6 +1,6 @@
 # Story 3.1 implementation record — Find and register a local patient
 
-Status: Implemented on `feat/3.1-find-register-local-patient`; end-of-story review, PR and Aymen's running-UI approval pending. Authorized under UD-65 (scope UD-63, design UD-64). Baseline `origin/main` `02a8c6d`. [Context packet](story-3-1-context-packet.md) · [Design review](../design/reviews/2026-11-23-story-3-1-design-review.md) · [Decision register](../planning-artifacts/decisions-assumptions.md)
+Status: Implemented on `feat/3.1-find-register-local-patient` (draft PR #59); the end-of-story review and the CodeRabbit review are triaged and fixed; Aymen's running-UI approval and the merge are pending. Authorized under UD-65 (scope UD-63, design UD-64). Baseline `origin/main` `02a8c6d`. [Context packet](story-3-1-context-packet.md) · [Design review](../design/reviews/2026-11-23-story-3-1-design-review.md) · [Decision register](../planning-artifacts/decisions-assumptions.md)
 
 ## Sequence
 
@@ -73,4 +73,23 @@ One run of `codex exec --sandbox read-only` on `9b8da2b`, three lenses, as the d
 | | Scheduling foreign-practice refusal not directly tested (P2) | Test added for both routes and an unknown practice, with zero writes. |
 | | "Annuler" disabled while saving, unlike the specimens (P3) | Kept and disclosed. |
 
-After the fixes: API 206 tests, Vitest 40, stubbed smoke 125, real-stack specs 5 of 5 on a fresh-volume package, the CI assertion passes with the new required suites and a minimum of 206.
+After the fixes: API 206 tests, Vitest 40, stubbed smoke 133, real-stack specs 5 of 5 on a fresh-volume package, the CI assertion passes with the new required suites and a minimum of 206.
+
+## CodeRabbit review (manual, 2026-11-23)
+
+The PR exceeded CodeRabbit's 100-file limit (130 files), so `.coderabbit.yaml` now excludes the static specimens, the comparison sheets and the generated client and the review covered the remaining 75 files. It left ten comments; each was verified against the code before any change, and all ten were confirmed. The CodeQL annotations from the first run (links built from the address bar, an overflow check on the page size, number parsing, an unused parameter) were fixed earlier in `74c77f0` and the check now passes.
+
+| Comment | Disposition |
+|---|---|
+| A foreign cursor under an unmatched query answers 200 (API, minor) | Confirmed. The position is resolved before the empty-page shortcut; the test forges the exact case. |
+| The registration race test may not overlap the checks (API test) | Confirmed. Replaced by a test that slows the duplicate lookup; it fails when the identity locks are disabled (verified by temporarily removing them). |
+| Reconnection clears the patient draft because the server answers `/compte` for a patient path (major) | Confirmed. The client restores the paused patient page and keeps the draft for the same account and an active grant; the stub now applies the real server rule, and the earlier expiry test had passed only through its unfaithful stub. |
+| A saved correction rewrites its draft and can show a false conflict | Confirmed. A done flag stops the draft write and the guard after a successful save. |
+| The "Dossier créé" pin appears inside a filtered search | Confirmed. The pin only shows in the unfiltered directory. |
+| Navigation requested during a save is dropped and the page is blank | Confirmed. The confirmation shows, then the requested navigation completes. |
+| The keyboard-order test can pass with a missing stop | Confirmed. Every required control must appear in the order first. |
+| Design review still lists the development authorization as pending | Confirmed. Marked as the state at UD-64 with a link to UD-65. |
+| UD-63 says the design approval follows the authorization | Confirmed. Reordered: UD-64 came before UD-65. |
+| The proxy error log can still quote the query on an upstream failure | Confirmed. The error log keeps critical errors only; a canary search with the API stopped left no trace; the diagnostic trade-off is recorded above. |
+
+After the fixes: API 206 tests, Vitest 40, stubbed smoke 133, real-stack specs 5 of 5; all required checks passed on the previous head and are re-run on the new one.
