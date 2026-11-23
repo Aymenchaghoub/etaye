@@ -104,6 +104,13 @@ Sources: Aymen's story 1.1 arbitration reply recorded under UD-50 and his story 
 | UD-57 | Aymen approved the running story 9.1 interface in PR #52 (“Je te valide”) after receiving the comparisons and recordings. This approval covers the demonstrated interface on PR head `0a63feb`. | [Running-UI review](../design/reviews/2026-11-22-story-9-1-runtime.md) · [PR #52](https://github.com/Aymenchaghoub/etaye/pull/52). D-54 has its own approval in UD-58. |
 | UD-58 | Aymen accepted D-54 for AT-035-A (“Valider le report D-54”) after reviewing the local scope choice. Story 9.1 verifies restoration of the data stored by the delivered demo, including invitation states. Corrected weight lineage and publication v2 remain in the canonical synthetic design dataset. | Add the corresponding runtime reset assertions when story 3.3 delivers measurement correction storage and stories 7.2 and 7.3 deliver publication and replacement storage. AT-035-A remains mapped to 9.1 for the delivered fixture. [Scope review](../design/reviews/2026-11-22-story-9-1-runtime/index.html#perimetre) · [Acceptance mapping](../traceability.md#story-91-demo-fixture-verification) |
 
+### Visual identity across page states — 2026-11-22
+
+| ID | Decision | Consequence |
+|---|---|---|
+| UD-60 | After seeing Nora’s confirmed read and S-36 aligned with the approved context, Aymen affirmed the revision and directed the project to apply this rule across future stories because it is part of Étaye’s visual identity. | Preserve the approved shell and background across states of each destination. Require the story reference and opened visual evidence in both themes. [Page-state continuity](../design/design-system.md#continuity-across-page-states) |
+
+
 ### Corrections applied on 2026-11-17 under Aymen's authorization to correct the package
 
 | ID | Correction | Where |
