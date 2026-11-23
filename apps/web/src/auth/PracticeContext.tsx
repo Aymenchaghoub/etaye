@@ -3,6 +3,7 @@ import type { AccessContext, Session } from '../api/generated/types.gen';
 import '../../../../design/received/2026-11-03/icons.css';
 import { AuthLogo, AuthShell, Banner, FocusedHeading } from './AuthComponents';
 import { contextPath, practiceLabel, roleLabel } from './access-contexts';
+import { patientsPath } from '../patients/routes';
 import { ACCOUNT_PATH } from './session-work';
 import './practice-context.css';
 
@@ -114,6 +115,10 @@ export function PracticeDestination({ session, context, contexts, select, signOu
     <ContextFrame context={context} contexts={contexts} select={select} testId="protected-account">
       <FocusedHeading>{patient ? 'Votre espace patient' : 'Votre espace de travail'}</FocusedHeading>
       <p>{session.account.displayName}</p>
+      {!patient && context.displayRole === 'CLINICAL' && (
+        <a className="etaye-bouton etaye-bouton--principal" href={patientsPath(contextPath(context))}
+          onClick={(event) => { event.preventDefault(); select(patientsPath(contextPath(context))); }}>Patients</a>
+      )}
       <button type="button" className="etaye-bouton etaye-bouton--discret" onClick={signOut}>Se déconnecter</button>
     </ContextFrame>
   );
