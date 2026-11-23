@@ -40,7 +40,7 @@ public class PatientDirectoryRepository {
         this.jdbc = new NamedParameterJdbcTemplate(jdbcTemplate);
     }
 
-    private static PatientView map(ResultSet rs, int row) throws SQLException {
+    private static PatientView map(ResultSet rs) throws SQLException {
         return new PatientView(
                 rs.getObject("id", UUID.class),
                 rs.getObject("practice_id", UUID.class),
@@ -187,7 +187,7 @@ public class PatientDirectoryRepository {
 
         @Override
         public PatientView mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return map(rs, rowNum);
+            return map(rs);
         }
     }
 }

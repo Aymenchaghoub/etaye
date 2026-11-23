@@ -87,7 +87,11 @@ public class PatientController {
         if (!matcher.matches()) {
             throw new InvalidParameterException("If-Match must hold one quoted version");
         }
-        return Long.parseLong(matcher.group(1));
+        try {
+            return Long.parseLong(matcher.group(1));
+        } catch (NumberFormatException tooLarge) {
+            throw new InvalidParameterException("If-Match must hold one quoted version");
+        }
     }
 
     @PostMapping(value = "/api/v1/practices/{practiceId}/patients", produces = MediaType.APPLICATION_JSON_VALUE)

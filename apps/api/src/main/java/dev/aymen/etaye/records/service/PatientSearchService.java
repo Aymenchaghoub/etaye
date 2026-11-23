@@ -65,10 +65,12 @@ public class PatientSearchService {
     }
 
     private Page search(UUID practiceId, UUID actorId, String q, String cursor, Integer requestedLimit, boolean queryRequired) {
-        int limit = requestedLimit == null ? DEFAULT_LIMIT : requestedLimit;
-        if (limit < 1 || limit > MAX_LIMIT) {
+        int asked = requestedLimit == null ? DEFAULT_LIMIT : requestedLimit;
+        if (asked < 1 || asked > MAX_LIMIT) {
             throw new InvalidParameterException("limit out of range");
         }
+        // Bounded again for the arithmetic below: the page size is never user-controlled beyond 100.
+        final int limit = Math.min(asked, MAX_LIMIT);
         if (q != null && q.length() > MAX_QUERY_LENGTH) {
             throw new InvalidParameterException("q too long");
         }
@@ -129,7 +131,7 @@ public class PatientSearchService {
                         : LocalDate.of(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(3)));
                 dates.add(date);
                 matcher.appendReplacement(out, " ");
-            } catch (DateTimeException notADate) {
+            } catch (DateTimeException | NumberFormatException notADate) {
                 matcher.appendReplacement(out, Matcher.quoteReplacement(matcher.group()));
             }
         }

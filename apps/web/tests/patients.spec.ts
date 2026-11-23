@@ -7,7 +7,7 @@ test.describe('S-07 directory', () => {
     await page.goto(LIST);
     await expect(heading(page, 'Patients')).toBeFocused();
     await noRingOnHeading(page);
-    expect(await rowNames(page)).toEqual(['BERNARD Louis', 'COLLET Marie', 'MARTIN Claire']);
+    await expect.poll(() => rowNames(page)).toEqual(['BERNARD Louis', 'COLLET Marie', 'MARTIN Claire']);
     await expect(page.getByRole('status').filter({ hasText: '3 patients affichés' })).toBeVisible();
     await expect(page.locator('.etaye-lignes__detail').first()).toContainText('09/07/1991');
     await expect(page.locator('.etaye-lignes__detail').first()).toContainText(/\d+ ans/);
@@ -46,7 +46,7 @@ test.describe('S-07 directory', () => {
     expect(page.url()).not.toContain('q=');
     const stored = await page.evaluate(() => JSON.stringify({ ...localStorage }) + JSON.stringify({ ...sessionStorage }));
     expect(stored).not.toContain('Mar');
-    expect(await rowNames(page)).toEqual(['COLLET Marie', 'MARTIN Claire']);
+    await expect.poll(() => rowNames(page)).toEqual(['COLLET Marie', 'MARTIN Claire']);
   });
 
   test('keeps the query in memory when going to the form and back, and clears it when the practice changes', async ({ page }) => {
@@ -80,7 +80,7 @@ test.describe('S-07 directory', () => {
     await expect(page.getByRole('status').filter({ hasText: '25 patients affichés · d’autres patients existent' })).toBeVisible();
     await page.getByRole('button', { name: 'Afficher plus' }).click();
     await expect(page.getByText('La suite n’a pas pu être chargée')).toBeVisible();
-    expect(await rowNames(page)).toHaveLength(25);
+    await expect.poll(() => rowNames(page)).toHaveLength(25);
     await accessible(page);
     failNext = false;
     await page.getByRole('button', { name: 'Réessayer' }).click();
@@ -99,7 +99,7 @@ test.describe('S-07 directory', () => {
     await page.getByRole('button', { name: 'Rechercher' }).click();
     await expect(page.getByText('La liste n’a pas pu être chargée entièrement')).toBeVisible();
     await expect(page.getByText(/Les résultats affichés datent de \d{2}:\d{2}/)).toBeVisible();
-    expect(await rowNames(page)).toHaveLength(3);
+    await expect.poll(() => rowNames(page)).toHaveLength(3);
     await accessible(page);
     fail = false;
     await page.getByRole('button', { name: 'Réessayer' }).click();

@@ -16,4 +16,7 @@ export function patientRoute(path: string): PatientRoute | undefined {
 
 export const patientsPath = (base: string) => `${base}/patients`;
 export const newPatientPath = (base: string) => `${base}/patients/nouveau`;
-export const editPatientPath = (base: string, recordId: string) => `${base}/patients/${recordId}/modifier`;
+const identifier = new RegExp(`^${uuid}$`);
+/** A record identifier that is not a UUID never reaches a link: the list path is used instead. */
+export const editPatientPath = (base: string, recordId: string) =>
+  identifier.test(recordId) ? `${base}/patients/${recordId}/modifier` : patientsPath(base);

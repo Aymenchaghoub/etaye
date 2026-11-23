@@ -1,4 +1,5 @@
 import type { AccessContext, Session } from '../api/generated/types.gen';
+import { contextPath } from '../auth/access-contexts';
 import { activateScope, scopeKey } from './memory';
 import { PatientForm } from './PatientForm';
 import { PatientsPage } from './PatientsPage';
@@ -19,18 +20,20 @@ export function PatientsArea({ session, context, contexts, route, select, signOu
   expire: () => void;
 }) {
   const scope = scopeKey(session.account.id, context.grantId);
+  // Links are built from the verified session context, never from the text of the address bar.
+  const base = contextPath(context);
   // Memory held for another account or practice grant is dropped before anything reads it.
   activateScope(scope);
   return (
     <PractitionerShell session={session} context={context} contexts={contexts} select={select} signOut={signOut}>
       {route.view === 'list' && (
-        <PatientsPage scope={scope} practiceId={context.practiceId} base={route.base} expire={expire} />
+        <PatientsPage scope={scope} practiceId={context.practiceId} base={base} expire={expire} />
       )}
       {route.view === 'new' && (
-        <PatientForm mode="new" scope={scope} practiceId={context.practiceId} base={route.base} expire={expire} />
+        <PatientForm mode="new" scope={scope} practiceId={context.practiceId} base={base} expire={expire} />
       )}
       {route.view === 'edit' && (
-        <PatientForm mode="edit" scope={scope} practiceId={context.practiceId} base={route.base}
+        <PatientForm mode="edit" scope={scope} practiceId={context.practiceId} base={base}
           recordId={route.recordId} expire={expire} />
       )}
     </PractitionerShell>

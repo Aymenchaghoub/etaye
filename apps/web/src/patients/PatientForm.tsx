@@ -7,7 +7,7 @@ import { AttemptKey } from './attempt-key';
 import { clearDraft, type DraftValues, readDraft, rememberConfirmation, writeDraft } from './memory';
 import { clockTime, EntryHeader, Notice, patientName, Skeleton } from './patient-ui';
 import { useShell } from './PractitionerShell';
-import { patientsPath } from './routes';
+import { editPatientPath, patientsPath } from './routes';
 
 type Phase = 'idle' | 'saving' | 'verifying' | 'confirmed' | 'failed' | 'unconfirmed' | 'limited' | 'restricted' | 'gone';
 type Duplicate = { candidates: SchedulingPatient[]; changed: boolean };
@@ -467,7 +467,7 @@ function IdentityForm({ mode, scope, practiceId, base, patient, expire }: {
         <Notice kind="attention" alert title={duplicate.changed ? 'La liste des dossiers semblables a changé' : 'Un dossier semblable existe dans ce cabinet'}
           actions={<>
             {duplicate.candidates.length === 1 && <a className="etaye-bouton etaye-bouton--secondaire"
-              href={`${base}/patients/${duplicate.candidates[0].recordId}/modifier`}
+              href={editPatientPath(base, duplicate.candidates[0].recordId)}
               onClick={(event) => {
                 event.preventDefault();
                 shell.navigate(`${base}/patients/${duplicate.candidates[0].recordId}/modifier`);
@@ -483,7 +483,7 @@ function IdentityForm({ mode, scope, practiceId, base, patient, expire }: {
               <li key={candidate.recordId}>
                 <strong>{patientName(candidate)}</strong>
                 <span>{candidateLine(candidate)}</span>
-                {duplicate.candidates.length > 1 && <a href={`${base}/patients/${candidate.recordId}/modifier`}
+                {duplicate.candidates.length > 1 && <a href={editPatientPath(base, candidate.recordId)}
                   onClick={(event) => { event.preventDefault(); shell.navigate(`${base}/patients/${candidate.recordId}/modifier`); }}>
                   Ouvrir ce dossier<span className="etaye-vh"> de {patientName(candidate)}</span>
                 </a>}
@@ -523,4 +523,3 @@ function IdentityForm({ mode, scope, practiceId, base, patient, expire }: {
     </form>
   </>;
 }
-
