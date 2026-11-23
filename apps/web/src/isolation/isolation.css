@@ -1,0 +1,98 @@
+/* Recipes of the approved S-36 reference states and the S-01 guided entry, on the existing Étaye tokens. */
+.etaye-etat-page {
+  max-width: 560px;
+  min-width: 0;
+  display: grid;
+  gap: var(--espace-4);
+  padding: 0;
+}
+
+.etaye-etat-page__code { font: 400 13px/20px var(--font-donnee); color: var(--encre-3); }
+.etaye-etat-page h1 { font: 500 26px/32px var(--font-texte); }
+.etaye-etat-page p { font: 400 16px/24px var(--font-texte); color: var(--encre-2); }
+
+.etaye-isolation__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espace-3);
+}
+
+.etaye-etat-page .etaye-bouton, .etaye-isolation-guide .etaye-bouton { white-space: normal; text-align: center; }
+
+.etaye-isolation__etape { color: var(--encre-2); font: 400 14px/20px var(--font-texte); }
+
+.etaye-panneau { background: var(--surface); border: var(--trait-filet) solid var(--filet); border-radius: var(--rayon-0); }
+.etaye-panneau__tete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espace-3);
+  padding: var(--espace-3) var(--espace-4);
+  border-bottom: var(--trait-filet) solid var(--filet);
+}
+.etaye-panneau__tete h2 { font: 500 16px/24px var(--font-texte); }
+.etaye-panneau__corps { padding: var(--espace-4); display: grid; gap: var(--espace-3); }
+
+.etaye-isolation__faits { margin: 0; display: grid; gap: var(--espace-2); }
+.etaye-isolation__faits > div { display: flex; flex-wrap: wrap; gap: var(--espace-1) var(--espace-3); }
+.etaye-isolation__faits dt { color: var(--encre-2); }
+.etaye-isolation__faits dd { margin: 0; }
+
+.etaye-bandeau--neutre > .etaye-icone { color: var(--encre-2); }
+.etaye-bandeau--attention > .etaye-icone { color: var(--attention); }
+.etaye-bandeau > .etaye-icone { margin-top: 2px; }
+.etaye-etat-page .etaye-bandeau p { font: inherit; color: inherit; }
+
+.etaye-isolation__notice {
+  background: var(--surface);
+  border: var(--trait-filet) solid var(--filet-controle);
+  border-radius: var(--rayon-2);
+  padding: var(--espace-3) var(--espace-4);
+}
+
+.etaye-isolation--patient .etaye-etat-page h1 { font: 500 28px/36px var(--font-texte); }
+.etaye-isolation--patient .etaye-etat-page p { font: 400 18px/28px var(--font-texte); }
+.etaye-isolation--patient .etaye-bandeau { font: 400 16px/24px var(--font-texte); }
+
+/* The journey keeps the signed-in context layout of the approved specimens: a left-aligned context label, the
+   fictional-data notice in the footer on narrow screens and the same vertical rhythm. */
+.etaye-context-destination.etaye-isolation { display: flex; flex-direction: column; }
+.etaye-isolation div.etaye-contexte { justify-content: flex-start; }
+.etaye-isolation .etaye-contexte > span:last-child { min-width: 0; }
+.etaye-isolation .etaye-etat-page { padding-block: 0; }
+.etaye-isolation__pied {
+  display: none;
+  margin-top: auto;
+  padding: var(--espace-4) var(--espace-6);
+  color: var(--encre-2);
+  font: 400 12px/16px var(--font-texte);
+}
+.etaye-isolation__carte p { color: var(--encre-2); }
+
+/* S-01: the guided entry after the scenario list and its guide. */
+.etaye-isolation-panel {
+  background: var(--surface);
+  border: var(--trait-filet) solid var(--filet-controle);
+  border-radius: var(--rayon-2);
+  padding: var(--espace-6);
+  display: grid;
+  gap: var(--espace-3);
+  min-width: 0;
+}
+
+.etaye-isolation-panel h2 { font: 500 16px/24px var(--font-texte); }
+.etaye-isolation-guide ol { margin: 0; padding-inline-start: var(--espace-6); display: grid; gap: var(--espace-2); }
+.etaye-isolation-guide li { font: 400 16px/24px var(--font-texte); }
+
+@media (max-width: 760px) {
+  .etaye-etat-page { padding-block: var(--espace-6); }
+  .etaye-isolation-panel { padding: var(--espace-4); }
+  .etaye-isolation .etaye-etat-page { padding-block: 0; }
+  .etaye-isolation__pied { display: block; }
+}
+
+@media (max-width: 360px) {
+  .etaye-isolation__actions { align-items: stretch; flex-direction: column; }
+  .etaye-isolation-panel { padding: var(--espace-3); }
+}

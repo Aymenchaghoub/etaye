@@ -5,6 +5,8 @@ import type { AccessContext, Session } from '../api/generated/types.gen';
 import { AuthShell, Banner, FocusedHeading } from './AuthComponents';
 import { contextPath, currentContexts } from './access-contexts';
 import { PracticeChooser, PracticeChooserHeading, PracticeDestination } from './PracticeContext';
+import { IsolationChanged, IsolationExpired, IsolationJourney, IsolationPending, IsolationRechecking } from '../isolation/IsolationJourney';
+import { isIsolationArea, isIsolationPath, journeyContext, stepOf } from '../isolation/isolation-journey';
 import { Invitation } from './Invitation';
 import { RecoveryRequest, ResetPassword } from './Recovery';
 import { SignIn } from './SignIn';
@@ -37,12 +39,17 @@ export function AuthApp() {
   const [notice, setNotice] = useState<Notice>();
   const [resetVersion, setResetVersion] = useState<string>();
   const [returning, setReturning] = useState(false);
+  const [journeyNotice, setJourneyNotice] = useState(false);
+  const [patientJourney, setPatientJourney] = useState(false);
+  const [reconnected, setReconnected] = useState(false);
   const [initial, setInitial] = useState<Session>();
   const [retry, setRetry] = useState(0);
   const paused = useRef<Resume>(undefined);
   const demo = useRef<DemoTracking>({ marker: demoEntry(), freshSignIn: false });
   const requestedPath = new URLSearchParams(window.location.search).get('retour');
-  const patient = path === '/connexion/patient' || path.startsWith('/compte/patient/');
+  // A patient who reconnects to a journey step returns to the patient sign-in, not the professional one.
+  const patient = path === '/connexion/patient' || path.startsWith('/compte/patient/')
+    || (isIsolationArea(path) && patientJourney);
 
   useEffect(applyDemoTheme, []);
 
@@ -52,6 +59,8 @@ export function AuthApp() {
       demo.current.freshSignIn = false;
       setNotice(undefined);
       setReturning(false);
+      setReconnected(false);
+      setJourneyNotice(false);
       setInitial(undefined);
       setRetry((attempt) => attempt + 1);
       setPath(readPath());
@@ -67,6 +76,7 @@ export function AuthApp() {
 
   const navigateContext = useCallback((target: string, session: Session, replace = false) => {
     if (target === window.location.pathname) return;
+    setReconnected(false);
     setInitial(session);
     if (replace) window.history.replaceState(null, '', target);
     else window.history.pushState(null, '', target);
@@ -76,6 +86,9 @@ export function AuthApp() {
   const halt = useCallback((reason: Notice, target: string, previous?: Session) => {
     paused.current = reason === 'expired' && previous ? pauseWork(previous, target, undefined) : undefined;
     setInitial(undefined);
+    setReconnected(false);
+    setJourneyNotice(isIsolationArea(target));
+    setPatientJourney(isIsolationArea(target) && journeyContext(previous?.contexts ?? [])?.audience === 'patient');
     setNotice(reason);
   }, []);
 
@@ -92,6 +105,8 @@ export function AuthApp() {
     paused.current = undefined;
     setNotice(undefined);
     setReturning(false);
+    setReconnected(false);
+    setJourneyNotice(false);
     setInitial(undefined);
     if (LOCAL_DEMO || demo.current.marker) {
       clearDemoEntry();
@@ -110,17 +125,23 @@ export function AuthApp() {
     setReturning(false);
     setInitial(session);
 
+    // A journey step is a client route: its entry link or its paused step brings the same account back to it.
+    const step = work && isIsolationPath(work.path) ? work.path : isIsolationPath(requestedPath) ? requestedPath : undefined;
+    const target = step ?? safe;
     // The previous route is restored only after both the identity and current grant match.
     if (work) {
-      const result = checkPausedWork(work, session, safe);
+      const result = checkPausedWork(work, session, target);
       if (result.status !== 'restored') {
         setNotice(result.status);
+        setJourneyNotice(isIsolationPath(work.path));
         navigate(ACCOUNT_PATH);
         return;
       }
+      setReconnected(isIsolationPath(work.path));
     }
     setNotice(undefined);
-    navigate(safe);
+    setJourneyNotice(false);
+    navigate(target);
   }
 
   if (notice === 'demo-reset') return (
@@ -134,6 +155,13 @@ export function AuthApp() {
       </div>
     </AuthShell>
   );
+
+  if (notice && (journeyNotice || isIsolationArea(path))) return notice === 'expired'
+    ? <IsolationExpired leave={leave} reconnect={() => {
+      setNotice(undefined);
+      setReturning(true);
+    }} />
+    : <IsolationChanged />;
 
   if (notice) return (
     <SessionNotice reason={notice} standalone={path === ACCOUNT_PATH} reconnect={() => {
@@ -165,7 +193,7 @@ export function AuthApp() {
   if (!isAccountArea(path)) return null;
 
   return <AccountGate key={`${path}-${retry}`} target={path} initial={initial} onHalt={halt} onDemoReset={onDemoReset} leave={leave}
-    enter={navigateContext} demo={demo} askToSignIn={() => setReturning(true)} />;
+    enter={navigateContext} demo={demo} askToSignIn={() => setReturning(true)} reconnected={reconnected} />;
 }
 
 function SessionNotice({ reason, standalone, reconnect, leave, continueToAccount }: {
@@ -218,7 +246,7 @@ function SessionNotice({ reason, standalone, reconnect, leave, continueToAccount
   );
 }
 
-function AccountGate({ target, initial, onHalt, onDemoReset, leave, enter, demo, askToSignIn }: {
+function AccountGate({ target, initial, onHalt, onDemoReset, leave, enter, demo, askToSignIn, reconnected }: {
   target: string;
   initial?: Session;
   onHalt: (reason: Notice, target: string, previous?: Session) => void;
@@ -227,8 +255,10 @@ function AccountGate({ target, initial, onHalt, onDemoReset, leave, enter, demo,
   leave: () => void;
   enter: (path: string, session: Session, replace?: boolean) => void;
   askToSignIn: () => void;
+  reconnected: boolean;
 }) {
   const [view, setView] = useState<{ session: Session; contexts: AccessContext[] }>();
+  const [rechecking, setRechecking] = useState(reconnected);
   const [unavailable, setUnavailable] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [retry, setRetry] = useState(0);
@@ -336,6 +366,7 @@ function AccountGate({ target, initial, onHalt, onDemoReset, leave, enter, demo,
         return;
       }
       setView({ session: latest, contexts });
+      setRechecking(false);
       window.clearTimeout(deadline);
       deadline = window.setTimeout(() => {
         if (demo.current.marker || LOCAL_DEMO) void check(true);
@@ -382,6 +413,9 @@ function AccountGate({ target, initial, onHalt, onDemoReset, leave, enter, demo,
   }
 
   const retryRead = () => setRetry((attempt) => attempt + 1);
+  const journey = isIsolationArea(target);
+  if (!view && journey && !leaving) return rechecking && !unavailable
+    ? <IsolationRechecking /> : <IsolationPending failed={unavailable} retry={retryRead} />;
   if (!view) return (
     <AuthShell wide>
       {leaving ? <FocusedHeading>Se déconnecter</FocusedHeading> : <PracticeChooserHeading />}
@@ -399,6 +433,15 @@ function AccountGate({ target, initial, onHalt, onDemoReset, leave, enter, demo,
 
   const { session, contexts } = view;
   const select = (path: string) => enter(path, session);
+  if (journey) return (
+    <IsolationJourney step={stepOf(target)} session={session} contexts={contexts} fixtureVersion={demo.current.marker?.version}
+      enter={select} expire={() => {
+        const previous = verifiedAccount.current;
+        verifiedAccount.current = undefined;
+        setView(undefined);
+        onHalt('expired', target, previous);
+      }} />
+  );
   const selected = contexts.find((context) => contextPath(context) === target);
   if (selected) return (
     <PracticeDestination context={selected} contexts={contexts} session={session} select={select} signOut={signOut} />

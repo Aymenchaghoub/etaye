@@ -2,6 +2,16 @@
 
 Updated: 2026-11-23. Owner: Aymen Chaghoub.
 
+## Story 1.4 approved and merged — 2026-11-23
+
+**Decision (UD-62).** After the comparisons and the three flagged visual points, Aymen wrote “je valide l’interface, tu peux fusionner”. [PR #58](https://github.com/Aymenchaghoub/etaye/pull/58) is squash-merged once the required checks pass on the exact head. [Decision register](planning-artifacts/decisions-assumptions.md) · [Implementation record](implementation-artifacts/story-1-4-implementation-record.md) · [Running-UI review](design/reviews/2026-11-23-story-1-4-runtime.md)
+
+**Delivered.** The contract review found no transport change. `API verify` measures 24 adversarial cases on the real synthetic fixture, gates them with `tools/assert_isolation_matrix.py` and publishes the `api-isolation-matrix` artifact. The demo has the guided "Prouvez l’isolation" entry and a signed-in journey performing the real record read, with the S-36 and I-22 states. Source, task and export rows stay pending under D-55; the scripted browser replay joins CI at M6 (D-56).
+
+**Actual verification.** Java 25 Maven verify: 176 tests; tooling: 119; Web: type check, build, 13 unit tests and 81 Chromium smoke tests (serial run). The Compose package replayed Nora `200`, the foreign record `404`, Mila `403` and Claire `404`, and the 9.1 journey passed again. All required checks passed on PR head `87949bc` including the published matrix artifact. One Codex review and nine CodeRabbit comments were triaged and fixed. Not run: the real outage spec, HawkScan (no key), Firefox and WebKit, screen-reader and browser-zoom checks.
+
+**Next action.** After the merge update `main`, regenerate the cockpit from it and verify the 1.4 status and PR number, remove the integrated worktree branches and the local demo stack (`COMPOSE_PROJECT_NAME=etaye-demo-14`), then prepare the next authorized story with Aymen.
+
 ## Story 1.4 design approved and development authorized (UD-61) — 2026-11-23
 
 **Decision.** Aymen wrote “j’autorise la dev de la 1.4” and, asked whether this lifted the condition of UD-59, chose “J’approuve ces états tels que présentés”. UD-61 records the written approval of the S-01 entry and guide and the I-22 read-only states, authorizes story 1.4 only, and keeps global authorization false. It approves specimens, not the running UI; matched running-UI comparisons, functional review and the merge keep their own decisions. He also authorized squash-merging this documentation PR once the required checks are green. [Decision register](planning-artifacts/decisions-assumptions.md) · [Design review](design/reviews/2026-11-22-story-1-4-design-review.md) · [Packet](implementation-artifacts/story-1-4-context-packet.md)

@@ -1,4 +1,5 @@
 import type { Session } from '../api/generated/types.gen';
+import { isIsolationPath } from '../isolation/isolation-journey';
 
 export const ACCOUNT_PATH = '/compte';
 const uuid = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
@@ -10,6 +11,8 @@ export function isAccountPath(path: string): boolean {
 
 export function allowsAccountPath(session: Session, path: string): boolean {
   if (path === ACCOUNT_PATH) return true;
+  // The journey steps are client routes only: the record read they perform is authorized by the server each time.
+  if (isIsolationPath(path)) return true;
   const match = grantPath.exec(path);
   if (!match) return false;
   return (match[1] === 'pratiques' ? session.membershipIds : session.portalLinkIds).includes(match[2]);

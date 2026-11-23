@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { AccessContext, Session } from '../api/generated/types.gen';
 import { contextPath, currentContexts } from './access-contexts';
+import { OUTSIDE_PATH, READ_PATH } from '../isolation/isolation-journey';
 import { allowsAccountPath, checkPausedWork, pauseWork } from './session-work';
 
 const membership = '11111111-1111-4111-8111-111111111111';
@@ -69,5 +70,24 @@ describe('paused account work', () => {
     expect(checkPausedWork(paused, { ...session, membershipIds: [] }, practicePath)).toEqual({ status: 'grant-changed' });
     const otherAccount = { ...session.account, id: '44444444-4444-4444-8444-444444444444' };
     expect(checkPausedWork(paused, { ...session, account: otherAccount }, practicePath)).toEqual({ status: 'account-changed' });
+  });
+});
+
+describe('isolation journey steps', () => {
+  it('pause and resume the same step for the same account only', () => {
+    for (const path of [READ_PATH, OUTSIDE_PATH]) {
+      const paused = pauseWork(session, path, undefined);
+      expect(paused?.path).toBe(path);
+      expect(checkPausedWork(paused!, session, path)).toEqual({ status: 'restored', value: undefined });
+      expect(checkPausedWork(paused!, { ...session, account: { ...session.account, id: 'other' } }, path))
+        .toEqual({ status: 'account-changed' });
+      expect(checkPausedWork(paused!, session, READ_PATH === path ? OUTSIDE_PATH : READ_PATH))
+        .toEqual({ status: 'grant-changed' });
+    }
+  });
+
+  it('never pauses an unknown path of the namespace', () => {
+    expect(allowsAccountPath(session, '/compte/isolation/ancien-lien')).toBe(false);
+    expect(pauseWork(session, '/compte/isolation/ancien-lien', undefined)).toBeUndefined();
   });
 });

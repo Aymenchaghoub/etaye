@@ -251,6 +251,29 @@ class ApplicationScopeTests(unittest.TestCase):
                 "Unexpected tracked path for stories 10.1, 10.2, 1.2, 1.1, 1.3 and 9.1: infra/demo/.env"
             ])
 
+    def test_isolation_replay_path_requires_story_1_4_scope(self):
+        self.authorize(story_10_2=True)
+        decisions = self.root / "docs/planning-artifacts/decisions-assumptions.md"
+        with decisions.open("a", encoding="utf-8") as stream:
+            stream.write("| UD-48 | Authorized for story 1.2 only. |\n"
+                         "| UD-50 | Authorized for story 1.1 only. |\n"
+                         "| UD-53 | Authorized for story 1.3 only. |\n"
+                         "| UD-56 | Authorized for story 9.1 only. |\n"
+                         "| UD-61 | Authorized for **story 1.4 only**. |\n")
+        self.write(".git")
+        replay = "apps/web/demo-e2e/isolation.spec.ts"
+        self.write(replay)
+        index = subprocess.CompletedProcess([], 0, f"100644 {'0' * 40} 0\t{replay}\0".encode())
+        with patch("validate_docs.subprocess.run", return_value=index):
+            self.configure('authorized_stories = ["10.1", "10.2", "1.2", "1.1", "1.3", "9.1"]')
+            _, errors = self.check_scope()
+            self.assertEqual(errors, [
+                "Unexpected tracked path for stories 10.1, 10.2, 1.2, 1.1, 1.3 and 9.1: " + replay
+            ])
+            self.configure('authorized_stories = ["10.1", "10.2", "1.2", "1.1", "1.3", "9.1", "1.4"]')
+            _, errors = self.check_scope()
+            self.assertEqual(errors, [])
+
     def test_authorized_scopes_reject_top_level_packages(self):
         for story_10_2 in (False, True):
             with self.subTest(story_10_2=story_10_2):

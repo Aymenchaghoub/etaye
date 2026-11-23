@@ -11,6 +11,7 @@ on:
       - 'apps/api/**'
       - 'tools/assert_test_reports.py'
       - 'tools/assert_coverage_reports.py'
+      - 'tools/assert_isolation_matrix.py'
       - '.github/workflows/api.yml'
 
 permissions:
@@ -39,7 +40,7 @@ jobs:
           # Fail closed: anything unexpected runs the full verification.
           relevant=true
           if [ "$EVENT_NAME" = "pull_request" ] &&
-              git diff --quiet HEAD^1 HEAD -- apps/api/ tools/assert_test_reports.py tools/assert_coverage_reports.py .github/workflows/api.yml; then
+              git diff --quiet HEAD^1 HEAD -- apps/api/ tools/assert_test_reports.py tools/assert_coverage_reports.py tools/assert_isolation_matrix.py .github/workflows/api.yml; then
             relevant=false
           fi
           echo "relevant=$relevant" >> "$GITHUB_OUTPUT"
@@ -58,7 +59,7 @@ jobs:
         if: steps.changes.outputs.relevant == 'true'
         # Raise the minimum whenever the suite grows.
         run: >-
-          python3 tools/assert_test_reports.py surefire apps/api/target/surefire-reports --min-tests 163
+          python3 tools/assert_test_reports.py surefire apps/api/target/surefire-reports --min-tests 176
           --require-suite dev.aymen.etaye.ArchitectureTest
           --require-suite dev.aymen.etaye.identity.IdentityLookupTest
           --require-suite dev.aymen.etaye.security.AccountAccessHttpTest
@@ -84,6 +85,26 @@ jobs:
           --require-suite dev.aymen.etaye.infrastructure.security.BrowserCorsConfigTest
           --require-suite dev.aymen.etaye.infrastructure.web.ApiMetaControllerTest
           --require-suite dev.aymen.etaye.infrastructure.demo.DemoHttpTest
+          --require-suite dev.aymen.etaye.isolation.ResourceIsolationMatrixHttpTest
+      - name: Verify isolation matrix report
+        if: steps.changes.outputs.relevant == 'true'
+        # Fails for a zero-case report, a missing, skipped or failing mandatory case, refusals that differ,
+        # or any identifier in the report (story 1.4, UD-33). Pending rows stay listed until their routes ship (D-55).
+        run: >-
+          python3 tools/assert_isolation_matrix.py apps/api/target/isolation-matrix/isolation-matrix.json
+          --manifest apps/api/src/test/resources/isolation/matrix-cases.json --require-commit
+          --expect-commit "$GITHUB_SHA"
+      - name: Summarize isolation matrix
+        if: steps.changes.outputs.relevant == 'true'
+        run: cat apps/api/target/isolation-matrix/isolation-matrix.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload isolation matrix
+        if: ${{ !cancelled() && steps.changes.outputs.relevant == 'true' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: api-isolation-matrix
+          path: apps/api/target/isolation-matrix/
+          if-no-files-found: error
+          retention-days: 30
       - name: Verify API coverage report
         if: steps.changes.outputs.relevant == 'true'
         run: python3 tools/assert_coverage_reports.py jacoco apps/api/target/site/jacoco/jacoco.xml

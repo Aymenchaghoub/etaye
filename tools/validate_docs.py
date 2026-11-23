@@ -49,6 +49,7 @@ STORY_9_1_TRACKED_PATHS = {
     "infra/demo/start.sh",
     "infra/demo/web.Dockerfile",
 }
+STORY_1_4_TRACKED_PATHS = {"apps/web/demo-e2e/isolation.spec.ts"}
 RESOURCE_ARTIFACT_SUFFIXES = {
     ".sh", ".bash", ".cmd", ".bat", ".ps1",
     ".class", ".jar", ".war", ".ear", ".exe", ".dll", ".so", ".bin",
@@ -226,6 +227,8 @@ def check_application_scope(root, errors):
             if "1.3" in authorized_stories and name in STORY_1_3_WEB_FIXTURES:
                 continue
             if demo_authorized and name in STORY_9_1_TRACKED_PATHS:
+                continue
+            if "1.4" in authorized_stories and name in STORY_1_4_TRACKED_PATHS:
                 continue
             match = STORY_10_1_TRACKED_PATH.fullmatch(name)
             if not match or (match["resource"] and not is_story_resource(root / name)):

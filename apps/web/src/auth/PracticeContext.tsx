@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { AccessContext, Session } from '../api/generated/types.gen';
 import '../../../../design/received/2026-11-03/icons.css';
 import { AuthLogo, AuthShell, Banner, FocusedHeading } from './AuthComponents';
@@ -59,12 +60,15 @@ export function PracticeChooser({ session, contexts, restricted, select, retry, 
   );
 }
 
-export function PracticeDestination({ session, context, contexts, select, signOut }: {
-  session: Session;
+export function ContextFrame({ context, contexts, select, actor, testId, className, demoNotice = false, children }: {
   context: AccessContext;
   contexts: AccessContext[];
   select: (path: string) => void;
-  signOut: () => void;
+  actor?: string;
+  testId: string;
+  className?: string;
+  demoNotice?: boolean;
+  children: ReactNode;
 }) {
   const patient = context.kind === 'PORTAL';
   const practice = practiceLabel(context);
@@ -73,12 +77,12 @@ export function PracticeDestination({ session, context, contexts, select, signOu
     <span className="etaye-icone etaye-icone--18 etaye-icone--cabinet" aria-hidden="true" />
     <span>
       <strong className="etaye-contexte__cabinet">{practice}</strong>{' '}
-      <span className="etaye-contexte__role">{role}</span>
+      <span className="etaye-contexte__role">{actor ? `${role} · ${actor}` : role}</span>
     </span>
   </>;
 
   return (
-    <div className="etaye-root etaye-context-destination">
+    <div className={`etaye-root etaye-context-destination${className ? ` ${className}` : ''}`}>
       <header className="etaye-context-top">
         <AuthLogo patient={patient} />
         {contexts.length > 1 ? (
@@ -90,11 +94,27 @@ export function PracticeDestination({ session, context, contexts, select, signOu
         ) : <div className="etaye-contexte">{label}</div>}
         <span className="etaye-demo">Démonstration — personnes et données fictives</span>
       </header>
-      <main className="etaye-auth__corps etaye-auth__corps--large" data-testid="protected-account" id="contenu">
-        <FocusedHeading>{patient ? 'Votre espace patient' : 'Votre espace de travail'}</FocusedHeading>
-        <p>{session.account.displayName}</p>
-        <button type="button" className="etaye-bouton etaye-bouton--discret" onClick={signOut}>Se déconnecter</button>
+      <main className="etaye-auth__corps etaye-auth__corps--large" data-testid={testId} id="contenu">
+        {children}
       </main>
+      {demoNotice && <footer className="etaye-isolation__pied">Démonstration — personnes et données fictives</footer>}
     </div>
+  );
+}
+
+export function PracticeDestination({ session, context, contexts, select, signOut }: {
+  session: Session;
+  context: AccessContext;
+  contexts: AccessContext[];
+  select: (path: string) => void;
+  signOut: () => void;
+}) {
+  const patient = context.kind === 'PORTAL';
+  return (
+    <ContextFrame context={context} contexts={contexts} select={select} testId="protected-account">
+      <FocusedHeading>{patient ? 'Votre espace patient' : 'Votre espace de travail'}</FocusedHeading>
+      <p>{session.account.displayName}</p>
+      <button type="button" className="etaye-bouton etaye-bouton--discret" onClick={signOut}>Se déconnecter</button>
+    </ContextFrame>
   );
 }

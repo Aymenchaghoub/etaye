@@ -25,6 +25,10 @@ To reset, sign in as the demo operator at `/connexion`, return to `/demonstratio
 
 The seeded invitation tokens use `etaye-fictional-invitation-` followed by the invitation alias in the [synthetic dataset](../../docs/design/synthetic-data.md). To try team activation use `INV-TEAM-01` and the fictional name Alex Rivière. For the pending portal activation (`INV-PORTAL-03`), use Marie Collet's fictional date of birth from the dataset.
 
+## Prove isolation
+
+On the showcase, open **Prouvez l’isolation** after the scenario list. The guide walks through four real refusals against the running API: Nora reads an authorized record, Nora requests a record outside her practice (one generic *introuvable* page), Mila (administration, no clinical capability) is refused in the practice she can see, and Claire (patient) gets the unavailable page in her own layout. Start with **Commencer avec Nora**; the guide links **Mila** and **Claire** sign in as those accounts and return to the same read. Every result is the actual HTTP answer. The same cases are measured in CI (`api-isolation-matrix` artifact of `API verify`).
+
 ## Scripted journey
 
-Use a fresh disposable stack for the walkthrough. With the demo running, run `corepack pnpm --filter etaye-web test:demo` from the repository root. It exercises the live journey and writes a video under `apps/web/test-results/demo/`. The test resets the demo fixture and its browser sessions.
+Use a fresh disposable stack for the walkthrough. With the demo running, run `corepack pnpm --filter etaye-web test:demo` from the repository root. It exercises the live journey and writes a video under `apps/web/test-results/demo/`. The test resets the demo fixture and its browser sessions. The package limits anti-forgery reads and sign-ins per address each minute. `test:demo` runs every spec of `apps/web/demo-e2e`, so run the 9.1 journey and the 1.4 isolation replay as two invocations, one minute apart, each naming its file: `corepack pnpm --filter etaye-web exec playwright test --config=playwright.demo.config.ts demo-e2e/journey.spec.ts`, then the same command with `demo-e2e/isolation.spec.ts`. Restarting the API container between them also clears the limiter.
