@@ -217,10 +217,10 @@ class ApplicationScopeTests(unittest.TestCase):
         self.assertEqual(scope["mode"], "stories-10.1-10.2-1.2-1.1-1.3-9.1-1.4")
         self.assertEqual(scope["authorizedStories"], ["10.1", "10.2", "1.2", "1.1", "1.3", "9.1", "1.4"])
         self.assertEqual(len(errors), 1)
-        self.assertIn("Story 1.4 authorization requires UD-60", errors[0])
+        self.assertIn("Story 1.4 authorization requires UD-61", errors[0])
 
         with decisions.open("a", encoding="utf-8") as stream:
-            stream.write("| UD-60 | Authorized for **story 1.4 only**. |\n")
+            stream.write("| UD-61 | Authorized for **story 1.4 only**. |\n")
         _, errors = self.check_scope()
         self.assertEqual(errors, [])
 

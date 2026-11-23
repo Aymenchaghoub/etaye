@@ -81,7 +81,7 @@ def check_application_scope(root, errors):
         ("10.1", "10.2", "1.2", "1.1", "1.3", "9.1", "1.4"): "stories-10.1-10.2-1.2-1.1-1.3-9.1-1.4",
     }
     decision_ids = {"10.1": "UD-41", "10.2": "UD-45", "1.2": "UD-48", "1.1": "UD-50", "1.3": "UD-53", "9.1": "UD-56",
-                    "1.4": "UD-60"}
+                    "1.4": "UD-61"}
     scope = {"mode": "planning-only", "authorizedStories": []}
     try:
         config = tomllib.loads((root / "_bmad/custom/config.toml").read_text(encoding="utf-8"))

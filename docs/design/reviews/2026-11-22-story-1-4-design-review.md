@@ -1,6 +1,6 @@
 # Story 1.4 design review — S-01, S-36 and I-22 additions
 
-Status: Aymen approved Nora’s confirmed read and the revised S-36 states on 2026-11-22. On 2026-11-23 he approved the S-01 entry and guide and the I-22 additions as presented, which UD-60 records together with the development authorization. UD-59 recorded the direction and the condition. Reference approvals are UD-46 for S-01 and S-36 and UD-48 for I-22. [Local review page](2026-11-22-story-1-4-design-review.html) · [Decision register](../../planning-artifacts/decisions-assumptions.md) · [Context packet](../../implementation-artifacts/story-1-4-context-packet.md)
+Status: Aymen approved Nora’s confirmed read and the revised S-36 states on 2026-11-22. On 2026-11-23 he approved the S-01 entry and guide and the I-22 additions as presented, which UD-61 records together with the development authorization. UD-59 recorded the direction and the condition. Reference approvals are UD-46 for S-01 and S-36 and UD-48 for I-22. [Local review page](2026-11-22-story-1-4-design-review.html) · [Decision register](../../planning-artifacts/decisions-assumptions.md) · [Context packet](../../implementation-artifacts/story-1-4-context-packet.md)
 
 | Family | Specimens presented and scope of the requested approval |
 |---|---|
@@ -28,4 +28,4 @@ Opened screenshots cover all 13 variants. The entry, patient refusal, staff hidd
 
 The gallery and captures describe synthetic design specimens. Runtime authorization, actual login/retry behavior, screen-reader announcements, 200% zoom and matched running-UI comparisons remain future evidence.
 
-UD-60 records the scope of this design decision. Coverage and the reception tracker carry it, and 1.4 is encoded in the BMAD allowlist with global authorization false. The approval covers specimens, not the running UI. Verify installed BMAD readiness before development.
+UD-61 records the scope of this design decision. Coverage and the reception tracker carry it, and 1.4 is encoded in the BMAD allowlist with global authorization false. The approval covers specimens, not the running UI. Verify installed BMAD readiness before development.
