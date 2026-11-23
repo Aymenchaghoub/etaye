@@ -2,7 +2,7 @@
 
 2026-11-23 · Story 3.1 · AT-009-C (SAMPLED, UD-37) · branch `feat/3.1-find-register-local-patient`. [Browsable comparison page](2026-11-23-story-3-1-runtime/index.html) · [Design review](2026-11-23-story-3-1-design-review.md) · [Implementation record](../../implementation-artifacts/story-3-1-implementation-record.md)
 
-**Status: running-UI approval is awaited from Aymen.** The design of the specimens is approved (UD-64); this record shows the running application beside them and decides nothing.
+**Status: running-UI approval is awaited from Aymen.** After opening the running list he wrote that it was "parfait" except that the "Rechercher" button was misaligned with the search field; it is now on the field's own row, measured centered on the input at 1440 and 390 px in both themes, and the S-07 specimens carry the same correction. That remark is not an approval decision and records no UD. The design of the specimens is approved (UD-64); this record shows the running application beside them and decides nothing.
 
 The left panel of every sheet is the approved specimen; the right panel is Chromium 153.0.8010.12 running the real stack: the React build served by nginx, the Spring Boot API with the V8 migration and PostgreSQL 18, from the local demonstration package (Compose project `etaye-demo-31`, `etaye.demo.patient-input-enabled` on). The account is the fictional Dr Nora Lefebvre. The pairs were produced in one scripted session per theme at 1440×1024 and 390×844, with the system color scheme emulated; the page canvas, shell and `data-theme` were asserted on every capture (24 of 24 on the expected theme, no horizontal overflow).
 
@@ -17,7 +17,7 @@ The left panel of every sheet is the approved specimen; the right panel is Chrom
 | S-08 likely duplicate (`doublon-*`) | 390 dark, 1440 light | Warning banner with the typed candidate and the confirmation sentence, "Ouvrir le dossier existant" and "Créer quand même", the form filled below. |
 | S-08 unsaved changes (`sale-*`) | 390 light | The guard replaces the form: heading, explanation, "Rester sur le formulaire" and "Abandonner les modifications". |
 
-All 24 sheets are in [the folder](2026-11-23-story-3-1-runtime/). They were regenerated after the end-of-story review fixes; five of the final sheets were opened side by side (list dark 390, input errors dark 1440, duplicate light 390, unsaved changes dark 1440, long names light 1440). The "Opened" column above names the seven sheets opened on the capture taken before those fixes, which the final sheets replace; the others were produced by the same script and checked only through its page assertions.
+All 24 sheets are in [the folder](2026-11-23-story-3-1-runtime/). They were regenerated after the review fixes and again after the alignment correction; two of the final sheets were opened side by side (list light 1440, no result light 390), and five sheets of the previous generation (list dark 390, input errors dark 1440, duplicate light 390, unsaved changes dark 1440, long names light 1440) differ from the final ones only in the search row. The "Opened" column above names the seven sheets opened on the capture taken before those fixes, which the final sheets replace; the others were produced by the same script and checked only through its page assertions.
 
 ## Observed differences from the specimens
 

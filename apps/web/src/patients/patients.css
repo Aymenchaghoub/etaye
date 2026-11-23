@@ -72,6 +72,9 @@
 
 .etaye-filtres { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--espace-3); }
 .etaye-filtres .etaye-champ { min-width: 180px; }
+/* The submit action sits on the field's own row, so it lines up with the input and not with the help text. */
+.etaye-recherche { display: flex; flex-wrap: wrap; align-items: center; gap: var(--espace-3); }
+.etaye-recherche .etaye-champ__saisie { flex: 1 1 220px; min-width: 0; }
 .etaye-lignes { list-style: none; padding: 0; margin: 0; border-top: var(--trait-filet) solid var(--filet); }
 .etaye-lignes > li { display: grid; grid-template-columns: 72px minmax(0, 1fr) auto; gap: var(--espace-2) var(--espace-4); align-items: center; padding: var(--espace-3) 0; border-bottom: var(--trait-filet) solid var(--filet); font: 400 14px/20px var(--font-texte); }
 .etaye-lignes__heure { font: 400 14px/20px var(--font-donnee); }

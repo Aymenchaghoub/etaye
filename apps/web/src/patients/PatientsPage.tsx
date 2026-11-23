@@ -193,16 +193,16 @@ export function PatientsPage({ scope, practiceId, base, expire }: {
       <div style={{ flex: 1, minWidth: 240 }}>
         <div className="etaye-champ">
           <label className="etaye-champ__libelle" htmlFor="q">Nom, prénom ou date de naissance</label>
-          <input id="q" type="search" className="etaye-champ__saisie" value={q} maxLength={100}
-            aria-describedby="q-a" autoComplete="off" onChange={(event) => setQ(event.target.value)} />
+          <div className="etaye-recherche">
+            <input id="q" type="search" className="etaye-champ__saisie" value={q} maxLength={100}
+              aria-describedby="q-a" autoComplete="off" onChange={(event) => setQ(event.target.value)} />
+            <button className="etaye-bouton etaye-bouton--secondaire" type="submit">Rechercher</button>
+            {(q !== '' || queried) && <button className="etaye-bouton etaye-bouton--discret" type="button" onClick={clear}>
+              Effacer la recherche
+            </button>}
+          </div>
           <span className="etaye-champ__aide" id="q-a">Exemple : Martin ou 18/04/1978</span>
         </div>
-      </div>
-      <div className="etaye-ligne" style={{ alignSelf: 'flex-end' }}>
-        <button className="etaye-bouton etaye-bouton--secondaire" type="submit">Rechercher</button>
-        {(q !== '' || queried) && <button className="etaye-bouton etaye-bouton--discret" type="button" onClick={clear}>
-          Effacer la recherche
-        </button>}
       </div>
     </form>
 

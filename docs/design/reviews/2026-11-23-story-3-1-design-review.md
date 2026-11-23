@@ -19,6 +19,10 @@ The page shows 26 static specimens built with the pinned offline snapshot `d2f08
 
 Before the approval was recorded, the generator was re-run to fix one defect and one detail; Aymen opened the live local page while the generator was still being re-run, so they are disclosed here instead of assumed approved. (1) States that move focus to their title on load (`s07-cree`, `s08-restreint`, `s08-planificateur-refus`) showed a focus ring on the heading, which Aymen had asked to avoid in story 1.1; the ring is removed and only keyboard-focusable controls show it. (2) The viewer scales the frame to the page width. No copy, state, layout or field changed. The approval covers the final files committed with this record; revert either change on request.
 
+## Change after the approval
+
+On 2026-11-23, looking at the running list, Aymen remarked that the "Rechercher" button was misaligned with the search field. The specimens had the same offset (the button sat on the bottom of the field block, beside the help text). The button now shares the field's own row in the application and in the S-07 specimens, which were regenerated; the full specimen verification below was run again on the corrected files with the same result (208 views, 52 axe-core runs, no failure).
+
 ## Evidence and limits
 
 Chromium 153.0.8010.12 and axe-core 4.14.1 (via `@axe-core/playwright` 4.14.0), run on the committed files:
