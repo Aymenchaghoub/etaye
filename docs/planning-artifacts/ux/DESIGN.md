@@ -171,6 +171,8 @@ Use Atkinson Hyperlegible Next for the workspace and patient portal, Mono for co
 
 # Layout & Spacing
 
+Use the approved shell and background across the states of each destination. [Étaye page-state continuity](../../design/design-system.md#continuity-across-page-states).
+
 Use the verified 4px-based scale. Professional desktop uses a persistent practice/identity header, compact navigation, chronology/content region and an optional source pane (originally an [ASSUMPTION]); the received reference implements this shell (56 px top bar, 248 px navigation, up to three columns) with its responsive breakpoints, recorded in the [design system reference](../../design/design-system.md) as a Proposal, not approved. Tablet rearranges the pane sequentially; mobile is a focused single-column task view, not a shrunken three-column desktop. The patient portal starts from a simple home, appointments, preparation and published information. At 1440×1024, 1024×768, 390×844 and 320 CSS px reflow, preserve identity, date, source and action hierarchy. Avoid repetitive cards when a chronology, list or table expresses relationships more clearly.
 
 # Elevation & Depth

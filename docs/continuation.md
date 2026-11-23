@@ -10,7 +10,7 @@ Updated: 2026-11-23. Owner: Aymen Chaghoub.
 
 **Actual verification.** The documentary validator reports zero errors in the new mode. 103 tooling tests pass, and a mutation mapping 1.4 to UD-59 made the new scope test fail. The installed BMAD readiness gate (`bmad-sprint-planning`, readiness intent, after resolving core, `modules.bmm` and workflow customization) returned PASS with three non-blocking concerns listed in the packet. No application test ran; no application file changed.
 
-**Next action.** Merge the documentation PR when required checks pass, regenerate the cockpit from the merged checkout and verify the rendered 1.4 status. Then branch `feat/1.4-demonstrate-server-side-resource-isolation` from the merged `main`: the first commit carries the contract review (or records that none is needed) before application code. The visual-continuity rule requested in the Codex session of 2026-11-22 sits on the separate, unmerged branch `docs/visual-continuity` (`1b32554`), which records it as UD-60; this authorization is therefore numbered UD-61 to avoid a collision.
+**Next action.** Merge the documentation PR when required checks pass, regenerate the cockpit from the merged checkout and verify the rendered 1.4 status. Then branch `feat/1.4-demonstrate-server-side-resource-isolation` from the merged `main`: the first commit carries the contract review (or records that none is needed) before application code. The visual-continuity rule Aymen requested on 2026-11-22 is merged as [PR #57](https://github.com/Aymenchaghoub/etaye/pull/57) (`21b51b5`, UD-60); this authorization is numbered UD-61 to avoid the collision. The 1.4 packet and design review already pin the signed-in context shell and `--fond` background that the rule requires, and the running UI must show them in both themes.
 
 ## Story 1.4 phase 0 arbitrated, new states awaiting written design approval — 2026-11-22
 
@@ -19,6 +19,12 @@ Updated: 2026-11-23. Owner: Aymen Chaghoub.
 **Artifacts and verification.** The local review presents the S-01 guided entry, S-36 denial/loading/failure/recovery and I-22 reauthentication states. Chromium checked 104 specimen views, performed 26 axe-core runs and exercised the review controls. All 13 initial states were opened. After Aymen flagged visual inconsistency, the confirmed read and S-36 review specimens were aligned with the 1.3 signed-in context layout and its light/dark background. The second Chromium run repeated 104 views and 26 axe-core scans, and the eight revised specimens were opened. Aymen approved the eight revised specimens and asked to apply the continuity rule to future stories. That rule is prepared separately on `docs/visual-continuity`. The documentary validator reported zero errors. Figma requests reconnection; the 18 November offline exception applies. Application tests were outside this phase. [Review page](design/reviews/2026-11-22-story-1-4-design-review.html) · [Evidence and review scope](design/reviews/2026-11-22-story-1-4-design-review.md)
 
 **Next action.** Obtain Aymen's written decision on the remaining new states in the S-01 entry/guide and I-22. After affirmative approval, record the design disposition and add 1.4 to the BMAD allowlist under UD-59 with global authorization false. Run the installed BMAD readiness check before development. Neither the allowlist nor application files were edited in this phase.
+
+## Visual identity across page states — 2026-11-22
+
+**Decision and artifacts.** UD-60 makes the approved shell and background part of the visual contract for every future visible story. Preparation records the reference, UI work reuses it and visual reviews verify continuity across states in both themes. AGENTS, the UX spine and delivery rules point to the design-system rule. BMAD's existing design context already loads the same reference. [Design rule](design/design-system.md#continuity-across-page-states) · [Decision register](planning-artifacts/decisions-assumptions.md)
+
+**Verification and next action.** The documentation branch `docs/visual-continuity` is based on `590b7e3`. Documentary validation, the design reference check and the installed BMAD override regression checks passed. Integrate this branch before assigning future visual stories. Story 1.4's phase-0 record is in its own worktree.
 
 ## Story 1.1 review follow-up — 2026-11-22
 
