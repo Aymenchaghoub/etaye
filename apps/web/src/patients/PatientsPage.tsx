@@ -143,7 +143,8 @@ export function PatientsPage({ scope, practiceId, base, expire }: {
   const trimmed = submitted.current;
   const saved = confirmation?.patient;
   // A patient that the loaded page does not contain (it sorts later) is pinned first, from the save response.
-  const pinned = saved && !items.some((patient) => patient.id === saved.id) ? saved : undefined;
+  // Only the unfiltered directory pins it: a search shows what matches, and an empty answer stays empty.
+  const pinned = saved && trimmed === '' && attempted.current === '' && !items.some((patient) => patient.id === saved.id) ? saved : undefined;
   const entry = (patient: Patient, marked: boolean) => {
     const name = patientName(patient);
     const edit = editPatientPath(base, patient.recordId);

@@ -15,6 +15,13 @@ type ShellApi = {
   /** Navigation that goes through the unsaved-changes guard (I-20) when a form holds unsaved input. */
   navigate: (path: string) => void;
   setDirty: (work: DirtyWork | null) => void;
+  /**
+   * The form's work was saved. A navigation that was requested while the save was running is kept, so it is
+   * completed after the confirmation instead of being dropped (the guard no longer applies to saved work).
+   */
+  finishWork: () => void;
+  /** Completes the navigation requested during the save, or goes to `fallback`. True when `fallback` was used. */
+  completeSave: (fallback: string) => boolean;
   practiceName: string;
 };
 
@@ -36,6 +43,8 @@ export function PractitionerShell({ session, context, contexts, select, signOut,
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [pending, setPending] = useState<(() => void) | null>(null);
+  const pendingRef = useRef<(() => void) | null>(null);
+  const requested = useRef<(() => void) | null>(null);
   const dirty = useRef<DirtyWork | null>(null);
   const menuButton = useRef<HTMLButtonElement>(null);
   const nav = useRef<HTMLElement>(null);
@@ -44,13 +53,34 @@ export function PractitionerShell({ session, context, contexts, select, signOut,
   const practice = practiceLabel(context);
   const role = roleLabel(context, contexts);
 
-  const request = useCallback((action: () => void) => {
-    if (dirty.current) setPending(() => action);
-    else action();
+  const hold = useCallback((action: (() => void) | null) => {
+    pendingRef.current = action;
+    setPending(() => action);
   }, []);
+  const request = useCallback((action: () => void) => {
+    if (dirty.current) hold(action);
+    else action();
+  }, [hold]);
   const navigate = useCallback((path: string) => request(() => select(path)), [request, select]);
   const setDirty = useCallback((work: DirtyWork | null) => { dirty.current = work; }, []);
-  const api = useMemo<ShellApi>(() => ({ navigate, setDirty, practiceName: practice }), [navigate, setDirty, practice]);
+  const finishWork = useCallback(() => {
+    dirty.current = null;
+    if (pendingRef.current) {
+      requested.current = pendingRef.current;
+      hold(null);
+    }
+  }, [hold]);
+  const completeSave = useCallback((fallback: string) => {
+    const action = requested.current;
+    requested.current = null;
+    if (action) { action(); return false; }
+    select(fallback);
+    return true;
+  }, [select]);
+  const api = useMemo<ShellApi>(
+    () => ({ navigate, setDirty, finishWork, completeSave, practiceName: practice }),
+    [navigate, setDirty, finishWork, completeSave, practice],
+  );
 
   const closeMenu = useCallback((returnFocus: boolean) => {
     setMenuOpen(false);
@@ -93,11 +123,11 @@ export function PractitionerShell({ session, context, contexts, select, signOut,
     // Back and Forward with unsaved input ask first, like every other way of leaving the form (BR-015).
     setLeaveGuard((target) => {
       if (!dirty.current) return false;
-      setPending(() => () => select(target));
+      hold(() => select(target));
       return true;
     });
     return () => setLeaveGuard(undefined);
-  }, [select]);
+  }, [hold, select]);
 
   const go = (path: string) => (event: { preventDefault: () => void }) => {
     event.preventDefault();
@@ -151,11 +181,11 @@ export function PractitionerShell({ session, context, contexts, select, signOut,
         <main className="etaye-main" id="contenu" inert={menuOpen}>
           <div className="etaye-page">
             {pending && dirty.current && (
-              <div onKeyDown={(event) => { if (event.key === 'Escape') setPending(null); }}>
+              <div onKeyDown={(event) => { if (event.key === 'Escape') hold(null); }}>
                 <div className="etaye-entete">
                   <div>
                     <div className="etaye-entete__fil">
-                      <a href={patients} onClick={(event) => { event.preventDefault(); setPending(null); }}>Patients</a> › {dirty.current.crumb}
+                      <a href={patients} onClick={(event) => { event.preventDefault(); hold(null); }}>Patients</a> › {dirty.current.crumb}
                     </div>
                     <h1>Modifications non enregistrées</h1>
                     <div className="etaye-entete__meta">{dirty.current.label} · {practice}</div>
@@ -166,13 +196,13 @@ export function PractitionerShell({ session, context, contexts, select, signOut,
                     <p>Vous avez saisi des informations qui ne sont pas enregistrées. Si vous quittez ce formulaire, elles seront perdues.</p>
                     <div className="etaye-ligne">
                       <button ref={stay} type="button" className="etaye-bouton etaye-bouton--principal"
-                        onClick={() => setPending(null)}>Rester sur le formulaire</button>
+                        onClick={() => hold(null)}>Rester sur le formulaire</button>
                       <button type="button" className="etaye-bouton etaye-bouton--secondaire" onClick={() => {
                         const action = pending;
                         const work = dirty.current;
                         dirty.current = null;
                         work?.onDiscard();
-                        setPending(null);
+                        hold(null);
                         action();
                       }}>Abandonner les modifications</button>
                     </div>

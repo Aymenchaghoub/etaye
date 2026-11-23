@@ -140,8 +140,10 @@ export function AuthApp() {
     setReturning(false);
     setInitial(session);
 
-    // A journey step is a client route: its entry link or its paused step brings the same account back to it.
-    const step = work && isIsolationPath(work.path) ? work.path : isIsolationPath(requestedPath) ? requestedPath : undefined;
+    // A journey step and a patient-directory page are client routes: the server's return path only names a grant home,
+    // so the paused page itself brings the same account back (checkPausedWork still demands the same account and grant).
+    const pausedStep = work && (isIsolationPath(work.path) || patientRoute(work.path)) ? work.path : undefined;
+    const step = pausedStep ?? (isIsolationPath(requestedPath) ? requestedPath : undefined);
     const target = step ?? safe;
     // The previous route is restored only after both the identity and current grant match.
     if (work) {
