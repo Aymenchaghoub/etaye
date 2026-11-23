@@ -1,10 +1,10 @@
 {
   "kind": "documentary-validation-only",
-  "date": "2026-11-22",
+  "date": "2026-11-23",
   "ok": true,
   "checks": {
     "markdownFiles": 135,
-    "localLinks": 1788,
+    "localLinks": 1794,
     "apiOperations": 99,
     "apiSchemas": 93,
     "planningStories": 45,
@@ -17,14 +17,15 @@
     "verifiedFigmaExports": 15,
     "offlineMockupFiles": 523,
     "applicationScope": {
-      "mode": "stories-10.1-10.2-1.2-1.1-1.3-9.1",
+      "mode": "stories-10.1-10.2-1.2-1.1-1.3-9.1-1.4",
       "authorizedStories": [
         "10.1",
         "10.2",
         "1.2",
         "1.1",
         "1.3",
-        "9.1"
+        "9.1",
+        "1.4"
       ],
       "trackedBuildOutputCheck": "checked with git ls-files"
     },
