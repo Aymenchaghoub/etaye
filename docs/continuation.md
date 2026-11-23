@@ -2,6 +2,16 @@
 
 Updated: 2026-11-23. Owner: Aymen Chaghoub.
 
+## Story 1.4 implemented, awaiting running-UI approval and merge — 2026-11-23
+
+**Phase.** Implementation of story 1.4 on `feat/1.4-demonstrate-server-side-resource-isolation` under UD-61. The contract review found no transport change (`30c026c`). The API job now measures 24 adversarial cases on the real synthetic fixture and publishes the `api-isolation-matrix` artifact behind `tools/assert_isolation_matrix.py` (`57732bd`). The web demo has the guided "Prouvez l’isolation" entry and a signed-in journey that performs the real record read for the current account and shows the S-36 and I-22 states (`5517805`, `dd73073`). [Implementation record](implementation-artifacts/story-1-4-implementation-record.md) · [Running-UI review](design/reviews/2026-11-23-story-1-4-runtime.md)
+
+**Actual verification.** Java 25 Maven verify passed 176 tests including 9 matrix tests; two disposable guard mutations were detected. 117 tooling tests, the Web type check, build, 13 unit tests and 81 Chromium smoke tests (serial run) passed. The Compose package replayed Nora `200`, the foreign record `404`, Mila `403` and Claire `404`, tied to their matrix cases, and the 9.1 journey passed again. Not run: the real outage spec, HawkScan (no key), Firefox and WebKit. The CI artifact is observable only on the pull request.
+
+**Open choices.** Aymen said the rendering is "net" on 2026-11-23; that is not the running-UI approval, which the PR asks for explicitly together with three visual points: "Mila" and "Claire" as links in the guide, the "Praticien" role label and the 1.2 neutral shell geometry for I-22. Merge needs his separate authorization. His focus-ring report came from the design-phase captures, which pressed Tab before every image; the application shows the ring only on keyboard focus (regression check added).
+
+**Next action.** Verify the exact PR head and the required checks, request the manual CodeRabbit review, triage its findings, obtain Aymen's running-UI decision and merge authorization, then update `main`, the cockpit and this file. The decision register records the approvals only once he gives them.
+
 ## Story 1.4 design approved and development authorized (UD-61) — 2026-11-23
 
 **Decision.** Aymen wrote “j’autorise la dev de la 1.4” and, asked whether this lifted the condition of UD-59, chose “J’approuve ces états tels que présentés”. UD-61 records the written approval of the S-01 entry and guide and the I-22 read-only states, authorizes story 1.4 only, and keeps global authorization false. It approves specimens, not the running UI; matched running-UI comparisons, functional review and the merge keep their own decisions. He also authorized squash-merging this documentation PR once the required checks are green. [Decision register](planning-artifacts/decisions-assumptions.md) · [Design review](design/reviews/2026-11-22-story-1-4-design-review.md) · [Packet](implementation-artifacts/story-1-4-context-packet.md)
