@@ -15,7 +15,7 @@ COMMIT = "0123456789abcdef0123456789abcdef01234567"
 def valid_report(manifest):
     parity = {member for members in manifest["parity"].values() for member in members}
     return {
-        "schemaVersion": 1, "story": "1.4", "commit": COMMIT, "fixtureVersion": "etaye-design-v1",
+        "schemaVersion": 1, "story": "1.4", "commit": COMMIT, "fixtureVersion": manifest["fixtureVersion"],
         "parity": manifest["parity"],
         "cases": [{**case, "observed": case["expected"], "result": "PASS", "test": "Suite#case",
                    "fingerprint": "7b6aed520c88f9d6" if case["id"] in parity else None}
@@ -111,6 +111,23 @@ class IsolationMatrixReportTest(unittest.TestCase):
         status, output = self.run_tool(None, "--require-commit")
         self.assertEqual(status, 1, output)
         self.assertEqual(self.run_tool()[0], 0)
+
+    def test_rejects_drift_of_commit_fixture_parity_and_pending_rows(self):
+        status, output = self.run_tool(None, "--expect-commit", "f" * 40)
+        self.assertEqual(status, 1, output)
+        self.assertIn("another commit", output)
+        self.assertEqual(self.run_tool(None, "--expect-commit", COMMIT)[0], 0)
+        self.report["fixtureVersion"] = "autre-jeu"
+        self.assert_fails("another fixture version")
+        self.report = valid_report(self.manifest)
+        del self.report["parity"]
+        self.assert_fails("parity groups of the report differ")
+        self.report = valid_report(self.manifest)
+        self.report["pending"][0]["owners"] = []
+        self.assert_fails("pending rows of the report differ")
+        self.report = valid_report(self.manifest)
+        self.report["pending"].append(dict(self.report["pending"][0]))
+        self.assert_fails("pending rows of the report differ")
 
     def test_keeps_unshipped_resources_pending(self):
         self.report["pending"][0]["status"] = "PASS"

@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "fixtureVersion": "etaye-design-v1",
   "cases": [
     {"id": "REC-A-ALLOWED", "group": "record", "label": "Practitioner of practice A reads a record of practice A", "expected": "200"},
     {"id": "REC-B-CONTROL", "group": "record", "label": "Practitioner of practice B reads the record of practice B (positive control: the hidden record exists)", "expected": "200"},
@@ -41,7 +42,7 @@
     {
       "id": "PENDING-SOURCES",
       "resource": "Internal record sources and patient source projections",
-      "operations": ["listRecordSources", "getSourceRevision"],
+      "operations": ["listRecordSources", "getSourceRevision", "readPublishedSources"],
       "owners": ["3.2", "5.3", "7.4"],
       "trigger": "First runtime delivery of each operation (D-55): add a positive control and hidden and missing refusal cases with the current record, role and audience checks."
     },

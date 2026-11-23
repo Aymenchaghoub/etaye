@@ -82,7 +82,7 @@ class ResourceIsolationMatrixHttpTest {
 
         String fingerprint() {
             return IsolationMatrix.fingerprint(status, String.valueOf(headers.getContentType()),
-                    headers.getCacheControl(), headers.getETag() != null, body);
+                    headers.getCacheControl(), headers.headerNames(), body);
         }
     }
 
@@ -180,7 +180,11 @@ class ResourceIsolationMatrixHttpTest {
         Map<String, Object> event = events.getFirst();
         assertThat(event).containsEntry("practice_id", practiceA).containsEntry("event_type", "ACCESS_DENIED")
                 .containsEntry("resource_type", "API_OPERATION").containsEntry("outcome", "DENIED")
-                .containsEntry("resource_id", null);
+                .containsEntry("resource_id", null)
+                .containsEntry("actor_account_id", ownerValue("SELECT etaye_demo.fixture_id('ACC-MILA')"));
+        assertThat(objectMapper.readTree((String) event.get("safe_metadata"))).isEqualTo(objectMapper.valueToTree(Map.of(
+                "reason", "CAPABILITY_MISSING", "capability", "CLINICAL_READ",
+                "operation", "GET /api/v1/practices/{practiceId}/records/{recordId}")));
         assertThat(UUID_PATTERN.matcher((String) event.get("safe_metadata")).find()).isFalse();
         assertThat(event.get("safe_metadata").toString()).doesNotContain(recordA);
         IsolationMatrix.observe("ADM-DENIAL-AUDIT", event.get("event_type").equals("ACCESS_DENIED")

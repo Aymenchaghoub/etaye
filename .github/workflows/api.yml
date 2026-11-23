@@ -93,6 +93,7 @@ jobs:
         run: >-
           python3 tools/assert_isolation_matrix.py apps/api/target/isolation-matrix/isolation-matrix.json
           --manifest apps/api/src/test/resources/isolation/matrix-cases.json --require-commit
+          --expect-commit "$GITHUB_SHA"
       - name: Summarize isolation matrix
         if: steps.changes.outputs.relevant == 'true'
         run: cat apps/api/target/isolation-matrix/isolation-matrix.md >> "$GITHUB_STEP_SUMMARY"

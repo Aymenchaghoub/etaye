@@ -6,7 +6,7 @@ import { AuthShell, Banner, FocusedHeading } from './AuthComponents';
 import { contextPath, currentContexts } from './access-contexts';
 import { PracticeChooser, PracticeChooserHeading, PracticeDestination } from './PracticeContext';
 import { IsolationChanged, IsolationExpired, IsolationJourney, IsolationPending, IsolationRechecking } from '../isolation/IsolationJourney';
-import { isIsolationArea, isIsolationPath, stepOf } from '../isolation/isolation-journey';
+import { isIsolationArea, isIsolationPath, journeyContext, stepOf } from '../isolation/isolation-journey';
 import { Invitation } from './Invitation';
 import { RecoveryRequest, ResetPassword } from './Recovery';
 import { SignIn } from './SignIn';
@@ -40,13 +40,16 @@ export function AuthApp() {
   const [resetVersion, setResetVersion] = useState<string>();
   const [returning, setReturning] = useState(false);
   const [journeyNotice, setJourneyNotice] = useState(false);
+  const [patientJourney, setPatientJourney] = useState(false);
   const [reconnected, setReconnected] = useState(false);
   const [initial, setInitial] = useState<Session>();
   const [retry, setRetry] = useState(0);
   const paused = useRef<Resume>(undefined);
   const demo = useRef<DemoTracking>({ marker: demoEntry(), freshSignIn: false });
   const requestedPath = new URLSearchParams(window.location.search).get('retour');
-  const patient = path === '/connexion/patient' || path.startsWith('/compte/patient/');
+  // A patient who reconnects to a journey step returns to the patient sign-in, not the professional one.
+  const patient = path === '/connexion/patient' || path.startsWith('/compte/patient/')
+    || (isIsolationArea(path) && patientJourney);
 
   useEffect(applyDemoTheme, []);
 
@@ -85,6 +88,7 @@ export function AuthApp() {
     setInitial(undefined);
     setReconnected(false);
     setJourneyNotice(isIsolationArea(target));
+    setPatientJourney(isIsolationArea(target) && journeyContext(previous?.contexts ?? [])?.audience === 'patient');
     setNotice(reason);
   }, []);
 

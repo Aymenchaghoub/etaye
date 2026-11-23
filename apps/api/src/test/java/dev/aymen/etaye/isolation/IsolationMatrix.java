@@ -43,7 +43,7 @@ public final class IsolationMatrix {
 
     public record Pending(String id, String resource, List<String> operations, List<String> owners, String trigger) {}
 
-    public record Manifest(int schemaVersion, List<Case> cases, Map<String, List<String>> parity, List<Pending> pending) {}
+    public record Manifest(int schemaVersion, String fixtureVersion, List<Case> cases, Map<String, List<String>> parity, List<Pending> pending) {}
 
     public record Entry(String id, String group, String label, String expected, String observed, String result,
                         String test, String fingerprint) {}
@@ -74,9 +74,19 @@ public final class IsolationMatrix {
         fixtureVersion = version;
     }
 
-    /** The compact outcome used by the report: the status and, when the problem carries one, its stable code. */
+    private static final java.util.regex.Pattern STABLE_CODE = java.util.regex.Pattern.compile("[A-Z][A-Z0-9_]{1,40}");
+    private static final java.util.regex.Pattern UUID_TEXT = java.util.regex.Pattern.compile(
+            "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}");
+
+    /**
+     * The compact outcome used by the report: the status and, when the problem carries one, its stable code. A code
+     * that is not a stable identifier is replaced, so a regression can never copy request data into the report.
+     */
     public static String outcome(int status, Object code) {
-        return code == null ? Integer.toString(status) : status + " " + code;
+        if (code == null) {
+            return Integer.toString(status);
+        }
+        return status + " " + (STABLE_CODE.matcher(code.toString()).matches() ? code : "NON_STANDARD_CODE");
     }
 
     /**
@@ -90,6 +100,7 @@ public final class IsolationMatrix {
         if (test == null) {
             throw new IllegalStateException("Observe isolation cases from a test that registers the extension");
         }
+        observed = UUID_TEXT.matcher(observed).replaceAll("<id>");
         boolean passed = definition.expected().equals(observed);
         Entry entry = new Entry(definition.id(), definition.group(), definition.label(), definition.expected(),
                 observed, passed ? "PASS" : "FAIL", test, fingerprint);
@@ -109,14 +120,23 @@ public final class IsolationMatrix {
     }
 
     /**
-     * Fingerprints what a refusal discloses: status, media type, caching directive, presence of a validator and the
-     * problem body without its per-request correlation identifier.
+     * Fingerprints what a refusal discloses: status, media type, caching directive, the presence of any header that
+     * could carry a validator, a location, a cookie or a retry hint, and the problem body without its per-request
+     * correlation identifier.
      */
-    public static String fingerprint(int status, String contentType, String cacheControl, boolean hasEtag,
+    public static String fingerprint(int status, String contentType, String cacheControl, java.util.Set<String> headers,
                                      Map<String, Object> problem) {
         Map<String, Object> body = new TreeMap<>(problem == null ? Map.of() : problem);
         body.remove("correlationId");
-        String material = status + "\n" + contentType + "\n" + cacheControl + "\n" + hasEtag + "\n"
+        java.util.Set<String> disclosing = new java.util.TreeSet<>();
+        for (String name : headers) {
+            String lower = name.toLowerCase(java.util.Locale.ROOT);
+            if (java.util.List.of("etag", "location", "content-location", "set-cookie", "retry-after", "www-authenticate",
+                    "last-modified", "content-disposition").contains(lower)) {
+                disclosing.add(lower);
+            }
+        }
+        String material = status + "\n" + contentType + "\n" + cacheControl + "\n" + disclosing + "\n"
                 + JSON.writeValueAsString(body);
         try {
             byte[] digest = MessageDigest.getInstance("SHA-256").digest(material.getBytes(StandardCharsets.UTF_8));

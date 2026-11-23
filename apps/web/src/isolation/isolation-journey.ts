@@ -60,6 +60,7 @@ export type Outcome =
   | { kind: 'hidden' }
   | { kind: 'patient' }
   | { kind: 'expired' }
+  | { kind: 'changed' }
   | { kind: 'failed' };
 
 const isoDate = /^\d{4}-\d{2}-\d{2}$/;

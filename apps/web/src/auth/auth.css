@@ -27,6 +27,7 @@ body:has(.etaye-root) { margin: 0; }
 .etaye-root h1[tabindex="-1"]:focus { outline: none; }
 
 .etaye-auth {
+  box-sizing: border-box;
   min-height: 100dvh;
   background: var(--papier);
   display: grid;

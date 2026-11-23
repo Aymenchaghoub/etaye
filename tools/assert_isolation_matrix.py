@@ -34,7 +34,7 @@ def forbidden_keys(value):
             yield from forbidden_keys(child)
 
 
-def check(report, manifest, require_commit):
+def check(report, manifest, require_commit, expect_commit=None):
     if report.get("schemaVersion") != 1 or report.get("story") != "1.4":
         raise ValueError("The report must declare schemaVersion 1 and story 1.4")
     cases = report.get("cases")
@@ -44,9 +44,13 @@ def check(report, manifest, require_commit):
     commit = report.get("commit")
     if not isinstance(commit, str) or commit == "unknown" or (require_commit and not COMMIT.fullmatch(commit)):
         raise ValueError("The report must name the commit it measured")
+    if expect_commit and commit != expect_commit:
+        raise ValueError("The report measured another commit than the one under verification")
     fixture = report.get("fixtureVersion")
     if not isinstance(fixture, str) or not fixture.strip() or fixture == "unknown":
         raise ValueError("The report must name the fixture version it measured")
+    if fixture != manifest.get("fixtureVersion"):
+        raise ValueError("The report measured another fixture version than the manifest names")
 
     expected_cases = {case["id"]: case for case in manifest.get("cases", [])}
     if not expected_cases:
@@ -72,6 +76,8 @@ def check(report, manifest, require_commit):
         if case["result"] != "PASS" or case["observed"] != case["expected"]:
             raise ValueError(f"Case {case_id} did not pass: expected [{case['expected']}] observed [{case['observed']}]")
 
+    if report.get("parity") != manifest.get("parity"):
+        raise ValueError("The parity groups of the report differ from the manifest")
     for group, members in manifest.get("parity", {}).items():
         fingerprints = {seen[member].get("fingerprint") for member in members}
         if None in fingerprints or "" in fingerprints:
@@ -80,11 +86,13 @@ def check(report, manifest, require_commit):
             raise ValueError(f"Parity group {group} discloses a difference between refusals that must be identical")
 
     pending = report.get("pending")
-    wanted_pending = {row["id"] for row in manifest.get("pending", [])}
-    if not isinstance(pending, list) or {row.get("id") for row in pending if isinstance(row, dict)} != wanted_pending:
+    wanted_pending = [{**row, "status": "PENDING"} for row in manifest.get("pending", [])]
+    if not isinstance(pending, list) or any(not isinstance(row, dict) for row in pending):
         raise ValueError("The pending rows of the report differ from the manifest")
     if any(row.get("status") != "PENDING" for row in pending):
         raise ValueError("A resource without a real route must stay PENDING")
+    if sorted(pending, key=lambda row: str(row.get("id"))) != sorted(wanted_pending, key=lambda row: row["id"]):
+        raise ValueError("The pending rows of the report differ from the manifest")
 
     text = json.dumps(report)
     if UUID.search(text):
@@ -100,10 +108,11 @@ def main(argv=None):
     parser.add_argument("report", type=Path, help="isolation-matrix.json written by the API tests")
     parser.add_argument("--manifest", type=Path, required=True, help="matrix-cases.json listing the mandatory cases")
     parser.add_argument("--require-commit", action="store_true", help="require a full Git commit hash (CI)")
+    parser.add_argument("--expect-commit", help="the commit under verification (GITHUB_SHA in CI)")
     args = parser.parse_args(argv)
     try:
         totals = check(load_json(args.report, "isolation matrix report"),
-                       load_json(args.manifest, "isolation case manifest"), args.require_commit)
+                       load_json(args.manifest, "isolation case manifest"), args.require_commit, args.expect_commit)
     except ValueError as exc:
         print(f"FAIL isolation matrix: {' '.join(str(exc).splitlines())}")
         return 1

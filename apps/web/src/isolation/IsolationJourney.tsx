@@ -11,7 +11,7 @@ import {
 } from './isolation-journey';
 import './isolation.css';
 
-type Shown = Outcome['kind'] | 'loading';
+type Shown = Outcome['kind'] | 'loading' | 'changed';
 
 function BackToDemo({ discreet = false }: { discreet?: boolean }) {
   return <a className={`etaye-bouton etaye-bouton--${discreet ? 'discret' : 'secondaire'}`} href={SHOWCASE}>
@@ -141,9 +141,19 @@ export function IsolationJourney({ step, session, contexts, fixtureVersion, ente
   const [attempt, setAttempt] = useState(0);
   const onExpired = useRef(expire);
   onExpired.current = expire;
+  const accountId = session.account.id;
+  const shownFor = useRef<string | undefined>(undefined);
+  // The read is repeated whenever the gate verifies the session again (its periodic check), so a grant or a
+  // capability withdrawn while the page is open replaces the result at the next check.
+  const verified = session;
 
   useEffect(() => {
-    setOutcome(undefined);
+    const key = `${step}|${audience}|${grant}|${ready}|${attempt}|${accountId}`;
+    if (shownFor.current !== key) {
+      // A different step, grant or account never keeps the previous result on screen while it is verified.
+      shownFor.current = key;
+      setOutcome(undefined);
+    }
     if (!ready || !audience || !step) return;
     const request = new AbortController();
     void (async () => {
@@ -154,10 +164,22 @@ export function IsolationJourney({ step, session, contexts, fixtureVersion, ente
         onExpired.current();
         return;
       }
+      // Confirm that the cookie still belongs to the account whose context is shown before showing any answer.
+      const confirmation = await accountApi.readSession(request.signal);
+      if (request.signal.aborted) return;
+      if (!confirmation.ok) {
+        if (confirmation.status === 401) onExpired.current();
+        else setOutcome({ kind: 'failed' });
+        return;
+      }
+      if (confirmation.data?.account?.id !== accountId) {
+        setOutcome({ kind: 'changed' });
+        return;
+      }
       setOutcome(next);
     })();
     return () => request.abort();
-  }, [step, ready, audience, grant, attempt]);
+  }, [step, ready, audience, grant, attempt, accountId, verified]);
 
   if (!scope || !ready) return <IsolationChanged />;
   const { context } = scope;
@@ -165,6 +187,7 @@ export function IsolationJourney({ step, session, contexts, fixtureVersion, ente
   const practice = practiceLabel(context);
   // An old or unknown link makes no request: it shows the same generic refusal as a hidden object.
   const shown: Shown = !step ? (patient ? 'patient' : 'hidden') : outcome?.kind ?? 'loading';
+  if (shown === 'changed') return <IsolationChanged />;
   const requested = step ? '404' : undefined;
   const label = step && audience && outcome ? matrixCase(step, audience, outcome.kind) : undefined;
   const backToSpace = (

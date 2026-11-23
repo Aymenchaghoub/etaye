@@ -322,8 +322,9 @@ test.describe('the replayed read', () => {
   });
 });
 
-test.describe('states in both themes and four widths', () => {
-  const widths = [[1440, 1024], [1024, 768], [390, 844], [320, 568]] as const;
+test.describe('states in both themes and six widths', () => {
+  // 720×512 and 512×384 are the CSS viewports of a 200 % browser zoom on 1440×1024 and 1024×768.
+  const widths = [[1440, 1024], [1024, 768], [720, 512], [512, 384], [390, 844], [320, 568]] as const;
   const cases: [string, AccessContext[], Reply, string][] = [
     ['allowed', [noraContext], allowed, 'Dossier accessible'],
     ['restricted', [milaContext], restricted, 'Cet espace est réservé aux soins'],
@@ -420,6 +421,41 @@ test.describe('session return for the journey', () => {
       { version: 'autre-jeu', generation: 1 });
     await other.goto(READ_PATH);
     await expect(other.getByRole('heading', { name: 'Cette étape n’est plus disponible' })).toBeVisible();
+  });
+
+  test('a capability withdrawn while the page is open replaces the record at the next periodic check', async ({ page }) => {
+    let withdrawn = false;
+    await stub(page, [noraContext], (route, url) => withdrawn ? restricted(route, url) : allowed(route, url));
+    await page.clock.install();
+    await page.goto(READ_PATH);
+    await expect(page.getByRole('heading', { name: 'Dossier accessible' })).toBeVisible();
+    withdrawn = true;
+    await page.clock.fastForward(21_000);
+    await expect(page.getByRole('heading', { name: 'Cet espace est réservé aux soins' })).toBeVisible();
+    await expect(page.getByText('Claire Martin')).toHaveCount(0);
+  });
+
+  test('an answer is never shown under another account when the cookie changed during the read', async ({ page }) => {
+    await stub(page, [noraContext], allowed);
+    let reads = 0;
+    await page.unroute('**/api/v1/session');
+    await page.route('**/api/v1/session', (route) => {
+      // The first status read belongs to the gate; the confirmation after the record read finds another account.
+      reads++;
+      return route.fulfill({ json: reads === 1 ? snapshot([noraContext]) : snapshot([milaContext], 'Mila Dubois', ids(101)) });
+    });
+    await page.goto(READ_PATH);
+    await expect(page.getByRole('heading', { name: 'Cette étape n’est plus disponible' })).toBeFocused();
+    await expect(page.getByText('Claire Martin')).toHaveCount(0);
+    await expect(page.getByText('Nora Lefebvre')).toHaveCount(0);
+  });
+
+  test('a patient who reconnects returns to the patient sign-in', async ({ page }) => {
+    await stub(page, [claireContext], (route) => route.fulfill({ status: 401, json: problem(401, 'UNAUTHORIZED') }), 'Claire Martin');
+    await page.goto(READ_PATH);
+    await expect(page.getByRole('heading', { name: 'Votre session a expiré' })).toBeFocused();
+    await page.getByRole('button', { name: 'Se reconnecter' }).click();
+    await expect(page.getByRole('heading', { name: 'Se connecter à votre espace patient' })).toBeVisible();
   });
 
   test('a revoked grant while the step is open removes the result at the next check', async ({ page }) => {

@@ -6,6 +6,8 @@ const password = 'Etaye-Jeu-Fictif-91!';
 const manifest = JSON.parse(readFileSync(
   new URL('../../api/src/test/resources/isolation/matrix-cases.json', import.meta.url), 'utf8',
 )) as { cases: { id: string; expected: string; label: string }[] };
+// md5('etaye-design-v1/PRA-B'): the second fictional practice, used only by the positive control below.
+const PRACTICE_B = '65696517-3eff-da90-ae10-0bd4d7616a64';
 const generic = { type: 'about:blank', title: 'Not Found', status: 404, code: 'NOT_FOUND', detail: 'Resource not found' };
 
 const recordUrl = (record: string) => `/api/v1/practices/${PRACTICE_A}/records/${record}`;
@@ -36,12 +38,22 @@ async function startJourney(page: Page) {
   await page.getByRole('link', { name: 'Commencer avec Nora' }).click();
 }
 
-test('replays the cross-practice, administrator and patient refusals on the real stack', async ({ page }) => {
+test('replays the cross-practice, administrator and patient refusals on the real stack', async ({ page, request }) => {
   const replay: { case: string; expected: string; observed: number }[] = [];
   const record = async (response: Response, expectedCase: string) => {
     await expect(page.locator('[data-isolation-case]')).toHaveAttribute('data-isolation-case', expectedCase);
     replay.push({ case: expectedCase, expected: manifest.cases.find(({ id }) => id === expectedCase)!.expected, observed: response.status() });
   };
+
+  // Positive control: the record Nora is refused exists, and the practitioner of its own practice reads it.
+  const csrf = await (await request.get('/api/v1/csrf')).json();
+  const signedIn = await request.post('/api/v1/session', {
+    headers: { 'X-CSRF-TOKEN': csrf.token }, data: { email: 'elodie.morel@example.test', password },
+  });
+  expect(signedIn.status()).toBe(200);
+  const control = await request.get(`/api/v1/practices/${PRACTICE_B}/records/${RECORD_B}`);
+  expect(control.status()).toBe(200);
+  expect((await control.json()).patient.lastName).toBe('Petit');
 
   // Nora reads the authorized record, then the record outside her practice.
   await startJourney(page);
