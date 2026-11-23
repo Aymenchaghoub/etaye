@@ -99,4 +99,3 @@ All required checks passed on the pull request head before the review (API verif
 | The gate accepts extra fields | The report, case and pending objects must match their exact schema. |
 | The gate prints an unvalidated observation | A failing case reports its identifier only. |
 | A whitespace fingerprint passes the parity group | Each parity member must carry a 16-character lowercase hexadecimal fingerprint. |
-
