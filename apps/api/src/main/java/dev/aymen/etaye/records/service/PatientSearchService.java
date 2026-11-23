@@ -36,6 +36,7 @@ public class PatientSearchService {
     public static final int DEFAULT_LIMIT = 25;
     public static final int MAX_LIMIT = 100;
     public static final int MAX_QUERY_LENGTH = 100;
+    public static final int MAX_CURSOR_LENGTH = 1024;
     private static final Pattern FRENCH_DATE = Pattern.compile("(?<![\\d/])(\\d{2})/(\\d{2})/(\\d{4})(?![\\d/])");
     private static final Pattern ISO_DATE = Pattern.compile("(?<![\\d-])(\\d{4})-(\\d{2})-(\\d{2})(?![\\d-])");
 
@@ -70,6 +71,13 @@ public class PatientSearchService {
         }
         if (q != null && q.length() > MAX_QUERY_LENGTH) {
             throw new InvalidParameterException("q too long");
+        }
+        // PostgreSQL cannot store a NUL character and a control character is never a name: refuse early.
+        if (q != null && q.chars().anyMatch(Character::isISOControl)) {
+            throw new InvalidParameterException("q holds a control character");
+        }
+        if (cursor != null && cursor.length() > MAX_CURSOR_LENGTH) {
+            throw new InvalidParameterException("cursor too long");
         }
         if (queryRequired && (q == null || q.strip().length() < 2)) {
             throw new InvalidParameterException("q must hold at least two characters");

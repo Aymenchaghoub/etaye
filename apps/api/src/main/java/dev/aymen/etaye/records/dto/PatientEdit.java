@@ -23,11 +23,13 @@ public record PatientEdit(
         @NotBlank(message = "firstName is required")
         @Size(min = 1, max = 100, message = "firstName must be between 1 and 100 characters")
         @Pattern(regexp = ".*[\\p{L}\\p{N}].*", message = "firstName must contain a letter or a digit")
+        @Pattern(regexp = "[^\\p{Cntrl}]*", message = "firstName must not contain control characters")
         String firstName,
 
         @NotBlank(message = "lastName is required")
         @Size(min = 1, max = 100, message = "lastName must be between 1 and 100 characters")
         @Pattern(regexp = ".*[\\p{L}\\p{N}].*", message = "lastName must contain a letter or a digit")
+        @Pattern(regexp = "[^\\p{Cntrl}]*", message = "lastName must not contain control characters")
         String lastName,
 
         @JsonDeserialize(using = StrictLocalDateDeserializer.class)
@@ -42,6 +44,7 @@ public record PatientEdit(
         String contactEmail,
 
         @Size(max = 40, message = "phone must not exceed 40 characters")
+        @Pattern(regexp = "[^\\p{Cntrl}]*", message = "phone must not contain control characters")
         String phone
 ) {
     public static class StrictLocalDateDeserializer extends ValueDeserializer<LocalDate> {

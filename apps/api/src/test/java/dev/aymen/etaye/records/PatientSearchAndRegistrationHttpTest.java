@@ -344,6 +344,46 @@ public class PatientSearchAndRegistrationHttpTest extends AbstractPostgresTest {
     }
 
     @Test
+    @DisplayName("control characters are refused as input instead of failing in the database")
+    void controlCharactersAreRefused() {
+        assertThat(get(clinicianA, PATIENTS.formatted(practiceA) + "?q=a%00b").getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(get(clinicianA, PATIENTS.formatted(practiceA) + "?cursor=" + "a".repeat(1025)).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(create(clinicianA, practiceA, identity("Jean\u0000ne", "Dupont", "1985-06-02")).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        Map<String, Object> phone = identity("Jeanne", "Dupont", "1985-06-02");
+        phone.put("phone", "06\u0007 00");
+        assertThat(create(clinicianA, practiceA, phone).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(patientCount(practiceA)).isEqualTo(4);
+    }
+
+    @Test
+    @DisplayName("C9 two concurrent corrections on one version yield one success and one stale refusal")
+    void concurrentCorrections() throws Exception {
+        Map<String, Object> created = create(clinicianA, practiceA, identity("Jeanne", "Dupont", "1985-06-02")).getBody();
+        String uri = PATIENTS.formatted(practiceA) + "/" + created.get("id");
+        java.util.concurrent.ExecutorService pool = java.util.concurrent.Executors.newFixedThreadPool(2);
+        try {
+            java.util.concurrent.CountDownLatch go = new java.util.concurrent.CountDownLatch(1);
+            List<java.util.concurrent.Future<HttpStatus>> results = new ArrayList<>();
+            for (String first : List.of("Jeanne-Marie", "Jeanne-Anne")) {
+                results.add(pool.submit(() -> {
+                    go.await();
+                    return HttpStatus.valueOf(send(HttpMethod.PATCH, clinicianA, uri, identity(first, "Dupont", "1985-06-02"),
+                            Map.of("If-Match", "\"0\"")).getStatusCode().value());
+                }));
+            }
+            go.countDown();
+            List<HttpStatus> statuses = new ArrayList<>();
+            for (var result : results) {
+                statuses.add(result.get());
+            }
+            assertThat(statuses).containsExactlyInAnyOrder(HttpStatus.OK, HttpStatus.PRECONDITION_FAILED);
+            assertThat(count("SELECT version FROM patient WHERE id = '" + created.get("id") + "'")).isEqualTo(1);
+        } finally {
+            pool.shutdownNow();
+        }
+    }
+
+    @Test
     @DisplayName("C7 create authorization")
     void createAuthorization() {
         assertThat(create(readOnlyA, practiceA, identity("Jeanne", "Dupont", "1985-06-02")).getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
