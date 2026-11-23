@@ -12,7 +12,9 @@ Updated: 2026-11-23. Owner: Aymen Chaghoub.
 
 **Disclosed for Aymen.** (1) The demo opt-in reopens a surface that 9.1 closed, for the loopback package only. (2) The conflict panel shows version and time but no author because the API exposes none. (3) Several small differences from the specimens: pinned created row, disabled "Annuler" while saving, stale notice reachable only through paging, role label, form year bound at 1900. (4) Assumptions: a correction runs no duplicate check; it does not change `record_revision`.
 
-**Next action.** Draft PR to `main` with the manual CodeRabbit request, then Aymen's running-UI decision (the package runs on http://localhost:4179 for him) and his merge authorization. After a confirmed merge: fetch `origin/main`, remove integrated worktrees and branches (the Web worktree under `.claude/worktrees`), return the principal checkout to `main` and regenerate the cockpit.
+**State of the pull request.** [Draft PR #59](https://github.com/Aymenchaghoub/etaye/pull/59): the manual CodeRabbit review (75 files after the path filters) left ten comments, all confirmed and fixed or answered, and all 33 review threads are resolved; the required checks passed on head `a9744d0` (API verify, Web verify, Planning package checks, CodeQL, Analyze ×3, Dependency review). The Web worktree branch `worktree-agent-a458f39e4eb3524a9` under `.claude/worktrees` is integrated and still to be removed after the merge.
+
+**Next action.** Aymen's explicit approval of the running interface (the package runs on http://localhost:4179; his remark on the "Rechercher" alignment is fixed and is not an approval) and, separately, his merge authorization. After a confirmed merge: fetch `origin/main`, verify the integration (squash included), remove the integrated worktree and local branches, return the principal checkout to `main`, fast-forward and check it is clean, regenerate the cockpit from the merged checkout and verify the rendered 3.1 status and PR number, and stop the local demo stack (`COMPOSE_PROJECT_NAME=etaye-demo-31`).
 
 ## Story 1.4 approved and merged — 2026-11-23
 
