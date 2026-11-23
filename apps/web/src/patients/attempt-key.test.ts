@@ -38,4 +38,24 @@ describe('idempotency key per attempt', () => {
     keys.reset();
     expect(keys.keyFor({ a: 1 })).not.toBe(first);
   });
+
+  it('restores the attempt of an unmounted form so the same body is replayed with the same key', () => {
+    const body = { firstName: 'Claire', lastName: 'Martin', confirmedDistinctRecordIds: ['a'] };
+    const generate = counter();
+    const original = new AttemptKey(generate);
+    const key = original.keyFor(body);
+    const remounted = new AttemptKey(generate, original.snapshot());
+    expect(remounted.keyFor(body)).toBe(key);
+    // The same body typed again after a remount is still the same attempt; a changed body is not.
+    expect(remounted.keyFor({ ...body, confirmedDistinctRecordIds: ['a', 'b'] })).not.toBe(key);
+  });
+
+  it('has no snapshot before a first send and none after a reset', () => {
+    const keys = new AttemptKey(counter());
+    expect(keys.snapshot()).toBeUndefined();
+    keys.keyFor({ a: 1 });
+    expect(keys.snapshot()).toMatchObject({ key: expect.stringMatching(/^key-/) });
+    keys.reset();
+    expect(keys.snapshot()).toBeUndefined();
+  });
 });

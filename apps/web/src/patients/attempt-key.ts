@@ -16,11 +16,17 @@ function canonical(value: unknown): unknown {
   return value;
 }
 
+export type AttemptSnapshot = { body: string; key: string };
+
 export class AttemptKey {
   private body?: string;
   private key?: string;
 
-  constructor(private readonly generate: () => string = newIdempotencyKey) {}
+  /** `restored` brings back the attempt of a form that was unmounted (hidden tab, expired session) before it resolved. */
+  constructor(private readonly generate: () => string = newIdempotencyKey, restored?: AttemptSnapshot) {
+    this.body = restored?.body;
+    this.key = restored?.key;
+  }
 
   keyFor(body: unknown): string {
     const next = JSON.stringify(canonical(body));
@@ -29,6 +35,10 @@ export class AttemptKey {
       this.key = this.generate();
     }
     return this.key;
+  }
+
+  snapshot(): AttemptSnapshot | undefined {
+    return this.body !== undefined && this.key !== undefined ? { body: this.body, key: this.key } : undefined;
   }
 
   reset() {

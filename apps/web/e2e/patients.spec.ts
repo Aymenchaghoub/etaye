@@ -64,7 +64,6 @@ async function signIn(page: Page, email: string) {
   await page.getByRole('button', { name: 'Se connecter', exact: true }).click();
 }
 
-const directory = (grant: string) => `/compte/pratiques/${grant}/patients`;
 const heading = (page: Page, name: string) => page.getByRole('heading', { name, exact: true, level: 1 });
 /** Reads the listed names once the first row has rendered: the directory loads after navigation. */
 const names = async (page: Page) => {
@@ -112,7 +111,7 @@ test('registers a patient, warns about a likely duplicate and creates a distinct
   await page.getByRole('link', { name: 'Créer un dossier patient' }).click();
   await fillIdentity(page, { nom: 'Dupont', prenom: 'Jeanne', j: '02', m: '06', a: '1985' });
   await page.getByRole('button', { name: 'Enregistrer l’identité' }).click();
-  await expect(page.getByText('Dossier créé')).toBeVisible();
+  await expect(page.locator('.etaye-bandeau__titre', { hasText: 'Dossier créé' })).toBeVisible();
   await expect(page.locator('.etaye-ligne--nouvelle')).toContainText('DUPONT Jeanne');
 
   await page.getByRole('link', { name: 'Créer un dossier patient' }).click();
@@ -125,7 +124,7 @@ test('registers a patient, warns about a likely duplicate and creates a distinct
   expect(before.body.items).toHaveLength(1);
 
   await page.getByRole('button', { name: 'Créer quand même' }).click();
-  await expect(page.getByText('Dossier créé')).toBeVisible();
+  await expect(page.locator('.etaye-bandeau__titre', { hasText: 'Dossier créé' })).toBeVisible();
   const after = await api(page, 'GET', `/practices/${fixture.practiceA}/patients?q=Martin`);
   expect(after.body.items).toHaveLength(2);
   expect(new Set(after.body.items.map((p: { recordId: string }) => p.recordId)).size).toBe(2);

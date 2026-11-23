@@ -63,6 +63,13 @@
 .etaye-app .etaye-champ__libelle .etaye-req { color: var(--encre); }
 .etaye-app .etaye-champ__saisie[readonly], .etaye-app .etaye-champ--lecture .etaye-champ__saisie { background: var(--surface-2); border-style: dashed; color: var(--encre); }
 
+.etaye-statut {
+  display: inline-flex; align-items: center; gap: var(--espace-1); height: 24px;
+  padding: 0 var(--espace-2); border-radius: var(--rayon-1);
+  font: 500 13px/20px var(--font-texte); white-space: nowrap;
+}
+.etaye-statut--valide { background: var(--accent-fond); color: var(--accent); }
+
 .etaye-filtres { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--espace-3); }
 .etaye-filtres .etaye-champ { min-width: 180px; }
 .etaye-lignes { list-style: none; padding: 0; margin: 0; border-top: var(--trait-filet) solid var(--filet); }
