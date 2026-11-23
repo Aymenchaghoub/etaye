@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="fr" data-theme="clair">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Étaye · Arbitrage de la Story 1.4</title>
+  <link rel="stylesheet" href="../../../design/offline-reference/site/tokens/tokens.css">
+  <style>
+    * { box-sizing: border-box; }
+    :root { color-scheme: light; }
+    [data-theme="sombre"] { color-scheme: dark; }
+    body {
+      margin: 0;
+      color: var(--encre);
+      background: var(--fond);
+      font: 400 15px/22px "Atkinson Hyperlegible Next", sans-serif;
+    }
+    header { border-bottom: var(--trait-filet) solid var(--filet); }
+    .wrap { max-width: 1060px; margin: auto; padding: var(--espace-6); }
+    header .wrap { display: flex; justify-content: space-between; align-items: center; gap: var(--espace-4); }
+    .logo { display: block; height: 28px; }
+    [data-theme="clair"] .logo-dark, [data-theme="sombre"] .logo-light { display: none; }
+    main { overflow-wrap: anywhere; }
+    h1 { font: 500 32px/40px "Source Serif 4", serif; margin: 0; }
+    h2 { font-size: 22px; line-height: 28px; font-weight: 500; margin: 0 0 var(--espace-4); }
+    h3, legend { font-size: 16px; line-height: 24px; font-weight: 600; }
+    p, ul, ol { margin: 0 0 var(--espace-3); }
+    li + li { margin-top: var(--espace-1); }
+    a { color: var(--accent); text-underline-offset: 0.16em; }
+    .intro { max-width: 70ch; margin-top: var(--espace-3); color: var(--encre-2); }
+    section { margin-top: var(--espace-8); }
+    .columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--espace-4); }
+    .panel, fieldset, .decision {
+      min-inline-size: 0;
+      background: var(--surface);
+      border: var(--trait-filet) solid var(--filet);
+      padding: var(--espace-5);
+    }
+    .panel h3 { margin: 0 0 var(--espace-2); }
+    .panel p:last-child, .panel ul:last-child, .panel ol:last-child { margin-bottom: 0; }
+    fieldset { margin: var(--espace-4) 0; }
+    legend { padding: 0 var(--espace-2); }
+    label.option { display: flex; align-items: baseline; gap: var(--espace-2); padding: var(--espace-2) 0; }
+    input { accent-color: var(--accent); flex: 0 0 auto; }
+    summary { cursor: pointer; font-weight: 500; }
+    details { margin-top: var(--espace-3); }
+    details > div { margin-top: var(--espace-3); }
+    button, textarea {
+      font: inherit;
+      color: var(--encre);
+      background: var(--surface);
+      border: var(--trait-filet) solid var(--filet-controle);
+      border-radius: var(--rayon-1);
+      padding: var(--espace-2) var(--espace-3);
+    }
+    button { min-height: 40px; cursor: pointer; }
+    .primary { background: var(--encre); color: var(--encre-inverse); }
+    :focus-visible, .sample-focus { outline: var(--trait-focus) solid var(--accent); outline-offset: 2px; }
+    .example {
+      display: inline-block;
+      margin: var(--espace-1) 0;
+      padding: var(--espace-1) var(--espace-3);
+      border: var(--trait-filet) solid var(--filet-controle);
+      border-radius: var(--rayon-1);
+      font-weight: 500;
+    }
+    textarea { display: block; width: 100%; min-height: 8em; resize: vertical; margin-top: var(--espace-2); }
+    .decision p { margin-top: var(--espace-2); color: var(--encre-2); }
+    @media (max-width: 760px) {
+      .wrap { padding: var(--espace-4); }
+      .columns { grid-template-columns: 1fr; }
+      h1 { font-size: 26px; line-height: 32px; }
+    }
+    @media (max-width: 360px) {
+      .wrap { padding: var(--espace-3); }
+      .panel, fieldset, .decision { padding: var(--espace-3); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div>
+        <img class="logo logo-light" src="../../../design/offline-reference/site/logos/etaye-logo.svg" alt="Étaye">
+        <img class="logo logo-dark" src="../../../design/offline-reference/site/logos/etaye-logo-sombre.svg" alt="Étaye">
+      </div>
+      <button id="theme" type="button" aria-pressed="false">Thème sombre</button>
+    </div>
+  </header>
+  <main class="wrap">
+    <h1>Story 1.4 · Prouvez l’isolation</h1>
+    <p class="intro">Arbitrage de préparation. Le parcours proposé utilise des données fictives. Les décisions sur le périmètre, le design et l’autorisation sont séparées.</p>
+    <p><a href="../../implementation-artifacts/story-1-4-context-packet.md">Lire le context packet</a></p>
+
+    <section aria-labelledby="flow">
+      <h2 id="flow">Le parcours dans la démo</h2>
+      <div class="columns">
+        <article class="panel">
+          <h3>État actuel</h3>
+          <p>La démo ouvre les contextes de Nora, Mila et Claire après connexion. Le serveur sait déjà lire un dossier autorisé. La maquette guidée montre des exemples de refus.</p>
+          <p>Les opérations sur les sources, les tâches et les exports sont décrites dans le contrat de planification. Leurs routes restent à livrer.</p>
+          <p><a href="../../../design/offline-reference/site/parcours.html">Ouvrir les parcours de référence</a></p>
+        </article>
+        <article class="panel">
+          <h3>Proposition pour le jalon M1</h3>
+          <ol>
+            <li>Nora ouvre un dossier autorisé aux Tilleuls. La démonstration montre la lecture confirmée par le serveur.</li>
+            <li>Une lecture hors de son périmètre affiche « Élément introuvable ».</li>
+            <li>Mila retrouve le refus de l’espace clinique dans son contexte d’administration.</li>
+            <li>Claire obtient une réponse générique quand une page clinique est inaccessible depuis son espace patient.</li>
+          </ol>
+          <p>Chaque étape rejouée porte le même libellé que dans le rapport CI. Un changement de compte passe par la connexion habituelle.</p>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="design">
+      <h2 id="design">S-36 et I-22 dans ce parcours</h2>
+      <div class="columns">
+        <article class="panel">
+          <h3>Références déjà approuvées</h3>
+          <p>S-36 sous UD-46 et I-22 sous UD-48, selon les états présentés le 20 novembre.</p>
+          <ul>
+            <li>S-36 · <a href="../../../design/offline-reference/site/ecrans/S-36/interdit.html">Espace interdit</a>, <a href="../../../design/offline-reference/site/ecrans/S-36/introuvable.html">élément introuvable</a>, <a href="../../../design/offline-reference/site/ecrans/S-36/lien-obsolete.html">lien obsolète</a>, <a href="../../../design/offline-reference/site/ecrans/S-36/patient.html">variante patient</a>.</li>
+            <li>I-22 · <a href="../../../design/offline-reference/site/ecrans/I-22/ouvert.html">Session expirée</a>, <a href="../../../design/offline-reference/site/ecrans/I-22/publication.html">publication interrompue</a>.</li>
+          </ul>
+          <p>Les exemples d’origine proposent notamment « Revenir aux patients », « Revenir à l’équipe » et un rappel sur les notes en cours.</p>
+        </article>
+        <article class="panel">
+          <h3>Adaptations à revoir</h3>
+          <p><strong>Élément introuvable.</strong> Vérifiez le lien ou revenez à votre espace.</p>
+          <p><span class="example sample-focus">Revenir à mon espace</span></p>
+          <p>Le bouton revient au contexte autorisé. À défaut de contexte courant, le parcours revient à l’accueil de la démonstration. Une ressource invisible garde le message générique, y compris avec un ancien lien.</p>
+          <details>
+            <summary>Chargement, panne et expiration</summary>
+            <div>
+              <p><strong>Vérification de l’accès…</strong> Le résultat précédent est masqué pendant l’attente.</p>
+              <p><strong>Vérification momentanément indisponible.</strong> Réessayer ou revenir à l’accueil.</p>
+              <p><strong>Votre session a expiré.</strong> Reconnectez-vous pour vérifier votre accès à cette étape. « Se reconnecter » et « Quitter la session » restent disponibles sur le fond neutre.</p>
+            </div>
+          </details>
+        </article>
+      </div>
+      <p class="intro">La revue suivante couvre les nouveaux états et leurs actions. S-36 reste CORE aux trois tailles avec repli à 320 px, texte long, clavier et deux thèmes. I-22 reste SAMPLED avec vérifications fonctionnelles et axe-core, et captures du retour de session.</p>
+    </section>
+
+    <section aria-labelledby="arbitrage">
+      <h2 id="arbitrage">Arbitrage d’Aymen</h2>
+      <form id="choices">
+        <fieldset>
+          <legend>A · Périmètre d’AT-004-B</legend>
+          <label class="option"><input type="radio" name="scope" value="A1" required><span><strong>A1 · Recommandé.</strong> Prouver le dossier dans 1.4. Consigner les contrôles des sources, tâches et exports comme obligatoires lors de la livraison de leurs routes réelles. Acter la modification de la répartition d’AT-004-B.</span></label>
+          <label class="option"><input type="radio" name="scope" value="A2"><span><strong>A2.</strong> Garder AT-004-B en bloc et laisser 1.4 ouverte jusqu’à la livraison de toutes les routes concernées. Réexaminer l’ordre des stories si nécessaire.</span></label>
+        </fieldset>
+        <fieldset>
+          <legend>B · Approbation de la direction design</legend>
+          <label class="option"><input type="radio" name="design" value="B1" required><span><strong>B1 · Recommandé.</strong> Confirmer les références S-36 et I-22 et approuver les adaptations présentées comme direction pour 1.4. Revoir les nouveaux états complets et tout ajout à S-01 avant de déclarer le design prêt.</span></label>
+          <label class="option"><input type="radio" name="design" value="B2"><span><strong>B2.</strong> Demander une révision du parcours, du retour ou de la copie. Préciser les changements attendus.</span></label>
+        </fieldset>
+        <fieldset>
+          <legend>C · Rapport CI et rejeu navigateur</legend>
+          <label class="option"><input type="radio" name="evidence" value="C1" required><span><strong>C1 · Recommandé.</strong> Générer et publier la matrice dans « API verify » dès 1.4. Rejouer le scénario sur la pile réelle en local, puis intégrer son automatisation CI au jalon M6.</span></label>
+          <label class="option"><input type="radio" name="evidence" value="C2"><span><strong>C2.</strong> Publier la même matrice et exécuter aussi le rejeu navigateur sur pile réelle en CI dès 1.4.</span></label>
+        </fieldset>
+        <fieldset>
+          <legend>D · Autorisation écrite de développement</legend>
+          <label class="option"><input type="radio" name="authorization" value="D1" required><span><strong>D1.</strong> J’autorise uniquement la Story 1.4 selon le périmètre choisi et sous réserve de la validation du design des nouveaux états. Consigner la décision et ajouter 1.4 à la liste BMAD lorsque ces conditions sont remplies.</span></label>
+          <label class="option"><input type="radio" name="authorization" value="D2"><span><strong>D2.</strong> Je réserve l’autorisation de développement à une décision ultérieure.</span></label>
+        </fieldset>
+        <div class="decision">
+          <button class="primary" type="submit">Préparer mon arbitrage</button>
+          <p>Copiez le récapitulatif dans la conversation et ajoutez vos remarques. La page conserve les choix le temps de la consultation.</p>
+          <label for="recap">Récapitulatif à transmettre</label>
+          <textarea id="recap" readonly></textarea>
+        </div>
+      </form>
+    </section>
+  </main>
+  <script>
+    const themeButton = document.getElementById('theme');
+    themeButton.addEventListener('click', () => {
+      const dark = document.documentElement.dataset.theme === 'clair';
+      document.documentElement.dataset.theme = dark ? 'sombre' : 'clair';
+      themeButton.setAttribute('aria-pressed', String(dark));
+    });
+
+    const choices = document.getElementById('choices');
+    const recap = document.getElementById('recap');
+    choices.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const selections = new FormData(choices);
+      const scopes = ['scope', 'design', 'evidence', 'authorization'];
+      const summary = scopes.map((scope) => selections.get(scope)).join(', ');
+      const authorization = selections.get('authorization') === 'D1'
+        ? 'J’autorise uniquement le développement de la Story 1.4 selon le périmètre choisi, sous réserve de la validation écrite des nouveaux états de design.'
+        : 'Je réserve l’autorisation de développement à une décision ultérieure.';
+      recap.value = 'Arbitrage Story 1.4 — ' + summary + '.\n' + authorization;
+      recap.focus();
+      recap.select();
+    });
+  </script>
+</body>
+</html>

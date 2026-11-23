@@ -2,6 +2,14 @@
 
 Updated: 2026-11-22. Owner: Aymen Chaghoub.
 
+## Story 1.4 phase 0 arbitrated, new states awaiting written design approval — 2026-11-22
+
+**Phase and decisions.** On the documentary branch `docs/story-1-4-phase-0` based on verified `origin/main` at `88e88d5`, Aymen gave A1, B1, C1 and conditional D1. UD-59 records the scoped authorization and its condition. The epic allocates the record proof to 1.4. D-55 keeps source, task and export tests mandatory at delivery of their real routes. The measured matrix is a 1.4 CI artifact and the browser replay runs locally in 1.4, with browser CI at M6. [Context packet](implementation-artifacts/story-1-4-context-packet.md) · [Decision register](planning-artifacts/decisions-assumptions.md) · [Traceability](traceability.md#story-14-isolation-verification)
+
+**Artifacts and verification.** The local review presents the S-01 guided entry, S-36 denial/loading/failure/recovery and I-22 reauthentication states. Chromium checked 104 specimen views, performed 26 axe-core runs and exercised the review controls. All 13 initial states were opened. After Aymen flagged visual inconsistency, the confirmed read and S-36 review specimens were aligned with the 1.3 signed-in context layout and its light/dark background. The second Chromium run repeated 104 views and 26 axe-core scans, and the eight revised specimens were opened. Aymen approved the eight revised specimens and asked to apply the continuity rule to future stories. That rule is prepared separately on `docs/visual-continuity`. The documentary validator reported zero errors. Figma requests reconnection; the 18 November offline exception applies. Application tests were outside this phase. [Review page](design/reviews/2026-11-22-story-1-4-design-review.html) · [Evidence and review scope](design/reviews/2026-11-22-story-1-4-design-review.md)
+
+**Next action.** Obtain Aymen's written decision on the remaining new states in the S-01 entry/guide and I-22. After affirmative approval, record the design disposition and add 1.4 to the BMAD allowlist under UD-59 with global authorization false. Run the installed BMAD readiness check before development. Neither the allowlist nor application files were edited in this phase.
+
 ## Story 1.1 review follow-up — 2026-11-22
 
 **Phase.** Follow-up to the seven findings on `5ec9e4a483785301f9742c2c4026e35e9e7d43a9`, audited against main `88e88d53bfb058af0eff3078452816be5eea5f86`. V7 closes the late database lock path. The invitation contract and Web recovery now describe and handle the verified outcomes. The [implementation record](implementation-artifacts/story-1-1-implementation-record.md#review-follow-up-on-main) records the evidence and limits. D-23 remains deferred.
