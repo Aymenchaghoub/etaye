@@ -4,6 +4,8 @@ import type { DemoScenario } from '../api/generated/types.gen';
 import { AuthLogo, AuthShell, Banner, FocusedHeading, useRetryDelay } from '../auth/AuthComponents';
 import { applyDemoTheme, type FixtureMarker, fixtureChanged, fixtureMarker, OPERATOR_EMAIL, pendingReset, rememberDemo, storeReset } from './demo-entry';
 import { demoSign } from './demo-sign';
+import { guideScenarios, IsolationGuide, IsolationPanel } from '../isolation/IsolationGuide';
+import { ISOLATION_DATASET } from '../isolation/isolation-journey';
 import './demo.css';
 
 type Failure = 'unavailable' | 'busy' | 'limited' | 'restricted';
@@ -43,13 +45,14 @@ export function DemoShowcase() {
   const [resetFailure, setResetFailure] = useState<Failure>();
   const [confirming, setConfirming] = useState(false);
   const [pending, setPending] = useState(false);
+  const [guide, setGuide] = useState(false);
   const [resetVersion, setResetVersion] = useState<FixtureMarker>();
   const unconfirmedReset = useRef(pendingReset());
   const loadRequest = useRef<AbortController | undefined>(undefined);
   const mutation = useRef<AbortController | undefined>(undefined);
   const { block, waiting } = useRetryDelay();
   const previousAction = useRef<string | undefined>(undefined);
-  const detailOpen = Boolean(scenario || confirming);
+  const detailOpen = Boolean(scenario || confirming || guide);
 
   useEffect(() => {
     if (detailOpen || !previousAction.current) return;
@@ -66,6 +69,7 @@ export function DemoShowcase() {
       if (event.key !== 'Escape' || pending) return;
       setScenario(undefined);
       setConfirming(false);
+      setGuide(false);
     };
     window.addEventListener('keydown', escape);
     return () => window.removeEventListener('keydown', escape);
@@ -172,6 +176,13 @@ export function DemoShowcase() {
     setResetFailure(result.ok ? 'unavailable' : failureFor(result.status, result.code));
   }
 
+  const isolation = snapshot && !failure && snapshot.marker.version === ISOLATION_DATASET
+    ? guideScenarios(snapshot.scenarios) : undefined;
+
+  if (guide && snapshot && isolation) return (
+    <IsolationGuide scenarios={isolation} marker={snapshot.marker} back={() => setGuide(false)} />
+  );
+
   if (scenario && snapshot) return (
     <AuthShell wide>
       <div>
@@ -276,6 +287,10 @@ export function DemoShowcase() {
               onClick={(event) => { previousAction.current = event.currentTarget.id; setScenario(item); }}>Choisir</button>
           </li>)}
         </ul>}
+        {isolation && <IsolationPanel disabled={loading} open={(button) => {
+          previousAction.current = button.id;
+          setGuide(true);
+        }} />}
         {snapshot?.scenarios.length === 0 && !failure && !loading && <p>Aucun scénario disponible.</p>}
         <p className="etaye-3">Personnes et cabinets entièrement fictifs{snapshot ? ` (jeu ${snapshot.marker.version})` : ''}.
           La démonstration peut être réinitialisée à tout moment.</p>

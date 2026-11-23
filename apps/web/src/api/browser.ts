@@ -1,6 +1,6 @@
 import { version } from '../../package.json';
 import { createClient } from './generated/client';
-import { acceptInvitation, completeRecovery, inspectInvitation, getApiMeta, getCsrfToken, getReadiness, getSession, listDemoScenarios, requestRecovery, resetSyntheticDemo, signIn, signOut } from './generated/sdk.gen';
+import { acceptInvitation, completeRecovery, getApiMeta, getCsrfToken, getPatientRecord, getReadiness, getSession, inspectInvitation, listDemoScenarios, requestRecovery, resetSyntheticDemo, signIn, signOut } from './generated/sdk.gen';
 import type { ActivationWritable, CredentialsWritable } from './generated/types.gen';
 
 type AccountResult<T> =
@@ -61,6 +61,11 @@ export function createBrowserApi(origin: string, transportEnabled: boolean, tran
     readSession,
     readMeta(signal?: AbortSignal) {
       return accountRequest((deadline) => getApiMeta({ client, signal: deadline, cache: 'no-store' }), signal);
+    },
+    readRecord(practiceId: string, recordId: string, signal?: AbortSignal) {
+      return accountRequest((deadline) => getPatientRecord({
+        client, path: { practiceId, recordId }, signal: deadline, cache: 'no-store',
+      }), signal);
     },
     listDemoScenarios(signal?: AbortSignal) {
       return accountRequest((deadline) => listDemoScenarios({ client, signal: deadline, cache: 'no-store' }), signal);
