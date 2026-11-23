@@ -164,6 +164,39 @@ public class GlobalExceptionHandler {
         return buildProblem(HttpStatus.CONFLICT, "IDEMPOTENCY_CONFLICT", "Idempotency conflict", ex, request);
     }
 
+    @ExceptionHandler(InvalidParameterException.class)
+    public ResponseEntity<ApiProblem> handleInvalidParameter(InvalidParameterException ex, HttpServletRequest request) {
+        return buildProblem(HttpStatus.BAD_REQUEST, "INVALID_PARAMETER", "Invalid request parameter", ex, request);
+    }
+
+    @ExceptionHandler(StaleVersionException.class)
+    public ResponseEntity<ApiProblem> handleStaleVersion(StaleVersionException ex, HttpServletRequest request) {
+        return buildProblem(HttpStatus.PRECONDITION_FAILED, "STALE_VERSION", "The resource version is not current", ex, request);
+    }
+
+    @ExceptionHandler(PreconditionRequiredException.class)
+    public ResponseEntity<ApiProblem> handlePreconditionRequired(PreconditionRequiredException ex, HttpServletRequest request) {
+        return buildProblem(HttpStatus.PRECONDITION_REQUIRED, "PRECONDITION_REQUIRED", "A precondition header is required", ex, request);
+    }
+
+    @ExceptionHandler(ConflictWithCandidatesException.class)
+    public ResponseEntity<ApiProblem> handleConflictWithCandidates(ConflictWithCandidatesException ex, HttpServletRequest request) {
+        String correlationId = CorrelationIdFilter.getCorrelationId(request);
+        log.warn("Request rejected: class={}, code={}, candidates={}, correlationId={}",
+                ex.getClass().getName(), ex.code(), ex.candidates().size(), correlationId);
+        ApiProblem problem = ApiProblem.withCandidates(
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                ex.code(),
+                ex.getMessage(),
+                correlationId,
+                ex.candidates()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+                .body(problem);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiProblem> handleValidationErrors(MethodArgumentNotValidException ex, HttpServletRequest request) {
         String correlationId = CorrelationIdFilter.getCorrelationId(request);

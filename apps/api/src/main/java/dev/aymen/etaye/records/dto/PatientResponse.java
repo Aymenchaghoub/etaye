@@ -1,6 +1,7 @@
 package dev.aymen.etaye.records.dto;
 
 import dev.aymen.etaye.records.domain.Patient;
+import dev.aymen.etaye.records.domain.PatientView;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -33,5 +34,10 @@ public record PatientResponse(
                 patient.getPhone(),
                 recordId
         );
+    }
+
+    public static PatientResponse of(PatientView view) {
+        return new PatientResponse(view.id(), view.version(), view.createdAt(), view.updatedAt(), view.practiceId(),
+                view.firstName(), view.lastName(), view.dateOfBirth(), view.contactEmail(), view.phone(), view.recordId());
     }
 }
