@@ -91,3 +91,28 @@ describe('isolation journey steps', () => {
     expect(pauseWork(session, '/compte/isolation/ancien-lien', undefined)).toBeUndefined();
   });
 });
+
+describe('patient directory paths', () => {
+  const record = '55555555-5555-4555-8555-555555555555';
+  const list = `${practicePath}/patients`;
+  const edit = `${practicePath}/patients/${record}/modifier`;
+
+  it('are allowed only under a current staff membership', () => {
+    for (const path of [list, `${list}/nouveau`, edit]) {
+      expect(allowsAccountPath(session, path)).toBe(true);
+      expect(allowsAccountPath({ ...session, membershipIds: [] }, path)).toBe(false);
+      expect(allowsAccountPath({ ...session, membershipIds: [portal] }, path)).toBe(false);
+    }
+    expect(allowsAccountPath(session, `/compte/patient/${portal}/patients`)).toBe(false);
+    expect(allowsAccountPath(session, `${practicePath}/patients/inconnu`)).toBe(false);
+  });
+
+  it('pause and resume the same page for the same account and grant', () => {
+    const paused = pauseWork(session, edit, undefined);
+    expect(paused?.path).toBe(edit);
+    expect(checkPausedWork(paused!, session, edit)).toEqual({ status: 'restored', value: undefined });
+    expect(checkPausedWork(paused!, { ...session, membershipIds: [] }, edit)).toEqual({ status: 'grant-changed' });
+    expect(checkPausedWork(paused!, session, list)).toEqual({ status: 'grant-changed' });
+    expect(pauseWork({ ...session, membershipIds: [] }, edit, undefined)).toBeUndefined();
+  });
+});

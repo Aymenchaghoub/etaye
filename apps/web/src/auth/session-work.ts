@@ -1,18 +1,22 @@
 import type { Session } from '../api/generated/types.gen';
 import { isIsolationPath } from '../isolation/isolation-journey';
+import { patientRoute } from '../patients/routes';
 
 export const ACCOUNT_PATH = '/compte';
 const uuid = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
 const grantPath = new RegExp(`^/compte/(pratiques|patient)/(${uuid})$`);
 
 export function isAccountPath(path: string): boolean {
-  return path === ACCOUNT_PATH || grantPath.test(path);
+  return path === ACCOUNT_PATH || grantPath.test(path) || patientRoute(path) !== undefined;
 }
 
 export function allowsAccountPath(session: Session, path: string): boolean {
   if (path === ACCOUNT_PATH) return true;
   // The journey steps are client routes only: the record read they perform is authorized by the server each time.
   if (isIsolationPath(path)) return true;
+  // The patient directory belongs to a staff grant: the same current membership gates every sub-route.
+  const patients = patientRoute(path);
+  if (patients) return session.membershipIds.includes(patients.base.slice(patients.base.lastIndexOf('/') + 1));
   const match = grantPath.exec(path);
   if (!match) return false;
   return (match[1] === 'pratiques' ? session.membershipIds : session.portalLinkIds).includes(match[2]);

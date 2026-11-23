@@ -7,6 +7,9 @@ import { contextPath, currentContexts } from './access-contexts';
 import { PracticeChooser, PracticeChooserHeading, PracticeDestination } from './PracticeContext';
 import { IsolationChanged, IsolationExpired, IsolationJourney, IsolationPending, IsolationRechecking } from '../isolation/IsolationJourney';
 import { isIsolationArea, isIsolationPath, journeyContext, stepOf } from '../isolation/isolation-journey';
+import { clearPatientMemory } from '../patients/memory';
+import { PatientsArea } from '../patients/PatientsArea';
+import { patientRoute } from '../patients/routes';
 import { Invitation } from './Invitation';
 import { RecoveryRequest, ResetPassword } from './Recovery';
 import { SignIn } from './SignIn';
@@ -84,6 +87,7 @@ export function AuthApp() {
   }, []);
 
   const halt = useCallback((reason: Notice, target: string, previous?: Session) => {
+    clearPatientMemory();
     paused.current = reason === 'expired' && previous ? pauseWork(previous, target, undefined) : undefined;
     setInitial(undefined);
     setReconnected(false);
@@ -93,6 +97,7 @@ export function AuthApp() {
   }, []);
 
   const onDemoReset = useCallback((marker: FixtureMarker) => {
+    clearPatientMemory();
     clearDemoEntry();
     demo.current = { freshSignIn: false };
     paused.current = undefined;
@@ -102,6 +107,7 @@ export function AuthApp() {
   }, []);
 
   function leave() {
+    clearPatientMemory();
     paused.current = undefined;
     setNotice(undefined);
     setReturning(false);
@@ -403,6 +409,7 @@ function AccountGate({ target, initial, onHalt, onDemoReset, leave, enter, demo,
   }, [demo, enter, initial, leaving, onDemoReset, onHalt, retry, target]);
 
   async function signOut() {
+    clearPatientMemory();
     verifiedAccount.current = undefined;
     setView(undefined);
     setUnavailable(false);
@@ -436,6 +443,18 @@ function AccountGate({ target, initial, onHalt, onDemoReset, leave, enter, demo,
   if (journey) return (
     <IsolationJourney step={stepOf(target)} session={session} contexts={contexts} fixtureVersion={demo.current.marker?.version}
       enter={select} expire={() => {
+        const previous = verifiedAccount.current;
+        verifiedAccount.current = undefined;
+        setView(undefined);
+        onHalt('expired', target, previous);
+      }} />
+  );
+  const patients = patientRoute(target);
+  const patientOwner = patients && contexts.find((context) => contextPath(context) === patients.base);
+  // Any staff grant may open the route: the server answers 403 where the capability is missing and the page says so.
+  if (patients && patientOwner?.kind === 'MEMBERSHIP') return (
+    <PatientsArea session={session} context={patientOwner} contexts={contexts} route={patients} select={select}
+      signOut={signOut} expire={() => {
         const previous = verifiedAccount.current;
         verifiedAccount.current = undefined;
         setView(undefined);
