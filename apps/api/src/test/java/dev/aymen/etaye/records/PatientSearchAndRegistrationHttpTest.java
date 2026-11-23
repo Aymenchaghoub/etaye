@@ -70,8 +70,12 @@ public class PatientSearchAndRegistrationHttpTest extends AbstractPostgresTest {
         return RestClient.builder().baseUrl("http://localhost:" + port).build();
     }
 
+    private UUID lastAccount;
+    private UUID clinicianAAccount;
+
     private String session(UUID practice, String... capabilities) {
         UUID account = createAccountAsOwner("p31." + UUID.randomUUID() + "@example.test", "Synthetic " + UUID.randomUUID());
+        lastAccount = account;
         createMembershipAsOwner(account, practice, "ACTIVE", capabilities);
         return sessions.createSessionCookie(account);
     }
@@ -95,6 +99,7 @@ public class PatientSearchAndRegistrationHttpTest extends AbstractPostgresTest {
         practiceB = createPracticeAsOwner("Cabinet B " + UUID.randomUUID());
         practiceEmpty = createPracticeAsOwner("Cabinet vide " + UUID.randomUUID());
         clinicianA = session(practiceA, "CLINICAL_READ", "CLINICAL_WRITE");
+        clinicianAAccount = lastAccount;
         clinicianA2 = session(practiceA, "CLINICAL_READ", "CLINICAL_WRITE");
         clinicianB = session(practiceB, "CLINICAL_READ", "CLINICAL_WRITE");
         clinicianEmpty = session(practiceEmpty, "CLINICAL_READ", "CLINICAL_WRITE");
@@ -490,36 +495,6 @@ public class PatientSearchAndRegistrationHttpTest extends AbstractPostgresTest {
     }
 
     @Test
-    @DisplayName("C8 two concurrent registrations of the same person under different keys yield one creation and one warning")
-    void concurrentRegistrationsAreSerialized() throws Exception {
-        java.util.concurrent.ExecutorService pool = java.util.concurrent.Executors.newFixedThreadPool(2);
-        try {
-            java.util.concurrent.CountDownLatch go = new java.util.concurrent.CountDownLatch(1);
-            List<java.util.concurrent.Future<Integer>> results = new ArrayList<>();
-            // Two sessions of two clinicians: one session shared by two threads is a different concurrency question.
-            String[] sessionsOfTwoClinicians = {clinicianA, clinicianA2};
-            String[][] sameIdentity = {{"Jeanne", "Dupont"}, {"Dupont", "Jeanne"}};
-            for (int i = 0; i < 2; i++) {
-                String cookie = sessionsOfTwoClinicians[i];
-                String[] names = sameIdentity[i];
-                results.add(pool.submit(() -> {
-                    go.await();
-                    return create(cookie, practiceA, identity(names[0], names[1], "1985-06-02")).getStatusCode().value();
-                }));
-            }
-            go.countDown();
-            List<Integer> statuses = new ArrayList<>();
-            for (var result : results) {
-                statuses.add(result.get());
-            }
-            assertThat(statuses).containsExactlyInAnyOrder(201, 409);
-            assertThat(count("SELECT count(*) FROM patient WHERE practice_id = '" + practiceA + "' AND last_name_key IN ('dupont', 'jeanne')")).isEqualTo(1);
-        } finally {
-            pool.shutdownNow();
-        }
-    }
-
-    @Test
     @DisplayName("C6 more than ten likely duplicates can never be named, so the registration stays refused")
     void elevenMatchesStayRefused() {
         List<String> named = new ArrayList<>();
@@ -581,6 +556,21 @@ public class PatientSearchAndRegistrationHttpTest extends AbstractPostgresTest {
                 (decoded.substring(0, decoded.indexOf('\n') + 1) + foreignPatient).getBytes(java.nio.charset.StandardCharsets.UTF_8));
         assertThat(get(clinicianA, uri + "&cursor=" + forged).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(get(clinicianA, PATIENTS.formatted(practiceA) + "?q=!!!&cursor=broken").getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+
+        // The reviewer's case: the right binding for a query that cannot match (two different dates) with a
+        // foreign patient id must be refused, not answered with an empty page.
+        String binding;
+        try {
+            binding = java.util.HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256").digest(
+                    ("v1|" + practiceA + "|" + clinicianAAccount + "||null").getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+        } catch (java.security.NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e);
+        }
+        String foreignCursor = java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(
+                (binding + "\n" + foreignPatient).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        String unmatched = PATIENTS.formatted(practiceA) + "?q=01/01/2000%2002/01/2000";
+        assertThat(get(clinicianA, unmatched).getBody()).as("without a cursor the empty page is kept").containsEntry("nextCursor", null);
+        assertThat(get(clinicianA, unmatched + "&cursor=" + foreignCursor).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     private Object jdbcValue(String sql) {

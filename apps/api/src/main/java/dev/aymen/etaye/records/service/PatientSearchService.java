@@ -86,15 +86,16 @@ public class PatientSearchService {
         }
         return practiceTransaction.execute(practiceId, () -> {
             ParsedQuery query = parse(practiceId, actorId, q);
-            // A cursor is validated even when the query cannot match, so a malformed one is never answered with 200.
+            // A cursor is validated and resolved in this practice even when the query cannot match, so a
+            // malformed or foreign one is never answered with 200.
             UUID cursorId = decode(cursor, query.binding());
-            if (query.matchesNothing()) {
-                return new Page(List.of(), null);
-            }
             Position after = null;
             if (cursorId != null) {
                 after = directory.positionOf(practiceId, cursorId)
                         .orElseThrow(() -> new InvalidParameterException("cursor does not belong to this search"));
+            }
+            if (query.matchesNothing()) {
+                return new Page(List.of(), null);
             }
             List<PatientView> rows = directory.search(practiceId, query.words(), query.birthDate(), after, limit + 1);
             if (rows.size() <= limit) {

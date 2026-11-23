@@ -90,6 +90,7 @@ jobs:
           --require-suite dev.aymen.etaye.records.PatientSearchMigrationTest
           --require-suite dev.aymen.etaye.infrastructure.demo.DemoPatientInputHttpTest
           --require-suite dev.aymen.etaye.records.PatientCorrectionAtomicityHttpTest
+          --require-suite dev.aymen.etaye.records.PatientRegistrationRaceHttpTest
       - name: Verify isolation matrix report
         if: steps.changes.outputs.relevant == 'true'
         # Fails for a zero-case report, a missing, skipped or failing mandatory case, refusals that differ,

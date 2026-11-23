@@ -1,6 +1,6 @@
 # Story 3.1 design review — S-07, S-08 and I-04 adapted states
 
-Status: **Aymen approved the 26 specimens as presented on 2026-11-23** (“J’approuve ces états tels que présentés. Cette réponse est une approbation de design seulement ; mon autorisation de développement reste une décision écrite distincte.”). [UD-64](../../planning-artifacts/decisions-assumptions.md) records the scope. This is a design approval of specimens only: it is not a development authorization (`3.1` is not in `[etaye] authorized_stories`), not a running-UI approval and not a merge authorization. [Local review page](2026-11-23-story-3-1-specimens/index.html) · [Context packet](../../implementation-artifacts/story-3-1-context-packet.md) · [Arbitration page](2026-11-23-story-3-1-phase0-arbitration.html)
+Status: **Aymen approved the 26 specimens as presented on 2026-11-23** (“J’approuve ces états tels que présentés. Cette réponse est une approbation de design seulement ; mon autorisation de développement reste une décision écrite distincte.”). [UD-64](../../planning-artifacts/decisions-assumptions.md) records the scope. This is a design approval of specimens only: at the time of UD-64 it was not a development authorization (`3.1` was not yet in `[etaye] authorized_stories`; Aymen granted that separately the same day, [UD-65](../../planning-artifacts/decisions-assumptions.md)), and it is not a running-UI approval or a merge authorization. [Local review page](2026-11-23-story-3-1-specimens/index.html) · [Context packet](../../implementation-artifacts/story-3-1-context-packet.md) · [Arbitration page](2026-11-23-story-3-1-phase0-arbitration.html)
 
 ## What was shown
 
@@ -35,4 +35,4 @@ Chromium 153.0.8010.12 and axe-core 4.14.1 (via `@axe-core/playwright` 4.14.0), 
 
 ## Effect
 
-`coverage.csv` and `html-reception.csv` record the design approval of S-07, S-08 and I-04 for the 3.1 specimens, with functional review `Pending`. The decisions that remain are Aymen's written development authorization of story 3.1 alone, then the matched running-UI comparisons (six sampled screens at 1440×1024 and 390×844, both themes, UD-63 I1) and the merge.
+`coverage.csv` and `html-reception.csv` record the design approval of S-07, S-08 and I-04 for the 3.1 specimens, with functional review `Pending`. Development authorization of story 3.1 alone followed in writing the same day ([UD-65](../../planning-artifacts/decisions-assumptions.md)). The decisions that remain are Aymen's approval of the matched running-UI comparisons (six sampled screens at 1440×1024 and 390×844, both themes, UD-63 I1; see the [running review](2026-11-23-story-3-1-runtime.md)) and the merge.
