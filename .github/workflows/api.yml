@@ -59,7 +59,7 @@ jobs:
         if: steps.changes.outputs.relevant == 'true'
         # Raise the minimum whenever the suite grows.
         run: >-
-          python3 tools/assert_test_reports.py surefire apps/api/target/surefire-reports --min-tests 176
+          python3 tools/assert_test_reports.py surefire apps/api/target/surefire-reports --min-tests 198
           --require-suite dev.aymen.etaye.ArchitectureTest
           --require-suite dev.aymen.etaye.identity.IdentityLookupTest
           --require-suite dev.aymen.etaye.security.AccountAccessHttpTest
@@ -86,6 +86,9 @@ jobs:
           --require-suite dev.aymen.etaye.infrastructure.web.ApiMetaControllerTest
           --require-suite dev.aymen.etaye.infrastructure.demo.DemoHttpTest
           --require-suite dev.aymen.etaye.isolation.ResourceIsolationMatrixHttpTest
+          --require-suite dev.aymen.etaye.records.PatientSearchAndRegistrationHttpTest
+          --require-suite dev.aymen.etaye.records.PatientSearchMigrationTest
+          --require-suite dev.aymen.etaye.infrastructure.demo.DemoPatientInputHttpTest
       - name: Verify isolation matrix report
         if: steps.changes.outputs.relevant == 'true'
         # Fails for a zero-case report, a missing, skipped or failing mandatory case, refusals that differ,

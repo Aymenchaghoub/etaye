@@ -126,6 +126,11 @@ class DemoHttpTest {
                 key, patient).getStatusCode().value()).isEqualTo(403);
 
         assertThat(request(HttpMethod.POST, create, csrf(mila), key, patient).getStatusCode().value()).isEqualTo(403);
+        // The other story 3.1 input surfaces stay closed in the public demo unless the local package opts in.
+        assertThat(request(HttpMethod.PATCH, create + "/" + UUID.randomUUID(), csrf(nora), null, patient)
+                .getStatusCode().value()).isEqualTo(403);
+        assertThat(request(HttpMethod.POST, "/practices/" + practice + "/scheduling/patients", csrf(mila), key, patient)
+                .getStatusCode().value()).isEqualTo(403);
         assertThat(reset(null, key, REASON).getStatusCode().value()).isEqualTo(401);
         assertThat(request(HttpMethod.POST, "/demo/%72eset", null, key, Map.of("reason", REASON))
                 .getStatusCode().value()).isEqualTo(401);
