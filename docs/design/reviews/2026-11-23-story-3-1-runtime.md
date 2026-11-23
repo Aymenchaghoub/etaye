@@ -17,7 +17,7 @@ The left panel of every sheet is the approved specimen; the right panel is Chrom
 | S-08 likely duplicate (`doublon-*`) | 390 dark, 1440 light | Warning banner with the typed candidate and the confirmation sentence, "Ouvrir le dossier existant" and "Créer quand même", the form filled below. |
 | S-08 unsaved changes (`sale-*`) | 390 light | The guard replaces the form: heading, explanation, "Rester sur le formulaire" and "Abandonner les modifications". |
 
-All 24 sheets are in [the folder](2026-11-23-story-3-1-runtime/); seven were opened side by side for this record (the ones marked above) and the other seventeen were produced by the same script and checked only through the page assertions.
+All 24 sheets are in [the folder](2026-11-23-story-3-1-runtime/). They were regenerated after the end-of-story review fixes; five of the final sheets were opened side by side (list dark 390, input errors dark 1440, duplicate light 390, unsaved changes dark 1440, long names light 1440). The "Opened" column above names the seven sheets opened on the capture taken before those fixes, which the final sheets replace; the others were produced by the same script and checked only through its page assertions.
 
 ## Observed differences from the specimens
 
@@ -27,11 +27,15 @@ All 24 sheets are in [the folder](2026-11-23-story-3-1-runtime/); seven were ope
 4. **Conflict panel.** Without a sheet in this sample: it shows "version N · hh:mm" and no author, because the API exposes none (single deviation from the approved specimen; it is stated in the implementation record).
 5. **After a save.** The form shows "Enregistré" for 600 ms and the list then shows an "Identité enregistrée" notice, which the specimens do not draw.
 6. **Several candidates.** With more than one candidate the panel has an "Ouvrir ce dossier" link per candidate instead of one button.
+7. **Created patient outside the first page.** After a creation, a patient that is not on the first 25 rows is pinned first with the word "Dossier créé"; the specimens show the word only on the banner and a marked row.
+8. **"Annuler" while saving.** It is disabled during saving and outcome verification (the specimens show it enabled), because leaving would offer to discard input that may already be saved. The breadcrumb and navigation still open the guard during a save.
+9. **Stale notice.** "Résultats à actualiser" is reachable only when a page loaded with "Afficher plus" repeats a row already shown, which means a correction shifted the list; returning from a conflict reloads the list, so the original trigger of the specimen never shows.
+10. **Birth year.** The form refuses years before 1900; the API has no lower bound.
 
 ## Functional evidence for this revision
 
-- API: `./mvnw -B -ntp verify`, 198 tests, 0 failures (PostgreSQL 18.7 Testcontainers). Web: `tsc -b`, `build` with the SDK drift check, Vitest 38 tests, stubbed Chromium smoke 110 tests (29 new, each state scanned with axe-core, plus keyboard, focus, shell background, overflow and idempotency-key assertions).
-- Real stack: five Playwright specs on the rebuilt package pass in one clean run (registration with the duplicate warning and the named confirmation, practice scoping, a read-only member refused with the restricted state, a stale correction keeping the input, the unsaved-changes guard). Earlier runs failed for test reasons only (a list read before it rendered, the package treating a hard navigation as an expired session, the per-address sign-in limit) and the specs were corrected; no application defect was found by them.
+- API: `./mvnw -B -ntp verify`, 206 tests, 0 failures (PostgreSQL 18.7 Testcontainers). Web: `tsc -b`, `build` with the SDK drift check, Vitest 40 tests, stubbed Chromium smoke 125 tests (44 new, each state scanned with axe-core, plus keyboard, focus, shell background, overflow, idempotency-key and review-regression assertions).
+- Real stack: five Playwright specs on the package rebuilt on a fresh database volume pass (after two clean runs before the review fixes) (registration with the duplicate warning and the named confirmation, practice scoping, a read-only member refused with the restricted state, a stale correction keeping the input, the unsaved-changes guard). Earlier runs failed for test reasons only (a list read before it rendered, the package treating a hard navigation as an expired session, the per-address sign-in limit) and the specs were corrected; no application defect was found by them.
 
 ## Not verified
 
