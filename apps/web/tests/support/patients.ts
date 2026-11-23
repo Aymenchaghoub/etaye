@@ -72,9 +72,13 @@ export async function stubApi(page: Page, handlers: Handlers = {}): Promise<Call
   await page.route('**/api/v1/session', (route) => {
     sessionReads += 1;
     const request = route.request();
-    // A sign-in echoes the validated return path, as the server does.
-    const returnTo = request.method() === 'POST' ? (request.postDataJSON() as { returnTo?: string } | null)?.returnTo : undefined;
-    return route.fulfill({ json: { ...(handlers.session?.(sessionReads) ?? snapshot(contexts)), ...(returnTo ? { returnTo } : {}) } });
+    const session = handlers.session?.(sessionReads) ?? snapshot(contexts);
+    const candidate = request.method() === 'POST' ? (request.postDataJSON() as { returnTo?: string } | null)?.returnTo : undefined;
+    // The real server (AccountAccessController.safeReturn) returns only the exact path of an active grant and
+    // answers /compte for anything else, including every sub-route such as the patient directory.
+    const exact = candidate !== undefined && (session.membershipIds.some((id) => `/compte/pratiques/${id}` === candidate)
+      || session.portalLinkIds.some((id) => `/compte/patient/${id}` === candidate));
+    return route.fulfill({ json: request.method() === 'POST' ? { ...session, returnTo: exact ? candidate : '/compte' } : session });
   });
   await page.route((url) => url.pathname.startsWith('/api/v1/practices/'), async (route) => {
     const request = route.request();
