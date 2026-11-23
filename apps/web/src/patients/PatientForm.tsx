@@ -4,7 +4,7 @@ import type { Patient, PatientRegistration, SchedulingPatient } from '../api/gen
 import { ErrorSummary, type FieldError } from '../auth/AuthComponents';
 import { ageLabel, formatDate, isoToParts, parseBirthDate } from './date';
 import { AttemptKey } from './attempt-key';
-import { clearDraft, type DraftValues, readDraft, rememberConfirmation, writeDraft } from './memory';
+import { clearDraft, type DraftValues, readDraft, rememberConfirmation, takeConfirmation, writeDraft } from './memory';
 import { clockTime, EntryHeader, Notice, patientName, Skeleton } from './patient-ui';
 import { useShell } from './PractitionerShell';
 import { editPatientPath, patientsPath } from './routes';
@@ -179,7 +179,9 @@ function IdentityForm({ mode, scope, practiceId, base, patient, expire }: {
   const timer = useRef<number | undefined>(undefined);
   const expireRef = useRef(expire);
   expireRef.current = expire;
-  const dirty = !same(values, baseline);
+  // Once the server has saved the work nothing is unsaved: no draft is written back and the leave guard stays off.
+  const [done, setDone] = useState(false);
+  const dirty = !done && !same(values, baseline);
   const crumb = mode === 'new' ? 'Nouveau dossier patient' : 'Modifier l’identité';
   const practice = shell.practiceName;
   const busy = phase === 'saving' || phase === 'verifying' || phase === 'confirmed';
@@ -224,10 +226,14 @@ function IdentityForm({ mode, scope, practiceId, base, patient, expire }: {
     request.current = null;
     setPhase('confirmed');
     // Success is shown only after the server commit; the guard must not intercept the planned return to the list.
-    shell.setDirty(null);
+    setDone(true);
+    shell.finishWork();
     clearDraft(scope, formId);
     rememberConfirmation(scope, { kind, patient: saved });
-    timer.current = window.setTimeout(() => shell.navigate(patientsPath(base)), CONFIRMED_DISPLAY_MS);
+    timer.current = window.setTimeout(() => {
+      // A navigation asked for during the save is completed now; the list's confirmation then no longer applies.
+      if (!shell.completeSave(patientsPath(base))) takeConfirmation(scope);
+    }, CONFIRMED_DISPLAY_MS);
   }
 
   function serverErrors(problem: { fieldErrors?: { field: string; code: string }[] } | undefined): FieldError[] {

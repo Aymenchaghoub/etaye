@@ -508,6 +508,8 @@ test.describe('states in both themes and four widths', () => {
       expect(info).toMatchObject({ style: 'solid', width: '2px', visible: true });
       order.push(info.label);
     }
+    // Every control must have been reached: a missing one would make indexOf -1 and pass any comparison.
+    for (const control of ['i-nom', 'i-pre', 'dn-j', 'dn-m', 'dn-a2', 'i-tel', 'i-mail']) expect(order).toContain(control);
     expect(order.indexOf('i-nom')).toBeLessThan(order.indexOf('i-pre'));
     expect(order.indexOf('i-pre')).toBeLessThan(order.indexOf('dn-j'));
     expect(order.indexOf('dn-j')).toBeLessThan(order.indexOf('dn-m'));
