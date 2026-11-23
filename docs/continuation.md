@@ -2,6 +2,16 @@
 
 Updated: 2026-11-23. Owner: Aymen Chaghoub.
 
+## Story 3.1 arbitrated and design approved, authorization awaited — 2026-11-23
+
+**Decisions.** UD-63: Aymen answered A1, B2, Ba, C1, D1, E1, F1, G1, H1, I1, J1 (scope only). UD-64: after the local design review he wrote “J'approuve ces états tels que présentés”, a design approval of the 26 specimens of S-07, S-08 and I-04, and stated that his development authorization remains a separate written decision. Nothing is authorized: `authorized_stories` still ends at `"1.4"` and `development_authorized` is false. [Packet](implementation-artifacts/story-3-1-context-packet.md) · [Design review](design/reviews/2026-11-23-story-3-1-design-review.md) · [Review page](design/reviews/2026-11-23-story-3-1-specimens/index.html) · [Decision register](planning-artifacts/decisions-assumptions.md)
+
+**Artifacts.** Branch `docs/story-3-1-phase-0` (uncommitted): packet with sections 12 and 13, arbitration page, design-review record and 26 static specimens with their index, UD-63 and UD-64, D-57 to D-59 and the updated D-43, D-44, D-46, D-47, D-48 and D-49, epic 3 and 4 amendments with AT-009-D, acceptance index and traceability, and the S-07, S-08 and I-04 rows of `coverage.csv` and `html-reception.csv` (functional review `Pending`).
+
+**Actual verification.** On the final specimens, Chromium 153.0.8010.12 rendered 208 views (26 states, two themes, 1440, 1024, 390 and 320 px) with no overflow, the pinned `--fond` and `--surface` backgrounds, a visible title and no failed request, and axe-core 4.14.1 reported zero violations and zero incomplete results in 52 runs at 390×844 plus six on the index. The mobile menu and the initial focus of the guard and the error summary were checked by keyboard. Seven captures were opened (listed in the review record). The documentary validator reports zero errors. Not verified: screen readers, 200 % zoom, other browsers, contrast on rendered pixels, any running behavior. No Figma call, no application test and no application, contract, migration or configuration change.
+
+**Next action.** Aymen's written authorization of story 3.1 alone. Then record the next UD row, append `"3.1"` with the scoped validator mode and its test, update `docs/agent-setup.md`, run the installed BMAD readiness check, and start `feat/3.1-find-register-local-patient` with the reviewed contract as the first commit (typed duplicate candidates and named confirmation, search semantics, README, operation index, SDK regeneration) before any application change. The documentation branch needs a commit and PR when he asks.
+
 ## Story 1.4 approved and merged — 2026-11-23
 
 **Decision (UD-62).** After the comparisons and the three flagged visual points, Aymen wrote “je valide l’interface, tu peux fusionner”. [PR #58](https://github.com/Aymenchaghoub/etaye/pull/58) is squash-merged once the required checks pass on the exact head. [Decision register](planning-artifacts/decisions-assumptions.md) · [Implementation record](implementation-artifacts/story-1-4-implementation-record.md) · [Running-UI review](design/reviews/2026-11-23-story-1-4-runtime.md)

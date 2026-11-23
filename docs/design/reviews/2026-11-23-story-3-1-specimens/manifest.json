@@ -1,0 +1,210 @@
+[
+ {
+  "id": "s07-liste",
+  "family": "S-07",
+  "title": "Liste initiale",
+  "focus": null,
+  "reference": "S-07/liste",
+  "change": "Coque praticien limitée à « Patients ». Recherche lancée par « Rechercher ». Ni colonne ni filtre « Espace patient », ni identifiant « dossier R-A-001 » (UD-63 E1). Le nom n'est pas un lien tant que S-09 n'existe pas ; l'action de ligne est « Modifier l'identité » (B2)."
+ },
+ {
+  "id": "s07-chargement",
+  "family": "S-07",
+  "title": "Chargement",
+  "focus": null,
+  "reference": "S-07/chargement",
+  "change": "Le résultat précédent est masqué ; l'attente est annoncée par une zone d'état polie."
+ },
+ {
+  "id": "s07-vide",
+  "family": "S-07",
+  "title": "Cabinet sans patient",
+  "focus": null,
+  "reference": "S-07/vide",
+  "change": "Note de gabarit retirée (« deux dossiers dans le jeu de données » était périmée). État testé avec un cabinet créé par la pile de test (UD-63 I1)."
+ },
+ {
+  "id": "s07-aucun-resultat",
+  "family": "S-07",
+  "title": "Aucun résultat",
+  "focus": null,
+  "reference": "S-07/aucun-resultat",
+  "change": "Même réponse serveur qu'une liste vide : l'écran distingue les deux par la présence de la requête (AC-S07-F : Hugo Petit n'apparaît jamais aux Tilleuls)."
+ },
+ {
+  "id": "s07-suite",
+  "family": "S-07",
+  "title": "Afficher plus",
+  "focus": null,
+  "reference": "Absent de la référence",
+  "change": "Pagination par curseur : action explicite « Afficher plus » (G-10). Le nombre est celui des lignes chargées ; aucun total n'est exposé."
+ },
+ {
+  "id": "s07-suite-echec",
+  "family": "S-07",
+  "title": "Suite non chargée",
+  "focus": null,
+  "reference": "S-07/erreur (adapté)",
+  "change": "Échec partiel : la liste chargée reste visible avec sa date, l'échec est localisé à la section (SP-STATE)."
+ },
+ {
+  "id": "s07-erreur",
+  "family": "S-07",
+  "title": "Chargement partiel",
+  "focus": null,
+  "reference": "S-07/erreur",
+  "change": "Copie de la référence conservée ; actions de ligne adaptées (B2)."
+ },
+ {
+  "id": "s07-a-actualiser",
+  "family": "S-07",
+  "title": "Résultats à actualiser",
+  "focus": null,
+  "reference": "S-07/perime",
+  "change": "Affiché seulement quand une ouverture ou une correction détecte une version plus récente (412) ; pas de sondage (UD-63 G1)."
+ },
+ {
+  "id": "s07-longs",
+  "family": "S-07",
+  "title": "Noms longs",
+  "focus": null,
+  "reference": "S-07/longs",
+  "change": "La date de naissance reste entière ; le nom passe à la ligne. Gabarit de mise en page : nom fictif long, pas un dossier du jeu."
+ },
+ {
+  "id": "s07-cree",
+  "family": "S-07",
+  "title": "Dossier créé",
+  "focus": "h1",
+  "reference": "Nouveau (Ba)",
+  "change": "Destination après création : retour à S-07 avec confirmation annoncée (zone d'état) et ligne du nouveau patient repérée par un fond et le mot « Dossier créé ». Le focus va sur le titre."
+ },
+ {
+  "id": "s07-planificateur",
+  "family": "S-07",
+  "title": "Recherche planificateur",
+  "focus": null,
+  "reference": "S-07/planificateur",
+  "change": "« Proposition PD-001, non validée » retiré (UD-17 l'a acceptée). Interface livrée avec I-10 en 4.2 ; états revus ici (UD-63 A1). La navigation de cette coque se décide avec 4.2."
+ },
+ {
+  "id": "s07-planificateur-court",
+  "family": "S-07",
+  "title": "Recherche planificateur trop courte",
+  "focus": null,
+  "reference": "Nouveau",
+  "change": "La recherche planificateur exige deux caractères (contrat) : message lié au champ, aucune requête envoyée."
+ },
+ {
+  "id": "s08-nouveau",
+  "family": "S-08 · I-04",
+  "title": "Nouveau dossier",
+  "focus": null,
+  "reference": "S-08/nouveau",
+  "change": "Cinq champs : « Nom d'usage » et « Origine de ces informations » retirés (UD-63 D1). Date de naissance en trois segments Jour / Mois / Année, sans calendrier (UD-63 H1)."
+ },
+ {
+  "id": "s08-erreur",
+  "family": "S-08 · I-04",
+  "title": "Erreurs de saisie",
+  "focus": "summary",
+  "reference": "S-08/erreur",
+  "change": "Résumé d'erreurs lié aux champs ; la saisie est conservée ; le focus va sur le résumé."
+ },
+ {
+  "id": "s08-doublon",
+  "family": "S-08 · I-04",
+  "title": "Doublon probable",
+  "focus": null,
+  "reference": "S-08/doublon · I-04/doublon",
+  "change": "Candidats typés du même cabinet (identité et contact seulement). « Ouvrir le dossier existant » mène à l'identité du patient tant que S-09 n'existe pas. Aucun identifiant « R-A-001 » (E1). La confirmation nomme les dossiers affichés."
+ },
+ {
+  "id": "s08-doublon-change",
+  "family": "S-08 · I-04",
+  "title": "Doublon : nouveau candidat",
+  "focus": null,
+  "reference": "Nouveau (C1)",
+  "change": "Le serveur revérifie à la validation : un candidat non nommé dans la confirmation renvoie le même écran avec la liste à jour."
+ },
+ {
+  "id": "s08-enregistrement",
+  "family": "S-08 · I-04",
+  "title": "Enregistrement en cours",
+  "focus": null,
+  "reference": "S-08/enregistrement",
+  "change": "Le bouton garde sa largeur (ADR-012 motif A), les champs passent en lecture seule, un seul envoi ; « Enregistré » n'apparaît qu'après la validation serveur."
+ },
+ {
+  "id": "s08-verification",
+  "family": "S-08 · I-04",
+  "title": "Réponse perdue : vérification",
+  "focus": null,
+  "reference": "Nouveau (I-04)",
+  "change": "La même clé d'idempotence est conservée ; le résultat est vérifié avant toute nouvelle tentative."
+ },
+ {
+  "id": "s08-echec",
+  "family": "S-08 · I-04",
+  "title": "Échec d'enregistrement",
+  "focus": null,
+  "reference": "S-08/conflit (bandeau d'échec)",
+  "change": "Aucune saisie perdue ; aucun succès affiché ; le même bouton permet de réessayer."
+ },
+ {
+  "id": "s08-sale",
+  "family": "S-08 · I-20",
+  "title": "Modifications non enregistrées",
+  "focus": null,
+  "reference": "S-08/sale · I-20 (UD-54)",
+  "change": "Garde intégrée remplaçant le contenu (jamais de dialogue empilé) ; le choix prudent reçoit le focus. Aucune saisie n'est conservée hors de la mémoire de l'onglet."
+ },
+ {
+  "id": "s08-modifier",
+  "family": "S-08 · I-04",
+  "title": "Modifier l'identité",
+  "focus": null,
+  "reference": "S-08/modifier",
+  "change": "Bannière réduite à l'identité (le bloc allergies arrive avec 3.2) ; ni nom d'usage ni origine (D1) ; pas d'identifiant local (E1). Le numéro de version est celui du patient."
+ },
+ {
+  "id": "s08-conflit",
+  "family": "S-08 · I-04",
+  "title": "Conflit de version",
+  "focus": null,
+  "reference": "S-08/conflit",
+  "change": "Panneau de conflit propre à S-08 (I-21 arrive en 6.3) : auteur, heure et version visibles, comparaison, rechargement ; la saisie locale est conservée (BR-015)."
+ },
+ {
+  "id": "s08-restreint",
+  "family": "S-08 · I-04",
+  "title": "Création non autorisée (praticien)",
+  "focus": "h1",
+  "reference": "Nouveau (SP-STATE, refus 403)",
+  "change": "Le formulaire n'est pas affiché : un refus retire le contenu protégé. L'interface ne connaît pas à l'avance la capacité et réagit au 403 du serveur."
+ },
+ {
+  "id": "s08-planificateur",
+  "family": "S-08 · I-04",
+  "title": "Création planificateur",
+  "focus": null,
+  "reference": "S-08/planificateur · I-04/planificateur",
+  "change": "« Proposition PD-001, non validée » retiré. Interface livrée avec I-10 en 4.2 (UD-63 A1) ; la navigation de la coque se décide avec 4.2."
+ },
+ {
+  "id": "s08-planificateur-refus",
+  "family": "S-08 · I-04",
+  "title": "Planificateur sans droit d'enregistrer",
+  "focus": "h1",
+  "reference": "AT-015-E",
+  "change": "Le 403 d'enregistrement n'efface pas le créneau retenu ; aucun formulaire n'est affiché."
+ },
+ {
+  "id": "menu-mobile",
+  "family": "S-07 · D-46",
+  "title": "Menu sous 760 px (ouvert)",
+  "focus": null,
+  "reference": "S-07/liste (menu fermé par défaut)",
+  "change": "Spécification D-46 proposée : bouton « Ouvrir le menu » (aria-expanded, aria-label), la navigation s'ouvre sous la barre, le focus va sur le premier lien, Échap la ferme et rend le focus au bouton, un lien choisi la ferme, l'élargissement de la fenêtre la ferme. Ouvrir avec ?menu=ouvert sous 760 px."
+ }
+]

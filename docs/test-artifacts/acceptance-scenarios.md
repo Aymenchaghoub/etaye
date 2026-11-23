@@ -12,7 +12,7 @@ All entries are planned, not executed. Exact Given/When/Then conditions are in t
 | AT-006-A/B/C | [2.2](../planning-artifacts/epics/epic-2.md) | Deactivate access without losing accountability | Real assertions/report plus opened visual evidence; record commit/fixture/environment and limitations |
 | AT-007-A/B/C | [2.3](../planning-artifacts/epics/epic-2.md) | Maintain operational practice settings | Real assertions/report plus opened visual evidence; record commit/fixture/environment and limitations |
 | AT-008-A/B/C | [2.4](../planning-artifacts/epics/epic-2.md) | Inspect scoped audit and own preferences | Real assertions/report plus opened visual evidence; record commit/fixture/environment and limitations |
-| AT-009-A/B/C | [3.1](../planning-artifacts/epics/epic-3.md) | Find and register a local patient | Real assertions/report plus opened visual evidence; record commit/fixture/environment and limitations |
+| AT-009-A/B/C/D | [3.1](../planning-artifacts/epics/epic-3.md) | Find and register a local patient. AT-009-D is the server-side scheduler boundary added by [UD-63](../planning-artifacts/decisions-assumptions.md) | Real assertions/report plus opened visual evidence; record commit/fixture/environment and limitations |
 | AT-010-A/B/C | [3.2](../planning-artifacts/epics/epic-3.md) | Explore chronology and explicit assertions | Real assertions/report plus opened visual evidence; record commit/fixture/environment and limitations |
 | AT-011-A/B/C | [3.3](../planning-artifacts/epics/epic-3.md) | Enter and correct measurements | Real assertions/report plus opened visual evidence; record commit/fixture/environment and limitations |
 | AT-012-A/B/C | [3.4](../planning-artifacts/epics/epic-3.md) | Enter and correct laboratory results | Real assertions/report plus opened visual evidence; record commit/fixture/environment and limitations |
@@ -51,6 +51,8 @@ All entries are planned, not executed. Exact Given/When/Then conditions are in t
 | AT-045-A/B/C | [10.8](../planning-artifacts/epics/epic-10.md) | iOS build and distribution gate | Real assertions and recorded reports; record commit/fixture/environment and limitations (no visual review) |
 
 ## Scheduling registration boundary (PD-001, accepted UD-17)
+
+UD-63 splits the delivery. Story 3.1 executes the server assertions of these two scenarios as AT-009-D on the real stack (grants, projection, refusals, scoped candidates, idempotency). Story 4.2 executes them in the browser with the restricted S-07 and S-08 screens and the return to the retained slot.
 
 - **AT-015-D (contract/design target, not executed application test):** Given Mila's explicitly assigned SCHEDULE_MANAGE and PATIENT_REGISTER in PRA-A, lookup returns only SchedulingPatient fields; registration creates identity plus empty local record and returns to the retained booking slot. GET clinical search/record/source stays forbidden. Birth date/contact validation, scoped duplicate candidates and idempotent retries must not create duplicate people or imply portal activation.
 - **AT-015-E (contract/design target, not executed application test):** With only SCHEDULE_MANAGE, existing-patient lookup/booking works but registration returns403 and shows the S-08 restriction without discarding the slot. Administrator-only cannot access either path. A PRA-B identifier/query never exposes PRA-A identity/contact or clinical details. The fixture must demonstrate these denied variants without broadening Mila's clinical capabilities.

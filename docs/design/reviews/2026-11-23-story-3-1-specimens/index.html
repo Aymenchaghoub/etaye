@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="fr" data-theme="clair">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Étaye · Revue design de la Story 3.1</title>
+  <link rel="stylesheet" href="../../../../design/offline-reference/site/tokens/tokens.css">
+  <style>
+    * { box-sizing: border-box; }
+    :root { color-scheme: light; }
+    [data-theme="sombre"] { color-scheme: dark; }
+    body { margin: 0; color: var(--encre); background: var(--fond); font: 400 15px/22px "Atkinson Hyperlegible Next", sans-serif; }
+    header { border-bottom: var(--trait-filet) solid var(--filet); }
+    .wrap { max-width: 1200px; margin: auto; padding: var(--espace-6); }
+    header .wrap { display: flex; justify-content: space-between; align-items: center; gap: var(--espace-4); }
+    .logo { display: block; height: 28px; }
+    [data-theme="clair"] .logo-dark, [data-theme="sombre"] .logo-light { display: none; }
+    main { overflow-wrap: anywhere; }
+    h1 { font: 500 32px/40px "Source Serif 4", serif; margin: 0; }
+    h2 { font-size: 22px; line-height: 28px; font-weight: 500; margin: 0 0 var(--espace-4); }
+    h3, legend { font-size: 16px; line-height: 24px; font-weight: 600; }
+    p, ul, ol { margin: 0 0 var(--espace-3); }
+    li + li { margin-top: var(--espace-1); }
+    a { color: var(--accent); text-underline-offset: 0.16em; }
+    .intro { max-width: 74ch; margin-top: var(--espace-3); color: var(--encre-2); }
+    section { margin-top: var(--espace-8); }
+    .columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--espace-4); }
+    .panel, fieldset, .decision { min-inline-size: 0; background: var(--surface); border: var(--trait-filet) solid var(--filet); padding: var(--espace-5); }
+    .panel h3 { margin: 0 0 var(--espace-2); }
+    .panel p:last-child, .panel ul:last-child { margin-bottom: 0; }
+    fieldset { margin: 0 0 var(--espace-4); }
+    legend { padding: 0 var(--espace-2); }
+    label.option { display: flex; align-items: baseline; gap: var(--espace-2); padding: var(--espace-2) 0; }
+    input[type="radio"] { accent-color: var(--accent); flex: 0 0 auto; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: var(--espace-3); align-items: end; margin-bottom: var(--espace-3); }
+    .toolbar label { display: grid; gap: var(--espace-1); min-width: 0; font-weight: 500; font-size: 13px; }
+    select, button, textarea, a.btn { font: inherit; color: var(--encre); background: var(--surface); border: var(--trait-filet) solid var(--filet-controle); border-radius: var(--rayon-1); padding: var(--espace-2) var(--espace-3); min-height: 40px; }
+    select { max-width: 100%; }
+    button { cursor: pointer; }
+    button.link { border: 0; background: transparent; color: var(--accent); text-decoration: underline; padding: 0; min-height: 0; text-align: left; font-weight: 500; }
+    .primary { background: var(--encre); color: var(--encre-inverse); }
+    a.btn { display: inline-flex; align-items: center; text-decoration: none; }
+    :focus-visible { outline: var(--trait-focus) solid var(--accent); outline-offset: 2px; }
+    .stage { overflow: auto; border: var(--trait-filet) solid var(--filet-controle); background: var(--surface-2); padding: var(--espace-3); }
+    #fit { margin: 0 auto; position: relative; }
+    iframe { display: block; transform-origin: 0 0; border: var(--trait-filet) solid var(--filet); background: var(--fond); width: 1440px; max-width: none; height: 900px; }
+    .note { margin-bottom: var(--espace-3); }
+    .note dl { margin: 0; display: grid; gap: var(--espace-2); }
+    .note dt { font-size: 13px; font-weight: 600; color: var(--encre-2); }
+    .note dd { margin: 0; }
+    table { width: 100%; border-collapse: collapse; background: var(--surface); }
+    th, td { text-align: left; vertical-align: top; padding: var(--espace-2) var(--espace-3); border-bottom: var(--trait-filet) solid var(--filet); font-size: 14px; line-height: 20px; }
+    thead th { color: var(--encre-2); font-size: 13px; }
+    .table-scroll { overflow-x: auto; }
+    textarea { display: block; width: 100%; min-height: 9em; resize: vertical; margin-top: var(--espace-2); }
+    .decision p { color: var(--encre-2); }
+    @media (max-width: 760px) { .wrap { padding: var(--espace-4); } .columns { grid-template-columns: 1fr; } h1 { font-size: 26px; line-height: 32px; } }
+    @media (max-width: 360px) { .wrap { padding: var(--espace-3); } .panel, fieldset, .decision { padding: var(--espace-3); } }
+  </style>
+</head>
+<body>
+  <header aria-label="En-tête de la page de revue">
+    <div class="wrap">
+      <div>
+        <img class="logo logo-light" src="../../../../design/offline-reference/site/logos/etaye-logo.svg" alt="Étaye">
+        <img class="logo logo-dark" src="../../../../design/offline-reference/site/logos/etaye-logo-sombre.svg" alt="Étaye">
+      </div>
+      <button id="page-theme" type="button" aria-pressed="false">Thème sombre</button>
+    </div>
+  </header>
+  <main class="wrap" aria-label="Revue design de la Story 3.1">
+    <h1>Story 3.1 · Revue design des états adaptés</h1>
+    <p class="intro">Tu as arbitré le périmètre le 23 novembre (UD-63) : cette page montre les états de S-07, S-08 et I-04 tels qu’ils seraient construits, avec la coque praticien limitée, les cinq champs, le champ date segmenté, les doublons avec candidats et la garde de modifications. Les 26 spécimens sont des maquettes statiques construites avec les tokens et le CSS de la référence hors ligne : aucune donnée réelle, aucun service. Chaque spécimen s’ouvre dans les deux thèmes et à quatre largeurs.</p>
+    <p><a href="../../../implementation-artifacts/story-3-1-context-packet.md">Context packet</a> · <a href="../2026-11-23-story-3-1-design-review.md">Dossier de revue</a> · <a href="../2026-11-23-story-3-1-phase0-arbitration.html">Page d’arbitrage</a> · <a href="../../../../design/offline-reference/site/ecrans/S-07/liste.html">Référence S-07</a> · <a href="../../../../design/offline-reference/site/ecrans/S-08/doublon.html">Référence S-08</a></p>
+
+    <section aria-labelledby="visionneuse">
+      <h2 id="visionneuse">Spécimens</h2>
+      <div class="toolbar">
+        <label>État<select id="state"><optgroup label="S-07 · Annuaire et recherche"><option value="s07-liste">Liste initiale</option><option value="s07-chargement">Chargement</option><option value="s07-vide">Cabinet sans patient</option><option value="s07-aucun-resultat">Aucun résultat</option><option value="s07-suite">Afficher plus</option><option value="s07-suite-echec">Suite non chargée</option><option value="s07-erreur">Chargement partiel</option><option value="s07-a-actualiser">Résultats à actualiser</option><option value="s07-longs">Noms longs</option><option value="s07-cree">Dossier créé</option><option value="s07-planificateur">Recherche planificateur</option><option value="s07-planificateur-court">Recherche planificateur trop courte</option><option value="menu-mobile">Menu sous 760 px (ouvert)</option></optgroup><optgroup label="S-08 · I-04 · Identité"><option value="s08-nouveau">Nouveau dossier</option><option value="s08-erreur">Erreurs de saisie</option><option value="s08-doublon">Doublon probable</option><option value="s08-doublon-change">Doublon : nouveau candidat</option><option value="s08-enregistrement">Enregistrement en cours</option><option value="s08-verification">Réponse perdue : vérification</option><option value="s08-echec">Échec d&#x27;enregistrement</option><option value="s08-sale">Modifications non enregistrées</option><option value="s08-modifier">Modifier l&#x27;identité</option><option value="s08-conflit">Conflit de version</option><option value="s08-restreint">Création non autorisée (praticien)</option><option value="s08-planificateur">Création planificateur</option><option value="s08-planificateur-refus">Planificateur sans droit d&#x27;enregistrer</option></optgroup></select></label>
+        <label>Thème<select id="theme"><option value="clair">Clair</option><option value="sombre">Sombre</option></select></label>
+        <label>Largeur<select id="width"><option value="1440">1440 × 1024 (bureau)</option><option value="1024">1024 × 768 (tablette)</option><option value="390">390 × 844 (mobile)</option><option value="320">320 × 844 (repli)</option></select></label>
+        <a class="btn" id="open" href="#" target="_blank" rel="noopener">Ouvrir seul</a>
+      </div>
+      <article class="panel note" aria-live="polite">
+        <h3 id="note-title">État</h3>
+        <dl>
+          <div><dt>Référence de départ</dt><dd id="note-ref"></dd></div>
+          <div><dt>Ce qui change et pourquoi</dt><dd id="note-change"></dd></div>
+        </dl>
+      </article>
+      <div class="stage" role="region" aria-label="Aperçu du spécimen" tabindex="0"><div id="fit"><iframe id="frame" title="Spécimen de revue" src="about:blank"></iframe></div></div>
+    </section>
+
+    <section aria-labelledby="points">
+      <h2 id="points">Cinq points à regarder en particulier</h2>
+      <div class="columns">
+        <article class="panel"><h3>1 · Coque et menu mobile</h3><p>Navigation limitée à « Patients » (UD-63 F1). Sous 760 px, ouvre « menu-mobile » : le bouton annonce son état, le focus passe au premier lien, Échap ferme et rend le focus au bouton.</p></article>
+        <article class="panel"><h3>2 · Champ date de naissance</h3><p>Trois segments Jour / Mois / Année, étiquetés, sans calendrier (H1). Ouvre « Erreurs de saisie » pour le message « le 31 février n’existe pas ».</p></article>
+        <article class="panel"><h3>3 · Doublon avec candidats</h3><p>« Ouvrir le dossier existant » mène à la page d’identité du patient tant que le dossier S-09 n’existe pas (arrive en 3.2). « Créer quand même » confirme que c’est une autre personne ; si un nouveau candidat apparaît, la liste est réaffichée.</p></article>
+        <article class="panel"><h3>4 · Cinq champs seulement</h3><p>Plus de « Nom d’usage » ni d’« Origine de ces informations » (D1), ni de colonne « Espace patient » ni d’identifiant « R-A-001 » dans la liste (E1) : écarts volontaires avec la référence.</p></article>
+        <article class="panel"><h3>5 · Création et correction</h3><p>Après création, retour à la liste avec la ligne repérée (« Dossier créé »). La correction part de « Modifier l’identité » sur chaque ligne ; le conflit de version garde ta saisie et montre auteur, heure et version.</p></article>
+        <article class="panel"><h3>Variantes planificateur</h3><p>Montrées pour leur revue de design (A1). Elles seront livrées avec la prise de rendez-vous en 4.2, dont la coque et la navigation se décident alors.</p></article>
+      </div>
+    </section>
+
+    <section aria-labelledby="liste">
+      <h2 id="liste">Tous les états</h2>
+      <div class="table-scroll"><table>
+        <thead><tr><th scope="col">État</th><th scope="col">Famille</th><th scope="col">Référence</th><th scope="col">Changement proposé</th></tr></thead>
+        <tbody><tr><th scope="row"><button class="link" type="button" data-pick="s07-liste">Liste initiale</button></th><td>S-07</td><td>S-07/liste</td><td>Coque praticien limitée à « Patients ». Recherche lancée par « Rechercher ». Ni colonne ni filtre « Espace patient », ni identifiant « dossier R-A-001 » (UD-63 E1). Le nom n&#x27;est pas un lien tant que S-09 n&#x27;existe pas ; l&#x27;action de ligne est « Modifier l&#x27;identité » (B2).</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s07-chargement">Chargement</button></th><td>S-07</td><td>S-07/chargement</td><td>Le résultat précédent est masqué ; l&#x27;attente est annoncée par une zone d&#x27;état polie.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s07-vide">Cabinet sans patient</button></th><td>S-07</td><td>S-07/vide</td><td>Note de gabarit retirée (« deux dossiers dans le jeu de données » était périmée). État testé avec un cabinet créé par la pile de test (UD-63 I1).</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s07-aucun-resultat">Aucun résultat</button></th><td>S-07</td><td>S-07/aucun-resultat</td><td>Même réponse serveur qu&#x27;une liste vide : l&#x27;écran distingue les deux par la présence de la requête (AC-S07-F : Hugo Petit n&#x27;apparaît jamais aux Tilleuls).</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s07-suite">Afficher plus</button></th><td>S-07</td><td>Absent de la référence</td><td>Pagination par curseur : action explicite « Afficher plus » (G-10). Le nombre est celui des lignes chargées ; aucun total n&#x27;est exposé.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s07-suite-echec">Suite non chargée</button></th><td>S-07</td><td>S-07/erreur (adapté)</td><td>Échec partiel : la liste chargée reste visible avec sa date, l&#x27;échec est localisé à la section (SP-STATE).</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s07-erreur">Chargement partiel</button></th><td>S-07</td><td>S-07/erreur</td><td>Copie de la référence conservée ; actions de ligne adaptées (B2).</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s07-a-actualiser">Résultats à actualiser</button></th><td>S-07</td><td>S-07/perime</td><td>Affiché seulement quand une ouverture ou une correction détecte une version plus récente (412) ; pas de sondage (UD-63 G1).</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s07-longs">Noms longs</button></th><td>S-07</td><td>S-07/longs</td><td>La date de naissance reste entière ; le nom passe à la ligne. Gabarit de mise en page : nom fictif long, pas un dossier du jeu.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s07-cree">Dossier créé</button></th><td>S-07</td><td>Nouveau (Ba)</td><td>Destination après création : retour à S-07 avec confirmation annoncée (zone d&#x27;état) et ligne du nouveau patient repérée par un fond et le mot « Dossier créé ». Le focus va sur le titre.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s07-planificateur">Recherche planificateur</button></th><td>S-07</td><td>S-07/planificateur</td><td>« Proposition PD-001, non validée » retiré (UD-17 l&#x27;a acceptée). Interface livrée avec I-10 en 4.2 ; états revus ici (UD-63 A1). La navigation de cette coque se décide avec 4.2.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s07-planificateur-court">Recherche planificateur trop courte</button></th><td>S-07</td><td>Nouveau</td><td>La recherche planificateur exige deux caractères (contrat) : message lié au champ, aucune requête envoyée.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s08-nouveau">Nouveau dossier</button></th><td>S-08 · I-04</td><td>S-08/nouveau</td><td>Cinq champs : « Nom d&#x27;usage » et « Origine de ces informations » retirés (UD-63 D1). Date de naissance en trois segments Jour / Mois / Année, sans calendrier (UD-63 H1).</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s08-erreur">Erreurs de saisie</button></th><td>S-08 · I-04</td><td>S-08/erreur</td><td>Résumé d&#x27;erreurs lié aux champs ; la saisie est conservée ; le focus va sur le résumé.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s08-doublon">Doublon probable</button></th><td>S-08 · I-04</td><td>S-08/doublon · I-04/doublon</td><td>Candidats typés du même cabinet (identité et contact seulement). « Ouvrir le dossier existant » mène à l&#x27;identité du patient tant que S-09 n&#x27;existe pas. Aucun identifiant « R-A-001 » (E1). La confirmation nomme les dossiers affichés.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s08-doublon-change">Doublon : nouveau candidat</button></th><td>S-08 · I-04</td><td>Nouveau (C1)</td><td>Le serveur revérifie à la validation : un candidat non nommé dans la confirmation renvoie le même écran avec la liste à jour.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s08-enregistrement">Enregistrement en cours</button></th><td>S-08 · I-04</td><td>S-08/enregistrement</td><td>Le bouton garde sa largeur (ADR-012 motif A), les champs passent en lecture seule, un seul envoi ; « Enregistré » n&#x27;apparaît qu&#x27;après la validation serveur.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s08-verification">Réponse perdue : vérification</button></th><td>S-08 · I-04</td><td>Nouveau (I-04)</td><td>La même clé d&#x27;idempotence est conservée ; le résultat est vérifié avant toute nouvelle tentative.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s08-echec">Échec d&#x27;enregistrement</button></th><td>S-08 · I-04</td><td>S-08/conflit (bandeau d&#x27;échec)</td><td>Aucune saisie perdue ; aucun succès affiché ; le même bouton permet de réessayer.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s08-sale">Modifications non enregistrées</button></th><td>S-08 · I-20</td><td>S-08/sale · I-20 (UD-54)</td><td>Garde intégrée remplaçant le contenu (jamais de dialogue empilé) ; le choix prudent reçoit le focus. Aucune saisie n&#x27;est conservée hors de la mémoire de l&#x27;onglet.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s08-modifier">Modifier l&#x27;identité</button></th><td>S-08 · I-04</td><td>S-08/modifier</td><td>Bannière réduite à l&#x27;identité (le bloc allergies arrive avec 3.2) ; ni nom d&#x27;usage ni origine (D1) ; pas d&#x27;identifiant local (E1). Le numéro de version est celui du patient.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s08-conflit">Conflit de version</button></th><td>S-08 · I-04</td><td>S-08/conflit</td><td>Panneau de conflit propre à S-08 (I-21 arrive en 6.3) : auteur, heure et version visibles, comparaison, rechargement ; la saisie locale est conservée (BR-015).</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s08-restreint">Création non autorisée (praticien)</button></th><td>S-08 · I-04</td><td>Nouveau (SP-STATE, refus 403)</td><td>Le formulaire n&#x27;est pas affiché : un refus retire le contenu protégé. L&#x27;interface ne connaît pas à l&#x27;avance la capacité et réagit au 403 du serveur.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s08-planificateur">Création planificateur</button></th><td>S-08 · I-04</td><td>S-08/planificateur · I-04/planificateur</td><td>« Proposition PD-001, non validée » retiré. Interface livrée avec I-10 en 4.2 (UD-63 A1) ; la navigation de la coque se décide avec 4.2.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s08-planificateur-refus">Planificateur sans droit d&#x27;enregistrer</button></th><td>S-08 · I-04</td><td>AT-015-E</td><td>Le 403 d&#x27;enregistrement n&#x27;efface pas le créneau retenu ; aucun formulaire n&#x27;est affiché.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="menu-mobile">Menu sous 760 px (ouvert)</button></th><td>S-07 · D-46</td><td>S-07/liste (menu fermé par défaut)</td><td>Spécification D-46 proposée : bouton « Ouvrir le menu » (aria-expanded, aria-label), la navigation s&#x27;ouvre sous la barre, le focus va sur le premier lien, Échap la ferme et rend le focus au bouton, un lien choisi la ferme, l&#x27;élargissement de la fenêtre la ferme. Ouvrir avec ?menu=ouvert sous 760 px.</td></tr></tbody>
+      </table></div>
+    </section>
+
+    <section aria-labelledby="decision">
+      <h2 id="decision">Ta décision de design</h2>
+      <p class="intro">Cette réponse approuve ou non les états ci-dessus comme spécimens de design pour S-07, S-08 et I-04. Elle n’autorise pas le développement : l’autorisation de la Story 3.1 est une décision écrite distincte, de même que l’approbation de l’interface en fonctionnement et la fusion.</p>
+      <form id="choices">
+        <fieldset>
+          <legend>Design des trois familles</legend>
+          <label class="option"><input type="radio" name="design" value="OK" required><span><strong>J’approuve ces états tels que présentés.</strong> Y compris les écarts avec la référence listés ci-dessus et les variantes planificateur comme design de revue.</span></label>
+          <label class="option"><input type="radio" name="design" value="MOD"><span><strong>J’approuve avec modifications.</strong> Je les précise dans les remarques.</span></label>
+          <label class="option"><input type="radio" name="design" value="NON"><span><strong>Je ne valide pas.</strong> Il faut reprendre les états signalés dans les remarques.</span></label>
+        </fieldset>
+        <div class="decision">
+          <button class="primary" type="submit">Préparer ma réponse</button>
+          <label for="recap" style="display:block;margin-top:var(--espace-3)">Récapitulatif à transmettre (ajoute tes remarques dans la conversation)</label>
+          <textarea id="recap" readonly></textarea>
+        </div>
+      </form>
+    </section>
+  </main>
+  <script>
+    const specs = {"s07-liste": {"family": "S-07", "title": "Liste initiale", "reference": "S-07/liste", "change": "Coque praticien limitée à « Patients ». Recherche lancée par « Rechercher ». Ni colonne ni filtre « Espace patient », ni identifiant « dossier R-A-001 » (UD-63 E1). Le nom n'est pas un lien tant que S-09 n'existe pas ; l'action de ligne est « Modifier l'identité » (B2)."}, "s07-chargement": {"family": "S-07", "title": "Chargement", "reference": "S-07/chargement", "change": "Le résultat précédent est masqué ; l'attente est annoncée par une zone d'état polie."}, "s07-vide": {"family": "S-07", "title": "Cabinet sans patient", "reference": "S-07/vide", "change": "Note de gabarit retirée (« deux dossiers dans le jeu de données » était périmée). État testé avec un cabinet créé par la pile de test (UD-63 I1)."}, "s07-aucun-resultat": {"family": "S-07", "title": "Aucun résultat", "reference": "S-07/aucun-resultat", "change": "Même réponse serveur qu'une liste vide : l'écran distingue les deux par la présence de la requête (AC-S07-F : Hugo Petit n'apparaît jamais aux Tilleuls)."}, "s07-suite": {"family": "S-07", "title": "Afficher plus", "reference": "Absent de la référence", "change": "Pagination par curseur : action explicite « Afficher plus » (G-10). Le nombre est celui des lignes chargées ; aucun total n'est exposé."}, "s07-suite-echec": {"family": "S-07", "title": "Suite non chargée", "reference": "S-07/erreur (adapté)", "change": "Échec partiel : la liste chargée reste visible avec sa date, l'échec est localisé à la section (SP-STATE)."}, "s07-erreur": {"family": "S-07", "title": "Chargement partiel", "reference": "S-07/erreur", "change": "Copie de la référence conservée ; actions de ligne adaptées (B2)."}, "s07-a-actualiser": {"family": "S-07", "title": "Résultats à actualiser", "reference": "S-07/perime", "change": "Affiché seulement quand une ouverture ou une correction détecte une version plus récente (412) ; pas de sondage (UD-63 G1)."}, "s07-longs": {"family": "S-07", "title": "Noms longs", "reference": "S-07/longs", "change": "La date de naissance reste entière ; le nom passe à la ligne. Gabarit de mise en page : nom fictif long, pas un dossier du jeu."}, "s07-cree": {"family": "S-07", "title": "Dossier créé", "reference": "Nouveau (Ba)", "change": "Destination après création : retour à S-07 avec confirmation annoncée (zone d'état) et ligne du nouveau patient repérée par un fond et le mot « Dossier créé ». Le focus va sur le titre."}, "s07-planificateur": {"family": "S-07", "title": "Recherche planificateur", "reference": "S-07/planificateur", "change": "« Proposition PD-001, non validée » retiré (UD-17 l'a acceptée). Interface livrée avec I-10 en 4.2 ; états revus ici (UD-63 A1). La navigation de cette coque se décide avec 4.2."}, "s07-planificateur-court": {"family": "S-07", "title": "Recherche planificateur trop courte", "reference": "Nouveau", "change": "La recherche planificateur exige deux caractères (contrat) : message lié au champ, aucune requête envoyée."}, "s08-nouveau": {"family": "S-08 · I-04", "title": "Nouveau dossier", "reference": "S-08/nouveau", "change": "Cinq champs : « Nom d'usage » et « Origine de ces informations » retirés (UD-63 D1). Date de naissance en trois segments Jour / Mois / Année, sans calendrier (UD-63 H1)."}, "s08-erreur": {"family": "S-08 · I-04", "title": "Erreurs de saisie", "reference": "S-08/erreur", "change": "Résumé d'erreurs lié aux champs ; la saisie est conservée ; le focus va sur le résumé."}, "s08-doublon": {"family": "S-08 · I-04", "title": "Doublon probable", "reference": "S-08/doublon · I-04/doublon", "change": "Candidats typés du même cabinet (identité et contact seulement). « Ouvrir le dossier existant » mène à l'identité du patient tant que S-09 n'existe pas. Aucun identifiant « R-A-001 » (E1). La confirmation nomme les dossiers affichés."}, "s08-doublon-change": {"family": "S-08 · I-04", "title": "Doublon : nouveau candidat", "reference": "Nouveau (C1)", "change": "Le serveur revérifie à la validation : un candidat non nommé dans la confirmation renvoie le même écran avec la liste à jour."}, "s08-enregistrement": {"family": "S-08 · I-04", "title": "Enregistrement en cours", "reference": "S-08/enregistrement", "change": "Le bouton garde sa largeur (ADR-012 motif A), les champs passent en lecture seule, un seul envoi ; « Enregistré » n'apparaît qu'après la validation serveur."}, "s08-verification": {"family": "S-08 · I-04", "title": "Réponse perdue : vérification", "reference": "Nouveau (I-04)", "change": "La même clé d'idempotence est conservée ; le résultat est vérifié avant toute nouvelle tentative."}, "s08-echec": {"family": "S-08 · I-04", "title": "Échec d'enregistrement", "reference": "S-08/conflit (bandeau d'échec)", "change": "Aucune saisie perdue ; aucun succès affiché ; le même bouton permet de réessayer."}, "s08-sale": {"family": "S-08 · I-20", "title": "Modifications non enregistrées", "reference": "S-08/sale · I-20 (UD-54)", "change": "Garde intégrée remplaçant le contenu (jamais de dialogue empilé) ; le choix prudent reçoit le focus. Aucune saisie n'est conservée hors de la mémoire de l'onglet."}, "s08-modifier": {"family": "S-08 · I-04", "title": "Modifier l'identité", "reference": "S-08/modifier", "change": "Bannière réduite à l'identité (le bloc allergies arrive avec 3.2) ; ni nom d'usage ni origine (D1) ; pas d'identifiant local (E1). Le numéro de version est celui du patient."}, "s08-conflit": {"family": "S-08 · I-04", "title": "Conflit de version", "reference": "S-08/conflit", "change": "Panneau de conflit propre à S-08 (I-21 arrive en 6.3) : auteur, heure et version visibles, comparaison, rechargement ; la saisie locale est conservée (BR-015)."}, "s08-restreint": {"family": "S-08 · I-04", "title": "Création non autorisée (praticien)", "reference": "Nouveau (SP-STATE, refus 403)", "change": "Le formulaire n'est pas affiché : un refus retire le contenu protégé. L'interface ne connaît pas à l'avance la capacité et réagit au 403 du serveur."}, "s08-planificateur": {"family": "S-08 · I-04", "title": "Création planificateur", "reference": "S-08/planificateur · I-04/planificateur", "change": "« Proposition PD-001, non validée » retiré. Interface livrée avec I-10 en 4.2 (UD-63 A1) ; la navigation de la coque se décide avec 4.2."}, "s08-planificateur-refus": {"family": "S-08 · I-04", "title": "Planificateur sans droit d'enregistrer", "reference": "AT-015-E", "change": "Le 403 d'enregistrement n'efface pas le créneau retenu ; aucun formulaire n'est affiché."}, "menu-mobile": {"family": "S-07 · D-46", "title": "Menu sous 760 px (ouvert)", "reference": "S-07/liste (menu fermé par défaut)", "change": "Spécification D-46 proposée : bouton « Ouvrir le menu » (aria-expanded, aria-label), la navigation s'ouvre sous la barre, le focus va sur le premier lien, Échap la ferme et rend le focus au bouton, un lien choisi la ferme, l'élargissement de la fenêtre la ferme. Ouvrir avec ?menu=ouvert sous 760 px."}};
+    const state = document.getElementById('state');
+    const theme = document.getElementById('theme');
+    const width = document.getElementById('width');
+    const frame = document.getElementById('frame');
+    const open = document.getElementById('open');
+    function refresh() {
+      const id = state.value;
+      const url = 'specimens/' + id + '.html?theme=' + theme.value + (id === 'menu-mobile' ? '&menu=ouvert' : '');
+      frame.src = url;
+      open.href = url;
+      const w = Number(width.value);
+      const h = w === 1440 ? 900 : w === 1024 ? 768 : 844;
+      const stage = document.querySelector('.stage');
+      const scale = Math.min(1, (stage.clientWidth - 24) / w);
+      frame.style.width = w + 'px';
+      frame.style.height = h + 'px';
+      frame.style.transform = 'scale(' + scale + ')';
+      const fit = document.getElementById('fit');
+      fit.style.width = Math.round(w * scale) + 'px';
+      fit.style.height = Math.round(h * scale) + 'px';
+      const s = specs[id];
+      document.getElementById('note-title').textContent = s.family + ' · ' + s.title;
+      document.getElementById('note-ref').textContent = s.reference;
+      document.getElementById('note-change').textContent = s.change;
+    }
+    [state, theme, width].forEach((el) => el.addEventListener('change', refresh));
+    document.querySelectorAll('[data-pick]').forEach((b) => b.addEventListener('click', () => {
+      state.value = b.dataset.pick;
+      refresh();
+      document.getElementById('visionneuse').scrollIntoView();
+    }));
+    const pageTheme = document.getElementById('page-theme');
+    pageTheme.addEventListener('click', () => {
+      const dark = document.documentElement.dataset.theme === 'clair';
+      document.documentElement.dataset.theme = dark ? 'sombre' : 'clair';
+      pageTheme.setAttribute('aria-pressed', String(dark));
+      pageTheme.textContent = dark ? 'Thème clair' : 'Thème sombre';
+    });
+    const labels = { OK: 'J’approuve ces états tels que présentés.', MOD: 'J’approuve avec modifications.', NON: 'Je ne valide pas.' };
+    document.getElementById('choices').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const value = new FormData(event.target).get('design');
+      const recap = document.getElementById('recap');
+      recap.value = 'Revue design Story 3.1 (S-07, S-08, I-04, 26 états) — ' + labels[value] + '\nCette réponse est une approbation de design seulement ; mon autorisation de développement reste une décision écrite distincte.';
+      recap.focus();
+      recap.select();
+    });
+    window.addEventListener('resize', refresh);
+    refresh();
+  </script>
+</body>
+</html>
