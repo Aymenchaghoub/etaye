@@ -4,10 +4,13 @@ import dev.aymen.etaye.AbstractPostgresTest;
 import dev.aymen.etaye.TestConnectionLifecycleRecorder;
 import dev.aymen.etaye.TestSessionHelper;
 import dev.aymen.etaye.TestTransactionFailureHelper;
+import dev.aymen.etaye.isolation.IsolationMatrix;
+import dev.aymen.etaye.records.dto.RecordResponse;
 import dev.aymen.etaye.records.dto.PatientEdit;
 import dev.aymen.etaye.records.dto.PatientResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -30,6 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         "spring.datasource.hikari.maximum-pool-size=1",
         "spring.datasource.hikari.minimum-idle=1"
 })
+@ExtendWith(IsolationMatrix.Extension.class)
 public class HttpConnectionReuseIsolationTest extends AbstractPostgresTest {
 
     @LocalServerPort
@@ -153,5 +157,68 @@ public class HttpConnectionReuseIsolationTest extends AbstractPostgresTest {
                     .withFailMessage("Hikari pool size 1 must reuse exact same backend PID across requests")
                     .isEqualTo(snapshots.getFirst().backendPid());
         });
+    }
+
+    @Test
+    @DisplayName("C6b: read refusals on one reused pooled connection: hidden record, capability refusal, then a local read")
+    void c6b_readRefusalsThenLocalRead_reuseOneConnectionWithCleanContext() {
+        UUID practiceA = createPracticeAsOwner("Cabinet A " + UUID.randomUUID());
+        UUID practiceB = createPracticeAsOwner("Cabinet B " + UUID.randomUUID());
+        UUID clinicalA = createAccountAsOwner("clinical.a." + UUID.randomUUID() + "@example.com", "Dr A");
+        createMembershipAsOwner(clinicalA, practiceA, "ACTIVE", new String[]{"CLINICAL_READ"});
+        String cookieClinicalA = testSessionHelper.createSessionCookie(clinicalA);
+        UUID adminA = createAccountAsOwner("admin.a." + UUID.randomUUID() + "@example.com", "Admin A");
+        createMembershipAsOwner(adminA, practiceA, "ACTIVE", new String[]{"TEAM_MANAGE"});
+        String cookieAdminA = testSessionHelper.createSessionCookie(adminA);
+        UUID clinicalB = createAccountAsOwner("clinical.b." + UUID.randomUUID() + "@example.com", "Dr B");
+        createMembershipAsOwner(clinicalB, practiceB, "ACTIVE", new String[]{"CLINICAL_WRITE", "CLINICAL_READ"});
+        String cookieClinicalB = testSessionHelper.createSessionCookie(clinicalB);
+        PatientResponse patientB = client().post()
+                .uri("/api/v1/practices/" + practiceB + "/patients")
+                .header(HttpHeaders.COOKIE, cookieClinicalB)
+                .header("X-CSRF-TOKEN", fetchCsrfToken(cookieClinicalB))
+                .header("Idempotency-Key", "key-c6b-" + UUID.randomUUID())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new PatientEdit("Local", "Read", LocalDate.of(1990, 4, 4), null, null))
+                .retrieve()
+                .body(PatientResponse.class);
+        assertThat(patientB).isNotNull();
+
+        connectionRecorder.clear();
+
+        ResponseEntity<Map> hidden = client().get()
+                .uri("/api/v1/practices/{practiceId}/records/{recordId}", practiceA, UUID.randomUUID())
+                .header(HttpHeaders.COOKIE, cookieClinicalA)
+                .retrieve().onStatus(status -> status.value() == 404, (req, res) -> {}).toEntity(Map.class);
+        ResponseEntity<Map> refused = client().get()
+                .uri("/api/v1/practices/{practiceId}/records/{recordId}", practiceA, patientB.recordId())
+                .header(HttpHeaders.COOKIE, cookieAdminA)
+                .retrieve().onStatus(status -> status.value() == 403, (req, res) -> {}).toEntity(Map.class);
+        ResponseEntity<RecordResponse> local = client().get()
+                .uri("/api/v1/practices/{practiceId}/records/{recordId}", practiceB, patientB.recordId())
+                .header(HttpHeaders.COOKIE, cookieClinicalB)
+                .retrieve().toEntity(RecordResponse.class);
+
+        assertThat(hidden.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(refused.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        assertThat(local.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(local.getBody()).isNotNull();
+        assertThat(local.getBody().practiceId()).isEqualTo(practiceB);
+
+        // The hidden read and the audited refusal each open a transaction in practice A; the local read follows in B.
+        List<TestConnectionLifecycleRecorder.Snapshot> snapshots = connectionRecorder.getSnapshots();
+        assertThat(snapshots).extracting(TestConnectionLifecycleRecorder.Snapshot::practiceId)
+                .containsExactly(practiceA, practiceA, practiceB);
+        boolean sameBackend = snapshots.stream()
+                .allMatch(snapshot -> snapshot.backendPid() == snapshots.getFirst().backendPid());
+        boolean cleanContext = snapshots.stream().allMatch(snapshot -> snapshot.contextBeforeSetting() == null);
+        assertThat(sameBackend).as("Hikari pool size 1 must reuse the same backend").isTrue();
+        assertThat(cleanContext).as("no practice context may survive on the returned connection").isTrue();
+
+        IsolationMatrix.observe("TX-POOL-REUSE-AFTER-DENIAL", String.join(", ",
+                IsolationMatrix.outcome(hidden.getStatusCode().value(), hidden.getBody().get("code")),
+                IsolationMatrix.outcome(refused.getStatusCode().value(), refused.getBody().get("code")),
+                IsolationMatrix.outcome(local.getStatusCode().value(), null))
+                + "; one backend, clean context");
     }
 }

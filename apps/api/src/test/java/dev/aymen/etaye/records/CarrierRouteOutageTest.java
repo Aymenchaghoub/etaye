@@ -1,6 +1,7 @@
 package dev.aymen.etaye.records;
 
 import dev.aymen.etaye.TestSessionHelper;
+import dev.aymen.etaye.isolation.IsolationMatrix;
 import dev.aymen.etaye.records.dto.PatientEdit;
 import dev.aymen.etaye.records.dto.PatientResponse;
 import dev.aymen.etaye.records.dto.RecordResponse;
@@ -36,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
+@org.junit.jupiter.api.extension.ExtendWith(IsolationMatrix.Extension.class)
 public class CarrierRouteOutageTest {
 
     private static final String OWNER_USER = "etaye_owner";
@@ -256,6 +258,7 @@ public class CarrierRouteOutageTest {
         String containerId = OUTAGE_CONTAINER.getContainerId();
         OUTAGE_CONTAINER.getDockerClient().pauseContainerCmd(containerId).exec();
 
+        java.util.concurrent.atomic.AtomicReference<String> failure = new java.util.concurrent.atomic.AtomicReference<>();
         try {
             assertTimeoutPreemptively(Duration.ofSeconds(10), () -> {
                 long startPause = System.currentTimeMillis();
@@ -274,11 +277,14 @@ public class CarrierRouteOutageTest {
                 assertThat(body.get("code")).isEqualTo("SERVICE_UNAVAILABLE");
                 assertThat(body.get("status")).isEqualTo(503);
                 assertThat(pauseDuration).isLessThan(4500L);
+                failure.set(IsolationMatrix.outcome(pausedResponse.getStatusCode().value(), body.get("code")));
             });
         } finally {
             // Unpause container to restore database connectivity
             OUTAGE_CONTAINER.getDockerClient().unpauseContainerCmd(containerId).exec();
         }
+
+        IsolationMatrix.observe("TX-DEPENDENCY-FAILURE", failure.get());
 
         // 4. Positive recovery: verify 200 OK after unpause
         ResponseEntity<RecordResponse> recoveredRecord = client().get()
@@ -290,6 +296,7 @@ public class CarrierRouteOutageTest {
         assertThat(recoveredRecord.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(recoveredRecord.getBody()).isNotNull();
         assertThat(recoveredRecord.getBody().id()).isEqualTo(recordId);
+        IsolationMatrix.observe("TX-DEPENDENCY-RECOVERY", IsolationMatrix.outcome(recoveredRecord.getStatusCode().value(), null));
 
         // 5. Stop container to simulate total database crash
         OUTAGE_CONTAINER.stop();

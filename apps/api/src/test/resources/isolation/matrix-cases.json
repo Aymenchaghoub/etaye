@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "cases": [
+    {"id": "REC-A-ALLOWED", "group": "record", "label": "Practitioner of practice A reads a record of practice A", "expected": "200"},
+    {"id": "REC-B-CONTROL", "group": "record", "label": "Practitioner of practice B reads the record of practice B (positive control: the hidden record exists)", "expected": "200"},
+    {"id": "REC-HIDDEN-FOREIGN-ID", "group": "record", "label": "Practitioner of practice A requests the record of practice B through the practice A route", "expected": "404 NOT_FOUND"},
+    {"id": "REC-HIDDEN-FOREIGN-PRACTICE", "group": "record", "label": "Practitioner of practice A requests the record of practice B through the practice B route", "expected": "404 NOT_FOUND"},
+    {"id": "REC-HIDDEN-MISSING", "group": "record", "label": "Practitioner of practice A requests an absent record of practice A", "expected": "404 NOT_FOUND"},
+    {"id": "REC-HIDDEN-UNKNOWN-PRACTICE", "group": "record", "label": "Practitioner of practice A requests a record through an unknown practice", "expected": "404 NOT_FOUND"},
+    {"id": "ADM-NO-CLINICAL", "group": "administrator", "label": "Administrator without clinical capability reads a record of the visible practice", "expected": "403 FORBIDDEN"},
+    {"id": "ADM-DENIAL-AUDIT", "group": "administrator", "label": "The refusal writes one scoped security event that carries no target identifier", "expected": "1 ACCESS_DENIED event without identifier"},
+    {"id": "PAT-OWN-RECORD-STAFF-ROUTE", "group": "patient", "label": "Linked patient requests the own linked record through the staff clinical route", "expected": "404 NOT_FOUND"},
+    {"id": "PAT-OTHER-RECORD-STAFF-ROUTE", "group": "patient", "label": "Linked patient requests another record of the practice through the staff clinical route", "expected": "404 NOT_FOUND"},
+    {"id": "PAT-PORTAL-CONTEXT-KEPT", "group": "patient", "label": "After the refusals the patient session still exposes the portal context", "expected": "200 portal context kept"},
+    {"id": "CUR-NO-SESSION", "group": "current-permission", "label": "Request without a session", "expected": "401 UNAUTHORIZED"},
+    {"id": "CUR-EXPIRED-SESSION", "group": "current-permission", "label": "Request with a session that expired after a confirmed read", "expected": "401 UNAUTHORIZED"},
+    {"id": "CUR-MEMBERSHIP-SUSPENDED", "group": "current-permission", "label": "Membership suspended after a confirmed read, same session", "expected": "403 FORBIDDEN"},
+    {"id": "CUR-CAPABILITY-REMOVED", "group": "current-permission", "label": "Clinical capability removed after a confirmed read, same session", "expected": "403 FORBIDDEN"},
+    {"id": "CUR-ACCOUNT-SUSPENDED", "group": "current-permission", "label": "Account suspended after a confirmed read, same session", "expected": "401 UNAUTHORIZED"},
+    {"id": "CUR-CONDITIONAL-ALLOWED", "group": "current-permission", "label": "Authorized conditional read with the current entity tag", "expected": "304"},
+    {"id": "CUR-CONDITIONAL-REVOKED", "group": "current-permission", "label": "Conditional read with a previously valid entity tag after the membership was suspended", "expected": "403 FORBIDDEN"},
+    {"id": "CUR-CONDITIONAL-HIDDEN", "group": "current-permission", "label": "Conditional read of a hidden record with the entity tag of an authorized read", "expected": "404 NOT_FOUND"},
+    {"id": "CTX-INDEPENDENT-GRANTS", "group": "context", "label": "Two memberships stay independent: each own-context read succeeds until its own membership is suspended", "expected": "200, 200, 403 FORBIDDEN, 200"},
+    {"id": "INP-MALFORMED-ID", "group": "input", "label": "Record identifier that is not a UUID", "expected": "400 INVALID_PARAMETER"},
+    {"id": "TX-POOL-REUSE-AFTER-DENIAL", "group": "transaction", "label": "Reads on one reused pooled connection: hidden record, capability refusal, then a local read", "expected": "404 NOT_FOUND, 403 FORBIDDEN, 200; one backend, clean context"},
+    {"id": "TX-DEPENDENCY-FAILURE", "group": "transaction", "label": "Record read while the database is unavailable", "expected": "503 SERVICE_UNAVAILABLE"},
+    {"id": "TX-DEPENDENCY-RECOVERY", "group": "transaction", "label": "Record read after the database is available again", "expected": "200"}
+  ],
+  "parity": {
+    "hidden-record": [
+      "REC-HIDDEN-FOREIGN-ID",
+      "REC-HIDDEN-FOREIGN-PRACTICE",
+      "REC-HIDDEN-MISSING",
+      "REC-HIDDEN-UNKNOWN-PRACTICE",
+      "PAT-OWN-RECORD-STAFF-ROUTE",
+      "PAT-OTHER-RECORD-STAFF-ROUTE",
+      "CUR-CONDITIONAL-HIDDEN"
+    ]
+  },
+  "pending": [
+    {
+      "id": "PENDING-SOURCES",
+      "resource": "Internal record sources and patient source projections",
+      "operations": ["listRecordSources", "getSourceRevision"],
+      "owners": ["3.2", "5.3", "7.4"],
+      "trigger": "First runtime delivery of each operation (D-55): add a positive control and hidden and missing refusal cases with the current record, role and audience checks."
+    },
+    {
+      "id": "PENDING-TASKS",
+      "resource": "Processing task status",
+      "operations": ["getProcessingTask"],
+      "owners": ["5.2"],
+      "trigger": "First runtime delivery of the operation (D-55): add a positive control and hidden and missing refusal cases, including the reauthorization of the reader at read time."
+    },
+    {
+      "id": "PENDING-EXPORTS",
+      "resource": "Export status and delivery",
+      "operations": ["getExport", "downloadExport"],
+      "owners": ["8.2", "8.1"],
+      "trigger": "First runtime delivery of each operation (D-55): add a positive control and hidden and missing refusal cases; verify that no content, disposition or storage metadata precedes authorization."
+    }
+  ]
+}
