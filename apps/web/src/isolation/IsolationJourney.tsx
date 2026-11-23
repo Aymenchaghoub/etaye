@@ -62,7 +62,7 @@ export function IsolationFailed({ retry, repeated }: { retry: () => void; repeat
 /** Shown while the session and its current grants are being verified: no practice or account is named yet. */
 export function IsolationPending({ failed, retry }: { failed: boolean; retry: () => void }) {
   return (
-    <div className="etaye-root etaye-context-destination">
+    <div className="etaye-root etaye-context-destination etaye-isolation">
       <header className="etaye-context-top">
         <AuthLogo />
         <span className="etaye-demo">Démonstration — personnes et données fictives</span>
@@ -70,6 +70,7 @@ export function IsolationPending({ failed, retry }: { failed: boolean; retry: ()
       <main className="etaye-auth__corps etaye-auth__corps--large" id="contenu">
         {failed ? <IsolationFailed retry={retry} repeated={false} /> : <IsolationLoading />}
       </main>
+      <footer className="etaye-isolation__pied">Démonstration — personnes et données fictives</footer>
     </div>
   );
 }
@@ -90,7 +91,7 @@ export function IsolationChanged() {
   return (
     <AuthShell>
       <FocusedHeading>Cette étape n’est plus disponible</FocusedHeading>
-      <div className="etaye-auth__carte">
+      <div className="etaye-auth__carte etaye-isolation__carte">
         <p>Revenez à la démonstration pour reprendre avec un compte et un espace autorisés.</p>
         <div className="etaye-auth__actions">
           <a className="etaye-bouton etaye-bouton--principal" href={SHOWCASE}>Revenir à la démonstration</a>
@@ -105,7 +106,7 @@ export function IsolationExpired({ reconnect, leave }: { reconnect: () => void; 
   return (
     <AuthShell>
       <FocusedHeading>Votre session a expiré</FocusedHeading>
-      <div className="etaye-auth__carte">
+      <div className="etaye-auth__carte etaye-isolation__carte">
         <p>Reconnectez-vous pour vérifier votre accès à cette étape.</p>
         <div className="etaye-auth__actions">
           <button type="button" className="etaye-bouton etaye-bouton--principal" onClick={reconnect}>Se reconnecter</button>
@@ -228,11 +229,10 @@ export function IsolationJourney({ step, session, contexts, fixtureVersion, ente
   }
 
   return (
-    <div className={patient ? 'etaye-isolation--patient' : undefined}>
-      <ContextFrame context={context} contexts={contexts} select={(path) => enter(path, session)}
-        actor={session.account.displayName} testId="isolation-journey">
-        <div key={shown}>{state}</div>
-      </ContextFrame>
-    </div>
+    <ContextFrame context={context} contexts={contexts} select={(path) => enter(path, session)}
+      actor={session.account.displayName} testId="isolation-journey" demoNotice
+      className={patient ? 'etaye-isolation etaye-isolation--patient' : 'etaye-isolation'}>
+      <div key={shown}>{state}</div>
+    </ContextFrame>
   );
 }

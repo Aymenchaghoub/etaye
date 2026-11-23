@@ -60,12 +60,14 @@ export function PracticeChooser({ session, contexts, restricted, select, retry, 
   );
 }
 
-export function ContextFrame({ context, contexts, select, actor, testId, children }: {
+export function ContextFrame({ context, contexts, select, actor, testId, className, demoNotice = false, children }: {
   context: AccessContext;
   contexts: AccessContext[];
   select: (path: string) => void;
   actor?: string;
   testId: string;
+  className?: string;
+  demoNotice?: boolean;
   children: ReactNode;
 }) {
   const patient = context.kind === 'PORTAL';
@@ -80,7 +82,7 @@ export function ContextFrame({ context, contexts, select, actor, testId, childre
   </>;
 
   return (
-    <div className="etaye-root etaye-context-destination">
+    <div className={`etaye-root etaye-context-destination${className ? ` ${className}` : ''}`}>
       <header className="etaye-context-top">
         <AuthLogo patient={patient} />
         {contexts.length > 1 ? (
@@ -95,6 +97,7 @@ export function ContextFrame({ context, contexts, select, actor, testId, childre
       <main className="etaye-auth__corps etaye-auth__corps--large" data-testid={testId} id="contenu">
         {children}
       </main>
+      {demoNotice && <footer className="etaye-isolation__pied">Démonstration — personnes et données fictives</footer>}
     </div>
   );
 }

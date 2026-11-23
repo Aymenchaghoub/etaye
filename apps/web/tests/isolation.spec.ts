@@ -95,6 +95,20 @@ async function usesBackground(page: Page, selector: string, token: string) {
   }, [selector, token]);
 }
 
+/** Buttons and links carry no outline until the keyboard reaches them; then the token-based ring appears. */
+async function ringOnlyForKeyboard(page: Page) {
+  const outlined = () => page.evaluate(() => [...document.querySelectorAll('a, button')]
+    .filter((element) => getComputedStyle(element).outlineStyle !== 'none').map((element) => element.textContent?.trim()));
+  expect(await outlined()).toEqual([]);
+  await page.keyboard.press('Tab');
+  const focused = await page.evaluate(() => {
+    const element = document.activeElement as HTMLElement;
+    const style = getComputedStyle(element);
+    return { match: element.matches(':focus-visible'), style: style.outlineStyle, width: style.outlineWidth };
+  });
+  expect(focused).toEqual({ match: true, style: 'solid', width: '2px' });
+}
+
 const readUrl = (record: string) => `/api/v1/practices/${PRACTICE_A}/records/${record}`;
 
 test.describe('the guided entry in the demonstration', () => {
@@ -149,6 +163,8 @@ test.describe('the guided entry in the demonstration', () => {
     await open.click();
     await page.getByRole('button', { name: 'Revenir à la démonstration' }).click();
     await expect(open).toBeFocused();
+    // Returned to by a mouse click, the action is focused without the keyboard ring.
+    expect(await open.evaluate((element) => getComputedStyle(element).outlineStyle)).toBe('none');
   });
 
   test('keeps the entry hidden for another fixture version and the existing cards untouched', async ({ page }) => {
@@ -326,6 +342,7 @@ test.describe('states in both themes and four widths', () => {
           await expect(page.getByRole('heading', { name: heading, exact: true })).toBeFocused();
           expect(await usesBackground(page, '.etaye-context-destination', '--fond')).toBe(true);
           await expect(page.locator('header .etaye-contexte')).toBeVisible();
+          if (width === 1024) await ringOnlyForKeyboard(page);
           await noOverflow(page);
           if (width === 390 || width === 1440) await accessible(page);
         }

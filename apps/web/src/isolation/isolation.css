@@ -55,6 +55,21 @@
 .etaye-isolation--patient .etaye-etat-page p { font: 400 18px/28px var(--font-texte); }
 .etaye-isolation--patient .etaye-bandeau { font: 400 16px/24px var(--font-texte); }
 
+/* The journey keeps the signed-in context layout of the approved specimens: a left-aligned context label, the
+   fictional-data notice in the footer on narrow screens and the same vertical rhythm. */
+.etaye-context-destination.etaye-isolation { display: flex; flex-direction: column; }
+.etaye-isolation div.etaye-contexte { justify-content: flex-start; }
+.etaye-isolation .etaye-contexte > span:last-child { min-width: 0; }
+.etaye-isolation .etaye-etat-page { padding-block: 0; }
+.etaye-isolation__pied {
+  display: none;
+  margin-top: auto;
+  padding: var(--espace-4) var(--espace-6);
+  color: var(--encre-2);
+  font: 400 12px/16px var(--font-texte);
+}
+.etaye-isolation__carte p { color: var(--encre-2); }
+
 /* S-01: the guided entry after the scenario list and its guide. */
 .etaye-isolation-panel {
   background: var(--surface);
@@ -73,6 +88,8 @@
 @media (max-width: 760px) {
   .etaye-etat-page { padding-block: var(--espace-6); }
   .etaye-isolation-panel { padding: var(--espace-4); }
+  .etaye-isolation .etaye-etat-page { padding-block: 0; }
+  .etaye-isolation__pied { display: block; }
 }
 
 @media (max-width: 360px) {
