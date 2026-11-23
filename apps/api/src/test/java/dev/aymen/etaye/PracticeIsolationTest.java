@@ -225,6 +225,9 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
                             "version", "updated_at").contains(col)) {
                         // Story 3.1 identity correction: these columns only, never the practice, id or order keys.
                         expectedColPrivs = Set.of("SELECT", "INSERT", "UPDATE");
+                    } else if ("patient_record".equals(table) && Set.of("version", "updated_at").contains(col)) {
+                        // The record version moves with the identity it embeds.
+                        expectedColPrivs = Set.of("SELECT", "INSERT", "UPDATE");
                     } else if (Set.of("patient", "patient_record", "idempotency_receipt").contains(table)) {
                         expectedColPrivs = Set.of("SELECT", "INSERT");
                     } else if (Set.of("audit_event", "outbox_event").contains(table)) {

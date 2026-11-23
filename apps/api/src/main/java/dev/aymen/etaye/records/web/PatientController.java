@@ -76,26 +76,18 @@ public class PatientController {
                 .body(response);
     }
 
+    private static final java.util.regex.Pattern STRONG_VERSION = java.util.regex.Pattern.compile("\"(\\d{1,18})\"");
+
+    /** The contract's If-Match is one quoted numeric version: weak, unquoted and list forms are malformed. */
     static long parseIfMatch(String header) {
         if (header == null || header.isBlank()) {
             throw new PreconditionRequiredException("If-Match header is required");
         }
-        String value = header.strip();
-        if (value.startsWith("W/")) {
-            value = value.substring(2);
+        java.util.regex.Matcher matcher = STRONG_VERSION.matcher(header.strip());
+        if (!matcher.matches()) {
+            throw new InvalidParameterException("If-Match must hold one quoted version");
         }
-        if (value.length() >= 2 && value.startsWith("\"") && value.endsWith("\"")) {
-            value = value.substring(1, value.length() - 1);
-        }
-        try {
-            long version = Long.parseLong(value);
-            if (version < 0) {
-                throw new InvalidParameterException("If-Match must hold a version");
-            }
-            return version;
-        } catch (NumberFormatException malformed) {
-            throw new InvalidParameterException("If-Match must hold a version");
-        }
+        return Long.parseLong(matcher.group(1));
     }
 
     @PostMapping(value = "/api/v1/practices/{practiceId}/patients", produces = MediaType.APPLICATION_JSON_VALUE)

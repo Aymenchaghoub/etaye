@@ -48,7 +48,7 @@ public record PatientRegistration(
         String phone,
 
         @Size(max = 10, message = "confirmedDistinctRecordIds must not exceed 10 entries")
-        List<UUID> confirmedDistinctRecordIds
+        List<@NotNull UUID> confirmedDistinctRecordIds
 ) {
     public List<UUID> confirmations() {
         return confirmedDistinctRecordIds == null ? List.of() : confirmedDistinctRecordIds;

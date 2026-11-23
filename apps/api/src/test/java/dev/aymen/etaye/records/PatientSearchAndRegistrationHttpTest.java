@@ -473,4 +473,139 @@ public class PatientSearchAndRegistrationHttpTest extends AbstractPostgresTest {
         assertThat(count("SELECT count(*) FROM outbox_event WHERE event_type = 'PATIENT_CREATED'")).isEqualTo(outbox);
         assertThat(count("SELECT count(*) FROM idempotency_receipt")).isEqualTo(receipts);
     }
+
+    @Test
+    @DisplayName("C7 a scheduler of one practice is refused in another, on both routes, with no write")
+    void schedulingRoutesRefuseAForeignPractice() {
+        long before = patientCount(practiceB);
+        UUID unknown = UUID.randomUUID();
+        for (UUID target : List.of(practiceB, unknown)) {
+            assertThat(get(schedulerA, SCHEDULING.formatted(target) + "?q=hugo").getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            ResponseEntity<Map<String, Object>> registration = send(HttpMethod.POST, schedulerA, SCHEDULING.formatted(target),
+                    identity("Jeanne", "Dupont", "1985-06-02"), Map.of("Idempotency-Key", "key-" + UUID.randomUUID()));
+            assertThat(registration.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(registration.getBody().toString()).doesNotContain("Hugo").doesNotContain("Petit");
+        }
+        assertThat(patientCount(practiceB)).isEqualTo(before);
+    }
+
+    @Test
+    @DisplayName("C8 two concurrent registrations of the same person under different keys yield one creation and one warning")
+    void concurrentRegistrationsAreSerialized() throws Exception {
+        java.util.concurrent.ExecutorService pool = java.util.concurrent.Executors.newFixedThreadPool(2);
+        try {
+            java.util.concurrent.CountDownLatch go = new java.util.concurrent.CountDownLatch(1);
+            List<java.util.concurrent.Future<Integer>> results = new ArrayList<>();
+            // Two sessions of two clinicians: one session shared by two threads is a different concurrency question.
+            String[] sessionsOfTwoClinicians = {clinicianA, clinicianA2};
+            String[][] sameIdentity = {{"Jeanne", "Dupont"}, {"Dupont", "Jeanne"}};
+            for (int i = 0; i < 2; i++) {
+                String cookie = sessionsOfTwoClinicians[i];
+                String[] names = sameIdentity[i];
+                results.add(pool.submit(() -> {
+                    go.await();
+                    return create(cookie, practiceA, identity(names[0], names[1], "1985-06-02")).getStatusCode().value();
+                }));
+            }
+            go.countDown();
+            List<Integer> statuses = new ArrayList<>();
+            for (var result : results) {
+                statuses.add(result.get());
+            }
+            assertThat(statuses).containsExactlyInAnyOrder(201, 409);
+            assertThat(count("SELECT count(*) FROM patient WHERE practice_id = '" + practiceA + "' AND last_name_key IN ('dupont', 'jeanne')")).isEqualTo(1);
+        } finally {
+            pool.shutdownNow();
+        }
+    }
+
+    @Test
+    @DisplayName("C6 more than ten likely duplicates can never be named, so the registration stays refused")
+    void elevenMatchesStayRefused() {
+        List<String> named = new ArrayList<>();
+        for (int i = 0; i < 11; i++) {
+            named.add(seed(practiceA, "Paul", "Durand", (1950 + i) + "-01-01").toString());
+        }
+        Map<String, Object> body = identity("Paul", "Durand", "1999-09-09");
+        ResponseEntity<Map<String, Object>> refused = create(clinicianA, practiceA, body);
+        assertThat(refused.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        @SuppressWarnings("unchecked")
+        List<Object> candidates = (List<Object>) refused.getBody().get("candidates");
+        assertThat(candidates).hasSize(10);
+        body.put("confirmedDistinctRecordIds", named.subList(0, 10));
+        assertThat(create(clinicianA, practiceA, body).getStatusCode()).as("naming ten of eleven is not enough").isEqualTo(HttpStatus.CONFLICT);
+    }
+
+    @Test
+    @DisplayName("search and duplicates treat a decomposed accent like the precomposed letter, and keep non-Latin names comparable")
+    void canonicallyEquivalentSpellings() {
+        assertThat(lastNames(get(clinicianA, PATIENTS.formatted(practiceA) + "?q=Le%CC%81ger"))).containsExactly("Léger-Müller");
+        ResponseEntity<Map<String, Object>> decomposed = create(clinicianA, practiceA, identity("E\u0301loi\u0308se", "Le\u0301ger-Mu\u0308ller", "1985-11-02"));
+        assertThat(decomposed.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+
+        assertThat(create(clinicianA, practiceA, identity("Иван", "Петров", "1980-05-05")).getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(create(clinicianA, practiceA, identity("иван", "ПЕТРОВ", "1970-01-01")).getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertThat(lastNames(get(clinicianA, PATIENTS.formatted(practiceA) + "?q=%D0%BF%D0%B5%D1%82"))).containsExactly("Петров");
+    }
+
+    @Test
+    @DisplayName("a conditional record read after a correction returns the corrected patient")
+    void recordEtagFollowsTheIdentity() {
+        Map<String, Object> created = create(clinicianA, practiceA, identity("Jeanne", "Dupont", "1985-06-02")).getBody();
+        String record = "/api/v1/practices/" + practiceA + "/records/" + created.get("recordId");
+        ResponseEntity<Map<String, Object>> first = get(clinicianA, record);
+        String etag = first.getHeaders().getETag();
+        assertThat(etag).isNotBlank();
+        send(HttpMethod.PATCH, clinicianA, PATIENTS.formatted(practiceA) + "/" + created.get("id"),
+                identity("Jeanne-Marie", "Dupont", "1985-06-02"), Map.of("If-Match", "\"0\""));
+        @SuppressWarnings("unchecked")
+        ResponseEntity<Map<String, Object>> conditional = (ResponseEntity<Map<String, Object>>) (ResponseEntity<?>) client().get()
+                .uri(java.net.URI.create("http://localhost:" + port + record)).header(HttpHeaders.COOKIE, clinicianA)
+                .header(HttpHeaders.IF_NONE_MATCH, etag).retrieve().onStatus(s -> true, (rq, rs) -> {}).toEntity(Map.class);
+        assertThat(conditional.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(conditional.getHeaders().getETag()).isNotEqualTo(etag);
+        @SuppressWarnings("unchecked")
+        Map<String, Object> patient = (Map<String, Object>) conditional.getBody().get("patient");
+        assertThat(patient).containsEntry("firstName", "Jeanne-Marie");
+    }
+
+    @Test
+    @DisplayName("the cursor carries no name, cannot be redirected to another practice and is checked even for an unmatched query")
+    void cursorIntegrity() {
+        String uri = PATIENTS.formatted(practiceA) + "?limit=2";
+        String cursor = (String) get(clinicianA, uri).getBody().get("nextCursor");
+        String decoded = new String(java.util.Base64.getUrlDecoder().decode(cursor), java.nio.charset.StandardCharsets.UTF_8);
+        assertThat(decoded).doesNotContain("bernard").doesNotContain("collet");
+        UUID foreignPatient = UUID.fromString(String.valueOf(jdbcValue("SELECT patient_id FROM patient_record WHERE id = '" + hugoRecord + "'")));
+        String forged = java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(
+                (decoded.substring(0, decoded.indexOf('\n') + 1) + foreignPatient).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        assertThat(get(clinicianA, uri + "&cursor=" + forged).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(get(clinicianA, PATIENTS.formatted(practiceA) + "?q=!!!&cursor=broken").getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    private Object jdbcValue(String sql) {
+        try (Connection c = DriverManager.getConnection(POSTGRES_CONTAINER.getJdbcUrl(), POSTGRES_CONTAINER.getUsername(), POSTGRES_CONTAINER.getPassword());
+             Statement st = c.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+            rs.next();
+            return rs.getObject(1);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    @DisplayName("malformed preconditions and confirmation lists are 400, never 500")
+    void malformedInputIsRefused() {
+        Map<String, Object> created = create(clinicianA, practiceA, identity("Jeanne", "Dupont", "1985-06-02")).getBody();
+        String uri = PATIENTS.formatted(practiceA) + "/" + created.get("id");
+        Map<String, Object> corrected = identity("Jeanne-Marie", "Dupont", "1985-06-02");
+        assertThat(send(HttpMethod.PATCH, clinicianA, uri, corrected, Map.of("If-Match", "W/\"0\"")).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(send(HttpMethod.PATCH, clinicianA, uri, corrected, Map.of("If-Match", "0")).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        Map<String, Object> withNull = identity("Claire", "Martin", "1978-04-18");
+        withNull.put("confirmedDistinctRecordIds", java.util.Arrays.asList(claireRecord.toString(), null));
+        assertThat(create(clinicianA, practiceA, withNull).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        Map<String, Object> repeated = identity("Claire", "Martin", "1978-04-18");
+        repeated.put("confirmedDistinctRecordIds", List.of(claireRecord.toString(), claireRecord.toString()));
+        assertThat(create(clinicianA, practiceA, repeated).getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
 }

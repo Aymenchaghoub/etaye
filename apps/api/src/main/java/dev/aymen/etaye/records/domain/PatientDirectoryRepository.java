@@ -57,6 +57,52 @@ public class PatientDirectoryRepository {
                 rs.getString("first_name_key"));
     }
 
+    /** The key stored for a name: its normalized words, or its lowercase text when none remain. */
+    public String normalizeName(String text) {
+        String key = jdbc.getJdbcOperations().queryForObject("SELECT patient_name_key(?)", String.class, text);
+        return key == null ? "" : key;
+    }
+
+    /** The current order position of a patient of this practice, the only state a cursor carries. */
+    public Optional<Position> positionOf(UUID practiceId, UUID patientId) {
+        return jdbc.query("SELECT p.last_name_key, p.first_name_key, p.id FROM patient p WHERE p.practice_id = :practiceId AND p.id = :id",
+                new MapSqlParameterSource().addValue("practiceId", practiceId).addValue("id", patientId),
+                (rs, row) -> new Position(rs.getString("last_name_key"), rs.getString("first_name_key"), rs.getObject("id", UUID.class)))
+                .stream().findFirst();
+    }
+
+    /**
+     * Serializes concurrent registrations of the same likely identity in one practice, so that the
+     * duplicate check and the insert of two requests cannot interleave. Two transaction-scoped locks
+     * cover the two clauses of the rule and are taken in key order to avoid a deadlock.
+     */
+    public void lockIdentity(UUID practiceId, String firstKey, String lastKey, LocalDate birthDate) {
+        if (firstKey.isEmpty() || lastKey.isEmpty()) {
+            return;
+        }
+        String names = firstKey.compareTo(lastKey) <= 0 ? firstKey + "|" + lastKey : lastKey + "|" + firstKey;
+        long[] keys = {lockKey(practiceId + "|names|" + names), lockKey(practiceId + "|birth|" + birthDate + "|" + lastKey)};
+        java.util.Arrays.sort(keys);
+        for (long key : keys) {
+            jdbc.getJdbcOperations().queryForList("SELECT pg_advisory_xact_lock(?)", key);
+        }
+    }
+
+    private static long lockKey(String text) {
+        try {
+            byte[] hash = java.security.MessageDigest.getInstance("SHA-256").digest(text.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            return java.nio.ByteBuffer.wrap(hash).getLong();
+        } catch (java.security.NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 not available", e);
+        }
+    }
+
+    /** Moves the record version with the identity it embeds, so a conditional record read never serves a stale patient. */
+    public void touchRecord(UUID practiceId, UUID recordId) {
+        jdbc.update("UPDATE patient_record SET version = version + 1, updated_at = now() WHERE practice_id = :practiceId AND id = :id",
+                new MapSqlParameterSource().addValue("practiceId", practiceId).addValue("id", recordId));
+    }
+
     /** The database normalization of a free text, empty when it holds no letter or digit. */
     public String normalize(String text) {
         String key = jdbc.getJdbcOperations().queryForObject("SELECT patient_search_key(?)", String.class, text);

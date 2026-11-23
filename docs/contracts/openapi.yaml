@@ -1459,7 +1459,7 @@
       "get": {
         "operationId": "searchPatients",
         "summary": "searchPatients",
-        "description": "Requires CLINICAL_READ. Practice IDs select context, never grant authority. Tokens are separated by spaces. Every token must match the start of a word of the patient's normalized first or last name; a token written JJ/MM/AAAA or AAAA-MM-JJ matches that exact birth date. Normalization lowercases, removes diacritics and treats every other non-alphanumeric character as a word separator. Results are ordered by normalized last name, first name, then id. The opaque cursor is bound to the practice, the actor and the query; a malformed or foreign cursor is a 400. Query text is never logged and never copied to a URL. Only the selected practice is searched; there is no global or cross-practice matching. Without `q` the practice's patients are listed; an empty page is the same 200 for an empty practice and for a query without match, so the client distinguishes them by whether it sent a query.",
+        "description": "Requires CLINICAL_READ. Practice IDs select context, never grant authority. Tokens are separated by spaces. Every token must match the start of a word of the patient's normalized first or last name; a token written JJ/MM/AAAA or AAAA-MM-JJ matches that exact birth date. Normalization composes the text canonically, lowercases it, removes combining marks and diacritics and treats every other non-alphanumeric character as a word separator. Results are ordered by normalized last name, first name, then id. The opaque cursor holds only the last row id and a binding to the practice, the actor and the query; a malformed, foreign or mismatched cursor is a 400. Query text is never logged and never copied to a URL. Only the selected practice is searched; there is no global or cross-practice matching. Without `q` the practice's patients are listed; an empty page is the same 200 for an empty practice and for a query without match, so the client distinguishes them by whether it sent a query.",
         "x-required-permissions": [
           "CLINICAL_READ"
         ],
@@ -8854,7 +8854,7 @@
           "lastName",
           "dateOfBirth"
         ],
-        "description": "Demographic identity for a registration. `confirmedDistinctRecordIds` is the human confirmation of story 3.1 (UD-63): it names the record IDs of every likely-duplicate candidate the person inspected and judged to be a different individual. The server re-runs the duplicate rule at commit and answers 409 DUPLICATE_PATIENT again when a current candidate is not named. The field is part of the canonical idempotency body hash."
+        "description": "Demographic identity for a registration. `confirmedDistinctRecordIds` is the human confirmation of story 3.1 (UD-63): it names the record IDs of every likely-duplicate candidate the person inspected and judged to be a different individual. The server re-runs the duplicate rule at commit and answers 409 DUPLICATE_PATIENT again when a current candidate is not named, or when more than ten patients match. A null or repeated entry is a 400. The field is part of the canonical idempotency body hash."
       },
       "Patient": {
         "type": "object",

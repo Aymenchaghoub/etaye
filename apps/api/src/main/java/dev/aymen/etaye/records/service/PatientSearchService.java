@@ -84,22 +84,29 @@ public class PatientSearchService {
         }
         return practiceTransaction.execute(practiceId, () -> {
             ParsedQuery query = parse(practiceId, actorId, q);
+            // A cursor is validated even when the query cannot match, so a malformed one is never answered with 200.
+            UUID cursorId = decode(cursor, query.binding());
             if (query.matchesNothing()) {
                 return new Page(List.of(), null);
             }
-            Position after = decode(cursor, query.binding());
+            Position after = null;
+            if (cursorId != null) {
+                after = directory.positionOf(practiceId, cursorId)
+                        .orElseThrow(() -> new InvalidParameterException("cursor does not belong to this search"));
+            }
             List<PatientView> rows = directory.search(practiceId, query.words(), query.birthDate(), after, limit + 1);
             if (rows.size() <= limit) {
                 return new Page(rows, null);
             }
             List<PatientView> items = rows.subList(0, limit);
             PatientView last = items.getLast();
-            return new Page(List.copyOf(items), encode(query.binding(), new Position(last.lastNameKey(), last.firstNameKey(), last.id())));
+            return new Page(List.copyOf(items), encode(query.binding(), last.id()));
         });
     }
 
     private ParsedQuery parse(UUID practiceId, UUID actorId, String q) {
-        String text = q == null ? "" : q.strip();
+        // Canonical composition first: a decomposed accent and its precomposed form are the same letter.
+        String text = q == null ? "" : java.text.Normalizer.normalize(q.strip(), java.text.Normalizer.Form.NFC);
         Set<LocalDate> dates = new LinkedHashSet<>();
         String remaining = removeDates(removeDates(text, FRENCH_DATE, true, dates), ISO_DATE, false, dates);
         String normalized = directory.normalize(remaining);
@@ -130,21 +137,21 @@ public class PatientSearchService {
         return out.toString();
     }
 
-    private static String encode(String binding, Position position) {
-        String raw = binding + "\n" + position.lastNameKey() + "\n" + position.firstNameKey() + "\n" + position.id();
-        return Base64.getUrlEncoder().withoutPadding().encodeToString(raw.getBytes(StandardCharsets.UTF_8));
+    /** The cursor holds only the binding to the search context and the id of the last row: no name, no query. */
+    private static String encode(String binding, UUID lastId) {
+        return Base64.getUrlEncoder().withoutPadding().encodeToString((binding + "\n" + lastId).getBytes(StandardCharsets.UTF_8));
     }
 
-    private static Position decode(String cursor, String binding) {
+    private static UUID decode(String cursor, String binding) {
         if (cursor == null || cursor.isEmpty()) {
             return null;
         }
         try {
             String[] parts = new String(Base64.getUrlDecoder().decode(cursor), StandardCharsets.UTF_8).split("\n", -1);
-            if (parts.length != 4 || !parts[0].equals(binding)) {
+            if (parts.length != 2 || !parts[0].equals(binding)) {
                 throw new InvalidParameterException("cursor does not belong to this search");
             }
-            return new Position(parts[1], parts[2], UUID.fromString(parts[3]));
+            return UUID.fromString(parts[1]);
         } catch (IllegalArgumentException malformed) {
             throw new InvalidParameterException("malformed cursor");
         }

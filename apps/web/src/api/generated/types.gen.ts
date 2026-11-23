@@ -200,7 +200,7 @@ export type PatientEdit = {
 };
 
 /**
- * Demographic identity for a registration. `confirmedDistinctRecordIds` is the human confirmation of story 3.1 (UD-63): it names the record IDs of every likely-duplicate candidate the person inspected and judged to be a different individual. The server re-runs the duplicate rule at commit and answers 409 DUPLICATE_PATIENT again when a current candidate is not named. The field is part of the canonical idempotency body hash.
+ * Demographic identity for a registration. `confirmedDistinctRecordIds` is the human confirmation of story 3.1 (UD-63): it names the record IDs of every likely-duplicate candidate the person inspected and judged to be a different individual. The server re-runs the duplicate rule at commit and answers 409 DUPLICATE_PATIENT again when a current candidate is not named, or when more than ten patients match. A null or repeated entry is a 400. The field is part of the canonical idempotency body hash.
  */
 export type PatientRegistration = {
     firstName: string;

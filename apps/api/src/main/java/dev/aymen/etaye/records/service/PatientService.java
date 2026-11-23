@@ -3,6 +3,7 @@ package dev.aymen.etaye.records.service;
 import dev.aymen.etaye.audit.service.AuditService;
 import dev.aymen.etaye.communications.service.OutboxService;
 import dev.aymen.etaye.infrastructure.error.ConflictWithCandidatesException;
+import dev.aymen.etaye.infrastructure.error.InvalidParameterException;
 import dev.aymen.etaye.infrastructure.error.ResourceNotFoundException;
 import dev.aymen.etaye.infrastructure.error.StaleVersionException;
 import dev.aymen.etaye.infrastructure.idempotency.IdempotencyService;
@@ -80,6 +81,11 @@ public class PatientService {
                 correlationId, idempotencyKey, registration));
     }
 
+    /** Names are stored in canonical composition so that equal letters are equal bytes. */
+    private static String nfc(String text) {
+        return java.text.Normalizer.normalize(text, java.text.Normalizer.Form.NFC);
+    }
+
     private PatientView register(String operation, String channel, UUID practiceId, UUID actorAccountId, String correlationId,
                                  String idempotencyKey, PatientRegistration registration) {
         Objects.requireNonNull(practiceId, "practiceId must not be null");
@@ -87,6 +93,9 @@ public class PatientService {
         Objects.requireNonNull(correlationId, "correlationId must not be null");
         Objects.requireNonNull(idempotencyKey, "idempotencyKey must not be null");
         Objects.requireNonNull(registration, "registration must not be null");
+        if (new HashSet<>(registration.confirmations()).size() != registration.confirmations().size()) {
+            throw new InvalidParameterException("confirmedDistinctRecordIds must not repeat a record");
+        }
 
         return practiceTransaction.execute(practiceId, () -> {
             String keyDigest = idempotencyService.computeSha256(idempotencyKey);
@@ -112,12 +121,20 @@ public class PatientService {
                         .orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
             }
 
-            List<PatientView> candidates = directory.findDuplicateCandidates(practiceId,
-                    directory.normalize(registration.firstName()), directory.normalize(registration.lastName()),
-                    registration.dateOfBirth(), MAX_CANDIDATES);
-            if (!candidates.isEmpty()) {
+            String firstName = nfc(registration.firstName());
+            String lastName = nfc(registration.lastName());
+            String firstKey = directory.normalizeName(firstName);
+            String lastKey = directory.normalizeName(lastName);
+            // Two registrations of the same likely identity cannot both pass the check: the second waits for the first.
+            directory.lockIdentity(practiceId, firstKey, lastKey, registration.dateOfBirth());
+            List<PatientView> found = directory.findDuplicateCandidates(practiceId, firstKey, lastKey,
+                    registration.dateOfBirth(), MAX_CANDIDATES + 1);
+            if (!found.isEmpty()) {
+                List<PatientView> candidates = found.stream().limit(MAX_CANDIDATES).toList();
                 Set<UUID> confirmed = new HashSet<>(registration.confirmations());
-                boolean allConfirmed = candidates.stream().allMatch(candidate -> confirmed.contains(candidate.recordId()));
+                // More than ten matches can never all be named, so the registration stays refused.
+                boolean allConfirmed = found.size() <= MAX_CANDIDATES
+                        && candidates.stream().allMatch(candidate -> confirmed.contains(candidate.recordId()));
                 if (!allConfirmed) {
                     throw new ConflictWithCandidatesException("DUPLICATE_PATIENT",
                             "A similar patient already exists in this practice",
@@ -125,7 +142,7 @@ public class PatientService {
                 }
             }
 
-            Patient patient = new Patient(practiceId, registration.firstName(), registration.lastName(),
+            Patient patient = new Patient(practiceId, firstName, lastName,
                     registration.dateOfBirth(), registration.contactEmail(), registration.phone());
             patient = patientRepository.saveAndFlush(patient);
             entityManager.refresh(patient);
@@ -164,12 +181,13 @@ public class PatientService {
             long current = directory.lockVersion(practiceId, patientId)
                     .orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
             if (current != expectedVersion
-                    || !directory.updateIdentity(practiceId, patientId, expectedVersion, edit.firstName(), edit.lastName(),
+                    || !directory.updateIdentity(practiceId, patientId, expectedVersion, nfc(edit.firstName()), nfc(edit.lastName()),
                     edit.dateOfBirth(), edit.contactEmail(), edit.phone())) {
                 throw new StaleVersionException("The patient was changed by another request");
             }
             PatientView view = directory.findView(practiceId, patientId)
                     .orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
+            directory.touchRecord(practiceId, view.recordId());
             auditService.recordEvent(practiceId, actorAccountId, "PATIENT_UPDATED", "Patient", patientId, view.version(),
                     "SUCCESS", correlationId, "{\"recordId\":\"" + view.recordId() + "\"}");
             outboxService.publish(practiceId, "PATIENT_UPDATED", patientId, view.version(),

@@ -63,10 +63,13 @@ public class PatientSearchMigrationTest extends AbstractPostgresTest {
                 assertThat(rs.getString("first_name_key")).isEqualTo("eloise");
                 assertThat(rs.getString("last_name_key")).isEqualTo("leger muller");
             }
-            try (ResultSet rs = st.executeQuery("SELECT patient_search_key('Œuvre-d''Ætna  ß') AS k, patient_search_key('---') AS empty")) {
+            try (ResultSet rs = st.executeQuery("SELECT patient_search_key('Œuvre-d''Ætna  ß') AS k, patient_search_key('---') AS empty, "
+                    + "patient_search_key(E'Le\\u0301ger') AS decomposed, patient_name_key('---') AS fallback")) {
                 rs.next();
                 assertThat(rs.getString("k")).isEqualTo("oeuvre d aetna ss");
                 assertThat(rs.getString("empty")).isEmpty();
+                assertThat(rs.getString("decomposed")).isEqualTo("leger");
+                assertThat(rs.getString("fallback")).isEqualTo("---");
             }
         }
 
@@ -78,6 +81,8 @@ public class PatientSearchMigrationTest extends AbstractPostgresTest {
                     .isInstanceOf(SQLException.class).hasMessageContaining("permission denied");
             assertThatThrownBy(() -> st.execute("UPDATE patient SET last_name_key = 'x' WHERE id = '" + patient + "'"))
                     .isInstanceOf(SQLException.class);
+            assertThatThrownBy(() -> st.execute("UPDATE patient_record SET practice_id = '" + UUID.randomUUID() + "' WHERE patient_id = '" + patient + "'"))
+                    .isInstanceOf(SQLException.class).hasMessageContaining("permission denied");
         }
     }
 }
