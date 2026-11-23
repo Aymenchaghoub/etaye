@@ -7,13 +7,14 @@ import { expect, test, type Page } from '@playwright/test';
  * container (see playwright.real.config.ts). Every case seeds its own practices and accounts with synthetic data.
  */
 const container = process.env.ETAYE_E2E_DB_CONTAINER;
+const database = process.env.ETAYE_E2E_DB_NAME ?? 'etaye';
 const password = 'Une phrase de test synthétique';
 const nameA = 'Cabinet des Tilleuls';
 const nameB = 'Cabinet du Canal';
 
 function sql(input: string) {
   if (!container || !/^[a-z0-9_.-]+$/i.test(container)) throw new Error('Set the disposable database container first');
-  execFileSync('docker', ['exec', '-i', container, 'psql', '-U', 'etaye_owner', '-d', 'etaye',
+  execFileSync('docker', ['exec', '-i', container, 'psql', '-U', 'etaye_owner', '-d', database,
     '-q', '-v', 'ON_ERROR_STOP=1'], { input, stdio: ['pipe', 'ignore', 'pipe'], timeout: 20_000 });
 }
 
@@ -65,7 +66,11 @@ async function signIn(page: Page, email: string) {
 
 const directory = (grant: string) => `/compte/pratiques/${grant}/patients`;
 const heading = (page: Page, name: string) => page.getByRole('heading', { name, exact: true, level: 1 });
-const names = (page: Page) => page.locator('.etaye-lignes__titre').allTextContents();
+/** Reads the listed names once the first row has rendered: the directory loads after navigation. */
+const names = async (page: Page) => {
+  await expect(page.locator('.etaye-lignes__titre').first()).toBeVisible();
+  return page.locator('.etaye-lignes__titre').allTextContents();
+};
 
 async function api(page: Page, method: string, path: string, init: { body?: unknown; ifMatch?: string } = {}) {
   return page.evaluate(async ([verb, target, payload, match]) => {
@@ -155,7 +160,8 @@ test('scopes the directory to the selected practice and hides the other one from
 test('a read-only member can search but is refused creation with the restricted state', async ({ page }) => {
   const fixture = seed();
   await signIn(page, fixture.readerEmail);
-  await page.goto(directory(fixture.readerA));
+  // The demonstration package closes a hard navigation as an expired session, so follow the in-app link.
+  await page.getByRole('link', { name: 'Patients' }).click();
   expect(await names(page)).toEqual(['BERNARD Louis', 'MARTIN Claire']);
   await page.getByRole('link', { name: 'Créer un dossier patient' }).click();
   await fillIdentity(page, { nom: 'Refusé', prenom: 'Test', j: '01', m: '01', a: '1980' });
