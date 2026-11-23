@@ -1,6 +1,24 @@
 # Session continuation
 
-Updated: 2026-11-22. Owner: Aymen Chaghoub.
+Updated: 2026-11-23. Owner: Aymen Chaghoub.
+
+## Story 1.4 design approved and development authorized (UD-61) — 2026-11-23
+
+**Decision.** Aymen wrote “j’autorise la dev de la 1.4” and, asked whether this lifted the condition of UD-59, chose “J’approuve ces états tels que présentés”. UD-61 records the written approval of the S-01 entry and guide and the I-22 read-only states, authorizes story 1.4 only, and keeps global authorization false. It approves specimens, not the running UI; matched running-UI comparisons, functional review and the merge keep their own decisions. He also authorized squash-merging this documentation PR once the required checks are green. [Decision register](planning-artifacts/decisions-assumptions.md) · [Design review](design/reviews/2026-11-22-story-1-4-design-review.md) · [Packet](implementation-artifacts/story-1-4-context-packet.md)
+
+**Artifacts.** Allowlist `["10.1", "10.2", "1.2", "1.1", "1.3", "9.1", "1.4"]` with the scoped validator mode and its test, UD-61 in the register, the S-01, S-36 and I-22 rows of `coverage.csv` and `html-reception.csv`, the packet and review status lines and the readiness section. The phase-0 branch was rebased on `origin/main` at `590b7e3` (PR #55); the packet records that the only intervening contract change is the `acceptInvitation` idempotency-key parameter.
+
+**Actual verification.** The documentary validator reports zero errors in the new mode. 103 tooling tests pass, and a mutation mapping 1.4 to UD-59 made the new scope test fail. The installed BMAD readiness gate (`bmad-sprint-planning`, readiness intent, after resolving core, `modules.bmm` and workflow customization) returned PASS with three non-blocking concerns listed in the packet. No application test ran; no application file changed.
+
+**Next action.** Merge the documentation PR when required checks pass, regenerate the cockpit from the merged checkout and verify the rendered 1.4 status. Then branch `feat/1.4-demonstrate-server-side-resource-isolation` from the merged `main`: the first commit carries the contract review (or records that none is needed) before application code. The visual-continuity rule Aymen requested on 2026-11-22 is merged as [PR #57](https://github.com/Aymenchaghoub/etaye/pull/57) (`21b51b5`, UD-60); this authorization is numbered UD-61 to avoid the collision. The 1.4 packet and design review already pin the signed-in context shell and `--fond` background that the rule requires, and the running UI must show them in both themes.
+
+## Story 1.4 phase 0 arbitrated, new states awaiting written design approval — 2026-11-22
+
+**Phase and decisions.** On the documentary branch `docs/story-1-4-phase-0` based on verified `origin/main` at `88e88d5`, Aymen gave A1, B1, C1 and conditional D1. UD-59 records the scoped authorization and its condition. The epic allocates the record proof to 1.4. D-55 keeps source, task and export tests mandatory at delivery of their real routes. The measured matrix is a 1.4 CI artifact and the browser replay runs locally in 1.4, with browser CI at M6. [Context packet](implementation-artifacts/story-1-4-context-packet.md) · [Decision register](planning-artifacts/decisions-assumptions.md) · [Traceability](traceability.md#story-14-isolation-verification)
+
+**Artifacts and verification.** The local review presents the S-01 guided entry, S-36 denial/loading/failure/recovery and I-22 reauthentication states. Chromium checked 104 specimen views, performed 26 axe-core runs and exercised the review controls. All 13 initial states were opened. After Aymen flagged visual inconsistency, the confirmed read and S-36 review specimens were aligned with the 1.3 signed-in context layout and its light/dark background. The second Chromium run repeated 104 views and 26 axe-core scans, and the eight revised specimens were opened. Aymen approved the eight revised specimens and asked to apply the continuity rule to future stories. That rule is prepared separately on `docs/visual-continuity`. The documentary validator reported zero errors. Figma requests reconnection; the 18 November offline exception applies. Application tests were outside this phase. [Review page](design/reviews/2026-11-22-story-1-4-design-review.html) · [Evidence and review scope](design/reviews/2026-11-22-story-1-4-design-review.md)
+
+**Next action.** Obtain Aymen's written decision on the remaining new states in the S-01 entry/guide and I-22. After affirmative approval, record the design disposition and add 1.4 to the BMAD allowlist under UD-59 with global authorization false. Run the installed BMAD readiness check before development. Neither the allowlist nor application files were edited in this phase.
 
 ## Visual identity across page states — 2026-11-22
 

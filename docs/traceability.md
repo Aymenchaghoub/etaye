@@ -110,3 +110,15 @@ Detailed I-01–28 mappings are in the interaction catalog and coverage rows. FR
 | DHR-017–019,022–024 | FR-017/019/020; BR-016/018; design/review gate | All HTML families; P-01–03, S-30,S-39,I-19,I-28 | ExportArtifact, frozen source/assets/evidence manifest; Figma pending | 8.1–8.3,9.1–9.3 / AT-032–037 |
 
 The REPORT's twelve decision subquestions and acknowledgement-contract gap are recorded in [decision reconciliation](design/reviews/2026-11-03-decisions.md). Existing canonical behavior is not rewritten to match mockups; new proposals remain pending Aymen.
+
+
+## Story 1.4 isolation verification
+
+UD-59 allocates AT-004-B evidence across the actual first delivery of each guarded resource. The M1 report records unshipped checks as pending. [Epic](planning-artifacts/epics/epic-1.md#story-14-demonstrate-server-side-resource-isolation) · [Deferred work D-55](planning-artifacts/deferred-work.md)
+
+| Resource | Acceptance proof | Delivery trigger |
+|---|---|---|
+| Record | Allowed A and B controls, missing and hidden record parity, administrator and patient boundaries, stale and missing access. Report in CI and replay selected refusals on the real local demo (AT-004-A/B). | Story 1.4 |
+| Internal and published source | Authorized exact revision or projection, compared with hidden and missing sources. Verify current record and audience where applicable. | When 3.2/5.3 or 7.4 delivers the corresponding guarded operation |
+| Processing task | Authorized task status control, compared with hidden and missing tasks. Verify current reader scope. | When 5.2 delivers the guarded task read |
+| Export | Authorized version/audience control, compared with hidden and missing exports. Verify status and byte delivery independently. | When 8.2 delivers report/explanation delivery, and when 8.1 adds the private brief path |

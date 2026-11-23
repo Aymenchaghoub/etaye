@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="fr" data-theme="clair">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Étaye · Revue des variantes de la Story 1.4</title>
+  <link rel="stylesheet" href="../../../design/offline-reference/site/tokens/tokens.css">
+  <link rel="stylesheet" href="../../../design/offline-reference/site/css/etaye.css">
+  <link rel="stylesheet" href="../../../apps/web/src/auth/practice-context.css">
+  <style>
+    [hidden] { display: none !important; }
+    body { margin: 0; background: var(--fond); }
+    .review {
+      background: var(--surface);
+      border-bottom: var(--trait-filet) solid var(--filet);
+      padding: var(--espace-4) max(var(--espace-4), calc((100% - 1200px) / 2));
+      overflow-wrap: anywhere;
+    }
+    .review h1 { font: 500 22px/28px var(--font-texte); margin-bottom: var(--espace-2); }
+    .review p { margin-bottom: var(--espace-3); }
+    .toolbar, .actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--espace-3);
+    }
+    .toolbar label { display: grid; min-width: 0; gap: var(--espace-1); }
+    .toolbar select {
+      width: 100%;
+      min-width: 0;
+      min-height: 40px;
+      padding: var(--espace-2);
+      color: var(--encre);
+      background: var(--surface);
+      border: var(--trait-filet) solid var(--filet-controle);
+      border-radius: var(--rayon-1);
+      font: inherit;
+    }
+    .toolbar .etaye-bouton { align-self: flex-end; min-height: 40px; }
+    .review a { color: var(--accent); }
+    .review-references {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--espace-2) var(--espace-4);
+      margin-top: var(--espace-3);
+    }
+    .review details { margin-top: var(--espace-3); }
+    .review summary { cursor: pointer; }
+    .screen {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      background: var(--fond);
+    }
+    .screen[data-shell="expiry"] { background: var(--papier); }
+    .surface-header:where(:not(.etaye-context-top)) {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--espace-3) var(--espace-6);
+      padding: var(--espace-3) var(--espace-6);
+      background: var(--fond);
+      border-bottom: var(--trait-filet) solid var(--filet);
+    }
+    [data-shell="expiry"] .surface-header { background: var(--papier); border-color: transparent; }
+    .surface-header img { height: 22px; display: block; }
+    [data-shell="patient"] .surface-header img { height: 24px; }
+    [data-shell="expiry"] .surface-header img,
+    [data-shell="entry"] .surface-header img { height: 28px; }
+    .etaye-context-top .etaye-contexte {
+      justify-content: flex-start;
+      overflow-wrap: anywhere;
+    }
+    .etaye-context-top .etaye-contexte > span:last-child { min-width: 0; }
+    .proof {
+      width: 100%;
+      max-width: 1200px;
+      margin-inline: auto;
+      padding: var(--espace-6);
+      flex: 1;
+      overflow-wrap: anywhere;
+    }
+    .etaye-context-destination .proof {
+      flex: 0;
+      padding-block: 0;
+    }
+    .etaye-context-destination .proof .etaye-etat-page { padding-block: 0; }
+    .etaye-context-destination > .demo-footer { display: none; }
+    [data-shell="expiry"] .proof { max-width: 488px; }
+    .proof .etaye-etat-page { margin: 0; }
+    [data-shell="patient"] .proof .etaye-etat-page h1 { font: 500 28px/36px var(--font-texte); }
+    [data-shell="patient"] .proof .etaye-etat-page p { font: 400 18px/28px var(--font-texte); }
+    .etaye-etat-page h1:focus { outline: none; }
+    .proof .etaye-bouton { white-space: normal; text-align: center; }
+    .proof .etaye-bouton:focus-visible, .review :focus-visible {
+      outline: var(--trait-focus) solid var(--accent);
+      outline-offset: 2px;
+    }
+    .notice, .scenario, .sign-in {
+      background: var(--surface);
+      border: var(--trait-filet) solid var(--filet-controle);
+      border-radius: var(--rayon-2);
+      padding: var(--espace-6);
+    }
+    .notice { padding: var(--espace-3) var(--espace-4); }
+    .proof .etaye-bandeau { grid-template-columns: auto minmax(0, 1fr); }
+    .proof .etaye-bandeau p { font: inherit; color: inherit; }
+    .scenario h2 { font: 500 16px/24px var(--font-texte); }
+    .scenario p + p, .sign-in p + p { margin-top: var(--espace-3); }
+    .reference-card { display: grid; gap: var(--espace-3); }
+    .reference-card dl { margin: 0; display: grid; gap: var(--espace-2); }
+    .reference-card dl > div { display: flex; flex-wrap: wrap; gap: var(--espace-1) var(--espace-3); }
+    .reference-card dt { color: var(--encre-2); }
+    .reference-card dd { margin: 0; }
+    .sign-in > .actions { margin-top: var(--espace-4); }
+    .journey-label, .demo-footer { color: var(--encre-2); }
+    .demo-footer { margin-top: auto; padding: var(--espace-4) var(--espace-6); font: 400 12px/16px var(--font-texte); }
+    @media (max-width: 760px) {
+      .proof, .surface-header:where(:not(.etaye-context-top)) { padding: var(--espace-4); }
+      .etaye-context-destination > .demo-footer { display: block; }
+      .proof .etaye-etat-page { padding-block: var(--espace-6); }
+    }
+    @media (max-width: 360px) {
+      .proof, .surface-header:where(:not(.etaye-context-top)), .scenario, .sign-in { padding: var(--espace-3); }
+      .actions { align-items: stretch; flex-direction: column; }
+    }
+  </style>
+</head>
+<body class="etaye-root">
+  <header class="review" id="review">
+    <h1>Valider les nouveaux états de la Story 1.4</h1>
+    <p>Maquettes locales sur données fictives. Les boutons parcourent les états de design.</p>
+    <div class="toolbar">
+      <label for="state">État à examiner
+        <select id="state">
+          <optgroup label="S-01 · Démonstration">
+            <option value="entry">Lien « Prouvez l’isolation »</option>
+            <option value="guide">Présentation du parcours</option>
+            <option value="allowed">Accès confirmé de Nora</option>
+          </optgroup>
+          <optgroup label="S-36 · Lecture et refus">
+            <option value="loading">Vérification en cours</option>
+            <option value="restricted">Espace clinique interdit à Mila</option>
+            <option value="hidden">Élément introuvable</option>
+            <option value="patient">Accès depuis l’espace patient</option>
+            <option value="old-link">Ancien lien</option>
+            <option value="failed">Vérification indisponible</option>
+            <option value="long">Texte long</option>
+          </optgroup>
+          <optgroup label="I-22 · Retour de session">
+            <option value="expired">Session expirée</option>
+            <option value="rechecking">Reconnexion et vérification</option>
+            <option value="changed">Contexte de retour indisponible</option>
+          </optgroup>
+        </select>
+      </label>
+      <button class="etaye-bouton etaye-bouton--secondaire" type="button" id="theme" aria-pressed="false">Thème sombre</button>
+      <button class="etaye-bouton etaye-bouton--secondaire" type="button" id="focus">Montrer le focus clavier</button>
+    </div>
+    <div class="review-references">
+      <a id="baseline" target="_blank" rel="noopener">Ouvrir la référence de cet état</a>
+      <a id="context-baseline" href="2026-11-21-story-1-3-runtime/S-05.webp" target="_blank" rel="noopener" hidden>Comparer au cadre de la Story 1.3</a>
+    </div>
+    <details>
+      <summary>Donner mon avis sur ces états</summary>
+      <p>Après la revue, réponds dans la conversation avec l’un des choix suivants.</p>
+      <ul>
+        <li>« Je valide les nouveaux états de design de la Story 1.4 présentés dans cette revue. »</li>
+        <li>« À revoir », avec les états concernés et les modifications souhaitées.</li>
+      </ul>
+    </details>
+  </header>
+
+  <div class="screen" id="screen" data-shell="entry">
+    <header class="surface-header" id="surface-header">
+      <img id="logo" alt="Étaye" src="../../../design/offline-reference/site/logos/etaye-logo.svg">
+      <div class="etaye-contexte" id="identity" hidden>
+        <span class="etaye-icone etaye-icone--18 etaye-icone--cabinet" aria-hidden="true"></span>
+        <span>
+          <strong class="etaye-contexte__cabinet">Cabinet des Tilleuls</strong>
+          <span class="etaye-contexte__role" id="identity-role"></span>
+        </span>
+      </div>
+      <span class="etaye-demo" id="header-demo" hidden>Démonstration — personnes et données fictives</span>
+    </header>
+    <main class="proof" id="proof"></main>
+    <footer class="demo-footer">Démonstration — personnes et données fictives</footer>
+  </div>
+
+  <template id="entry">
+    <div class="etaye-etat-page">
+      <h1 tabindex="-1">Choisir un scénario de démonstration</h1>
+      <div class="scenario reference-card">
+        <h2>Prouvez l’isolation</h2>
+        <p>Voyez un dossier s’ouvrir pour une praticienne autorisée, puis suivez trois cas où l’accès est refusé.</p>
+        <div class="actions">
+          <a class="etaye-bouton etaye-bouton--secondaire" href="?state=guide" data-state="guide">Ouvrir le parcours</a>
+        </div>
+      </div>
+      <p>Personnes et cabinets entièrement fictifs. La démonstration peut être réinitialisée à tout moment.</p>
+    </div>
+  </template>
+
+  <template id="guide">
+    <div class="etaye-etat-page">
+      <h1 tabindex="-1">Prouvez l’isolation</h1>
+      <p>Le parcours commence dans le Cabinet des Tilleuls avec le compte fictif de Nora Lefebvre.</p>
+      <ol>
+        <li>Lire un dossier autorisé avec Nora.</li>
+        <li>Vérifier le refus d’un dossier hors de son périmètre.</li>
+        <li>Se reconnecter avec Mila, puis avec Claire, pour voir les refus dans leurs espaces respectifs.</li>
+      </ol>
+      <div class="actions">
+        <a class="etaye-bouton etaye-bouton--principal" href="?state=loading" data-state="loading">Commencer avec Nora</a>
+        <a class="etaye-bouton etaye-bouton--discret" href="?state=entry" data-state="entry">Revenir à la démonstration</a>
+      </div>
+    </div>
+  </template>
+
+  <template id="allowed">
+    <div class="etaye-etat-page">
+      <p class="journey-label">Prouvez l’isolation · Lecture autorisée</p>
+      <h1 tabindex="-1">Dossier accessible</h1>
+      <section class="etaye-panneau" aria-labelledby="record-title">
+        <div class="etaye-panneau__tete">
+          <h2 id="record-title">Claire Martin</h2>
+        </div>
+        <div class="etaye-panneau__corps reference-card">
+          <dl>
+            <div><dt>Cabinet</dt><dd>Cabinet des Tilleuls</dd></div>
+            <div><dt>Date de naissance</dt><dd><time datetime="1978-04-18">18 avril 1978</time></dd></div>
+          </dl>
+        </div>
+      </section>
+      <div class="actions">
+        <a class="etaye-bouton etaye-bouton--principal" href="?state=hidden" data-state="hidden">Voir le refus hors du cabinet</a>
+        <a class="etaye-bouton etaye-bouton--discret" href="?state=entry" data-state="entry">Revenir à la démonstration</a>
+      </div>
+    </div>
+  </template>
+
+  <template id="loading">
+    <div class="etaye-etat-page">
+      <h1 tabindex="-1">Vérification de l’accès</h1>
+      <div class="etaye-bandeau etaye-bandeau--neutre" role="status">
+        <span class="etaye-icone etaye-icone--18 etaye-icone--horloge" aria-hidden="true"></span>
+        <p>Vérification de l’accès en cours…</p>
+      </div>
+      <div class="actions">
+        <a class="etaye-bouton etaye-bouton--secondaire" href="?state=entry" data-state="entry">Revenir à la démonstration</a>
+      </div>
+    </div>
+  </template>
+
+  <template id="restricted">
+    <div class="etaye-etat-page">
+      <span class="etaye-etat-page__code">Accès non autorisé · 403</span>
+      <h1 tabindex="-1">Cet espace est réservé aux soins</h1>
+      <p>Votre rôle d’administration au Cabinet des Tilleuls ne donne pas accès aux dossiers patients.</p>
+      <div class="actions">
+        <a class="etaye-bouton etaye-bouton--principal" href="?state=entry" data-state="entry">Revenir à mon espace</a>
+      </div>
+    </div>
+  </template>
+
+  <template id="hidden">
+    <div class="etaye-etat-page">
+      <span class="etaye-etat-page__code">Élément introuvable · 404</span>
+      <h1 tabindex="-1">Élément introuvable</h1>
+      <p>Vérifiez le lien ou revenez à votre espace.</p>
+      <div class="actions">
+        <a class="etaye-bouton etaye-bouton--principal" href="?state=entry" data-state="entry">Revenir à mon espace</a>
+      </div>
+    </div>
+  </template>
+
+  <template id="patient">
+    <div class="etaye-etat-page">
+      <span class="etaye-etat-page__code">Élément introuvable</span>
+      <h1 tabindex="-1">Cette page n’est pas disponible</h1>
+      <p>Elle n’existe pas ou ne vous a pas été partagée.</p>
+      <div class="actions">
+        <a class="etaye-bouton etaye-bouton--principal etaye-bouton--patient" href="?state=entry" data-state="entry">Revenir à mon espace</a>
+      </div>
+    </div>
+  </template>
+
+  <template id="failed">
+    <div class="etaye-etat-page">
+      <h1 tabindex="-1">Vérification momentanément indisponible</h1>
+      <div class="etaye-bandeau etaye-bandeau--attention">
+        <span class="etaye-icone etaye-icone--18 etaye-icone--alerte" aria-hidden="true"></span>
+        <p>La vérification de l’accès a échoué. Réessayez ou revenez à la démonstration.</p>
+      </div>
+      <div class="actions">
+        <a class="etaye-bouton etaye-bouton--principal" href="?state=loading" data-state="loading">Réessayer</a>
+        <a class="etaye-bouton etaye-bouton--discret" href="?state=entry" data-state="entry">Revenir à la démonstration</a>
+      </div>
+    </div>
+  </template>
+
+  <template id="long">
+    <div class="etaye-etat-page">
+      <h1 tabindex="-1">Impossible de vérifier votre accès à cette étape de la démonstration pour le moment</h1>
+      <div class="etaye-bandeau etaye-bandeau--attention">
+        <span class="etaye-icone etaye-icone--18 etaye-icone--alerte" aria-hidden="true"></span>
+        <p>La vérification n’a pas abouti. Vous pouvez réessayer maintenant, ou revenir à la démonstration et sélectionner un scénario correspondant au compte avec lequel vous souhaitez vous reconnecter.</p>
+      </div>
+      <div class="actions">
+        <a class="etaye-bouton etaye-bouton--principal" href="?state=loading" data-state="loading">Réessayer la vérification de l’accès</a>
+        <a class="etaye-bouton etaye-bouton--discret" href="?state=entry" data-state="entry">Revenir à la démonstration</a>
+      </div>
+    </div>
+  </template>
+
+  <template id="expired">
+    <div class="etaye-etat-page">
+      <h1 tabindex="-1">Votre session a expiré</h1>
+      <div class="sign-in">
+        <p>Reconnectez-vous pour vérifier votre accès à cette étape.</p>
+        <div class="actions">
+          <a class="etaye-bouton etaye-bouton--principal" href="?state=rechecking" data-state="rechecking">Se reconnecter</a>
+          <a class="etaye-bouton etaye-bouton--discret" href="?state=entry" data-state="entry">Quitter la session</a>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <template id="rechecking">
+    <div class="etaye-etat-page">
+      <h1 tabindex="-1">Vérification après reconnexion</h1>
+      <p class="notice" role="status">Vérification de votre accès au parcours…</p>
+      <div class="actions">
+        <a class="etaye-bouton etaye-bouton--secondaire" href="?state=entry" data-state="entry">Revenir à la démonstration</a>
+      </div>
+    </div>
+  </template>
+
+  <template id="changed">
+    <div class="etaye-etat-page">
+      <h1 tabindex="-1">Cette étape n’est plus disponible</h1>
+      <div class="sign-in">
+        <p>Revenez à la démonstration pour reprendre avec un compte et un espace autorisés.</p>
+        <div class="actions">
+          <a class="etaye-bouton etaye-bouton--principal" href="?state=entry" data-state="entry">Revenir à la démonstration</a>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    const assetRoot = '../../../design/offline-reference/site/';
+    const catalogue = {
+      entry: { shell: 'entry', ref: 'S-01/accueil', historical: true },
+      guide: { shell: 'entry', ref: 'S-01/accueil', historical: true },
+      allowed: { shell: 'staff', actor: 'Nora Lefebvre', role: 'Praticienne', ref: 'S-05/choix' },
+      loading: { shell: 'staff', actor: 'Nora Lefebvre', role: 'Praticienne', ref: 'S-36/introuvable' },
+      restricted: { shell: 'staff', actor: 'Mila Dubois', role: 'Administration', ref: 'S-36/interdit' },
+      hidden: { shell: 'staff', actor: 'Nora Lefebvre', role: 'Praticienne', ref: 'S-36/introuvable' },
+      patient: { shell: 'patient', actor: 'Claire Martin', role: 'Espace patient', ref: 'S-36/patient' },
+      'old-link': { shell: 'staff', actor: 'Nora Lefebvre', role: 'Praticienne', ref: 'S-36/lien-obsolete', template: 'hidden' },
+      failed: { shell: 'staff', actor: 'Nora Lefebvre', role: 'Praticienne', ref: 'S-36/introuvable' },
+      long: { shell: 'staff', actor: 'Nora Lefebvre', role: 'Praticienne', ref: 'S-36/introuvable' },
+      expired: { shell: 'expiry', ref: 'I-22/ouvert' },
+      rechecking: { shell: 'expiry', ref: 'I-22/ouvert' },
+      changed: { shell: 'expiry', ref: 'I-22/ouvert' }
+    };
+    const params = new URLSearchParams(location.search);
+    const picker = document.getElementById('state');
+    const theme = document.getElementById('theme');
+    const proof = document.getElementById('proof');
+    const screen = document.getElementById('screen');
+    const logo = document.getElementById('logo');
+    const header = document.getElementById('surface-header');
+    const headerDemo = document.getElementById('header-demo');
+    const identity = document.getElementById('identity');
+    const identityRole = document.getElementById('identity-role');
+    const baseline = document.getElementById('baseline');
+    const contextBaseline = document.getElementById('context-baseline');
+    let state = Object.hasOwn(catalogue, params.get('state')) ? params.get('state') : 'entry';
+
+    function render(focusHeading = false) {
+      const variant = catalogue[state];
+      const dark = document.documentElement.dataset.theme === 'sombre';
+      const template = document.getElementById(variant.template || state);
+      proof.replaceChildren(template.content.cloneNode(true));
+      screen.dataset.shell = variant.shell;
+      const signedIn = Boolean(variant.actor);
+      screen.classList.toggle('etaye-context-destination', signedIn);
+      header.classList.toggle('etaye-context-top', signedIn);
+      proof.classList.toggle('etaye-auth__corps', signedIn);
+      proof.classList.toggle('etaye-auth__corps--large', signedIn);
+      const logoName = variant.shell === 'patient' ? 'etaye-logo-espace-patient' : 'etaye-logo';
+      logo.src = assetRoot + 'logos/' + logoName + (dark ? '-sombre' : '') + '.svg';
+      identity.hidden = !signedIn;
+      headerDemo.hidden = !signedIn;
+      contextBaseline.hidden = !signedIn;
+      identityRole.textContent = signedIn ? variant.role + ' · ' + variant.actor : '';
+      baseline.href = variant.historical
+        ? '2026-11-22-story-9-1-runtime/index.html'
+        : assetRoot + 'ecrans/' + variant.ref + '.html?theme=' + (dark ? 'sombre' : 'clair');
+      picker.value = state;
+      if (focusHeading) proof.querySelector('h1').focus();
+    }
+
+    function changeState(next) {
+      state = next;
+      render(true);
+    }
+
+    picker.addEventListener('change', () => { state = picker.value; render(); });
+    theme.addEventListener('click', () => {
+      const dark = document.documentElement.dataset.theme === 'clair';
+      document.documentElement.dataset.theme = dark ? 'sombre' : 'clair';
+      theme.setAttribute('aria-pressed', String(dark));
+      render();
+    });
+    document.getElementById('focus').addEventListener('click', () => {
+      proof.querySelector('a')?.focus({ focusVisible: true });
+    });
+    proof.addEventListener('click', (event) => {
+      const link = event.target.closest('a[data-state]');
+      if (link) {
+        event.preventDefault();
+        changeState(link.dataset.state);
+      }
+    });
+
+    const dark = params.get('theme') === 'sombre';
+    document.documentElement.dataset.theme = dark ? 'sombre' : 'clair';
+    theme.setAttribute('aria-pressed', String(dark));
+    document.getElementById('review').hidden = params.get('view') === 'state';
+    render();
+  </script>
+</body>
+</html>
