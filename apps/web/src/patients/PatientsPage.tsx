@@ -6,7 +6,7 @@ import { ageLabel, formatDate } from './date';
 import { clearDraft, readSearch, takeConfirmation, writeSearch } from './memory';
 import { clockTime, EntryHeader, Notice, patientName, Skeleton } from './patient-ui';
 import { useShell } from './PractitionerShell';
-import { editPatientPath, newPatientPath } from './routes';
+import { editPatientPath, newPatientPath, recordPath } from './routes';
 
 type Phase = 'loading' | 'ready' | 'refreshing' | 'failed' | 'forbidden' | 'hidden' | 'limited';
 const PAGE = 25;
@@ -148,6 +148,7 @@ export function PatientsPage({ scope, practiceId, base, expire }: {
   const entry = (patient: Patient, marked: boolean) => {
     const name = patientName(patient);
     const edit = editPatientPath(base, patient.recordId);
+    const open = recordPath(base, patient.recordId);
     const age = ageLabel(patient.dateOfBirth);
     return (
       <li key={patient.id} className={marked ? 'etaye-ligne--nouvelle' : undefined}>
@@ -155,7 +156,9 @@ export function PatientsPage({ scope, practiceId, base, expire }: {
           <span aria-hidden="true" className="etaye-icone etaye-icone--18 etaye-icone--compte etaye-2" />
         </span>
         <div>
-          <div className="etaye-lignes__titre">{name}</div>
+          <div className="etaye-lignes__titre">
+            <a href={open} onClick={(event) => { event.preventDefault(); shell.navigate(open); }}>{name}</a>
+          </div>
           <div className="etaye-lignes__detail">
             Naissance <span className="etaye-num">{formatDate(patient.dateOfBirth)}</span>{age && ` · ${age}`}
           </div>

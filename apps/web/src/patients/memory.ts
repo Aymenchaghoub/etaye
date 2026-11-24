@@ -1,4 +1,5 @@
 import type { Patient } from '../api/generated/types.gen';
+import { clearRecordMemory } from '../record/memory';
 
 /**
  * The query text and the unsaved identity drafts live only in this module's memory, scoped to one account and one
@@ -34,6 +35,7 @@ export function clearPatientMemory() {
   searches.clear();
   drafts.clear();
   confirmations.clear();
+  clearRecordMemory();
   activeScope = undefined;
 }
 

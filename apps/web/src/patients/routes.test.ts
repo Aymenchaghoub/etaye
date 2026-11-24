@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { editPatientPath, newPatientPath, patientRoute, patientsPath } from './routes';
+import { editPatientPath, historyPath, newPatientPath, patientRoute, patientsPath, recordPath } from './routes';
 
 const grant = '11111111-1111-4111-8111-111111111111';
 const record = '55555555-5555-4555-8555-555555555555';
@@ -12,6 +12,15 @@ describe('patient routes', () => {
     expect(patientRoute(`${base}/patients/${record}/modifier`)).toEqual({ base, view: 'edit', recordId: record });
   });
 
+  it('recognizes the chronology and the history of a record (story 3.2)', () => {
+    expect(patientRoute(`${base}/patients/${record}`)).toEqual({ base, view: 'record', recordId: record });
+    expect(patientRoute(`${base}/patients/${record}/antecedents`)).toEqual({ base, view: 'history', recordId: record });
+    expect(patientRoute(recordPath(base, record))?.view).toBe('record');
+    expect(patientRoute(historyPath(base, record))?.view).toBe('history');
+    expect(recordPath(base, 'not-a-uuid')).toBe(patientsPath(base));
+    expect(historyPath(base, '../x')).toBe(patientsPath(base));
+  });
+
   it('builds the same paths it recognizes', () => {
     expect(patientRoute(patientsPath(base))?.view).toBe('list');
     expect(patientRoute(newPatientPath(base))?.view).toBe('new');
@@ -21,7 +30,9 @@ describe('patient routes', () => {
   it('ignores a patient grant, other segments, trailing paths and query text', () => {
     expect(patientRoute(`/compte/patient/${grant}/patients`)).toBeUndefined();
     expect(patientRoute(`${base}/patients/other`)).toBeUndefined();
-    expect(patientRoute(`${base}/patients/${record}`)).toBeUndefined();
+    expect(patientRoute(`${base}/patients/${record}/`)).toBeUndefined();
+    expect(patientRoute(`${base}/patients/${record}/antecedents/`)).toBeUndefined();
+    expect(patientRoute(`${base}/patients/${record}/antecedents?asOf=2026-10-20`)).toBeUndefined();
     expect(patientRoute(`${base}/patients/${record}/modifier/`)).toBeUndefined();
     expect(patientRoute(`${base}/patients/nouveau?q=Martin`)).toBeUndefined();
     expect(patientRoute(`${base}/patients/not-a-uuid/modifier`)).toBeUndefined();

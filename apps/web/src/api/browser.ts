@@ -1,7 +1,7 @@
 import { version } from '../../package.json';
 import { createClient } from './generated/client';
-import { acceptInvitation, completeRecovery, createPatient, editPatient, getApiMeta, getCsrfToken, getPatientRecord, getReadiness, getSession, inspectInvitation, listDemoScenarios, requestRecovery, resetSyntheticDemo, searchPatients, signIn, signOut } from './generated/sdk.gen';
-import type { ActivationWritable, CredentialsWritable, PatientEdit, PatientRegistration, Problem } from './generated/types.gen';
+import { acceptInvitation, completeRecovery, createPatient, editPatient, getApiMeta, getCsrfToken, getHistorySummary, getPatientRecord, getReadiness, getSession, getSourceRevision, getTimeline, inspectInvitation, listDemoScenarios, requestRecovery, resetSyntheticDemo, searchPatients, signIn, signOut } from './generated/sdk.gen';
+import type { ActivationWritable, CredentialsWritable, PatientEdit, PatientRegistration, Problem, SourceKind } from './generated/types.gen';
 
 export type AccountResult<T> =
   | { ok: true; data: T; etag?: string }
@@ -65,6 +65,24 @@ export function createBrowserApi(origin: string, transportEnabled: boolean, tran
     readRecord(practiceId: string, recordId: string, signal?: AbortSignal) {
       return accountRequest((deadline) => getPatientRecord({
         client, path: { practiceId, recordId }, signal: deadline, cache: 'no-store',
+      }), signal);
+    },
+    // Record evidence (story 3.2). Every read is no-store and carries the optional past instant of the view (UD-32).
+    readTimeline(practiceId: string, recordId: string,
+      query: { cursor?: string; limit?: number; from?: string; to?: string; kind?: SourceKind[]; asOf?: string },
+      signal?: AbortSignal) {
+      return accountRequest((deadline) => getTimeline({
+        client, path: { practiceId, recordId }, query, signal: deadline, cache: 'no-store',
+      }), signal);
+    },
+    readHistory(practiceId: string, recordId: string, asOf?: string, signal?: AbortSignal) {
+      return accountRequest((deadline) => getHistorySummary({
+        client, path: { practiceId, recordId }, query: { asOf }, signal: deadline, cache: 'no-store',
+      }), signal);
+    },
+    readSource(practiceId: string, sourceId: string, asOf?: string, signal?: AbortSignal) {
+      return accountRequest((deadline) => getSourceRevision({
+        client, path: { practiceId, sourceId }, query: { asOf }, signal: deadline, cache: 'no-store',
       }), signal);
     },
     // Patient directory (story 3.1). The query text travels only in the request: it is never logged or stored here.
