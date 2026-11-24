@@ -148,3 +148,16 @@ UD-67 makes story 3.2 read-only and records what the build deliberately leaves o
 | Cross-module timeline events (publications, validations, briefs, appointments, tasks, reports) | Owning stories | D-61 |
 | Read audit of clinical record views | Deferred (D-62) | Not applicable in increment 1 |
 | Identity history in the as-of view | Deferred (D-63) | Not applicable in increment 1 |
+
+## Story 3.2 record evidence verification
+
+Executed evidence for the delivered read side. [Implementation record](implementation-artifacts/story-3-2-implementation-record.md) · [Running-UI review](design/reviews/2026-11-24-story-3-2-runtime.md) (visual approval pending Aymen's decision).
+
+| Criterion | Executed evidence | Where |
+|---|---|---|
+| AT-010-A dated history, allergies, reported treatments, source types, `asOf` without later revisions | Real HTTP on PostgreSQL over the seeded fixture; real-stack browser spec | `RecordEvidenceFixtureHttpTest`, `RecordEvidenceHttpTest`, `apps/web/e2e/record.spec.ts` |
+| AT-010-B unknown or not asked, never absence; conflicting reports visible | The BR-008 section state as one pure rule, exhaustive test against an independent oracle; fixture and browser cases | `SectionStateRuleTest`, `RecordEvidenceFixtureHttpTest`, `apps/web/tests/record.spec.ts` |
+| AT-010-C long content, keyboard, loading and failure | Smoke on every state with axe-core, overflow and clipping measured on rendered boxes; opened side-by-side captures | `apps/web/tests/record.spec.ts`, [running-UI review](design/reviews/2026-11-24-story-3-2-runtime.md) |
+| D-55 source cases in the isolation matrix | Eight measured cases and the `hidden-source` parity group | `ResourceIsolationMatrixHttpTest`, `apps/api/src/test/resources/isolation/matrix-cases.json` |
+| D-54 reset restores the evidence | An added revision does not survive a reset; seeded rows and counts are restored; V8 to V10 upgrade of an existing demonstration database | `DemoHttpTest`, `RecordEvidenceMigrationTest` |
+| Read-only runtime role, immutability, row-level security | Catalog verification of privileges and RLS flags; owner updates and deletes rejected | `PracticeIsolationTest`, `RecordEvidenceHttpTest` |
