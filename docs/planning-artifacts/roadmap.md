@@ -106,7 +106,7 @@ multi-membership enlarge the first increment relative to the leanest slice.
 
 Delivers, in this order of value: team administration and invitation issuance (2.1, 2.2, M-01, M-02); practice
 settings and booking policy (2.3, D-21); availability management (4.1, D-20); rescheduling and no-show (D-22);
-measurement and laboratory entry (D-24); uploads and patient attachments (3.5, D-25); PDFs P-01 and P-02
+measurement and laboratory entry (D-24); assertion entry and correction (D-60); uploads and patient attachments (3.5, D-25); PDFs P-01 and P-02
 (8.1, D-27); audit screen and profile (2.4, D-31). Exit criteria: the acceptance designs of those stories pass in
 the same real-stack conditions, the adversarial matrix covers each new resource group, and the specification's
 twenty requirements are covered on the web.
@@ -180,7 +180,7 @@ D-01 to D-14 keep their existing triggers and stay unscheduled.
 | 1 | [9.3](epics/epic-9.md) | Recover unavailable services and releases | 10.1, 1.2 | Release rollback rehearsal → Inc 4 (D-29) |
 | 1 | [1.4](epics/epic-1.md) | Demonstrate server-side resource isolation | 10.1, 1.3 | Extending the adversarial matrix to each resource group added later (uploads, availability, audit, devices); every later story adds its resource to the matrix → Inc 2 (10.1) |
 | 1 | [3.1](epics/epic-3.md) | Find and register a local patient | 1.3 | — |
-| 1 | [3.2](epics/epic-3.md) | Explore chronology and explicit assertions | 3.1 | — |
+| 1 | [3.2](epics/epic-3.md) | Explore chronology and explicit assertions | 3.1 | Entering and correcting assertions (I-05 on S-10, the I-27 human disposition; appendAssertion, correctAssertion) → Inc 2 (D-60) |
 | 1 | [4.2](epics/epic-4.md) | Book a real appointment | 3.1 | — |
 | 1 | [3.3](epics/epic-3.md) | Enter and correct measurements | 3.2 | Entering and correcting measurements (I-06; appendMeasurement, correctMeasurement) → Inc 2 (D-24) |
 | 1 | [3.4](epics/epic-3.md) | Enter and correct laboratory results | 3.2 | Entering and correcting laboratory results (I-07; appendLabResult, correctLabResult) → Inc 2 (D-24) |
@@ -249,7 +249,7 @@ CORE families need the full evidence of the named design exception (UD-16); ever
 | I-24 | interaction | Availability exception or practice policy | 2 | SAMPLED | — |
 | I-25 | interaction | Audit filters and event detail | 2 | SAMPLED | Advanced audit filters → Inc 4 (D-30) |
 | I-26 | interaction | Choose/reset demo scenario | 1 | SAMPLED | — |
-| I-27 | interaction | Review missing or conflicting evidence | 1 | SAMPLED | — |
+| I-27 | interaction | Review missing or conflicting evidence | 1 | SAMPLED | Human disposition "Conserver à vérifier" → Inc 2 (D-60) |
 | I-28 | interaction | Authorized download outcome | 1 | SAMPLED | — |
 | M-01 | email | Team invitation | 2 | SAMPLED | — |
 | M-02 | email | Patient activation | 2 | SAMPLED | — |
@@ -268,7 +268,7 @@ CORE families need the full evidence of the named design exception (UD-16); ever
 | S-07 | screen | Patient directory and search | 1 | SAMPLED | — |
 | S-08 | screen | Patient identity creation and editing | 1 | SAMPLED | — |
 | S-09 | screen | Patient record and longitudinal timeline | 1 | CORE | — |
-| S-10 | screen | History, allergies and reported treatments | 1 | CORE | — |
+| S-10 | screen | History, allergies and reported treatments | 1 | CORE | Assertion entry and correction states (I-05) → Inc 2 (D-60) |
 | S-11 | screen | Vital signs, measurements and trends | 1 | SAMPLED | Entry and correction drawer I-06 → Inc 2 (D-24) |
 | S-12 | screen | Laboratory results and reference intervals | 1 | SAMPLED | Entry and correction drawer I-07 → Inc 2 (D-24) |
 | S-13 | screen | Record documents and clinician source viewer | 1 | SAMPLED | Upload drawer I-08 and inspection states → Inc 2 (D-25) |
@@ -325,8 +325,8 @@ CORE families need the full evidence of the named design exception (UD-16); ever
 | 1 | listRecordSources | GET /practices/{practiceId}/records/{recordId}/sources | CLINICAL_READ | in contract |
 | 1 | getSourceRevision | GET /practices/{practiceId}/sources/{sourceId} | CLINICAL_READ | in contract |
 | 1 | listAssertions | GET /practices/{practiceId}/records/{recordId}/assertions | CLINICAL_READ | in contract |
-| 1 | appendAssertion | POST /practices/{practiceId}/records/{recordId}/assertions | CLINICAL_WRITE | in contract |
-| 1 | correctAssertion | POST /practices/{practiceId}/assertions/{assertionId}/corrections | CLINICAL_WRITE | in contract |
+| 2 | appendAssertion | POST /practices/{practiceId}/records/{recordId}/assertions | CLINICAL_WRITE | in contract |
+| 2 | correctAssertion | POST /practices/{practiceId}/assertions/{assertionId}/corrections | CLINICAL_WRITE | in contract |
 | 1 | listMeasurements | GET /practices/{practiceId}/records/{recordId}/measurements | CLINICAL_READ | in contract |
 | 1 | listLabResults | GET /practices/{practiceId}/records/{recordId}/lab-results | CLINICAL_READ | in contract |
 | 1 | listRecordDocuments | GET /practices/{practiceId}/records/{recordId}/documents | CLINICAL_READ | in contract |

@@ -179,7 +179,7 @@
     "rules": "BR-008",
     "journeys": "J-02",
     "screens": "S-09, S-10",
-    "interactions": "I-05",
+    "interactions": "I-27",
     "test": "AT-010",
     "path": "docs/planning-artifacts/epics/epic-3.md",
     "status": "backlog",

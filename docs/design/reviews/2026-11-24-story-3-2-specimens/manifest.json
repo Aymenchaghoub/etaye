@@ -1,0 +1,210 @@
+[
+ {
+  "id": "s07-liste",
+  "family": "S-07",
+  "title": "Liste : le nom ouvre le dossier",
+  "focus": null,
+  "reference": "S-07/liste (story 3.1, UD-64)",
+  "change": "Le nom du patient devient un lien vers S-09 (B1) ; la 3.1 l'avait laissé en texte faute de dossier. « Modifier l'identité » reste. Le bouton « Ouvrir le dossier existant » du panneau de doublon de S-08 mène aussi à S-09, sans changement visuel. Les liens vers S-08 pointent vers les spécimens de la 3.1."
+ },
+ {
+  "id": "s09-claire",
+  "family": "S-09",
+  "title": "Dossier riche (Claire Martin)",
+  "focus": "h1",
+  "reference": "S-09/claire",
+  "change": "Bannière réduite à l'identité : ni « Dossier R-A-001 » ni pastille « Espace patient » (D-57), bloc Allergies dérivé par la règle C1. Onglets limités aux pages livrées par la 3.2. Retirés : Exporter, Ouvrir la préparation, Prochain rendez-vous, Diffusion et les types Publication, Validation, Brief, Compte rendu, Rendez-vous, Espace patient, Tâche, qui appartiennent à d'autres stories (B1). Chaque événement montre sa date de survenue et sa date d'enregistrement, l'auteur, l'origine en toutes lettres, l'identifiant de source et un repère lié à sa source (E1). Le panneau « Rubriques du dossier » dit l'état dérivé de chaque rubrique, jamais un silence. Les filtres s'appliquent par un bouton, les dates en trois segments (UD-63 H1)."
+ },
+ {
+  "id": "s09-claire-source",
+  "family": "S-09",
+  "title": "Sources ouvertes sur place",
+  "focus": "disclosure",
+  "reference": "S-09/claire + I-09/source (aperçu)",
+  "change": "E1 et D-45 : « Afficher la source » (aria-expanded) déplie la source sous l'événement : type, dates, auteur, extrait conservé et, pour le poids, la version remplacée et le motif. Le repère numéroté est un lien interne : il déplie la source et y place le focus ; « Revenir à l'élément » rend le focus au repère. Ni popover ni tiroir (D-42 non déclenché). Dans cette maquette le focus clavier est sur le bouton de la source du poids (anneau visible)."
+ },
+ {
+  "id": "s09-louis",
+  "family": "S-09",
+  "title": "Dossier peu renseigné (Louis Bernard)",
+  "focus": "h1",
+  "reference": "S-09/louis",
+  "change": "Aucun événement : l'écran dit « Historique peu renseigné » et refuse de conclure (C3). Le bloc Allergies dit « Non renseigné », jamais « Aucune » ; la variante neutre « aucune » du design system (§6.2) n'est pas construite. Les filtres sont masqués tant que le dossier est vide, ce qui distingue « dossier vide » de « filtre sans résultat ». Les rubriques disent chacune leur état exact."
+ },
+ {
+  "id": "s09-chargement",
+  "family": "S-09",
+  "title": "Chargement",
+  "focus": "h1",
+  "reference": "Absent des références (SP-STATE)",
+  "change": "Squelettes pour la chronologie, les rubriques et le bloc Allergies ; une zone d'état polie annonce l'attente. Aucun libellé « Non renseigné » ni « Inconnu » tant que la réponse n'est pas arrivée (C10, BR-008). Le choix de date passée n'est pas proposé tant que le dossier n'est pas chargé."
+ },
+ {
+  "id": "s09-echec",
+  "family": "S-09",
+  "title": "Dossier non chargé (page entière)",
+  "focus": "h1",
+  "reference": "Absent des références (SP-STATE) ; 403 et 404 : S-36 approuvé",
+  "change": "Le dossier ne s'est pas chargé : ni identité ni information devinée, pas de bannière patient. Alerte, « Réessayer » et retour à la liste. Distinct du 403 (Mila, administration seule) et du 404 (dossier d'un autre cabinet ou absent), qui utilisent les états S-36 déjà approuvés en 1.4 sur leur propre coque, sans nouveau spécimen ici."
+ },
+ {
+  "id": "s09-erreur-partielle",
+  "family": "S-09",
+  "title": "Chronologie non chargée",
+  "focus": "h1",
+  "reference": "S-09/erreur-partielle (adaptée)",
+  "change": "Dans la référence, ce sont les mesures qui échouent ; en 3.2 c'est la chronologie, et les rubriques ainsi que le bloc Allergies restent affichés (C9). La zone vide dit « ceci n'est pas un dossier vide » : pas d'état vide à la place d'une erreur. « Réessayer » ne recharge que la chronologie."
+ },
+ {
+  "id": "s09-erreur-rubriques",
+  "family": "S-09",
+  "title": "Rubriques non chargées",
+  "focus": "h1",
+  "reference": "Nouveau (C9, BR-008)",
+  "change": "Le cas inverse : la chronologie reste affichée, le panneau et le bloc Allergies disent « non chargées · ne pas conclure à l'absence » au lieu de « Non renseigné ». Un échec n'est jamais présenté comme un état clinique."
+ },
+ {
+  "id": "s09-filtre-vide",
+  "family": "S-09",
+  "title": "Aucun événement pour ces filtres",
+  "focus": "h1",
+  "reference": "Absent des références (SP-STATE, C8)",
+  "change": "Filtre sans résultat, distinct du dossier vide : la phrase dit que des événements peuvent exister hors filtre, « Réinitialiser les filtres » est visible deux fois (dans la barre et dans l'état) et le compteur dit « 0 événement affiché ». Les filtres posés : déclarations de la patiente du 01/10/2026 au 31/10/2026."
+ },
+ {
+  "id": "s09-date-inconnue",
+  "family": "S-09",
+  "title": "Date de survenue inconnue (gabarit)",
+  "focus": "h1",
+  "reference": "S-09/date-inconnue",
+  "change": "Un vrai spécimen au lieu d'un gabarit de texte : le groupe « Date inconnue » est placé en fin de chronologie, trié par date d'enregistrement, et n'affiche que la date d'enregistrement (C5). Aucun dossier du jeu ne contient ce cas : gabarit de mise en page, l'élément « Courrier scanné sans date lisible » est fictif."
+ },
+ {
+  "id": "s09-filtre-date",
+  "family": "S-09",
+  "title": "Filtre de dates : la date inconnue reste listée",
+  "focus": "h1",
+  "reference": "Nouveau (C8, à confirmer)",
+  "change": "À CONFIRMER : avec un filtre du 01/10/2026 au 31/10/2026, les événements sans date de survenue restent affichés sous « Date inconnue » avec une mention, parce qu'un filtre ne doit jamais masquer un fait. L'autre choix (les masquer avec une mention du nombre masqué) est proposé sur la page de revue. Gabarit : l'événement sans date est fictif."
+ },
+ {
+  "id": "s09-long",
+  "family": "S-09",
+  "title": "Contenu long",
+  "focus": "h1",
+  "reference": "S-09/long",
+  "change": "Gabarit fictif : un texte de plus de 1 100 caractères avec un mot de 70 caractères sans espace, et un intitulé de plus de 300 caractères. La chronologie en montre le début (240 caractères) et la source dépliée le texte entier (D-45) ; rien n'est rogné et les dates, l'auteur et la source restent lisibles jusqu'à 320 px. Le plafond du contrat est de 5 000 caractères par texte et 500 par intitulé."
+ },
+ {
+  "id": "s09-asof-saisie",
+  "family": "S-09",
+  "title": "Vue historique : choix de la date",
+  "focus": null,
+  "reference": "Absent des références (UD-32, DF-17)",
+  "change": "F1 : « Voir le dossier à une date passée » ouvre un groupe étiqueté Jour, Mois, Année, Heure, Minute (heure de Paris), sans calendrier (D-48 garde la moitié calendrier). Tant que la date n'est pas affichée, la vue actuelle reste en place, sans bandeau historique. Exemple saisi : 20/10/2026 à 10:14."
+ },
+ {
+  "id": "s09-asof",
+  "family": "S-09",
+  "title": "Vue historique appliquée (20/10/2026 10:14)",
+  "focus": "h1",
+  "reference": "Absent des références (UD-32, DF-17)",
+  "change": "F1 : bandeau persistant « Vue historique — lecture seule » avec la date et l'heure de Paris, et la précision que l'identité affichée est l'identité actuelle (D-63). Le poids est à sa version 1 (86,4 kg) parce que la correction a été enregistrée à 10:15 ; la déclaration du 02/11 et la note de 10:35 sont absentes, sans compteur ni mention de ce qui a été enregistré ensuite. Le bloc Allergies dit « Absence déclarée le 14/09/2026 ». Même coque et mêmes fonds (UD-60). Note de données : le texte conservé de la version 1 du poids doit être « Poids saisi : 86,4 kg. » ; la fixture actuelle ajoute « Valeur historique corrigée ensuite », qui révélerait la correction."
+ },
+ {
+  "id": "s09-asof-avant",
+  "family": "S-09",
+  "title": "Avant le premier enregistrement",
+  "focus": "h1",
+  "reference": "Absent des références (UD-32, C6)",
+  "change": "Si rien n'était enregistré à cet instant, la vue le dit sans conclure à la normalité : « Rien n'était enregistré à cette date. Cela ne signifie pas que le dossier était normal. » Le bloc Allergies dit « Non renseigné ». Exemple : 01/09/2026 08:00, avant la première source de Claire (14/09/2026)."
+ },
+ {
+  "id": "s09-asof-erreur",
+  "family": "S-09",
+  "title": "Date future refusée",
+  "focus": "summary",
+  "reference": "Absent des références (UD-32, 400)",
+  "change": "Un instant futur est refusé par le serveur (400, UD-32). Résumé d'erreurs lié aux champs avec le focus, saisie conservée, vue actuelle inchangée ; aucun message n'indique si des données futures existent. L'exemple saisi est le 12/03/2027 à 10:00."
+ },
+ {
+  "id": "s10-claire",
+  "family": "S-10",
+  "title": "Rubriques discordantes (Claire Martin)",
+  "focus": "h1",
+  "reference": "S-10/claire",
+  "change": "Un ordre unique des rubriques : Allergies, Antécédents, Traitements déclarés (la référence variait entre Claire et Louis). Un seul vocabulaire par état (C1). Les deux déclarations discordantes restent visibles, la plus ancienne d'abord, avec date, auteur, origine et source ; les sources se déplient sur place (E1). Retirés : « Ajouter … » et « Conserver à vérifier », qui sont de l'écriture (D-60) ; reste « Examiner les sources » (I-27 en lecture)."
+ },
+ {
+  "id": "s10-louis",
+  "family": "S-10",
+  "title": "Rubriques peu renseignées (Louis Bernard)",
+  "focus": "h1",
+  "reference": "S-10/louis",
+  "change": "Chaque rubrique dit son état exact : Allergies « Non renseigné », Antécédents « Inconnu · à préciser », Traitements « Non renseigné » (la référence mélangeait « Inconnu · à préciser » et « Non renseigné » pour la même absence). Aucun bouton d'ajout : ils appartiennent à D-60 et l'écran ne propose pas une action qui n'existe pas encore."
+ },
+ {
+  "id": "s10-chargement",
+  "family": "S-10",
+  "title": "Chargement",
+  "focus": "h1",
+  "reference": "Absent des références (SP-STATE)",
+  "change": "Un squelette par rubrique et le bloc Allergies de la bannière en attente ; une zone d'état polie annonce l'attente. Aucun « Non renseigné », « Inconnu » ni « Aucune » avant la réponse (C10, BR-008)."
+ },
+ {
+  "id": "s10-echec",
+  "family": "S-10",
+  "title": "Rubriques non chargées",
+  "focus": "h1",
+  "reference": "Absent des références (SP-STATE, C9)",
+  "change": "Échec de lecture des rubriques : aucune rubrique n'est dessinée (jamais de panneaux vides) et le bloc Allergies de la bannière dit « non chargées · ne pas conclure à l'absence ». « Réessayer » recharge les rubriques seulement ; l'identité reste affichée."
+ },
+ {
+  "id": "s10-asof",
+  "family": "S-10",
+  "title": "Vue historique : absence déclarée seule",
+  "focus": "h1",
+  "reference": "Absent des références (UD-32, BR-008)",
+  "change": "Au 01/11/2026 à 10:00 la déclaration du 02/11 n'existe pas encore : Allergies = « Absence déclarée le 14/09/2026 », jamais « Aucune allergie » ; c'est le cas « absence déclarée seule » de la règle C1. Les autres rubriques sont « Non renseigné » à cette date. Hypothèse de données [ASSUMPTION] : les lignes « inconnu » de la fixture seraient enregistrées à l'instant de référence du jeu (02/11/2026 16:00), donc absentes d'une vue plus ancienne."
+ },
+ {
+  "id": "s10-sources",
+  "family": "S-10",
+  "title": "Ouverture d'une source : échec et attente",
+  "focus": "h1",
+  "reference": "Absent des références (D-45, SP-STATE)",
+  "change": "Deux états de l'ouverture d'une source, côte à côte pour la revue (en pratique l'un ou l'autre) : la source 1 n'a pas pu être chargée (alerte locale et « Réessayer », la déclaration reste affichée) ; la source 2 est en cours de chargement (squelette et zone d'état). L'état chargé est montré par la maquette S-09 « Sources ouvertes sur place »."
+ },
+ {
+  "id": "s10-long",
+  "family": "S-10",
+  "title": "Contenu long",
+  "focus": "h1",
+  "reference": "S-10/claire (gabarit)",
+  "change": "Gabarit fictif : une déclaration de plus de 1 100 caractères avec un mot de 70 caractères sans espace. La rubrique en montre le début (240 caractères) et la source dépliée le texte entier (D-45). Rien n'est rogné, y compris à 320 px. Ceci montre aussi le cas « présent, déclaré par la patiente · non confirmé » de la règle C1."
+ },
+ {
+  "id": "s10-vocabulaire",
+  "family": "S-10",
+  "title": "Vocabulaire des états (feuille de référence)",
+  "focus": "h1",
+  "reference": "Nouveau (C1, G-05)",
+  "change": "Une seule formulation par état, côte à côte avec le bloc Allergies de la bannière : « Non renseigné », « Inconnu · à préciser », « Non demandé », « Absence déclarée le {date} », présent (origine en toutes lettres), « Déclarations discordantes ». Rapporté par un document est une formulation nouvelle (la référence n'avait que « Déclaration de la patiente » et « Observation du praticien »). Feuille de revue, pas un écran."
+ },
+ {
+  "id": "i27-examiner",
+  "family": "I-27",
+  "title": "Examiner les sources (lecture seule)",
+  "focus": "h1",
+  "reference": "I-27/ouvert",
+  "change": "Version lecture seule d'I-27 (A1) : les deux déclarations datées côte à côte, la plus ancienne d'abord, avec le champ manquant. Retirés : « Ajouter une évaluation du praticien » et « Conserver à vérifier » (une disposition humaine sans opération, ni table, ni événement ; D-60) ainsi que le toast « Passage enregistré » (D-43). Les sources se déplient dans chaque colonne ; le repère est un lien interne qui y place le focus. Le contour bleu du panneau dans la référence est retiré : il restait affiché sans survol ni focus (UD-68)."
+ },
+ {
+  "id": "i27-sources-ouvertes",
+  "family": "I-27",
+  "title": "Sources dépliées",
+  "focus": "h1",
+  "reference": "I-27/ouvert + I-09/source",
+  "change": "Les deux sources dépliées dans leur colonne : type, dates, auteur, extrait conservé. Rien n'est modifiable ; la page ne change aucune donnée."
+ }
+]
