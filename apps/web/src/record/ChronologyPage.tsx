@@ -367,4 +367,3 @@ function SectionRow({ section, past, to, go }: { section: HistorySection; past: 
     </li>
   );
 }
-
