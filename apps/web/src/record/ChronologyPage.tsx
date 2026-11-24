@@ -191,7 +191,7 @@ export function ChronologyPage() {
             Les événements déjà affichés restent consultables.
           </Notice>
         )}
-        {(phase === 'ready' || noMatch) && (
+        {((phase === 'ready' && !emptyRecord) || noMatch) && (
           <div className="etaye-ligne">
             <span className="etaye-3" role="status" style={{ fontSize: 13 }}>
               {shown} événement{shown > 1 ? 's' : ''} affiché{shown > 1 ? 's' : ''}{next ? ' · d’autres événements existent' : ''}
