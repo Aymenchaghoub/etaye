@@ -23,6 +23,7 @@ export function ChronologyPage() {
   const [wait, setWait] = useState(0);
   const [more, setMore] = useState<'idle' | 'loading' | 'failed'>('idle');
   const [attempt, setAttempt] = useState(0);
+  const [answered, setAnswered] = useState(false);
   const [kind, setKind] = useState(applied.kind);
   const [from, setFrom] = useState<DayParts>(applied.from);
   const [to, setTo] = useState<DayParts>(applied.to);
@@ -54,6 +55,7 @@ export function ChronologyPage() {
       if (result.ok) {
         setItems(result.data.items);
         setNext(result.data.nextCursor);
+        setAnswered(true);
         setPhase('ready');
       } else if (result.status === 401) expire();
       else if (result.status === 403 || result.status === 404) refused(result.status);
@@ -134,7 +136,7 @@ export function ChronologyPage() {
       <section aria-labelledby="h-chrono" className="etaye-pile" aria-busy={phase === 'loading' ? true : undefined}>
         <h2 className="ui-section" id="h-chrono">Événements du dossier</h2>
         {emptyRecord && !past && (
-          <Notice kind="attention" title="Historique peu renseigné">
+          <Notice kind="neutre" title="Historique peu renseigné">
             Aucun événement n’est enregistré pour ce dossier. Cela ne signifie pas qu’il n’y a rien à signaler.
           </Notice>
         )}
@@ -143,7 +145,7 @@ export function ChronologyPage() {
             Cela ne signifie pas que le dossier était normal : aucune information n’avait encore été consignée.
           </Notice>
         )}
-        {!emptyRecord && phase !== 'failed' && phase !== 'limited' && (
+        {answered && !emptyRecord && phase !== 'failed' && phase !== 'limited' && (
           <Filters kind={kind} setKind={setKind} from={from} setFrom={setFrom} to={to} setTo={setTo} errors={errors}
             apply={apply} reset={reset} filtered={filtered} />
         )}
@@ -290,7 +292,7 @@ function ChronologyItem({ item, number }: { item: TimelineItem; number: number }
         {carriesText && quoted && (
           <div className="etaye-chrono__detail">
             {quoted}
-            {item.sourceType === 'PATIENT_REPORTED' && state && <>{' '}<span className={`etaye-etat etaye-etat--${state.tone}`}>{state.label}</span></>}
+            {item.kind === 'PATIENT_PREPARATION' && state && <>{' '}<span className={`etaye-etat etaye-etat--${state.tone}`}>{state.label}</span></>}
           </div>
         )}
         {!known && (
@@ -338,7 +340,7 @@ export function SectionsPanel({ history, past, to, go }: { history: Remote<Histo
 function SectionRow({ section, past, to, go }: { section: HistorySection; past: boolean; to: string; go: (path: string) => void }) {
   const words = sectionWords(section.category, section, past);
   const conflicting = section.state === 'CONFLICTING';
-  const alert = words.unresolved;
+  const alert = conflicting;
   const action = section.category === 'ALLERGY' ? (conflicting ? 'Examiner' : 'Voir') : undefined;
   return (
     <li>

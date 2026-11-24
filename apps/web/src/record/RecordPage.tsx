@@ -2,9 +2,9 @@ import { createContext, type ReactNode, useCallback, useContext, useEffect, useM
 import { createPortal } from 'react-dom';
 import { accountApi } from '../api/browser';
 import type { HistorySummary, Record as PatientRecord } from '../api/generated/types.gen';
-import { ErrorSummary, type FieldError } from '../auth/AuthComponents';
+import { ErrorSummary, type FieldError, FocusedHeading } from '../auth/AuthComponents';
 import { ACCOUNT_PATH } from '../auth/session-work';
-import { ageLabel, formatDate } from '../patients/date';
+import { ageOn, formatDate } from '../patients/date';
 import { EntryHeader, Notice, patientName, Skeleton } from '../patients/patient-ui';
 import { useShell } from '../patients/PractitionerShell';
 import { historyPath, patientsPath, recordPath } from '../patients/routes';
@@ -84,20 +84,27 @@ export function RecordPage({ tab, scope, practiceId, base, recordId, expire, chi
     <a className="etaye-bouton etaye-bouton--secondaire" href={patientsPath(base)} onClick={toList}>{label}</a>
   );
 
-  if (status === 403) return <>
-    <EntryHeader title="Dossier patient" meta={shell.practiceName} />
-    <Notice kind="info" alert title="Accès au dossier non autorisé"
-      actions={<a className="etaye-bouton etaye-bouton--secondaire" href={ACCOUNT_PATH}
-        onClick={(event) => { event.preventDefault(); shell.navigate(ACCOUNT_PATH); }}>Revenir à mon espace</a>}>
-      Votre accès actuel ne permet pas de consulter les dossiers cliniques de ce cabinet.
-    </Notice>
-  </>;
-  if (status === 404) return <>
-    <EntryHeader title="Élément introuvable" meta={shell.practiceName} />
-    <Notice kind="info" alert title="Élément introuvable" actions={listLink('Retour aux patients')}>
-      Vérifiez le lien ou revenez à la liste des patients.
-    </Notice>
-  </>;
+  // The approved S-36 states (story 1.4): a refusal discloses nothing about the record and offers one way back.
+  const backToSpace = (
+    <button type="button" className="etaye-bouton etaye-bouton--principal"
+      onClick={() => shell.navigate(ACCOUNT_PATH)}>Revenir à mon espace</button>
+  );
+  if (status === 403) return (
+    <div className="etaye-etat-page" data-record-state="restricted">
+      <span className="etaye-etat-page__code">Accès non autorisé · 403</span>
+      <FocusedHeading>Cet espace est réservé aux soins</FocusedHeading>
+      <p>Votre accès actuel au {shell.practiceName} ne donne pas accès aux dossiers patients.</p>
+      <div className="etaye-ligne">{backToSpace}</div>
+    </div>
+  );
+  if (status === 404) return (
+    <div className="etaye-etat-page" data-record-state="hidden">
+      <span className="etaye-etat-page__code">Élément introuvable · 404</span>
+      <FocusedHeading>Élément introuvable</FocusedHeading>
+      <p>Vérifiez le lien ou revenez à votre espace.</p>
+      <div className="etaye-ligne">{backToSpace}</div>
+    </div>
+  );
   if (record.phase === 'failed' || record.phase === 'limited') return <>
     <EntryHeader title="Dossier patient" meta={shell.practiceName} crumb="Dossier patient" onCrumb={() => shell.navigate(patientsPath(base))} />
     <Notice kind="attention" alert title={record.phase === 'limited' ? 'Trop de requêtes' : 'Le dossier n’a pas pu être chargé'}
@@ -123,26 +130,31 @@ export function RecordPage({ tab, scope, practiceId, base, recordId, expire, chi
 }
 
 function Banner({ patient, history, past }: { patient: PatientRecord['patient']; history: Remote<HistorySummary>; past: boolean }) {
-  const age = ageLabel(patient.dateOfBirth);
+  const years = ageOn(patient.dateOfBirth);
   const allergy = history.phase === 'ready' ? history.data.sections.find((section) => section.category === 'ALLERGY') : undefined;
   const words = allergy ? sectionWords('ALLERGY', allergy, past) : undefined;
+  const stated = allergy?.state === 'PRESENT' || allergy?.state === 'CONFLICTING';
   const variant = allergy?.state === 'PRESENT' ? '' : allergy?.state === 'CONFLICTING' ? ' etaye-allergies--attention' : ' etaye-allergies--neutre';
   return (
     <header aria-label="Patient affiché" className="etaye-banniere">
       <div>
         <div className="etaye-banniere__nom">{patientName(patient)}</div>
         <div className="etaye-banniere__traits">
-          <span>Naissance <span className="etaye-num">{formatDate(patient.dateOfBirth)}</span>{age && <> · <span className="etaye-num">{age.split(' ')[0]}</span> {age.split(' ')[1]}</>}</span>
+          <span>Naissance <span className="etaye-num">{formatDate(patient.dateOfBirth)}</span>{years !== undefined && <> · <span className="etaye-num">{years}</span> {years <= 1 ? 'an' : 'ans'}</>}</span>
         </div>
       </div>
       <div className={`etaye-allergies${variant}`} role="note">
         <div className="etaye-allergies__titre">
-          <span aria-hidden="true" className="etaye-icone etaye-icone--alerte" />Allergies
+          {stated && <span aria-hidden="true" className="etaye-icone etaye-icone--alerte" />}Allergies
         </div>
         <div className="etaye-allergies__liste">
-          {history.phase === 'loading' && 'Chargement des allergies…'}
+          {history.phase === 'loading' && <>
+            <span className="etaye-squelette" aria-hidden="true"><span /><span /></span>
+            <span className="etaye-vh" role="status">Chargement des allergies…</span>
+          </>}
           {(history.phase === 'failed' || history.phase === 'limited') && <>Allergies non chargées<br />Ne pas conclure à l’absence</>}
-          {words && words.headline}
+          {words && (stated ? words.headline
+            : <span className={`etaye-etat etaye-etat--${words.tone === 'plain' ? 'observe' : words.tone}`}>{words.headline}</span>)}
         </div>
       </div>
     </header>

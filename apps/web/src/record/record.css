@@ -17,7 +17,7 @@
 .etaye-resume-erreurs { max-width: 720px; }
 
 /* Allergies block of the identity banner: critical when present, attention when conflicting, neutral otherwise. */
-.etaye-allergies { min-width: 240px; max-width: 420px; padding: var(--espace-2) var(--espace-3); background: var(--critique-fond); border-radius: var(--rayon-1); overflow-wrap: anywhere; }
+.etaye-allergies { min-width: 240px; padding: var(--espace-2) var(--espace-3); background: var(--critique-fond); border-radius: var(--rayon-1); overflow-wrap: anywhere; }
 .etaye-allergies__titre { display: flex; align-items: center; gap: var(--espace-2); font: 500 13px/20px var(--font-texte); color: var(--critique); }
 .etaye-allergies__liste { font: 500 15px/22px var(--font-texte); color: var(--encre); }
 .etaye-allergies--attention { background: var(--attention-fond); }
@@ -97,7 +97,7 @@ select.etaye-champ__saisie { appearance: none; padding-right: var(--espace-8); b
 }
 @media (max-width: 760px) {
   .etaye-cols--egal { grid-template-columns: minmax(0, 1fr); }
-  .etaye-allergies { min-width: 0; max-width: none; }
+  .etaye-allergies { min-width: 0; }
   .etaye-chrono__item { grid-template-columns: 16px minmax(0, 1fr); column-gap: var(--espace-2); }
   .etaye-chrono__rail { grid-column: 1; grid-row: 1 / span 2; }
   .etaye-chrono__date { grid-column: 2; grid-row: 1; text-align: left; padding: var(--espace-3) 0 0; }
@@ -106,3 +106,14 @@ select.etaye-champ__saisie { appearance: none; padding-right: var(--espace-8); b
   .etaye-controle li { grid-template-columns: 24px minmax(0, 1fr); }
   .etaye-controle li > :nth-child(3) { grid-column: 2; justify-self: start; }
 }
+
+/* S-36 restricted and hidden states (approved in story 1.4), reused inside the practitioner shell. */
+.etaye-etat-page { max-width: 560px; min-width: 0; display: grid; gap: var(--espace-4); padding: var(--espace-6) 0; }
+.etaye-etat-page__code { font: 400 13px/20px var(--font-donnee); color: var(--encre-3); }
+.etaye-etat-page h1 { font: 500 26px/32px var(--font-texte); }
+.etaye-etat-page p { font: 400 16px/24px var(--font-texte); color: var(--encre-2); }
+.etaye-etat-page .etaye-bouton { white-space: normal; text-align: center; }
+
+/* I-27: the two sides of a conflict as cards, the date on the right of the label line. */
+.etaye-carte { display: grid; gap: var(--espace-2); align-content: start; min-width: 0; padding: var(--espace-3); border: var(--trait-filet) solid var(--filet); background: var(--surface-2); }
+.etaye-carte__tete { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: var(--espace-2); }

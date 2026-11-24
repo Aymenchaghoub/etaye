@@ -125,12 +125,13 @@ test.describe('S-09 chronology (AT-010-A, AT-010-B)', () => {
     await expect(page.getByText(/Patientez 9 secondes/)).toBeVisible();
     answer = { record: () => ({ status: 403, json: problem(403, 'FORBIDDEN') }) };
     await page.getByRole('button', { name: 'Réessayer' }).click();
-    await expect(page.getByText('Accès au dossier non autorisé')).toBeVisible();
+    await expect(page.getByText('Accès non autorisé · 403')).toBeVisible();
+    await expect(heading(page, 'Cet espace est réservé aux soins')).toBeFocused();
     await expect(page.getByText('MARTIN Claire')).toHaveCount(0);
     await accessible(page);
     answer = { record: () => ({ status: 404, json: problem(404, 'NOT_FOUND') }) };
     await page.goto(RECORD);
-    await expect(page.getByText('Élément introuvable').first()).toBeVisible();
+    await expect(page.getByText('Élément introuvable · 404')).toBeVisible();
     await expect(page.getByText('MARTIN Claire')).toHaveCount(0);
     await accessible(page);
   });
@@ -141,7 +142,7 @@ test.describe('S-09 chronology (AT-010-A, AT-010-B)', () => {
     await expect(items(page)).toHaveCount(8);
     await page.getByLabel('Type d’événement').selectOption('mesures');
     await page.getByRole('button', { name: 'Appliquer les filtres' }).click();
-    await expect(page.getByText('Accès au dossier non autorisé')).toBeVisible();
+    await expect(page.getByText('Accès non autorisé · 403')).toBeVisible();
     await expect(items(page)).toHaveCount(0);
     await expect(page.getByText('MARTIN Claire')).toHaveCount(0);
   });
@@ -526,6 +527,7 @@ test.describe('S-10 history and allergies, I-27 read subset (AT-010-A, AT-010-B)
     await expect(review).toContainText('02/11/2026 09:10');
     await expect(review).toContainText('La déclaration négative du 14/09/2026 ne contredit pas une réaction rapportée ensuite : elle date d’avant.');
     await expect(review).toContainText('Rien n’est fusionné ni résolu automatiquement. La rubrique reste « à préciser ».');
+    await expect(review.locator('.etaye-bandeau')).toHaveCount(0);
     await expect(review.getByRole('button', { name: /Conserver|Résoudre|Valider|Fusionner/ })).toHaveCount(0);
     await review.getByRole('button', { name: /Afficher la source/ }).first().click();
     await review.getByRole('button', { name: /Afficher la source/ }).last().click();

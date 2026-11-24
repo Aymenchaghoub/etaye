@@ -28,7 +28,6 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Base64;
-import java.util.Comparator;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Objects;
@@ -160,15 +159,12 @@ public class RecordEvidenceService {
             Instant view = viewInstant(asOf);
             List<AssertionView> all = evidence.allAssertions(practiceId, recordId, view);
             List<HistorySectionResponse> sections = AssertionCategory.DISPLAY_ORDER.stream().map(category -> {
-                List<AssertionView> statements = all.stream().filter(a -> a.category() == category)
-                        .sorted(Comparator.comparing(AssertionView::recordedAt)).toList();
+                // The repository order (oldest event first, undated last) is kept; the state is derived from all statements.
+                List<AssertionView> statements = all.stream().filter(a -> a.category() == category).toList();
                 SectionState state = SectionStateRule.derive(statements.stream()
                         .map(a -> new SectionStateRule.Statement(a.kind(), a.recordedAt(), a.id())).toList());
-                // The listing keeps the repository order (oldest event first, undated last); only its length is bounded.
-                List<AssertionView> ordered = all.stream().filter(a -> a.category() == category).toList();
-                List<AssertionResponse> shown = ordered.stream().limit(MAX_SECTION_STATEMENTS).map(AssertionResponse::of).toList();
-                return new HistorySectionResponse(category.name(), state.name(), shown,
-                        ordered.size() > MAX_SECTION_STATEMENTS);
+                List<AssertionResponse> shown = statements.stream().limit(MAX_SECTION_STATEMENTS).map(AssertionResponse::of).toList();
+                return new HistorySectionResponse(category.name(), state.name(), shown, statements.size() > MAX_SECTION_STATEMENTS);
             }).toList();
             return new HistorySummaryResponse(asOf, sections);
         });

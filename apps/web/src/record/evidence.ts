@@ -98,13 +98,13 @@ export type SectionTone = 'manquant' | 'negatif' | 'declare' | 'discordant' | 'o
  * the dossier panel. An absence is never written as "none": every state names itself and none concludes an absence.
  */
 export function sectionWords(category: AssertionCategory, section: Pick<HistorySection, 'state' | 'statements'>, past = false): {
-  chip: string; tone: SectionTone; sentence: string; panel: string; headline: string; lead: string; unresolved: boolean;
+  chip: string; tone: SectionTone; sentence: string; panel: string; headline: string; lead: string;
 } {
   const { article, thing } = titles[category];
   const none = `Aucune source au dossier${past ? ' à cette date' : ''} · ne signifie pas absence ${article}`;
   switch (section.state) {
     case 'NOT_RECORDED':
-      return { chip: 'Non renseigné', tone: 'manquant', sentence: `${none}.`, panel: none, headline: 'Non renseigné', lead: 'non renseigné', unresolved: false };
+      return { chip: 'Non renseigné', tone: 'manquant', sentence: `${none}.`, panel: none, headline: 'Non renseigné', lead: 'non renseigné' };
     case 'UNKNOWN':
       return {
         chip: 'Inconnu · à préciser', tone: 'manquant',
@@ -112,12 +112,12 @@ export function sectionWords(category: AssertionCategory, section: Pick<HistoryS
           ? 'Marqué inconnu au dossier. Ne pas écrire « aucun traitement ».'
           : 'Marqué inconnu au dossier · à préciser.',
         panel: `Marqué inconnu au dossier · ne pas conclure à l’absence ${article}`,
-        headline: 'Inconnu · à préciser', lead: 'inconnu · à préciser', unresolved: true,
+        headline: 'Inconnu · à préciser', lead: 'inconnu · à préciser',
       };
     case 'NOT_ASKED':
       return {
         chip: 'Non demandé', tone: 'manquant', sentence: 'Cette rubrique n’a pas été demandée.',
-        panel: `Non demandé au dossier · ne pas conclure à l’absence ${article}`, headline: 'Non demandé', lead: 'non demandé', unresolved: true,
+        panel: `Non demandé au dossier · ne pas conclure à l’absence ${article}`, headline: 'Non demandé', lead: 'non demandé',
       };
     case 'EXPLICITLY_ABSENT': {
       const day = absentDay(section.statements);
@@ -125,23 +125,23 @@ export function sectionWords(category: AssertionCategory, section: Pick<HistoryS
       return {
         chip: label, tone: 'negatif',
         sentence: 'Déclaration datée, avec son auteur et son origine · une information plus récente peut la remplacer.',
-        panel: label, headline: label, lead: 'absence déclarée', unresolved: false,
+        panel: label, headline: label, lead: 'absence déclarée',
       };
     }
     case 'PRESENT':
       return {
         chip: 'Déclaré', tone: 'declare', sentence: 'Chaque déclaration est datée, avec l’origine en toutes lettres.',
-        panel: presentSummary(section.statements), headline: presentSummary(section.statements), lead: 'signalé', unresolved: false,
+        panel: presentSummary(section.statements), headline: presentSummary(section.statements), lead: 'signalé',
       };
     case 'CONFLICTING':
       return {
         chip: 'Déclarations discordantes', tone: 'discordant',
         sentence: `Rubrique à préciser : deux déclarations datées se contredisent · ne pas conclure à l’absence ${article}.`,
         panel: conflictSummary(section.statements),
-        headline: 'Déclarations discordantes à préciser · ne pas conclure à l’absence', lead: 'déclarations discordantes', unresolved: true,
+        headline: 'Déclarations discordantes à préciser · ne pas conclure à l’absence', lead: 'déclarations discordantes',
       };
     default:
-      return { chip: 'État inconnu', tone: 'manquant', sentence: `Ne pas conclure à l’absence ${article} (${thing}).`, panel: '', headline: 'Non renseigné', lead: 'état inconnu', unresolved: true };
+      return { chip: 'État inconnu', tone: 'manquant', sentence: `Ne pas conclure à l’absence ${article} (${thing}).`, panel: '', headline: 'Non renseigné', lead: 'état inconnu' };
   }
 }
 
@@ -158,7 +158,7 @@ function conflictSummary(statements: Assertion[]): string {
       const day = eventDay(statement.eventDate);
       if (statement.assertionKind === 'EXPLICITLY_ABSENT') return `Absence déclarée${day ? ` le ${day}` : ''}`;
       const unconfirmed = statement.sourceType === 'PATIENT_REPORTED' ? ' · non confirmée' : '';
-      return `${statement.text ?? 'Information présente'}${day ? ` · signalé le ${day}` : ''}${unconfirmed}`;
+      return `Déclaration présente${day ? ` signalée le ${day}` : ''}${unconfirmed}`;
     }).join(', ');
 }
 
@@ -192,7 +192,7 @@ export function statementState(statement: Assertion): { label: string; tone: Sec
 }
 
 /** The conflict sentence of the I-27 panel; the negative statement is compared with the present one by date. */
-export function conflictNote(statements: Assertion[]): string {
+export function conflictNote(statements: Assertion[]): { lead: string; rest: string } {
   const absent = statements.find((statement) => statement.assertionKind === 'EXPLICITLY_ABSENT');
   const present = statements.find((statement) => statement.assertionKind === 'PRESENT');
   const absentDay_ = absent && eventDay(absent.eventDate);
@@ -200,7 +200,7 @@ export function conflictNote(statements: Assertion[]): string {
   const lead = older && absentDay_
     ? `La déclaration négative du ${absentDay_} ne contredit pas une réaction rapportée ensuite : elle date d’avant.`
     : 'Une déclaration négative et une déclaration présente se contredisent : aucune n’est retenue à la place de l’autre.';
-  return `${lead} Rien n’est fusionné ni résolu automatiquement. La rubrique reste « à préciser ».`;
+  return { lead, rest: 'Rien n’est fusionné ni résolu automatiquement. La rubrique reste « à préciser ».' };
 }
 
 export const STATE_WITHOUT_ABSENCE: SectionState[] = ['NOT_RECORDED', 'UNKNOWN', 'NOT_ASKED', 'CONFLICTING'];

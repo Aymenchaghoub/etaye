@@ -39,7 +39,7 @@ export function HistoryPage() {
 
   if (examining) {
     const section = sections.find((candidate) => candidate.category === examining)!;
-    return <Review section={section} past={past} back={() => { returnTo.current = examining; setExamining(undefined); }} />;
+    return <Review section={section} back={() => { returnTo.current = examining; setExamining(undefined); }} />;
   }
 
   let number = 0;
@@ -136,19 +136,18 @@ function StatementRow({ statement, number }: { statement: Assertion; number: num
 }
 
 /** I-27, read-only subset: the two sides of a conflict next to each other, with their sources, nothing merged or resolved. */
-function Review({ section, past, back }: { section: HistorySection; past: boolean; back: () => void }) {
-  const ctx = useRecord();
+function Review({ section, back }: { section: HistorySection; back: () => void }) {
   const title = useRef<HTMLHeadingElement>(null);
   useEffect(() => { title.current?.focus({ preventScroll: true }); }, []);
   const sides = section.statements.filter((s) => s.assertionKind === 'PRESENT' || s.assertionKind === 'EXPLICITLY_ABSENT');
-  const words = sectionWords(section.category, section, past);
+  const note = conflictNote(sides);
   return (
     <div className="etaye-pile" style={{ maxWidth: 880 }}>
       <section aria-labelledby="h-i27" className="etaye-panneau">
         <div className="etaye-panneau__corps etaye-pile">
           <div className="etaye-titre-rubrique">
             <h2 id="h-i27" ref={title} tabIndex={-1} className="ui-section" style={{ outline: 'none' }}>Informations à vérifier</h2>
-            <span className={`etaye-etat etaye-etat--${words.tone === 'plain' ? 'observe' : words.tone}`}>{sectionTitle(section.category)} · lecture seule</span>
+            <span className="etaye-2" style={{ fontSize: 13 }}>{sectionTitle(section.category)} · lecture seule</span>
           </div>
           <p className="etaye-2" style={{ margin: 0, fontSize: 14 }}>Examen des sources en ligne, sans fenêtre.</p>
           <div className="etaye-cols etaye-cols--egal">
@@ -157,14 +156,15 @@ function Review({ section, past, back }: { section: HistorySection; past: boolea
                 label={index === 0 ? 'Plus ancienne' : index === sides.length - 1 ? 'Plus récente' : 'Intermédiaire'} />
             ))}
           </div>
-          <div className="etaye-bandeau etaye-bandeau--info" role="note">
-            <span aria-hidden="true" className="etaye-icone etaye-icone--18 etaye-icone--info" />
-            <div>{conflictNote(sides)}</div>
-          </div>
+          <ul className="etaye-controle">
+            <li>
+              <span aria-hidden="true" className="etaye-icone etaye-icone--18 etaye-icone--info etaye-2" />
+              <div>{note.lead}<small>{note.rest}</small></div>
+            </li>
+          </ul>
           <div><button className="etaye-bouton etaye-bouton--secondaire" type="button" onClick={back}>Retour aux antécédents et allergies</button></div>
         </div>
       </section>
-      <span hidden>{ctx.patientLabel}</span>
     </div>
   );
 }
@@ -176,9 +176,11 @@ function Side({ statement, number, label }: { statement: Assertion; number: numb
     ctx.practiceId, ctx.asOf, ctx.expire, 'alone');
   const when = eventLabel(statement.eventDate);
   return (
-    <div className="etaye-pile">
-      <div className="etaye-ligne"><span className="etaye-num">{source.marker}</span><span className="etaye-2" style={{ fontSize: 13 }}>{label}</span></div>
-      <div className="etaye-num" style={{ fontSize: 14 }}>{when ?? 'Date de survenue inconnue'}</div>
+    <div className="etaye-carte">
+      <div className="etaye-carte__tete">
+        <span className="etaye-ligne" style={{ gap: 'var(--espace-1)' }}>{source.marker}<span className="etaye-2" style={{ fontSize: 13 }}>{label}</span></span>
+        <span className="etaye-num" style={{ fontSize: 13 }}>{when ?? 'Date de survenue inconnue'}</span>
+      </div>
       {statement.text && <div className="etaye-declaration">« {statement.text} »</div>}
       <div className="etaye-ligne">
         <span className={state.tone === 'plain' ? 'etaye-2' : `etaye-etat etaye-etat--${state.tone}`}>{state.label}</span>

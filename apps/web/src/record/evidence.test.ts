@@ -61,9 +61,9 @@ describe('the wording of a section (BR-008, UD-67 C1)', () => {
   it('explains that an older negative does not contradict a later report', () => {
     const absent = statement({ assertionKind: 'EXPLICITLY_ABSENT', recordedAt: '2026-09-14T07:45:00Z', eventDate: { precision: 'INSTANT', instant: '2026-09-14T07:30:00Z' } });
     const present = statement({ recordedAt: '2026-11-02T08:10:00Z' });
-    expect(conflictNote([absent, present])).toContain('La déclaration négative du 14/09/2026 ne contredit pas une réaction rapportée ensuite : elle date d’avant.');
-    expect(conflictNote([present, absent].reverse())).toContain('Rien n’est fusionné ni résolu automatiquement.');
-    expect(conflictNote([statement({ recordedAt: '2026-09-01T08:00:00Z' }), statement({ assertionKind: 'EXPLICITLY_ABSENT', recordedAt: '2026-10-01T08:00:00Z' })]))
+    expect(conflictNote([absent, present]).lead).toBe('La déclaration négative du 14/09/2026 ne contredit pas une réaction rapportée ensuite : elle date d’avant.');
+    expect(conflictNote([present, absent].reverse()).rest).toContain('Rien n’est fusionné ni résolu automatiquement.');
+    expect(conflictNote([statement({ recordedAt: '2026-09-01T08:00:00Z' }), statement({ assertionKind: 'EXPLICITLY_ABSENT', recordedAt: '2026-10-01T08:00:00Z' })]).lead)
       .toContain('aucune n’est retenue à la place de l’autre');
   });
 });
