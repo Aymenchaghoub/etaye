@@ -23,6 +23,9 @@ reviews:
     # tests, contract, migration, workflow and decision records.
     - "!docs/design/reviews/2026-11-23-story-3-1-specimens/**"
     - "!docs/design/reviews/2026-11-23-story-3-1-runtime/**"
+    # Story 3.2: the same exclusion for its 26 static specimens and its running-UI comparison sheets.
+    - "!docs/design/reviews/2026-11-24-story-3-2-specimens/**"
+    - "!docs/design/reviews/2026-11-24-story-3-2-runtime/**"
     - "!apps/web/src/api/generated/**"
     - "!pnpm-lock.yaml"
     - "!apps/api/mvnw"

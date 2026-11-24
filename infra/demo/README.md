@@ -25,6 +25,10 @@ To reset, sign in as the demo operator at `/connexion`, return to `/demonstratio
 
 The seeded invitation tokens use `etaye-fictional-invitation-` followed by the invitation alias in the [synthetic dataset](../../docs/design/synthetic-data.md). To try team activation use `INV-TEAM-01` and the fictional name Alex Rivière. For the pending portal activation (`INV-PORTAL-03`), use Marie Collet's fictional date of birth from the dataset.
 
+## Read a record
+
+Sign in as Dr Nora Lefebvre, open **Patients** in the practice context and choose **MARTIN Claire** or **BERNARD Louis** (story 3.2). Claire's chronology lists eight dated evidence items with their occurrence and recording dates, the corrected weight and the conflicting allergy reports; **Antécédents et allergies** shows the three sections and **Examiner les sources** the two sides of the conflict. **Voir le dossier à une date passée** shows the record as known at an instant (Paris time): at 20/10/2026 10:14 the weight is still 86,4 kg and nothing recorded later is shown. Louis's thin record reads *non renseigné* or *inconnu*, never normal. The screens are read-only; entering and correcting statements belongs to increment 2. A reset restores the evidence with the rest of the fixture.
+
 ## Prove isolation
 
 On the showcase, open **Prouvez l’isolation** after the scenario list. The guide walks through four real refusals against the running API: Nora reads an authorized record, Nora requests a record outside her practice (one generic *introuvable* page), Mila (administration, no clinical capability) is refused in the practice she can see, and Claire (patient) gets the unavailable page in her own layout. Start with **Commencer avec Nora**; the guide links **Mila** and **Claire** sign in as those accounts and return to the same read. Every result is the actual HTTP answer. The same cases are measured in CI (`api-isolation-matrix` artifact of `API verify`).

@@ -101,13 +101,14 @@ jobs:
         if: steps.changes.outputs.relevant == 'true'
         # Raise the minimum whenever the suite grows.
         run: >-
-          python3 tools/assert_test_reports.py playwright apps/web/playwright-report/smoke.json --min-tests 81
+          python3 tools/assert_test_reports.py playwright apps/web/playwright-report/smoke.json --min-tests 163
           --require-file tests/stubbed-probe.spec.ts
           --require-file tests/account-access.spec.ts
           --require-file tests/invitation-access.spec.ts
           --require-file tests/practice-context.spec.ts
           --require-file tests/demo.spec.ts
           --require-file tests/isolation.spec.ts
+          --require-file tests/record.spec.ts
       - name: Upload Playwright and axe evidence
         if: always() && steps.changes.outputs.relevant == 'true'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -124,7 +125,7 @@ jobs:
         id: unit-coverage
         if: ${{ !cancelled() && steps.unit-tests.outcome == 'success' }}
         run: |
-          python3 tools/assert_test_reports.py vitest apps/web/reports/unit-tests.json --min-tests 13 --require-file src/auth/session-work.test.ts --require-file src/isolation/isolation-journey.test.ts
+          python3 tools/assert_test_reports.py vitest apps/web/reports/unit-tests.json --min-tests 57 --require-file src/auth/session-work.test.ts --require-file src/isolation/isolation-journey.test.ts --require-file src/record/evidence.test.ts --require-file src/record/asof.test.ts
           python3 tools/assert_coverage_reports.py lcov apps/web/reports/unit-coverage/lcov.info
       - name: Upload Web unit coverage
         if: ${{ !cancelled() && steps.unit-coverage.outcome == 'success' }}

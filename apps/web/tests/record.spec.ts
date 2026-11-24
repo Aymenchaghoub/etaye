@@ -601,6 +601,9 @@ test.describe('shell, entries and context hygiene', () => {
     await page.setViewportSize({ width: 1440, height: 1024 });
     await page.goto(RECORD);
     await expect(heading(page, 'Chronologie')).toBeFocused();
+    // The tab order is read on the loaded page: the heading is focused while the record still loads.
+    await expect(items(page)).toHaveCount(8);
+    await expect(heading(page, 'Chronologie')).toBeFocused();
     const stops: string[] = [];
     for (let tab = 0; tab < 14; tab += 1) {
       await page.keyboard.press('Tab');
