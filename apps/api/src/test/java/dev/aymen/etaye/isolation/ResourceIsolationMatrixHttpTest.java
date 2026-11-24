@@ -323,6 +323,55 @@ class ResourceIsolationMatrixHttpTest {
         IsolationMatrix.observe("CTX-INDEPENDENT-GRANTS", String.join(", ", observed));
     }
 
+    @Test
+    @DisplayName("D-55: the source operations follow the same isolation as the record, with a positive control")
+    void sourcesFollowTheRecordIsolation() throws SQLException {
+        Browser nora = login(NORA);
+        Browser elodie = login(ELODIE);
+        String ownSource = ownerValue("SELECT etaye_demo.fixture_id('SRC-A-001')");
+        String foreignSource = ownerValue("SELECT etaye_demo.fixture_id('SRC-B-001')");
+
+        Exchange list = get("/api/v1/practices/" + practiceA + "/records/" + recordA + "/sources", nora, null);
+        Exchange one = get("/api/v1/practices/" + practiceA + "/sources/" + ownSource, nora, null);
+        assertThat(list.status()).isEqualTo(200);
+        assertThat(list.headers().getCacheControl()).contains("no-store");
+        assertThat(((List<?>) list.body().get("items"))).isNotEmpty();
+        assertThat(one.status()).isEqualTo(200);
+        assertThat(one.headers().getETag()).isNull();
+        IsolationMatrix.observe("SRC-A-ALLOWED", list.status() == 200 && one.status() == 200 ? "200" : list.outcome() + ", " + one.outcome());
+
+        // The hidden source demonstrably exists: its own practice reads it.
+        Exchange control = get("/api/v1/practices/" + practiceB + "/sources/" + foreignSource, elodie, null);
+        assertThat(control.status()).isEqualTo(200);
+        IsolationMatrix.observe("SRC-B-CONTROL", control.outcome());
+
+        Map<String, Exchange> hidden = new java.util.LinkedHashMap<>();
+        hidden.put("SRC-HIDDEN-FOREIGN-ID", get("/api/v1/practices/" + practiceA + "/sources/" + foreignSource, nora, null));
+        hidden.put("SRC-HIDDEN-FOREIGN-PRACTICE", get("/api/v1/practices/" + practiceB + "/sources/" + foreignSource, nora, null));
+        hidden.put("SRC-HIDDEN-MISSING", get("/api/v1/practices/" + practiceA + "/sources/" + UUID.randomUUID(), nora, null));
+        hidden.put("SRC-HIDDEN-FOREIGN-RECORD", get("/api/v1/practices/" + practiceA + "/records/" + recordB + "/sources", nora, null));
+        hidden.put("SRC-PAT-STAFF-ROUTE", get("/api/v1/practices/" + practiceA + "/records/" + recordA + "/sources", login(CLAIRE), null));
+        hidden.forEach((id, response) -> {
+            assertThat(response.headers().getContentType()).as(id).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
+            assertThat(response.headers().getETag()).as("%s must carry no validator", id).isNull();
+            Map<String, Object> problem = new java.util.LinkedHashMap<>(response.body());
+            problem.remove("correlationId");
+            assertThat(problem).as(id).isEqualTo(NOT_FOUND);
+            for (String target : List.of(foreignSource, ownSource, recordA, recordB)) {
+                assertThat(response.body().toString()).as(id).doesNotContain(target);
+            }
+            IsolationMatrix.observe(id, response.outcome(), response.fingerprint());
+        });
+        assertThat(hidden.values().stream().map(Exchange::fingerprint).distinct()).hasSize(1);
+
+        Exchange refusal = get("/api/v1/practices/" + practiceA + "/records/" + recordA + "/sources", login(MILA), null);
+        assertThat(refusal.status()).isEqualTo(403);
+        assertThat(refusal.body()).containsOnlyKeys("type", "title", "status", "code", "detail", "correlationId")
+                .containsEntry("code", "FORBIDDEN");
+        assertThat(refusal.body().toString()).doesNotContain(recordA, practiceA, ownSource);
+        IsolationMatrix.observe("SRC-ADM-NO-CLINICAL", refusal.outcome());
+    }
+
     private Exchange read(String practiceId, String recordId, Browser browser, String ifNoneMatch) {
         return get("/api/v1/practices/" + practiceId + "/records/" + recordId, browser, ifNoneMatch);
     }

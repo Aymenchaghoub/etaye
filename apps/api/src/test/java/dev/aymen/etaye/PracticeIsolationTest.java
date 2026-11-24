@@ -134,7 +134,7 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
 
         Set<String> rlsTables = Set.of(
                 "account", "membership", "patient", "patient_record", "portal_link", "invitation",
-                "audit_event", "outbox_event", "idempotency_receipt");
+                "audit_event", "outbox_event", "idempotency_receipt", "source_revision", "clinical_assertion");
 
         for (String tbl : allRelations) {
             String qualifiedTable = "public." + tbl;
@@ -168,6 +168,9 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
                 "etaye_runtime", Map.of(
                         "patient", Set.of("SELECT", "INSERT"),
                         "patient_record", Set.of("SELECT", "INSERT"),
+                        // Story 3.2 serves the evidence read-only: entry and correction arrive with increment 2 (D-60).
+                        "source_revision", Set.of("SELECT"),
+                        "clinical_assertion", Set.of("SELECT"),
                         "audit_event", Set.of("INSERT"),
                         "outbox_event", Set.of("INSERT"),
                         "idempotency_receipt", Set.of("SELECT", "INSERT"),
@@ -230,6 +233,8 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
                         expectedColPrivs = Set.of("SELECT", "INSERT", "UPDATE");
                     } else if (Set.of("patient", "patient_record", "idempotency_receipt").contains(table)) {
                         expectedColPrivs = Set.of("SELECT", "INSERT");
+                    } else if (Set.of("source_revision", "clinical_assertion").contains(table)) {
+                        expectedColPrivs = Set.of("SELECT");
                     } else if (Set.of("audit_event", "outbox_event").contains(table)) {
                         expectedColPrivs = Set.of("INSERT");
                     } else if (Set.of("spring_session", "spring_session_attributes").contains(table)) {
