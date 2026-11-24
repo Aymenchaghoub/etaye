@@ -3,6 +3,18 @@
 -- Every row is practice and record owned, the keys are composite so a row can never point at another practice or
 -- record, and forced row-level security applies on top (BR-001, data model).
 
+-- A stored zone is always one PostgreSQL knows: a misspelled zone would otherwise make every read of the record fail.
+CREATE FUNCTION public.valid_time_zone(zone text) RETURNS boolean
+LANGUAGE plpgsql STABLE
+AS $$
+BEGIN
+    PERFORM now() AT TIME ZONE zone;
+    RETURN true;
+EXCEPTION WHEN invalid_parameter_value THEN
+    RETURN false;
+END
+$$;
+
 CREATE TABLE source_revision (
     id UUID NOT NULL DEFAULT gen_random_uuid(),
     practice_id UUID NOT NULL,
@@ -48,6 +60,7 @@ CREATE TABLE source_revision (
         (event_precision = 'INSTANT' AND event_at IS NOT NULL AND event_date IS NULL)
         OR (event_precision = 'DATE' AND event_date IS NOT NULL AND event_at IS NULL AND event_timezone IS NOT NULL)
         OR (event_precision = 'UNKNOWN' AND event_at IS NULL AND event_date IS NULL AND event_timezone IS NULL)),
+    CONSTRAINT ck_source_revision_zone CHECK (event_timezone IS NULL OR public.valid_time_zone(event_timezone)),
     CONSTRAINT ck_source_revision_correction CHECK (
         (revision = 1 AND supersedes_id IS NULL AND correction_reason IS NULL)
         OR (revision > 1 AND supersedes_id IS NOT NULL AND correction_reason IS NOT NULL AND btrim(correction_reason) <> ''))
@@ -91,6 +104,7 @@ CREATE TABLE clinical_assertion (
         (event_precision = 'INSTANT' AND event_at IS NOT NULL AND event_date IS NULL)
         OR (event_precision = 'DATE' AND event_date IS NOT NULL AND event_at IS NULL AND event_timezone IS NOT NULL)
         OR (event_precision = 'UNKNOWN' AND event_at IS NULL AND event_date IS NULL AND event_timezone IS NULL)),
+    CONSTRAINT ck_clinical_assertion_zone CHECK (event_timezone IS NULL OR public.valid_time_zone(event_timezone)),
     CONSTRAINT ck_clinical_assertion_correction CHECK (
         (revision = 1 AND supersedes_id IS NULL AND correction_reason IS NULL)
         OR (revision > 1 AND supersedes_id IS NOT NULL AND correction_reason IS NOT NULL AND btrim(correction_reason) <> ''))
@@ -108,6 +122,55 @@ BEGIN
         USING ERRCODE = 'restrict_violation';
 END
 $$;
+
+-- A correction follows the revision it supersedes, in revision order and in recording time, and an assertion is never
+-- recorded before the revision it cites: an asOf view can then never show a statement whose evidence does not exist yet.
+CREATE FUNCTION public.source_revision_order_guard() RETURNS trigger
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    prior public.source_revision%ROWTYPE;
+BEGIN
+    IF NEW.supersedes_id IS NOT NULL THEN
+        SELECT * INTO prior FROM public.source_revision WHERE id = NEW.supersedes_id;
+        IF NOT FOUND OR prior.revision <> NEW.revision - 1 OR prior.recorded_at > NEW.recorded_at THEN
+            RAISE EXCEPTION 'A correction must follow the revision it supersedes (ck_source_revision_order)'
+                USING ERRCODE = 'check_violation';
+        END IF;
+    END IF;
+    RETURN NEW;
+END
+$$;
+
+CREATE FUNCTION public.clinical_assertion_order_guard() RETURNS trigger
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    prior public.clinical_assertion%ROWTYPE;
+    cited_at timestamptz;
+BEGIN
+    IF NEW.source_revision_id IS NOT NULL THEN
+        SELECT recorded_at INTO cited_at FROM public.source_revision WHERE id = NEW.source_revision_id;
+        IF cited_at IS NULL OR cited_at > NEW.recorded_at THEN
+            RAISE EXCEPTION 'An assertion cannot be recorded before the source revision it cites (ck_clinical_assertion_order)'
+                USING ERRCODE = 'check_violation';
+        END IF;
+    END IF;
+    IF NEW.supersedes_id IS NOT NULL THEN
+        SELECT * INTO prior FROM public.clinical_assertion WHERE id = NEW.supersedes_id;
+        IF NOT FOUND OR prior.revision <> NEW.revision - 1 OR prior.recorded_at > NEW.recorded_at THEN
+            RAISE EXCEPTION 'A correction must follow the revision it supersedes (ck_clinical_assertion_order)'
+                USING ERRCODE = 'check_violation';
+        END IF;
+    END IF;
+    RETURN NEW;
+END
+$$;
+
+CREATE TRIGGER source_revision_order BEFORE INSERT ON source_revision
+    FOR EACH ROW EXECUTE FUNCTION public.source_revision_order_guard();
+CREATE TRIGGER clinical_assertion_order BEFORE INSERT ON clinical_assertion
+    FOR EACH ROW EXECUTE FUNCTION public.clinical_assertion_order_guard();
 
 CREATE TRIGGER source_revision_immutable BEFORE UPDATE OR DELETE ON source_revision
     FOR EACH ROW EXECUTE FUNCTION public.reject_evidence_change();

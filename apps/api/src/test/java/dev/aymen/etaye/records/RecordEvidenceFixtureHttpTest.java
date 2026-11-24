@@ -219,6 +219,22 @@ class RecordEvidenceFixtureHttpTest {
     }
 
     @Test
+    @DisplayName("UD-32: an instant finer than PostgreSQL stores is cut down, never rounded up into a later revision")
+    void asOfIsNeverRoundedUpIntoALaterRevision() {
+        String nora = login("nora.lefebvre@example.test");
+        String base = "/practices/" + practiceA + "/records/" + claire;
+        // The correction was recorded at 08:15:00Z: 100 nanoseconds before it, version 1 is still the current revision.
+        var timeline = get(nora, base + "/timeline?asOf=2026-10-20T08:14:59.999999900Z");
+        assertThat(references(timeline)).contains("SRC-A-007-v1").doesNotContain("SRC-A-007-v2");
+        String weightV2 = items(get(nora, base + "/timeline?asOf=2026-10-20T08:16:00Z")).stream()
+                .filter(i -> "SRC-A-007-v2".equals(i.get("reference"))).findFirst().orElseThrow().get("sourceRevisionId").toString();
+        assertThat(get(nora, "/practices/" + practiceA + "/sources/" + weightV2 + "?asOf=2026-10-20T08:14:59.999999900Z")
+                .getStatusCode().value()).isEqualTo(404);
+        assertThat(get(nora, "/practices/" + practiceA + "/sources/" + weightV2 + "?asOf=2026-10-20T08:15:00Z")
+                .getStatusCode().value()).isEqualTo(200);
+    }
+
+    @Test
     @DisplayName("UD-32: a revision recorded after the instant is a 404 byte-identical to an absent source")
     void sourceRevisionRecordedLaterIsHiddenInThePastView() {
         String nora = login("nora.lefebvre@example.test");

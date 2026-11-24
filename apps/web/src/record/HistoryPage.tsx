@@ -37,9 +37,10 @@ export function HistoryPage() {
   const sections = SECTION_ORDER.map((category) => history.data.sections.find((section) => section.category === category)
     ?? ({ category, state: 'NOT_RECORDED', statements: [], truncated: false } as HistorySection));
 
-  if (examining) {
-    const section = sections.find((candidate) => candidate.category === examining)!;
-    return <Review section={section} back={() => { returnTo.current = examining; setExamining(undefined); }} />;
+  // The review stays open only while its section is still a conflict: another instant can remove one side of it.
+  const reviewed = examining ? sections.find((candidate) => candidate.category === examining && candidate.state === 'CONFLICTING') : undefined;
+  if (examining && reviewed) {
+    return <Review section={reviewed} back={() => { returnTo.current = examining; setExamining(undefined); }} />;
   }
 
   let number = 0;
@@ -187,7 +188,7 @@ function Side({ statement, number, label }: { statement: Assertion; number: numb
       </div>
       <span className="etaye-3" style={{ fontSize: 12 }}>
         {[statement.authorLabel, statement.sourceType ? originLabel[statement.sourceType] : undefined,
-          statement.sourceReference ? `${statement.sourceReference} v${statement.revision}` : undefined].filter(Boolean).join(' · ')}
+          statement.sourceReference].filter(Boolean).join(' · ')}
       </span>
       {statement.sourceRevisionId && source.panel}
     </div>

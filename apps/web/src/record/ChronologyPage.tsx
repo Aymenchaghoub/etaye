@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { accountApi } from '../api/browser';
 import type { HistorySection, HistorySummary, TimelineItem } from '../api/generated/types.gen';
 import { ErrorSummary, type FieldError } from '../auth/AuthComponents';
@@ -42,10 +42,16 @@ export function ChronologyPage() {
   }, [applied, ctx.asOf]);
   const dateFiltered = applied.from.day !== '' || applied.to.day !== '';
   const filtered = applied.kind !== '' || dateFiltered;
-  const { practiceId, recordId, expire, refused } = ctx;
+  const { practiceId, recordId, refused } = ctx;
+  // The session poll hands the screen a new `expire` function every time: it is read through a ref so a poll never
+  // reloads the first page. `epoch` numbers the first-page loads, so a late "Afficher plus" of an earlier view is dropped.
+  const expireRef = useRef(ctx.expire);
+  expireRef.current = ctx.expire;
+  const epoch = useRef(0);
 
   useEffect(() => {
     const request = new AbortController();
+    epoch.current += 1;
     setPhase('loading');
     setItems([]);
     setNext(null);
@@ -57,20 +63,23 @@ export function ChronologyPage() {
         setNext(result.data.nextCursor);
         setAnswered(true);
         setPhase('ready');
-      } else if (result.status === 401) expire();
+      } else if (result.status === 401) expireRef.current();
       else if (result.status === 403 || result.status === 404) refused(result.status);
       else if (result.status === 429) { setWait(result.retryAfter); setPhase('limited'); }
       else setPhase('failed');
     });
     return () => request.abort();
-  }, [practiceId, recordId, query, attempt, expire, refused]);
+  }, [practiceId, recordId, query, attempt, refused]);
 
   async function showMore() {
     if (!next || more === 'loading') return;
+    const started = epoch.current;
     setMore('loading');
     const result = await accountApi.readTimeline(practiceId, recordId, { ...query, cursor: next, limit: PAGE });
+    // The view changed while the page was loading (another instant or filter): this page belongs to the earlier view.
+    if (started !== epoch.current) return;
     if (!result.ok) {
-      if (result.status === 401) expire();
+      if (result.status === 401) expireRef.current();
       else if (result.status === 403 || result.status === 404) refused(result.status);
       else setMore('failed');
       return;
@@ -113,9 +122,10 @@ export function ChronologyPage() {
   const row = (item: TimelineItem) => { number += 1; return <ChronologyItem key={item.id} item={item} number={number} />; };
 
   return <>
-    {ctx.history.phase === 'failed' && (
-      <Notice kind="attention" alert title="Les rubriques n’ont pas pu être chargées"
+    {(ctx.history.phase === 'failed' || ctx.history.phase === 'limited') && (
+      <Notice kind="attention" alert title={ctx.history.phase === 'limited' ? 'Trop de requêtes' : 'Les rubriques n’ont pas pu être chargées'}
         actions={<button className="etaye-bouton etaye-bouton--secondaire" type="button" onClick={ctx.retryHistory}>Réessayer</button>}>
+        {ctx.history.phase === 'limited' ? `Patientez ${ctx.history.wait > 0 ? `${ctx.history.wait} secondes` : 'un instant'} avant de recharger les rubriques. ` : ''}
         Ne pas conclure à l’absence d’allergie, d’antécédent ou de traitement : l’état de ces rubriques est inconnu de l’affichage.
         La chronologie reste consultable ; rien n’a été supprimé.
       </Notice>

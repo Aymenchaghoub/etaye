@@ -3,6 +3,7 @@ import { accountApi } from '../api/browser';
 import type { Source } from '../api/generated/types.gen';
 import { Notice } from '../patients/patient-ui';
 import { eventLabel, formatInstant, originLabel, originState, sourceHeading } from './evidence';
+import { useRecord } from './RecordPage';
 import { outcome, type Remote } from './remote';
 
 /** What a row already knows about its source, so the marker and the button are named before the source is fetched. */
@@ -16,6 +17,7 @@ export type SourceHandle = { id: string; reference: string; number: number };
  */
 export function useSource(source: SourceHandle, practiceId: string, asOf: string | undefined, expire: () => void,
   variant: 'inline' | 'alone' = 'inline'): { marker: ReactNode; panel: ReactNode } {
+  const { refused } = useRecord();
   const uid = useId();
   const markerId = `m-${uid}`;
   const regionId = `r-${uid}`;
@@ -32,10 +34,13 @@ export function useSource(source: SourceHandle, practiceId: string, asOf: string
     const request = new AbortController();
     setRemote({ phase: 'loading' });
     void accountApi.readSource(practiceId, source.id, asOf, request.signal).then((result) => {
-      if (!request.signal.aborted) setRemote(outcome(result, () => expireRef.current()));
+      if (request.signal.aborted) return;
+      // A permission denial removes the protected content at once, like every other panel of the record (I-27).
+      if (!result.ok && (result.status === 403 || result.status === 404)) { refused(result.status); return; }
+      setRemote(outcome(result, () => expireRef.current()));
     });
     return () => request.abort();
-  }, [open, attempt, practiceId, source.id, asOf]);
+  }, [open, attempt, practiceId, source.id, asOf, refused]);
 
   useEffect(() => {
     if (focusButton.current) {
@@ -47,7 +52,12 @@ export function useSource(source: SourceHandle, practiceId: string, asOf: string
   const marker = (
     <a className={`etaye-repere${variant === 'alone' ? ' etaye-repere--seul' : ''}`} id={markerId} href={`#${regionId}`}
       aria-label={`Source ${source.number} : ${source.reference}`}
-      onClick={(event) => { event.preventDefault(); focusButton.current = true; setOpen(true); }}>{source.number}</a>
+      onClick={(event) => {
+        event.preventDefault();
+        // Already open: the state does not change, so the focus is moved here and not by the effect.
+        if (open) button.current?.focus();
+        else { focusButton.current = true; setOpen(true); }
+      }}>{source.number}</a>
   );
   const panel = (
     <div className="etaye-source">

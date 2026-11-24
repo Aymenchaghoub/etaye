@@ -34,6 +34,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * the database guarantees (read-only runtime role, immutability, constraints, row-level security) and the isolation
  * and denial behavior of the five read operations (C1, C5 to C8, C11, C12, C15).
  */
+@SuppressWarnings("unchecked")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class RecordEvidenceHttpTest extends AbstractPostgresTest {
 
@@ -274,6 +275,51 @@ class RecordEvidenceHttpTest extends AbstractPostgresTest {
         items(second).forEach(i -> assertThat(seen.add(i.get("reference").toString())).isTrue());
     }
 
+    // ---------------------------------------------------------------- AT-010-A: dated history and treatments
+
+    @Test
+    @DisplayName("AT-010-A: stated history and reported treatments carry dated provenance, and an earlier view omits them")
+    void statedHistoryAndTreatmentsCarryDatedProvenance() throws SQLException {
+        UUID note = source(practiceA, recordA, "SRC-P-1", "CONSULTATION_NOTE", "Antécédents relevés", "Appendicectomie en 2009.",
+                "D:2026-09-01", "2026-09-02T10:00:00+02:00");
+        UUID document = source(practiceA, recordA, "SRC-P-2", "UPLOADED_DOCUMENT", "Ordonnance reportée", "Traitement noté sur le courrier.",
+                "I:2026-10-05T09:00:00+02:00", "2026-10-06T10:00:00+02:00");
+        assertion(practiceA, recordA, "HISTORY", "PRESENT", "Appendicectomie en 2009.", note, "2026-09-02T10:00:00+02:00");
+        assertion(practiceA, recordA, "REPORTED_TREATMENT", "PRESENT", "Traitement noté sur le courrier.", document, "2026-10-06T10:00:00+02:00");
+        String base = "/practices/" + practiceA + "/records/" + recordA + "/history";
+        var now = get(clinicalA, base);
+        var sections = (List<Map<String, Object>>) now.getBody().get("sections");
+        var history = sections.stream().filter(s -> "HISTORY".equals(s.get("category"))).findFirst().orElseThrow();
+        assertThat(history).containsEntry("state", "PRESENT");
+        var statement = ((List<Map<String, Object>>) history.get("statements")).getFirst();
+        assertThat(statement).containsEntry("sourceReference", "SRC-P-1").containsEntry("sourceKind", "CONSULTATION_NOTE")
+                .containsEntry("sourceType", "PRACTITIONER_OBSERVED").containsEntry("authorLabel", "Dr Test")
+                .containsEntry("text", "Appendicectomie en 2009.");
+        assertThat(statement.get("recordedAt").toString()).startsWith("2026-09-02T08:00");
+        var treatments = sections.stream().filter(s -> "REPORTED_TREATMENT".equals(s.get("category"))).findFirst().orElseThrow();
+        assertThat(treatments).containsEntry("state", "PRESENT");
+        // Before the document was recorded the treatments are not recorded, and the history is already known.
+        var earlier = (List<Map<String, Object>>) get(clinicalA, base + "?asOf=2026-09-15T00:00:00Z").getBody().get("sections");
+        assertThat(earlier).extracting(s -> s.get("state")).containsExactly("NOT_RECORDED", "PRESENT", "NOT_RECORDED");
+    }
+
+    @Test
+    @DisplayName("A section of more than 100 statements still lists both sides of a conflict and says it is truncated")
+    void aLongSectionKeepsBothSidesOfAConflict() throws SQLException {
+        UUID src = source(practiceA, recordA, "SRC-T-1", "CONSULTATION_NOTE", "Note", "Texte", "I:2026-09-01T09:00:00+02:00", "2026-09-01T10:00:00+02:00");
+        for (int i = 0; i < 101; i++) {
+            assertion(practiceA, recordA, "ALLERGY", "EXPLICITLY_ABSENT", "Aucune allergie " + i, src, "2026-09-02T10:%02d:00+02:00".formatted(i % 60));
+        }
+        assertion(practiceA, recordA, "ALLERGY", "PRESENT", "Réaction signalée", src, "2026-10-01T10:00:00+02:00");
+        var sections = (List<Map<String, Object>>) get(clinicalA, "/practices/" + practiceA + "/records/" + recordA + "/history")
+                .getBody().get("sections");
+        var allergy = sections.getFirst();
+        assertThat(allergy).containsEntry("state", "CONFLICTING").containsEntry("truncated", true);
+        var statements = (List<Map<String, Object>>) allergy.get("statements");
+        assertThat(statements).hasSize(100);
+        assertThat(statements).extracting(s -> s.get("assertionKind")).contains("PRESENT", "EXPLICITLY_ABSENT");
+    }
+
     // ---------------------------------------------------------------- C11, C12: read-only member, untrusted text
 
     @Test
@@ -444,7 +490,7 @@ class RecordEvidenceHttpTest extends AbstractPostgresTest {
         // A superseding revision needs its reason, its predecessor and the same lineage and record.
         assertThatThrownBy(() -> source(practiceA, recordA, lineage, 3, second, null, "SRC-C-3", "PRACTITIONER_MEASUREMENT", "x", "x",
                 "I:2026-10-20T10:12:00+02:00", "2026-10-20T10:16:00+02:00")).isInstanceOf(SQLException.class).hasMessageContaining("ck_source_revision_correction");
-        assertThatThrownBy(() -> source(practiceA, recordA, UUID.randomUUID(), 2, second, "Autre lignée", "SRC-C-4", "PRACTITIONER_MEASUREMENT", "x", "x",
+        assertThatThrownBy(() -> source(practiceA, recordA, UUID.randomUUID(), 3, second, "Autre lignée", "SRC-C-4", "PRACTITIONER_MEASUREMENT", "x", "x",
                 "I:2026-10-20T10:12:00+02:00", "2026-10-20T10:16:00+02:00")).isInstanceOf(SQLException.class).hasMessageContaining("fk_source_revision_supersedes");
         UUID otherRecord = createRecord(practiceA, "Autre", "Dossier");
         assertThatThrownBy(() -> source(practiceA, otherRecord, lineage, 3, second, "Autre dossier", "SRC-C-5", "PRACTITIONER_MEASUREMENT", "x", "x",
@@ -454,6 +500,17 @@ class RecordEvidenceHttpTest extends AbstractPostgresTest {
         // The same lineage cannot hold two rows of one revision number.
         assertThatThrownBy(() -> source(practiceA, recordA, lineage, 2, first, "Doublon", "SRC-C-7", "PRACTITIONER_MEASUREMENT", "x", "x",
                 "I:2026-10-20T10:12:00+02:00", "2026-10-20T10:17:00+02:00")).isInstanceOf(SQLException.class).hasMessageContaining("uq_source_revision_lineage_revision");
+
+        // A correction follows its predecessor in revision order and in time; an assertion never precedes its source.
+        assertThatThrownBy(() -> source(practiceA, recordA, lineage, 3, first, "Saut de révision", "SRC-C-8", "PRACTITIONER_MEASUREMENT", "x", "x",
+                "I:2026-10-20T10:12:00+02:00", "2026-10-20T10:17:00+02:00")).isInstanceOf(SQLException.class).hasMessageContaining("ck_source_revision_order");
+        UUID otherLineage = UUID.randomUUID();
+        UUID early = source(practiceA, recordA, otherLineage, 1, null, null, "SRC-C-9", "CONSULTATION_NOTE", "x", "x",
+                "I:2026-10-20T10:12:00+02:00", "2026-10-20T10:20:00+02:00");
+        assertThatThrownBy(() -> source(practiceA, recordA, otherLineage, 2, early, "Antidaté", "SRC-C-10", "CONSULTATION_NOTE", "x", "x",
+                "I:2026-10-20T10:12:00+02:00", "2026-10-20T10:19:00+02:00")).isInstanceOf(SQLException.class).hasMessageContaining("ck_source_revision_order");
+        assertThatThrownBy(() -> assertion(practiceA, recordA, "ALLERGY", "PRESENT", "Avant sa source", early, "2026-10-20T10:19:00+02:00"))
+                .isInstanceOf(SQLException.class).hasMessageContaining("ck_clinical_assertion_order");
 
         try (Connection c = owner(); Statement st = c.createStatement()) {
             c.setAutoCommit(false);
@@ -471,6 +528,14 @@ class RecordEvidenceHttpTest extends AbstractPostgresTest {
                         event_precision, event_date, recorded_at, author_label)
                     VALUES ('%s', '%s', gen_random_uuid(), 1, 'F', 'CONSULTATION_NOTE', 'x', 'PATIENT_REPORTED', 'DATE', '2026-10-01', now(), 'x')
                     """.formatted(practiceA, recordA))).hasMessageContaining("ck_source_revision_event");
+            c.rollback();
+            scope(c, practiceA);
+            // A stored zone is one PostgreSQL knows, so no read can fail on it.
+            assertThatThrownBy(() -> st.execute("""
+                    INSERT INTO source_revision (practice_id, record_id, lineage_id, revision, reference, kind, label, source_type,
+                        event_precision, event_date, event_timezone, recorded_at, author_label)
+                    VALUES ('%s', '%s', gen_random_uuid(), 1, 'Z', 'CONSULTATION_NOTE', 'x', 'PATIENT_REPORTED', 'DATE', '2026-10-01', 'Europe/Pariss', now(), 'x')
+                    """.formatted(practiceA, recordA))).hasMessageContaining("ck_source_revision_zone");
             c.rollback();
             scope(c, practiceA);
             // Immutable even for the owner.

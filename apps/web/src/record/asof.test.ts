@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dayStart, instantParts, nextDayStart, parseAsOf, parseFilterDay, parisInstant } from './asof';
+import { dayStart, instantParts, nextDayStart, parseAsOf, parseFilterDay, parisInstant, parisInstants } from './asof';
 
 const now = new Date('2026-11-24T12:00:00Z');
 const parts = (day: string, month: string, year: string, hour: string, minute: string) => ({ day, month, year, hour, minute });
@@ -11,10 +11,13 @@ describe('Paris wall clock to instant', () => {
     expect(parisInstant(2026, 1, 15, 0, 0)?.toISOString()).toBe('2026-01-14T23:00:00.000Z');
   });
 
-  it('refuses the hour that clocks skip and reads a repeated hour as its first occurrence', () => {
+  it('refuses the hour that clocks skip and the hour that repeats, instead of choosing one reading', () => {
     expect(parisInstant(2026, 3, 29, 2, 30)).toBeUndefined();
     expect(parisInstant(2026, 3, 29, 3, 0)?.toISOString()).toBe('2026-03-29T01:00:00.000Z');
-    expect(parisInstant(2026, 10, 25, 2, 30)?.toISOString()).toBe('2026-10-25T00:30:00.000Z');
+    expect(parisInstants(2026, 10, 25, 2, 30).map((at) => at.toISOString())).toEqual(['2026-10-25T00:30:00.000Z', '2026-10-25T01:30:00.000Z']);
+    expect(parisInstant(2026, 10, 25, 2, 30)).toBeUndefined();
+    expect(parisInstant(2026, 10, 25, 3, 0)?.toISOString()).toBe('2026-10-25T02:00:00.000Z');
+    expect(parseAsOf(parts('25', '10', '2026', '02', '30'), now)).toMatchObject({ ok: false, summary: 'Date et heure : cette heure existe deux fois' });
   });
 
   it('round-trips an instant to the fields of the control', () => {

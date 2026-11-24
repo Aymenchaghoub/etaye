@@ -59,7 +59,7 @@ jobs:
         if: steps.changes.outputs.relevant == 'true'
         # Raise the minimum whenever the suite grows.
         run: >-
-          python3 tools/assert_test_reports.py surefire apps/api/target/surefire-reports --min-tests 232
+          python3 tools/assert_test_reports.py surefire apps/api/target/surefire-reports --min-tests 235
           --require-suite dev.aymen.etaye.ArchitectureTest
           --require-suite dev.aymen.etaye.identity.IdentityLookupTest
           --require-suite dev.aymen.etaye.security.AccountAccessHttpTest

@@ -21,15 +21,20 @@ function zoneOffset(at: number): number {
 }
 
 /**
- * The instant at which the Paris wall clock reads the given date and time, or undefined when that time does not exist
- * (the hour skipped when clocks go forward). The hour repeated when clocks go back reads as its first occurrence.
+ * Every instant at which the Paris wall clock reads the given date and time: none for the hour that clocks skip when they
+ * go forward, two for the hour that repeats when they go back.
  */
-export function parisInstant(year: number, month: number, day: number, hour: number, minute: number): Date | undefined {
+export function parisInstants(year: number, month: number, day: number, hour: number, minute: number): Date[] {
   const wall = Date.UTC(year, month - 1, day, hour, minute);
-  // The offsets in force a day before and a day after bracket any change of clocks, so both readings of a repeated hour are tried.
+  // The offsets in force a day before and a day after bracket any change of clocks, so both readings are tried.
   const candidates = new Set([wall - zoneOffset(wall - 86_400_000), wall - zoneOffset(wall + 86_400_000)]);
-  const valid = [...candidates].filter((at) => at + zoneOffset(at) === wall).sort((a, b) => a - b);
-  return valid.length ? new Date(valid[0]) : undefined;
+  return [...candidates].filter((at) => at + zoneOffset(at) === wall).sort((a, b) => a - b).map((at) => new Date(at));
+}
+
+/** The instant of a Paris wall-clock reading, or undefined when it does not exist or is ambiguous (see parisInstants). */
+export function parisInstant(year: number, month: number, day: number, hour: number, minute: number): Date | undefined {
+  const all = parisInstants(year, month, day, hour, minute);
+  return all.length === 1 ? all[0] : undefined;
 }
 
 const daysIn = (year: number, month: number) => new Date(Date.UTC(year, month, 0)).getUTCDate();
@@ -56,10 +61,15 @@ export function parseAsOf(parts: InstantParts, now: Date = new Date()): ParseRes
   if (month < 1 || month > 12 || day < 1 || day > daysIn(year, month) || hour > 23 || minute > 59 || year < 1900) {
     return { ok: false, summary: 'Date et heure : cet instant n’existe pas', detail: `Erreur : cette date ou cette heure n’existe pas. ${FORMAT}` };
   }
-  const instant = parisInstant(year, month, day, hour, minute);
-  if (!instant) {
+  const found = parisInstants(year, month, day, hour, minute);
+  if (found.length === 0) {
     return { ok: false, summary: 'Date et heure : cette heure n’existe pas', detail: 'Erreur : cette heure n’existe pas à Paris (changement d’heure). Choisissez une autre heure.' };
   }
+  if (found.length > 1) {
+    // Choosing one of the two readings silently could hide evidence recorded between them.
+    return { ok: false, summary: 'Date et heure : cette heure existe deux fois', detail: 'Erreur : cette heure existe deux fois à Paris (changement d’heure). Choisissez une heure avant ou après cet intervalle.' };
+  }
+  const instant = found[0];
   if (instant.getTime() > now.getTime()) {
     return { ok: false, summary: 'Date et heure : une date future ne peut pas être affichée', detail: 'Erreur : une date future ne peut pas être affichée. Choisissez un instant passé.' };
   }

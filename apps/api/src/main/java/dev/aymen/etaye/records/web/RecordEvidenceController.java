@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -110,13 +111,17 @@ public class RecordEvidenceController {
         return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(body);
     }
 
-    /** An absolute ISO 8601 date-time. A client sends UTC or an offset; a local time without offset is refused. */
+    /**
+     * An absolute ISO 8601 date-time. A client sends UTC or an offset; a local time without offset is refused. The instant
+     * is cut down to the microsecond PostgreSQL stores: rounding it up would let a revision recorded just after the
+     * requested instant into an as-of view.
+     */
     static Instant instant(String name, String value) {
         if (value == null) {
             return null;
         }
         try {
-            return OffsetDateTime.parse(value).toInstant();
+            return OffsetDateTime.parse(value).toInstant().truncatedTo(ChronoUnit.MICROS);
         } catch (DateTimeParseException malformed) {
             throw new InvalidParameterException(name + " must be an ISO 8601 date-time with an offset");
         }

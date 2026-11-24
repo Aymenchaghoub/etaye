@@ -254,6 +254,110 @@ test.describe('S-09 chronology (AT-010-A, AT-010-B)', () => {
   });
 });
 
+test.describe('review findings of story 3.2', () => {
+  test('a late page of an earlier view never replaces the view that was chosen after it', async ({ page }) => {
+    const rows: Row[] = Array.from({ length: 30 }, (_, n) => ({
+      id: ids(8000 + n), lineage: ids(9000 + n), revision: 1, reference: `SRC-L-${String(n).padStart(2, '0')}`, kind: 'CONSULTATION_NOTE',
+      label: `Note ${n}`, excerpt: `Texte ${n}`, sourceType: 'PRACTITIONER_OBSERVED', at: `2026-09-${String(n % 28 + 1).padStart(2, '0')}T08:00:00Z`,
+      recordedAt: '2026-10-02T08:00:00Z', author: 'Dr Nora Lefebvre',
+    }));
+    await stubRecord(page, { rows, timeline: (url) => (url.searchParams.get('cursor') ? { json: { items: [timelineItem(rows[29])], nextCursor: null }, delay: 1200 } : undefined) });
+    await page.goto(RECORD);
+    await expect(items(page)).toHaveCount(25);
+    await page.getByRole('button', { name: 'Afficher plus' }).click();
+    // While the next page loads, the practitioner chooses an earlier instant: nothing was recorded yet.
+    await page.locator('button[aria-controls="asof-region"]').click();
+    for (const [id, value] of [['as-j', '01'], ['as-m', '10'], ['as-a', '2026'], ['as-h', '10'], ['as-mi', '00']]) await page.locator(`#${id}`).fill(value);
+    await page.getByRole('button', { name: 'Afficher cette date' }).click();
+    await expect(page.getByText('Rien n’était enregistré à cette date')).toBeVisible();
+    await page.waitForTimeout(1600);
+    await expect(items(page)).toHaveCount(0);
+    await expect(page.getByText('Rien n’était enregistré à cette date')).toBeVisible();
+    await expect(page.getByText('SRC-L-29')).toHaveCount(0);
+  });
+
+  test('a throttled history says so and can be retried, on the chronology too', async ({ page }) => {
+    let throttled = true;
+    await stubRecord(page, { history: () => (throttled ? { status: 429, json: problem(429, 'RATE_LIMITED'), headers: { 'Retry-After': '7' } } : undefined) });
+    await page.goto(RECORD);
+    await expect(items(page)).toHaveCount(8);
+    await expect(page.getByRole('alert').filter({ hasText: 'Trop de requêtes' })).toContainText('Patientez 7 secondes avant de recharger les rubriques.');
+    await accessible(page);
+    throttled = false;
+    await page.getByRole('button', { name: 'Réessayer' }).click();
+    await expect(sections(page)).toContainText('Allergies : déclarations discordantes');
+  });
+
+  test('a source refused after the page loaded removes the protected content at once', async ({ page }) => {
+    await stubRecord(page, { source: () => ({ status: 403, json: problem(403, 'FORBIDDEN') }) });
+    await page.goto(HISTORY);
+    await expect(page.getByRole('region', { name: 'Allergies' })).toContainText('« Aucune allergie connue');
+    await page.getByRole('region', { name: 'Allergies' }).locator('.etaye-controle li').first().getByRole('button', { name: /Afficher la source/ }).click();
+    await expect(page.getByText('Accès non autorisé · 403')).toBeVisible();
+    await expect(page.getByText('Aucune allergie connue')).toHaveCount(0);
+    await expect(page.getByText('MARTIN Claire')).toHaveCount(0);
+  });
+
+  test('Enter on the marker of a source that is already open moves focus to its button', async ({ page }) => {
+    await stubRecord(page);
+    await page.goto(RECORD);
+    const item = items(page).first();
+    const marker = item.getByRole('link', { name: 'Source 1 : SRC-A-005' });
+    await marker.focus();
+    await page.keyboard.press('Enter');
+    await expect(item.locator('.etaye-source > button')).toBeFocused();
+    await marker.focus();
+    await expect(marker).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(item.locator('.etaye-source > button')).toBeFocused();
+    await expect(item.locator('.etaye-source > button')).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  test('the conflict review closes when another instant leaves no conflict', async ({ page }) => {
+    await stubRecord(page);
+    await page.goto(HISTORY);
+    await page.getByRole('button', { name: /Examiner les sources/ }).click();
+    await expect(page.getByRole('region', { name: 'Informations à vérifier' })).toBeVisible();
+    await page.locator('button[aria-controls="asof-region"]').click();
+    for (const [id, value] of [['as-j', '01'], ['as-m', '11'], ['as-a', '2026'], ['as-h', '10'], ['as-mi', '00']]) await page.locator(`#${id}`).fill(value);
+    await page.getByRole('button', { name: 'Afficher cette date' }).click();
+    await expect(page.getByRole('region', { name: 'Informations à vérifier' })).toHaveCount(0);
+    await expect(page.getByRole('region', { name: 'Allergies' })).toContainText('Absence déclarée le 14/09/2026');
+    await expect(page.getByRole('region', { name: 'Allergies' })).not.toContainText('Déclarations discordantes');
+  });
+
+  test('an hour that repeats when the clocks go back is refused, not guessed', async ({ page }) => {
+    const { evidence } = await stubRecord(page);
+    await page.goto(RECORD);
+    await expect(items(page)).toHaveCount(8);
+    await page.locator('button[aria-controls="asof-region"]').click();
+    const before = evidence.timelines.length;
+    for (const [id, value] of [['as-j', '25'], ['as-m', '10'], ['as-a', '2026'], ['as-h', '02'], ['as-mi', '30']]) await page.locator(`#${id}`).fill(value);
+    await page.getByRole('button', { name: 'Afficher cette date' }).click();
+    await expect(page.getByRole('alert').filter({ hasText: 'Date et heure : cette heure existe deux fois' })).toBeFocused();
+    expect(evidence.timelines.length).toBe(before);
+  });
+
+  test('long untrusted statements on the history tab wrap and clip nothing at 390 and 320 px', async ({ page }) => {
+    const longWord = 'A'.repeat(70);
+    const long = `<img src=x onerror="window.__s10 = 1"> ${('Déclaration longue ' + longWord + ' ').repeat(60)}`.slice(0, 5000);
+    const statements = { [claire.recordId]: claireStatements.map((s) => (s.id === ids(7002) ? { ...s, text: long } : s)) };
+    await stubRecord(page, { statements });
+    for (const width of [1440, 390, 320]) {
+      await page.setViewportSize({ width, height: 844 });
+      await page.goto(HISTORY);
+      await expect(page.getByRole('region', { name: 'Allergies' })).toContainText('Déclaration longue AAAAAAAAAA');
+      await noOverflow(page);
+      const clipped = await page.evaluate(() => [...document.querySelectorAll('.etaye-controle li, .etaye-declaration, .etaye-3, .etaye-etat')]
+        .filter((element) => element.scrollWidth > element.clientWidth + 1).map((element) => element.textContent?.slice(0, 40)));
+      expect(clipped).toEqual([]);
+      expect(await page.evaluate(() => (window as unknown as { __s10?: number }).__s10)).toBeUndefined();
+      await expect(page.locator('main img[src="x"]')).toHaveCount(0);
+      if (width !== 1440) await accessible(page);
+    }
+  });
+});
+
 test.describe('the past-instant view (UD-32)', () => {
   const choose = async (page: Page, parts: { j: string; m: string; a: string; h: string; mi: string }) => {
     await page.locator('#as-j').fill(parts.j);

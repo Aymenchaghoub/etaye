@@ -141,7 +141,7 @@ public class EvidenceRepository {
                     .addValue("afterId", after.id());
         }
         String sql = CURRENT_SOURCES + "SELECT " + SOURCE_COLUMNS + " FROM shaped c "
-                + "LEFT JOIN source_revision p ON p.practice_id = c.practice_id AND p.record_id = c.record_id AND p.id = c.supersedes_id "
+                + "LEFT JOIN source_revision p ON p.practice_id = c.practice_id AND p.record_id = c.record_id AND p.id = c.supersedes_id AND p.recorded_at <= :asOf "
                 + where + " ORDER BY c.undated, c.sort_at DESC, c.recorded_at DESC, c.id DESC LIMIT :limit";
         return jdbc.query(sql, params, (rs, row) -> mapSource(rs));
     }
@@ -156,8 +156,8 @@ public class EvidenceRepository {
         }
         return jdbc.query("SELECT " + SOURCE_COLUMNS + """
                          FROM source_revision c
-                         LEFT JOIN source_revision p ON p.practice_id = c.practice_id AND p.record_id = c.record_id AND p.id = c.supersedes_id
-                         WHERE c.practice_id = :practiceId AND c.id = :id""" + visible,
+                         LEFT JOIN source_revision p ON p.practice_id = c.practice_id AND p.record_id = c.record_id AND p.id = c.supersedes_id%s
+                         WHERE c.practice_id = :practiceId AND c.id = :id""".formatted(asOf == null ? "" : " AND p.recorded_at <= :asOf") + visible,
                 params, (rs, row) -> mapSource(rs)).stream().findFirst();
     }
 
@@ -180,6 +180,7 @@ public class EvidenceRepository {
     private static final String ASSERTION_FROM = """
             FROM shaped c
             LEFT JOIN source_revision s ON s.practice_id = c.practice_id AND s.record_id = c.record_id AND s.id = c.source_revision_id
+                AND s.recorded_at <= :asOf
             """;
 
     private static final String ASSERTION_COLUMNS = """

@@ -4,6 +4,7 @@ import dev.aymen.etaye.infrastructure.error.InvalidParameterException;
 import dev.aymen.etaye.infrastructure.error.ResourceNotFoundException;
 import dev.aymen.etaye.infrastructure.transaction.PracticeTransaction;
 import dev.aymen.etaye.records.domain.AssertionCategory;
+import dev.aymen.etaye.records.domain.AssertionKind;
 import dev.aymen.etaye.records.domain.AssertionView;
 import dev.aymen.etaye.records.domain.EvidenceRepository;
 import dev.aymen.etaye.records.domain.EvidenceRepository.Position;
@@ -163,11 +164,33 @@ public class RecordEvidenceService {
                 List<AssertionView> statements = all.stream().filter(a -> a.category() == category).toList();
                 SectionState state = SectionStateRule.derive(statements.stream()
                         .map(a -> new SectionStateRule.Statement(a.kind(), a.recordedAt(), a.id())).toList());
-                List<AssertionResponse> shown = statements.stream().limit(MAX_SECTION_STATEMENTS).map(AssertionResponse::of).toList();
+                List<AssertionResponse> shown = listed(statements).stream().map(AssertionResponse::of).toList();
                 return new HistorySectionResponse(category.name(), state.name(), shown, statements.size() > MAX_SECTION_STATEMENTS);
             }).toList();
             return new HistorySummaryResponse(asOf, sections);
         });
+    }
+
+    /**
+     * The statements a section lists: all of them up to the bound. Beyond it, the latest statement of every kind is kept
+     * first, so that the two sides of a conflict can always be read, then the most recent others; the repository order
+     * (oldest event first) is restored. The state is derived from all statements either way.
+     */
+    static List<AssertionView> listed(List<AssertionView> statements) {
+        if (statements.size() <= MAX_SECTION_STATEMENTS) {
+            return statements;
+        }
+        java.util.Set<UUID> keep = new java.util.HashSet<>();
+        for (AssertionKind kind : AssertionKind.values()) {
+            statements.stream().filter(a -> a.kind() == kind)
+                    .max(java.util.Comparator.comparing(AssertionView::recordedAt).thenComparing(AssertionView::id))
+                    .ifPresent(a -> keep.add(a.id()));
+        }
+        statements.stream()
+                .sorted(java.util.Comparator.comparing(AssertionView::recordedAt).thenComparing(AssertionView::id).reversed())
+                .takeWhile(a -> keep.size() < MAX_SECTION_STATEMENTS || keep.contains(a.id()))
+                .forEach(a -> keep.add(a.id()));
+        return statements.stream().filter(a -> keep.contains(a.id())).toList();
     }
 
     private Position sourceCursor(UUID practiceId, UUID recordId, Instant view, String cursor, String binding) {
