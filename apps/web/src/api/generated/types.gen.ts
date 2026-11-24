@@ -313,6 +313,7 @@ export type Assertion = {
     sourceReference?: string;
     revision?: number;
     supersedesId?: string;
+    sourceKind?: SourceKind;
 };
 
 export type MeasurementInput = {

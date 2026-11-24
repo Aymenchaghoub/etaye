@@ -9307,6 +9307,9 @@
           "supersedesId": {
             "type": "string",
             "format": "uuid"
+          },
+          "sourceKind": {
+            "$ref": "#/components/schemas/SourceKind"
           }
         },
         "required": [
