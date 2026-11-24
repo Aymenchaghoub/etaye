@@ -40,6 +40,8 @@ Story 3.2 serves the read side of the record: `getTimeline`, `listRecordSources`
 
 **Evidence items.** A source revision is immutable. Its lineage groups the revisions of one source, and a correction appends a revision with a reason that supersedes the previous one inside the same record. Text, labels and author labels are plain text and a client never renders them as markup. `kind` is a `SourceKind`; the filter `kind` of `getTimeline` accepts those values, repeated, and rejects any other with `400`.
 
+**Timeline text.** A timeline item carries the stored text of its revision (`excerpt`, plain text) so that a note or a patient statement reads in the list without a second request; a client shows it for the kinds that carry text and never renders it as markup. `getSourceRevision` opens the same immutable revision with its full provenance.
+
 **Order and unknown dates.** The timeline orders items by event date descending, then recording time descending, then id. An item whose event date is unknown is never placed at its recording date: it forms a last group, ordered by recording time and id, and shows only its recording date. `from` is inclusive, `to` exclusive; a date-only event counts at 00:00 of its timezone; items with an unknown event date stay listed under every date filter, so a filter never hides a fact. `listRecordSources` uses the same order; `listAssertions` lists oldest event date first with unknown dates last.
 
 **Paging.** Default 25, maximum 100. The opaque cursor is bound to practice, actor, record, view instant and filters and holds only the id of the last item; a malformed, foreign or mismatched cursor is `400`. No total is returned: a client says how many items it shows, never how many exist.

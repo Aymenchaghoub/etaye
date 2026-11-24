@@ -11273,6 +11273,12 @@
             "minLength": 1,
             "maxLength": 1000,
             "description": "Present only on a corrected revision."
+          },
+          "excerpt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 5000,
+            "description": "The dated text stored with this revision, as written (plain text, never markup). Present for items that carry text; the same revision is opened in full by getSourceRevision."
           }
         },
         "required": [

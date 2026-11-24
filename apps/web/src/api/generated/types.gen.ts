@@ -745,6 +745,10 @@ export type TimelineItem = {
      * Present only on a corrected revision.
      */
     correctionReason?: string;
+    /**
+     * The dated text stored with this revision, as written (plain text, never markup). Present for items that carry text; the same revision is opened in full by getSourceRevision.
+     */
+    excerpt?: string;
 };
 
 export type PracticePage = {
