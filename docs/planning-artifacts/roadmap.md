@@ -300,7 +300,7 @@ CORE families need the full evidence of the named design exception (UD-16); ever
 | S-39 | screen | Export options and print preview | 1 | SAMPLED | Export options for P-01 and P-02 → Inc 2 (D-27) |
 | S-40 | screen | AI processing activity and task detail | 1 | SAMPLED | — |
 
-### 8.3 API operations (99 in the contract, 4 planned)
+### 8.3 API operations (100 in the contract, 4 planned)
 
 | Inc | Operation | Method and path | Permission | State |
 |---|---|---|---|---|
@@ -326,6 +326,7 @@ CORE families need the full evidence of the named design exception (UD-16); ever
 | 1 | getSourceRevision | GET /practices/{practiceId}/sources/{sourceId} | CLINICAL_READ | in contract |
 | 1 | listAssertions | GET /practices/{practiceId}/records/{recordId}/assertions | CLINICAL_READ | in contract |
 | 2 | appendAssertion | POST /practices/{practiceId}/records/{recordId}/assertions | CLINICAL_WRITE | in contract |
+| 1 | getHistorySummary | GET /practices/{practiceId}/records/{recordId}/history | CLINICAL_READ | in contract |
 | 2 | correctAssertion | POST /practices/{practiceId}/assertions/{assertionId}/corrections | CLINICAL_WRITE | in contract |
 | 1 | listMeasurements | GET /practices/{practiceId}/records/{recordId}/measurements | CLINICAL_READ | in contract |
 | 1 | listLabResults | GET /practices/{practiceId}/records/{recordId}/lab-results | CLINICAL_READ | in contract |

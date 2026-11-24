@@ -818,6 +818,10 @@
       "increment": 2,
       "status": "contract"
     },
+    "getHistorySummary": {
+      "increment": 1,
+      "status": "contract"
+    },
     "correctAssertion": {
       "increment": 2,
       "status": "contract"

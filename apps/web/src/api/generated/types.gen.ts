@@ -247,13 +247,34 @@ export type Source = {
     id: string;
     practiceId: string;
     recordId: string;
-    sourceType: 'PATIENT_REPORTED' | 'PRACTITIONER_OBSERVED' | 'DOCUMENT_REPORTED';
+    sourceType: SourceType;
     eventDate: EventDate;
     recordedAt: string;
     authorLabel: string;
     revision: number;
     locator?: string;
     supersedesId?: string;
+    /**
+     * Human identifier of the revision, for example SRC-A-007-v2.
+     */
+    reference?: string;
+    kind?: SourceKind;
+    /**
+     * Plain-text title of the evidence item, shown as written.
+     */
+    label?: string;
+    /**
+     * The dated text stored with this immutable revision. Plain text: a client never renders it as markup.
+     */
+    excerpt?: string;
+    /**
+     * Reason recorded when this revision supersedes another; absent on an original.
+     */
+    correctionReason?: string;
+    /**
+     * Human identifier of the superseded revision, present with `supersedesId`.
+     */
+    supersedesReference?: string;
 };
 
 export type AssertionInput = {
@@ -265,19 +286,33 @@ export type AssertionInput = {
     correctionReason?: string;
 };
 
+/**
+ * One dated statement. UNKNOWN and NOT_ASKED statements may carry no text, no source type and no source revision: a missing field is never a negative. `correctionReason` appears only on a corrected revision.
+ */
 export type Assertion = {
     id: string;
     version: number;
     createdAt: string;
     updatedAt: string;
     practiceId: string;
-    category: 'HISTORY' | 'ALLERGY' | 'REPORTED_TREATMENT';
-    assertionKind: 'PRESENT' | 'EXPLICITLY_ABSENT' | 'UNKNOWN' | 'NOT_ASKED';
-    text: string;
+    category: AssertionCategory;
+    assertionKind: AssertionKind;
+    text?: string;
     eventDate: EventDate;
-    sourceType: 'PATIENT_REPORTED' | 'PRACTITIONER_OBSERVED' | 'DOCUMENT_REPORTED';
-    correctionReason: string;
-    sourceRevisionId: string;
+    sourceType?: SourceType;
+    correctionReason?: string;
+    sourceRevisionId?: string;
+    /**
+     * Server-provided recording instant. It decides which statements an `asOf` view contains.
+     */
+    recordedAt: string;
+    authorLabel?: string;
+    /**
+     * Human identifier of the linked source revision.
+     */
+    sourceReference?: string;
+    revision?: number;
+    supersedesId?: string;
 };
 
 export type MeasurementInput = {
@@ -692,10 +727,24 @@ export type TimelineItem = {
     id: string;
     eventDate: EventDate;
     recordedAt: string;
-    kind: string;
+    kind: SourceKind;
     sourceRevisionId?: string;
     label: string;
     corrected: boolean;
+    /**
+     * Human identifier of the source revision, for example SRC-A-005.
+     */
+    reference?: string;
+    sourceType?: SourceType;
+    authorLabel?: string;
+    /**
+     * Revision number inside the source lineage; the item is the latest revision recorded at or before the view instant.
+     */
+    revision?: number;
+    /**
+     * Present only on a corrected revision.
+     */
+    correctionReason?: string;
 };
 
 export type PracticePage = {
@@ -877,6 +926,53 @@ export type ApiMeta = {
      * Monotonic generation of the synthetic demonstration fixture in the local demo package; incremented by each completed reset (UD-56 E1). Clients compare the generation observed at entry to detect a reset.
      */
     demoResetGeneration?: number;
+};
+
+/**
+ * Origin of a fact (BR-008): what the patient reported, what the practitioner observed or what a document reports. An acknowledged patient report keeps its origin.
+ */
+export type SourceType = 'PATIENT_REPORTED' | 'PRACTITIONER_OBSERVED' | 'DOCUMENT_REPORTED';
+
+/**
+ * Kind of an evidence item. Later stories add values with their owning stories (D-61); a client shows an unknown kind with a neutral label.
+ */
+export type SourceKind = 'CONSULTATION_NOTE' | 'PRACTITIONER_MEASUREMENT' | 'MANUAL_LAB_PANEL' | 'UPLOADED_DOCUMENT' | 'PATIENT_PREPARATION';
+
+export type AssertionCategory = 'HISTORY' | 'ALLERGY' | 'REPORTED_TREATMENT';
+
+export type AssertionKind = 'PRESENT' | 'EXPLICITLY_ABSENT' | 'UNKNOWN' | 'NOT_ASKED';
+
+/**
+ * State of one history section derived on the server by the BR-008 rule: NOT_RECORDED has no statement at all and never means absence; UNKNOWN and NOT_ASKED are the latest of those statements; EXPLICITLY_ABSENT has only dated negatives; PRESENT has at least one present statement and no negative; CONFLICTING has a negative and a present statement together, in either order, and reads as unknown.
+ */
+export type SectionState = 'NOT_RECORDED' | 'UNKNOWN' | 'NOT_ASKED' | 'EXPLICITLY_ABSENT' | 'PRESENT' | 'CONFLICTING';
+
+export type HistorySection = {
+    category: AssertionCategory;
+    state: SectionState;
+    /**
+     * The current statements of the section, oldest first, including UNKNOWN and NOT_ASKED ones. Nothing is merged or removed; a conflict lists both sides.
+     */
+    statements: Array<Assertion>;
+    /**
+     * True when more than 100 current statements exist; the state is still derived from all of them.
+     */
+    truncated: boolean;
+};
+
+export type HistorySummary = {
+    /**
+     * The instant of the view, or null for the current record.
+     */
+    asOf: string | null;
+    /**
+     * Always the three categories, in the order ALLERGY, HISTORY, REPORTED_TREATMENT.
+     */
+    sections: [
+        HistorySection,
+        HistorySection,
+        HistorySection
+    ];
 };
 
 export type CredentialsWritable = {
@@ -2451,6 +2547,10 @@ export type GetTimelineData = {
          * Past instant. Returns, for every lineage, the latest revision recorded at or before it; read-only, same authorization as the current view; a future instant is rejected with 400.
          */
         asOf?: string;
+        /**
+         * Keeps only items of these kinds (repeat the parameter). An unknown value is a 400.
+         */
+        kind?: Array<SourceKind>;
     };
     url: '/practices/{practiceId}/records/{recordId}/timeline';
 };
@@ -2554,7 +2654,12 @@ export type GetSourceRevisionData = {
         practiceId: string;
         sourceId: string;
     };
-    query?: never;
+    query?: {
+        /**
+         * Past instant. Returns, for every lineage, the latest revision recorded at or before it; read-only, same authorization as the current view; a future instant is rejected with 400.
+         */
+        asOf?: string;
+    };
     url: '/practices/{practiceId}/sources/{sourceId}';
 };
 
@@ -2609,6 +2714,10 @@ export type ListAssertionsData = {
          * Past instant. Returns, for every lineage, the latest revision recorded at or before it; read-only, same authorization as the current view; a future instant is rejected with 400.
          */
         asOf?: string;
+        /**
+         * Keeps only the statements of one category.
+         */
+        category?: AssertionCategory;
     };
     url: '/practices/{practiceId}/records/{recordId}/assertions';
 };
@@ -2713,6 +2822,59 @@ export type AppendAssertionResponses = {
 };
 
 export type AppendAssertionResponse = AppendAssertionResponses[keyof AppendAssertionResponses];
+
+export type GetHistorySummaryData = {
+    body?: never;
+    path: {
+        practiceId: string;
+        recordId: string;
+    };
+    query?: {
+        /**
+         * Past instant. Returns, for every lineage, the latest revision recorded at or before it; read-only, same authorization as the current view; a future instant is rejected with 400.
+         */
+        asOf?: string;
+    };
+    url: '/practices/{practiceId}/records/{recordId}/history';
+};
+
+export type GetHistorySummaryErrors = {
+    /**
+     * Malformed request
+     */
+    400: Problem;
+    /**
+     * Missing or expired session
+     */
+    401: Problem;
+    /**
+     * Forbidden action on visible resource or CSRF failure
+     */
+    403: Problem;
+    /**
+     * Not found or inaccessible resource
+     */
+    404: Problem;
+    /**
+     * Rate limit or quota exceeded
+     */
+    429: Problem;
+    /**
+     * Service temporarily unavailable
+     */
+    503: Problem;
+};
+
+export type GetHistorySummaryError = GetHistorySummaryErrors[keyof GetHistorySummaryErrors];
+
+export type GetHistorySummaryResponses = {
+    /**
+     * Successful outcome; no automatic review or publication.
+     */
+    200: HistorySummary;
+};
+
+export type GetHistorySummaryResponse = GetHistorySummaryResponses[keyof GetHistorySummaryResponses];
 
 export type CorrectAssertionData = {
     body: AssertionInput;
