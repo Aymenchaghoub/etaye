@@ -1,6 +1,6 @@
 # Story 3.1 implementation record — Find and register a local patient
 
-Status: Implemented on `feat/3.1-find-register-local-patient` (draft PR #59); the end-of-story review and the CodeRabbit review are triaged and fixed; Aymen's running-UI approval and the merge are pending. Authorized under UD-65 (scope UD-63, design UD-64). Baseline `origin/main` `02a8c6d`. [Context packet](story-3-1-context-packet.md) · [Design review](../design/reviews/2026-11-23-story-3-1-design-review.md) · [Decision register](../planning-artifacts/decisions-assumptions.md)
+Status: Implemented on `feat/3.1-find-register-local-patient` (draft PR #59); the end-of-story review and the CodeRabbit review are triaged and fixed; Aymen approved the running UI and authorized the merge of PR #59 on 2026-11-24 (UD-66). Authorized under UD-65 (scope UD-63, design UD-64). Baseline `origin/main` `02a8c6d`. [Context packet](story-3-1-context-packet.md) · [Design review](../design/reviews/2026-11-23-story-3-1-design-review.md) · [Decision register](../planning-artifacts/decisions-assumptions.md)
 
 ## Sequence
 

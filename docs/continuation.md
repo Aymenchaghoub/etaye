@@ -1,10 +1,10 @@
 # Session continuation
 
-Updated: 2026-11-23. Owner: Aymen Chaghoub.
+Updated: 2026-11-24. Owner: Aymen Chaghoub.
 
-## Story 3.1 implemented, review fixes applied, running-UI approval awaited — 2026-11-23
+## Story 3.1 running UI approved, merge authorized — 2026-11-24
 
-**Decisions.** UD-63 (scope), UD-64 (design of 26 specimens) and UD-65 (“j'autorise la dev de la 3.1”, authorized for story 3.1 only; allowlist, scoped validator mode and two scope tests in place, global flag false). Pending with Aymen: approval of the running interface, and the merge. [Implementation record](implementation-artifacts/story-3-1-implementation-record.md) · [Running review](design/reviews/2026-11-23-story-3-1-runtime.md) · [Packet](implementation-artifacts/story-3-1-context-packet.md)
+**Decisions.** UD-63 (scope), UD-64 (design of 26 specimens) and UD-65 (“j'autorise la dev de la 3.1”, authorized for story 3.1 only; allowlist, scoped validator mode and two scope tests in place, global flag false). UD-66 (2026-11-24, “traite les PR ouverte et je valide tout tes reco”, [ASSUMPTION] read as): approval of the running interface with its disclosed differences, confirmation of the demo opt-in and of the conflict panel without an author, and authorization to squash-merge PR #59 once the required checks pass on the exact head and no thread is open; the five Dependabot pull requests are handled one by one. [Implementation record](implementation-artifacts/story-3-1-implementation-record.md) · [Running review](design/reviews/2026-11-23-story-3-1-runtime.md) · [Packet](implementation-artifacts/story-3-1-context-packet.md)
 
 **Delivered on `feat/3.1-find-register-local-patient`.** Contract first (`111d87d`), V8 and the API for search, registration with the duplicate rule and named confirmation, correction under `If-Match`, and the scheduler operations server-side; the practitioner shell, S-07 and S-08 in the Web app; the local demonstration package opts in to patient input through `etaye.demo.patient-input-enabled` (closed by default). One Codex CLI three-lens review ran on `9b8da2b`: all 21 findings were verified, none rejected, and the fixes are merged with their tests; the table is in the implementation record.
 
@@ -14,7 +14,7 @@ Updated: 2026-11-23. Owner: Aymen Chaghoub.
 
 **State of the pull request.** [Draft PR #59](https://github.com/Aymenchaghoub/etaye/pull/59): the manual CodeRabbit review (75 files after the path filters) left ten comments, all confirmed and fixed or answered, and all 33 review threads are resolved; the required checks passed on head `a9744d0` (API verify, Web verify, Planning package checks, CodeQL, Analyze ×3, Dependency review). The Web worktree branch `worktree-agent-a458f39e4eb3524a9` under `.claude/worktrees` is integrated and still to be removed after the merge.
 
-**Next action.** Aymen's explicit approval of the running interface (the package runs on http://localhost:4179; his remark on the "Rechercher" alignment is fixed and is not an approval) and, separately, his merge authorization. After a confirmed merge: fetch `origin/main`, verify the integration (squash included), remove the integrated worktree and local branches, return the principal checkout to `main`, fast-forward and check it is clean, regenerate the cockpit from the merged checkout and verify the rendered 3.1 status and PR number, and stop the local demo stack (`COMPOSE_PROJECT_NAME=etaye-demo-31`).
+**Next action.** Mark PR #59 ready, check the required checks and the review threads on the exact head, squash-merge, then handle Dependabot #60–#64 one by one. After a confirmed merge: fetch `origin/main`, verify the integration (squash included), remove the integrated worktree and local branches, return the principal checkout to `main`, fast-forward and check it is clean, regenerate the cockpit from the merged checkout and verify the rendered 3.1 status and PR number, and stop the local demo stack (`COMPOSE_PROJECT_NAME=etaye-demo-31`).
 
 ## Story 1.4 approved and merged — 2026-11-23
 
