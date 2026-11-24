@@ -7,6 +7,10 @@ import { contextPath, currentContexts } from './access-contexts';
 import { PracticeChooser, PracticeChooserHeading, PracticeDestination } from './PracticeContext';
 import { IsolationChanged, IsolationExpired, IsolationJourney, IsolationPending, IsolationRechecking } from '../isolation/IsolationJourney';
 import { isIsolationArea, isIsolationPath, journeyContext, stepOf } from '../isolation/isolation-journey';
+import { interceptLeave } from '../patients/leave-guard';
+import { clearPatientMemory, retainScope, scopeKey } from '../patients/memory';
+import { PatientsArea } from '../patients/PatientsArea';
+import { patientRoute } from '../patients/routes';
 import { Invitation } from './Invitation';
 import { RecoveryRequest, ResetPassword } from './Recovery';
 import { SignIn } from './SignIn';
@@ -36,6 +40,8 @@ export function usesAuth(path: string): boolean {
 
 export function AuthApp() {
   const [path, setPath] = useState(readPath);
+  const pathRef = useRef(path);
+  pathRef.current = path;
   const [notice, setNotice] = useState<Notice>();
   const [resetVersion, setResetVersion] = useState<string>();
   const [returning, setReturning] = useState(false);
@@ -55,6 +61,11 @@ export function AuthApp() {
 
   useEffect(() => {
     const onPopState = () => {
+      // Unsaved input keeps its page: the shell asks first, and only a chosen discard follows the browser's target.
+      if (interceptLeave(readPath())) {
+        window.history.pushState(null, '', pathRef.current);
+        return;
+      }
       paused.current = undefined;
       demo.current.freshSignIn = false;
       setNotice(undefined);
@@ -84,6 +95,8 @@ export function AuthApp() {
   }, []);
 
   const halt = useCallback((reason: Notice, target: string, previous?: Session) => {
+    // An expired session keeps the in-memory drafts of the same account for the reconnection; a changed grant does not.
+    if (reason !== 'expired') clearPatientMemory();
     paused.current = reason === 'expired' && previous ? pauseWork(previous, target, undefined) : undefined;
     setInitial(undefined);
     setReconnected(false);
@@ -93,6 +106,7 @@ export function AuthApp() {
   }, []);
 
   const onDemoReset = useCallback((marker: FixtureMarker) => {
+    clearPatientMemory();
     clearDemoEntry();
     demo.current = { freshSignIn: false };
     paused.current = undefined;
@@ -102,6 +116,7 @@ export function AuthApp() {
   }, []);
 
   function leave() {
+    clearPatientMemory();
     paused.current = undefined;
     setNotice(undefined);
     setReturning(false);
@@ -125,13 +140,16 @@ export function AuthApp() {
     setReturning(false);
     setInitial(session);
 
-    // A journey step is a client route: its entry link or its paused step brings the same account back to it.
-    const step = work && isIsolationPath(work.path) ? work.path : isIsolationPath(requestedPath) ? requestedPath : undefined;
+    // A journey step and a patient-directory page are client routes: the server's return path only names a grant home,
+    // so the paused page itself brings the same account back (checkPausedWork still demands the same account and grant).
+    const pausedStep = work && (isIsolationPath(work.path) || patientRoute(work.path)) ? work.path : undefined;
+    const step = pausedStep ?? (isIsolationPath(requestedPath) ? requestedPath : undefined);
     const target = step ?? safe;
     // The previous route is restored only after both the identity and current grant match.
     if (work) {
       const result = checkPausedWork(work, session, target);
       if (result.status !== 'restored') {
+        clearPatientMemory();
         setNotice(result.status);
         setJourneyNotice(isIsolationPath(work.path));
         navigate(ACCOUNT_PATH);
@@ -403,6 +421,7 @@ function AccountGate({ target, initial, onHalt, onDemoReset, leave, enter, demo,
   }, [demo, enter, initial, leaving, onDemoReset, onHalt, retry, target]);
 
   async function signOut() {
+    clearPatientMemory();
     verifiedAccount.current = undefined;
     setView(undefined);
     setUnavailable(false);
@@ -433,6 +452,12 @@ function AccountGate({ target, initial, onHalt, onDemoReset, leave, enter, demo,
 
   const { session, contexts } = view;
   const select = (path: string) => enter(path, session);
+  const patients = patientRoute(target);
+  const patientOwner = patients && contexts.find((context) => contextPath(context) === patients.base);
+  const selected = contexts.find((context) => contextPath(context) === target);
+  // Memory of a practice directory survives only while that practice's own destinations are shown.
+  const owner = patientOwner?.kind === 'MEMBERSHIP' ? patientOwner : selected;
+  retainScope(owner ? scopeKey(session.account.id, owner.grantId) : undefined);
   if (journey) return (
     <IsolationJourney step={stepOf(target)} session={session} contexts={contexts} fixtureVersion={demo.current.marker?.version}
       enter={select} expire={() => {
@@ -442,7 +467,16 @@ function AccountGate({ target, initial, onHalt, onDemoReset, leave, enter, demo,
         onHalt('expired', target, previous);
       }} />
   );
-  const selected = contexts.find((context) => contextPath(context) === target);
+  // Any staff grant may open the route: the server answers 403 where the capability is missing and the page says so.
+  if (patients && patientOwner?.kind === 'MEMBERSHIP') return (
+    <PatientsArea session={session} context={patientOwner} contexts={contexts} route={patients} select={select}
+      signOut={signOut} expire={() => {
+        const previous = verifiedAccount.current;
+        verifiedAccount.current = undefined;
+        setView(undefined);
+        onHalt('expired', target, previous);
+      }} />
+  );
   if (selected) return (
     <PracticeDestination context={selected} contexts={contexts} session={session} select={select} signOut={signOut} />
   );

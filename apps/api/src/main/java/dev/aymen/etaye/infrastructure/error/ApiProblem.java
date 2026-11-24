@@ -18,13 +18,18 @@ public record ApiProblem(
         @JsonProperty("instance") String instance,
         @JsonProperty("code") String code,
         @JsonProperty("correlationId") String correlationId,
-        @JsonProperty("fieldErrors") List<FieldErrorItem> fieldErrors
+        @JsonProperty("fieldErrors") List<FieldErrorItem> fieldErrors,
+        @JsonProperty("candidates") List<?> candidates
 ) {
     public static ApiProblem of(int status, String title, String code, String detail, String correlationId) {
-        return new ApiProblem(URI.create("about:blank"), title, status, detail, null, code, correlationId, null);
+        return new ApiProblem(URI.create("about:blank"), title, status, detail, null, code, correlationId, null, null);
     }
 
     public static ApiProblem withFieldErrors(int status, String title, String code, String detail, String correlationId, List<FieldErrorItem> fieldErrors) {
-        return new ApiProblem(URI.create("about:blank"), title, status, detail, null, code, correlationId, fieldErrors);
+        return new ApiProblem(URI.create("about:blank"), title, status, detail, null, code, correlationId, fieldErrors, null);
+    }
+
+    public static ApiProblem withCandidates(int status, String title, String code, String detail, String correlationId, List<?> candidates) {
+        return new ApiProblem(URI.create("about:blank"), title, status, detail, null, code, correlationId, null, candidates);
     }
 }

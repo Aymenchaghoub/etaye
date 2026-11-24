@@ -122,3 +122,16 @@ UD-59 allocates AT-004-B evidence across the actual first delivery of each guard
 | Internal and published source | Authorized exact revision or projection, compared with hidden and missing sources. Verify current record and audience where applicable. | When 3.2/5.3 or 7.4 delivers the corresponding guarded operation |
 | Processing task | Authorized task status control, compared with hidden and missing tasks. Verify current reader scope. | When 5.2 delivers the guarded task read |
 | Export | Authorized version/audience control, compared with hidden and missing exports. Verify status and byte delivery independently. | When 8.2 delivers report/explanation delivery, and when 8.1 adds the private brief path |
+
+## Story 3.1 scope allocation
+
+UD-63 allocates the patient identity work between stories 3.1 and 4.2 and records what the build deliberately leaves out. [Epic 3](planning-artifacts/epics/epic-3.md#story-31-find-and-register-a-local-patient) · [Context packet](implementation-artifacts/story-3-1-context-packet.md#12-arbitration-outcome-ud-63) · [Deferred work D-57 to D-59](planning-artifacts/deferred-work.md)
+
+| Item | Delivered by | Acceptance proof |
+|---|---|---|
+| `searchPatients`, `createPatient` (duplicate rule, typed candidates, named confirmation), `editPatient`, clinical S-07 and S-08 | Story 3.1 | AT-009-A/B/C |
+| `searchSchedulingPatients`, `registerSchedulingPatient` (server side) | Story 3.1 | AT-009-D |
+| Restricted scheduler screens, I-10 lookup combobox, return to the retained slot | Story 4.2 | AT-015-D/E, D-47 |
+| Portal-status column and filter, local record identifier | Deferred (D-57) | Not applicable in increment 1 |
+| "Nom d'usage" and identity provenance | Deferred (D-58) | Not applicable in increment 1 |
+| Fuzzy duplicate matching | Deferred (D-59) | Not applicable in increment 1 |

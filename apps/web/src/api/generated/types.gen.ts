@@ -17,6 +17,10 @@ export type Problem = {
         code: string;
         message: string;
     }>;
+    /**
+     * Present only on 409 DUPLICATE_PATIENT: same-practice likely duplicates with identity and contact fields only, never clinical data.
+     */
+    candidates?: Array<SchedulingPatient>;
 };
 
 export type Reason = {
@@ -193,6 +197,18 @@ export type PatientEdit = {
     dateOfBirth: string;
     contactEmail?: string | null;
     phone?: string | null;
+};
+
+/**
+ * Demographic identity for a registration. `confirmedDistinctRecordIds` is the human confirmation of story 3.1 (UD-63): it names the record IDs of every likely-duplicate candidate the person inspected and judged to be a different individual. The server re-runs the duplicate rule at commit and answers 409 DUPLICATE_PATIENT again when a current candidate is not named, or when more than ten patients match. A null or repeated entry is a 400. The field is part of the canonical idempotency body hash.
+ */
+export type PatientRegistration = {
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+    contactEmail?: string | null;
+    phone?: string | null;
+    confirmedDistinctRecordIds?: Array<string>;
 };
 
 export type Patient = {
@@ -2214,7 +2230,7 @@ export type SearchPatientsResponses = {
 export type SearchPatientsResponse = SearchPatientsResponses[keyof SearchPatientsResponses];
 
 export type CreatePatientData = {
-    body: PatientEdit;
+    body: PatientRegistration;
     headers: {
         'X-CSRF-TOKEN': string;
         /**
@@ -6867,7 +6883,7 @@ export type SearchSchedulingPatientsResponses = {
 export type SearchSchedulingPatientsResponse = SearchSchedulingPatientsResponses[keyof SearchSchedulingPatientsResponses];
 
 export type RegisterSchedulingPatientData = {
-    body: PatientEdit;
+    body: PatientRegistration;
     headers: {
         'X-CSRF-TOKEN': string;
         /**

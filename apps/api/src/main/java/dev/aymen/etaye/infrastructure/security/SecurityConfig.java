@@ -37,19 +37,22 @@ public class SecurityConfig {
     private final IdentityLookupService identityLookupService;
     private final ObjectProvider<SessionRepository<?>> sessionRepositoryProvider;
     private final boolean demoEnabled;
+    private final boolean demoPatientInputEnabled;
 
     public SecurityConfig(ProblemAuthenticationEntryPoint authenticationEntryPoint,
                           ProblemAccessDeniedHandler accessDeniedHandler,
                           ProblemResponseWriter problemResponseWriter,
                           IdentityLookupService identityLookupService,
                           ObjectProvider<SessionRepository<?>> sessionRepositoryProvider,
-                          @Value("${etaye.demo.enabled:false}") boolean demoEnabled) {
+                          @Value("${etaye.demo.enabled:false}") boolean demoEnabled,
+                          @Value("${etaye.demo.patient-input-enabled:false}") boolean demoPatientInputEnabled) {
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.accessDeniedHandler = accessDeniedHandler;
         this.problemResponseWriter = problemResponseWriter;
         this.identityLookupService = identityLookupService;
         this.sessionRepositoryProvider = sessionRepositoryProvider;
         this.demoEnabled = demoEnabled;
+        this.demoPatientInputEnabled = demoPatientInputEnabled;
     }
 
     @Bean
@@ -159,8 +162,13 @@ public class SecurityConfig {
                             return new AuthorizationDecision(account instanceof AuthenticatedAccount resolved
                                     && DemoFixture.isOperator(resolved.account().id()));
                         });
-                    // The public demo identities never have an arbitrary patient-input surface.
-                    auth.requestMatchers(HttpMethod.POST, "/api/v1/practices/{practiceId}/patients").denyAll();
+                    // The public demo identities have no arbitrary patient-input surface unless the local
+                    // package opts in (story 3.1 registers and corrects fictional patients on the loopback demo).
+                    if (!demoPatientInputEnabled) {
+                        auth.requestMatchers(HttpMethod.POST, "/api/v1/practices/{practiceId}/patients").denyAll();
+                        auth.requestMatchers(HttpMethod.PATCH, "/api/v1/practices/{practiceId}/patients/{patientId}").denyAll();
+                        auth.requestMatchers(HttpMethod.POST, "/api/v1/practices/{practiceId}/scheduling/patients").denyAll();
+                    }
                 }
                 auth.anyRequest().authenticated();
             })

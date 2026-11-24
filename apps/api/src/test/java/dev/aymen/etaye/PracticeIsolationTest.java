@@ -221,7 +221,14 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
             for (String role : List.of("etaye_runtime", "etaye_identity")) {
                 Set<String> expectedColPrivs;
                 if ("etaye_runtime".equals(role)) {
-                    if (Set.of("patient", "patient_record", "idempotency_receipt").contains(table)) {
+                    if ("patient".equals(table) && Set.of("first_name", "last_name", "date_of_birth", "contact_email", "phone",
+                            "version", "updated_at").contains(col)) {
+                        // Story 3.1 identity correction: these columns only, never the practice, id or order keys.
+                        expectedColPrivs = Set.of("SELECT", "INSERT", "UPDATE");
+                    } else if ("patient_record".equals(table) && Set.of("version", "updated_at").contains(col)) {
+                        // The record version moves with the identity it embeds.
+                        expectedColPrivs = Set.of("SELECT", "INSERT", "UPDATE");
+                    } else if (Set.of("patient", "patient_record", "idempotency_receipt").contains(table)) {
                         expectedColPrivs = Set.of("SELECT", "INSERT");
                     } else if (Set.of("audit_event", "outbox_event").contains(table)) {
                         expectedColPrivs = Set.of("INSERT");

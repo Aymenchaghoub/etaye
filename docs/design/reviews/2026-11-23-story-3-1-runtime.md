@@ -1,0 +1,46 @@
+# Story 3.1 running UI review
+
+2026-11-23 · Story 3.1 · AT-009-C (SAMPLED, UD-37) · branch `feat/3.1-find-register-local-patient`. [Browsable comparison page](2026-11-23-story-3-1-runtime/index.html) · [Design review](2026-11-23-story-3-1-design-review.md) · [Implementation record](../../implementation-artifacts/story-3-1-implementation-record.md)
+
+**Status: running UI approved by Aymen on 2026-11-24 ([UD-66](../../planning-artifacts/decisions-assumptions.md)).** The approval covers the running application of PR #59 as compared here with the specimens approved under UD-64, with the ten differences listed below and the limits listed under "Not verified". Earlier, after opening the running list, Aymen wrote that it was "parfait" except that the "Rechercher" button was misaligned with the search field; it is now on the field's own row, measured centered on the input at 1440 and 390 px in both themes, and the S-07 specimens carry the same correction. That earlier remark was not an approval decision and records no UD; the approval is UD-66.
+
+The left panel of every sheet is the approved specimen; the right panel is Chromium 153.0.8010.12 running the real stack: the React build served by nginx, the Spring Boot API with the V8 migration and PostgreSQL 18, from the local demonstration package (Compose project `etaye-demo-31`, `etaye.demo.patient-input-enabled` on). The account is the fictional Dr Nora Lefebvre. The pairs were produced in one scripted session per theme at 1440×1024 and 390×844, with the system color scheme emulated; the page canvas, shell and `data-theme` were asserted on every capture (24 of 24 on the expected theme, no horizontal overflow).
+
+## Sampled screens (UD-63 I1: six screens, two widths, both themes)
+
+| Sheet | Opened | What the running application shows beside the specimen |
+|---|---|---|
+| S-07 list (`liste-*`) | 1440 light | Same shell, navigation limited to "Patients", search field with "Rechercher", loaded count and one "Modifier l'identité" per row. The list has four rows instead of three: the check created one synthetic long-named patient. |
+| S-07 no result (`aucun-resultat-*`) | 1440 dark | Same dashed block, the same copy and the two actions; "Effacer la recherche" appears in the search row as in the specimen. |
+| S-07 long names (`longs-*`) | 390 dark | The long composed name wraps onto three lines, the birth date stays whole and the action stays below. The check filtered on "Dupont", so the sheet shows "Effacer la recherche" and "1 patient affiché" where the specimen shows the unfiltered template. |
+| S-08 input errors (`erreur-*`) | 1440 light | Error summary with two linked errors, field messages, the segmented date field with the "31 février" message and the entered values kept. |
+| S-08 likely duplicate (`doublon-*`) | 390 dark, 1440 light | Warning banner with the typed candidate and the confirmation sentence, "Ouvrir le dossier existant" and "Créer quand même", the form filled below. |
+| S-08 unsaved changes (`sale-*`) | 390 light | The guard replaces the form: heading, explanation, "Rester sur le formulaire" and "Abandonner les modifications". |
+
+All 24 sheets are in [the folder](2026-11-23-story-3-1-runtime/). They were regenerated after the review fixes and again after the alignment correction; two of the final sheets were opened side by side (list light 1440, no result light 390), and five sheets of the previous generation (list dark 390, input errors dark 1440, duplicate light 390, unsaved changes dark 1440, long names light 1440) differ from the final ones only in the search row. The "Opened" column above names the seven sheets opened on the capture taken before those fixes, which the final sheets replace; the others were produced by the same script and checked only through its page assertions.
+
+## Observed differences from the specimens
+
+1. **Role label.** The running header reads "Praticien · Nora Lefebvre"; the specimen reads "Praticienne · Dr Nora Lefebvre". The application keeps the existing story 1.3 label from the session projection.
+2. **Focus ring on arrival.** The specimens show a ring on the error summary and on "Rester sur le formulaire" because they use the `autofocus` attribute. After a pointer action the running application moves focus there without a ring; the ring appears for keyboard focus (UD-62 rule). The stubbed smoke suite asserts the focus target and the 2 px keyboard ring.
+3. **Context button.** About 4 px taller than in the specimens (the 1.3 style); its accessible name includes the account name.
+4. **Conflict panel.** Without a sheet in this sample: it shows "version N · hh:mm" and no author, because the API exposes none (single deviation from the approved specimen; it is stated in the implementation record).
+5. **After a save.** The form shows "Enregistré" for 600 ms and the list then shows an "Identité enregistrée" notice, which the specimens do not draw.
+6. **Several candidates.** With more than one candidate the panel has an "Ouvrir ce dossier" link per candidate instead of one button.
+7. **Created patient outside the first page.** After a creation, a patient that is not on the first 25 rows is pinned first with the word "Dossier créé"; the specimens show the word only on the banner and a marked row.
+8. **"Annuler" while saving.** It is disabled during saving and outcome verification (the specimens show it enabled), because leaving would offer to discard input that may already be saved. The breadcrumb and navigation still open the guard during a save.
+9. **Stale notice.** "Résultats à actualiser" is reachable only when a page loaded with "Afficher plus" repeats a row already shown, which means a correction shifted the list; returning from a conflict reloads the list, so the original trigger of the specimen never shows.
+10. **Birth year.** The form refuses years before 1900; the API has no lower bound.
+
+## Functional evidence for this revision
+
+- API: `./mvnw -B -ntp verify`, 206 tests, 0 failures (PostgreSQL 18.7 Testcontainers). Web: `tsc -b`, `build` with the SDK drift check, Vitest 40 tests, stubbed Chromium smoke 133 tests (52 new, each state scanned with axe-core, plus keyboard, focus, shell background, overflow, idempotency-key and review-regression assertions).
+- Real stack: five Playwright specs on the package rebuilt on a fresh database volume pass (after two clean runs before the review fixes) (registration with the duplicate warning and the named confirmation, practice scoping, a read-only member refused with the restricted state, a stale correction keeping the input, the unsaved-changes guard). Earlier runs failed for test reasons only (a list read before it rendered, the package treating a hard navigation as an expired session, the per-address sign-in limit) and the specs were corrected; no application defect was found by them.
+
+## Not verified
+
+Tablet 1024×768 and the 320 CSS px reflow on the running application (the smoke suite asserts reflow and overflow with stubs, not these captures), screen readers, 200 % zoom, browsers other than Chromium, contrast measured on rendered pixels, behavior under real latency, the real outage spec, and the remaining seventeen sheets opened by eye. Figma was not read; the 2026-11-18 exception applies.
+
+## How to look at it
+
+The package is running on this machine: open http://localhost:4179, choose the practitioner scenario, sign in as `nora.lefebvre@example.test` with the demo password from `infra/demo/README.md`, then "Patients". Try the search ("Martin", "18/04/1978", "Petit"), create "Claire Martin" born 18/04/1978 to see the duplicate panel, correct a patient, and leave the form with typed text. To start it elsewhere run `./infra/demo/start.sh`. Reset restores the fictional fixture.

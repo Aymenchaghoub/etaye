@@ -346,7 +346,7 @@ export const resendInvitation = <ThrowOnError extends boolean = false>(options: 
 /**
  * searchPatients
  *
- * Requires CLINICAL_READ. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.
+ * Requires CLINICAL_READ. Practice IDs select context, never grant authority. Tokens are separated by spaces. Every token must match the start of a word of the patient's normalized first or last name; a token written JJ/MM/AAAA or AAAA-MM-JJ matches that exact birth date. Normalization composes the text canonically, lowercases it, removes combining marks and diacritics and treats every other non-alphanumeric character as a word separator. Results are ordered by normalized last name, first name, then id. The opaque cursor holds only the last row id and a binding to the practice, the actor and the query; a malformed, foreign or mismatched cursor is a 400. Query text is never logged and never copied to a URL. Only the selected practice is searched; there is no global or cross-practice matching. Without `q` the practice's patients are listed; an empty page is the same 200 for an empty practice and for a query without match, so the client distinguishes them by whether it sent a query.
  */
 export const searchPatients = <ThrowOnError extends boolean = false>(options: Options<SearchPatientsData, ThrowOnError>): RequestResult<SearchPatientsResponses, SearchPatientsErrors, ThrowOnError> => (options.client ?? client).get<SearchPatientsResponses, SearchPatientsErrors, ThrowOnError>({
     security: [{
@@ -361,7 +361,7 @@ export const searchPatients = <ThrowOnError extends boolean = false>(options: Op
 /**
  * createPatient
  *
- * Requires CLINICAL_WRITE. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.
+ * Requires CLINICAL_WRITE. Practice IDs select context, never grant authority. Atomically creates the local Patient, an empty PatientRecord, audit, outbox and idempotency outcome. A likely duplicate (see the guide, Patient search and duplicate rule) returns 409 DUPLICATE_PATIENT with typed same-practice `candidates` unless `confirmedDistinctRecordIds` names every current candidate. No portal link, invitation, appointment or clinical fact is created.
  */
 export const createPatient = <ThrowOnError extends boolean = false>(options: Options<CreatePatientData, ThrowOnError>): RequestResult<CreatePatientResponses, CreatePatientErrors, ThrowOnError> => (options.client ?? client).post<CreatePatientResponses, CreatePatientErrors, ThrowOnError>({
     security: [{
@@ -380,7 +380,7 @@ export const createPatient = <ThrowOnError extends boolean = false>(options: Opt
 /**
  * editPatient
  *
- * Requires CLINICAL_WRITE. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.
+ * Requires CLINICAL_WRITE and `If-Match` with the current patient version: a missing header is 428, a stale version 412. Replaces the identity fields; the patient and record identifiers never change. A foreign or unknown patientId is 404. A correction runs no duplicate check (story 3.1 [ASSUMPTION]); the duplicate warning protects registration. Practice IDs select context, never grant authority.
  */
 export const editPatient = <ThrowOnError extends boolean = false>(options: Options<EditPatientData, ThrowOnError>): RequestResult<EditPatientResponses, EditPatientErrors, ThrowOnError> => (options.client ?? client).patch<EditPatientResponses, EditPatientErrors, ThrowOnError>({
     security: [{
@@ -1628,7 +1628,7 @@ export const listPractitioners = <ThrowOnError extends boolean = false>(options:
 /**
  * Search the minimal scheduling patient directory
  *
- * Requires SCHEDULE_MANAGE in the selected practice. Returns only SchedulingPatient fields for booking and local duplicate disambiguation. No clinical-record endpoint becomes readable; query text is not logged.
+ * Requires SCHEDULE_MANAGE in the selected practice. Returns only SchedulingPatient fields for booking and local duplicate disambiguation; `q` is required with at least two characters and follows the matching rules of searchPatients. No clinical-record endpoint becomes readable; query text is not logged.
  */
 export const searchSchedulingPatients = <ThrowOnError extends boolean = false>(options: Options<SearchSchedulingPatientsData, ThrowOnError>): RequestResult<SearchSchedulingPatientsResponses, SearchSchedulingPatientsErrors, ThrowOnError> => (options.client ?? client).get<SearchSchedulingPatientsResponses, SearchSchedulingPatientsErrors, ThrowOnError>({
     security: [{
@@ -1643,7 +1643,7 @@ export const searchSchedulingPatients = <ThrowOnError extends boolean = false>(o
 /**
  * Register minimal local identity for an appointment
  *
- * Requires BOTH SCHEDULE_MANAGE and separately assigned PATIENT_REGISTER (PD-001 proposal). Accepts only PatientEdit demographic fields. Atomically create local Patient and empty PatientRecord plus audit/idempotency outcome. A likely duplicate returns Problem409 with code DUPLICATE_PATIENT; requery searchSchedulingPatients for authorized minimal candidates and human selection. No candidate clinical data is included in the error. No portal link, clinical facts, invitation or appointment is created. No existing-identity correction via this endpoint.
+ * Requires BOTH SCHEDULE_MANAGE and separately assigned PATIENT_REGISTER (PD-001, accepted UD-17). Accepts PatientRegistration; the identity fields are demographic only. Atomically creates the local Patient and an empty PatientRecord plus audit and idempotency outcome. A likely duplicate returns 409 DUPLICATE_PATIENT with typed minimal `candidates` for human selection or a named confirmation; candidates carry no clinical data. No portal link, clinical facts, invitation or appointment is created. No existing-identity correction via this endpoint.
  */
 export const registerSchedulingPatient = <ThrowOnError extends boolean = false>(options: Options<RegisterSchedulingPatientData, ThrowOnError>): RequestResult<RegisterSchedulingPatientResponses, RegisterSchedulingPatientErrors, ThrowOnError> => (options.client ?? client).post<RegisterSchedulingPatientResponses, RegisterSchedulingPatientErrors, ThrowOnError>({
     security: [{

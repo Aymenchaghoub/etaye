@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="fr" data-theme="clair">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Étaye · Arbitrage de la Story 3.1</title>
+  <link rel="stylesheet" href="../../../design/offline-reference/site/tokens/tokens.css">
+  <style>
+    * { box-sizing: border-box; }
+    :root { color-scheme: light; }
+    [data-theme="sombre"] { color-scheme: dark; }
+    body {
+      margin: 0;
+      color: var(--encre);
+      background: var(--fond);
+      font: 400 15px/22px "Atkinson Hyperlegible Next", sans-serif;
+    }
+    header { border-bottom: var(--trait-filet) solid var(--filet); }
+    .wrap { max-width: 1060px; margin: auto; padding: var(--espace-6); }
+    header .wrap { display: flex; justify-content: space-between; align-items: center; gap: var(--espace-4); }
+    .logo { display: block; height: 28px; }
+    [data-theme="clair"] .logo-dark, [data-theme="sombre"] .logo-light { display: none; }
+    main { overflow-wrap: anywhere; }
+    h1 { font: 500 32px/40px "Source Serif 4", serif; margin: 0; }
+    h2 { font-size: 22px; line-height: 28px; font-weight: 500; margin: 0 0 var(--espace-4); }
+    h3, legend { font-size: 16px; line-height: 24px; font-weight: 600; }
+    p, ul, ol { margin: 0 0 var(--espace-3); }
+    li + li { margin-top: var(--espace-1); }
+    a { color: var(--accent); text-underline-offset: 0.16em; }
+    .intro { max-width: 72ch; margin-top: var(--espace-3); color: var(--encre-2); }
+    section { margin-top: var(--espace-8); }
+    .columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--espace-4); margin-bottom: var(--espace-4); }
+    .panel, fieldset, .decision {
+      min-inline-size: 0;
+      background: var(--surface);
+      border: var(--trait-filet) solid var(--filet);
+      padding: var(--espace-5);
+    }
+    .panel h3 { margin: 0 0 var(--espace-2); }
+    .panel p:last-child, .panel ul:last-child, .panel ol:last-child { margin-bottom: 0; }
+    .label { display: block; font-size: 13px; line-height: 20px; font-weight: 500; color: var(--encre-2); margin-bottom: var(--espace-1); }
+    fieldset { margin: 0 0 var(--espace-4); }
+    legend { padding: 0 var(--espace-2); }
+    label.option { display: flex; align-items: baseline; gap: var(--espace-2); padding: var(--espace-2) 0; }
+    input[type="radio"] { accent-color: var(--accent); flex: 0 0 auto; }
+    summary { cursor: pointer; font-weight: 500; }
+    details { margin-top: var(--espace-3); }
+    details > div { margin-top: var(--espace-3); }
+    button, textarea {
+      font: inherit;
+      color: var(--encre);
+      background: var(--surface);
+      border: var(--trait-filet) solid var(--filet-controle);
+      border-radius: var(--rayon-1);
+      padding: var(--espace-2) var(--espace-3);
+    }
+    button { min-height: 40px; cursor: pointer; }
+    .primary { background: var(--encre); color: var(--encre-inverse); }
+    .actions { display: flex; flex-wrap: wrap; gap: var(--espace-3); }
+    :focus-visible { outline: var(--trait-focus) solid var(--accent); outline-offset: 2px; }
+    textarea { display: block; width: 100%; min-height: 9em; resize: vertical; margin-top: var(--espace-2); }
+    .decision p { margin-top: var(--espace-2); color: var(--encre-2); }
+    .mock { margin: var(--espace-3) 0; padding: var(--espace-3); background: var(--surface-2); border: var(--trait-filet) solid var(--filet); border-radius: var(--rayon-1); }
+    .mock strong { font-weight: 600; }
+    .mock .row { display: flex; flex-wrap: wrap; gap: var(--espace-2); align-items: center; margin-top: var(--espace-2); }
+    .mock .btn { display: inline-block; padding: var(--espace-1) var(--espace-3); border: var(--trait-filet) solid var(--filet-controle); border-radius: var(--rayon-1); background: var(--surface); font-weight: 500; font-size: 14px; }
+    .mock .btn.main { background: var(--encre); color: var(--encre-inverse); border-color: var(--encre); }
+    .mock .warn { border: var(--trait-filet) solid var(--attention); background: var(--attention-fond); padding: var(--espace-3); border-radius: var(--rayon-1); }
+    .mock .seg { display: inline-block; min-width: 3.4em; padding: var(--espace-1) var(--espace-2); text-align: center; background: var(--surface); border: var(--trait-filet) solid var(--filet-controle); border-radius: var(--rayon-1); color: var(--encre-2); }
+    .mock .nav { list-style: none; padding: 0; margin: 0; }
+    .mock .nav li { padding: var(--espace-1) var(--espace-2); border-radius: var(--rayon-1); }
+    .mock .nav .on { background: var(--surface); border: var(--trait-filet) solid var(--filet); font-weight: 500; }
+    .mock .nav .off { color: var(--encre-3); text-decoration: line-through; }
+    .tag { display: inline-block; font-size: 12px; line-height: 16px; font-weight: 600; padding: 0 var(--espace-2); border: var(--trait-filet) solid var(--filet-controle); border-radius: var(--rayon-1); color: var(--encre-2); margin-right: var(--espace-2); }
+    .tag.rec { border-color: var(--accent); color: var(--accent); }
+    @media (max-width: 760px) {
+      .wrap { padding: var(--espace-4); }
+      .columns { grid-template-columns: 1fr; }
+      h1 { font-size: 26px; line-height: 32px; }
+    }
+    @media (max-width: 360px) {
+      .wrap { padding: var(--espace-3); }
+      .panel, fieldset, .decision { padding: var(--espace-3); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div>
+        <img class="logo logo-light" src="../../../design/offline-reference/site/logos/etaye-logo.svg" alt="Étaye">
+        <img class="logo logo-dark" src="../../../design/offline-reference/site/logos/etaye-logo-sombre.svg" alt="Étaye">
+      </div>
+      <button id="theme" type="button" aria-pressed="false">Thème sombre</button>
+    </div>
+  </header>
+  <main class="wrap">
+    <h1>Story 3.1 · Trouver et enregistrer un patient local</h1>
+    <p class="intro">Arbitrage de préparation. Aucune ligne de code n’est écrite et rien n’est autorisé tant que tu n’as pas répondu par écrit. Les maquettes de S-07, S-08 et I-04 existent déjà dans la référence hors ligne, mais elles ne sont pas approuvées, et plusieurs de leurs éléments n’ont pas de donnée ni de contrat derrière eux. Les dix cartes ci-dessous séparent ces points. Chaque carte montre l’état actuel, la proposition et ses choix, la première option étant la recommandation.</p>
+    <p><a href="../../implementation-artifacts/story-3-1-context-packet.md">Lire le context packet</a> · <a href="../../../design/offline-reference/site/ecrans/S-07/liste.html">S-07 liste</a> · <a href="../../../design/offline-reference/site/ecrans/S-08/nouveau.html">S-08 nouveau</a> · <a href="../../../design/offline-reference/site/ecrans/S-08/doublon.html">S-08 doublon</a> · <a href="../../../design/offline-reference/site/ecrans/I-04/planificateur.html">I-04 planificateur</a> (ajoute <code>?theme=sombre</code> pour le thème sombre)</p>
+
+    <section aria-labelledby="etat">
+      <h2 id="etat">Où en est la story</h2>
+      <div class="columns">
+        <article class="panel">
+          <h3>Vérifié dans le dépôt (main <code>02a8c6d</code>)</h3>
+          <ul>
+            <li>Dépendance 1.3 fusionnée (PR #50). Autorisation de 3.1 : <strong>absente</strong>.</li>
+            <li>S-07, S-08, I-04 : « Prêt pour la conception », <strong>non approuvés</strong> ; niveau SAMPLED.</li>
+            <li>La création de patient existe déjà depuis 10.1 (atomique, idempotente) mais <strong>sans détection de doublon</strong> ; la recherche, la correction et les deux opérations planificateur n’existent pas côté serveur.</li>
+            <li>Le jeu de démo a trois dossiers aux Tilleuls et un au Canal ; aucun cabinet vide.</li>
+          </ul>
+        </article>
+        <article class="panel">
+          <h3>Ce qui sépare les décisions</h3>
+          <ol>
+            <li><strong>Approbation du design</strong> des trois familles.</li>
+            <li><strong>Autorisation écrite</strong> de développer la story 3.1 seule.</li>
+            <li>Approbation de l’interface <strong>en fonctionnement</strong>, plus tard.</li>
+            <li><strong>Autorisation de fusion</strong>, plus tard.</li>
+          </ol>
+          <p>Cette page prépare 1 et 2 sans les accorder. Le registre numérote ta réponse UD-63.</p>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="arbitrage">
+      <h2 id="arbitrage">Arbitrage d’Aymen</h2>
+      <p class="intro">Le bouton « Accepter toutes les recommandations » sélectionne une option par carte ; tu peux ensuite en changer. Les remarques libres vont dans le récapitulatif.</p>
+      <div class="actions"><button id="accept-all" type="button">Accepter toutes les recommandations</button></div>
+
+      <form id="choices">
+        <!-- A -->
+        <h3 id="carte-a">A · Variantes planificateur (PD-001, UD-17)</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>L’histoire parle du planificateur, mais AT-009 ne teste que le praticien. Les deux opérations de recherche et d’enregistrement du planificateur n’appartiennent à aucune story. Leurs écrans restreints ne s’atteignent que depuis la prise de rendez-vous I-10 (story 4.2) : la référence de Mila n’a pas d’entrée « Patients ». ADR-011 range ces variantes parmi les premières coupes possibles.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>Livrer le serveur et ses tests de refus dans 3.1, et les écrans restreints avec I-10 dans 4.2. L’isolation du planificateur (aucun accès clinique) est ainsi prouvée tôt.</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix A</legend>
+          <label class="option"><input type="radio" name="A" value="A1" required><span><span class="tag rec">Recommandé</span><strong>A1.</strong> 3.1 livre côté serveur la recherche et l’enregistrement planificateur, avec les tests sur pile réelle (Mila, SCHEDULE_MANAGE seul, administrateur seul, autre cabinet). Les écrans restreints sont livrés avec I-10 dans 4.2 ; leurs états sont revus dans le design de 3.1.</span></label>
+          <label class="option"><input type="radio" name="A" value="A2"><span><strong>A2.</strong> 3.1 livre aussi une entrée autonome pour Mila, ce qui demande une nouvelle entrée de navigation hors référence, à concevoir.</span></label>
+          <label class="option"><input type="radio" name="A" value="A3"><span><strong>A3.</strong> Toute la variante planificateur passe à 4.2 ; 3.1 ne livre que le parcours clinique.</span></label>
+        </fieldset>
+
+        <!-- B -->
+        <h3 id="carte-b">B · Correction d’identité, entrées et sorties sans S-09</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>La maquette montre la modification (<a href="../../../design/offline-reference/site/ecrans/S-08/modifier.html">modifier</a>, <a href="../../../design/offline-reference/site/ecrans/S-08/conflit.html">conflit</a>, <a href="../../../design/offline-reference/site/ecrans/S-08/sale.html">modifications non enregistrées</a>) avec une bannière qui affiche un bloc allergies. Le dossier S-09 arrive en 3.2 et le panneau de conflit I-21 en 6.3. Aucun critère d’AT-009 ne parle de correction. Le rôle d’exécution ne peut pas modifier un patient.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>Garder la correction, car FR-004 et AC-S08-F l’exigent, avec l’entrée depuis la ligne S-07. Le conflit de version utilise l’état déjà dessiné dans S-08. La bannière ne montre ni allergies ni donnée clinique avant 3.2.</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix B · correction</legend>
+          <label class="option"><input type="radio" name="B" value="B2" required><span><span class="tag rec">Recommandé</span><strong>B2.</strong> Garder la correction dans 3.1 : ligne S-07 « Modifier l’identité », conflit de version dans S-08, bannière réduite (nom, naissance, référence du dossier).</span></label>
+          <label class="option"><input type="radio" name="B" value="B1"><span><strong>B1.</strong> Reporter la correction (opération, écran de modification, conflit) à un élément différé nommé. 3.1 se limite à la recherche et à la création.</span></label>
+        </fieldset>
+        <fieldset>
+          <legend>Choix B · destination après création</legend>
+          <label class="option"><input type="radio" name="Bexit" value="Ba" required><span><span class="tag rec">Recommandé</span><strong>Ba.</strong> Retour à S-07 avec la ligne du nouveau patient confirmée (« Dossier créé »), puisque S-09 n’existe pas encore.</span></label>
+          <label class="option"><input type="radio" name="Bexit" value="Bb"><span><strong>Bb.</strong> Ouvrir le dossier minimal déjà livré en 1.4 (identité seule).</span></label>
+        </fieldset>
+
+        <!-- C -->
+        <h3 id="carte-c">C · Doublons : règle et contrat</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>La maquette propose « Ouvrir le dossier existant » et « Créer quand même ». Le contrat répond 409 sans candidats et sans moyen de confirmer ; la notion de « doublon probable » n’est définie nulle part. Sans confirmation, un homonyme ne pourrait jamais être enregistré.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <div class="mock" aria-label="Maquette de la proposition">
+              <div class="warn"><strong>Un dossier semblable existe dans ce cabinet</strong><br>MARTIN Claire · naissance 18/04/1978<br><span style="color:var(--encre-2)">Rien n’est fusionné automatiquement.</span></div>
+              <div class="row"><span class="btn main">Ouvrir le dossier existant</span><span class="btn">Créer quand même (c’est une autre personne)</span></div>
+            </div>
+            <p>Règle : même cabinet ; nom et prénom normalisés égaux (casse, accents, ordre ignorés), ou même date de naissance et même nom. Le serveur renvoie les candidats typés (identité et contact, aucune donnée clinique). « Créer quand même » nomme les dossiers inspectés et le serveur revérifie.</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix C</legend>
+          <label class="option"><input type="radio" name="C" value="C1" required><span><span class="tag rec">Recommandé</span><strong>C1.</strong> La règle ci-dessus, les candidats typés dans le 409 et une confirmation nommée pour « Créer quand même » (changement de contrat additif, décrit dans le packet).</span></label>
+          <label class="option"><input type="radio" name="C" value="C2"><span><strong>C2.</strong> Contrat inchangé : 409 sans candidats, le client relance la recherche, pas de « Créer quand même ». Un homonyme exact ne peut pas être créé.</span></label>
+        </fieldset>
+
+        <!-- D -->
+        <h3 id="carte-d">D · Champs d’identité</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>La maquette a sept champs : nom de naissance, prénom, <strong>nom d’usage</strong> (facultatif), naissance, téléphone, e-mail et <strong>« Origine de ces informations »</strong> (déclarées, pièce d’identité, courrier). Le contrat, le dictionnaire de données et la base n’ont que cinq champs.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>Retirer le nom d’usage et l’origine de la première version. Chaque champ ajouté coûte une migration, une évolution du contrat, de l’audit et des règles de recherche. Les deux éléments sont consignés comme différés avec un déclencheur.</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix D</legend>
+          <label class="option"><input type="radio" name="D" value="D1" required><span><span class="tag rec">Recommandé</span><strong>D1.</strong> Cinq champs en 3.1. Écart de design par rapport à la maquette, que tu approuves ici.</span></label>
+          <label class="option"><input type="radio" name="D" value="D2"><span><strong>D2.</strong> Ajouter seulement l’origine des informations (champ, migration, contrat, audit).</span></label>
+          <label class="option"><input type="radio" name="D" value="D3"><span><strong>D3.</strong> Ajouter le nom d’usage et l’origine.</span></label>
+        </fieldset>
+
+        <!-- E -->
+        <h3 id="carte-e">E · Contenu de la liste S-07</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>La liste montre une colonne et un filtre « Espace patient », un identifiant « dossier R-A-001 », l’âge, et aucune commande de pagination. Le contrat n’a ni statut d’espace patient, ni filtre, ni numéro de dossier : « R-A-001 » est un alias de jeu de données.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <div class="mock" aria-label="Maquette de la proposition">
+              <strong>MARTIN Claire</strong><br>Naissance 18/04/1978 · 48 ans<br>
+              <strong>BERNARD Louis</strong><br>Naissance 09/07/1991 · 35 ans
+              <div class="row"><span class="btn">Afficher plus</span><span style="color:var(--encre-2)">2 patients affichés</span></div>
+            </div>
+            <p>Date de naissance toujours entière. Statut d’espace patient et numéro de dossier reviennent avec l’émission des invitations ou à ta demande.</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix E</legend>
+          <label class="option"><input type="radio" name="E" value="E1" required><span><span class="tag rec">Recommandé</span><strong>E1.</strong> Liste sans colonne ni filtre « Espace patient » et sans identifiant local ; « Afficher plus » explicite avec le nombre de lignes chargées.</span></label>
+          <label class="option"><input type="radio" name="E" value="E2"><span><strong>E2.</strong> Ajouter dès 3.1 le statut d’espace patient et son filtre (projection entre modules et champ de contrat nouveau).</span></label>
+        </fieldset>
+
+        <!-- F -->
+        <h3 id="carte-f">F · Coque et navigation du praticien</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>Les maquettes S-07 et S-08 sont dans la coque praticien : barre de 56 px et navigation de 248 px. L’espace de travail déjà livré (1.3 et 1.4) est l’en-tête minimal sur fond <code>--fond</code>. Les liens de la maquette (Aujourd’hui, Agenda, Tâches, Briefs…) mènent à des pages non livrées, et le menu mobile n’est pas spécifié (D-46).</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <div class="mock" aria-label="Maquette de la proposition">
+              <ul class="nav">
+                <li class="on">Patients</li>
+                <li class="off">Agenda</li>
+                <li class="off">Tâches</li>
+              </ul>
+              <p style="margin:var(--espace-2) 0 0;color:var(--encre-2)">Seules les destinations livrées apparaissent ; le menu sous 760 px est spécifié et revu avec le design.</p>
+            </div>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix F</legend>
+          <label class="option"><input type="radio" name="F" value="F1" required><span><span class="tag rec">Recommandé</span><strong>F1.</strong> Coque praticien <code>.etaye-app</code> (fond de navigation <code>--fond</code>, zone de travail <code>--surface</code>), navigation limitée aux pages livrées, menu mobile spécifié et revu dans la revue design de 3.1.</span></label>
+          <label class="option"><input type="radio" name="F" value="F2"><span><strong>F2.</strong> Garder l’en-tête minimal de 1.3 sans navigation pour S-07 et S-08. Écart avec les maquettes à approuver ; D-46 reste différé.</span></label>
+        </fieldset>
+
+        <!-- G -->
+        <h3 id="carte-g">G · Règles de recherche et état « à actualiser »</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>Seul un exemple figure dans la maquette (« Martin ou 18/04/1978 »). Ni l’ordre, ni la casse, ni les accents, ni le sens d’une requête vide ne sont définis. L’état « Un dossier a été modifié depuis votre recherche » n’a pas de signal dans le contrat.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <ul>
+              <li>Recherche lancée par validation, sans autocomplétion.</li>
+              <li>Insensible à la casse, aux accents et à l’ordre nom/prénom ; date saisie <code>JJ/MM/AAAA</code> reconnue.</li>
+              <li>Tri par nom, prénom, puis identifiant ; requête vide = liste complète (clinique) ; deux caractères minimum (planificateur).</li>
+              <li>Jamais dans l’adresse ni dans les journaux ; conservée en mémoire par compte et cabinet ; effacée au changement de cabinet et à la déconnexion.</li>
+              <li>« À actualiser » seulement quand une ouverture ou une modification détecte une version plus récente ; pas de sondage.</li>
+            </ul>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix G</legend>
+          <label class="option"><input type="radio" name="G" value="G1" required><span><span class="tag rec">Recommandé</span><strong>G1.</strong> Règles ci-dessus telles quelles.</span></label>
+          <label class="option"><input type="radio" name="G" value="G2"><span><strong>G2.</strong> Modifier une règle (précise laquelle dans les remarques).</span></label>
+        </fieldset>
+
+        <!-- H -->
+        <h3 id="carte-h">H · Contrôles de conception et éléments différés</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>Le registre des différés déclenche cinq points à l’autorisation de la première story concernée : le champ date (D-48), l’annonce d’une sauvegarde (D-43), le tri (D-44), le combobox de recherche patient (D-47, D-49) et le menu mobile (D-46, carte F). S-08 est la première vraie sauvegarde et le premier champ date de naissance.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <div class="mock" aria-label="Maquette de la proposition">
+              <span class="label">Date de naissance (obligatoire)</span>
+              <span class="seg">JJ</span> / <span class="seg">MM</span> / <span class="seg">AAAA</span>
+              <p style="margin:var(--espace-2) 0 0;color:var(--encre-2)">« Erreur : le 31 février n’existe pas. Format JJ/MM/AAAA. »</p>
+            </div>
+            <p>Champ segmenté sans calendrier (le calendrier reste à D-48 pour l’agenda) ; confirmation d’enregistrement dans le bouton, plus une zone d’état annoncée sans voler le focus, sans toast ; aucun tri ; le combobox reste avec I-10 en 4.2.</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix H</legend>
+          <label class="option"><input type="radio" name="H" value="H1" required><span><span class="tag rec">Recommandé</span><strong>H1.</strong> Les quatre points ci-dessus ; D-44 est consigné comme non déclenché et D-47 / D-49 reportés à 4.2.</span></label>
+          <label class="option"><input type="radio" name="H" value="H2"><span><strong>H2.</strong> Revoir un de ces points (précise lequel dans les remarques).</span></label>
+        </fieldset>
+
+        <!-- I -->
+        <h3 id="carte-i">I · Preuves et jeu de données</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>AT-009-A demande de distinguer « aucun résultat » d’une « liste vide », mais le jeu de démo n’a aucun cabinet vide. Le doublon se montre sans nouvelle ligne : ressaisir Claire Martin (1978-04-18) duplique <code>R-A-001</code>. AT-009-C demande des captures ouvertes sur un sous-ensemble choisi.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>L’état vide est testé avec un cabinet créé par la pile de test, sans toucher au jeu de démo. Six écrans échantillonnés à 1440×1024 et 390×844, thèmes clair et sombre : liste, aucun résultat, noms longs, erreur de saisie, doublon et modifications non enregistrées. Les états restants passent par les tests fonctionnels et axe-core.</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix I</legend>
+          <label class="option"><input type="radio" name="I" value="I1" required><span><span class="tag rec">Recommandé</span><strong>I1.</strong> Cabinet vide dans les tests, jeu de démo inchangé, six écrans échantillonnés.</span></label>
+          <label class="option"><input type="radio" name="I" value="I2"><span><strong>I2.</strong> Ajouter un troisième cabinet vide au jeu de démo (touche la réinitialisation de 9.1 et la matrice d’isolation de 1.4).</span></label>
+        </fieldset>
+
+        <!-- J -->
+        <h3 id="carte-j">J · Chemin vers l’autorisation</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>Les états adaptés (doublon avec candidats, champ date, coque limitée, séquence de sauvegarde, variante restreinte) n’ont pas été montrés. Tu ne peux donc pas encore les approuver tels que présentés.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>Après tes réponses, je prépare la page de revue design de ces états dans les deux thèmes. Tu l’approuves par écrit. Tu autorises ensuite la story 3.1 seule par écrit ; j’enregistre une ligne du registre, j’ajoute <code>"3.1"</code> à la liste BMAD (le drapeau global reste faux) et je lance le contrôle de préparation BMAD.</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix J</legend>
+          <label class="option"><input type="radio" name="J" value="J1" required><span><span class="tag rec">Recommandé</span><strong>J1.</strong> Revue design d’abord, puis approbation écrite, puis autorisation écrite de 3.1 seule.</span></label>
+          <label class="option"><input type="radio" name="J" value="J2"><span><strong>J2.</strong> Je réserve toute décision de design et d’autorisation à plus tard ; la préparation reste valable.</span></label>
+        </fieldset>
+
+        <div class="decision">
+          <div class="actions"><button class="primary" type="submit">Préparer mon arbitrage</button></div>
+          <p>Copie le récapitulatif dans la conversation et ajoute tes remarques. Ce récapitulatif n’autorise pas le développement : il fixe le périmètre et le chemin à suivre.</p>
+          <label for="recap">Récapitulatif à transmettre</label>
+          <textarea id="recap" readonly></textarea>
+        </div>
+      </form>
+    </section>
+  </main>
+  <script>
+    const themeButton = document.getElementById('theme');
+    themeButton.addEventListener('click', () => {
+      const dark = document.documentElement.dataset.theme === 'clair';
+      document.documentElement.dataset.theme = dark ? 'sombre' : 'clair';
+      themeButton.setAttribute('aria-pressed', String(dark));
+      themeButton.textContent = dark ? 'Thème clair' : 'Thème sombre';
+    });
+
+    const recommended = { A: 'A1', B: 'B2', Bexit: 'Ba', C: 'C1', D: 'D1', E: 'E1', F: 'F1', G: 'G1', H: 'H1', I: 'I1', J: 'J1' };
+    document.getElementById('accept-all').addEventListener('click', () => {
+      Object.entries(recommended).forEach(([name, value]) => {
+        const input = document.querySelector(`input[name="${name}"][value="${value}"]`);
+        if (input) input.checked = true;
+      });
+    });
+
+    const choices = document.getElementById('choices');
+    const recap = document.getElementById('recap');
+    choices.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const selections = new FormData(choices);
+      const order = ['A', 'B', 'Bexit', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+      const summary = order.map((name) => selections.get(name)).join(', ');
+      const path = selections.get('J') === 'J1'
+        ? 'Prépare la revue design des états adaptés ; je décide ensuite par écrit du design puis de l’autorisation de la Story 3.1.'
+        : 'Je réserve les décisions de design et d’autorisation à plus tard.';
+      recap.value = 'Arbitrage Story 3.1 — ' + summary + '.\n' + path;
+      recap.focus();
+      recap.select();
+    });
+  </script>
+</body>
+</html>

@@ -224,6 +224,43 @@ class ApplicationScopeTests(unittest.TestCase):
         _, errors = self.check_scope()
         self.assertEqual(errors, [])
 
+    def test_story_3_1_scope_requires_its_own_decision(self):
+        self.authorize(story_10_2=True)
+        self.configure('authorized_stories = ["10.1", "10.2", "1.2", "1.1", "1.3", "9.1", "1.4", "3.1"]')
+        decisions = self.root / "docs/planning-artifacts/decisions-assumptions.md"
+        with decisions.open("a", encoding="utf-8") as stream:
+            stream.write("| UD-48 | Authorized for **story 1.2 only**. |\n")
+            stream.write("| UD-50 | Authorized for **story 1.1 only**. |\n")
+            stream.write("| UD-53 | Authorized for **story 1.3 only**. |\n")
+            stream.write("| UD-56 | Authorized for **story 9.1 only**. |\n")
+            stream.write("| UD-61 | Authorized for **story 1.4 only**. |\n")
+            # The scope-only UD-63 and design-only UD-64 rows must not satisfy the gate.
+            stream.write("| UD-63 | Scope of story 3.1 decided; development is not authorized. |\n")
+            stream.write("| UD-64 | Design of story 3.1 approved; authorization stays separate. |\n")
+
+        scope, errors = self.check_scope()
+        self.assertEqual(scope["mode"], "stories-10.1-10.2-1.2-1.1-1.3-9.1-1.4-3.1")
+        self.assertEqual(scope["authorizedStories"], ["10.1", "10.2", "1.2", "1.1", "1.3", "9.1", "1.4", "3.1"])
+        self.assertEqual(len(errors), 1)
+        self.assertIn("Story 3.1 authorization requires UD-65", errors[0])
+
+        with decisions.open("a", encoding="utf-8") as stream:
+            stream.write("| UD-65 | Authorized for **story 3.1 only**, which also covers story 4.2. |\n")
+        _, errors = self.check_scope()
+        self.assertEqual(len(errors), 1)
+        self.assertIn("Story 3.1 authorization requires UD-65", errors[0])
+
+    def test_story_3_1_scope_accepts_its_decision(self):
+        self.authorize(story_10_2=True)
+        self.configure('authorized_stories = ["10.1", "10.2", "1.2", "1.1", "1.3", "9.1", "1.4", "3.1"]')
+        decisions = self.root / "docs/planning-artifacts/decisions-assumptions.md"
+        with decisions.open("a", encoding="utf-8") as stream:
+            for story, decision in (("1.2", "UD-48"), ("1.1", "UD-50"), ("1.3", "UD-53"), ("9.1", "UD-56"),
+                                    ("1.4", "UD-61"), ("3.1", "UD-65")):
+                stream.write(f"| {decision} | Authorized for **story {story} only**. |\n")
+        _, errors = self.check_scope()
+        self.assertEqual(errors, [])
+
     def test_demo_delivery_paths_require_story_9_1_scope(self):
         self.authorize(story_10_2=True)
         decisions = self.root / "docs/planning-artifacts/decisions-assumptions.md"

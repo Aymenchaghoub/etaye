@@ -13,15 +13,17 @@ As a practitioner or an authorized scheduler, I want to find and register practi
 - Requirements: FR-004, FR-005. Rules: BR-004. Journey: J-02.
 - Design: S-07, S-08; interactions I-04. Acceptance test design: AT-009.
 - Dependencies: Story 1.3 (see [roadmap](../roadmap.md)). Gates: Aymen's development authorization and the core design families (UD-16).
-- Delivery: Increment 1, Red-thread slice (web).
+- Delivery: Increment 1, Red-thread slice (web). Scope decisions of 2026-11-23 ([UD-63](../decisions-assumptions.md), [context packet](../../implementation-artifacts/story-3-1-context-packet.md#12-arbitration-outcome-ud-63)): the server side of `searchSchedulingPatients` and `registerSchedulingPatient` is delivered here and the restricted scheduler screens with I-10 in [story 4.2](epic-4.md); identity correction stays in this story; likely duplicates get typed candidates and a named confirmation; the build has five identity fields, no portal-status column and no local record identifier ([D-57, D-58, D-59](../deferred-work.md)). These decisions are not a design approval and not a development authorization.
 - Read before refinement: [PRD](../prd/prd.md), [rules](../business-rules.md), [access](../access-matrix.md), [architecture](../architecture/ARCHITECTURE-SPINE.md), [data](../data-model.md), [contracts](../../contracts/openapi.yaml), [screen catalog](../../design/screen-catalog.md), [test strategy](../../test-artifacts/test-strategy.md).
 - Assumptions: apply relevant A-01–A-12 from the decision register; never treat them as verified facts. Record any changed source/version and resulting AC change in the future story.
 
-**AT-009-A:** Given valid current permission and the documented prerequisite state, when the actor completes this action, then a practitioner searches local patients, distinguishes no-results from empty list and creates valid identity.
+**AT-009-A:** Given valid current permission and the documented prerequisite state, when the actor completes this action, then a practitioner searches local patients, distinguishes no-results from empty list, creates a valid identity and corrects it under the current version, which keeps the same record identifier.
 
-**AT-009-B:** Given an invalid, missing, stale or unauthorized condition, when the same action is attempted, then likely duplicates prompt human selection and no cross-practice matching occurs.
+**AT-009-B:** Given an invalid, missing, stale or unauthorized condition, when the same action is attempted, then likely duplicates prompt human selection, a confirmed distinct person is the only way to create a second similar identity, a stale correction keeps the entered values and no cross-practice matching occurs.
 
 **AT-009-C:** Given long content, keyboard-only navigation and a failed or loading state on S-07, S-08, when the surface is reviewed under the evidence level below, then no essential source, date, unit or action is clipped and focus, error and recovery behavior match the catalog. Evidence level SAMPLED for S-07, S-08: functional assertions and automated axe-core checks for every state, plus opened desktop and mobile captures for the subset sampled by risk (8–10 screens across all sampled families, at 2 widths; confirmed UD-37), preserved as separate visual evidence.
+
+**AT-009-D (UD-63, server side only):** Given the scheduling grants of the fixture, when the scheduler lookup and registration operations are called on the real stack, then lookup returns only the minimal `SchedulingPatient` fields, registration needs both `SCHEDULE_MANAGE` and `PATIENT_REGISTER` and creates identity plus an empty record only, `SCHEDULE_MANAGE` alone, an administrator without those grants and a PRA-B identifier are refused under the existence-hiding policy, and no clinical route becomes readable. The restricted screens and the return to the booking slot are verified with AT-015-D/E in story 4.2.
 
 ## Story 3.2: Explore chronology and explicit assertions
 

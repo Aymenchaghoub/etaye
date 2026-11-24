@@ -30,7 +30,7 @@ As a scheduler, practitioner or linked patient, I want to book an offered slot s
 - Requirements: FR-009. Rules: BR-006. Journey: J-03.
 - Design: S-14, S-16, S-26; interactions I-10. Acceptance test design: AT-015.
 - Dependencies: Story 3.1 (see [roadmap](../roadmap.md)). Gates: Aymen's development authorization and the core design families (UD-16).
-- Delivery: Increment 1, Red-thread slice (web).
+- Delivery: Increment 1, Red-thread slice (web). Under [UD-63](../decisions-assumptions.md) this story delivers the restricted scheduler screens (S-07 lookup and S-08 create-only variants), the I-10 patient lookup with its combobox ([D-47](../deferred-work.md)) and the return to the retained slot (AT-015-D/E); the server operations and their refusal tests are delivered by [story 3.1](epic-3.md).
 - Read before refinement: [PRD](../prd/prd.md), [rules](../business-rules.md), [access](../access-matrix.md), [architecture](../architecture/ARCHITECTURE-SPINE.md), [data](../data-model.md), [contracts](../../contracts/openapi.yaml), [screen catalog](../../design/screen-catalog.md), [test strategy](../../test-artifacts/test-strategy.md).
 - Assumptions: apply relevant A-01–A-12 from the decision register; never treat them as verified facts. Record any changed source/version and resulting AC change in the future story.
 

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html data-theme="clair" lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>S-07 · Suite non chargée · Étaye</title>
+<link href="../../../../../design/offline-reference/site/tokens/tokens.css" rel="stylesheet"/>
+<link href="../../../../../design/offline-reference/site/css/etaye.css" rel="stylesheet"/>
+<link href="../../../../../design/offline-reference/site/css/review-corrections.css" rel="stylesheet"/>
+<style>
+body{margin:0;background:var(--fond);}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+.etaye-root h1[tabindex="-1"]:focus,.etaye-root h1[tabindex="-1"]:focus-visible{outline:none;}
+.spec-date{display:flex;flex-wrap:wrap;gap:var(--espace-3);align-items:end;}
+.spec-date .etaye-champ{width:auto;}
+.spec-date .j,.spec-date .m{width:72px;}
+.spec-date .a{width:104px;}
+.spec-date .etaye-champ__libelle{font-weight:400;color:var(--encre-2);font-size:13px;}
+.spec-new{background:var(--accent-fond);}
+.spec-save{min-width:200px;justify-content:center;}
+.spec-compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--espace-4);}
+.spec-compare dl{margin:0;display:grid;gap:var(--espace-2);}
+.spec-compare dt{color:var(--encre-2);font-size:13px;}
+.spec-compare dd{margin:0;}
+.spec-diff{background:var(--attention-fond);padding:0 var(--espace-1);}
+.spec-cand{list-style:none;margin:var(--espace-2) 0 0;padding:0;display:grid;gap:var(--espace-2);}
+.spec-cand li{display:flex;flex-wrap:wrap;gap:var(--espace-1) var(--espace-4);align-items:center;}
+.etaye-bandeau .etaye-bandeau__actions{flex-wrap:wrap;}
+.spec-recherche{display:flex;flex-wrap:wrap;align-items:center;gap:var(--espace-3);}
+.spec-recherche .etaye-champ__saisie{flex:1 1 220px;min-width:0;}
+@media (max-width:760px){.spec-compare{grid-template-columns:minmax(0,1fr);}}
+</style>
+</head>
+<body class="etaye-root" >
+<div class="etaye-root etaye-app"><header class="etaye-top"><button aria-expanded="false" aria-label="Ouvrir le menu" class="etaye-fermer etaye-top__menu" data-menu="true" type="button"><span aria-hidden="true" class="etaye-icone etaye-icone--18 etaye-icone--menu"></span></button><a class="etaye-top__logo" href="s07-liste.html"><img alt="Étaye" class="etaye-logo-c" src="../../../../../design/offline-reference/site/logos/etaye-logo.svg" style="height:22px"/><img alt="Étaye" class="etaye-logo-s" src="../../../../../design/offline-reference/site/logos/etaye-logo-sombre.svg" style="height:22px"/></a><div class="etaye-contexte"><span aria-hidden="true" class="etaye-icone etaye-icone--18 etaye-icone--cabinet"></span><span><span class="etaye-contexte__cabinet">Cabinet des Tilleuls</span> <span class="etaye-contexte__role">Praticienne · Dr Nora Lefebvre</span></span></div><div class="etaye-top__droite"><span class="etaye-demo">Démonstration — personnes et données fictives</span><span class="etaye-compte__nom">Dr Nora Lefebvre</span><button class="etaye-bouton etaye-bouton--discret" type="button">Se déconnecter</button></div></header><nav aria-label="Navigation principale" class="etaye-nav"><ul class="etaye-nav__liste"><li><a aria-current="page" class="etaye-nav__rangee" href="s07-liste.html"><span aria-hidden="true" class="etaye-icone etaye-icone--18 etaye-icone--patients"></span>Patients</a></li></ul></nav><main class="etaye-main" id="contenu"><div class="etaye-page"><div class="etaye-entete"><div><h1 tabindex="-1">Patients</h1><div class="etaye-entete__meta">Cabinet des Tilleuls · les dossiers des autres cabinets n'apparaissent jamais ici</div></div><div class="etaye-entete__actions"><a class="etaye-bouton etaye-bouton--principal" href="s08-nouveau.html"><span aria-hidden="true" class="etaye-icone etaye-icone--18 etaye-icone--ajouter"></span>Créer un dossier patient</a></div></div><form aria-label="Rechercher un patient" class="etaye-filtres" role="search" novalidate=""><div style="flex:1;min-width:240px"><div class="etaye-champ"><label class="etaye-champ__libelle" for="q">Nom, prénom ou date de naissance</label><div class="spec-recherche"><input aria-describedby="q-a" class="etaye-champ__saisie" id="q" type="search" value=""/><button class="etaye-bouton etaye-bouton--secondaire" type="submit">Rechercher</button></div><span class="etaye-champ__aide" id="q-a">Exemple : Martin ou 18/04/1978</span></div></div></form><div class="etaye-ligne" style="justify-content:space-between"><span class="etaye-3" role="status" style="font-size:13px">3 patients affichés</span></div><div class="etaye-bandeau etaye-bandeau--attention" role="alert"><span aria-hidden="true" class="etaye-icone etaye-icone--18 etaye-icone--alerte"></span><div><div class="etaye-bandeau__titre">La suite n'a pas pu être chargée</div><div>Les patients déjà affichés restent consultables.</div></div><div class="etaye-bandeau__actions"><button class="etaye-bouton etaye-bouton--secondaire" type="button">Réessayer</button></div></div><ul class="etaye-lignes"><li class=""><span aria-hidden="true" class="etaye-lignes__heure"><span aria-hidden="true" class="etaye-icone etaye-icone--18 etaye-icone--compte etaye-2"></span></span><div><div class="etaye-lignes__titre">BERNARD Louis</div><div class="etaye-lignes__detail">Naissance <span class="etaye-num">09/07/1991</span> · 35 ans</div></div><div class="etaye-lignes__actions"><a class="etaye-bouton etaye-bouton--secondaire" href="s08-modifier.html">Modifier l'identité <span class="vh">de BERNARD Louis</span></a></div></li><li class=""><span aria-hidden="true" class="etaye-lignes__heure"><span aria-hidden="true" class="etaye-icone etaye-icone--18 etaye-icone--compte etaye-2"></span></span><div><div class="etaye-lignes__titre">COLLET Marie</div><div class="etaye-lignes__detail">Naissance <span class="etaye-num">12/03/1990</span> · 36 ans</div></div><div class="etaye-lignes__actions"><a class="etaye-bouton etaye-bouton--secondaire" href="s08-modifier.html">Modifier l'identité <span class="vh">de COLLET Marie</span></a></div></li><li class=""><span aria-hidden="true" class="etaye-lignes__heure"><span aria-hidden="true" class="etaye-icone etaye-icone--18 etaye-icone--compte etaye-2"></span></span><div><div class="etaye-lignes__titre">MARTIN Claire</div><div class="etaye-lignes__detail">Naissance <span class="etaye-num">18/04/1978</span> · 48 ans</div></div><div class="etaye-lignes__actions"><a class="etaye-bouton etaye-bouton--secondaire" href="s08-modifier.html">Modifier l'identité <span class="vh">de MARTIN Claire</span></a></div></li></ul></div></main></div>
+<script>
+(function(){
+  try{var t=new URLSearchParams(location.search).get('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}
+  var first=document.querySelector('[data-focus]');if(first)first.focus({preventScroll:true});
+  var b=document.querySelector('[data-menu]'),n=document.querySelector('.etaye-nav');
+  if(!b||!n)return;
+  function close(returnFocus){n.removeAttribute('data-open');b.setAttribute('aria-expanded','false');b.setAttribute('aria-label','Ouvrir le menu');if(returnFocus)b.focus();}
+  function open(){n.setAttribute('data-open','true');b.setAttribute('aria-expanded','true');b.setAttribute('aria-label','Fermer le menu');var f=n.querySelector('a');if(f)f.focus();}
+  b.addEventListener('click',function(){n.getAttribute('data-open')==='true'?close(true):open();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&n.getAttribute('data-open')==='true')close(true);});
+  n.addEventListener('click',function(e){if(e.target.closest('a'))close(false);});
+  window.matchMedia('(min-width:761px)').addEventListener('change',function(e){if(e.matches)close(false);});
+  try{if(new URLSearchParams(location.search).get('menu')==='ouvert'&&getComputedStyle(b).display!=='none')open();}catch(e){}
+})();
+</script>
+</body>
+</html>

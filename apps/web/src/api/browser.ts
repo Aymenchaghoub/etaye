@@ -1,20 +1,20 @@
 import { version } from '../../package.json';
 import { createClient } from './generated/client';
-import { acceptInvitation, completeRecovery, getApiMeta, getCsrfToken, getPatientRecord, getReadiness, getSession, inspectInvitation, listDemoScenarios, requestRecovery, resetSyntheticDemo, signIn, signOut } from './generated/sdk.gen';
-import type { ActivationWritable, CredentialsWritable } from './generated/types.gen';
+import { acceptInvitation, completeRecovery, createPatient, editPatient, getApiMeta, getCsrfToken, getPatientRecord, getReadiness, getSession, inspectInvitation, listDemoScenarios, requestRecovery, resetSyntheticDemo, searchPatients, signIn, signOut } from './generated/sdk.gen';
+import type { ActivationWritable, CredentialsWritable, PatientEdit, PatientRegistration, Problem } from './generated/types.gen';
 
-type AccountResult<T> =
-  | { ok: true; data: T }
-  | { ok: false; status: number; code?: string; retryAfter: number };
+export type AccountResult<T> =
+  | { ok: true; data: T; etag?: string }
+  | { ok: false; status: number; code?: string; retryAfter: number; problem?: Problem };
 
 type AccountResponse<T> = { data?: T; error?: unknown; response?: Response };
 
 function accountResult<T>(result: AccountResponse<T>): AccountResult<T> {
-  if (result.response?.ok) return { ok: true, data: result.data as T };
+  if (result.response?.ok) return { ok: true, data: result.data as T, etag: result.response.headers.get('ETag') ?? undefined };
   const header = Number(result.response?.headers.get('Retry-After'));
   const retryAfter = Number.isFinite(header) && header > 0 ? Math.ceil(header) : 0;
-  const code = (result.error as { code?: string } | undefined)?.code;
-  return { ok: false, status: result.response?.status ?? 0, code, retryAfter };
+  const problem = result.error && typeof result.error === 'object' ? result.error as Problem : undefined;
+  return { ok: false, status: result.response?.status ?? 0, code: problem?.code, retryAfter, problem };
 }
 
 type BrowserTransport = { fetch: typeof fetch };
@@ -65,6 +65,24 @@ export function createBrowserApi(origin: string, transportEnabled: boolean, tran
     readRecord(practiceId: string, recordId: string, signal?: AbortSignal) {
       return accountRequest((deadline) => getPatientRecord({
         client, path: { practiceId, recordId }, signal: deadline, cache: 'no-store',
+      }), signal);
+    },
+    // Patient directory (story 3.1). The query text travels only in the request: it is never logged or stored here.
+    searchPatients(practiceId: string, query: { q?: string; cursor?: string; limit?: number }, signal?: AbortSignal) {
+      return accountRequest((deadline) => searchPatients({
+        client, path: { practiceId }, query, signal: deadline, cache: 'no-store',
+      }), signal);
+    },
+    createPatient(practiceId: string, body: PatientRegistration, key: string, signal?: AbortSignal) {
+      return withCsrf((headers, deadline) => createPatient({
+        client, path: { practiceId }, headers: { ...headers, 'Idempotency-Key': key }, body,
+        signal: deadline, cache: 'no-store',
+      }), signal);
+    },
+    editPatient(practiceId: string, patientId: string, version: number, body: PatientEdit, signal?: AbortSignal) {
+      return withCsrf((headers, deadline) => editPatient({
+        client, path: { practiceId, patientId }, headers: { ...headers, 'If-Match': `"${version}"` }, body,
+        signal: deadline, cache: 'no-store',
       }), signal);
     },
     listDemoScenarios(signal?: AbortSignal) {

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html data-theme="clair" lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>S-08 · I-04 · Conflit de version · Étaye</title>
+<link href="../../../../../design/offline-reference/site/tokens/tokens.css" rel="stylesheet"/>
+<link href="../../../../../design/offline-reference/site/css/etaye.css" rel="stylesheet"/>
+<link href="../../../../../design/offline-reference/site/css/review-corrections.css" rel="stylesheet"/>
+<style>
+body{margin:0;background:var(--fond);}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+.etaye-root h1[tabindex="-1"]:focus,.etaye-root h1[tabindex="-1"]:focus-visible{outline:none;}
+.spec-date{display:flex;flex-wrap:wrap;gap:var(--espace-3);align-items:end;}
+.spec-date .etaye-champ{width:auto;}
+.spec-date .j,.spec-date .m{width:72px;}
+.spec-date .a{width:104px;}
+.spec-date .etaye-champ__libelle{font-weight:400;color:var(--encre-2);font-size:13px;}
+.spec-new{background:var(--accent-fond);}
+.spec-save{min-width:200px;justify-content:center;}
+.spec-compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--espace-4);}
+.spec-compare dl{margin:0;display:grid;gap:var(--espace-2);}
+.spec-compare dt{color:var(--encre-2);font-size:13px;}
+.spec-compare dd{margin:0;}
+.spec-diff{background:var(--attention-fond);padding:0 var(--espace-1);}
+.spec-cand{list-style:none;margin:var(--espace-2) 0 0;padding:0;display:grid;gap:var(--espace-2);}
+.spec-cand li{display:flex;flex-wrap:wrap;gap:var(--espace-1) var(--espace-4);align-items:center;}
+.etaye-bandeau .etaye-bandeau__actions{flex-wrap:wrap;}
+.spec-recherche{display:flex;flex-wrap:wrap;align-items:center;gap:var(--espace-3);}
+.spec-recherche .etaye-champ__saisie{flex:1 1 220px;min-width:0;}
+@media (max-width:760px){.spec-compare{grid-template-columns:minmax(0,1fr);}}
+</style>
+</head>
+<body class="etaye-root" >
+<div class="etaye-root etaye-app"><header class="etaye-top"><button aria-expanded="false" aria-label="Ouvrir le menu" class="etaye-fermer etaye-top__menu" data-menu="true" type="button"><span aria-hidden="true" class="etaye-icone etaye-icone--18 etaye-icone--menu"></span></button><a class="etaye-top__logo" href="s07-liste.html"><img alt="Étaye" class="etaye-logo-c" src="../../../../../design/offline-reference/site/logos/etaye-logo.svg" style="height:22px"/><img alt="Étaye" class="etaye-logo-s" src="../../../../../design/offline-reference/site/logos/etaye-logo-sombre.svg" style="height:22px"/></a><div class="etaye-contexte"><span aria-hidden="true" class="etaye-icone etaye-icone--18 etaye-icone--cabinet"></span><span><span class="etaye-contexte__cabinet">Cabinet des Tilleuls</span> <span class="etaye-contexte__role">Praticienne · Dr Nora Lefebvre</span></span></div><div class="etaye-top__droite"><span class="etaye-demo">Démonstration — personnes et données fictives</span><span class="etaye-compte__nom">Dr Nora Lefebvre</span><button class="etaye-bouton etaye-bouton--discret" type="button">Se déconnecter</button></div></header><nav aria-label="Navigation principale" class="etaye-nav"><ul class="etaye-nav__liste"><li><a aria-current="page" class="etaye-nav__rangee" href="s07-liste.html"><span aria-hidden="true" class="etaye-icone etaye-icone--18 etaye-icone--patients"></span>Patients</a></li></ul></nav><main class="etaye-main" id="contenu"><div class="etaye-page"><div class="etaye-entete"><div><div class="etaye-entete__fil"><a href="s07-liste.html">Patients</a> › Modifier l'identité</div><h1 tabindex="-1">Modifier l'identité</h1><div class="etaye-entete__meta">MARTIN Claire · version 7 ouverte</div></div></div><div class="etaye-bandeau etaye-bandeau--attention" role="alert"><span aria-hidden="true" class="etaye-icone etaye-icone--18 etaye-icone--alerte"></span><div><div class="etaye-bandeau__titre">Ce dossier a été modifié entre-temps</div><div>La version 8 a été enregistrée pendant votre saisie. Vos modifications sont conservées ci-dessous ; comparez avant d'enregistrer.</div></div><div class="etaye-bandeau__actions"><button class="etaye-bouton etaye-bouton--secondaire" type="button">Recharger la version enregistrée</button></div></div><div class="etaye-panneau" style="max-width:720px"><div class="etaye-panneau__corps" style="padding:var(--espace-4)"><div class="spec-compare"><dl><dt>Votre saisie</dt><dd>Prénom : <span class="spec-diff">Claire-Anne</span></dd><dd>Téléphone : <span class="spec-diff">06 00 00 00 00</span></dd></dl><dl><dt>Enregistré · version 8 · 16:02 · Dr Sami Rahmani</dt><dd>Prénom : Claire</dd><dd>Téléphone : <span class="spec-diff">01 00 00 00 00</span></dd></dl></div></div></div><form class="etaye-form" novalidate="" style="max-width:720px"><div class="etaye-form__ligne"><div class="etaye-champ"><label class="etaye-champ__libelle" for="i-nom">Nom de naissance <span aria-hidden="true" class="etaye-req">*</span></label><input aria-required="true" class="etaye-champ__saisie" id="i-nom" type="text" value="Martin"/></div><div class="etaye-champ"><label class="etaye-champ__libelle" for="i-pre">Prénom <span aria-hidden="true" class="etaye-req">*</span></label><input aria-required="true" class="etaye-champ__saisie" id="i-pre" type="text" value="Claire-Anne"/></div></div><div class="etaye-champ" role="group" aria-labelledby="dn-l" aria-describedby="dn-a"><span class="etaye-champ__libelle" id="dn-l">Date de naissance <span aria-hidden="true" class="etaye-req">*</span></span><div class="spec-date"><div class="etaye-champ j"><label class="etaye-champ__libelle" for="dn-j">Jour</label><input aria-required="true" class="etaye-champ__saisie etaye-num" id="dn-j" inputmode="numeric" maxlength="2" placeholder="JJ" type="text" value="18"/></div><div class="etaye-champ m"><label class="etaye-champ__libelle" for="dn-m">Mois</label><input aria-required="true" class="etaye-champ__saisie etaye-num" id="dn-m" inputmode="numeric" maxlength="2" placeholder="MM" type="text" value="04"/></div><div class="etaye-champ a"><label class="etaye-champ__libelle" for="dn-a2">Année</label><input aria-required="true" class="etaye-champ__saisie etaye-num" id="dn-a2" inputmode="numeric" maxlength="4" placeholder="AAAA" type="text" value="1978"/></div></div><span class="etaye-champ__aide" id="dn-a">Format JJ/MM/AAAA.</span></div><div class="etaye-form__ligne"><div class="etaye-champ"><label class="etaye-champ__libelle" for="i-tel">Téléphone <span class="etaye-opt">(facultatif)</span></label><input class="etaye-champ__saisie" id="i-tel" type="tel" value="06 00 00 00 00"/></div><div class="etaye-champ"><label class="etaye-champ__libelle" for="i-mail">Adresse e-mail <span class="etaye-opt">(facultatif)</span></label><input class="etaye-champ__saisie" id="i-mail" type="email" value=""/></div></div><p class="etaye-3" style="font-size:13px;margin:0">L'espace patient n'est pas créé ici : une invitation séparée est envoyée par l'équipe soignante.</p><div class="etaye-ligne"><button class="etaye-bouton etaye-bouton--principal " type="button">Enregistrer l'identité</button><button class="etaye-bouton etaye-bouton--discret" type="button">Annuler</button></div></form></div></main></div>
+<script>
+(function(){
+  try{var t=new URLSearchParams(location.search).get('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}
+  var first=document.querySelector('[data-focus]');if(first)first.focus({preventScroll:true});
+  var b=document.querySelector('[data-menu]'),n=document.querySelector('.etaye-nav');
+  if(!b||!n)return;
+  function close(returnFocus){n.removeAttribute('data-open');b.setAttribute('aria-expanded','false');b.setAttribute('aria-label','Ouvrir le menu');if(returnFocus)b.focus();}
+  function open(){n.setAttribute('data-open','true');b.setAttribute('aria-expanded','true');b.setAttribute('aria-label','Fermer le menu');var f=n.querySelector('a');if(f)f.focus();}
+  b.addEventListener('click',function(){n.getAttribute('data-open')==='true'?close(true):open();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&n.getAttribute('data-open')==='true')close(true);});
+  n.addEventListener('click',function(e){if(e.target.closest('a'))close(false);});
+  window.matchMedia('(min-width:761px)').addEventListener('change',function(e){if(e.matches)close(false);});
+  try{if(new URLSearchParams(location.search).get('menu')==='ouvert'&&getComputedStyle(b).display!=='none')open();}catch(e){}
+})();
+</script>
+</body>
+</html>

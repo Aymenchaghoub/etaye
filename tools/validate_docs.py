@@ -80,9 +80,10 @@ def check_application_scope(root, errors):
         ("10.1", "10.2", "1.2", "1.1", "1.3"): "stories-10.1-10.2-1.2-1.1-1.3",
         ("10.1", "10.2", "1.2", "1.1", "1.3", "9.1"): "stories-10.1-10.2-1.2-1.1-1.3-9.1",
         ("10.1", "10.2", "1.2", "1.1", "1.3", "9.1", "1.4"): "stories-10.1-10.2-1.2-1.1-1.3-9.1-1.4",
+        ("10.1", "10.2", "1.2", "1.1", "1.3", "9.1", "1.4", "3.1"): "stories-10.1-10.2-1.2-1.1-1.3-9.1-1.4-3.1",
     }
     decision_ids = {"10.1": "UD-41", "10.2": "UD-45", "1.2": "UD-48", "1.1": "UD-50", "1.3": "UD-53", "9.1": "UD-56",
-                    "1.4": "UD-61"}
+                    "1.4": "UD-61", "3.1": "UD-65"}
     scope = {"mode": "planning-only", "authorizedStories": []}
     try:
         config = tomllib.loads((root / "_bmad/custom/config.toml").read_text(encoding="utf-8"))
@@ -106,8 +107,9 @@ def check_application_scope(root, errors):
             raise ValueError('[etaye] authorized_stories must be [], ["10.1"], ["10.1", "10.2"], '
                              '["10.1", "10.2", "1.2"], ["10.1", "10.2", "1.2", "1.1"], '
                              '["10.1", "10.2", "1.2", "1.1", "1.3"], '
-                             '["10.1", "10.2", "1.2", "1.1", "1.3", "9.1"] or '
-                             '["10.1", "10.2", "1.2", "1.1", "1.3", "9.1", "1.4"]')
+                             '["10.1", "10.2", "1.2", "1.1", "1.3", "9.1"], '
+                             '["10.1", "10.2", "1.2", "1.1", "1.3", "9.1", "1.4"] or '
+                             '["10.1", "10.2", "1.2", "1.1", "1.3", "9.1", "1.4", "3.1"]')
         scope = {"mode": mode, "authorizedStories": stories}
     except (OSError, ValueError) as exc:
         errors.append(f"Invalid authorization in _bmad/custom/config.toml: {exc}")

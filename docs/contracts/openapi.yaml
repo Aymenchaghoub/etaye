@@ -1459,7 +1459,7 @@
       "get": {
         "operationId": "searchPatients",
         "summary": "searchPatients",
-        "description": "Requires CLINICAL_READ. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
+        "description": "Requires CLINICAL_READ. Practice IDs select context, never grant authority. Tokens are separated by spaces. Every token must match the start of a word of the patient's normalized first or last name; a token written JJ/MM/AAAA or AAAA-MM-JJ matches that exact birth date. Normalization composes the text canonically, lowercases it, removes combining marks and diacritics and treats every other non-alphanumeric character as a word separator. Results are ordered by normalized last name, first name, then id. The opaque cursor holds only the last row id and a binding to the practice, the actor and the query; a malformed, foreign or mismatched cursor is a 400. Query text is never logged and never copied to a URL. Only the selected practice is searched; there is no global or cross-practice matching. Without `q` the practice's patients are listed; an empty page is the same 200 for an empty practice and for a query without match, so the client distinguishes them by whether it sent a query.",
         "x-required-permissions": [
           "CLINICAL_READ"
         ],
@@ -1524,7 +1524,7 @@
       "post": {
         "operationId": "createPatient",
         "summary": "createPatient",
-        "description": "Requires CLINICAL_WRITE. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
+        "description": "Requires CLINICAL_WRITE. Practice IDs select context, never grant authority. Atomically creates the local Patient, an empty PatientRecord, audit, outbox and idempotency outcome. A likely duplicate (see the guide, Patient search and duplicate rule) returns 409 DUPLICATE_PATIENT with typed same-practice `candidates` unless `confirmedDistinctRecordIds` names every current candidate. No portal link, invitation, appointment or clinical fact is created.",
         "x-required-permissions": [
           "CLINICAL_WRITE"
         ],
@@ -1603,7 +1603,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PatientEdit"
+                "$ref": "#/components/schemas/PatientRegistration"
               }
             }
           }
@@ -1614,7 +1614,7 @@
       "patch": {
         "operationId": "editPatient",
         "summary": "editPatient",
-        "description": "Requires CLINICAL_WRITE. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
+        "description": "Requires CLINICAL_WRITE and `If-Match` with the current patient version: a missing header is 428, a stale version 412. Replaces the identity fields; the patient and record identifiers never change. A foreign or unknown patientId is 404. A correction runs no duplicate check (story 3.1 [ASSUMPTION]); the duplicate warning protects registration. Practice IDs select context, never grant authority.",
         "x-required-permissions": [
           "CLINICAL_WRITE"
         ],
@@ -7756,7 +7756,7 @@
       "get": {
         "operationId": "searchSchedulingPatients",
         "summary": "Search the minimal scheduling patient directory",
-        "description": "Requires SCHEDULE_MANAGE in the selected practice. Returns only SchedulingPatient fields for booking and local duplicate disambiguation. No clinical-record endpoint becomes readable; query text is not logged.",
+        "description": "Requires SCHEDULE_MANAGE in the selected practice. Returns only SchedulingPatient fields for booking and local duplicate disambiguation; `q` is required with at least two characters and follows the matching rules of searchPatients. No clinical-record endpoint becomes readable; query text is not logged.",
         "x-required-permissions": [
           "SCHEDULE_MANAGE"
         ],
@@ -7822,7 +7822,7 @@
       "post": {
         "operationId": "registerSchedulingPatient",
         "summary": "Register minimal local identity for an appointment",
-        "description": "Requires BOTH SCHEDULE_MANAGE and separately assigned PATIENT_REGISTER (PD-001 proposal). Accepts only PatientEdit demographic fields. Atomically create local Patient and empty PatientRecord plus audit/idempotency outcome. A likely duplicate returns Problem409 with code DUPLICATE_PATIENT; requery searchSchedulingPatients for authorized minimal candidates and human selection. No candidate clinical data is included in the error. No portal link, clinical facts, invitation or appointment is created. No existing-identity correction via this endpoint.",
+        "description": "Requires BOTH SCHEDULE_MANAGE and separately assigned PATIENT_REGISTER (PD-001, accepted UD-17). Accepts PatientRegistration; the identity fields are demographic only. Atomically creates the local Patient and an empty PatientRecord plus audit and idempotency outcome. A likely duplicate returns 409 DUPLICATE_PATIENT with typed minimal `candidates` for human selection or a named confirmation; candidates carry no clinical data. No portal link, clinical facts, invitation or appointment is created. No existing-identity correction via this endpoint.",
         "x-required-permissions": [
           "SCHEDULE_MANAGE",
           "PATIENT_REGISTER"
@@ -7885,7 +7885,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PatientEdit"
+                "$ref": "#/components/schemas/PatientRegistration"
               }
             }
           }
@@ -8060,6 +8060,14 @@
               ]
             },
             "maxItems": 100
+          },
+          "candidates": {
+            "type": "array",
+            "maxItems": 10,
+            "items": {
+              "$ref": "#/components/schemas/SchedulingPatient"
+            },
+            "description": "Present only on 409 DUPLICATE_PATIENT: same-practice likely duplicates with identity and contact fields only, never clinical data."
           }
         },
         "required": [
@@ -8798,6 +8806,55 @@
           "lastName",
           "dateOfBirth"
         ]
+      },
+      "PatientRegistration": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "lastName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "format": "date"
+          },
+          "contactEmail": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "email"
+          },
+          "phone": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 40
+          },
+          "confirmedDistinctRecordIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "uniqueItems": true,
+            "maxItems": 10
+          }
+        },
+        "required": [
+          "firstName",
+          "lastName",
+          "dateOfBirth"
+        ],
+        "description": "Demographic identity for a registration. `confirmedDistinctRecordIds` is the human confirmation of story 3.1 (UD-63): it names the record IDs of every likely-duplicate candidate the person inspected and judged to be a different individual. The server re-runs the duplicate rule at commit and answers 409 DUPLICATE_PATIENT again when a current candidate is not named, or when more than ten patients match. A null or repeated entry is a 400. The field is part of the canonical idempotency body hash."
       },
       "Patient": {
         "type": "object",
