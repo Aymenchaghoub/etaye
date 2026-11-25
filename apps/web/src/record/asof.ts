@@ -103,9 +103,17 @@ export function parseFilterDay(label: string, parts: DayParts): ParseResult<{ ye
   return { ok: true, value: { year, month, day } };
 }
 
-/** The first instant of a calendar day of a zone: when midnight repeats (clocks going back at 00:00), the earlier reading. */
-function firstInstantOfDay(zone: string, year: number, month: number, day: number): Date | undefined {
-  return zoneInstants(zone, year, month, day, 0, 0)[0];
+/**
+ * The first instant of a calendar day of a zone: when midnight repeats, the earlier reading; when the clocks skip midnight
+ * (Santiago on 8 September 2019, from 00:00 to 01:00) the day starts where the skipped hour ends, so a day filter never
+ * loses its bound.
+ */
+function firstInstantOfDay(zone: string, year: number, month: number, day: number): Date {
+  const [first] = zoneInstants(zone, year, month, day, 0, 0);
+  if (first) return first;
+  const wall = Date.UTC(year, month - 1, day, 0, 0);
+  // Read with the offset of the day before and of the day after, the later instant is the one where the clocks jumped.
+  return new Date(Math.max(wall - zoneOffset(zone, wall - 86_400_000), wall - zoneOffset(zone, wall + 86_400_000)));
 }
 
 /** Start of a day of the practice zone, as the inclusive `from` of the timeline. */

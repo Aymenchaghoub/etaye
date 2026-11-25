@@ -133,6 +133,21 @@ describe('the series (BR-009)', () => {
     expect(series[1].rows.map((row) => row.value)).toEqual(['68,4', '69']);
   });
 
+  it('never merges the synthetic blood-pressure series with a stored concept spelled like its option', () => {
+    // A concept code is free text (D-66): "p" in mmHg is its own single-value series beside the paired blood pressure.
+    const rows = buildRows([
+      ...pressure('g1', '2026-09-14T07:35:00Z', '128', '80'),
+      measurement({ concept: PRESSURE_OPTION, value: '5', unit: 'mmHg', observedAt: '2026-10-01T08:00:00Z' }),
+      measurement({ concept: PRESSURE_OPTION, value: '6', unit: 'mmHg', observedAt: '2026-10-02T08:00:00Z' }),
+    ]);
+    const series = buildSeries(rows);
+    expect(series.map((entry) => [entry.kind, entry.concept, entry.rows.length])).toEqual([
+      ['pressure', PRESSURE_OPTION, 1], ['single', PRESSURE_OPTION, 2],
+    ]);
+    expect(series[0].rows[0].plotted).toEqual([128, 80]);
+    expect(series[1].rows.every((row) => row.plotted.length === 1)).toBe(true);
+  });
+
   it('keeps the plain label when the concept has one unit, and states the unit when it is too long for the chart', () => {
     const [bp] = buildSeries(buildRows(pressure('g1', '2026-09-14T07:35:00Z', '128', '80')));
     expect(panelTitle(bp, [bp])).toBe('Pression artérielle');
@@ -185,6 +200,23 @@ describe('the series (BR-009)', () => {
 });
 
 describe('the chart', () => {
+  it('keeps two close values of 12 integer digits apart on the axis and plots finite points', () => {
+    const axis = chartAxis([123456789012.1, 123456789012.2]);
+    expect(axis.max).toBeGreaterThan(axis.min);
+    expect(axis.ticks).toEqual([...axis.ticks].sort((a, b) => a - b));
+    expect(new Set(axis.ticks).size).toBe(axis.ticks.length);
+    const [big] = buildSeries(buildRows([
+      measurement({ concept: 'BIG', value: '123456789012.1', unit: 'u', observedAt: '2026-10-01T08:00:00Z' }),
+      measurement({ concept: 'BIG', value: '123456789012.2', unit: 'u', observedAt: '2026-10-02T08:00:00Z' }),
+    ]));
+    const drawn = plot(big, 'wide');
+    for (const line of drawn.lines) for (const point of line.points) {
+      expect(Number.isFinite(point.x)).toBe(true);
+      expect(Number.isFinite(point.y)).toBe(true);
+    }
+    expect(drawn.ticks.every((tick) => Number.isFinite(tick.y))).toBe(true);
+  });
+
   it('computes its axis from the data and never draws a band or a threshold', () => {
     expect(chartAxis([128, 134, 80, 82])).toEqual({ min: 60, max: 150, ticks: [60, 90, 120, 150] });
     expect(chartAxis([10, 14, 12])).toEqual({ min: 9, max: 15, ticks: [9, 12, 15] });

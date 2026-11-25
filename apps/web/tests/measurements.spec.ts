@@ -132,6 +132,10 @@ test.describe('S-11 measurements (AT-011-A, AT-011-B)', () => {
     const region = page.getByRole('region', { name: 'Historique des versions : Poids' });
     await expect(region.locator('.etaye-lignee li')).toHaveCount(100);
     await expect(region.locator('.etaye-lignee li').first()).toContainText('Version 1 · 86,4 kg');
+    // The next listed revision is version 3 and does not name version 1 as its predecessor: no false "remplacée par".
+    await expect(region.locator('.etaye-lignee li').first()).toContainText('remplacée ensuite · versions intermédiaires non affichées');
+    await expect(region.locator('.etaye-lignee li').first()).not.toContainText('remplacée par la version 3');
+    await expect(region.locator('.etaye-lignee li').nth(1)).toContainText('remplacée par la version 4');
     await expect(region).toContainText('Historique raccourci : la version d’origine et les 99 plus récentes sont listées');
     await accessible(page);
   });

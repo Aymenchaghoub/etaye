@@ -446,7 +446,11 @@ function LineageEntry({ entry, next, zone }: { entry: Measurement; next: Measure
       {' · '}
       {next
         ? <><span className={`etaye-etat etaye-etat--${originState[entry.sourceType].tone === 'plain' ? 'observe' : originState[entry.sourceType].tone}`}>{originLabel[entry.sourceType]}</span>
-          {' · '}<span>remplacée par la version {next.revision ?? next.version}</span></>
+          {' · '}
+          {/* Only a revision that names this one as its predecessor replaced it: in a shortened lineage the next listed entry may be later. */}
+          <span>{next.supersedesId === entry.id
+            ? `remplacée par la version ${next.revision ?? next.version}`
+            : 'remplacée ensuite · versions intermédiaires non affichées'}</span></>
         : <span className="etaye-etat etaye-etat--corrige">Version courante</span>}
       {entry.correctionReason ? ` · motif : ${entry.correctionReason}` : ''}
     </li>

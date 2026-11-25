@@ -129,19 +129,22 @@ export type Series = {
 
 const SEPARATOR = '\u001f';
 
+/** A series is one kind of row, one exact concept and one exact unit: the synthetic blood-pressure option never matches a stored code. */
+const seriesKey = (row: Row): string => [row.kind, row.concept, row.unit].join(SEPARATOR);
+
 /** The series of the rows: blood pressure first, as in the approved reference, then by most recent observation (no ranking). */
 export function buildSeries(rows: Row[]): Series[] {
   const series = new Map<string, Series>();
   for (const row of rows) {
     if (!row.complete || row.plotted.length === 0) continue;
-    const key = `${row.concept}${SEPARATOR}${row.unit}`;
+    const key = seriesKey(row);
     const known = series.get(key);
     if (known) known.rows.unshift(row);
     else series.set(key, { key, kind: row.kind, concept: row.concept, label: row.label, unit: row.unit, rows: [row], incomplete: 0 });
   }
   for (const row of rows) {
     if (row.complete) continue;
-    const known = series.get(`${row.concept}${SEPARATOR}${row.unit}`);
+    const known = series.get(seriesKey(row));
     if (known) known.incomplete += 1;
   }
   return [...series.values()].sort((a, b) => Number(b.kind === 'pressure') - Number(a.kind === 'pressure'));
@@ -191,8 +194,11 @@ export function chartAxis(values: number[]): { min: number; max: number; ticks: 
       const max = Math.ceil(to / step) * step;
       if (Math.round((max - min) / step) <= 3) {
         const count = Math.round((max - min) / step);
-        const ticks = Array.from({ length: count + 1 }, (_, index) => Number((min + index * step).toPrecision(12)));
-        return { min: ticks[0], max: ticks[count], ticks };
+        // Rounded to the decimals of the step, never to a number of significant digits: twelve of them would merge two
+        // close values of 12 integer digits into one tick and leave a zero-height axis.
+        const decimals = Math.min(100, Math.max(0, -exponent));
+        const ticks = Array.from({ length: count + 1 }, (_, index) => Number((min + index * step).toFixed(decimals)));
+        if (ticks.every(Number.isFinite) && ticks[count] > ticks[0]) return { min: ticks[0], max: ticks[count], ticks };
       }
     }
   }

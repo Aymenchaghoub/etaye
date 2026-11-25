@@ -88,4 +88,14 @@ describe('a day filter in a zone whose clocks go back at midnight (review of sto
     // The bound is the Sunday midnight, which exists once: 00:00 at UTC-4 is 04:00Z.
     expect(end!.toISOString()).toBe('2026-04-05T04:00:00.000Z');
   });
+
+  it('starts a day whose midnight the clocks skip where the skipped hour ends, never without a bound', () => {
+    // Santiago, 8 September 2019: the clocks went from 00:00 (UTC-4) to 01:00 (UTC-3), so there is no 00:00 that day.
+    expect(zoneInstants('America/Santiago', 2019, 9, 8, 0, 0)).toEqual([]);
+    const day = { year: 2019, month: 9, day: 8 };
+    expect(dayStart(day, 'America/Santiago')?.toISOString()).toBe('2019-09-08T04:00:00.000Z');
+    // The previous day ends there, and the next day starts at its ordinary midnight (UTC-3).
+    expect(nextDayStart({ year: 2019, month: 9, day: 7 }, 'America/Santiago')?.toISOString()).toBe('2019-09-08T04:00:00.000Z');
+    expect(nextDayStart(day, 'America/Santiago')?.toISOString()).toBe('2019-09-09T03:00:00.000Z');
+  });
 });
