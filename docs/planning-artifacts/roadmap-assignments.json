@@ -838,6 +838,10 @@
       "increment": 2,
       "status": "contract"
     },
+    "listMeasurementRevisions": {
+      "increment": 1,
+      "status": "contract"
+    },
     "listLabResults": {
       "increment": 1,
       "status": "contract"

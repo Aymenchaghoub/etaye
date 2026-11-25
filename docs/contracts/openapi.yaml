@@ -2365,7 +2365,7 @@
       "get": {
         "operationId": "listMeasurements",
         "summary": "listMeasurements",
-        "description": "Requires CLINICAL_READ. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README. Optional asOf returns the record as known at a past instant (UD-32).",
+        "description": "Requires CLINICAL_READ. Returns the current revision of every measurement lineage of the record, newest observation first (observed time, then recording time, then id), 25 per page by default and 100 at most, with an opaque cursor bound to the practice, the actor, the record, the view instant and the filters. `from` is inclusive and `to` exclusive on the observed time; `concept` keeps only measurements of these exact stored codes. With `asOf`, each lineage contributes the latest revision recorded at or before the instant; a lineage whose first revision is later is absent and nothing discloses a later revision; a future instant is a 400. A foreign or absent record is a 404. The response is `Cache-Control: no-store` and carries no ETag. See the README section on measurements.",
         "x-required-permissions": [
           "CLINICAL_READ"
         ],
@@ -2409,6 +2409,24 @@
               "type": "string",
               "format": "date-time"
             }
+          },
+          {
+            "name": "concept",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "maxItems": 10,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              }
+            },
+            "style": "form",
+            "explode": true,
+            "description": "Keeps only measurements of these exact concept codes, compared as stored and case-sensitive (repeat the parameter)."
           },
           {
             "$ref": "#/components/parameters/AsOf"
@@ -2629,6 +2647,69 @@
                 "$ref": "#/components/schemas/MeasurementInput"
               }
             }
+          }
+        }
+      }
+    },
+    "/practices/{practiceId}/measurements/{measurementId}/revisions": {
+      "get": {
+        "operationId": "listMeasurementRevisions",
+        "summary": "listMeasurementRevisions",
+        "description": "Requires CLINICAL_READ. Returns the revisions of the lineage that contains the measurement `measurementId` (any revision of it), oldest first, each with its recording time, author, source reference and, for a correction, the reason. With `asOf`, only revisions recorded at or before the instant are listed, and a `measurementId` recorded after the instant is a 404, byte-identical to an absent resource. A measurement of another practice is a 404. The response is `Cache-Control: no-store` and carries no ETag.",
+        "x-required-permissions": [
+          "CLINICAL_READ"
+        ],
+        "parameters": [
+          {
+            "name": "practiceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "measurementId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/AsOf"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The lineage, oldest revision first.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeasurementRevisionList"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem404"
+          },
+          "429": {
+            "$ref": "#/components/responses/Problem429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Problem503"
           }
         }
       }
@@ -8473,7 +8554,7 @@
         ]
       },
       "AccessContext": {
-        "description": "Current minimal access-context projection. The kind and grant ID identify the browser context. A display role or practice ID does not authorize any resource.",
+        "description": "Current minimal access-context projection. The kind and grant ID identify the browser context. A display role or practice ID does not authorize any resource. For a MEMBERSHIP context, `timezone` is the IANA zone of the practice, which the record screens use to show and read every instant (D-64); it never authorizes anything.",
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -8505,6 +8586,12 @@
               "TEAM",
               "PATIENT"
             ]
+          },
+          "timezone": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "description": "IANA time zone of the practice. Present for MEMBERSHIP contexts."
           }
         },
         "required": [
@@ -9439,6 +9526,26 @@
           "supersedesId": {
             "type": "string",
             "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Server-provided recording instant of this revision; it alone decides what an asOf view contains (UD-32)."
+          },
+          "authorLabel": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Plain-text label of the person who recorded this revision."
+          },
+          "sourceReference": {
+            "type": "string",
+            "maxLength": 100,
+            "description": "Human identifier of the source revision that supports this measurement."
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Revision number inside the lineage; 1 for an original."
           }
         },
         "required": [
@@ -9453,7 +9560,8 @@
           "observedAt",
           "sourceType",
           "sourceRevisionId"
-        ]
+        ],
+        "description": "One dated numeric observation. The row is an immutable revision: a correction appends the next revision of the same lineage with its reason, and `version` equals the revision number. A blood-pressure reading is two components (concepts SYSTOLIC_BLOOD_PRESSURE and DIASTOLIC_BLOOD_PRESSURE) that share a `groupId`. `observedAt` is always an instant: an observation without a time does not exist (BR-009, D-65). `unit` is stored and returned as entered and is never converted."
       },
       "LabInput": {
         "type": "object",
@@ -11460,6 +11568,23 @@
           "items",
           "nextCursor"
         ]
+      },
+      "MeasurementRevisionList": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/Measurement"
+            }
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "description": "The revisions of one measurement lineage, oldest first. A lineage has at most 100 revisions in this response."
       },
       "LabResultPage": {
         "type": "object",
