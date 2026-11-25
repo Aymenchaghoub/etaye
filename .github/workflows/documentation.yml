@@ -38,6 +38,12 @@ jobs:
         run: .venv-docs/bin/ruff check --select E9,F tools design/corrections design/figma-background-study docs/design/background-study
       - name: Verify resume kit preservation and archive integrity
         run: .venv-docs/bin/python -m unittest discover -s tools -p 'test_*.py'
+      # The runner image ships another Node line (22.x on 2026-11-25); the tooling tests run on the
+      # Node line of the project (ADR-002).
+      - name: Set up Node 26
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '26'
       - name: Verify local design importer preservation
         run: |
           node --check design/figma-local-import/code.js
