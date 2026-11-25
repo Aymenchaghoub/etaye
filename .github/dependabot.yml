@@ -21,3 +21,56 @@ updates:
     open-pull-requests-limit: 3
     commit-message:
       prefix: chore
+  # Application dependencies. Grouping limits the number of pull requests (each runs the full checks); security
+  # updates are separate from version updates, are not grouped and are not delayed by the cooldown.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: chore
+    groups:
+      web-tooling:
+        applies-to: version-updates
+        dependency-type: development
+        update-types: [minor, patch]
+      react:
+        applies-to: version-updates
+        patterns: ['react', 'react-dom', 'react-aria-components', '@types/react', '@types/react-dom']
+  - package-ecosystem: maven
+    directory: /apps/api
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: chore
+    groups:
+      spring-boot:
+        applies-to: version-updates
+        patterns: ['org.springframework.boot:*', 'org.springframework.session:*']
+      build-plugins:
+        applies-to: version-updates
+        patterns: ['org.apache.maven.plugins:*', 'org.jacoco:*', 'org.flywaydb:flyway-maven-plugin']
+  - package-ecosystem: docker
+    directory: /infra/demo
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: build
+  - package-ecosystem: docker-compose
+    directory: /infra/local
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: build

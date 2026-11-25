@@ -128,7 +128,7 @@ def check_application_scope(root, errors):
     workflows = {"documentation.yml", "codeql.yml", "architecture-pages.yml"}
     forbidden = ("pom.xml", "src", "compose.yaml", "docker-compose.yml")
     if authorized:
-        workflows.update({"api.yml", "web.yml", "dependency-review.yml"})
+        workflows.update({"api.yml", "web.yml", "dependency-review.yml", "package.yml"})
         forbidden += ("packages",)
     else:
         forbidden += ("package.json", "apps", "infra")

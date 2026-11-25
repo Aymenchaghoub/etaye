@@ -67,6 +67,14 @@ jobs:
         run: .venv-docs/bin/python -m openapi_spec_validator docs/contracts/openapi.yaml
       - name: Lint the architecture spine
         run: .venv-docs/bin/python .claude/skills/bmad-architecture/scripts/lint_spine.py --workspace docs/planning-artifacts/architecture -o reports/architecture-lint.json
+      - name: Lint GitHub workflows (policy, syntax and security)
+        env:
+          # The read-only token of the run: zizmor checks pinned action references against GitHub.
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          .venv-docs/bin/python tools/check_workflow_policy.py
+          bash tools/run_actionlint.sh
+          .venv-docs/bin/zizmor --no-progress --format plain .github/workflows
       - name: Verify workflow policy and whitespace
         run: |
           .venv-docs/bin/python tools/check_doc_workflow.py

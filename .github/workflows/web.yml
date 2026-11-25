@@ -1,46 +1,21 @@
 name: Web
 
 on:
-  # No path filter on pull requests: "Web verify" is a required check (D-40), and a required check that
-  # never starts blocks every documentation-only pull request. The job always runs and reports; its
-  # heavy steps run only when a relevant path changed.
+  # No path filter: "Web verify" is a required check (D-40), and a required check that never starts blocks
+  # every documentation-only pull request. The job always starts and reports; tools/ci_scope.py decides
+  # whether its heavy steps run, for pull requests and for pushes to main alike.
   pull_request:
   push:
     branches: [main]
-    # Keep this list equal to the detection step of the job.
-    paths:
-      - 'apps/web/**'
-      # Read by the web unit suite (src/isolation/isolation-journey.test.ts).
-      - 'apps/api/src/test/resources/isolation/matrix-cases.json'
-      - 'package.json'
-      - 'pnpm-workspace.yaml'
-      - 'pnpm-lock.yaml'
-      - 'tsconfig.json'
-      - 'tsconfig.base.json'
-      - 'docs/contracts/openapi.yaml'
-      - 'docs/references/hey-api-license.md'
-      - 'design/tokens/adr-014.json'
-      - 'design/received/2026-11-03/design-system/tokens.json'
-      - 'design/received/2026-11-03/export/etaye-design-system/tokens/tokens.css'
-      - 'design/received/2026-11-03/export/etaye-design-system/fonts/**'
-      - 'design/received/2026-11-03/licenses/*-OFL.txt'
-      - 'design/received/2026-11-03/licenses/Lucide-LICENSE.txt'
-      - 'design/offline-reference/site/logos/**'
-      # Imported by the application sources.
-      - 'design/received/2026-11-03/icons.css'
-      - 'tools/fixtures/etaye-tokens.golden.css'
-      - 'tools/generate_web_tokens.py'
-      - 'tools/test_generate_web_tokens.py'
-      - 'tools/assert_test_reports.py'
-      - 'tools/assert_coverage_reports.py'
-      - '.github/workflows/web.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
   group: web-${{ github.ref }}
-  cancel-in-progress: true
+  # A newer push to a pull request supersedes the older run; never cancel the verification of a merge to main.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   verify:
@@ -57,25 +32,8 @@ jobs:
         id: changes
         env:
           EVENT_NAME: ${{ github.event_name }}
-        run: |
-          # Fail closed: anything unexpected runs the full verification.
-          # Same paths as the push filter above, including the two inputs outside apps/web.
-          relevant=true
-          if [ "$EVENT_NAME" = "pull_request" ] &&
-              git diff --quiet HEAD^1 HEAD -- apps/web/ apps/api/src/test/resources/isolation/matrix-cases.json \
-                package.json pnpm-workspace.yaml pnpm-lock.yaml tsconfig.json tsconfig.base.json \
-                docs/contracts/openapi.yaml docs/references/hey-api-license.md design/tokens/adr-014.json \
-                design/received/2026-11-03/design-system/tokens.json \
-                design/received/2026-11-03/export/etaye-design-system/tokens/tokens.css \
-                design/received/2026-11-03/export/etaye-design-system/fonts/ design/received/2026-11-03/icons.css \
-                'design/received/2026-11-03/licenses/*-OFL.txt' \
-                design/received/2026-11-03/licenses/Lucide-LICENSE.txt design/offline-reference/site/logos/ \
-                tools/fixtures/etaye-tokens.golden.css tools/generate_web_tokens.py tools/test_generate_web_tokens.py \
-                tools/assert_test_reports.py tools/assert_coverage_reports.py .github/workflows/web.yml; then
-            relevant=false
-          fi
-          echo "relevant=$relevant" >> "$GITHUB_OUTPUT"
-          echo "Full web verification needed: $relevant"
+        # Fail closed: an unknown path, a failed diff or a manual run verifies everything.
+        run: python3 tools/ci_scope.py --scope web --event "$EVENT_NAME" --github-output "$GITHUB_OUTPUT"
       - if: steps.changes.outputs.relevant == 'true'
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -84,9 +42,14 @@ jobs:
         id: dependencies
         if: steps.changes.outputs.relevant == 'true'
         run: |
-          npm install --global corepack@0.36.0
+          bash tools/install_corepack.sh
           corepack enable
           pnpm install --frozen-lockfile
+      - name: Lint (correctness, security, accessibility)
+        if: steps.changes.outputs.relevant == 'true'
+        # New violations fail; the recorded ones live in apps/web/eslint-suppressions.json.
+        working-directory: apps/web
+        run: pnpm lint
       - name: Check workspace types
         if: steps.changes.outputs.relevant == 'true'
         run: PATH="$PWD/apps/web/node_modules/.bin:$PATH" pnpm exec tsc -b
@@ -124,6 +87,15 @@ jobs:
           name: web-playwright-report
           path: apps/web/playwright-report/smoke.json
           retention-days: 7
+      - name: Upload Playwright traces of failed tests
+        # The stubbed suite uses synthetic data only. A trace holds the DOM, the stubbed requests and the console.
+        if: failure() && steps.changes.outputs.relevant == 'true'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: web-playwright-traces
+          path: apps/web/test-results/
+          if-no-files-found: ignore
+          retention-days: 7
       - name: Run Web unit tests with coverage
         id: unit-tests
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
@@ -135,13 +107,25 @@ jobs:
         run: |
           python3 tools/assert_test_reports.py vitest apps/web/reports/unit-tests.json --min-tests 102 --require-file src/auth/session-work.test.ts --require-file src/isolation/isolation-journey.test.ts --require-file src/record/evidence.test.ts --require-file src/record/asof.test.ts --require-file src/record/measurements.test.ts --require-file src/record/zone.test.ts
           python3 tools/assert_coverage_reports.py lcov apps/web/reports/unit-coverage/lcov.info
+      - name: Gate coverage of the changed Web logic lines
+        if: github.event_name == 'pull_request' && steps.unit-coverage.outcome == 'success'
+        # Logic modules (.ts) only: the page and component files (.tsx) are driven by the browser suite, which
+        # collects no coverage, so they have no line measure to gate. Also left out: the browser entry points
+        # (src/api/browser.ts, src/demo/**), which only a running page executes. See
+        # docs/operations/ci-cd-quality-audit.md. Hooks in .ts files stay in: extract their logic to test it.
+        run: >-
+          python3 tools/assert_changed_line_coverage.py lcov apps/web/reports/unit-coverage/lcov.info
+          --prefix apps/web/ --include 'apps/web/src/**/*.ts' --exclude 'apps/web/src/**/*.test.ts'
+          --exclude 'apps/web/src/api/generated/**' --exclude 'apps/web/src/**/*.d.ts'
+          --exclude 'apps/web/src/api/browser.ts' --exclude 'apps/web/src/demo/**' --min-percent 80
       - name: Upload Web unit coverage
-        if: ${{ !cancelled() && steps.unit-coverage.outcome == 'success' }}
+        # Also when a coverage floor failed the run: the report shows which lines to cover.
+        if: ${{ !cancelled() && steps.unit-tests.outcome != 'skipped' }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: web-unit-coverage
           path: |
             apps/web/reports/unit-coverage/
             apps/web/reports/unit-tests.json
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 7

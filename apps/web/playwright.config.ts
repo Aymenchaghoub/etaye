@@ -15,6 +15,9 @@ export default defineConfig({
   use: {
     baseURL,
     browserName: 'chromium',
-    headless: true
+    headless: true,
+    // Diagnostics for a failed test only; retries stay at 0 so a flake is never hidden.
+    trace: 'retain-on-failure',
+    screenshot: 'only-on-failure'
   }
 });
