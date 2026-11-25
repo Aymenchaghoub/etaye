@@ -285,6 +285,35 @@ class MeasurementHttpTest extends AbstractPostgresTest {
         }
     }
 
+    @Test
+    @DisplayName("E1: a lineage longer than the response keeps its original and its newest revisions and says it was shortened")
+    void aLongLineageKeepsTheOriginalAndTheNewestRevisions() throws SQLException {
+        UUID s = source(practiceA, recordA, "SRC-LONG-LINEAGE", "2026-10-20T10:00:00+02:00");
+        Row first = Row.original(practiceA, recordA, "WEIGHT", "71", "kg", "2026-10-20T10:12:00+02:00", "2026-10-20T10:13:00+02:00", s);
+        UUID previous = measurement(first);
+        UUID current = previous;
+        for (int revision = 2; revision <= 105; revision++) {
+            String recorded = java.time.Instant.parse("2026-10-20T08:13:00Z").plus(revision, java.time.temporal.ChronoUnit.MINUTES).toString();
+            current = measurement(new Row(practiceA, recordA, first.lineage(), revision, "WEIGHT", String.valueOf(70 + revision), "kg",
+                    "2026-10-20T10:12:00+02:00", recorded, s, null, previous, "Correction " + revision, "Dr Test"));
+            previous = current;
+        }
+        var response = get(clinicalA, lineage(practiceA, current));
+        var revisions = items(response);
+        assertThat(revisions).hasSize(100);
+        assertThat(response.getBody()).containsEntry("truncated", true);
+        // The original is never the one dropped, the current one neither; the revisions in between that do not fit are.
+        assertThat(revisions.getFirst().get("revision")).isEqualTo(1);
+        assertThat(revisions.get(1).get("revision")).isEqualTo(7);
+        assertThat(revisions.getLast().get("revision")).isEqualTo(105);
+        assertThat(revisions.stream().map(item -> (Integer) item.get("revision")).toList()).isSorted();
+        // The same lineage read from its original resolves identically.
+        assertThat(values(get(clinicalA, lineage(practiceA, previous)))).isEqualTo(values(response));
+        // A lineage that fits is not marked at all.
+        UUID[] weight = weightLineage(practiceA, recordA);
+        assertThat(get(clinicalA, lineage(practiceA, weight[0])).getBody()).doesNotContainKey("truncated");
+    }
+
     // ---------------------------------------------------------------- UD-32: the as-of view
 
     @Test
@@ -627,6 +656,20 @@ class MeasurementHttpTest extends AbstractPostgresTest {
         // Another practice's zone never reaches this actor.
         assertThat(contexts(get(clinicalB, "/session"))).singleElement()
                 .satisfies(context -> assertThat(context.get("timezone")).isEqualTo("Europe/Paris"));
+    }
+
+    @Test
+    @DisplayName("D-64: a practice can never be given a time zone that is not an IANA name")
+    void aPracticeZoneMustBeAnIanaName() throws SQLException {
+        try (Connection c = owner(); Statement st = c.createStatement()) {
+            for (String zone : List.of("Not/AZone", "", "Paris", "UTC+2")) {
+                assertThatThrownBy(() -> st.execute("UPDATE practice SET timezone = '" + zone + "' WHERE id = '" + practiceA + "'"))
+                        .as(zone).isInstanceOf(SQLException.class).hasMessageContaining("ck_practice_zone");
+            }
+            st.execute("UPDATE practice SET timezone = 'Pacific/Noumea' WHERE id = '" + practiceA + "'");
+        }
+        assertThat(contexts(get(clinicalA, "/session"))).singleElement()
+                .satisfies(context -> assertThat(context.get("timezone")).isEqualTo("Pacific/Noumea"));
     }
 
     private static List<Map<String, Object>> contexts(ResponseEntity<Map<String, Object>> session) {

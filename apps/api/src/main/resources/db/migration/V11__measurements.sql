@@ -95,7 +95,9 @@ REVOKE ALL ON measurement FROM PUBLIC, etaye_runtime, etaye_identity;
 GRANT SELECT ON measurement TO etaye_runtime;
 
 -- D-64: the membership context also carries the IANA time zone of its practice, which the record screens use to show
--- and read every instant. A portal context has none. The return type changes, so the V4 function is replaced.
+-- and read every instant. A portal context has none. The zone is now checked where it is stored, so a practice can never
+-- carry a name the screens would have to guess around. The return type changes, so the V4 function is replaced.
+ALTER TABLE practice ADD CONSTRAINT ck_practice_zone CHECK (public.valid_time_zone(timezone));
 DROP FUNCTION public.current_access_contexts(uuid);
 CREATE FUNCTION public.current_access_contexts(actor uuid)
 RETURNS TABLE (grant_id uuid, grant_type text, practice_id uuid, practice_name text, display_role text, practice_timezone text)

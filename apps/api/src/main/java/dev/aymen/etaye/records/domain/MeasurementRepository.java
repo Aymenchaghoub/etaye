@@ -31,8 +31,15 @@ public class MeasurementRepository {
     public record Position(OffsetDateTime observedAt, OffsetDateTime recordedAt, UUID id) {
     }
 
-    /** The most revisions one lineage response lists; when a lineage is longer the oldest are dropped, never the newest. */
+    /**
+     * The most revisions one lineage response lists. A longer lineage keeps its original revision and its newest ones,
+     * never the current one, and says it was shortened.
+     */
     public static final int MAX_LINEAGE = 100;
+
+    /** The listed revisions of one lineage, oldest first, and whether revisions between the original and the newest are left out. */
+    public record Lineage(List<MeasurementView> revisions, boolean truncated) {
+    }
 
     private static final String CURRENT = """
             WITH current_revision AS (
@@ -137,9 +144,10 @@ public class MeasurementRepository {
     /**
      * The revisions of the lineage that contains one measurement, oldest first. With an instant, a revision recorded later
      * is absent, as if it did not exist, and a measurement recorded later is empty (a 404). A measurement of another
-     * practice is empty as well.
+     * practice is empty as well. Beyond {@link #MAX_LINEAGE} revisions the original and the newest {@code MAX_LINEAGE - 1}
+     * are listed and the result is marked truncated.
      */
-    public Optional<List<MeasurementView>> lineage(UUID practiceId, UUID measurementId, Instant asOf) {
+    public Optional<Lineage> lineage(UUID practiceId, UUID measurementId, Instant asOf) {
         MapSqlParameterSource params = new MapSqlParameterSource().addValue("practiceId", practiceId)
                 .addValue("id", measurementId);
         String visible = "";
@@ -157,13 +165,22 @@ public class MeasurementRepository {
             return Optional.empty();
         }
         params.addValue("recordId", anchor.get().recordId()).addValue("lineageId", anchor.get().lineageId())
-                .addValue("limit", MAX_LINEAGE);
-        List<MeasurementView> newestFirst = jdbc.query("SELECT " + COLUMNS + " FROM measurement c " + SOURCE_JOIN
+                .addValue("limit", MAX_LINEAGE + 1);
+        String scope = "FROM measurement c " + SOURCE_JOIN
                 + "WHERE c.practice_id = :practiceId AND c.record_id = :recordId AND c.lineage_id = :lineageId"
-                + visible.replace("recorded_at", "c.recorded_at")
+                + visible.replace("recorded_at", "c.recorded_at");
+        // One more than the maximum tells whether the lineage is longer than what is listed.
+        List<MeasurementView> newestFirst = jdbc.query("SELECT " + COLUMNS + " " + scope
                 + " ORDER BY c.revision DESC LIMIT :limit", params, (rs, row) -> map(rs));
-        List<MeasurementView> oldestFirst = new ArrayList<>(newestFirst);
+        boolean truncated = newestFirst.size() > MAX_LINEAGE;
+        List<MeasurementView> oldestFirst = new ArrayList<>(truncated ? newestFirst.subList(0, MAX_LINEAGE - 1) : newestFirst);
         Collections.reverse(oldestFirst);
-        return Optional.of(oldestFirst);
+        if (truncated) {
+            // The original revision is the value the first correction replaced: it is never the one dropped.
+            params.addValue("limit", 1);
+            oldestFirst.addAll(0, jdbc.query("SELECT " + COLUMNS + " " + scope + " ORDER BY c.revision ASC LIMIT :limit",
+                    params, (rs, row) -> map(rs)));
+        }
+        return Optional.of(new Lineage(oldestFirst, truncated));
     }
 }

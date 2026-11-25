@@ -222,7 +222,8 @@ public class RecordEvidenceService {
         Objects.requireNonNull(measurementId, "measurementId must not be null");
         Instant view = asOf == null ? null : viewInstant(asOf);
         return practiceTransaction.execute(practiceId, () -> measurements.lineage(practiceId, measurementId, view)
-                .map(revisions -> new MeasurementRevisionListResponse(revisions.stream().map(MeasurementResponse::of).toList()))
+                .map(lineage -> new MeasurementRevisionListResponse(lineage.revisions().stream().map(MeasurementResponse::of).toList(),
+                        lineage.truncated() ? Boolean.TRUE : null))
                 .orElseThrow(() -> new ResourceNotFoundException("Resource not found")));
     }
 
