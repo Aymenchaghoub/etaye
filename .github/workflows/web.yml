@@ -7,8 +7,11 @@ on:
   pull_request:
   push:
     branches: [main]
+    # Keep this list equal to the detection step of the job.
     paths:
       - 'apps/web/**'
+      # Read by the web unit suite (src/isolation/isolation-journey.test.ts).
+      - 'apps/api/src/test/resources/isolation/matrix-cases.json'
       - 'package.json'
       - 'pnpm-workspace.yaml'
       - 'pnpm-lock.yaml'
@@ -23,6 +26,8 @@ on:
       - 'design/received/2026-11-03/licenses/*-OFL.txt'
       - 'design/received/2026-11-03/licenses/Lucide-LICENSE.txt'
       - 'design/offline-reference/site/logos/**'
+      # Imported by the application sources.
+      - 'design/received/2026-11-03/icons.css'
       - 'tools/fixtures/etaye-tokens.golden.css'
       - 'tools/generate_web_tokens.py'
       - 'tools/test_generate_web_tokens.py'
@@ -54,13 +59,15 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
         run: |
           # Fail closed: anything unexpected runs the full verification.
+          # Same paths as the push filter above, including the two inputs outside apps/web.
           relevant=true
           if [ "$EVENT_NAME" = "pull_request" ] &&
-              git diff --quiet HEAD^1 HEAD -- apps/web/ package.json pnpm-workspace.yaml pnpm-lock.yaml tsconfig.json tsconfig.base.json \
+              git diff --quiet HEAD^1 HEAD -- apps/web/ apps/api/src/test/resources/isolation/matrix-cases.json \
+                package.json pnpm-workspace.yaml pnpm-lock.yaml tsconfig.json tsconfig.base.json \
                 docs/contracts/openapi.yaml docs/references/hey-api-license.md design/tokens/adr-014.json \
                 design/received/2026-11-03/design-system/tokens.json \
                 design/received/2026-11-03/export/etaye-design-system/tokens/tokens.css \
-                design/received/2026-11-03/export/etaye-design-system/fonts/ \
+                design/received/2026-11-03/export/etaye-design-system/fonts/ design/received/2026-11-03/icons.css \
                 'design/received/2026-11-03/licenses/*-OFL.txt' \
                 design/received/2026-11-03/licenses/Lucide-LICENSE.txt design/offline-reference/site/logos/ \
                 tools/fixtures/etaye-tokens.golden.css tools/generate_web_tokens.py tools/test_generate_web_tokens.py \
