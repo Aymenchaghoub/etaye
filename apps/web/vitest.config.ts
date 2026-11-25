@@ -1,9 +1,13 @@
 import { defineConfig } from 'vitest/config';
 
-// Coverage floors. A ratchet set just under the baseline measured on 2026-11-25: 18.8 % of lines overall, because the
-// 23 page and component files (.tsx, 1,769 lines) are driven by the Playwright suite, which collects no coverage;
-// 73 % of lines in the 18 logic modules (.ts); 98 % of lines in the pure rule modules listed below. Raise a floor when
-// coverage grows; never lower one to pass a build. Vitest applies each glob to its matching files in aggregate.
+// Coverage floors, set just under the baseline measured on 2026-11-25: 73 % of lines in the 18 logic modules (.ts) and
+// 98 % in the nine pure rule modules listed below. A ratchet: raise a floor when coverage grows, never lower one to
+// pass a build. Vitest applies each glob to its matching files in aggregate.
+//
+// There is deliberately no overall floor. The 23 page and component files (.tsx, 1,769 lines) read 0 % here because
+// the Playwright suite drives them and collects no coverage, so an overall percentage falls with every UI story
+// (stories 3.2 and 3.3 added 996 and 643 .tsx lines; the baseline tolerates 103) and would fail the required check
+// without any regression. The .tsx files are verified by the browser suite; see docs/operations/ci-cd-quality-audit.md.
 const ruleModules = [
   'isolation/isolation-journey',
   'auth/session-work',
@@ -25,10 +29,6 @@ export default defineConfig({
       reporter: ['text-summary', 'lcov'],
       reportsDirectory: 'reports/unit-coverage',
       thresholds: {
-        lines: 18,
-        statements: 18,
-        functions: 20,
-        branches: 15,
         'src/**/*.ts': { lines: 71, statements: 71, functions: 61, branches: 71 },
         [`src/{${ruleModules.join(',')}}.ts`]: { lines: 95, statements: 95, functions: 90, branches: 87 },
       },
