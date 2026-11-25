@@ -12,8 +12,12 @@ import { DEFAULT_ZONE } from './zone';
 export const SYSTOLIC = 'SYSTOLIC_BLOOD_PRESSURE';
 export const DIASTOLIC = 'DIASTOLIC_BLOOD_PRESSURE';
 export const PRESSURE_LABEL = 'Pression artérielle';
-/** The value of the measure filter that stands for the two components of a blood-pressure reading. */
-export const PRESSURE_OPTION = 'pression';
+/**
+ * The value of the measure filter that stands for the two components of a blood-pressure reading. Every other option is
+ * `c:` followed by the exact concept code, so no free-text code can ever collide with this one.
+ */
+export const PRESSURE_OPTION = 'p';
+const CODE_PREFIX = 'c:';
 
 const LABELS = new Map<string, string>([
   ['WEIGHT', 'Poids'],
@@ -41,6 +45,8 @@ export type Row = {
   value: string;
   /** The numbers a chart may draw: one value, or systolic then diastolic. Empty when the row is incomplete. */
   plotted: number[];
+  /** The same values as stored, for the chart labels: a label never reformats a decimal (128.40 stays 128,40). */
+  texts: string[];
   complete: boolean;
   missing?: 'systolique' | 'diastolique';
   members: Measurement[];
@@ -58,7 +64,7 @@ function singleRow(measurement: Measurement): Row {
   return {
     key: measurement.id, at: Date.parse(measurement.observedAt), observedAt: measurement.observedAt, kind: 'single',
     concept: measurement.concept, label: conceptLabel(measurement.concept), unit: measurement.unit,
-    value: displayDecimal(measurement.value), plotted: Number.isFinite(number) ? [number] : [], complete: true,
+    value: displayDecimal(measurement.value), plotted: Number.isFinite(number) ? [number] : [], texts: [displayDecimal(measurement.value)], complete: true,
     members: [measurement], lead: measurement, revision: revisionOf(measurement), corrected: revisionOf(measurement) > 1,
     feminine: isPressureCode(measurement.concept),
   };
@@ -84,7 +90,8 @@ export function buildRows(items: Measurement[], more = false): Row[] {
     const diastolic = members.filter((member) => member.concept === DIASTOLIC);
     const [s] = systolic;
     const [d] = diastolic;
-    if (systolic.length > 1 || diastolic.length > 1 || (s && d && s.unit !== d.unit)) {
+    // Components of one reading share one unit and one observed instant; a group that does not is never paired.
+    if (systolic.length > 1 || diastolic.length > 1 || (s && d && (s.unit !== d.unit || Date.parse(s.observedAt) !== Date.parse(d.observedAt)))) {
       loose.push(...members);
       continue;
     }
@@ -96,7 +103,8 @@ export function buildRows(items: Measurement[], more = false): Row[] {
       label: PRESSURE_LABEL, unit: lead.unit,
       value: complete ? `${displayDecimal(s.value)}/${displayDecimal(d.value)}`
         : s ? `${displayDecimal(s.value)} / —` : `— / ${displayDecimal(d.value)}`,
-      plotted: numbers.every(Number.isFinite) ? numbers : [], complete, ...(complete ? {} : { missing: s ? 'diastolique' as const : 'systolique' as const }),
+      plotted: numbers.every(Number.isFinite) ? numbers : [],
+      texts: complete ? [displayDecimal(s.value), displayDecimal(d.value)] : [], complete, ...(complete ? {} : { missing: s ? 'diastolique' as const : 'systolique' as const }),
       members, lead, revision: Math.max(...members.map(revisionOf)), corrected: members.some((member) => revisionOf(member) > 1), feminine: true,
     });
   }
@@ -150,8 +158,10 @@ export const UNIT_IN_CHART_MAX = 10;
 
 /** The title of a panel: the label, and the unit when another series shares the label or the unit is too long for the chart. */
 export function panelTitle(series: Series, all: Series[]): string {
-  const shared = all.some((other) => other !== series && other.label === series.label);
-  return shared || series.unit.length > UNIT_IN_CHART_MAX ? `${series.label} · ${series.unit}` : series.label;
+  const sameLabel = all.filter((other) => other !== series && other.label === series.label);
+  const withUnit = sameLabel.length > 0 || series.unit.length > UNIT_IN_CHART_MAX ? `${series.label} · ${series.unit}` : series.label;
+  // Two codes can read the same (the code Poids and the label of WEIGHT, in one unit): the exact code then tells them apart.
+  return sameLabel.some((other) => other.unit === series.unit && other.concept !== series.concept) ? `${withUnit} · ${series.concept}` : withUnit;
 }
 
 export function panelMeta(series: Series, more = false): string {
@@ -223,8 +233,7 @@ export function plot(series: Series, variant: PlotVariant, zone: string = DEFAUL
     : g.x0 + g.inset + ((at - first) / (last - first)) * (g.x1 - g.x0 - 2 * g.inset));
   const tickLabels = axis.ticks.map((tick) => displayDecimal(String(tick)));
   const showTicks = tickLabels.every((label) => label.length <= LABEL_MAX && !label.includes('e'));
-  const texts = series.rows.flatMap((row) => (series.kind === 'pressure'
-    ? [displayDecimal(String(row.plotted[0])), displayDecimal(String(row.plotted[1]))] : [row.value]));
+  const texts = series.rows.flatMap((row) => row.texts);
   const showLabels = series.rows.length <= LABELLED_POINTS_MAX && texts.every((text) => text.length <= LABEL_MAX);
   const shown = series.rows.length <= 3 ? series.rows : [series.rows[0], series.rows[series.rows.length - 1]];
   const labelled = shown.map((row) => clock(row.observedAt, zone).date);
@@ -251,7 +260,10 @@ export function chartAlternative(series: Series, title: string, zone: string = D
     const repeated = days.filter((day) => day === days[index]).length > 1;
     return `${row.value} ${series.unit} le ${repeated ? formatInstant(row.observedAt, zone) : days[index]}`;
   });
-  return `${title} : ${parts.join(', ')}. ${more ? 'Courbe limitée aux mesures chargées.' : 'Aucune autre mesure.'}`;
+  const closing = more ? 'Courbe limitée aux mesures chargées.'
+    : series.incomplete > 0 ? `${series.incomplete} mesure${series.incomplete > 1 ? 's incomplètes ne sont pas tracées' : ' incomplète n’est pas tracée'} : voir le tableau.`
+      : 'Aucune autre mesure.';
+  return `${title} : ${parts.join(', ')}. ${closing}`;
 }
 
 export const PERIODS = [
@@ -280,14 +292,15 @@ export function measureOptions(codes: Iterable<string>, selected: string): Measu
     options.push({ value: PRESSURE_OPTION, label: PRESSURE_LABEL, concepts: [SYSTOLIC, DIASTOLIC] });
   }
   const others = new Set([...present].filter((code) => !isPressureCode(code)));
-  if (selected && selected !== PRESSURE_OPTION) others.add(selected);
+  if (selected.startsWith(CODE_PREFIX)) others.add(selected.slice(CODE_PREFIX.length));
   [...others].sort((a, b) => conceptLabel(a).localeCompare(conceptLabel(b), 'fr') || a.localeCompare(b))
-    .forEach((code) => options.push({ value: code, label: conceptLabel(code), concepts: [code] }));
+    .forEach((code) => options.push({ value: `${CODE_PREFIX}${code}`, label: conceptLabel(code), concepts: [code] }));
   return options;
 }
 
 export const conceptsOf = (option: string): string[] | undefined => (option === '' ? undefined
-  : option === PRESSURE_OPTION ? [SYSTOLIC, DIASTOLIC] : [option]);
+  : option === PRESSURE_OPTION ? [SYSTOLIC, DIASTOLIC]
+    : option.startsWith(CODE_PREFIX) ? [option.slice(CODE_PREFIX.length)] : undefined);
 
 /** The origin of a row in words; "Observé" or "Observée" agrees with the measure, as in the approved reference. */
 export function originText(row: Row): string {

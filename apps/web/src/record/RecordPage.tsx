@@ -25,6 +25,8 @@ export type RecordContext = {
   practiceName: string;
   /** The IANA zone of the practice: every instant of the record screens is read and shown in it (D-64). */
   zone: string;
+  /** False when the session carries no readable zone and the screens fell back to Paris: the frame then says so. */
+  zoneKnown: boolean;
   patientLabel: string;
   asOf: string | undefined;
   history: Remote<HistorySummary>;
@@ -51,8 +53,8 @@ const emptyView = (): RecordView => ({ filters: { kind: '', from: { day: '', mon
  * the past instant (UD-32) and the independent loading of the record and of its history. The server decides every
  * request; this component only shows what the current session was granted and never keeps clinical content.
  */
-export function RecordPage({ tab, scope, practiceId, base, recordId, zone, expire, children }: {
-  tab: RecordTab; scope: string; practiceId: string; base: string; recordId: string; zone: string; expire: () => void;
+export function RecordPage({ tab, scope, practiceId, base, recordId, zone, zoneKnown = true, expire, children }: {
+  tab: RecordTab; scope: string; practiceId: string; base: string; recordId: string; zone: string; zoneKnown?: boolean; expire: () => void;
   children: (tab: RecordTab) => ReactNode;
 }) {
   const shell = useShell();
@@ -78,9 +80,9 @@ export function RecordPage({ tab, scope, practiceId, base, recordId, zone, expir
     : record.phase === 'hidden' || history.phase === 'hidden' ? 404 : undefined);
 
   const context = useMemo<RecordContext>(() => ({
-    scope, practiceId, recordId, base, practiceName: shell.practiceName, zone, patientLabel, asOf: view.asOf, history, retryHistory,
+    scope, practiceId, recordId, base, practiceName: shell.practiceName, zone, zoneKnown, patientLabel, asOf: view.asOf, history, retryHistory,
     view, setView, refused: setRefusal, expire, go: shell.navigate,
-  }), [scope, practiceId, recordId, base, shell.practiceName, zone, patientLabel, view, history, retryHistory, setView, expire, shell.navigate]);
+  }), [scope, practiceId, recordId, base, shell.practiceName, zone, zoneKnown, patientLabel, view, history, retryHistory, setView, expire, shell.navigate]);
 
   const toList = (event: { preventDefault: () => void }) => { event.preventDefault(); shell.navigate(patientsPath(base)); };
   const listLink = (label: string) => (
@@ -206,6 +208,11 @@ function Frame({ tab, patientLabel, ready, children }: { tab: RecordTab; patient
         aria-controls="asof-region" onClick={() => setOpen((value) => !value)}>
         {open ? 'Masquer le choix de date' : past ? 'Changer de date' : 'Voir le dossier à une date passée'}
       </button> : undefined} />
+    {!ctx.zoneKnown && (
+      <Notice kind="attention" title="Fuseau du cabinet non disponible">
+        Les heures de ce dossier sont affichées à l’heure de Paris par défaut. Prévenez l’administration du cabinet si elles semblent décalées.
+      </Notice>
+    )}
     {ready && <AsOfPanel open={open} current={past} zone={ctx.zone} onApply={apply} />}
     {ready && past && (
       <div ref={banner} tabIndex={-1} className="etaye-bandeau etaye-bandeau--info" role="status" style={{ outline: 'none' }}>

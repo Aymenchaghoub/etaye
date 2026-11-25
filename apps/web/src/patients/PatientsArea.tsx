@@ -7,7 +7,7 @@ import { ChronologyPage } from '../record/ChronologyPage';
 import { HistoryPage } from '../record/HistoryPage';
 import { MeasurementsPage } from '../record/MeasurementsPage';
 import { RecordPage } from '../record/RecordPage';
-import { resolveZone } from '../record/zone';
+import { hasUsableZone, resolveZone } from '../record/zone';
 import { PractitionerShell } from './PractitionerShell';
 import type { PatientRoute } from './routes';
 
@@ -39,8 +39,11 @@ export function PatientsArea({ session, context, contexts, route, select, signOu
       )}
       {(route.view === 'record' || route.view === 'history' || route.view === 'measurements') && (
         <RecordPage tab={route.view} scope={scope} practiceId={context.practiceId} base={base} recordId={route.recordId}
-          zone={resolveZone(context.timezone)} expire={expire}>
-          {(tab) => (tab === 'record' ? <ChronologyPage /> : tab === 'history' ? <HistoryPage /> : <MeasurementsPage />)}
+          zone={resolveZone(context.timezone)} zoneKnown={hasUsableZone(context.timezone)} expire={expire}>
+          {/* Keyed by practice and record: the state of one record's screen never survives a move to another record. */}
+          {(tab) => (tab === 'record' ? <ChronologyPage key={`${context.practiceId}:${route.recordId}`} />
+            : tab === 'history' ? <HistoryPage key={`${context.practiceId}:${route.recordId}`} />
+              : <MeasurementsPage key={`${context.practiceId}:${route.recordId}`} />)}
         </RecordPage>
       )}
       {route.view === 'edit' && (

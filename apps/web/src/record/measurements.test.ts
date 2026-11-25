@@ -70,6 +70,25 @@ describe('the rows of the table', () => {
     expect(twice.every((row) => row.kind === 'single')).toBe(true);
   });
 
+  it('never pairs two components observed at different instants, even in the same group and unit', () => {
+    const [systolic, diastolic] = pressure('g7', '2026-11-12T07:40:00Z', '130', '75');
+    const later = { ...diastolic, observedAt: '2026-11-12T07:41:00Z' };
+    const rows = buildRows([systolic, later]);
+    expect(rows).toHaveLength(2);
+    expect(rows.every((row) => row.kind === 'single')).toBe(true);
+    // The same instant written with another offset is the same instant and does pair.
+    const sameInstant = { ...diastolic, observedAt: '2026-11-12T09:40:00+02:00' };
+    expect(buildRows([systolic, sameInstant])).toHaveLength(1);
+  });
+
+  it('keeps the stored decimals of every plotted value as the texts a chart may label', () => {
+    const [paired] = buildRows(pressure('g8', '2026-11-12T07:40:00Z', '130.0', '75.50'));
+    expect(paired.texts).toEqual(['130,0', '75,50']);
+    const [single] = buildRows([measurement({ concept: 'WEIGHT', value: '68.40', unit: 'kg', observedAt: '2026-10-20T08:12:00Z' })]);
+    expect(single.texts).toEqual(['68,40']);
+    expect(buildRows([pressure('g9', '2026-11-12T07:40:00Z', '130', '75')[0]])[0].texts).toEqual([]);
+  });
+
   it('treats a blood-pressure component without a group, and any other concept, as a plain measurement', () => {
     const rows = buildRows([measurement({ concept: SYSTOLIC, value: '120', unit: 'mmHg', observedAt: '2026-11-01T08:00:00Z' }),
       measurement({ concept: 'HEIGHT', value: '1.72', unit: 'm', observedAt: '2026-11-02T08:00:00Z' })]);
@@ -119,6 +138,16 @@ describe('the series (BR-009)', () => {
     expect(panelTitle(bp, [bp])).toBe('Pression artérielle');
     const [long] = buildSeries(buildRows([measurement({ concept: 'C', value: '1', unit: 'unité-de-gabarit-très-longue', observedAt: '2026-10-01T08:00:00Z' })]));
     expect(panelTitle(long, [long])).toBe('C · unité-de-gabarit-très-longue');
+  });
+
+  it('tells two series apart by their exact code when the label and the unit read the same', () => {
+    const rows = buildRows([
+      measurement({ concept: 'WEIGHT', value: '68.4', unit: 'kg', observedAt: '2026-10-20T08:12:00Z' }),
+      measurement({ concept: 'Poids', value: '70', unit: 'kg', observedAt: '2026-10-21T08:12:00Z' }),
+    ]);
+    const series = buildSeries(rows);
+    expect(series).toHaveLength(2);
+    expect(series.map((entry) => panelTitle(entry, series)).sort()).toEqual(['Poids · kg · Poids', 'Poids · kg · WEIGHT']);
   });
 
   it('counts incomplete readings of a series without drawing them', () => {
@@ -172,6 +201,10 @@ describe('the chart', () => {
     expect(chartAlternative(bp, 'Pression artérielle')).toBe(
       'Pression artérielle : 128/80 mmHg le 14/09/2026, 134/82 mmHg le 20/10/2026. Aucune autre mesure.');
     expect(chartAlternative(bp, 'Pression artérielle', 'Europe/Paris', true)).toContain('Courbe limitée aux mesures chargées.');
+    const withIncomplete = buildSeries(buildRows([...pressure('g1', '2026-09-14T07:35:00Z', '128', '80'), ...pressure('g2', '2026-10-20T08:10:00Z', '134', '82'),
+      pressure('g3', '2026-11-12T07:40:00Z', '130', '75')[0]]))[0];
+    expect(chartAlternative(withIncomplete, 'Pression artérielle')).toBe(
+      'Pression artérielle : 128/80 mmHg le 14/09/2026, 134/82 mmHg le 20/10/2026. 1 mesure incomplète n’est pas tracée : voir le tableau.');
     const [two] = buildSeries(buildRows([measurement({ concept: 'A', value: '1', unit: 'u', observedAt: '2026-10-20T06:00:00Z' }),
       measurement({ concept: 'A', value: '2', unit: 'u', observedAt: '2026-10-20T14:00:00Z' })]));
     expect(chartAlternative(two, 'A')).toBe('A : 1 u le 20/10/2026 08:00, 2 u le 20/10/2026 16:00. Aucune autre mesure.');
@@ -243,14 +276,23 @@ describe('the period and the measure filter', () => {
   it('builds the measure options from the codes present, blood pressure first, and keeps a selected code', () => {
     const options = measureOptions([SYSTOLIC, DIASTOLIC, 'WEIGHT', 'HEIGHT'], '');
     expect(options.map((option) => [option.value, option.label])).toEqual([
-      ['', 'Toutes'], [PRESSURE_OPTION, 'Pression artérielle'], ['HEIGHT', 'HEIGHT'], ['WEIGHT', 'Poids'],
+      ['', 'Toutes'], [PRESSURE_OPTION, 'Pression artérielle'], ['c:HEIGHT', 'HEIGHT'], ['c:WEIGHT', 'Poids'],
     ]);
     expect(options[1].concepts).toEqual([SYSTOLIC, DIASTOLIC]);
-    expect(measureOptions([], 'WEIGHT').map((option) => option.value)).toEqual(['', 'WEIGHT']);
+    expect(measureOptions([], 'c:WEIGHT').map((option) => option.value)).toEqual(['', 'c:WEIGHT']);
     expect(measureOptions([], PRESSURE_OPTION).map((option) => option.value)).toEqual(['', PRESSURE_OPTION]);
     expect(conceptsOf('')).toBeUndefined();
     expect(conceptsOf(PRESSURE_OPTION)).toEqual([SYSTOLIC, DIASTOLIC]);
-    expect(conceptsOf('WEIGHT')).toEqual(['WEIGHT']);
+    expect(conceptsOf('c:WEIGHT')).toEqual(['WEIGHT']);
+  });
+
+  it('never mistakes a code for the blood-pressure option: a concept spelled like it keeps its own prefixed value', () => {
+    // A concept code is free text (D-66): one literally called "p" must not select the paired blood pressure.
+    const options = measureOptions(['p'], '');
+    expect(options.map((option) => option.value)).toEqual(['', 'c:p']);
+    expect(conceptsOf('c:p')).toEqual(['p']);
+    expect(conceptsOf(PRESSURE_OPTION)).toEqual([SYSTOLIC, DIASTOLIC]);
+    expect(measureOptions([], 'c:p').map((option) => option.value)).toEqual(['', 'c:p']);
   });
 });
 

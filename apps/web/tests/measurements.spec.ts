@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { accessible, base, canal, claire, heading, ids, louis, noOverflow, noRingOnHeading, problem, tilleuls, usesBackground } from './support/patients';
-import { claireMeasurements, DIASTOLIC, type Meas, stubMeasurements, SYSTOLIC } from './support/measurements';
+import { claireMeasurements, DIASTOLIC, type Meas, measurementBody, stubMeasurements, SYSTOLIC } from './support/measurements';
 
 const RECORD = `${base}/patients/${claire.recordId}`;
 const MEASURES = `${RECORD}/mesures`;
@@ -100,7 +100,8 @@ test.describe('S-11 measurements (AT-011-A, AT-011-B)', () => {
     let fail = true;
     await stubMeasurements(page, { revisions: () => (fail ? { status: 503, json: problem(503, 'UNAVAILABLE') } : undefined) });
     await page.goto(MEASURES);
-    await expect(panel(page, 'Poids')).toContainText('version précédente conservée · motif');
+    // The failed read is said in the note itself: the previous value is not loaded, and the screen does not pretend otherwise.
+    await expect(panel(page, 'Poids')).toContainText('version précédente conservée · valeur non chargée · motif');
     await expect(panel(page, 'Poids')).not.toContainText('version précédente 86,4 kg');
     await page.getByRole('button', { name: /Voir l’historique/ }).click();
     const region = page.getByRole('region', { name: 'Historique des versions : Poids' });
@@ -111,6 +112,28 @@ test.describe('S-11 measurements (AT-011-A, AT-011-B)', () => {
     await region.getByRole('button', { name: 'Réessayer' }).click();
     await expect(region.locator('.etaye-lignee li')).toHaveCount(2);
     await expect(panel(page, 'Poids')).toContainText('version précédente 86,4 kg conservée');
+    await expect(panel(page, 'Poids')).not.toContainText('valeur non chargée');
+  });
+
+  test('a lineage longer than the response says it was shortened and still lists the original and the current value', async ({ page }) => {
+    const weight = claireMeasurements.filter((row) => row.concept === 'WEIGHT');
+    const original = weight[0];
+    const chain = Array.from({ length: 99 }, (_, n) => ({
+      ...original, id: ids(30000 + n), revision: n + 3, supersedes: n === 0 ? ids(9205) : ids(30000 + n - 1), value: String(70 + n),
+      recordedAt: new Date(Date.UTC(2026, 9, 21, 8, n)).toISOString(), reference: `SRC-A-007-v${n + 3}`,
+    }));
+    const listed = [original, ...chain];
+    await stubMeasurements(page, {
+      measurements: { [claire.recordId]: [...weight, ...chain], [louis.recordId]: [] },
+      revisions: () => ({ json: { items: listed.map(measurementBody), truncated: true } }),
+    });
+    await page.goto(MEASURES);
+    await page.locator('button[aria-controls^="lin-"]').first().click();
+    const region = page.getByRole('region', { name: 'Historique des versions : Poids' });
+    await expect(region.locator('.etaye-lignee li')).toHaveCount(100);
+    await expect(region.locator('.etaye-lignee li').first()).toContainText('Version 1 · 86,4 kg');
+    await expect(region).toContainText('Historique raccourci : la version d’origine et les 99 plus récentes sont listées');
+    await accessible(page);
   });
 
   test('a marker opens its source on the spot, moves focus to it, and "Revenir à l’élément" returns focus to the marker', async ({ page }) => {
@@ -162,6 +185,23 @@ test.describe('S-11 measurements (AT-011-A, AT-011-B)', () => {
     await expect(banner(page)).toContainText('Non renseigné');
     await expect(page.getByRole('button', { name: /Saisir|Ajouter/ })).toHaveCount(0);
     await accessible(page);
+  });
+
+  test('moving to another record through the browser history never keeps the first record on screen', async ({ page }) => {
+    await stubMeasurements(page);
+    await page.goto(MEASURES);
+    await expect(rows(page)).toHaveCount(3);
+    await expect(panel(page, 'Poids')).toBeVisible();
+    await page.evaluate((target) => {
+      window.history.pushState(null, '', target);
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }, LOUIS);
+    await expect(page.getByText('Aucune mesure au dossier')).toBeVisible();
+    await expect(rows(page)).toHaveCount(0);
+    await expect(page.locator('main')).not.toContainText('Pression artérielle');
+    await expect(page.locator('main')).not.toContainText('Poids');
+    await expect(banner(page)).toContainText('BERNARD Louis');
+    await expect(banner(page)).not.toContainText('MARTIN Claire');
   });
 
   test('while loading it shows a skeleton and never "Aucune mesure" (C3)', async ({ page }) => {
@@ -223,11 +263,11 @@ test.describe('filters, period and pages', () => {
     await expect(rows(page)).toHaveCount(3);
     await expect(page.getByLabel('Mesure', { exact: true }).locator('option')).toHaveText(['Toutes', 'Pression artérielle', 'Poids']);
     await expect(page.getByLabel('Période', { exact: true }).locator('option')).toHaveText(['Tout le dossier', '3 derniers mois', '12 derniers mois']);
-    await page.getByLabel('Mesure', { exact: true }).selectOption('pression');
+    await page.getByLabel('Mesure', { exact: true }).selectOption('p');
     await page.getByRole('button', { name: 'Appliquer les filtres' }).click();
     await expect(rows(page)).toHaveCount(2);
     expect(measurementCalls.lists.at(-1)!.searchParams.getAll('concept')).toEqual([SYSTOLIC, DIASTOLIC]);
-    await page.getByLabel('Mesure', { exact: true }).selectOption('WEIGHT');
+    await page.getByLabel('Mesure', { exact: true }).selectOption('c:WEIGHT');
     await page.getByRole('button', { name: 'Appliquer les filtres' }).click();
     await expect(rows(page)).toHaveCount(1);
     expect(measurementCalls.lists.at(-1)!.searchParams.getAll('concept')).toEqual(['WEIGHT']);
@@ -279,6 +319,41 @@ test.describe('filters, period and pages', () => {
     await expect(page.getByText('Courbe limitée aux mesures chargées')).toHaveCount(0);
     await expect(page.getByRole('status').filter({ hasText: '30 mesures affichées' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Afficher plus de mesures' })).toHaveCount(0);
+  });
+
+  test('when no drawn chart can load more, the table carries the only button that does', async ({ page }) => {
+    // Thirty one-point series: every panel is a single point, so none of them has a button of its own.
+    const list = generated(30, (n) => ({ concept: `K${n}`, value: String(n), unit: 'u' }));
+    await stubMeasurements(page, { measurements: { [claire.recordId]: list, [louis.recordId]: [] } });
+    await page.goto(MEASURES);
+    await expect(rows(page)).toHaveCount(25);
+    const more = page.getByRole('button', { name: 'Afficher plus de mesures' });
+    await expect(more).toHaveCount(1);
+    await more.click();
+    await expect(rows(page)).toHaveCount(30);
+    await expect(more).toHaveCount(0);
+  });
+
+  test('a corrected measurement that no chart draws still shows its previous value and its reason', async ({ page }) => {
+    // C is the oldest of three series: it stays in the table, and its correction must not disappear with its chart.
+    const base = generated(5, (n) => ({ concept: n === 0 ? 'C' : n < 3 ? 'A' : 'B', value: String(10 + n), unit: 'u' }));
+    const [c1] = base;
+    const c2 = { ...c1, id: ids(20900), revision: 2, supersedes: c1.id, value: '6', sourceId: ids(5005), reference: 'SRC-G-C2',
+      recordedAt: new Date(Date.parse(c1.recordedAt) + 2 * 86_400_000).toISOString(), reason: 'Valeur corrigée après relecture.' };
+    await stubMeasurements(page, { measurements: { [claire.recordId]: [...base, c2], [louis.recordId]: [] } });
+    await page.goto(MEASURES);
+    await expect(rows(page)).toHaveCount(5);
+    await expect(page.getByText('1 autre série n’est pas tracée')).toBeVisible();
+    // Two panels are drawn (each has a wide and a narrow form, only one of which is exposed): A and B, never C.
+    await expect(page.getByRole('img', { name: /^[AB] :/ })).toHaveCount(2);
+    await expect(page.getByRole('img', { name: /^C :/ })).toHaveCount(0);
+    const section = page.getByRole('region', { name: 'Mesures corrigées' });
+    await expect(section).toBeVisible();
+    await expect(section).toContainText('C');
+    await expect(section).toContainText('6 u');
+    await expect(section).toContainText('Corrigé · version 2');
+    await expect(section).toContainText('version précédente 10 u conservée · motif : Valeur corrigée après relecture.');
+    await accessible(page);
   });
 
   test('a late page of an earlier view never replaces the view chosen after it', async ({ page }) => {
@@ -394,7 +469,7 @@ test.describe('the past-instant view (UD-32, DF-17 for S-11)', () => {
     await page.getByRole('button', { name: 'Voir le dossier à une date passée' }).click();
     await choose(page, { j: '15', m: '09', a: '2026', h: '12', mi: '00' });
     await expect(rows(page)).toHaveCount(1);
-    await page.getByLabel('Mesure', { exact: true }).selectOption('WEIGHT');
+    await page.getByLabel('Mesure', { exact: true }).selectOption('c:WEIGHT');
     await page.getByRole('button', { name: 'Appliquer les filtres' }).click();
     await expect(page.getByText('Aucune mesure ne correspond à ces filtres')).toBeVisible();
     await expect(page.getByText('Rien n’était enregistré à cette date')).toHaveCount(0);
@@ -475,6 +550,24 @@ test.describe('the practice time zone (D-64)', () => {
     await stubMeasurements(page, {}, {}, { contexts: zoned(undefined) });
     await page.goto(MEASURES);
     await expect(rows(page).first()).toContainText('20/10/2026 10:12');
+  });
+
+  test('a zone the browser cannot read, or none at all, says that Paris time is shown instead of falling back silently', async ({ page }) => {
+    await stubMeasurements(page, {}, {}, { contexts: zoned('Not/AZone') });
+    await page.goto(MEASURES);
+    const notice = page.locator('.etaye-bandeau--attention').filter({ hasText: 'Fuseau du cabinet non disponible' });
+    await expect(notice).toBeVisible();
+    await expect(notice).toContainText('affichées à l’heure de Paris par défaut');
+    await expect(rows(page).first()).toContainText('20/10/2026 10:12');
+    await accessible(page);
+    await stubMeasurements(page, {}, {}, { contexts: zoned(undefined) });
+    await page.goto(MEASURES);
+    await expect(page.getByText('Fuseau du cabinet non disponible')).toBeVisible();
+    // A readable zone, Paris included, needs no such notice.
+    await stubMeasurements(page, {}, {}, { contexts: zoned('Europe/Paris') });
+    await page.goto(MEASURES);
+    await expect(rows(page)).toHaveCount(3);
+    await expect(page.getByText('Fuseau du cabinet non disponible')).toHaveCount(0);
   });
 });
 

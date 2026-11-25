@@ -6,12 +6,17 @@ export const DEFAULT_ZONE = 'Europe/Paris';
  * A missing, empty or unknown value falls back to the default instead of breaking the screen.
  */
 export function resolveZone(value: unknown): string {
-  if (typeof value !== 'string' || value.trim() === '') return DEFAULT_ZONE;
+  return hasUsableZone(value) ? (value as string).trim() : DEFAULT_ZONE;
+}
+
+/** Whether the context carries a zone this browser can read instants in; when not, the screens say they fell back to Paris. */
+export function hasUsableZone(value: unknown): boolean {
+  if (typeof value !== 'string' || value.trim() === '') return false;
   try {
     new Intl.DateTimeFormat('fr-FR', { timeZone: value.trim() });
-    return value.trim();
+    return true;
   } catch {
-    return DEFAULT_ZONE;
+    return false;
   }
 }
 

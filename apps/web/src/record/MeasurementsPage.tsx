@@ -52,7 +52,8 @@ export function MeasurementsPage() {
   const expireRef = useRef(ctx.expire);
   expireRef.current = ctx.expire;
   const moreRequest = useRef<AbortController | null>(null);
-  const viewKey = JSON.stringify(query);
+  // The record and the practice are part of the view: rows of another record are never shown, even for one render.
+  const viewKey = JSON.stringify([practiceId, recordId, query]);
   const sameView = rowsOf === viewKey;
   const items = sameView ? itemsState : [];
   const next = sameView ? nextState : null;
@@ -124,9 +125,16 @@ export function MeasurementsPage() {
   const sharedLabelUnits = Math.max(0, ...series.map((entry) => series.filter((other) => other.label === entry.label).length));
   const registry = useRef(new Map<number, () => void>());
   const sources = useId();
+  // A corrected measurement that no drawn panel shows (a series left in the table, an incomplete reading) still shows its
+  // previous value and reason: BR-008 keeps the original in plain sight whatever the chart draws.
+  const drawnKeys = new Set(drawn.flatMap((entry) => entry.rows.map((row) => row.key)));
+  const uncovered = rows.filter((row) => row.corrected && !drawnKeys.has(row.key));
+  const correctedOf = (row: Row) => row.members.filter((member) => (member.revision ?? member.version) > 1);
   // The first corrected measurements shown read their previous value at once; the others read it when their history opens.
-  const autoloaded = new Set(drawn.flatMap((entry) => entry.rows.filter((row) => row.corrected)
-    .flatMap((row) => row.members.filter((member) => (member.revision ?? member.version) > 1).map((member) => member.id))).slice(0, AUTOLOAD_LINEAGES));
+  const autoloaded = new Set([...drawn.flatMap((entry) => entry.rows.filter((row) => row.corrected)), ...uncovered]
+    .flatMap((row) => correctedOf(row).map((member) => member.id)).slice(0, AUTOLOAD_LINEAGES));
+  // Every drawn chart of a single point has no button of its own: the table then carries the one that loads the rest.
+  const chartLoads = drawn.some((entry) => entry.rows.length > 1);
 
   return <>
     {answered && !emptyRecord && phase !== 'failed' && phase !== 'limited' && (
@@ -192,9 +200,27 @@ export function MeasurementsPage() {
     )}
     {phase === 'ready' && tableOnly.length > 0 && (
       <p className="etaye-2" style={{ margin: 0, fontSize: 14 }}>
-        {tableOnly.length} autre{tableOnly.length > 1 ? 's' : ''} série{tableOnly.length > 1 ? 's' : ''} ne {tableOnly.length > 1 ? 'sont' : 'est'} pas
+        {tableOnly.length} autre{tableOnly.length > 1 ? 's' : ''} série{tableOnly.length > 1 ? 's' : ''} {tableOnly.length > 1 ? 'ne sont' : 'n’est'} pas
         tracée{tableOnly.length > 1 ? 's' : ''} : {tableOnly.length > 1 ? 'elles restent' : 'elle reste'} dans le tableau. Choisissez une mesure pour {tableOnly.length > 1 ? 'les' : 'la'} tracer.
       </p>
+    )}
+    {phase === 'ready' && uncovered.length > 0 && (
+      <section aria-labelledby="h-corr" className="etaye-pile">
+        <h2 className="ui-section" id="h-corr">Mesures corrigées</h2>
+        {uncovered.map((row) => correctedOf(row).map((member) => {
+          const name = row.kind === 'pressure' ? `${row.label} ${member.concept === SYSTOLIC ? 'systolique' : 'diastolique'}` : row.label;
+          const when = `${clock(row.observedAt, ctx.zone).date} à ${clock(row.observedAt, ctx.zone).time}`;
+          return (
+            <div className="etaye-pile" style={{ gap: 'var(--espace-2)' }} key={member.id}>
+              <div>
+                <strong>{name}</strong> · <span className="etaye-num">{displayDecimal(member.value)}</span> {member.unit}{' '}
+                <span className="etaye-2" style={{ fontSize: 14 }}>le {when}</span>
+              </div>
+              <CorrectedNote measurement={member} zone={ctx.zone} name={name} when={when} autoload={autoloaded.has(member.id)} />
+            </div>
+          );
+        }))}
+      </section>
     )}
     {noMatch && (
       <section aria-labelledby="h-tab" className="etaye-pile">
@@ -221,7 +247,7 @@ export function MeasurementsPage() {
           <span className="etaye-3" role="status" style={{ fontSize: 13 }}>
             {rows.length} mesure{rows.length > 1 ? 's' : ''} affichée{rows.length > 1 ? 's' : ''}{next ? ' · d’autres mesures existent' : ''}
           </span>
-          {next && more !== 'failed' && drawn.length === 0 && (
+          {next && more !== 'failed' && !chartLoads && (
             <button className="etaye-bouton etaye-bouton--secondaire" type="button" disabled={more === 'loading'} onClick={() => void showMore()}>
               {more === 'loading' ? 'Chargement…' : 'Afficher plus de mesures'}
             </button>
@@ -367,12 +393,15 @@ function CorrectedNote({ measurement, zone, name, when, autoload }: { measuremen
   const revision = measurement.revision ?? measurement.version;
   const lineage = remote?.phase === 'ready' ? remote.data.items : undefined;
   const previous = lineage ? previousRevision(lineage, measurement.id) : undefined;
+  // A history read that failed or was refused is said in the note itself, not only once the history is opened.
+  const unread = remote !== undefined && remote.phase !== 'loading' && remote.phase !== 'ready';
   const regionId = `lin-${uid}`;
   return <>
     <div className="etaye-ligne">
       <span className="etaye-etat etaye-etat--corrige">Corrigé · version {revision}</span>
       <span className="etaye-3" style={{ fontSize: 12 }}>
         version précédente {previous ? `${displayDecimal(previous.value)} ${previous.unit} ` : ''}conservée
+        {unread ? ' · valeur non chargée' : ''}
         {measurement.correctionReason ? ` · motif : ${measurement.correctionReason}` : ''}
       </span>
     </div>
@@ -396,6 +425,11 @@ function CorrectedNote({ measurement, zone, name, when, autoload }: { measuremen
           <ol className="etaye-lignee">
             {lineage.map((entry, index) => <LineageEntry key={entry.id} entry={entry} next={lineage[index + 1]} zone={zone} />)}
           </ol>
+        )}
+        {remote?.phase === 'ready' && remote.data.truncated && (
+          <p className="etaye-3" role="status" style={{ fontSize: 13, margin: 0 }}>
+            Historique raccourci : la version d’origine et les {lineage ? lineage.length - 1 : 99} plus récentes sont listées ; les versions intermédiaires ne sont pas affichées.
+          </p>
         )}
       </div>
     )}
