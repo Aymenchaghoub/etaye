@@ -457,6 +457,7 @@ class ApplicationScopeTests(unittest.TestCase):
                    "apps/api/src/test/resources/fixtures/nested/patient.json",
                    "apps/web/src/components/Panel.tsx", "apps/web/src/styles.css",
                    "apps/web/tests/nested/probe.spec.ts", "apps/web/e2e/outage.spec.ts",
+                   "apps/web/vitest.config.ts", "apps/web/eslint.config.js", "apps/web/eslint-suppressions.json",
                    "infra/local/verify-init-roles.sh")
         unlisted = ("apps/api/extra.txt", "apps/web/public/extra.txt", "infra/local/extra.sh",
                     "apps/web/package.json/extra.txt", "apps/api/src",
@@ -466,7 +467,8 @@ class ApplicationScopeTests(unittest.TestCase):
                     "apps/api/src/main/resources/archive.zip", "apps/api/src/main/resources/nested/evil.sh",
                     "apps/api/src/test/resources/.env", "apps/web/src/nested/.env",
                     "apps/web/tests/snapshot.png", "apps/web/e2e/script.sh",
-                    "apps/api/src/main/resources/binary.txt")
+                    "apps/api/src/main/resources/binary.txt", "apps/web/eslint.config.mjs",
+                    "apps/web/eslint-suppressions.json.bak")
         for name in (*allowed, *unlisted):
             if name != "apps/api/src" and not name.startswith("apps/web/package.json/"):
                 self.write(name)

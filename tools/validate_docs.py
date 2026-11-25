@@ -227,7 +227,8 @@ def check_application_scope(root, errors):
                 continue
             if not application_path:
                 continue
-            if name == "apps/web/vitest.config.ts":
+            # Tool configuration of the Web checks, accepted by exact name in every scope.
+            if name in {"apps/web/vitest.config.ts", "apps/web/eslint.config.js", "apps/web/eslint-suppressions.json"}:
                 continue
             if "10.2" in authorized_stories and STORY_10_2_TRACKED_PATH.fullmatch(name):
                 continue

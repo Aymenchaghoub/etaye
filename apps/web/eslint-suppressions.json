@@ -1,0 +1,71 @@
+{
+  "demo-e2e/isolation.spec.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "src/auth/AuthApp.tsx": {
+    "@typescript-eslint/no-misused-promises": {
+      "count": 3
+    }
+  },
+  "src/auth/Invitation.tsx": {
+    "@typescript-eslint/no-misused-promises": {
+      "count": 1
+    },
+    "react-hooks/rules-of-hooks": {
+      "count": 1
+    }
+  },
+  "src/auth/Recovery.tsx": {
+    "@typescript-eslint/no-misused-promises": {
+      "count": 2
+    },
+    "jsx-a11y/no-autofocus": {
+      "count": 2
+    }
+  },
+  "src/auth/SignIn.tsx": {
+    "@typescript-eslint/no-misused-promises": {
+      "count": 1
+    },
+    "jsx-a11y/no-autofocus": {
+      "count": 1
+    }
+  },
+  "src/demo/DemoShowcase.tsx": {
+    "react-hooks/exhaustive-deps": {
+      "count": 1
+    }
+  },
+  "src/patients/PractitionerShell.tsx": {
+    "jsx-a11y/no-static-element-interactions": {
+      "count": 1
+    }
+  },
+  "src/record/ChronologyPage.tsx": {
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 1
+    }
+  },
+  "src/record/HistoryPage.tsx": {
+    "@typescript-eslint/no-unnecessary-type-assertion": {
+      "count": 1
+    }
+  },
+  "src/record/MeasurementsPage.tsx": {
+    "react-hooks/exhaustive-deps": {
+      "count": 2
+    }
+  },
+  "src/record/evidence.ts": {
+    "@typescript-eslint/no-redundant-type-constituents": {
+      "count": 2
+    }
+  },
+  "tests/patients-review.spec.ts": {
+    "@typescript-eslint/no-base-to-string": {
+      "count": 1
+    }
+  }
+}
