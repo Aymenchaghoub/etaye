@@ -32,6 +32,16 @@ Fixed after opening: the inactive tabs were blue in the application and grey in 
 8. **The truncated series** lists the 25 loaded rows, where the specimen shows four.
 9. **The incomplete reading** of the stubbed capture is at 07:40 (Paris), the specimen at 08:40: stub data, not the application.
 
+## After the review fixes (UD-74)
+
+The Zcode review of the branch (see the [implementation record](../../implementation-artifacts/story-3-3-implementation-record.md#6-review)) led to fixes after the sheets above were produced. They change three things a user can see, none of which has a specimen or a comparison sheet:
+
+- **A section "Mesures corrigées"** shows the previous value, the reason and the history of a corrected measurement that no drawn chart carries (a series left in the table, an incomplete reading). It reuses the section title, the correction chip and the note of the series panel.
+- **A notice "Fuseau du cabinet non disponible"** (attention banner) appears above the record when the session carries no readable zone and the screens fall back to Paris time.
+- **Two short sentences:** "Historique raccourci : …" when a lineage exceeds 100 revisions, and "valeur non chargée" in the correction note when the history read failed.
+
+They are asserted by the smoke suite (axe-core on the first two) and were never opened as a picture, because the demonstration data cannot produce them and the specimens do not cover them: **they are the part of the running UI I ask Aymen to look at with a stubbed or edited dataset if he wants a visual decision.** The states the specimens do cover were recaptured on the rebuilt package (25 real-stack captures, no horizontal overflow, shell and background asserted in both themes); the desktop light default and the 390 px dark state with the history open were opened and match the sheets. The singular wording of the sentence about the series left in the table was corrected ("1 autre série n'est pas tracée").
+
 ## How Aymen can look at it
 
 From the repository root, with the branch checked out: `COMPOSE_PROJECT_NAME=etaye-demo-33 ETAYE_DEMO_WEB_PORT=4183 ./infra/demo/start.sh`, then open http://localhost:4183, sign in as `nora.lefebvre@example.test` (the demo password is in `infra/demo/README.md`), choose the practice, **Patients**, **MARTIN Claire**, then the **Mesures** tab. Things to judge: the table order, the corrected weight and **Voir l'historique**, the past instant at 20/10/2026 10:14 and 10:16, the chart and its sentence, the three tabs at phone width, and Louis's empty state.
