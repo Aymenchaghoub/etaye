@@ -2,32 +2,27 @@ import type {
   Assertion, AssertionCategory, EventDate, HistorySection, SectionState, SourceKind, SourceType,
 } from '../api/generated/types.gen';
 
-/**
- * The zone in which dates are read and shown. UD-67 F1 asks for the practice time zone, which the session does not carry yet:
- * until a decision says how it reaches the client, Paris (the zone of the dataset) is a disclosed deviation.
- */
-export const PRACTICE_ZONE = 'Europe/Paris';
-
-const dateTime = new Intl.DateTimeFormat('fr-FR', {
-  timeZone: PRACTICE_ZONE, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
-});
+import { DEFAULT_ZONE, displayFormat } from './zone';
 
 type Clock = { date: string; time: string };
 
-/** The date and the 24-hour time of an instant in the practice zone. */
-export function clock(instant: string | Date): Clock {
-  const parts = Object.fromEntries(dateTime.formatToParts(new Date(instant)).map((part) => [part.type, part.value]));
+/**
+ * The date and the 24-hour time of an instant in the practice zone (D-64): the zone is the one of the session context,
+ * passed by the screen. The default is only the fallback of a context that carries none.
+ */
+export function clock(instant: string | Date, zone: string = DEFAULT_ZONE): Clock {
+  const parts = Object.fromEntries(displayFormat(zone).formatToParts(new Date(instant)).map((part) => [part.type, part.value]));
   return { date: `${parts.day}/${parts.month}/${parts.year}`, time: `${parts.hour}:${parts.minute}` };
 }
 
-export const formatInstant = (instant: string | Date) => {
-  const { date, time } = clock(instant);
+export const formatInstant = (instant: string | Date, zone: string = DEFAULT_ZONE) => {
+  const { date, time } = clock(instant, zone);
   return `${date} ${time}`;
 };
 
 /** "20/10/2026 10:12" for an instant, "30/09/2026" for a date-only event, nothing for an unknown date. */
-export function eventLabel(event: EventDate): string | undefined {
-  if (event.precision === 'INSTANT' && event.instant) return formatInstant(event.instant);
+export function eventLabel(event: EventDate, zone: string = DEFAULT_ZONE): string | undefined {
+  if (event.precision === 'INSTANT' && event.instant) return formatInstant(event.instant, zone);
   if (event.precision === 'DATE' && event.date) {
     const [year, month, day] = event.date.split('-');
     return `${day}/${month}/${year}`;
@@ -36,8 +31,8 @@ export function eventLabel(event: EventDate): string | undefined {
 }
 
 /** The calendar day of an event, used where only the day matters ("Absence déclarée le …"). */
-export function eventDay(event: EventDate): string | undefined {
-  const label = eventLabel(event);
+export function eventDay(event: EventDate, zone: string = DEFAULT_ZONE): string | undefined {
+  const label = eventLabel(event, zone);
   return label?.slice(0, 10);
 }
 
@@ -100,7 +95,7 @@ export type SectionTone = 'manquant' | 'negatif' | 'declare' | 'discordant' | 'o
  * One wording per state, in one place (UD-67 C1, BR-008): the chip of the section, its sentence and the shorter line of
  * the dossier panel. An absence is never written as "none": every state names itself and none concludes an absence.
  */
-export function sectionWords(category: AssertionCategory, section: Pick<HistorySection, 'state' | 'statements'>, past = false): {
+export function sectionWords(category: AssertionCategory, section: Pick<HistorySection, 'state' | 'statements'>, past = false, zone: string = DEFAULT_ZONE): {
   chip: string; tone: SectionTone; sentence: string; panel: string; headline: string; lead: string;
 } {
   const { article, thing } = titles[category];
@@ -123,7 +118,7 @@ export function sectionWords(category: AssertionCategory, section: Pick<HistoryS
         panel: `Non demandé au dossier · ne pas conclure à l’absence ${article}`, headline: 'Non demandé', lead: 'non demandé',
       };
     case 'EXPLICITLY_ABSENT': {
-      const day = absentDay(section.statements);
+      const day = absentDay(section.statements, zone);
       const label = absentLabel(day);
       return {
         chip: label, tone: 'negatif',
@@ -134,13 +129,13 @@ export function sectionWords(category: AssertionCategory, section: Pick<HistoryS
     case 'PRESENT':
       return {
         chip: 'Déclaré', tone: 'declare', sentence: 'Chaque déclaration est datée, avec l’origine en toutes lettres.',
-        panel: presentSummary(section.statements), headline: presentSummary(section.statements), lead: 'signalé',
+        panel: presentSummary(section.statements, zone), headline: presentSummary(section.statements, zone), lead: 'signalé',
       };
     case 'CONFLICTING':
       return {
         chip: 'Déclarations discordantes', tone: 'discordant',
         sentence: `Rubrique à préciser : deux déclarations datées se contredisent · ne pas conclure à l’absence ${article}.`,
-        panel: conflictSummary(section.statements),
+        panel: conflictSummary(section.statements, zone),
         headline: 'Déclarations discordantes à préciser · ne pas conclure à l’absence', lead: 'déclarations discordantes',
       };
     default:
@@ -153,17 +148,17 @@ function absentLabel(day: string | undefined): string {
   return day ? `Absence déclarée le ${day}` : 'Absence déclarée · date inconnue';
 }
 
-function absentDay(statements: Assertion[]): string | undefined {
+function absentDay(statements: Assertion[], zone: string): string | undefined {
   const absent = statements.filter((statement) => statement.assertionKind === 'EXPLICITLY_ABSENT');
   const latest = absent.at(-1);
-  return latest ? eventDay(latest.eventDate) : undefined;
+  return latest ? eventDay(latest.eventDate, zone) : undefined;
 }
 
 /** The two sides of a conflict in one line, oldest first, each with its date; nothing is merged or resolved. */
-function conflictSummary(statements: Assertion[]): string {
+function conflictSummary(statements: Assertion[], zone: string): string {
   return statements.filter((statement) => statement.assertionKind === 'PRESENT' || statement.assertionKind === 'EXPLICITLY_ABSENT')
     .map((statement) => {
-      const day = eventDay(statement.eventDate);
+      const day = eventDay(statement.eventDate, zone);
       if (statement.assertionKind === 'EXPLICITLY_ABSENT') return absentLabel(day);
       const unconfirmed = statement.sourceType === 'PATIENT_REPORTED' ? ' · non confirmée' : '';
       return `Déclaration présente${day ? ` signalée le ${day}` : ''}${unconfirmed}`;
@@ -171,23 +166,23 @@ function conflictSummary(statements: Assertion[]): string {
 }
 
 /** What a present section says in one line: the statements, each with its origin and its date. */
-function presentSummary(statements: Assertion[]): string {
+function presentSummary(statements: Assertion[], zone: string): string {
   const present = statements.filter((statement) => statement.assertionKind === 'PRESENT');
   if (present.length === 0) return 'Déclaré';
   return present.map((statement) => {
     const origin = statement.sourceType === 'PATIENT_REPORTED' ? 'déclaré par la patiente, non confirmé'
       : statement.sourceType === 'DOCUMENT_REPORTED' ? 'rapporté par un document'
         : statement.sourceType === 'PRACTITIONER_OBSERVED' ? 'observation du praticien' : 'origine non précisée';
-    const day = eventDay(statement.eventDate);
+    const day = eventDay(statement.eventDate, zone);
     return `${statement.text ?? 'Information présente'} · ${origin}${day ? ` · ${day}` : ''}`;
   }).join(' ; ');
 }
 
 /** The state chip of one statement. */
-export function statementState(statement: Assertion): { label: string; tone: SectionTone } {
+export function statementState(statement: Assertion, zone: string = DEFAULT_ZONE): { label: string; tone: SectionTone } {
   switch (statement.assertionKind) {
     case 'EXPLICITLY_ABSENT': {
-      const day = eventDay(statement.eventDate);
+      const day = eventDay(statement.eventDate, zone);
       return { label: absentLabel(day), tone: 'negatif' };
     }
     case 'UNKNOWN': return { label: 'Inconnu · à préciser', tone: 'manquant' };
@@ -204,11 +199,11 @@ export function statementState(statement: Assertion): { label: string; tone: Sec
  * occurrence days show it (a strictly earlier day for the negative); otherwise it stays neutral, because the order in which
  * two statements were recorded does not tell which one describes the earlier fact.
  */
-export function conflictNote(statements: Assertion[]): { lead: string; rest: string } {
+export function conflictNote(statements: Assertion[], zone: string = DEFAULT_ZONE): { lead: string; rest: string } {
   const absent = statements.find((statement) => statement.assertionKind === 'EXPLICITLY_ABSENT');
   const present = statements.find((statement) => statement.assertionKind === 'PRESENT');
-  const absentDay = absent && eventDay(absent.eventDate);
-  const presentDay = present && eventDay(present.eventDate);
+  const absentDay = absent && eventDay(absent.eventDate, zone);
+  const presentDay = present && eventDay(present.eventDate, zone);
   const earlier = absentDay && presentDay && absentDay.split('/').reverse().join('') < presentDay.split('/').reverse().join('');
   const lead = earlier
     ? `La déclaration négative du ${absentDay} ne contredit pas une réaction rapportée ensuite : elle date d’avant.`

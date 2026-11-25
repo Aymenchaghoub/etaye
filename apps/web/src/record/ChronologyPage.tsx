@@ -37,11 +37,11 @@ export function ChronologyPage() {
     const end = parseFilterDay('Au', applied.to);
     return {
       kind: group && group.kinds.length ? group.kinds : undefined,
-      from: start.ok && start.value ? dayStart(start.value)?.toISOString() : undefined,
-      to: end.ok && end.value ? nextDayStart(end.value)?.toISOString() : undefined,
+      from: start.ok && start.value ? dayStart(start.value, ctx.zone)?.toISOString() : undefined,
+      to: end.ok && end.value ? nextDayStart(end.value, ctx.zone)?.toISOString() : undefined,
       asOf: ctx.asOf,
     };
-  }, [applied, ctx.asOf]);
+  }, [applied, ctx.asOf, ctx.zone]);
   const dateFiltered = applied.from.day !== '' || applied.to.day !== '';
   const filtered = applied.kind !== '' || dateFiltered;
   const { practiceId, recordId, refused } = ctx;
@@ -126,7 +126,7 @@ export function ChronologyPage() {
   const dated = items.filter((item) => item.eventDate.precision !== 'UNKNOWN');
   const undated = items.filter((item) => item.eventDate.precision === 'UNKNOWN');
   const shown = items.length;
-  const past = ctx.asOf ? clock(new Date(ctx.asOf)) : undefined;
+  const past = ctx.asOf ? clock(new Date(ctx.asOf), ctx.zone) : undefined;
   const emptyRecord = phase === 'ready' && shown === 0 && !filtered;
   const noMatch = phase === 'ready' && shown === 0 && filtered;
   let number = 0;
@@ -226,7 +226,7 @@ export function ChronologyPage() {
         )}
       </section>
       <div className="etaye-pile">
-        <SectionsPanel history={ctx.history} past={past !== undefined} to={historyPath(ctx.base, ctx.recordId)} go={ctx.go} />
+        <SectionsPanel history={ctx.history} past={past !== undefined} zone={ctx.zone} to={historyPath(ctx.base, ctx.recordId)} go={ctx.go} />
       </div>
     </div>
   </>;
@@ -287,9 +287,9 @@ function Filters({ kind, setKind, from, setFrom, to, setTo, errors, apply, reset
 function ChronologyItem({ item, number }: { item: TimelineItem; number: number }) {
   const ctx = useRecord();
   const known = item.eventDate.precision !== 'UNKNOWN';
-  const label = eventLabel(item.eventDate);
+  const label = eventLabel(item.eventDate, ctx.zone);
   const [day, time] = label ? label.split(' ') : [];
-  const recorded = clock(item.recordedAt);
+  const recorded = clock(item.recordedAt, ctx.zone);
   const state = item.sourceType ? originState[item.sourceType] : undefined;
   const carriesText = item.kind === 'CONSULTATION_NOTE' || item.kind === 'PATIENT_PREPARATION';
   const source = useSource({ id: item.sourceRevisionId ?? item.id, reference: item.reference ?? item.label, number },
@@ -337,7 +337,7 @@ function ChronologyItem({ item, number }: { item: TimelineItem; number: number }
 }
 
 /** "Rubriques du dossier": the derived state of each section, never a silence, with a path to the detail. */
-export function SectionsPanel({ history, past, to, go }: { history: Remote<HistorySummary>; past: boolean; to: string; go: (path: string) => void }) {
+export function SectionsPanel({ history, past, zone, to, go }: { history: Remote<HistorySummary>; past: boolean; zone: string; to: string; go: (path: string) => void }) {
   return (
     <section aria-labelledby="h-rub" className="etaye-panneau" aria-busy={history.phase === 'loading' ? true : undefined}>
       <div className="etaye-panneau__tete"><h2 id="h-rub">Rubriques du dossier</h2></div>
@@ -349,7 +349,7 @@ export function SectionsPanel({ history, past, to, go }: { history: Remote<Histo
             {SECTION_ORDER.map((category) => {
               const section = history.data.sections.find((candidate) => candidate.category === category)
                 ?? ({ category, state: 'NOT_RECORDED', statements: [], truncated: false } as HistorySection);
-              return <SectionRow key={category} section={section} past={past} to={to} go={go} />;
+              return <SectionRow key={category} section={section} past={past} zone={zone} to={to} go={go} />;
             })}
           </ul>
         )}
@@ -358,8 +358,8 @@ export function SectionsPanel({ history, past, to, go }: { history: Remote<Histo
   );
 }
 
-function SectionRow({ section, past, to, go }: { section: HistorySection; past: boolean; to: string; go: (path: string) => void }) {
-  const words = sectionWords(section.category, section, past);
+function SectionRow({ section, past, zone, to, go }: { section: HistorySection; past: boolean; zone: string; to: string; go: (path: string) => void }) {
+  const words = sectionWords(section.category, section, past, zone);
   const conflicting = section.state === 'CONFLICTING';
   const alert = conflicting;
   const action = section.category === 'ALLERGY' ? (conflicting ? 'Examiner' : 'Voir') : undefined;

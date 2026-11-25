@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="fr" data-theme="clair">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Étaye · Arbitrage de la Story 3.3</title>
+  <link rel="stylesheet" href="../../../design/offline-reference/site/tokens/tokens.css">
+  <style>
+    * { box-sizing: border-box; }
+    :root { color-scheme: light; }
+    [data-theme="sombre"] { color-scheme: dark; }
+    body {
+      margin: 0;
+      color: var(--encre);
+      background: var(--fond);
+      font: 400 15px/22px "Atkinson Hyperlegible Next", sans-serif;
+    }
+    header { border-bottom: var(--trait-filet) solid var(--filet); }
+    .wrap { max-width: 1060px; margin: auto; padding: var(--espace-6); }
+    header .wrap { display: flex; justify-content: space-between; align-items: center; gap: var(--espace-4); }
+    .logo { display: block; height: 28px; }
+    [data-theme="clair"] .logo-dark, [data-theme="sombre"] .logo-light { display: none; }
+    main { overflow-wrap: anywhere; }
+    h1 { font: 500 32px/40px "Source Serif 4", serif; margin: 0; }
+    h2 { font-size: 22px; line-height: 28px; font-weight: 500; margin: 0 0 var(--espace-4); }
+    h3, legend { font-size: 16px; line-height: 24px; font-weight: 600; }
+    p, ul, ol { margin: 0 0 var(--espace-3); }
+    li + li { margin-top: var(--espace-1); }
+    a { color: var(--accent); text-underline-offset: 0.16em; }
+    .intro { max-width: 72ch; margin-top: var(--espace-3); color: var(--encre-2); }
+    section { margin-top: var(--espace-8); }
+    form > h3 { margin: var(--espace-6) 0 var(--espace-3); }
+    .columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--espace-4); margin-bottom: var(--espace-4); }
+    .panel, fieldset, .decision {
+      min-inline-size: 0;
+      background: var(--surface);
+      border: var(--trait-filet) solid var(--filet);
+      padding: var(--espace-5);
+    }
+    .panel h3 { margin: 0 0 var(--espace-2); }
+    .panel p:last-child, .panel ul:last-child, .panel ol:last-child { margin-bottom: 0; }
+    fieldset { margin: 0 0 var(--espace-4); }
+    legend { padding: 0 var(--espace-2); }
+    label.option { display: flex; align-items: baseline; gap: var(--espace-2); padding: var(--espace-2) 0; }
+    input[type="radio"] { accent-color: var(--accent); flex: 0 0 auto; }
+    button, textarea {
+      font: inherit;
+      color: var(--encre);
+      background: var(--surface);
+      border: var(--trait-filet) solid var(--filet-controle);
+      border-radius: var(--rayon-1);
+      padding: var(--espace-2) var(--espace-3);
+    }
+    button { min-height: 40px; cursor: pointer; }
+    .primary { background: var(--encre); color: var(--encre-inverse); }
+    .actions { display: flex; flex-wrap: wrap; gap: var(--espace-3); }
+    :focus-visible { outline: var(--trait-focus) solid var(--accent); outline-offset: 2px; }
+    textarea { display: block; width: 100%; min-height: 9em; resize: vertical; margin-top: var(--espace-2); }
+    .decision p { margin-top: var(--espace-2); color: var(--encre-2); }
+    .mock { margin: var(--espace-3) 0; padding: var(--espace-3); background: var(--surface-2); border: var(--trait-filet) solid var(--filet); border-radius: var(--rayon-1); }
+    .mock strong { font-weight: 600; }
+    .mock .row { display: flex; flex-wrap: wrap; gap: var(--espace-2); align-items: center; margin-top: var(--espace-2); }
+    .mock .btn { display: inline-block; padding: var(--espace-1) var(--espace-3); border: var(--trait-filet) solid var(--filet-controle); border-radius: var(--rayon-1); background: var(--surface); font-weight: 500; font-size: 14px; }
+    .mock .warn { border: var(--trait-filet) solid var(--attention); background: var(--attention-fond); padding: var(--espace-3); border-radius: var(--rayon-1); }
+    .mock .tabs { display: flex; flex-wrap: wrap; gap: var(--espace-2); list-style: none; padding: 0; margin: 0; }
+    .mock .tabs li { padding: var(--espace-1) var(--espace-3); border-radius: var(--rayon-1); margin: 0; }
+    .mock .tabs .on { background: var(--surface); border: var(--trait-filet) solid var(--filet); font-weight: 500; }
+    .mock .tabs .off { color: var(--encre-3); text-decoration: line-through; }
+    .tag { display: inline-block; font-size: 12px; line-height: 16px; font-weight: 600; padding: 0 var(--espace-2); border: var(--trait-filet) solid var(--filet-controle); border-radius: var(--rayon-1); color: var(--encre-2); margin-right: var(--espace-2); }
+    .tag.rec { border-color: var(--accent); color: var(--accent); }
+    .scroll { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; min-width: 36rem; font-size: 14px; line-height: 20px; }
+    th, td { text-align: left; vertical-align: top; overflow-wrap: normal; padding: var(--espace-2) var(--espace-3); border: var(--trait-filet) solid var(--filet); }
+    th { color: var(--encre-2); font-weight: 600; background: var(--surface-2); }
+    @media (max-width: 760px) {
+      .wrap { padding: var(--espace-4); }
+      .columns { grid-template-columns: 1fr; }
+      h1 { font-size: 26px; line-height: 32px; }
+    }
+    @media (max-width: 360px) {
+      .wrap { padding: var(--espace-3); }
+      .panel, fieldset, .decision { padding: var(--espace-3); }
+    }
+
+    .mock .btn.off { color: var(--encre-3); text-decoration: line-through; }
+    .mock svg { display: block; max-width: 100%; height: auto; }
+    .mock .grille { stroke: var(--filet); stroke-width: 1; }
+    .mock .axe { fill: var(--encre-2); font-size: 11px; }
+    .mock .serie { stroke: var(--accent); stroke-width: 2; fill: none; }
+    .mock .serie-2 { stroke: var(--encre-2); stroke-width: 2; stroke-dasharray: 5 4; fill: none; }
+    .mock .point { fill: var(--accent); }
+    .mock .point-2 { fill: var(--encre-2); }
+    .mock .val { fill: var(--encre); font-size: 11px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div>
+        <img class="logo logo-light" src="../../../design/offline-reference/site/logos/etaye-logo.svg" alt="Étaye">
+        <img class="logo logo-dark" src="../../../design/offline-reference/site/logos/etaye-logo-sombre.svg" alt="Étaye">
+      </div>
+      <button id="theme" type="button" aria-pressed="false">Thème sombre</button>
+    </div>
+  </header>
+  <main class="wrap">
+    <h1>Story 3.3 · Mesures, tendances et historique des corrections</h1>
+    <p class="intro">Arbitrage de préparation. Aucune ligne de code n’est écrite et rien n’est autorisé tant que tu n’as pas répondu par écrit. Contrairement à 3.2, le périmètre est déjà arrêté par l’epic, la feuille de route et D-24 : 3.3 lit, trace et montre la lignée des corrections ; la saisie et la correction sont en incrément 2. Il reste à confirmer ce périmètre, à décider de la table et du contrat des mesures, de la règle des unités et des séries, du fuseau horaire du cabinet (D-64, dû avant cette story) et du chemin de design de S-11, qui n’est pas approuvé. Chaque carte montre l’état actuel, ma proposition et des choix explicites ; la recommandation est en premier.</p>
+    <p><a href="../../implementation-artifacts/story-3-3-context-packet.md">Lire le context packet</a> · <a href="../../../design/offline-reference/site/ecrans/S-11/claire.html">S-11 Claire</a> · <a href="../../../design/offline-reference/site/ecrans/S-11/louis.html">S-11 Louis</a> · <a href="../../../design/offline-reference/site/ecrans/S-11/chargement.html">S-11 chargement</a> · <a href="../../../design/offline-reference/site/ecrans/S-11/gabarits.html">S-11 gabarits</a> · <a href="../../../design/offline-reference/site/ecrans/I-06/ouvert.html">I-06 (incrément 2)</a></p>
+
+    <section aria-labelledby="etat">
+      <h2 id="etat">Où en est la story</h2>
+      <div class="columns">
+        <article class="panel">
+          <h3>Vérifié dans le dépôt (main <code>149e5db</code>)</h3>
+          <ul>
+            <li>Dépendance 3.2 fusionnée (PR #68). Autorisation de 3.3 : <strong>absente</strong>.</li>
+            <li>S-11 et I-06 : « Prêt pour la conception », <strong>non approuvés</strong>, niveau <strong>SAMPLED</strong>. La référence de S-11 a quatre états (défaut, vide, chargement, gabarits) ; les quatre états d’I-06 sont des états d’écriture.</li>
+            <li>Il n’existe <strong>aucune table de mesures</strong> : valeur et unité n’existent que dans le texte des révisions de source de 3.2. Seul le poids corrigé 86,4 → 68,4 kg est semé, comme deux révisions de source (10:13 puis 10:15).</li>
+            <li>Le contrat a les trois opérations de mesure, mais <code>Measurement</code> n’a ni date d’enregistrement, ni auteur, ni valeur précédente, <code>listMeasurements</code> n’a pas de filtre par mesure et aucune opération ne lit la lignée d’une mesure.</li>
+            <li>Le fuseau du cabinet n’atteint pas le client : les écrans lisent l’heure de Paris (D-64), décision due avant cette story.</li>
+            <li>La référence S-11 contient « Saisir une mesure », les onglets Biologie et Documents, « Dossier R-A-001 » et une ligne « Date inconnue » que le contrat ne permet pas.</li>
+          </ul>
+        </article>
+        <article class="panel">
+          <h3>Ce qui sépare les décisions</h3>
+          <ol>
+            <li><strong>Périmètre et règles</strong> (cartes A à F, H, I) : ta réponse devient UD-71.</li>
+            <li><strong>Approbation du design</strong> des états de S-11 manquants (carte G).</li>
+            <li><strong>Autorisation écrite</strong> de développer la story 3.3 seule.</li>
+            <li>Approbation de l’interface <strong>en fonctionnement</strong>, plus tard.</li>
+            <li><strong>Autorisation de fusion</strong>, plus tard.</li>
+          </ol>
+          <p>Cette page prépare 1 sans accorder 2 à 5.</p>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="arbitrage">
+      <h2 id="arbitrage">Arbitrage d’Aymen</h2>
+      <p class="intro">Le bouton « Accepter toutes les recommandations » sélectionne une option par carte ; tu peux ensuite en changer. Les remarques libres vont dans le récapitulatif.</p>
+      <div class="actions"><button id="accept-all" type="button">Accepter toutes les recommandations</button></div>
+
+      <form id="choices">
+        <h3 id="carte-a">A · Lecture seule, comme prévu, ou écriture aussi (I-06)</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>L’epic, la feuille de route, l’index des stories et D-24 placent la saisie et la correction (I-06, <code>appendMeasurement</code>, <code>correctMeasurement</code>) en incrément 2 : 3.3 ne livre que la lecture, la tendance et la lignée des corrections. Deux documents décrivent encore l’ancien périmètre : la ligne FR-006 de la traçabilité attribue les trois opérations à 3.3, et la référence S-11 montre « Saisir une mesure » et « Corriger la mesure ».</p>
+            <p>Conséquence sur les critères : AT-011-A est démontrable en lecture (valeurs, unités, provenance, tendance, lignée, vue « as of » avant et après la correction). Dans AT-011-B, la saisie invalide, la correction périmée (412, 428) et la validation d’unité exigent l’écriture : elles ne peuvent pas être prouvées avant l’incrément 2.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>3.3 reste en lecture seule. Je confirme D-24 et j’y consigne les parties d’AT-011-B qui attendent l’écriture, pour qu’elles soient écrites dans les critères de l’incrément 2. La traçabilité est alignée. Aucun bouton d’écriture n’apparaît sur S-11 (la session ne porte pas la liste des droits, D-60).</p>
+            <div class="mock" aria-hidden="true">
+              <ul class="tabs"><li class="on">Mesures</li></ul>
+              <p class="row"><span class="btn off">Saisir une mesure</span><span class="btn off">Corriger la mesure</span></p>
+              <p class="row">Ces actions de la référence ne sont pas rendues en 3.3.</p>
+            </div>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix A</legend>
+          <label class="option"><input type="radio" name="A" value="A1" required><span><span class="tag rec">Recommandé</span><strong>A1.</strong> 3.3 est en lecture seule. I-06, <code>appendMeasurement</code>, <code>correctMeasurement</code>, le catalogue de concepts et d’unités et la liste des droits restent en incrément 2 (D-24, D-60).</span></label>
+          <label class="option"><input type="radio" name="A" value="A2"><span><strong>A2.</strong> 3.3 livre aussi la saisie et la correction avec I-06. Il faut alors approuver les quatre états d’I-06, ajouter l’écriture à AT-011 (412, 428, idempotence, unités), la liste des droits sur la session, et sortir D-24 : l’epic et la feuille de route changent.</span></label>
+        </fieldset>
+
+        <h3 id="carte-b">B · Où vivent les mesures et ce que le contrat expose</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>Aucune table de mesures : la valeur et l’unité n’existent que dans le texte d’une révision de source (« Poids 68,4 kg »). Le contrat a un <code>Measurement</code> sans date d’enregistrement, sans auteur, sans référence de source ni numéro de révision, alors que la référence montre l’auteur et « 86,4 kg remplacé le 20/10/2026 à 10:15 · erreur de saisie ». <code>listMeasurements</code> n’a pas de filtre par mesure.</p>
+            <p>Le jeu de design range chaque tension dans une ligne {systolique, diastolique} ; le contrat a une valeur scalaire et un <code>groupId</code>. La valeur précédente d’un poids corrigé n’est lisible nulle part sous forme structurée.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>Une table <code>measurement</code> (clé composite cabinet et dossier, clé étrangère vers la révision de source, lignée, ordre des révisions, sécurité par ligne forcée, lecture seule pour le rôle d’exécution, triggers d’immutabilité comme V9), semée par migration de démo : six lignes pour Claire (deux tensions de deux composantes, le poids en deux révisions).</p>
+            <p>Contrat, ajouts optionnels seulement : <code>recordedAt</code>, <code>authorLabel</code>, <code>sourceReference</code> et <code>revision</code> sur <code>Measurement</code>, un filtre <code>concept</code>, les règles d’ordre, de pagination et d’<code>asOf</code> dans le guide, et une nouvelle lecture <code>listMeasurementRevisions</code> (la lignée d’une mesure, du plus ancien au plus récent, avec <code>asOf</code>). Une tension = deux concepts liés par <code>groupId</code> ; libellés français dans le client, code brut si inconnu.</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix B</legend>
+          <label class="option"><input type="radio" name="B" value="B1" required><span><span class="tag rec">Recommandé</span><strong>B1.</strong> Table <code>measurement</code> en lecture seule, semée par migration, ajouts de contrat optionnels, filtre <code>concept</code> et nouvelle lecture de la lignée (101 opérations).</span></label>
+          <label class="option"><input type="radio" name="B" value="B2"><span><strong>B2.</strong> B1, mais sans nouvelle opération : le prédécesseur direct est inclus dans <code>Measurement</code>. Une chaîne de plusieurs corrections ne serait pas lisible.</span></label>
+          <label class="option"><input type="radio" name="B" value="B3"><span><strong>B3.</strong> Pas de table : lire les mesures dans les révisions de source. Cela oblige à extraire valeur et unité d’un texte libre, contredit le dictionnaire de données et BR-009 (valeurs numériques et unités conservées telles quelles).</span></label>
+        </fieldset>
+
+        <h3 id="carte-c">C · Date d’observation, unités et séries</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>BR-009 exige une date d’observation ; le contrat et le dictionnaire aussi (<code>observedAt</code> est un instant obligatoire). Le catalogue de S-11, les gabarits (« Date inconnue · hors courbe ») et I-06 (« Heure (facultatif) ») supposent une date inconnue ou une date sans heure ; le jeu de données n’en contient aucune.</p>
+            <p>Aucune règle n’écrit comment comparer deux unités : la référence dit seulement « jamais convertie en silence ». Le groupe de tension incomplet n’a pas de rendu. D-44 (en-têtes triables) nomme S-11.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>Date d’observation <strong>obligatoire</strong>, comme BR-009 et le contrat : une mesure sans date ou à date seule n’existe pas en 3.3, la ligne « Date inconnue » des gabarits n’est pas construite et devient D-65 (déclencheur : conception d’I-06, incrément 2).</p>
+            <p>Une série = concept + unité <strong>exacts</strong>. Aucune conversion (aucune conversion documentée n’existe) : deux orthographes d’une unité donnent deux séries, jamais une fusion silencieuse ; une seconde unité ouvre une seconde série avec son axe ou reste dans le tableau ; au plus deux séries par graphique. Une tension incomplète s’affiche dans le tableau avec « composante manquante » et n’est pas tracée sur la courbe appariée. Le tableau a un ordre fixe (date d’observation décroissante) : pas d’en-tête triable, donc D-44 n’est pas déclenché. Catalogue de concepts et d’unités, conversions et limites de saisie : D-66, avec I-06.</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix C</legend>
+          <label class="option"><input type="radio" name="C" value="C1" required><span><span class="tag rec">Recommandé</span><strong>C1.</strong> Instant d’observation obligatoire, date inconnue et date seule reportées (D-65), séries par concept et unité exacts sans conversion, tension incomplète signalée, pas de tri.</span></label>
+          <label class="option"><input type="radio" name="C" value="C2"><span><strong>C2.</strong> Autoriser dès maintenant une date inconnue ou sans heure : champ additif de type <code>EventDate</code>, précision stockée, ligne « Date inconnue » construite. Cela change la table, le contrat et la lecture de BR-009, qu’il faudrait d’abord clarifier.</span></label>
+        </fieldset>
+
+        <h3 id="carte-d">D · Fuseau horaire du cabinet (D-64)</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>Le contrôle de date passée, le filtre de période et toutes les dates affichées lisent l’heure de Paris (constante). Le contrat a <code>Practice.timezone</code> et la colonne existe, mais la session n’expose aucun fuseau et <code>getPractice</code> n’est pas servi. Le registre demande une décision avant 3.3 : S-11 réutilise la règle <code>asOf</code> et les périodes « 3 derniers mois » comptent à partir d’un instant.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>Un champ additif et facultatif <code>timezone</code> sur le contexte d’accès de type cabinet (<code>AccessContext</code>, story 1.3). L’API le lit avec le nom du cabinet ; les écrans de dossier (S-09, S-10, S-11) le lisent à la place de la constante. Test avec un cabinet d’un autre fuseau. Aucune migration, aucun nouvel endpoint.</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix D</legend>
+          <label class="option"><input type="radio" name="D" value="D1" required><span><span class="tag rec">Recommandé</span><strong>D1.</strong> Champ <code>timezone</code> sur le contexte d’accès ; les écrans de dossier le lisent.</span></label>
+          <label class="option"><input type="radio" name="D" value="D2"><span><strong>D2.</strong> Servir <code>getPractice</code> et lire le fuseau par cet appel : nouvelle opération, nouveau contrôle d’accès et une requête de plus au chargement.</span></label>
+          <label class="option"><input type="radio" name="D" value="D3"><span><strong>D3.</strong> Garder la constante Paris pour S-11 et reporter la décision à la porte M2 : S-11 hérite de l’écart déjà divulgué en 3.2.</span></label>
+        </fieldset>
+
+        <h3 id="carte-e">E · Sources et vue « as of » sur S-11</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>S-11 figure dans l’inventaire d’I-09 (ouvrir une source, tiroir) mais l’epic ne cite que I-06. En 3.2 tu as approuvé l’ouverture d’une source en place (bouton, extrait stocké, marqueur numéroté sans fenêtre flottante) et le contrôle de date passée avec la bannière « Vue historique — lecture seule » ; DF-17 laisse S-11 à cette story. La référence S-11 a un lien « Voir l’historique » sans interaction définie.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>Réutiliser tels quels le panneau de source en place et le contrôle de date passée, partagés entre les onglets. « Voir l’historique » est une divulgation en place (bouton, <code>aria-expanded</code>) qui liste la lignée : valeur, unité, date d’enregistrement, auteur, motif. Dans la vue passée n’apparaissent que les révisions déjà enregistrées à cet instant : à 10:14 le poids est 86,4 kg sans trace d’une correction, à 10:16 il est 68,4 kg version 2. Le tiroir d’I-09 reste avec 5.3 et 3.5.</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix E</legend>
+          <label class="option"><input type="radio" name="E" value="E1" required><span><span class="tag rec">Recommandé</span><strong>E1.</strong> Source en place et date passée de 3.2 réutilisées ; la lignée s’ouvre en place ; I-09 reste avec 5.3 et 3.5.</span></label>
+          <label class="option"><input type="radio" name="E" value="E2"><span><strong>E2.</strong> Ouvrir les sources de S-11 dans le tiroir d’I-09 (famille CORE approuvée). Il faut alors construire le tiroir et traiter ses points ouverts (D-49), hors du périmètre de 3.2.</span></label>
+        </fieldset>
+
+        <h3 id="carte-f">F · Le graphique</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>La référence trace une ligne entre deux points distants de cinq semaines et ajoute « Le trait n’est pas une mesure ». La recette du système de design dit « périodes manquantes dessinées comme des trous ». BR-009 interdit une interpolation présentée comme une observation ; aucun document ne définit quand une période est « manquante » (ce serait une règle clinique). L’axe 60 à 150 mmHg de la référence est écrit à la main.</p>
+            <p>Une page de réponse contient au plus 100 mesures et il n’y a pas de total : un graphique tracé depuis une page présenterait une série partielle comme la tendance. Aucune bibliothèque de graphiques n’est documentée dans les ADR.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>SVG construit à la main selon la recette <code>.etaye-courbe</code> (aucune dépendance), <code>role="img"</code> avec une alternative textuelle qui énonce chaque valeur, le tableau comme référence. Les marqueurs sont les observations ; le segment entre deux points consécutifs ne porte aucune valeur (pas d’infobulle) et la phrase de la référence l’accompagne ; un seul point ne trace aucune courbe ; au plus deux séries, la seconde en pointillé ; axe calculé depuis les données, sans bande de référence ni seuil. Si la série dépasse les pages chargées, le graphique le dit. Une étiquette de point qui déborderait est masquée ; le tableau fait foi.</p>
+          </article>
+        </div>
+        <div class="columns">
+          <div class="mock" aria-hidden="true">
+            <strong>F1 · marqueurs, segment sans valeur et phrase</strong>
+            <svg viewBox="0 0 320 150" width="320" height="150" role="presentation" focusable="false">
+              <line class="grille" x1="50" x2="300" y1="110" y2="110"></line><text class="axe" x="8" y="114">60</text>
+              <line class="grille" x1="50" x2="300" y1="65" y2="65"></line><text class="axe" x="8" y="69">105</text>
+              <line class="grille" x1="50" x2="300" y1="20" y2="20"></line><text class="axe" x="8" y="24">150</text>
+              <polyline class="serie" points="90,42 260,36"></polyline>
+              <polyline class="serie-2" points="90,90 260,88"></polyline>
+              <circle class="point" cx="90" cy="42" r="4"></circle><circle class="point" cx="260" cy="36" r="4"></circle>
+              <circle class="point-2" cx="90" cy="90" r="4"></circle><circle class="point-2" cx="260" cy="88" r="4"></circle>
+              <text class="val" x="80" y="32">128</text><text class="val" x="250" y="26">134</text>
+              <text class="val" x="84" y="108">80</text><text class="val" x="254" y="106">82</text>
+              <text class="axe" x="62" y="140">14/09/2026</text><text class="axe" x="232" y="140">20/10/2026</text>
+            </svg>
+            <p class="row">Le trait n’est pas une mesure. Le tableau est la référence.</p>
+          </div>
+          <div class="mock" aria-hidden="true">
+            <strong>F2 · marqueurs seuls</strong>
+            <svg viewBox="0 0 320 150" width="320" height="150" role="presentation" focusable="false">
+              <line class="grille" x1="50" x2="300" y1="110" y2="110"></line><text class="axe" x="8" y="114">60</text>
+              <line class="grille" x1="50" x2="300" y1="65" y2="65"></line><text class="axe" x="8" y="69">105</text>
+              <line class="grille" x1="50" x2="300" y1="20" y2="20"></line><text class="axe" x="8" y="24">150</text>
+              <circle class="point" cx="90" cy="42" r="4"></circle><circle class="point" cx="260" cy="36" r="4"></circle>
+              <circle class="point-2" cx="90" cy="90" r="4"></circle><circle class="point-2" cx="260" cy="88" r="4"></circle>
+              <text class="val" x="80" y="32">128</text><text class="val" x="250" y="26">134</text>
+              <text class="val" x="84" y="108">80</text><text class="val" x="254" y="106">82</text>
+              <text class="axe" x="62" y="140">14/09/2026</text><text class="axe" x="232" y="140">20/10/2026</text>
+            </svg>
+            <p class="row">Aucune mesure entre le 14/09/2026 et le 20/10/2026.</p>
+          </div>
+        </div>
+        <fieldset>
+          <legend>Choix F</legend>
+          <label class="option"><input type="radio" name="F" value="F1" required><span><span class="tag rec">Recommandé</span><strong>F1.</strong> SVG accessible fait main, tableau de référence, marqueurs et segment sans valeur avec la phrase de la référence, au plus deux séries, mention explicite d’une série tronquée, aucune bibliothèque.</span></label>
+          <label class="option"><input type="radio" name="F" value="F2"><span><strong>F2.</strong> Même chose, mais marqueurs seuls, sans segment (lecture stricte de « trous ») : l’écart est porté par le tableau et par la phrase « Aucune mesure entre … et … ».</span></label>
+          <label class="option"><input type="radio" name="F" value="F3"><span><strong>F3.</strong> Une bibliothèque de graphiques : nouvelle dépendance, accessibilité à vérifier, décision à documenter par un ADR.</span></label>
+        </fieldset>
+
+        <h3 id="carte-g">G · Design et preuves</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>S-11 n’est pas approuvé. Sa référence n’a ni état d’échec, ni période sans résultat, ni vue passée, ni lignée ouverte, ni groupe incomplet, ni unités mélangées réelles, ni contenu long. C’est une famille SAMPLED (UD-16, UD-37) : l’epic demande 8 à 10 écrans ouverts à deux largeurs, mais AGENTS.md demande de finir et de revoir les designs manquants avant, sauf exception nommée. En 3.1 et 3.2 tu as approuvé des spécimens avant l’autorisation. I-06 n’est pas approuvé non plus ; ses quatre états sont des états d’écriture.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>Préparer une page de revue de spécimens statiques de S-11 dans les deux thèmes (1440, 1024, 390 et 320 px) : défaut, point corrigé avec lignée ouverte, vide, chargement, échec pleine page, échec partiel, période sans résultat, vue passée avant la correction, après la correction et avant tout enregistrement, unités mélangées, tension incomplète, contenu long, texte alternatif du graphique. L’enveloppe, le bandeau d’identité et les onglets livrés en 3.2 ; aucun onglet ni lien non livré, pas de « Dossier R-A-001 » (D-57), pas de « Saisir une mesure ».</p>
+            <p>Tu approuves par écrit. Puis la preuve en fonctionnement : dix écrans à 1440×1024 et 390×844, dont trois aussi en thème sombre, 320 px et clavier assertés, ouverts et consignés, séparés des tests fonctionnels. I-06 n’est pas revu maintenant.</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix G</legend>
+          <label class="option"><input type="radio" name="G" value="G1" required><span><span class="tag rec">Recommandé</span><strong>G1.</strong> Spécimens des états manquants de S-11, approbation écrite avant l’autorisation, preuve SAMPLED en fonctionnement ; I-06 non revu maintenant.</span></label>
+          <label class="option"><input type="radio" name="G" value="G2"><span><strong>G2.</strong> Pas de spécimens : construire depuis la référence et le système de design sous l’exception nommée d’UD-16 ; ton approbation porterait sur l’interface en fonctionnement.</span></label>
+          <label class="option"><input type="radio" name="G" value="G3"><span><strong>G3.</strong> G1, plus la revue d’I-06 maintenant : quatre états d’écriture utiles à l’incrément 2, sans effet sur 3.3.</span></label>
+        </fieldset>
+
+        <h3 id="carte-h">H · Jeu de données, réinitialisation et matrice d’isolation</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>Seule Claire a des mesures : aucune dans le cabinet B, aucune unité mélangée, aucun groupe incomplet, aucune série longue, aucun membre en lecture clinique seule, aucun cabinet hors du fuseau de Paris. La réinitialisation de démo énumère ses tables et la liste existe déjà deux fois (V5 et V10). D-54 attend l’assertion de réinitialisation du poids corrigé avec le stockage des mesures ; D-55 ne nomme pas les mesures.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>Migration de schéma (V11 attendu) et migration de démo (V12 attendu), numérotées au moment du contrat. Réinitialisation étendue avec la table et une assertion d’égalité sur les six lignes et la lignée du poids. Matrice d’isolation 1.4 étendue : lecture positive, mesure du cabinet B introuvable, compte administratif refusé, identifiant deviné sur la route de lignée, curseur falsifié. Cas rares créés dans la pile de test seulement ; jeu de design inchangé. Démo : une étape de lecture pour Nora, en local (D-56).</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix H</legend>
+          <label class="option"><input type="radio" name="H" value="H1" required><span><span class="tag rec">Recommandé</span><strong>H1.</strong> Semis par migration de démo, réinitialisation étendue, matrice 1.4 étendue, cas de test créés dans la pile, jeu de design inchangé.</span></label>
+          <label class="option"><input type="radio" name="H" value="H2"><span><strong>H2.</strong> Comme H1 sans l’extension de la matrice (D-55 ne nomme pas les mesures) : moins de travail, mais la nouvelle route reste hors de la preuve d’isolation.</span></label>
+        </fieldset>
+
+        <h3 id="carte-i">I · Reports, alignement des documents et budget</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>D-65 et D-66 n’existent pas. La traçabilité de FR-006 attribue trois opérations à 3.3, la feuille de route compte 100 opérations (la lecture de lignée n’y figure pas), D-44, D-54 et D-64 attendent leur déclencheur. Le budget d’effort de M2 n’est toujours pas recalibré avec les sessions mesurées de M1 (ADR-011).</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>Après ta réponse : D-65 (précision de la date d’observation, date inconnue) et D-66 (catalogue de concepts et d’unités, conversions, limites de saisie), notes sur D-24, D-44, D-48, D-54, D-55 et D-64 (décidé) ; alignement de l’epic, de la traçabilité, de l’allocation des opérations (<code>listMeasurementRevisions</code> en incrément 1) et de l’index des opérations. Le budget de M2 reste « à vérifier » jusqu’à la porte M2.</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix I</legend>
+          <label class="option"><input type="radio" name="I" value="I1" required><span><span class="tag rec">Recommandé</span><strong>I1.</strong> Entrées D-65 et D-66 et alignement des documents ; budget M2 à la porte M2.</span></label>
+          <label class="option"><input type="radio" name="I" value="I2"><span><strong>I2.</strong> I1, plus le recalibrage du budget de M2 maintenant : tu me donnes le nombre de sessions réellement passées sur M1.</span></label>
+        </fieldset>
+
+        <h3 id="carte-j">J · Chemin vers l’autorisation</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>Les états manquants de S-11 n’ont pas été montrés ; tu ne peux pas les approuver tels que présentés. Aucune autorisation écrite n’existe pour 3.3.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>Après tes réponses, je prépare la page de revue design des états de la carte G dans les deux thèmes. Tu l’approuves par écrit. Tu autorises ensuite la story 3.3 seule par écrit ; j’enregistre une ligne du registre, j’ajoute <code>"3.3"</code> à la liste BMAD (le drapeau global reste faux), j’étends le validateur et je lance le contrôle de préparation BMAD. La branche de développement part de <code>main</code>, premier commit : le contrat relu.</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix J</legend>
+          <label class="option"><input type="radio" name="J" value="J1" required><span><span class="tag rec">Recommandé</span><strong>J1.</strong> Revue design d’abord, puis approbation écrite, puis autorisation écrite de 3.3 seule.</span></label>
+          <label class="option"><input type="radio" name="J" value="J2"><span><strong>J2.</strong> Je réserve toute décision de design et d’autorisation à plus tard ; la préparation reste valable.</span></label>
+        </fieldset>
+
+        <div class="decision">
+          <div class="actions"><button class="primary" type="submit">Préparer mon arbitrage</button></div>
+          <p>Copie le récapitulatif dans la conversation et ajoute tes remarques. Ce récapitulatif n’autorise pas le développement : il fixe le périmètre et le chemin à suivre.</p>
+          <label for="recap">Récapitulatif à transmettre</label>
+          <textarea id="recap" readonly></textarea>
+        </div>
+      </form>
+    </section>
+  </main>
+  <script>
+    const themeButton = document.getElementById('theme');
+    themeButton.addEventListener('click', () => {
+      const dark = document.documentElement.dataset.theme === 'clair';
+      document.documentElement.dataset.theme = dark ? 'sombre' : 'clair';
+      themeButton.setAttribute('aria-pressed', String(dark));
+      themeButton.textContent = dark ? 'Thème clair' : 'Thème sombre';
+    });
+
+    const recommended = { A: 'A1', B: 'B1', C: 'C1', D: 'D1', E: 'E1', F: 'F1', G: 'G1', H: 'H1', I: 'I1', J: 'J1' };
+    document.getElementById('accept-all').addEventListener('click', () => {
+      Object.entries(recommended).forEach(([name, value]) => {
+        const input = document.querySelector(`input[name="${name}"][value="${value}"]`);
+        if (input) input.checked = true;
+      });
+    });
+
+    const choices = document.getElementById('choices');
+    const recap = document.getElementById('recap');
+    choices.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const selections = new FormData(choices);
+      const order = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+      const summary = order.map((name) => selections.get(name)).join(', ');
+      const path = selections.get('J') === 'J1'
+        ? 'Prépare la revue design des états manquants de S-11 ; je décide ensuite par écrit du design puis de l’autorisation de la Story 3.3.'
+        : 'Je réserve les décisions de design et d’autorisation à plus tard.';
+      recap.value = 'Arbitrage Story 3.3 — ' + summary + '.\n' + path;
+      recap.focus();
+      recap.select();
+    });
+  </script>
+</body>
+</html>

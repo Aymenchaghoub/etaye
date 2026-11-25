@@ -40,7 +40,7 @@ export function HistoryPage() {
   // The review stays open only while its section is still a conflict: another instant can remove one side of it.
   const reviewed = examining ? sections.find((candidate) => candidate.category === examining && candidate.state === 'CONFLICTING') : undefined;
   if (examining && reviewed) {
-    return <Review section={reviewed} back={() => { returnTo.current = examining; setExamining(undefined); }} />;
+    return <Review section={reviewed} zone={ctx.zone} back={() => { returnTo.current = examining; setExamining(undefined); }} />;
   }
 
   let number = 0;
@@ -50,7 +50,7 @@ export function HistoryPage() {
         const first = number + 1;
         const listed = listedStatements(section);
         number += listed.length;
-        return <SectionPanel key={section.category} section={section} past={past} first={first} listed={listed}
+        return <SectionPanel key={section.category} section={section} past={past} zone={ctx.zone} first={first} listed={listed}
           examine={() => setExamining(section.category)} />;
       })}
     </div>
@@ -63,10 +63,10 @@ function listedStatements(section: HistorySection): Assertion[] {
   return section.statements.filter((s) => s.assertionKind === 'PRESENT' || s.assertionKind === 'EXPLICITLY_ABSENT' || stated);
 }
 
-function SectionPanel({ section, past, first, listed, examine }: {
-  section: HistorySection; past: boolean; first: number; listed: Assertion[]; examine: () => void;
+function SectionPanel({ section, past, zone, first, listed, examine }: {
+  section: HistorySection; past: boolean; zone: string; first: number; listed: Assertion[]; examine: () => void;
 }) {
-  const words = sectionWords(section.category, section, past);
+  const words = sectionWords(section.category, section, past, zone);
   const id = `h-${section.category}`;
   return (
     <section aria-labelledby={id} className="etaye-panneau">
@@ -107,12 +107,12 @@ function SectionPanel({ section, past, first, listed, examine }: {
 
 function StatementRow({ statement, number }: { statement: Assertion; number: number }) {
   const ctx = useRecord();
-  const state = statementState(statement);
-  const day = eventDay(statement.eventDate);
+  const state = statementState(statement, ctx.zone);
+  const day = eventDay(statement.eventDate, ctx.zone);
   const hasSource = statement.sourceRevisionId !== undefined;
   const source = useSource({ id: statement.sourceRevisionId ?? statement.id, reference: statement.sourceReference ?? '', number },
     ctx.practiceId, ctx.asOf, ctx.expire, 'alone');
-  const recorded = clock(statement.recordedAt);
+  const recorded = clock(statement.recordedAt, ctx.zone);
   const heading = day
     ? `${day}${statement.sourceKind ? ` · ${kindLabel(statement.sourceKind)}` : ''}`
     : `Date de survenue inconnue${statement.sourceKind ? ` · ${kindLabel(statement.sourceKind)}` : ''}`;
@@ -137,11 +137,11 @@ function StatementRow({ statement, number }: { statement: Assertion; number: num
 }
 
 /** I-27, read-only subset: the two sides of a conflict next to each other, with their sources, nothing merged or resolved. */
-function Review({ section, back }: { section: HistorySection; back: () => void }) {
+function Review({ section, zone, back }: { section: HistorySection; zone: string; back: () => void }) {
   const title = useRef<HTMLHeadingElement>(null);
   useEffect(() => { title.current?.focus({ preventScroll: true }); }, []);
   const sides = section.statements.filter((s) => s.assertionKind === 'PRESENT' || s.assertionKind === 'EXPLICITLY_ABSENT');
-  const note = conflictNote(sides);
+  const note = conflictNote(sides, zone);
   return (
     <div className="etaye-pile" style={{ maxWidth: 880 }}>
       <section aria-labelledby="h-i27" className="etaye-panneau">
@@ -153,7 +153,7 @@ function Review({ section, back }: { section: HistorySection; back: () => void }
           <p className="etaye-2" style={{ margin: 0, fontSize: 14 }}>Examen des sources en ligne, sans fenêtre.</p>
           <div className="etaye-cols etaye-cols--egal">
             {sides.map((statement, index) => (
-              <Side key={statement.id} statement={statement} number={index + 1}
+              <Side key={statement.id} statement={statement} number={index + 1} zone={zone}
                 label={index === 0 ? 'Plus ancienne' : index === sides.length - 1 ? 'Plus récente' : 'Intermédiaire'} />
             ))}
           </div>
@@ -170,13 +170,13 @@ function Review({ section, back }: { section: HistorySection; back: () => void }
   );
 }
 
-function Side({ statement, number, label }: { statement: Assertion; number: number; label: string }) {
+function Side({ statement, number, label, zone }: { statement: Assertion; number: number; label: string; zone: string }) {
   const ctx = useRecord();
-  const state = statementState(statement);
+  const state = statementState(statement, zone);
   const source = useSource({ id: statement.sourceRevisionId ?? statement.id, reference: statement.sourceReference ?? '', number },
     ctx.practiceId, ctx.asOf, ctx.expire, 'alone');
-  const when = eventLabel(statement.eventDate);
-  const recordedAt = clock(statement.recordedAt);
+  const when = eventLabel(statement.eventDate, zone);
+  const recordedAt = clock(statement.recordedAt, zone);
   return (
     <div className="etaye-carte">
       <div className="etaye-carte__tete">

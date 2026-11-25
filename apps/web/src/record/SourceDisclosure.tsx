@@ -16,10 +16,11 @@ export type SourceHandle = { id: string; reference: string; number: number };
  * The two parts are returned separately so a screen can place the marker beside the item and the button under it.
  */
 export function useSource(source: SourceHandle, practiceId: string, asOf: string | undefined, expire: () => void,
-  variant: 'inline' | 'alone' = 'inline'): { marker: ReactNode; panel: ReactNode } {
-  const { refused } = useRecord();
+  variant: 'inline' | 'alone' = 'inline', external?: { markerId: string }): { marker: ReactNode; panel: ReactNode; activate: () => void; regionId: string } {
+  const { refused, zone } = useRecord();
   const uid = useId();
-  const markerId = `m-${uid}`;
+  // A screen that places the marker elsewhere (the table of S-11) names its own marker, so "Revenir à l'élément" returns there.
+  const markerId = external?.markerId ?? `m-${uid}`;
   const regionId = `r-${uid}`;
   const [open, setOpen] = useState(false);
   const [remote, setRemote] = useState<Remote<Source> | undefined>();
@@ -50,15 +51,15 @@ export function useSource(source: SourceHandle, practiceId: string, asOf: string
     }
   });
 
+  // Already open: the state does not change, so the focus is moved here and not by the effect.
+  const activate = () => {
+    if (open) button.current?.focus();
+    else { focusButton.current = true; setOpen(true); }
+  };
   const marker = (
     <a className={`etaye-repere${variant === 'alone' ? ' etaye-repere--seul' : ''}`} id={markerId} href={`#${regionId}`}
       aria-label={`Source ${source.number} : ${source.reference}`}
-      onClick={(event) => {
-        event.preventDefault();
-        // Already open: the state does not change, so the focus is moved here and not by the effect.
-        if (open) button.current?.focus();
-        else { focusButton.current = true; setOpen(true); }
-      }}>{source.number}</a>
+      onClick={(event) => { event.preventDefault(); activate(); }}>{source.number}</a>
   );
   const panel = (
     <div className="etaye-source">
@@ -76,16 +77,16 @@ export function useSource(source: SourceHandle, practiceId: string, asOf: string
               La déclaration affichée au-dessus reste visible ; seul l’extrait manque. Rien n’a été supprimé.
             </Notice>
           )}
-          {remote?.phase === 'ready' && <SourceBody source={remote.data} back={markerId} />}
+          {remote?.phase === 'ready' && <SourceBody source={remote.data} back={markerId} zone={zone} />}
         </div>
       )}
     </div>
   );
-  return { marker, panel };
+  return { marker, panel, activate, regionId };
 }
 
-function SourceBody({ source, back }: { source: Source; back: string }) {
-  const event = eventLabel(source.eventDate);
+function SourceBody({ source, back, zone }: { source: Source; back: string; zone: string }) {
+  const event = eventLabel(source.eventDate, zone);
   const state = originState[source.sourceType];
   return <>
     <div className="etaye-source-tete">
@@ -95,7 +96,7 @@ function SourceBody({ source, back }: { source: Source; back: string }) {
       {source.kind && <div className="ui-section">{sourceHeading(source.kind)}</div>}
       <div className="etaye-2" style={{ fontSize: 14 }}>
         {event ? <>Survenu le <span className="etaye-num">{event}</span></> : 'Date de survenue inconnue'}
-        {' '}· enregistré le <span className="etaye-num">{formatInstant(source.recordedAt)}</span> · {source.authorLabel}
+        {' '}· enregistré le <span className="etaye-num">{formatInstant(source.recordedAt, zone)}</span> · {source.authorLabel}
       </div>
       <div className="etaye-ligne">
         {state.tone !== 'plain' && <span className={`etaye-etat etaye-etat--${state.tone}`}>{state.label}</span>}

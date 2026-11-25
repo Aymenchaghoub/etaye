@@ -216,6 +216,12 @@
     "permission": "CLINICAL_WRITE"
   },
   {
+    "operationId": "listMeasurementRevisions",
+    "method": "get",
+    "path": "/practices/{practiceId}/measurements/{measurementId}/revisions",
+    "permission": "CLINICAL_READ"
+  },
+  {
     "operationId": "listLabResults",
     "method": "get",
     "path": "/practices/{practiceId}/records/{recordId}/lab-results",

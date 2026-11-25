@@ -107,7 +107,7 @@ public class IdentityLookupRepository {
             var portalLinkIds = new ArrayList<UUID>();
             var contexts = new ArrayList<AccessContext>();
             try (PreparedStatement ps = conn.prepareStatement("""
-                    SELECT grant_id, grant_type, practice_id, practice_name, display_role
+                    SELECT grant_id, grant_type, practice_id, practice_name, display_role, practice_timezone
                     FROM public.current_access_contexts(?) ORDER BY grant_id, grant_type
                     """)) {
                 ps.setObject(1, accountId);
@@ -117,7 +117,8 @@ public class IdentityLookupRepository {
                         var kind = AccessContext.Kind.valueOf(rs.getString("grant_type"));
                         contexts.add(new AccessContext(kind, id, rs.getObject("practice_id", UUID.class),
                                 rs.getString("practice_name"),
-                                AccessContext.DisplayRole.valueOf(rs.getString("display_role"))));
+                                AccessContext.DisplayRole.valueOf(rs.getString("display_role")),
+                                rs.getString("practice_timezone")));
                         if (kind == AccessContext.Kind.MEMBERSHIP) {
                             membershipIds.add(id);
                         } else {

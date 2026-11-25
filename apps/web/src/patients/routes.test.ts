@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { editPatientPath, historyPath, newPatientPath, patientRoute, patientsPath, recordPath } from './routes';
+import { editPatientPath, historyPath, measurementsPath, newPatientPath, patientRoute, patientsPath, recordPath } from './routes';
 
 const grant = '11111111-1111-4111-8111-111111111111';
 const record = '55555555-5555-4555-8555-555555555555';
@@ -19,6 +19,16 @@ describe('patient routes', () => {
     expect(patientRoute(historyPath(base, record))?.view).toBe('history');
     expect(recordPath(base, 'not-a-uuid')).toBe(patientsPath(base));
     expect(historyPath(base, '../x')).toBe(patientsPath(base));
+  });
+
+  it('recognizes the measurements of a record (story 3.3)', () => {
+    expect(patientRoute(`${base}/patients/${record}/mesures`)).toEqual({ base, view: 'measurements', recordId: record });
+    expect(patientRoute(measurementsPath(base, record))?.view).toBe('measurements');
+    expect(measurementsPath(base, 'not-a-uuid')).toBe(patientsPath(base));
+    expect(measurementsPath(base, '../x')).toBe(patientsPath(base));
+    expect(patientRoute(`${base}/patients/${record}/mesures/`)).toBeUndefined();
+    expect(patientRoute(`${base}/patients/${record}/mesures?asOf=2026-10-20`)).toBeUndefined();
+    expect(patientRoute(`/compte/patient/${grant}/patients/${record}/mesures`)).toBeUndefined();
   });
 
   it('builds the same paths it recognizes', () => {

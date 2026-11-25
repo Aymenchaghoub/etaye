@@ -7,6 +7,10 @@
 .etaye-onglets { display: flex; gap: var(--espace-1); border-bottom: var(--trait-filet) solid var(--filet); overflow-x: auto; }
 .etaye-onglets a { display: inline-flex; align-items: center; gap: var(--espace-2); min-height: 40px; padding: 0 var(--espace-3); font: 400 14px/20px var(--font-texte); color: var(--encre-2); text-decoration: none; border-bottom: 2px solid transparent; white-space: nowrap; }
 .etaye-onglets a[aria-current="page"] { color: var(--encre); border-bottom-color: var(--encre); font-weight: 500; }
+/* The authentication stylesheet colors every class-less link with the accent (specificity 0,2,1), which turned the inactive
+   tabs blue; the approved specimens keep them in the secondary ink. These selectors outrank it. */
+.etaye-root .etaye-onglets a:not([class]) { color: var(--encre-2); text-decoration: none; }
+.etaye-root .etaye-onglets a[aria-current="page"]:not([class]) { color: var(--encre); }
 .etaye-cols { display: grid; gap: var(--espace-6); align-items: start; }
 .etaye-cols--2 { grid-template-columns: minmax(0, 1fr) 360px; }
 .etaye-cols--egal { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -117,3 +121,48 @@ select.etaye-champ__saisie { appearance: none; padding-right: var(--espace-8); b
 /* I-27: the two sides of a conflict as cards, the date on the right of the label line. */
 .etaye-carte { display: grid; gap: var(--espace-2); align-content: start; min-width: 0; padding: var(--espace-3); border: var(--trait-filet) solid var(--filet); background: var(--surface-2); }
 .etaye-carte__tete { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: var(--espace-2); }
+
+/*
+ * Measurements (story 3.3, S-11). The table and the chart are the recipes of the approved Étaye offline reference
+ * (design/offline-reference/site/css/etaye.css, snapshot d2f0800e275c…) and of the approved specimens of 2026-11-25
+ * (UD-72). Two defects of the received CSS are corrected here (specimen review F-1 and F-2): a numeric cell never wrapped,
+ * so the longest value the contract accepts was clipped below 760 px, and the tab bar scrolled, so the current one of
+ * three tabs left the screen at 320 px.
+ */
+.etaye-panneau__tete { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--espace-1) var(--espace-3); }
+.etaye-panneau__tete h2 { overflow-wrap: anywhere; min-width: 0; }
+.etaye-tableau { width: 100%; border-collapse: collapse; font: 400 14px/20px var(--font-texte); }
+.etaye-tableau th { text-align: left; padding: var(--espace-2) var(--espace-3); font: 500 13px/20px var(--font-texte); color: var(--encre-2); border-bottom: var(--trait-filet) solid var(--filet-controle); }
+.etaye-tableau td { padding: var(--espace-2) var(--espace-3); min-height: 36px; border-bottom: var(--trait-filet) solid var(--filet); vertical-align: middle; overflow-wrap: anywhere; }
+.etaye-tableau .etaye-col-num { text-align: right; font-family: var(--font-donnee); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.etaye-tableau th.etaye-col-num { font-family: var(--font-texte); }
+.etaye-tableau tbody tr:hover td { background: var(--surface-2); }
+.etaye-lignee { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--espace-2); }
+.etaye-lignee li { padding: var(--espace-2) var(--espace-3); border: var(--trait-filet) solid var(--filet); background: var(--surface); overflow-wrap: anywhere; font: 400 14px/20px var(--font-texte); }
+.etaye-sources-liste { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--espace-3); }
+.etaye-sources-liste li { display: grid; gap: var(--espace-1); min-width: 0; }
+.etaye-sources-liste .etaye-repere { top: 0; }
+
+.etaye-courbe { width: 100%; max-width: 720px; height: auto; display: block; font-family: var(--font-donnee); }
+.etaye-courbe--etroite { display: none; }
+.etaye-courbe .grille { stroke: var(--filet); stroke-width: 1; }
+.etaye-courbe .axe { fill: var(--encre-3); font-size: 11px; }
+.etaye-courbe .serie { fill: none; stroke: var(--accent); stroke-width: 2; }
+.etaye-courbe .serie-2 { fill: none; stroke: var(--encre-2); stroke-width: 2; stroke-dasharray: 6 4; }
+.etaye-courbe .point { fill: var(--surface); stroke: var(--accent); stroke-width: 2; }
+.etaye-courbe .point-2 { fill: var(--surface); stroke: var(--encre-2); stroke-width: 2; }
+.etaye-courbe .val { fill: var(--encre); font-size: 12px; }
+
+@media (max-width: 760px) {
+  .etaye-courbe--large { display: none; }
+  .etaye-courbe--etroite { display: block; }
+  .etaye-tableau--empile thead { display: none; }
+  .etaye-tableau--empile tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--espace-3); row-gap: var(--espace-1); padding: var(--espace-2) 0; border-bottom: var(--trait-filet) solid var(--filet); }
+  .etaye-tableau--empile td { border: 0; padding: 2px var(--espace-2); }
+  .etaye-tableau--empile td[data-l]::before { content: attr(data-l); display: block; color: var(--encre-3); font: 400 12px/16px var(--font-texte); }
+  .etaye-tableau--empile td.etaye-col-num { text-align: left; white-space: normal; overflow-wrap: anywhere; }
+}
+@media (max-width: 420px) {
+  .etaye-onglets { flex-wrap: wrap; overflow-x: visible; }
+  .etaye-onglets a { white-space: normal; }
+}

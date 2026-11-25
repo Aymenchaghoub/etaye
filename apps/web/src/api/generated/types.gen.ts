@@ -113,7 +113,7 @@ export type Session = {
 };
 
 /**
- * Current minimal access-context projection. The kind and grant ID identify the browser context. A display role or practice ID does not authorize any resource.
+ * Current minimal access-context projection. The kind and grant ID identify the browser context. A display role or practice ID does not authorize any resource. For a MEMBERSHIP context, `timezone` is the IANA zone of the practice, which the record screens use to show and read every instant (D-64); it never authorizes anything.
  */
 export type AccessContext = {
     kind: 'MEMBERSHIP' | 'PORTAL';
@@ -121,6 +121,10 @@ export type AccessContext = {
     practiceId: string;
     practiceName: string;
     displayRole: 'CLINICAL' | 'ADMINISTRATION' | 'SCHEDULING' | 'TEAM' | 'PATIENT';
+    /**
+     * IANA time zone of the practice. Present for MEMBERSHIP contexts.
+     */
+    timezone?: string;
 };
 
 export type Csrf = {
@@ -326,6 +330,9 @@ export type MeasurementInput = {
     correctionReason?: string;
 };
 
+/**
+ * One dated numeric observation. The row is an immutable revision: a correction appends the next revision of the same lineage with its reason, and `version` equals the revision number. A blood-pressure reading is two components (concepts SYSTOLIC_BLOOD_PRESSURE and DIASTOLIC_BLOOD_PRESSURE) that share a `groupId`. `observedAt` is always an instant: an observation without a time does not exist (BR-009, D-65). `unit` is stored and returned as entered and is never converted.
+ */
 export type Measurement = {
     id: string;
     version: number;
@@ -341,6 +348,22 @@ export type Measurement = {
     correctionReason?: string;
     sourceRevisionId: string;
     supersedesId?: string;
+    /**
+     * Server-provided recording instant of this revision; it alone decides what an asOf view contains (UD-32).
+     */
+    recordedAt?: string;
+    /**
+     * Plain-text label of the person who recorded this revision.
+     */
+    authorLabel?: string;
+    /**
+     * Human identifier of the source revision that supports this measurement.
+     */
+    sourceReference?: string;
+    /**
+     * Revision number inside the lineage; 1 for an original.
+     */
+    revision?: number;
 };
 
 export type LabInput = {
@@ -785,6 +808,17 @@ export type AssertionPage = {
 export type MeasurementPage = {
     items: Array<Measurement>;
     nextCursor: string | null;
+};
+
+/**
+ * The revisions of one measurement lineage, oldest first. A lineage has at most 100 revisions in this response; a longer one keeps its original revision and its newest 99 and says so with truncated.
+ */
+export type MeasurementRevisionList = {
+    items: Array<Measurement>;
+    /**
+     * Present and true only when the lineage has more than 100 revisions: the response then lists the original revision and the newest 99, and the revisions between them are left out. Absent when the whole lineage is listed.
+     */
+    truncated?: boolean;
 };
 
 export type LabResultPage = {
@@ -2968,6 +3002,10 @@ export type ListMeasurementsData = {
         from?: string;
         to?: string;
         /**
+         * Keeps only measurements of these exact concept codes, compared as stored and case-sensitive (repeat the parameter).
+         */
+        concept?: Array<string>;
+        /**
          * Past instant. Returns, for every lineage, the latest revision recorded at or before it; read-only, same authorization as the current view; a future instant is rejected with 400.
          */
         asOf?: string;
@@ -3150,6 +3188,59 @@ export type CorrectMeasurementResponses = {
 };
 
 export type CorrectMeasurementResponse = CorrectMeasurementResponses[keyof CorrectMeasurementResponses];
+
+export type ListMeasurementRevisionsData = {
+    body?: never;
+    path: {
+        practiceId: string;
+        measurementId: string;
+    };
+    query?: {
+        /**
+         * Past instant. Returns, for every lineage, the latest revision recorded at or before it; read-only, same authorization as the current view; a future instant is rejected with 400.
+         */
+        asOf?: string;
+    };
+    url: '/practices/{practiceId}/measurements/{measurementId}/revisions';
+};
+
+export type ListMeasurementRevisionsErrors = {
+    /**
+     * Malformed request
+     */
+    400: Problem;
+    /**
+     * Missing or expired session
+     */
+    401: Problem;
+    /**
+     * Forbidden action on visible resource or CSRF failure
+     */
+    403: Problem;
+    /**
+     * Not found or inaccessible resource
+     */
+    404: Problem;
+    /**
+     * Rate limit or quota exceeded
+     */
+    429: Problem;
+    /**
+     * Service temporarily unavailable
+     */
+    503: Problem;
+};
+
+export type ListMeasurementRevisionsError = ListMeasurementRevisionsErrors[keyof ListMeasurementRevisionsErrors];
+
+export type ListMeasurementRevisionsResponses = {
+    /**
+     * The lineage, oldest revision first.
+     */
+    200: MeasurementRevisionList;
+};
+
+export type ListMeasurementRevisionsResponse = ListMeasurementRevisionsResponses[keyof ListMeasurementRevisionsResponses];
 
 export type ListLabResultsData = {
     body?: never;

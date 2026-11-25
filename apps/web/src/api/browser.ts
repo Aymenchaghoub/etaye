@@ -1,6 +1,6 @@
 import { version } from '../../package.json';
 import { createClient } from './generated/client';
-import { acceptInvitation, completeRecovery, createPatient, editPatient, getApiMeta, getCsrfToken, getHistorySummary, getPatientRecord, getReadiness, getSession, getSourceRevision, getTimeline, inspectInvitation, listDemoScenarios, requestRecovery, resetSyntheticDemo, searchPatients, signIn, signOut } from './generated/sdk.gen';
+import { acceptInvitation, completeRecovery, createPatient, editPatient, getApiMeta, getCsrfToken, getHistorySummary, getPatientRecord, getReadiness, getSession, getSourceRevision, getTimeline, inspectInvitation, listDemoScenarios, listMeasurementRevisions, listMeasurements, requestRecovery, resetSyntheticDemo, searchPatients, signIn, signOut } from './generated/sdk.gen';
 import type { ActivationWritable, CredentialsWritable, PatientEdit, PatientRegistration, Problem, SourceKind } from './generated/types.gen';
 
 export type AccountResult<T> =
@@ -83,6 +83,19 @@ export function createBrowserApi(origin: string, transportEnabled: boolean, tran
     readSource(practiceId: string, sourceId: string, asOf?: string, signal?: AbortSignal) {
       return accountRequest((deadline) => getSourceRevision({
         client, path: { practiceId, sourceId }, query: { asOf }, signal: deadline, cache: 'no-store',
+      }), signal);
+    },
+    // Measurements (story 3.3). Both reads are no-store and carry the optional past instant of the view (UD-32).
+    readMeasurements(practiceId: string, recordId: string,
+      query: { cursor?: string; limit?: number; from?: string; to?: string; concept?: string[]; asOf?: string },
+      signal?: AbortSignal) {
+      return accountRequest((deadline) => listMeasurements({
+        client, path: { practiceId, recordId }, query, signal: deadline, cache: 'no-store',
+      }), signal);
+    },
+    readMeasurementRevisions(practiceId: string, measurementId: string, asOf?: string, signal?: AbortSignal) {
+      return accountRequest((deadline) => listMeasurementRevisions({
+        client, path: { practiceId, measurementId }, query: { asOf }, signal: deadline, cache: 'no-store',
       }), signal);
     },
     // Patient directory (story 3.1). The query text travels only in the request: it is never logged or stored here.

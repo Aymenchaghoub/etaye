@@ -5,7 +5,9 @@ import { PatientForm } from './PatientForm';
 import { PatientsPage } from './PatientsPage';
 import { ChronologyPage } from '../record/ChronologyPage';
 import { HistoryPage } from '../record/HistoryPage';
+import { MeasurementsPage } from '../record/MeasurementsPage';
 import { RecordPage } from '../record/RecordPage';
+import { hasUsableZone, resolveZone } from '../record/zone';
 import { PractitionerShell } from './PractitionerShell';
 import type { PatientRoute } from './routes';
 
@@ -35,9 +37,13 @@ export function PatientsArea({ session, context, contexts, route, select, signOu
       {route.view === 'new' && (
         <PatientForm mode="new" scope={scope} practiceId={context.practiceId} base={base} expire={expire} />
       )}
-      {(route.view === 'record' || route.view === 'history') && (
-        <RecordPage tab={route.view} scope={scope} practiceId={context.practiceId} base={base} recordId={route.recordId} expire={expire}>
-          {(tab) => (tab === 'record' ? <ChronologyPage /> : <HistoryPage />)}
+      {(route.view === 'record' || route.view === 'history' || route.view === 'measurements') && (
+        <RecordPage tab={route.view} scope={scope} practiceId={context.practiceId} base={base} recordId={route.recordId}
+          zone={resolveZone(context.timezone)} zoneKnown={hasUsableZone(context.timezone)} expire={expire}>
+          {/* Keyed by practice and record: the state of one record's screen never survives a move to another record. */}
+          {(tab) => (tab === 'record' ? <ChronologyPage key={`${context.practiceId}:${route.recordId}`} />
+            : tab === 'history' ? <HistoryPage key={`${context.practiceId}:${route.recordId}`} />
+              : <MeasurementsPage key={`${context.practiceId}:${route.recordId}`} />)}
         </RecordPage>
       )}
       {route.view === 'edit' && (

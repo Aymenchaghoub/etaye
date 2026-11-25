@@ -8,6 +8,8 @@ import dev.aymen.etaye.records.domain.AssertionKind;
 import dev.aymen.etaye.records.domain.AssertionView;
 import dev.aymen.etaye.records.domain.EvidenceRepository;
 import dev.aymen.etaye.records.domain.EvidenceRepository.Position;
+import dev.aymen.etaye.records.domain.MeasurementRepository;
+import dev.aymen.etaye.records.domain.MeasurementView;
 import dev.aymen.etaye.records.domain.SectionState;
 import dev.aymen.etaye.records.domain.SectionStateRule;
 import dev.aymen.etaye.records.domain.SourceKind;
@@ -16,6 +18,9 @@ import dev.aymen.etaye.records.dto.AssertionPageResponse;
 import dev.aymen.etaye.records.dto.AssertionResponse;
 import dev.aymen.etaye.records.dto.HistorySectionResponse;
 import dev.aymen.etaye.records.dto.HistorySummaryResponse;
+import dev.aymen.etaye.records.dto.MeasurementPageResponse;
+import dev.aymen.etaye.records.dto.MeasurementResponse;
+import dev.aymen.etaye.records.dto.MeasurementRevisionListResponse;
 import dev.aymen.etaye.records.dto.SourcePageResponse;
 import dev.aymen.etaye.records.dto.SourceResponse;
 import dev.aymen.etaye.records.dto.TimelineItemResponse;
@@ -52,13 +57,18 @@ public class RecordEvidenceService {
     /** The statements listed per section; the state is always derived from all of them. */
     public static final int MAX_SECTION_STATEMENTS = 100;
 
+    public static final int MAX_CONCEPTS = 10;
+    public static final int MAX_CONCEPT_LENGTH = 100;
+
     private final EvidenceRepository evidence;
+    private final MeasurementRepository measurements;
     private final PracticeTransaction practiceTransaction;
     private final Clock clock;
 
-    public RecordEvidenceService(EvidenceRepository evidence, PracticeTransaction practiceTransaction,
-                                 ObjectProvider<Clock> clock) {
+    public RecordEvidenceService(EvidenceRepository evidence, MeasurementRepository measurements,
+                                 PracticeTransaction practiceTransaction, ObjectProvider<Clock> clock) {
         this.evidence = evidence;
+        this.measurements = measurements;
         this.practiceTransaction = practiceTransaction;
         this.clock = clock.getIfAvailable(Clock::systemUTC);
     }
@@ -172,6 +182,51 @@ public class RecordEvidenceService {
             return pageOf(rows, page.limit(), binding, AssertionView::id, AssertionResponse::of,
                     (items, next) -> new AssertionPageResponse(items, next));
         });
+    }
+
+    /**
+     * The measurements of the view (story 3.3): the current revision of every lineage, newest observation first. The
+     * concept filter compares exact stored codes, so two spellings of a concept or a unit are never merged here.
+     */
+    public MeasurementPageResponse measurements(UUID practiceId, UUID actorId, UUID recordId, String cursor, Integer limit,
+                                                Instant from, Instant to, List<String> concepts, Instant asOf) {
+        Paging page = paging(limit, cursor);
+        if (from != null && to != null && from.isAfter(to)) {
+            throw new InvalidParameterException("from must not be after to");
+        }
+        List<String> conceptFilter = concepts == null ? List.of() : concepts.stream().distinct().sorted().toList();
+        if (conceptFilter.size() > MAX_CONCEPTS) {
+            throw new InvalidParameterException("too many concepts");
+        }
+        if (conceptFilter.stream().anyMatch(code -> code.isBlank() || code.length() > MAX_CONCEPT_LENGTH)) {
+            throw new InvalidParameterException("concept must be 1 to " + MAX_CONCEPT_LENGTH + " characters");
+        }
+        return practiceTransaction.execute(practiceId, () -> {
+            requireRecord(practiceId, recordId);
+            Instant view = viewInstant(asOf);
+            // Each code carries its length: a separator inside a code can never make two filters bind the same cursor.
+            String binding = binding("measurements", practiceId, actorId, recordId, asOf,
+                    conceptFilter.stream().map(code -> code.length() + ":" + code).collect(java.util.stream.Collectors.joining(",", "[", "]"))
+                            + "|" + from + "|" + to);
+            UUID cursorId = decode(page.cursor(), binding);
+            MeasurementRepository.Position after = cursorId == null ? null
+                    : measurements.position(practiceId, recordId, view, cursorId)
+                    .orElseThrow(() -> new InvalidParameterException("cursor does not belong to this view"));
+            List<MeasurementView> rows = measurements.page(practiceId, recordId, view, conceptFilter, lowerBound(from),
+                    upperBound(to), after, page.limit() + 1);
+            return pageOf(rows, page.limit(), binding, MeasurementView::id, MeasurementResponse::of,
+                    (items, next) -> new MeasurementPageResponse(items, next));
+        });
+    }
+
+    /** The lineage of one measurement, oldest first, as known at the instant: a later revision is never listed. */
+    public MeasurementRevisionListResponse measurementRevisions(UUID practiceId, UUID measurementId, Instant asOf) {
+        Objects.requireNonNull(measurementId, "measurementId must not be null");
+        Instant view = asOf == null ? null : viewInstant(asOf);
+        return practiceTransaction.execute(practiceId, () -> measurements.lineage(practiceId, measurementId, view)
+                .map(lineage -> new MeasurementRevisionListResponse(lineage.revisions().stream().map(MeasurementResponse::of).toList(),
+                        lineage.truncated() ? Boolean.TRUE : null))
+                .orElseThrow(() -> new ResourceNotFoundException("Resource not found")));
     }
 
     public HistorySummaryResponse history(UUID practiceId, UUID recordId, Instant asOf) {

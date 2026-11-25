@@ -55,7 +55,8 @@ public class RecordEvidenceMigrationTest extends AbstractPostgresTest {
                     + "INSERT INTO patient_record (id, practice_id, patient_id) VALUES ('" + record + "', '" + practice + "', '" + patient + "'); COMMIT;");
         }
 
-        var result = Flyway.configure().dataSource(url(database), OWNER_USER, OWNER_PASSWORD).locations("classpath:db/migration").load().migrate();
+        // Pinned to the version this story introduced: later stories add their own upgrade tests.
+        var result = Flyway.configure().dataSource(url(database), OWNER_USER, OWNER_PASSWORD).locations("classpath:db/migration").target("9").load().migrate();
         assertThat(result.success).isTrue();
         assertThat(result.targetSchemaVersion).isEqualTo("9");
 
@@ -124,7 +125,7 @@ public class RecordEvidenceMigrationTest extends AbstractPostgresTest {
             }
 
             var result = Flyway.configure().dataSource(container.getJdbcUrl(), OWNER_USER, OWNER_PASSWORD)
-                    .locations("classpath:db/migration", "classpath:db/demo").load().migrate();
+                    .locations("classpath:db/migration", "classpath:db/demo").target("10").load().migrate();
             assertThat(result.success).isTrue();
             assertThat(result.targetSchemaVersion).isEqualTo("10");
 

@@ -300,7 +300,7 @@ CORE families need the full evidence of the named design exception (UD-16); ever
 | S-39 | screen | Export options and print preview | 1 | SAMPLED | Export options for P-01 and P-02 → Inc 2 (D-27) |
 | S-40 | screen | AI processing activity and task detail | 1 | SAMPLED | — |
 
-### 8.3 API operations (100 in the contract, 4 planned)
+### 8.3 API operations (101 in the contract, 4 planned)
 
 | Inc | Operation | Method and path | Permission | State |
 |---|---|---|---|---|
@@ -393,6 +393,7 @@ CORE families need the full evidence of the named design exception (UD-16); ever
 | 2 | resendInvitation | POST /practices/{practiceId}/invitations/{invitationId}/resend | AUTHORIZED_ISSUER | in contract |
 | 2 | appendMeasurement | POST /practices/{practiceId}/records/{recordId}/measurements | CLINICAL_WRITE | in contract |
 | 2 | correctMeasurement | POST /practices/{practiceId}/measurements/{measurementId}/corrections | CLINICAL_WRITE | in contract |
+| 1 | listMeasurementRevisions | GET /practices/{practiceId}/measurements/{measurementId}/revisions | CLINICAL_READ | in contract |
 | 2 | appendLabResult | POST /practices/{practiceId}/records/{recordId}/lab-results | CLINICAL_WRITE | in contract |
 | 2 | correctLabResult | POST /practices/{practiceId}/lab-results/{labResultId}/corrections | CLINICAL_WRITE | in contract |
 | 2 | uploadRecordDocument | POST /practices/{practiceId}/records/{recordId}/documents | CLINICAL_WRITE | in contract |

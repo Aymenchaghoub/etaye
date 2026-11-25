@@ -3,21 +3,21 @@
   "date": "2026-11-25",
   "ok": true,
   "checks": {
-    "markdownFiles": 145,
-    "localLinks": 2052,
-    "apiOperations": 100,
-    "apiSchemas": 101,
+    "markdownFiles": 149,
+    "localLinks": 2147,
+    "apiOperations": 101,
+    "apiSchemas": 102,
     "planningStories": 45,
     "roadmapStories": 45,
     "requiredDesignFamilies": 76,
     "roadmapSurfaces": 76,
-    "roadmapOperations": 104,
+    "roadmapOperations": 105,
     "screenInteractionMappings": 28,
     "syntheticObjects": 71,
     "verifiedFigmaExports": 15,
     "offlineMockupFiles": 523,
     "applicationScope": {
-      "mode": "stories-10.1-10.2-1.2-1.1-1.3-9.1-1.4-3.1-3.2",
+      "mode": "stories-10.1-10.2-1.2-1.1-1.3-9.1-1.4-3.1-3.2-3.3",
       "authorizedStories": [
         "10.1",
         "10.2",
@@ -27,11 +27,12 @@
         "9.1",
         "1.4",
         "3.1",
-        "3.2"
+        "3.2",
+        "3.3"
       ],
       "trackedBuildOutputCheck": "checked with git ls-files"
     },
-    "projectFilesSecretScanned": 235
+    "projectFilesSecretScanned": 240
   },
   "errors": [],
   "applicationTestsExecuted": false,

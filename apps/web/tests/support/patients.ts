@@ -4,10 +4,10 @@ import type { AccessContext, Patient, Problem, SchedulingPatient, Session } from
 
 export const ids = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 export const tilleuls: AccessContext = {
-  kind: 'MEMBERSHIP', grantId: ids(1), practiceId: ids(10), practiceName: 'Cabinet des Tilleuls', displayRole: 'CLINICAL',
+  kind: 'MEMBERSHIP', grantId: ids(1), practiceId: ids(10), practiceName: 'Cabinet des Tilleuls', displayRole: 'CLINICAL', timezone: 'Europe/Paris',
 };
 export const canal: AccessContext = {
-  kind: 'MEMBERSHIP', grantId: ids(2), practiceId: ids(20), practiceName: 'Cabinet du Canal', displayRole: 'CLINICAL',
+  kind: 'MEMBERSHIP', grantId: ids(2), practiceId: ids(20), practiceName: 'Cabinet du Canal', displayRole: 'CLINICAL', timezone: 'Europe/Paris',
 };
 export const admin: AccessContext = { ...canal, grantId: ids(4), practiceName: 'Cabinet des Tilleuls', displayRole: 'ADMINISTRATION' };
 export const base = `/compte/pratiques/${tilleuls.grantId}`;

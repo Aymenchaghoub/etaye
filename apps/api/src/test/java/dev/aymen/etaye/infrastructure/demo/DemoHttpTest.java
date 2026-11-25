@@ -165,6 +165,17 @@ class DemoHttpTest {
                 COMMIT;
                 """);
         assertThat(evidenceCount("source_revision")).isEqualTo(11);
+        // Story 3.3 (D-54): an added measurement must not survive the reset either, and a seeded revision must come back.
+        ownerExecute("""
+                BEGIN;
+                SELECT set_config('etaye.practice_id', etaye_demo.fixture_id('PRA-A')::text, true);
+                INSERT INTO public.measurement (practice_id, record_id, lineage_id, revision, concept, value_decimal, unit,
+                    observed_at, recorded_at, author_label, source_revision_id)
+                VALUES (etaye_demo.fixture_id('PRA-A'), etaye_demo.fixture_id('R-A-001'), gen_random_uuid(), 1, 'EXTRA',
+                    1, 'u', now(), now(), 'Dr Test', etaye_demo.fixture_id('SRC-A-001'));
+                COMMIT;
+                """);
+        assertThat(evidenceCount("measurement")).isEqualTo(7);
         var operatorCsrf = csrf(operator);
         var otherCsrf = csrf(anotherOperator);
         var lateLoginCsrf = csrf(null);
@@ -230,6 +241,11 @@ class DemoHttpTest {
         // The restored rows are exactly the seeded ones: the added revision is gone and no seeded revision is missing.
         assertThat(evidenceReferences()).containsExactlyInAnyOrder("SRC-A-001", "SRC-A-002", "SRC-A-003", "SRC-A-004", "SRC-A-005",
                 "SRC-A-006", "SRC-A-007-v1", "SRC-A-007-v2", "SRC-A-008", "SRC-B-001");
+        // The measurements are exactly the seeded ones: the corrected weight lineage (86.4 kg then 68.4 kg) and the two
+        // blood-pressure readings; the added measurement is gone.
+        assertThat(evidenceCount("measurement")).isEqualTo(6);
+        assertThat(measurementSummary()).containsExactlyInAnyOrder("DIASTOLIC_BLOOD_PRESSURE 80 mmHg r1", "DIASTOLIC_BLOOD_PRESSURE 82 mmHg r1",
+                "SYSTOLIC_BLOOD_PRESSURE 128 mmHg r1", "SYSTOLIC_BLOOD_PRESSURE 134 mmHg r1", "WEIGHT 86.4 kg r1", "WEIGHT 68.4 kg r2");
         assertThat(request(HttpMethod.GET, "/session", nora, null, null).getStatusCode().value()).isEqualTo(401);
         assertThat(request(HttpMethod.GET, "/session", operator, null, null).getStatusCode().value()).isEqualTo(401);
         assertThat(request(HttpMethod.GET, "/session", new Browser(lateCookie, null), null, null)
@@ -328,6 +344,15 @@ class DemoHttpTest {
             var references = new java.util.ArrayList<String>();
             while (result.next()) references.add(result.getString(1));
             return references;
+        }
+    }
+
+    private java.util.List<String> measurementSummary() throws SQLException {
+        try (var connection = DemoDatabase.adminConnection(); var command = connection.createStatement();
+             var result = command.executeQuery("SELECT concept || ' ' || value_decimal || ' ' || unit || ' r' || revision FROM public.measurement")) {
+            var rows = new java.util.ArrayList<String>();
+            while (result.next()) rows.add(result.getString(1));
+            return rows;
         }
     }
 
