@@ -8,7 +8,9 @@ from io import StringIO
 from pathlib import Path
 
 import ci_scope
-from ci_scope import ALL, NONE, classify_path, decide, run
+
+ALL, NONE = ci_scope.ALL, ci_scope.NONE
+classify_path, decide, run = ci_scope.classify_path, ci_scope.decide, ci_scope.run
 
 ROOT = Path(__file__).resolve().parents[1]
 
