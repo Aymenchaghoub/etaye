@@ -290,8 +290,9 @@ class MeasurementHttpTest extends AbstractPostgresTest {
     void aLongLineageKeepsTheOriginalAndTheNewestRevisions() throws SQLException {
         UUID s = source(practiceA, recordA, "SRC-LONG-LINEAGE", "2026-10-20T10:00:00+02:00");
         Row first = Row.original(practiceA, recordA, "WEIGHT", "71", "kg", "2026-10-20T10:12:00+02:00", "2026-10-20T10:13:00+02:00", s);
-        UUID previous = measurement(first);
-        UUID current = previous;
+        UUID original = measurement(first);
+        UUID previous = original;
+        UUID current = original;
         for (int revision = 2; revision <= 105; revision++) {
             String recorded = java.time.Instant.parse("2026-10-20T08:13:00Z").plus(revision, java.time.temporal.ChronoUnit.MINUTES).toString();
             current = measurement(new Row(practiceA, recordA, first.lineage(), revision, "WEIGHT", String.valueOf(70 + revision), "kg",
@@ -308,7 +309,7 @@ class MeasurementHttpTest extends AbstractPostgresTest {
         assertThat(revisions.getLast().get("revision")).isEqualTo(105);
         assertThat(revisions.stream().map(item -> (Integer) item.get("revision")).toList()).isSorted();
         // The same lineage read from its original resolves identically.
-        assertThat(values(get(clinicalA, lineage(practiceA, previous)))).isEqualTo(values(response));
+        assertThat(values(get(clinicalA, lineage(practiceA, original)))).isEqualTo(values(response));
         // A lineage that fits is not marked at all.
         UUID[] weight = weightLineage(practiceA, recordA);
         assertThat(get(clinicalA, lineage(practiceA, weight[0])).getBody()).doesNotContainKey("truncated");
@@ -423,6 +424,27 @@ class MeasurementHttpTest extends AbstractPostgresTest {
         assertThat(items(get(clinicalA, list(practiceA, recordA) + "?from=2026-09-05T07:00:00Z&to=2026-09-07T07:00:00Z"))).hasSize(2);
         assertThat(items(get(clinicalA, list(practiceA, recordA) + "?from=2026-09-05T07:00:00Z&to=2026-09-05T07:00:00Z"))).isEmpty();
         assertThat(get(clinicalA, list(practiceA, recordA) + "?from=2026-09-07T07:00:00Z&to=2026-09-05T07:00:00Z").getStatusCode().value()).isEqualTo(400);
+    }
+
+    @Test
+    @DisplayName("C9: a cursor issued for one concept filter is refused for another, even when a code contains the separator")
+    void aCursorIsBoundToTheExactConceptCodes() throws SQLException {
+        UUID s = source(practiceA, recordA, "SRC-BIND", "2026-10-01T10:00:00+02:00");
+        // One code spelled "A, B" and the two codes "A" and "B" print the same when a list is converted to text.
+        for (int i = 0; i < 3; i++) {
+            measurement(Row.original(practiceA, recordA, "A, B", String.valueOf(60 + i), "u",
+                    "2026-09-%02dT09:00:00+02:00".formatted(i + 1), "2026-10-01T10:00:00+02:00", s));
+        }
+        measurement(Row.original(practiceA, recordA, "A", "1", "u", "2026-09-20T09:00:00+02:00", "2026-10-01T10:00:00+02:00", s));
+        measurement(Row.original(practiceA, recordA, "B", "2", "u", "2026-09-21T09:00:00+02:00", "2026-10-01T10:00:00+02:00", s));
+        var first = get(clinicalA, list(practiceA, recordA) + "?concept=A%2C%20B&limit=1");
+        assertThat(items(first)).hasSize(1);
+        String cursor = (String) first.getBody().get("nextCursor");
+        assertThat(cursor).isNotBlank();
+        // The same filter continues; the look-alike filter and a narrower one are refused.
+        assertThat(items(get(clinicalA, list(practiceA, recordA) + "?concept=A%2C%20B&limit=1&cursor=" + cursor))).hasSize(1);
+        assertThat(get(clinicalA, list(practiceA, recordA) + "?concept=A&concept=B&limit=1&cursor=" + cursor).getStatusCode().value()).isEqualTo(400);
+        assertThat(get(clinicalA, list(practiceA, recordA) + "?concept=A&limit=1&cursor=" + cursor).getStatusCode().value()).isEqualTo(400);
     }
 
     @Test

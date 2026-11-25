@@ -204,8 +204,10 @@ public class RecordEvidenceService {
         return practiceTransaction.execute(practiceId, () -> {
             requireRecord(practiceId, recordId);
             Instant view = viewInstant(asOf);
+            // Each code carries its length: a separator inside a code can never make two filters bind the same cursor.
             String binding = binding("measurements", practiceId, actorId, recordId, asOf,
-                    conceptFilter + "|" + from + "|" + to);
+                    conceptFilter.stream().map(code -> code.length() + ":" + code).collect(java.util.stream.Collectors.joining(",", "[", "]"))
+                            + "|" + from + "|" + to);
             UUID cursorId = decode(page.cursor(), binding);
             MeasurementRepository.Position after = cursorId == null ? null
                     : measurements.position(practiceId, recordId, view, cursorId)
