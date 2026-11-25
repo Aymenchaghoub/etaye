@@ -2,6 +2,45 @@
 
 Status: API and Web validation run through GitHub Actions. The promotion, deployment and rollback stages below are planned. [GitHub security](github-security.md), [delivery rules](delivery-rules.md), ADR-007 and the [test strategy](../test-artifacts/test-strategy.md) provide the repository and acceptance evidence.
 
+## Verification gates and local commands
+
+Updated 2026-11-25 after the [CI/CD quality audit](ci-cd-quality-audit.md). Each gate lives in the tool that owns it, so a local build and CI fail the same way. A check that cannot decide fails closed.
+
+| Gate | Enforced by | Fails when |
+|---|---|---|
+| Which jobs a change needs | `tools/ci_scope.py` (rules and hygiene test in `tools/test_ci_scope.py`) | never skips on a failed diff, a missing parent, a manual or scheduled run, or a path no rule names; the Documentation job fails when a tracked file has no rule |
+| Build environment | Maven Enforcer in `apps/api/pom.xml` | Maven below 3.9.11, a JDK below 25, duplicate dependency versions, divergent transitive versions |
+| API warnings | `-Xlint:all,-serial,-deprecation -Werror` on production compilation | any lint warning in `src/main` |
+| API coverage floors | JaCoCo `check` in `mvnw verify`: 88 % lines and 77 % branches overall, 90 % and 75 % in five packages (security, transaction, identity service, record service, record domain) | a floor is missed |
+| Web lint | `corepack pnpm --filter etaye-web lint`: correctness, Hooks, accessibility and promise rules, no formatting rules | a new violation, or a recorded violation that no longer occurs (prune it) |
+| Web coverage floors | Vitest `thresholds`: 18 % lines overall, 71 % in the logic modules, 95 % in nine pure rule modules | a floor is missed |
+| Changed-line coverage | `tools/assert_changed_line_coverage.py`, pull requests only | fewer than 80 % of the executable lines a pull request adds or changes run: API production code, Web logic modules (`.ts`) |
+| Test and coverage evidence | `tools/assert_test_reports.py`, `tools/assert_coverage_reports.py` | a report is missing, empty, malformed, skipped, or a required suite is absent |
+| Workflow policy | `tools/check_workflow_policy.py`, `actionlint`, `zizmor` in `Planning package checks` | an unpinned action, a dangerous trigger, an expression in a shell script, a missing timeout, an orphaned required check name, a syntax or security finding |
+| Pinned floors | `tools/test_coverage_policy.py` | a floor above is lowered or a gate removed without editing this test |
+
+The floors are a ratchet set just under the baseline of 2026-11-25. Raise them as coverage grows; never lower one to pass a build. The 23 page and component files (`.tsx`) read 0 % in the unit report because the Playwright suite collects no coverage; they are verified by that suite, not by a line measure.
+
+`Package verify` (`.github/workflows/package.yml`, not required yet, D-56) checks the delivery package: it runs `infra/local/verify-init-roles.sh` (role attributes, no `BYPASSRLS`), builds the four images, starts the package and runs the three real-stack specs that apply to it. On pushes to `main` and weekly it also scans the built images with a checksummed Trivy and reports fixable high and critical findings without failing the job: the findings sit in third-party base images that a rebuild or a Dependabot digest update fixes. Base images are pinned by digest and Dependabot covers npm, Maven, Docker and Docker Compose beside Actions and pip.
+
+Run before opening a pull request (Java 25, Node 26 with Corepack, Docker):
+
+```bash
+cd apps/api && ./mvnw -B -ntp verify                      # tests, Enforcer, -Werror, coverage floors
+corepack pnpm install --frozen-lockfile
+corepack pnpm --filter etaye-web verify                   # lint, SDK drift, types, unit tests and floors
+corepack pnpm --filter etaye-web build && corepack pnpm --filter etaye-web test:smoke
+python3 -m unittest discover -s tools -p 'test_*.py'      # tooling tests, run from the repository root
+python3 tools/validate_docs.py && python3 tools/check_workflow_policy.py && bash tools/run_actionlint.sh
+git diff --check "$(git merge-base origin/main HEAD)" HEAD
+# Coverage of the lines this branch changes (API shown; the Web form is in .github/workflows/web.yml)
+python3 tools/assert_changed_line_coverage.py jacoco apps/api/target/site/jacoco/jacoco.xml \
+  --prefix apps/api/src/main/java/ --include 'apps/api/src/main/java/**/*.java' \
+  --base "$(git merge-base origin/main HEAD)" --head HEAD
+# Delivery package, when infrastructure or either application changed
+./infra/demo/start.sh && bash tools/run_package_smoke.sh && bash infra/local/verify-init-roles.sh
+```
+
 ## Coverage and dependency checks
 
 Aymen authorized CI quality improvements on 2026-11-22. `API verify` generates JaCoCo XML and HTML when the API suite runs. Run `./mvnw -B -ntp clean verify` in `apps/api` to reproduce the report locally under `target/site/jacoco/`. GitHub retains the `api-coverage` artifact.
@@ -12,7 +51,7 @@ Aymen authorized CI quality improvements on 2026-11-22. `API verify` generates J
 
 `API verify` also publishes the adversarial isolation matrix of story 1.4 (UD-33, UD-59 C1) as the `api-isolation-matrix` artifact (`isolation-matrix.json` and `.md`, retained 30 days) and appends it to the job summary. `tools/assert_isolation_matrix.py` fails the job for a zero-case report, a missing, skipped or failing mandatory case in `apps/api/src/test/resources/isolation/matrix-cases.json`, refusals whose responses can be told apart, an identifier or request material in the report, or a missing upload. Source, task and export rows stay `PENDING` until their routes ship (D-55). The scripted browser replay of the matrix (`apps/web/demo-e2e/isolation.spec.ts`) runs locally with the story and joins CI at M6.
 
-The first release of these checks publishes baselines. SonarQube Cloud imports Java XML and Web LCOV into separate projects once the owner links those projects and supplies analysis credentials. Store an analysis-only token in GitHub repository Actions secrets as `SONAR_TOKEN`. The proposed threshold is 80% on new or changed code after verifying the report inputs and the exact quality gate in CI. [SonarQube Cloud setup](https://docs.sonarsource.com/sonarqube-cloud/getting-started/github)
+The baselines became the floors above. SonarQube Cloud imports Java XML and Web LCOV into separate projects once the owner links those projects and supplies analysis credentials. Store an analysis-only token in GitHub repository Actions secrets as `SONAR_TOKEN`. The proposed threshold is 80% on new or changed code after verifying the report inputs and the exact quality gate in CI. [SonarQube Cloud setup](https://docs.sonarsource.com/sonarqube-cloud/getting-started/github)
 
 ## Validation and promotion graph
 

@@ -67,7 +67,7 @@ flowchart LR
 | Web unit line / branch coverage | 447 / 2,380 = **18.78 %**; 434 / 2,697 = **16.09 %** | local and CI agree |
 | Web coverage by kind | the pure rule modules read 80–100 % (`measurements.ts` 96.9 %, `asof.ts` 98.5 %, `isolation-journey.ts` 97.2 %, `evidence.ts` 80.3 %, `date.ts` 100 %); all 16 page and component `.tsx` files read **0 %** because browser tests drive them and no browser coverage is collected | local lcov |
 | Runtime (14 days, successful full runs on `main` and PRs) | `API verify` median 119 s (max 161 s); `Web verify` median 202 s (max 637 s: one 517 s Chromium installation); light runs (no relevant path) 0.1 min; CodeQL jobs 59–106 s; `Planning package checks` 29 s | job and step data |
-| Outcome mix, 14 days | `API verify` and `Web verify`: 36 and 33 pull request runs skipped their heavy steps; failures: 2 API (Testcontainers), 1 Web (a stale-version flake of a 3.1 spec), 10 `Planning package checks` (4 Gitleaks catches, 6 whitespace or policy), 5 CodeQL upload failures during the GitHub incident of 2026-11-25 and a Dependabot bump | job data |
+| Outcome mix, 14 days | `API verify` and `Web verify`: 36 and 33 pull request runs skipped their heavy steps; failures: 2 API (Testcontainers), 1 Web (a stale-version flake of a 3.1 spec), 10 `Planning package checks` (5 stopped by Gitleaks, 5 by the whitespace or policy step), 5 CodeQL runs (four on the Dependabot `codeql-action` bump of 2026-11-23 and 2026-11-24, one during the GitHub incident of 2026-11-25) | job data |
 | Dependabot | 3 security-update jobs for `js-yaml` ended `security_update_not_possible` on 2026-11-20; the 3 alerts were later fixed (alerts 55–57); version-update PRs exist only for Actions and two pip directories | run log, alerts |
 
 **Sample of the latest run per pull request branch** (API / Web heavy steps): `docs/*` (6 branches): skipped / skipped; `feat/3.3`, `feat/3.2`, `feat/3.1`, `feat/1.4`, `ci/quality-checks`: full / full; `ci/cd-improvements` (PR #72): skipped / full; `dependabot/actions/setup-java`: full / skipped; `dependabot/actions/codeql-action`, `setup-uv`, `pip/*`: skipped / skipped. These are consistent with the current path lists. They do not prove the lists are complete; CI-02 explains why completeness depends on discipline, not construction.
@@ -94,13 +94,13 @@ Severity follows impact on trust in a green result. Complexity: S small, M mediu
 - **Correction:** one classifier with ordered rules where every path is `api`, `web`, shared, explicitly ignored or **unknown, and unknown runs everything**; one hygiene test that fails when a tracked file is unclassified; the same classifier for pull requests and pushes (a squash commit's first parent is the previous tip); no `paths` filter on `push`. **Complexity:** M.
 - **Validation:** scenario matrix (API-only, Web-only, contract, migration, shared TypeScript config, lockfile, tokens and icons, isolation manifest, the scripts themselves, Docker and Compose, documentation-only, failed diff, missing history, renamed and deleted files). **Residual risk:** a path that is *ignored by mistake*; mitigated by the hygiene test and by listing only content known not to be consumed.
 
-### CI-03 — The workflow policy validator audits three of six workflows by snapshot
+### CI-03 — Workflow policy is checked by snapshots, only for known workflows
 
-- **Severity:** Medium. **Priority:** P1.
-- **Where:** `tools/check_doc_workflow.py` references `documentation.yml`, `codeql.yml` and `architecture-pages.yml` only, asserts exact job-name sets and exact permission dictionaries, and uses bare `assert` (skipped under `python -O`). `api.yml`, `web.yml` and `dependency-review.yml` are never checked: an unpinned action, `pull_request_target`, `continue-on-error`, a missing timeout or a script-injection pattern added there passes this check.
-- **Evidence:** `grep` for the three names in `tools/check_doc_workflow.py` returns nothing. The remote SHA-pinning setting is the only backstop for pinning; nothing guards the other invariants. Adding a workflow also requires editing the fixed list in `tools/validate_docs.py:128-131`.
-- **Impact:** policy regressions in the two largest workflows are not detected; a renamed job would orphan a required check and block every merge without any local warning.
-- **Correction:** an invariant-based validator over every file in `.github/workflows/` (new workflows covered automatically), with tests that fail on each invariant; `actionlint` and `zizmor` for syntax and security analysis. Keep the existing snapshot checks, which protect other decisions. **Complexity:** M.
+- **Severity:** Medium. **Priority:** P1. *Corrected on 2026-11-25 after reading `tools/test_validate_docs_scope.py`: an earlier draft said the three application workflows were never checked.*
+- **Where:** two snapshot-style checks exist. `tools/check_doc_workflow.py` audits `documentation.yml`, `codeql.yml` and `architecture-pages.yml` (exact job-name sets, exact permission dictionaries, bare `assert`, skipped under `python -O`). `tools/test_validate_docs_scope.py:663-690` snapshot-tests `api.yml`, `web.yml` and `dependency-review.yml` (action names from a fixed list, exact `{"contents": "read"}` permissions, `cancel-in-progress` equal to `True`, `persist-credentials: false`, pinned SHAs).
+- **Evidence:** the two checks live in different files and styles, neither discovers workflows (a seventh workflow is invisible until someone edits one of them, and `tools/validate_docs.py:128-131` also keeps a fixed workflow list), and neither checks `pull_request_target`, `workflow_run`, `continue-on-error` on the application workflows, a missing timeout on `api.yml`, a runner label such as `ubuntu-latest`, expression injection into a shell script, or required-check name drift. A job rename would orphan a required check and block every merge without a local warning. The remote SHA-pinning setting independently backs the pinning rule.
+- **Impact:** policy regressions in the largest workflows are not detected, and a legitimate improvement (here: not cancelling a run on `main`) must edit a snapshot that encodes the old value.
+- **Correction:** an invariant-based validator over every file in `.github/workflows/`, with tests that fail on each invariant; `actionlint` and `zizmor` for syntax and security analysis. The existing snapshot checks stay, since they protect other decisions. **Complexity:** M.
 
 ### CI-04 — No frontend linting
 
@@ -166,7 +166,7 @@ Severity follows impact on trust in a green result. Complexity: S small, M mediu
 
 ### CI-15 — Local verification diverges from CI
 
-- **Severity:** Low. **Priority:** P2. **Evidence:** the documented `./mvnw -B -ntp verify` passes without the coverage floors and the report checks that CI adds; the whitespace check (`git diff --check`) and the workflow policy run only in CI (six `Planning package checks` failures in 14 days, one a trailing blank line in `ChronologyPage.tsx`); no single page lists the commands to run before a pull request.
+- **Severity:** Low. **Priority:** P2. **Evidence:** the documented `./mvnw -B -ntp verify` passes without the coverage floors and the report checks that CI adds; the whitespace check (`git diff --check`) and the workflow policy run only in CI (five `Planning package checks` failures of the whitespace or policy step in 14 days, one a trailing blank line in `ChronologyPage.tsx`); no single page lists the commands to run before a pull request.
 
 ### CI-16 — Browser tests contribute no coverage measure
 
@@ -184,7 +184,7 @@ Severity follows impact on trust in a green result. Complexity: S small, M mediu
 | Docker and demo packaging are unverified | **Confirmed** (CI-07), worse than hypothesized: the role script is only manually verified |
 | Static analysis beyond CodeQL is insufficient | **Partly confirmed**: frontend lint is absent (CI-04); backend added value to be measured (CI-05) |
 | Path filters and internal detection duplicate knowledge | **Confirmed**; lists currently complete, structure fragile (CI-02) |
-| The policy checker does not audit all workflows | **Confirmed** (CI-03) |
+| The policy checker does not audit all workflows | **Partly confirmed**: the application workflows are snapshot-tested elsewhere; nothing discovers new workflows or checks the broader invariants (CI-03) |
 | Delivery and promotion are not automated | **Confirmed** (CI-14); documentation publication is not deployment |
 | Two to three minutes API, three to four minutes Web | **Confirmed** (median 2.0 and 3.4 minutes); no optimization is justified |
 
@@ -242,13 +242,119 @@ Research by a read-only sub-agent on official Sonar pages (2026-11-25), spot-che
 
 ## 10. Outcome
 
-Appended after the implementation: see the sections below.
+Verified locally on 2026-11-25 with Java 25, Node 26.13.1, Docker 29.9.3 and Python 3.14. Remote results are recorded in the pull request, not here, because a document cannot cite the run of its own head.
+
+### 10.1 What changed
+
+| Finding | Change | Evidence it works |
+|---|---|---|
+| CI-01 | JaCoCo `check` (88 % lines and 77 % branches overall; 90 % and 75 % in five security, transaction and record packages) bound to `mvnw verify`; Vitest `thresholds` (18 % overall, 71 % in the logic modules, 95 % in nine pure rule modules); `tools/assert_changed_line_coverage.py` requires 80 % of the executable lines a pull request adds or changes; `tools/test_coverage_policy.py` pins the floors | negative and boundary runs of every tier (10.2); replay on the story 3.3 diff: 121/121 API lines, 196/203 Web lines |
+| CI-02 | `tools/ci_scope.py` classifies each changed path once (API, Web, package, pnpm, or ignored); an unclassified path, a failed diff, a missing parent, a manual or scheduled run verifies everything; `push` filters removed; one hygiene test fails when a tracked file has no rule | 33 unit tests with real Git histories; replay of 20 repository scenarios against the old logic (10.2) |
+| CI-03 | `tools/check_workflow_policy.py` checks every file in `.github/workflows/`; `actionlint` 1.7.12 (checksummed) and `zizmor` 1.33.1 (hash-locked) run in `Planning package checks` | 27 unit tests; a deliberately unsafe workflow fails all three (10.2) |
+| CI-04 | ESLint 10 with typescript-eslint, React Hooks and jsx-a11y rules (correctness, security and accessibility only); 21 existing violations recorded in `eslint-suppressions.json`, so a new violation or a stale suppression fails | four negative runs (10.2) |
+| CI-05 | Maven Enforcer (Maven, JDK, duplicate versions, convergence) and `-Xlint:all,-serial,-deprecation -Werror` on production compilation | a JDK 21 build and an injected raw type both fail with a readable message |
+| CI-06, CI-07 | `Package verify` (`.github/workflows/package.yml`): role-script verification, a four-image build and start, three real-stack specs (11 tests), report-only image scan on `main` and weekly; base images pinned by digest | role mutant caught; 11 real-stack tests pass in 48 s; scan reports below |
+| CI-08 | Dependabot for npm, Maven, Docker and Docker Compose with groups, a PR limit and a cooldown; the shipped API image (and its jar) is scanned | `dependabot.yml` validates against the SchemaStore schema; activation is observed after merge |
+| CI-10 | `tools/install_corepack.sh` verifies the Corepack tarball digest; `packageManager` carries pnpm's integrity hash; `package.yml`, `web.yml`, `dependency-review.yml` and the web image use them | tampered pnpm hash and wrong Corepack digest both fail |
+| CI-11 | `trace: 'retain-on-failure'` and screenshots on failure in both Playwright configurations; failed-run traces and package logs are uploaded for seven days | a deliberately failing test produced `trace.zip`, a screenshot and `error-context.md` |
+| CI-12 | `cancel-in-progress` only for pull requests | policy test; the snapshot test accepts the expression |
+| CI-13 | version comments on the three `checkout` pins of `codeql.yml` | the policy validator reported them before the fix |
+
+New or modified workflows: `api.yml`, `web.yml`, `dependency-review.yml`, `documentation.yml`, `codeql.yml` (comments only), `dependabot.yml`, and the new `package.yml`. Required check names are unchanged. No application source file, contract, migration or product behavior changed. One dependency override was added (`minimatch`, see 10.4).
+
+### 10.2 Negative and boundary validation actually run
+
+| Gate | Case | Result |
+|---|---|---|
+| JaCoCo bundle and critical packages | `-Dcoverage.line.minimum=0.99`, `0.99` branches, critical `0.995` lines, `0.95` branches | build failure naming the bundle or each failing package; the five named packages only |
+| JaCoCo boundary | minimum `0.8946` and `0.8947` against 2,064 / 2,307 = 0.89467 | pass, then fail |
+| Vitest tiers | global lines 99, logic glob 99, rule glob 99, branches 16.1 and 16.08 against 16.09 | three failures naming the threshold, then a fail and a pass at the boundary |
+| `-Werror` | a raw `List` in production code, then its removal | `warnings found and -Werror specified`, then success |
+| Enforcer | JDK 21, JDK 25 | `Detected JDK ... is not in the allowed range [25,)`, then pass |
+| ESLint | new floating promise, conditional Hook, `role="button"` on a `div`; fix a suppressed violation without pruning | each fails; the stale suppression exits 2 until `lint:prune`; original state restored |
+| Changed-line gate | untested addition, 75 % and 75.1 % thresholds, comment-only change, documentation-only change, deleted and new files, malformed, empty, missing or entity-bearing reports, failed Git, invalid threshold | 25 unit tests; six mutants of the tool killed (`ci>0`, `>=`, hunk range, fail-closed Git, `hits>0`, entity check) |
+| Policy pinning | lower a floor, drop a critical package, rename the check execution, lower the Vitest floor, remove `-Werror` | five mutants killed |
+| Workflow policy | unpinned action, `pull_request_target`, `write-all`, no timeout, `ubuntu-latest`, an expression in `run`, an orphaned and a duplicated required name | `check_workflow_policy.py` reports nine violations; `actionlint` and `zizmor` also fail on the same file; the fixture was never committed |
+| Report validators | zero tests, skipped, missing directory or file, malformed, zero covered lines, inconsistent counters | the existing cases and 16 new ones fail with `FAIL` and exit 1 |
+| Failing browser test | a deliberately failing spec | non-zero exit, `trace.zip`, screenshot, validator `FAIL`; probe removed |
+| Role provisioning | the runtime role created with `BYPASSRLS` | three of five cases fail; restored, five pass |
+| Corepack and pnpm integrity | wrong Corepack digest, tampered pnpm hash | installation refused, nothing installed |
+| Recovery | each deliberate failure removed | the default configuration passes: API 259 tests, `BUILD SUCCESS` |
+
+Change-detection replay on a clone of the repository (merge commits built over a moved base; old logic taken from `origin/main`, new logic from this branch):
+
+| Scenario | Old `api` / `web` | New `api` / `web` / `package` |
+|---|---|---|
+| API source, migration | run / skip | run / skip / run |
+| Web source, OpenAPI contract, `tsconfig.base.json`, lockfile, tokens, icons, deleted Web source, a document renamed into the Web tree | skip / run | skip / run / run |
+| Isolation manifest, `assert_test_reports.py` | run / run | run / run / skip |
+| Demo Dockerfile, Compose, `init-roles.sh` | skip / skip | skip / skip / run |
+| Documentation file, agent skill text | skip / skip | skip / skip / skip |
+| **New root `eslint.config.js`, `.node-version`, `.npmrc`** | **skip / skip** | **run / run / run** |
+
+The last row is the confirmed structural defect of CI-02: the old positive lists silently skipped any new root file that the Web build needs.
+
+### 10.3 Measured results
+
+| Metric | Before | After |
+|---|---|---|
+| Tooling tests | 125 | 224 (`unittest discover -s tools`) |
+| API verify, local, Java 25 | 2 m 02 s, 259 tests, no gate | 1 m 59 s, 259 tests, Enforcer, `-Werror` and coverage floors pass |
+| API coverage | 89.47 % lines, 78.8 % branches, not gated | same, gated; changed-line gate replayed 121/121 on story 3.3 |
+| Web unit coverage | 18.78 % lines, not gated | same, floors 18 / 71 / 95 %; changed-line gate replayed 196/203 on story 3.3 |
+| Web checks | 206 browser and 102 unit tests | same counts, plus lint (21 recorded violations, about 12 s) |
+| Package | never built in CI | 55 s to build and start with a warm cache, 48 s for 11 real-stack tests |
+| Image scan (fixable HIGH and CRITICAL) | none | API image 0; web (nginx) 85; Flyway 7 + 79 (OS and bundled drivers); PostgreSQL 2 + 26 (`gosu`); 3 m 24 s here, mostly the Java database download |
+
+CI timings on the final head are in the pull request. [To verify] The new steps add about 12 s of lint and a few seconds of gates to `Web verify`, and about 15 s of linting to `Planning package checks`; the package job is separate and not required.
+
+### 10.4 Security findings and remaining risk
+
+- **Verified:** adding the lint toolchain introduced a moderate `minimatch` advisory (denial of service through globparts amplification, versions 7.0.0 up to 11.0.0) in development tooling only. A pnpm override to 11.0.9 removed it (`pnpm audit`: no known vulnerabilities) and lint, build and unit tests still pass. The override is dated in its comment and should go when the toolchain moves to a patched range.
+- **Verified:** SpotBugs 4.10.5 with find-sec-bugs at maximum effort reported 89 findings (64 `EI_EXPOSE_REP` on injected beans and records, 11 `CT_CONSTRUCTOR_THROW`, one `HRS_REQUEST_PARAMETER_TO_HTTP_HEADER` that is a false positive: the header value is checked by `^[A-Za-z0-9-]{8,64}$` first) and no defect. It was **not** adopted. PMD and Checkstyle were not run.
+- **Verified:** the compiler lint finds 100 raw-type and unchecked warnings in five test classes and 34 deprecated-API uses; production code has none outside those categories. Recorded as D-68, not hidden.
+- **Remaining risks:** coverage proves execution, not correct assertions (mutation checks stay manual, D-70); browser-driven `.tsx` files have no line measure; the OpenAPI contract is not checked against the API (D-69); image findings are reported, not gated; the Maven dependency graph still hides Boot-managed versions from Dependabot alerts, so the shipped-jar scan on `main` is the compensating control; no SBOM, provenance or signed release exists (CI-14, D-29). Nothing here shows that the system is secure.
+
+### 10.5 Scorecard after
+
+| Dimension | Before | After | Why not higher |
+|---|---|---|---|
+| Workflow reliability | 3 | 4 | classifier with a failing-closed hygiene test and the invariant validator; remote behavior of the new workflows still unobserved on `main` |
+| Build reproducibility | 3 | 4 | digest-pinned images, verified Corepack and pnpm, Enforcer; the jar is not reproducible and the Maven cache is not verified |
+| Backend quality | 3 | 4 | enforced floors, `-Werror`, Enforcer; test code keeps lint debt, no contract conformance |
+| Frontend quality | 2 | 3 | lint with a ratchet and unit floors; 21 recorded violations and unmeasured `.tsx` |
+| Test effectiveness | 3 | 4 | real stack in CI (non-required), changed-line gate, diagnostics; mutation testing manual |
+| Coverage enforcement | 1 | 4 | three tiers plus a changed-line gate, all with negative tests; execution coverage only |
+| Application security | 3 | 3 | no new application control; CodeQL, secret scanning and the matrix are unchanged |
+| Supply-chain security | 3 | 4 | digests, verified bootstrap, four more Dependabot ecosystems, image scan; Dependency review still optional, Maven transitives partly blind |
+| Delivery readiness | 1 | 2 | the package is built, started and exercised; no registry, versioning, SBOM, provenance or promotion |
+| Developer experience | 3 | 4 | one documented command list, native gates, readable Enforcer and lint failures; Web `verify` still excludes the browser suite |
+| Governance and maintainability | 3 | 4 | invariant validator, pinned floors, debt register; owner decisions below are pending |
+
+A score of 5 would need an observed run of every new gate on `main` and a quarter of stable operation; none exists yet.
 
 ## 11. Decisions and remote changes that need the owner
 
-Written before implementation; the detailed procedures (current state, proposed state, exact steps, expected effect, order, risks, rollback) are completed with the outcome.
+Nothing below was changed. Each item gives the current state, the proposal, the procedure, the effect, the order, the risks, the rollback and the approval it needs.
 
-1. Make `Dependency review` a required check (CI-09). Remote ruleset change.
-2. Decide whether a new non-required real-stack and delivery-package check should later become required (CI-06, CI-07).
-3. Activate SonarQube Cloud Free, or not (section 8). Needs a Sonar organization, the GitHub App installation and a token.
-4. Allow any further third-party action only by an explicit Actions allowlist change; this work adds none.
+1. **Require `Dependency review` on `main` (CI-09).** Current: seven required contexts. Proposal: add `Dependency review` (GitHub Actions, integration 15368). Procedure (GitHub CLI, owner token): read the ruleset with `gh api repos/Aymenchaghoub/etaye/rulesets/26390376`, add `{"context": "Dependency review", "integration_id": 15368}` to the `required_status_checks` rule and send it back with `gh api -X PUT repos/Aymenchaghoub/etaye/rulesets/26390376 --input updated.json`, or use Settings, Rules, the ruleset, Require status checks. Effect: a pull request with a new high or critical advisory, or a failing pnpm audit, cannot merge. Order: after this pull request is merged and `Dependency review` has passed once on `main`'s next pull request. Risks: a GitHub dependency-graph outage blocks merges, as the other required checks do; a Dependabot pull request whose update itself carries an advisory is blocked. Rollback: remove the context the same way. Approval: Aymen.
+2. **Make `Package verify` required (CI-06, CI-07, D-56).** Current: not required. Proposal: observe it on at least ten consecutive pull requests and pushes with no unexplained failure, then add the context `Package verify` the same way. Effect: the delivery package and the role script gate every merge that changes an application or `infra/`; about 8 to 12 minutes in the worst case. Risks: base-image or runner drift; the sign-in rate limit is handled by restarting the API between specs. Rollback: remove the context. Approval: Aymen, after the observation period.
+3. **SonarQube Cloud Free (section 8).** Runbook, about 15 minutes, all by the owner: sign in at SonarQube Cloud with the GitHub account; create an organization from the personal account; install the SonarQubeCloud GitHub App on this repository only and read the permissions GitHub shows; choose the Free plan (no card, no Team trial); create three projects bound to this repository (`apps/api`, `apps/web`, `tools`) and turn Automatic Analysis off; create a personal token and store it as the Actions secret `SONAR_TOKEN` (and as a Dependabot secret if Dependabot pull requests should be analyzed). Repository side, afterwards and not prepared in this pull request because it cannot be verified without those steps: a workflow that runs `./mvnw -B -ntp verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar` for the API (no third-party action) and the scanner CLI with a verified checksum for the Web and Python projects, importing `jacoco.xml` and `lcov.info`; `sonar.qualitygate.wait=true`; then require the status Sonar reports. The workflow policy of this repository forbids secrets in pull-request workflows, so the Sonar workflow needs an explicit, reviewed exception. Risks: a free plan gives only the read-only "Sonar way" gate; the account is a new third-party processor of public code. Rollback: delete the workflow and the projects. Approval: Aymen.
+4. **Third-party Actions allowlist.** This work adds none. A future dependency-submission or SBOM action from a non-GitHub owner would need an explicit allowlist entry in Settings, Actions, General; prefer GitHub-owned actions (`actions/attest-build-provenance`, `actions/attest-sbom`) when a release target exists.
+5. **Dependabot activation.** The new ecosystems start on the first schedule after merge. Observe the first pull requests; the groups and the PR limit of 3 per ecosystem are the noise controls. Rollback: remove the entry.
+6. **Review policy.** No change proposed: zero mandatory approvals with resolved threads stays right for a solo maintainer. The floors and the pinned-floor test are the second key against a weak-model shortcut.
+
+## 12. Deferred, with the reason
+
+| Item | Why now | Trigger |
+|---|---|---|
+| SBOM, provenance, signed and versioned images, promotion, rollback rehearsal (CI-14) | no registry or deployment target; attesting artifacts nobody consumes is decoration (D-29) | a release target exists |
+| Contract conformance of the API (D-69), browser coverage and mutation testing (D-70) | design choices for the test architecture, not CI settings | M6 evidence roll-up |
+| Frontend and backend lint debt (D-67, D-68) | fixing it edits product and test code | the story that touches the files |
+| Outage, journey and isolation replays in `Package verify` (D-56) | the outage spec needs the plain stack; the journeys need a minute between sign-in bursts | M6, or after the job proves stable |
+| `.node-version` (CI-10) | Node `'26'` appears in four places; a shared file removes a duplicate but changes no verified behavior | opportunistic |
+| Required `Dependency review`, required `Package verify`, SonarQube Cloud | remote settings or accounts | owner decisions above |
+
+## 13. Review log
+
+Appended after the independent review of the pull request head.

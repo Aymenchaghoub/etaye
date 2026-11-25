@@ -4,7 +4,7 @@
   "ok": true,
   "checks": {
     "markdownFiles": 150,
-    "localLinks": 2160,
+    "localLinks": 2165,
     "apiOperations": 101,
     "apiSchemas": 102,
     "planningStories": 45,
@@ -32,7 +32,7 @@
       ],
       "trackedBuildOutputCheck": "checked with git ls-files"
     },
-    "projectFilesSecretScanned": 241
+    "projectFilesSecretScanned": 248
   },
   "errors": [],
   "applicationTestsExecuted": false,
