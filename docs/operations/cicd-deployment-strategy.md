@@ -4,7 +4,7 @@ Status: API and Web validation run through GitHub Actions. The promotion, deploy
 
 ## Verification gates and local commands
 
-Updated 2026-11-25 after the [CI/CD quality audit](ci-cd-quality-audit.md). Each gate lives in the tool that owns it, so a local build and CI fail the same way. A check that cannot decide fails closed.
+Updated 2026-11-25 after the [CI/CD quality audit](ci-cd-quality-audit.md). Each gate lives in the tool that owns it, so a local build and CI fail the same way. A check that errors (a missing or malformed report, an unavailable diff) fails closed; a gate that has nothing to measure says so and passes.
 
 | Gate | Enforced by | Fails when |
 |---|---|---|
@@ -13,15 +13,17 @@ Updated 2026-11-25 after the [CI/CD quality audit](ci-cd-quality-audit.md). Each
 | API warnings | `-Xlint:all,-serial,-deprecation -Werror` on production compilation | any lint warning in `src/main` |
 | API coverage floors | JaCoCo `check` in `mvnw verify`: 88 % lines and 77 % branches overall, 90 % and 75 % in five packages (security, transaction, identity service, record service, record domain) | a floor is missed |
 | Web lint | `corepack pnpm --filter etaye-web lint`: correctness, Hooks, accessibility and promise rules, no formatting rules | a new violation, or a recorded violation that no longer occurs (prune it) |
-| Web coverage floors | Vitest `thresholds`: 18 % lines overall, 71 % in the logic modules, 95 % in nine pure rule modules | a floor is missed |
-| Changed-line coverage | `tools/assert_changed_line_coverage.py`, pull requests only | fewer than 80 % of the executable lines a pull request adds or changes run: API production code, Web logic modules (`.ts`) |
+| Web coverage floors | Vitest `thresholds`: 71 % in the logic modules (`.ts`), 95 % in nine pure rule modules; no overall floor, because the `.tsx` files read 0 % and an overall percentage would fall with every UI story | a floor is missed |
+| Changed-line coverage | `tools/assert_changed_line_coverage.py`, pull requests only | fewer than 80 % of the executable lines a pull request adds or changes run (aggregate over the changed files: API production code, Web logic modules `.ts`); a changed file with ten or more such lines is under 50 %; no path of the report exists in the checkout; the report or the diff is unusable |
 | Test and coverage evidence | `tools/assert_test_reports.py`, `tools/assert_coverage_reports.py` | a report is missing, empty, malformed, skipped, or a required suite is absent |
-| Workflow policy | `tools/check_workflow_policy.py`, `actionlint`, `zizmor` in `Planning package checks` | an unpinned action, a dangerous trigger, an expression in a shell script, a missing timeout, an orphaned required check name, a syntax or security finding |
-| Pinned floors | `tools/test_coverage_policy.py` | a floor above is lowered or a gate removed without editing this test |
+| Workflow policy | `tools/check_workflow_policy.py`, `actionlint`, `zizmor` in `Planning package checks` | an unpinned action, a dangerous trigger, an expression in a shell script, a missing timeout, a required job that can be skipped (`if`, `needs`) or a required workflow that filters pull requests, a run on push that cancels unconditionally, an orphaned required check name, a syntax or security finding |
+| Pinned floors | `tools/test_coverage_policy.py` | a floor above is lowered, a gate removed, the lint baseline grows, or a workflow switches a gate off from the command line (`-Djacoco.skip`, `--passWithNoTests`, a lower `--min-percent`) without editing this test |
 
 The floors are a ratchet set just under the baseline of 2026-11-25. Raise them as coverage grows; never lower one to pass a build. The 23 page and component files (`.tsx`) read 0 % in the unit report because the Playwright suite collects no coverage; they are verified by that suite, not by a line measure.
 
 `Package verify` (`.github/workflows/package.yml`, not required yet, D-56) checks the delivery package: it runs `infra/local/verify-init-roles.sh` (role attributes, no `BYPASSRLS`), builds the four images, starts the package and runs the three real-stack specs that apply to it. On pushes to `main` and weekly it also scans the built images with a checksummed Trivy and reports fixable high and critical findings without failing the job: the findings sit in third-party base images that a rebuild or a Dependabot digest update fixes. Base images are pinned by digest and Dependabot covers npm, Maven, Docker and Docker Compose beside Actions and pip.
+
+Operational dependencies worth knowing when a required check turns red without a repository change: `Planning package checks` downloads the pinned Gitleaks and actionlint releases and runs `zizmor` against GitHub (a new advisory on a pinned action fails the step until Dependabot or a manual bump updates the action); `actionlint` uses the ShellCheck of the runner image; `API verify` resolves the latest Temurin 25 patch and compiles production code with `-Werror`. A pull request that adds a tracked file no rule of `tools/ci_scope.py` names fails the hygiene test until the file is classified: add it to the scopes it affects, or to the ignored set if no verification reads it.
 
 Run before opening a pull request (Java 25, Node 26 with Corepack, Docker):
 

@@ -1,6 +1,6 @@
 # CI/CD, DevSecOps and software quality audit
 
-Updated: 2026-11-25. Owner: Aymen Chaghoub. Audit baseline: `main` at `7980407125e9202b26b3f4b813b06f48c39a5d51` (PR #72). Status: **initial audit, written before any implementation change**. The implementation outcome, the after-scorecard and the validation evidence are appended below once they exist.
+Updated: 2026-11-25. Owner: Aymen Chaghoub. Audit baseline: `main` at `7980407125e9202b26b3f4b813b06f48c39a5d51` (PR #72). Status: audit and implementation record. Sections 1 to 9 are the initial audit, written before any implementation change; sections 10 to 13 record the outcome, the validation evidence, the owner decisions and the review.
 
 This audit challenges the pipeline; it does not describe it favorably. A green check is treated as a claim that needs evidence. Labels follow AGENTS.md: **User decision**, **Verified observation**, **Proposal**, **[ASSUMPTION]**, **To verify**.
 
@@ -248,16 +248,16 @@ Verified locally on 2026-11-25 with Java 25, Node 26.13.1, Docker 29.9.3 and Pyt
 
 | Finding | Change | Evidence it works |
 |---|---|---|
-| CI-01 | JaCoCo `check` (88 % lines and 77 % branches overall; 90 % and 75 % in five security, transaction and record packages) bound to `mvnw verify`; Vitest `thresholds` (18 % overall, 71 % in the logic modules, 95 % in nine pure rule modules); `tools/assert_changed_line_coverage.py` requires 80 % of the executable lines a pull request adds or changes; `tools/test_coverage_policy.py` pins the floors | negative and boundary runs of every tier (10.2); replay on the story 3.3 diff: 121/121 API lines, 196/203 Web lines |
-| CI-02 | `tools/ci_scope.py` classifies each changed path once (API, Web, package, pnpm, or ignored); an unclassified path, a failed diff, a missing parent, a manual or scheduled run verifies everything; `push` filters removed; one hygiene test fails when a tracked file has no rule | 33 unit tests with real Git histories; replay of 20 repository scenarios against the old logic (10.2) |
-| CI-03 | `tools/check_workflow_policy.py` checks every file in `.github/workflows/`; `actionlint` 1.7.12 (checksummed) and `zizmor` 1.33.1 (hash-locked) run in `Planning package checks` | 27 unit tests; a deliberately unsafe workflow fails all three (10.2) |
+| CI-01 | JaCoCo `check` (88 % lines and 77 % branches overall; 90 % and 75 % in five security, transaction and record packages) bound to `mvnw verify`; Vitest `thresholds` (71 % in the logic modules, 95 % in nine pure rule modules, no overall floor: the 23 `.tsx` files read 0 % and an overall percentage would fall with every UI story, see section 13); `tools/assert_changed_line_coverage.py` requires 80 % of the executable lines a pull request adds or changes, no changed file of ten or more such lines under 50 %, and report paths that exist in the checkout; `tools/test_coverage_policy.py` pins the floors, the lint debt and the absence of command-line bypasses | negative and boundary runs of every tier (10.2); replay on the story 3.3 diff: 121/121 API lines, 196/201 Web lines |
+| CI-02 | `tools/ci_scope.py` classifies each changed path once (API, Web, package, pnpm, or ignored); an unclassified path, a failed diff, a missing parent, a manual or scheduled run verifies everything; `push` filters removed; one hygiene test fails when a tracked file has no rule | 37 unit tests with real Git histories, including one that every script a workflow runs triggers that workflow; replay of 20 repository scenarios against the old logic (10.2) |
+| CI-03 | `tools/check_workflow_policy.py` checks every file in `.github/workflows/` (including that a required job cannot be skipped and a required workflow cannot filter pull requests); `actionlint` 1.7.12 (checksummed) and `zizmor` 1.33.1 (hash-locked) run in `Planning package checks` | 30 unit tests; a deliberately unsafe workflow fails all three (10.2) |
 | CI-04 | ESLint 10 with typescript-eslint, React Hooks and jsx-a11y rules (correctness, security and accessibility only); 21 existing violations recorded in `eslint-suppressions.json`, so a new violation or a stale suppression fails | four negative runs (10.2) |
 | CI-05 | Maven Enforcer (Maven, JDK, duplicate versions, convergence) and `-Xlint:all,-serial,-deprecation -Werror` on production compilation | a JDK 21 build and an injected raw type both fail with a readable message |
 | CI-06, CI-07 | `Package verify` (`.github/workflows/package.yml`): role-script verification, a four-image build and start, three real-stack specs (11 tests), report-only image scan on `main` and weekly; base images pinned by digest | role mutant caught; 11 real-stack tests pass in 48 s; scan reports below |
 | CI-08 | Dependabot for npm, Maven, Docker and Docker Compose with groups, a PR limit and a cooldown; the shipped API image (and its jar) is scanned | `dependabot.yml` validates against the SchemaStore schema; activation is observed after merge |
 | CI-10 | `tools/install_corepack.sh` verifies the Corepack tarball digest; `packageManager` carries pnpm's integrity hash; `package.yml`, `web.yml`, `dependency-review.yml` and the web image use them | tampered pnpm hash and wrong Corepack digest both fail |
 | CI-11 | `trace: 'retain-on-failure'` and screenshots on failure in both Playwright configurations; failed-run traces and package logs are uploaded for seven days | a deliberately failing test produced `trace.zip`, a screenshot and `error-context.md` |
-| CI-12 | `cancel-in-progress` only for pull requests | policy test; the snapshot test accepts the expression |
+| CI-12 | five workflows that run on push (`api`, `web`, `package`, `documentation`, `codeql`) use `cancel-in-progress` only for pull requests and a concurrency group of their own outside pull requests (concurrency keeps one pending run per group, so a shared group would drop a merge's run when two more arrive); the policy validator forbids an unconditional cancel on a workflow that also runs on push | policy test; it flagged `documentation.yml` and `codeql.yml`, which the first version of this change had missed |
 | CI-13 | version comments on the three `checkout` pins of `codeql.yml` | the policy validator reported them before the fix |
 
 New or modified workflows: `api.yml`, `web.yml`, `dependency-review.yml`, `documentation.yml`, `codeql.yml` (comments only), `dependabot.yml`, and the new `package.yml`. Required check names are unchanged. No application source file, contract, migration or product behavior changed. One dependency override was added (`minimatch`, see 10.4).
@@ -272,9 +272,9 @@ New or modified workflows: `api.yml`, `web.yml`, `dependency-review.yml`, `docum
 | `-Werror` | a raw `List` in production code, then its removal | `warnings found and -Werror specified`, then success |
 | Enforcer | JDK 21, JDK 25 | `Detected JDK ... is not in the allowed range [25,)`, then pass |
 | ESLint | new floating promise, conditional Hook, `role="button"` on a `div`; fix a suppressed violation without pruning | each fails; the stale suppression exits 2 until `lint:prune`; original state restored |
-| Changed-line gate | untested addition, 75 % and 75.1 % thresholds, comment-only change, documentation-only change, deleted and new files, malformed, empty, missing or entity-bearing reports, failed Git, invalid threshold | 25 unit tests; six mutants of the tool killed (`ci>0`, `>=`, hunk range, fail-closed Git, `hits>0`, entity check) |
-| Policy pinning | lower a floor, drop a critical package, rename the check execution, lower the Vitest floor, remove `-Werror` | five mutants killed |
-| Workflow policy | unpinned action, `pull_request_target`, `write-all`, no timeout, `ubuntu-latest`, an expression in `run`, an orphaned and a duplicated required name | `check_workflow_policy.py` reports nine violations; `actionlint` and `zizmor` also fail on the same file; the fixture was never committed |
+| Changed-line gate | untested addition, 75 % and 75.1 % thresholds, comment-only and documentation-only changes, deleted and new files, malformed, empty, missing or entity-bearing reports, failed Git, invalid threshold; later (section 13): a `-diff` attribute that hides the hunks, a U+2028 that forges a hunk header, report paths that do not exist in the checkout, a wholly untested file diluted by covered ones | 29 unit tests; ten mutants of the tool killed (`ci>0`, `>=`, hunk range, fail-closed Git, `hits>0`, entity check, `--text`, `splitlines`, path resolvability, per-file floor) |
+| Policy pinning | lower a floor, drop a critical package, rename the check execution, lower the Vitest floor, remove `-Werror`; grow the lint baseline, add `-Djacoco.skip=true` to `api.yml`, lower `--min-percent` | eight mutants killed |
+| Workflow policy | unpinned action, `pull_request_target`, `write-all`, no timeout, `ubuntu-latest`, an expression in `run`, an orphaned and a duplicated required name; later (section 13): a required job with `if` or `needs`, a required workflow narrowed by `branches`, `branches-ignore` or `types`, an unconditional cancel on a push workflow | `check_workflow_policy.py` reports nine violations; `actionlint` and `zizmor` also fail on the same file; the fixture was never committed |
 | Report validators | zero tests, skipped, missing directory or file, malformed, zero covered lines, inconsistent counters | the existing cases and 16 new ones fail with `FAIL` and exit 1 |
 | Failing browser test | a deliberately failing spec | non-zero exit, `trace.zip`, screenshot, validator `FAIL`; probe removed |
 | Role provisioning | the runtime role created with `BYPASSRLS` | three of five cases fail; restored, five pass |
@@ -287,7 +287,8 @@ Change-detection replay on a clone of the repository (merge commits built over a
 |---|---|---|
 | API source, migration | run / skip | run / skip / run |
 | Web source, OpenAPI contract, `tsconfig.base.json`, lockfile, tokens, icons, deleted Web source, a document renamed into the Web tree | skip / run | skip / run / run |
-| Isolation manifest, `assert_test_reports.py` | run / run | run / run / skip |
+| Isolation manifest | run / run | run / run / skip |
+| `assert_test_reports.py` (also run by the package smoke) | run / run | run / run / run |
 | Demo Dockerfile, Compose, `init-roles.sh` | skip / skip | skip / skip / run |
 | Documentation file, agent skill text | skip / skip | skip / skip / skip |
 | **New root `eslint.config.js`, `.node-version`, `.npmrc`** | **skip / skip** | **run / run / run** |
@@ -298,10 +299,10 @@ The last row is the confirmed structural defect of CI-02: the old positive lists
 
 | Metric | Before | After |
 |---|---|---|
-| Tooling tests | 125 | 224 (`unittest discover -s tools`) |
+| Tooling tests | 125 | 235 (`unittest discover -s tools`) |
 | API verify, local, Java 25 | 2 m 02 s, 259 tests, no gate | 1 m 59 s, 259 tests, Enforcer, `-Werror` and coverage floors pass |
 | API coverage | 89.47 % lines, 78.8 % branches, not gated | same, gated; changed-line gate replayed 121/121 on story 3.3 |
-| Web unit coverage | 18.78 % lines, not gated | same, floors 18 / 71 / 95 %; changed-line gate replayed 196/203 on story 3.3 |
+| Web unit coverage | 18.78 % lines, not gated | same, floors 71 % (logic modules) and 95 % (rule modules); changed-line gate replayed 196/201 on story 3.3 |
 | Web checks | 206 browser and 102 unit tests | same counts, plus lint (21 recorded violations, about 12 s) |
 | Package | never built in CI | 55 s to build and start with a warm cache, 48 s for 11 real-stack tests |
 | Image scan (fixable HIGH and CRITICAL) | none | API image 0; web (nginx) 85; Flyway 7 + 79 (OS and bundled drivers); PostgreSQL 2 + 26 (`gosu`); 3 m 24 s here, mostly the Java database download |
@@ -357,4 +358,35 @@ Nothing below was changed. Each item gives the current state, the proposal, the 
 
 ## 13. Review log
 
-Appended after the independent review of the pull request head.
+### 13.1 Defects of this work found before the independent review
+
+| # | Defect | Found by | Fix |
+|---|---|---|---|
+| 1 | the policy validator raised on an empty `with:` instead of reporting | its own negative test | structural checks on every step field |
+| 2 | the changed-line gate refused the `<!DOCTYPE report PUBLIC ... "report.dtd">` that real JaCoCo reports carry | replay on a real report (the unit fixture had none) | refuse entity declarations and an internal DTD subset only, test with the real header |
+| 3 | the classifier ignored `run_package_smoke.sh`, `run_image_scan.sh` and `assert_test_reports.py` for the package scope | self-review | rules, plus a test that every script a workflow runs, directly or through an import, triggers that workflow (it failed on exactly these three before the fix) |
+| 4 | `**/` required a directory, so a file directly under `apps/web/src` would have left the changed-line gate | self-review | Git semantics (`**/` matches zero or more directories), with tests |
+| 5 | the documentary validator refused the two new lint files once tracked, and a test file ended with a blank line | the final local verification | exact-name allowance with a boundary test; blank line removed |
+| 6 | the lint toolchain brought a moderate `minimatch` advisory | `pnpm audit` on the new lockfile | dated pnpm override, audit clean |
+
+An earlier draft of CI-03 said three workflows were never checked; the snapshot test of `tools/test_validate_docs_scope.py` already covered them, and the finding was corrected. A first version of the local verification script hid failing exit codes behind `grep`; it was rewritten without pipes around the status.
+
+### 13.2 Independent read-only review (a separate reviewer with the diff and the policy, not these conclusions), head `37890b7`
+
+Each finding was checked against the code before a disposition. The reviewer also noted that four of its checks could not run without network (image digests, the pnpm hash, scanner digests, the SchemaStore validation); those were verified in this audit (pulled digests, enforced and tampered pnpm hash, release checksums fetched, schema validated, mutants run).
+
+| # | Reviewer severity | Finding | Verified | Disposition |
+|---|---|---|---|---|
+| 1 | High | the overall Web floors go red on the next UI story, because `.tsx` files read 0 % | yes: stories 3.2 and 3.3 added 996 and 643 `.tsx` lines and the floors tolerated 103; a simulated component of 250 handlers failed the old floor | fixed: no overall floor, the logic-module and rule-module floors stay; a test forbids reintroducing one |
+| 2 | Medium | the changed-line gate passes when it measures nothing (drifted report paths, a `-diff` attribute, a U+2028 forging a hunk) | yes, three reproductions | fixed: `--text`, split on `\n` only, report paths must exist in the checkout, and a per-file floor (ten executable lines at 50 %) against dilution; four new mutants killed |
+| 3 | Medium | the policy cannot see a required job that is skipped or a required workflow narrowed by `branches` or `types` | yes | fixed with invariants and tests; it also flagged unconditional cancellation in `documentation.yml` and `codeql.yml` |
+| 4 | Medium | a required check can turn red with no repository change (runner ShellCheck, zizmor online audits, a Temurin patch with `-Werror`) | yes, by construction | accepted and documented under "Operational dependencies" in the strategy; pinning ShellCheck or the JDK would trade availability for staleness |
+| 5 | Medium | the guards against weakening cover only part of the ratchet (`--suppress-all`, `-Djacoco.skip`) | yes | fixed: a limit on the lint baseline and tests that forbid command-line bypasses and a lower `--min-percent`, three mutants killed |
+| 6 | Low | AGENTS.md and the strategy overstate the changed-line gate | yes | wording corrected to name the scope, the aggregate and the per-file floor |
+| 7 | Low | stale statements in this audit (CI-12 only half done, the status line, one replay row, counts) and a concurrency comment that was not exact | yes | corrected; groups are now per SHA outside pull requests |
+| 8 | Low | the hygiene test makes an unclassified tracked file a red required check | yes | accepted by design, documented with the one-line remedy |
+| 9 | Low | the token reaches the whole lint step | yes | `zizmor` has its own step with the token |
+| 10 | Low | overlapping tooling (two report parsers, floors in four places, three workflow validators) | yes | accepted: the parsers answer different questions, the floors are the two-key design, the two older validators protect other decisions |
+| 11 | Low | a Hooks violation sits in the lint baseline | yes, but it is a false positive: `useNewAccount` is an async event helper with no Hook call | kept in the baseline and described in D-67 |
+
+An AI reviewer's approval is not evidence; the evidence above is the reproductions, the tests and the mutants.
