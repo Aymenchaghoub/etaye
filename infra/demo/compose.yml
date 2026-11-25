@@ -38,6 +38,8 @@ services:
     build:
       context: ../..
       dockerfile: infra/demo/api.Dockerfile
+      args:
+        MVNW_REPOURL: ${MVNW_REPOURL:-}
     depends_on:
       migrate:
         condition: service_completed_successfully

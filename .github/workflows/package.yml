@@ -51,15 +51,22 @@ jobs:
       - name: Build and start the package (API, web, PostgreSQL, Flyway)
         if: steps.changes.outputs.relevant == 'true'
         # The API image downloads Maven and its dependencies from Maven Central on every cold runner, and Central
-        # rate-limits shared addresses (HTTP 429, seen on 2026-11-25). Only this network-bound build retries, at most
-        # three times with a growing pause and with each failed attempt in the log; the browser tests never retry.
+        # rate-limits shared addresses (HTTP 429, three of five runs on 2026-11-25, always on the wrapper's download of
+        # the Maven distribution). The first and third attempts fetch that distribution from a Google mirror of
+        # Central; the wrapper verifies it against the SHA-256 pinned in the repository, so the mirror needs no trust.
+        # Only this network-bound build retries, at most three times, with each failed attempt in the log; the browser
+        # tests never retry.
+        env:
+          MAVEN_DISTRIBUTION_MIRROR: https://maven-central.storage-download.googleapis.com/maven2
         run: |
           for attempt in 1 2 3; do
-            if ./infra/demo/start.sh; then
+            repository=""
+            if (( attempt % 2 == 1 )); then repository="$MAVEN_DISTRIBUTION_MIRROR"; fi
+            if MVNW_REPOURL="$repository" ./infra/demo/start.sh; then
               exit 0
             fi
             echo "::warning::Package build attempt ${attempt} of 3 failed"
-            sleep $(( attempt * 60 ))
+            sleep $(( attempt * 30 ))
           done
           exit 1
       - if: steps.changes.outputs.relevant == 'true'
