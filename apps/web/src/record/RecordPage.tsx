@@ -7,14 +7,15 @@ import { ACCOUNT_PATH } from '../auth/session-work';
 import { ageOn, formatDate } from '../patients/date';
 import { EntryHeader, Notice, patientName, Skeleton } from '../patients/patient-ui';
 import { useShell } from '../patients/PractitionerShell';
-import { historyPath, patientsPath, recordPath } from '../patients/routes';
+import { historyPath, measurementsPath, patientsPath, recordPath } from '../patients/routes';
 import { EMPTY_INSTANT, instantParts, type InstantParts, parseAsOf } from './asof';
 import { clock, sectionWords } from './evidence';
 import { readView, type RecordView, writeView } from './memory';
 import { type Remote, useRemote } from './remote';
+import { zoneWords } from './zone';
 import './record.css';
 
-export type RecordTab = 'record' | 'history';
+export type RecordTab = 'record' | 'history' | 'measurements';
 
 export type RecordContext = {
   scope: string;
@@ -22,6 +23,8 @@ export type RecordContext = {
   recordId: string;
   base: string;
   practiceName: string;
+  /** The IANA zone of the practice: every instant of the record screens is read and shown in it (D-64). */
+  zone: string;
   patientLabel: string;
   asOf: string | undefined;
   history: Remote<HistorySummary>;
@@ -48,8 +51,8 @@ const emptyView = (): RecordView => ({ filters: { kind: '', from: { day: '', mon
  * the past instant (UD-32) and the independent loading of the record and of its history. The server decides every
  * request; this component only shows what the current session was granted and never keeps clinical content.
  */
-export function RecordPage({ tab, scope, practiceId, base, recordId, expire, children }: {
-  tab: RecordTab; scope: string; practiceId: string; base: string; recordId: string; expire: () => void;
+export function RecordPage({ tab, scope, practiceId, base, recordId, zone, expire, children }: {
+  tab: RecordTab; scope: string; practiceId: string; base: string; recordId: string; zone: string; expire: () => void;
   children: (tab: RecordTab) => ReactNode;
 }) {
   const shell = useShell();
@@ -75,9 +78,9 @@ export function RecordPage({ tab, scope, practiceId, base, recordId, expire, chi
     : record.phase === 'hidden' || history.phase === 'hidden' ? 404 : undefined);
 
   const context = useMemo<RecordContext>(() => ({
-    scope, practiceId, recordId, base, practiceName: shell.practiceName, patientLabel, asOf: view.asOf, history, retryHistory,
+    scope, practiceId, recordId, base, practiceName: shell.practiceName, zone, patientLabel, asOf: view.asOf, history, retryHistory,
     view, setView, refused: setRefusal, expire, go: shell.navigate,
-  }), [scope, practiceId, recordId, base, shell.practiceName, patientLabel, view, history, retryHistory, setView, expire, shell.navigate]);
+  }), [scope, practiceId, recordId, base, shell.practiceName, zone, patientLabel, view, history, retryHistory, setView, expire, shell.navigate]);
 
   const toList = (event: { preventDefault: () => void }) => { event.preventDefault(); shell.navigate(patientsPath(base)); };
   const listLink = (label: string) => (
@@ -121,7 +124,7 @@ export function RecordPage({ tab, scope, practiceId, base, recordId, expire, chi
   return (
     <Context.Provider value={context}>
       {patient && shell.bannerSlot && createPortal(
-        <Banner patient={patient} history={history} past={view.asOf !== undefined} />, shell.bannerSlot)}
+        <Banner patient={patient} history={history} past={view.asOf !== undefined} zone={zone} />, shell.bannerSlot)}
       <Frame key={tab} tab={tab} patientLabel={patientLabel} ready={record.phase === 'ready'}>
         {record.phase === 'ready' ? children(tab) : <Skeleton label="Chargement du dossier…" />}
       </Frame>
@@ -129,10 +132,10 @@ export function RecordPage({ tab, scope, practiceId, base, recordId, expire, chi
   );
 }
 
-function Banner({ patient, history, past }: { patient: PatientRecord['patient']; history: Remote<HistorySummary>; past: boolean }) {
+function Banner({ patient, history, past, zone }: { patient: PatientRecord['patient']; history: Remote<HistorySummary>; past: boolean; zone: string }) {
   const years = ageOn(patient.dateOfBirth);
   const allergy = history.phase === 'ready' ? history.data.sections.find((section) => section.category === 'ALLERGY') : undefined;
-  const words = allergy ? sectionWords('ALLERGY', allergy, past) : undefined;
+  const words = allergy ? sectionWords('ALLERGY', allergy, past, zone) : undefined;
   const stated = allergy?.state === 'PRESENT' || allergy?.state === 'CONFLICTING';
   const variant = allergy?.state === 'PRESENT' ? '' : allergy?.state === 'CONFLICTING' ? ' etaye-allergies--attention' : ' etaye-allergies--neutre';
   return (
@@ -170,7 +173,7 @@ function Frame({ tab, patientLabel, ready, children }: { tab: RecordTab; patient
   const focusToggle = useRef(false);
   // One Date per applied instant: a session poll re-renders the frame and must not refill a draft of the control.
   const past = useMemo(() => (ctx.asOf ? new Date(ctx.asOf) : undefined), [ctx.asOf]);
-  const { date, time } = past ? clock(past) : { date: '', time: '' };
+  const { date, time } = past ? clock(past, ctx.zone) : { date: '', time: '' };
 
   useEffect(() => {
     if (focusBanner.current && past) { focusBanner.current = false; banner.current?.focus(); }
@@ -191,10 +194,11 @@ function Frame({ tab, patientLabel, ready, children }: { tab: RecordTab; patient
     <a aria-current={tab === target ? 'page' : undefined} href={path}
       onClick={(event) => { event.preventDefault(); ctx.go(path); }}>{label}</a>
   );
-  const title = tab === 'record' ? 'Chronologie' : 'Antécédents et allergies';
+  const title = tab === 'record' ? 'Chronologie' : tab === 'history' ? 'Antécédents et allergies' : 'Mesures';
   const meta = past ? `${ctx.practiceName} · vue historique au ${date} à ${time}`
     : tab === 'record' ? `${ctx.practiceName} · dates de survenue et d’enregistrement affichées séparément`
-      : 'Chaque déclaration garde sa date, son auteur et son origine';
+      : tab === 'history' ? 'Chaque déclaration garde sa date, son auteur et son origine'
+        : `${ctx.practiceName} · valeurs actuelles · les versions corrigées restent consultables`;
 
   return <>
     <EntryHeader title={title} meta={meta} crumb={patientLabel} onCrumb={() => ctx.go(patientsPath(ctx.base))}
@@ -202,14 +206,14 @@ function Frame({ tab, patientLabel, ready, children }: { tab: RecordTab; patient
         aria-controls="asof-region" onClick={() => setOpen((value) => !value)}>
         {open ? 'Masquer le choix de date' : past ? 'Changer de date' : 'Voir le dossier à une date passée'}
       </button> : undefined} />
-    {ready && <AsOfPanel open={open} current={past} onApply={apply} />}
+    {ready && <AsOfPanel open={open} current={past} zone={ctx.zone} onApply={apply} />}
     {ready && past && (
       <div ref={banner} tabIndex={-1} className="etaye-bandeau etaye-bandeau--info" role="status" style={{ outline: 'none' }}>
         <span aria-hidden="true" className="etaye-icone etaye-icone--18 etaye-icone--info" />
         <div>
           <div className="etaye-bandeau__titre">Vue historique — lecture seule</div>
           <div>
-            Dossier tel qu’il était le <span className="etaye-num">{date}</span> à <span className="etaye-num">{time}</span> (heure de Paris).
+            Dossier tel qu’il était le <span className="etaye-num">{date}</span> à <span className="etaye-num">{time}</span> ({zoneWords(ctx.zone).clock}).
             Les informations enregistrées ensuite ne sont pas affichées. L’identité affichée est l’identité actuelle.
           </div>
         </div>
@@ -221,16 +225,17 @@ function Frame({ tab, patientLabel, ready, children }: { tab: RecordTab; patient
     <nav aria-label="Sections" className="etaye-onglets">
       {tabLink('record', 'Chronologie', recordPath(ctx.base, ctx.recordId))}
       {tabLink('history', 'Antécédents et allergies', historyPath(ctx.base, ctx.recordId))}
+      {tabLink('measurements', 'Mesures', measurementsPath(ctx.base, ctx.recordId))}
     </nav>
     {children}
   </>;
 }
 
-/** The control of the past instant: date and time in Paris, refused before any request when it is in the future. */
-function AsOfPanel({ open, current, onApply }: { open: boolean; current: Date | undefined; onApply: (instant: Date) => void }) {
-  const [parts, setParts] = useState<InstantParts>(() => (current ? instantParts(current) : EMPTY_INSTANT));
+/** The control of the past instant: date and time in the practice zone, refused before any request when it is in the future. */
+function AsOfPanel({ open, current, zone, onApply }: { open: boolean; current: Date | undefined; zone: string; onApply: (instant: Date) => void }) {
+  const [parts, setParts] = useState<InstantParts>(() => (current ? instantParts(current, zone) : EMPTY_INSTANT));
   const [errors, setErrors] = useState<(FieldError & { field: string })[]>([]);
-  useEffect(() => { setParts(current ? instantParts(current) : EMPTY_INSTANT); }, [current]);
+  useEffect(() => { setParts(current ? instantParts(current, zone) : EMPTY_INSTANT); }, [current, zone]);
   const bad = errors.length > 0 ? true : undefined;
   const field = (id: string, label: string, key: keyof InstantParts, width: string, max: number, placeholder: string) => (
     <div className={`etaye-champ ${width}`}>
@@ -242,7 +247,7 @@ function AsOfPanel({ open, current, onApply }: { open: boolean; current: Date | 
   );
   const submit = (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    const result = parseAsOf(parts);
+    const result = parseAsOf(parts, new Date(), zone);
     if (!result.ok) {
       setErrors([{ id: 'as-j', field: 'asof', summary: result.summary, detail: result.detail }]);
       return;
@@ -265,10 +270,12 @@ function AsOfPanel({ open, current, onApply }: { open: boolean; current: Date | 
             <button className="etaye-bouton etaye-bouton--secondaire" type="submit">Afficher cette date</button>
           </div>
           <span className="etaye-champ__aide" id="as-aide">
-            {errors[0]?.detail ?? 'Heure de Paris. Lecture seule : le dossier s’affiche tel qu’il était à cet instant. Une date future est refusée.'}
+            {errors[0]?.detail ?? `${capitalized(zoneWords(zone).clock)}. Lecture seule : le dossier s’affiche tel qu’il était à cet instant. Une date future est refusée.`}
           </span>
         </div>
       </form>
     </section>
   );
 }
+
+const capitalized = (text: string) => text.charAt(0).toLocaleUpperCase('fr-FR') + text.slice(1);
