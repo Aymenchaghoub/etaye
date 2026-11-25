@@ -4,10 +4,15 @@ WORKDIR /src
 COPY apps/api/.mvn .mvn
 COPY apps/api/mvnw apps/api/pom.xml ./
 COPY apps/api/src src
-# Optional base URL for downloading the Maven distribution (empty: Maven Central). The wrapper checks the
-# distribution against the SHA-256 pinned in .mvn/wrapper/maven-wrapper.properties, so a mirror needs no trust.
-ARG MVNW_REPOURL=
-RUN ./mvnw -B -ntp -Dmaven.test.skip=true package
+# Optional mirror of Maven Central for the wrapper download and for dependency resolution (empty: Maven Central). It
+# exists for the CI smoke build, where shared runner addresses are rate-limited (HTTP 429). The wrapper checks the
+# distribution against the SHA-256 pinned in .mvn/wrapper/maven-wrapper.properties; the dependencies are checked by Maven
+# against checksums that the same mirror serves, so a release build must leave this empty.
+ARG MAVEN_CENTRAL_MIRROR=
+RUN if [ -n "$MAVEN_CENTRAL_MIRROR" ]; then \
+      mkdir -p /root/.m2 && printf '<settings><mirrors><mirror><id>central-mirror</id><mirrorOf>central</mirrorOf><url>%s</url></mirror></mirrors></settings>\n' "$MAVEN_CENTRAL_MIRROR" > /root/.m2/settings.xml; \
+    fi
+RUN MVNW_REPOURL="$MAVEN_CENTRAL_MIRROR" ./mvnw -B -ntp -Dmaven.test.skip=true package
 
 FROM eclipse-temurin:25-jre@sha256:4ed132f6832e9804b123e89a849a7b4502756ae64a4ee08ebab939d9d5d0a9fa
 WORKDIR /app
