@@ -7,6 +7,10 @@
 .etaye-onglets { display: flex; gap: var(--espace-1); border-bottom: var(--trait-filet) solid var(--filet); overflow-x: auto; }
 .etaye-onglets a { display: inline-flex; align-items: center; gap: var(--espace-2); min-height: 40px; padding: 0 var(--espace-3); font: 400 14px/20px var(--font-texte); color: var(--encre-2); text-decoration: none; border-bottom: 2px solid transparent; white-space: nowrap; }
 .etaye-onglets a[aria-current="page"] { color: var(--encre); border-bottom-color: var(--encre); font-weight: 500; }
+/* The authentication stylesheet colors every class-less link with the accent (specificity 0,2,1), which turned the inactive
+   tabs blue; the approved specimens keep them in the secondary ink. These selectors outrank it. */
+.etaye-root .etaye-onglets a:not([class]) { color: var(--encre-2); text-decoration: none; }
+.etaye-root .etaye-onglets a[aria-current="page"]:not([class]) { color: var(--encre); }
 .etaye-cols { display: grid; gap: var(--espace-6); align-items: start; }
 .etaye-cols--2 { grid-template-columns: minmax(0, 1fr) 360px; }
 .etaye-cols--egal { grid-template-columns: repeat(2, minmax(0, 1fr)); }

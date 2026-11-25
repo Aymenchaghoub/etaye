@@ -565,6 +565,34 @@ test.describe('long untrusted content and the layout (AT-011-C)', () => {
     expect(stops.filter((stop) => !/ solid 2px$/.test(stop)), stops.join('\n')).toEqual([]);
   });
 
+  test('the tab bar keeps the ink of the approved specimens, never the accent of a plain link', async ({ page }) => {
+    await stubMeasurements(page);
+    await page.goto(MEASURES);
+    await expect(tabs(page).getByRole('link')).toHaveCount(3);
+    for (const scheme of ['light', 'dark'] as const) {
+      await page.emulateMedia({ colorScheme: scheme });
+      const colors = await page.evaluate(() => {
+        const probe = (token: string) => {
+          const span = document.createElement('span');
+          span.style.color = `var(${token})`;
+          document.body.append(span);
+          const color = getComputedStyle(span).color;
+          span.remove();
+          return color;
+        };
+        const links = [...document.querySelectorAll('.etaye-onglets a')];
+        return {
+          inactive: links.filter((a) => !a.hasAttribute('aria-current')).map((a) => getComputedStyle(a).color),
+          current: links.filter((a) => a.hasAttribute('aria-current')).map((a) => getComputedStyle(a).color),
+          secondary: probe('--encre-2'), ink: probe('--encre'), accent: probe('--accent'),
+        };
+      });
+      expect(colors.inactive, scheme).toEqual([colors.secondary, colors.secondary]);
+      expect(colors.current, scheme).toEqual([colors.ink]);
+      expect(colors.secondary).not.toEqual(colors.accent);
+    }
+  });
+
   test('the Mesures tab is reachable from the other two and keeps the heading focus', async ({ page }) => {
     await stubMeasurements(page);
     await page.goto(RECORD);
