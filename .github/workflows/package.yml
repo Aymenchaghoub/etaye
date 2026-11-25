@@ -50,7 +50,18 @@ jobs:
         run: bash infra/local/verify-init-roles.sh
       - name: Build and start the package (API, web, PostgreSQL, Flyway)
         if: steps.changes.outputs.relevant == 'true'
-        run: ./infra/demo/start.sh
+        # The API image downloads Maven and its dependencies from Maven Central on every cold runner, and Central
+        # rate-limits shared addresses (HTTP 429, seen on 2026-11-25). Only this network-bound build retries, at most
+        # three times with a growing pause and with each failed attempt in the log; the browser tests never retry.
+        run: |
+          for attempt in 1 2 3; do
+            if ./infra/demo/start.sh; then
+              exit 0
+            fi
+            echo "::warning::Package build attempt ${attempt} of 3 failed"
+            sleep $(( attempt * 60 ))
+          done
+          exit 1
       - if: steps.changes.outputs.relevant == 'true'
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
