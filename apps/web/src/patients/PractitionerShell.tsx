@@ -23,6 +23,8 @@ type ShellApi = {
   /** Completes the navigation requested during the save, or goes to `fallback`. True when `fallback` was used. */
   completeSave: (fallback: string) => boolean;
   practiceName: string;
+  /** Where a screen may place its identity banner, full width above the page (the record screens, story 3.2). */
+  bannerSlot: HTMLElement | null;
 };
 
 const ShellContext = createContext<ShellApi | undefined>(undefined);
@@ -46,6 +48,7 @@ export function PractitionerShell({ session, context, contexts, select, signOut,
   const pendingRef = useRef<(() => void) | null>(null);
   const requested = useRef<(() => void) | null>(null);
   const dirty = useRef<DirtyWork | null>(null);
+  const [bannerSlot, setBannerSlot] = useState<HTMLElement | null>(null);
   const menuButton = useRef<HTMLButtonElement>(null);
   const nav = useRef<HTMLElement>(null);
   const stay = useRef<HTMLButtonElement>(null);
@@ -78,8 +81,8 @@ export function PractitionerShell({ session, context, contexts, select, signOut,
     return true;
   }, [select]);
   const api = useMemo<ShellApi>(
-    () => ({ navigate, setDirty, finishWork, completeSave, practiceName: practice }),
-    [navigate, setDirty, finishWork, completeSave, practice],
+    () => ({ navigate, setDirty, finishWork, completeSave, practiceName: practice, bannerSlot }),
+    [navigate, setDirty, finishWork, completeSave, practice, bannerSlot],
   );
 
   const closeMenu = useCallback((returnFocus: boolean) => {
@@ -179,6 +182,7 @@ export function PractitionerShell({ session, context, contexts, select, signOut,
         </nav>
         {/* While the menu covers the page, nothing behind it can take focus (focus not obscured). */}
         <main className="etaye-main" id="contenu" inert={menuOpen}>
+          <div ref={setBannerSlot} />
           <div className="etaye-page">
             {pending && dirty.current && (
               <div onKeyDown={(event) => { if (event.key === 'Escape') hold(null); }}>

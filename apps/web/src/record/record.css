@@ -1,0 +1,119 @@
+/*
+ * Record screens (story 3.2): the chronology S-09, the history and allergies S-10 and the source review I-27.
+ * The recipes are the ones of the approved Étaye offline reference (design/offline-reference/site/css/etaye.css,
+ * snapshot d2f0800e275c…) and of the approved specimens of 2026-11-24 (UD-68); the tokens are the generated ones.
+ * Additions are marked: they carry the unclipped dates of AT-010-C and the focus and state recipes of the specimens.
+ */
+.etaye-onglets { display: flex; gap: var(--espace-1); border-bottom: var(--trait-filet) solid var(--filet); overflow-x: auto; }
+.etaye-onglets a { display: inline-flex; align-items: center; gap: var(--espace-2); min-height: 40px; padding: 0 var(--espace-3); font: 400 14px/20px var(--font-texte); color: var(--encre-2); text-decoration: none; border-bottom: 2px solid transparent; white-space: nowrap; }
+.etaye-onglets a[aria-current="page"] { color: var(--encre); border-bottom-color: var(--encre); font-weight: 500; }
+.etaye-cols { display: grid; gap: var(--espace-6); align-items: start; }
+.etaye-cols--2 { grid-template-columns: minmax(0, 1fr) 360px; }
+.etaye-cols--egal { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.etaye-pile { display: grid; gap: var(--espace-3); align-content: start; }
+.etaye-panneau__tete { padding: var(--espace-3) var(--espace-4); border-bottom: var(--trait-filet) solid var(--filet); }
+.etaye-panneau__tete h2 { font: 500 15px/22px var(--font-texte); margin: 0; }
+.ui-section { font: 500 15px/22px var(--font-texte); margin: 0; }
+.etaye-resume-erreurs { max-width: 720px; }
+
+/* Allergies block of the identity banner: critical when present, attention when conflicting, neutral otherwise. */
+.etaye-allergies { min-width: 240px; padding: var(--espace-2) var(--espace-3); background: var(--critique-fond); border-radius: var(--rayon-1); overflow-wrap: anywhere; }
+.etaye-allergies__titre { display: flex; align-items: center; gap: var(--espace-2); font: 500 13px/20px var(--font-texte); color: var(--critique); }
+.etaye-allergies__liste { font: 500 15px/22px var(--font-texte); color: var(--encre); }
+.etaye-allergies--attention { background: var(--attention-fond); }
+.etaye-allergies--attention .etaye-allergies__titre { color: var(--attention); }
+.etaye-allergies--attention .etaye-allergies__liste { font-weight: 400; }
+.etaye-allergies--neutre { background: transparent; box-shadow: inset 0 0 0 1px var(--filet); }
+.etaye-allergies--neutre .etaye-allergies__titre { color: var(--encre-2); }
+.etaye-allergies--neutre .etaye-allergies__liste { font-weight: 400; display: grid; gap: 2px; }
+
+/* State chips: one marker shape per state, never the colour alone. */
+.etaye-etat { display: inline-flex; align-items: center; gap: var(--espace-1); font: 500 13px/20px var(--font-texte); color: var(--encre-2); }
+.etaye-etat::before { content: ""; width: 10px; height: 10px; flex: none; }
+.etaye-etat--manquant::before { border: 1.5px dashed var(--encre-2); }
+.etaye-etat--negatif::before { border: 1.5px solid var(--encre-2); background: linear-gradient(135deg, transparent 45%, var(--encre-2) 45%, var(--encre-2) 55%, transparent 55%); }
+.etaye-etat--declare::before { border: 1.5px solid var(--attention); border-radius: 50%; }
+.etaye-etat--declare { color: var(--attention); }
+.etaye-etat--discordant::before { width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 10px solid var(--attention); }
+.etaye-etat--discordant { color: var(--attention); }
+.etaye-etat--observe::before { background: var(--encre); }
+.etaye-etat--observe { color: var(--encre); }
+.etaye-etat--corrige::before { border: 1.5px solid var(--accent); }
+.etaye-etat--corrige { color: var(--accent); }
+
+/* Chronology. */
+.etaye-chrono { list-style: none; padding: 0; margin: 0; }
+.etaye-chrono__item { display: grid; grid-template-columns: 96px 16px minmax(0, 1fr); column-gap: var(--espace-3); }
+.etaye-chrono__date { padding: var(--espace-3) 0; text-align: right; font: 400 12px/20px var(--font-donnee); color: var(--encre-3); }
+.etaye-chrono__heure { display: block; }
+.etaye-chrono__rail { position: relative; }
+.etaye-chrono__rail::before { content: ""; position: absolute; left: 7px; top: 0; bottom: 0; width: 1px; background: var(--filet-controle); }
+.etaye-chrono__item:first-child .etaye-chrono__rail::before { top: 20px; }
+.etaye-chrono__item:last-child .etaye-chrono__rail::before { bottom: calc(100% - 20px); }
+.etaye-chrono__rail::after { content: ""; position: absolute; left: 4px; top: 16px; width: 8px; height: 8px; background: var(--surface); box-shadow: 0 0 0 1px var(--filet-controle); }
+.etaye-chrono__corps { padding: var(--espace-3) 0; border-bottom: var(--trait-filet) solid var(--filet); min-width: 0; overflow-wrap: anywhere; }
+.etaye-chrono__item:last-child .etaye-chrono__corps { border-bottom: 0; }
+.etaye-chrono__type { font: 400 13px/20px var(--font-texte); color: var(--encre-2); }
+.etaye-chrono__titre { font: 500 15px/22px var(--font-texte); }
+.etaye-chrono__detail { font: 400 14px/20px var(--font-texte); color: var(--encre-2); white-space: pre-wrap; }
+.etaye-chrono__detail .etaye-etat { white-space: normal; }
+.etaye-provenance { font: 400 12px/18px var(--font-texte); color: var(--encre-3); margin-top: 2px; }
+
+/* Source markers and the in-place source (E1, D-45): a numbered link and a disclosure button, no popover. */
+.etaye-repere { display: inline-flex; align-items: center; gap: 2px; height: 16px; padding: 0 2px; margin: 0 1px 0 2px; position: relative; top: -0.45em; font: 600 11px/16px var(--font-donnee); color: var(--accent); background: transparent; border: 0; border-radius: 2px; cursor: pointer; text-decoration: none; }
+.etaye-repere::before { content: ""; width: 7px; height: 6px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 12'%3E%3Cpath d='M5.6 0h2.8L14 12h-2.6L7 2.6 2.6 12H0z'/%3E%3C/svg%3E") center/contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 12'%3E%3Cpath d='M5.6 0h2.8L14 12h-2.6L7 2.6 2.6 12H0z'/%3E%3C/svg%3E") center/contain no-repeat; }
+.etaye-repere:hover { background: var(--accent-fond); }
+.etaye-repere--seul { top: 0; }
+.etaye-source { margin-top: var(--espace-1); }
+.etaye-source__corps { display: grid; gap: var(--espace-2); margin-top: var(--espace-2); padding: var(--espace-3); border: var(--trait-filet) solid var(--filet); background: var(--surface); font: 400 14px/20px var(--font-texte); }
+.etaye-source-tete { display: grid; gap: var(--espace-1); }
+.etaye-apercu__ref { display: flex; align-items: center; gap: var(--espace-2); font: 400 13px/16px var(--font-texte); color: var(--encre-3); overflow-wrap: anywhere; }
+.etaye-source-texte { font: 400 16px/28px var(--font-document); padding: var(--espace-4); background: var(--papier); border: var(--trait-filet) solid var(--filet); white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* Sections and statements (S-10, I-27). */
+.etaye-controle { list-style: none; padding: 0; margin: 0; display: grid; border-top: var(--trait-filet) solid var(--filet); }
+.etaye-controle li { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; gap: var(--espace-3); align-items: start; padding: var(--espace-3) 0; border-bottom: var(--trait-filet) solid var(--filet); font: 400 14px/20px var(--font-texte); }
+.etaye-controle li > div { min-width: 0; overflow-wrap: anywhere; }
+.etaye-controle small { display: block; color: var(--encre-2); font-size: 13px; }
+.etaye-controle__bloque { color: var(--attention); }
+.etaye-declaration { font: 400 15px/24px var(--font-texte); margin: 4px 0; overflow-wrap: anywhere; white-space: pre-wrap; }
+.etaye-titre-rubrique { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--espace-2); }
+.etaye-titre-rubrique h2 { margin: 0; }
+.etaye-separation { margin: var(--espace-4) 0 var(--espace-1); }
+.etaye-app .etaye-3, .etaye-app .etaye-2 { overflow-wrap: anywhere; }
+
+/* The select takes the same 2 px ring as the other controls, and the received chevron recipe. */
+.etaye-root select:focus-visible { outline: var(--trait-focus) solid var(--accent); outline-offset: 2px; }
+select.etaye-champ__saisie { appearance: none; padding-right: var(--espace-8); background-image: linear-gradient(45deg, transparent 50%, var(--encre-2) 50%), linear-gradient(135deg, var(--encre-2) 50%, transparent 50%); background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%; background-size: 5px 5px; background-repeat: no-repeat; }
+
+/* Past-instant control: the hour and the minute sit beside the 3.1 date fields. */
+.etaye-date .etaye-date__h, .etaye-date .etaye-date__mi { width: 72px; }
+.etaye-filtres .etaye-date .etaye-champ { min-width: 0; }
+.etaye-champ .etaye-vh { position: absolute; }
+
+/* The mobile chronology stacks the date above the event: the received 64 px date column clipped "02/11/2026" (F-6). */
+@media (max-width: 1100px) {
+  .etaye-cols--2 { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 760px) {
+  .etaye-cols--egal { grid-template-columns: minmax(0, 1fr); }
+  .etaye-allergies { min-width: 0; }
+  .etaye-chrono__item { grid-template-columns: 16px minmax(0, 1fr); column-gap: var(--espace-2); }
+  .etaye-chrono__rail { grid-column: 1; grid-row: 1 / span 2; }
+  .etaye-chrono__date { grid-column: 2; grid-row: 1; text-align: left; padding: var(--espace-3) 0 0; }
+  .etaye-chrono__corps { grid-column: 2; grid-row: 2; padding-top: var(--espace-1); }
+  .etaye-chrono__heure { display: inline; margin-left: var(--espace-2); }
+  .etaye-controle li { grid-template-columns: 24px minmax(0, 1fr); }
+  .etaye-controle li > :nth-child(3) { grid-column: 2; justify-self: start; }
+}
+
+/* S-36 restricted and hidden states (approved in story 1.4), reused inside the practitioner shell. */
+.etaye-etat-page { max-width: 560px; min-width: 0; display: grid; gap: var(--espace-4); padding: var(--espace-6) 0; }
+.etaye-etat-page__code { font: 400 13px/20px var(--font-donnee); color: var(--encre-3); }
+.etaye-etat-page h1 { font: 500 26px/32px var(--font-texte); }
+.etaye-etat-page p { font: 400 16px/24px var(--font-texte); color: var(--encre-2); }
+.etaye-etat-page .etaye-bouton { white-space: normal; text-align: center; }
+
+/* I-27: the two sides of a conflict as cards, the date on the right of the label line. */
+.etaye-carte { display: grid; gap: var(--espace-2); align-content: start; min-width: 0; padding: var(--espace-3); border: var(--trait-filet) solid var(--filet); background: var(--surface-2); }
+.etaye-carte__tete { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: var(--espace-2); }

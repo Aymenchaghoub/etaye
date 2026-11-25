@@ -91,6 +91,18 @@ Every clinically meaningful fact records source type, original author/reporter, 
 
 Corrections append a superseding revision with correction reason, actor and time. Preserve the original for internal history, mark the current revision clearly and reconsider dependent briefs. Unknown dates are never replaced with the upload date; show both event date and recorded date when they differ. Do not invent clinical recommendations from sample data. A record may be viewed as known at a past instant (UD-32): the view returns, for every lineage, the latest revision whose recorded time is at or before that instant, it is read-only, it is refused for a future instant, it applies the same authorization as the current view and it never exposes later revisions.
 
+**Section state (UD-67 C1, story 3.2).** The state of one history section (allergies, history, reported treatments) is derived on the server, never stored and never typed by a client, by one pure rule that every consumer reuses, including the clinician brief (UD-30). For one category at instant T (now without `asOf`), take the current revision of every statement lineage recorded at or before T:
+
+| Current statements | State | Reading |
+|---|---|---|
+| None | NOT_RECORDED | "Non renseigné", "Aucune source au dossier · ne signifie pas absence" |
+| Only UNKNOWN or NOT_ASKED (the latest by recording time wins; equal recording times are broken by statement identifier, so every consumer reaches the same winner) | UNKNOWN or NOT_ASKED | "Inconnu · à préciser" or "Non demandé" |
+| Only EXPLICITLY_ABSENT | EXPLICITLY_ABSENT | "Absence déclarée le {date}" with author and origin, never "Aucune allergie"; with an unknown event date, "Absence déclarée · date inconnue" (the recording date never replaces the event date) |
+| One or more PRESENT and no EXPLICITLY_ABSENT | PRESENT | Each statement dated, with its origin in words; a patient report reads "Déclaré par la patiente · non confirmé" until a practitioner adds a separate assessment |
+| EXPLICITLY_ABSENT and PRESENT together, in either order | CONFLICTING (reads as unknown) | "Déclarations discordantes à préciser · ne pas conclure à l'absence", both statements oldest first, nothing merged or resolved |
+
+An UNKNOWN or NOT_ASKED statement beside a PRESENT or EXPLICITLY_ABSENT one gives the state of the row that applies and stays listed as dated history. An absent section is never rendered as "none", "no known allergies" or "normal", and a section that is still loading shows no state at all.
+
 ## BR-009 — Measurements, laboratory results and units
 
 A quantitative measurement requires concept, numeric value, unit and observed time; if unavailable, represent a missing observation explicitly rather than using zero. Support source/author/device-or-method when known. A laboratory result also records analyte, specimen/result dates when supplied, comparator (such as `<`), unit, supplied reference interval and interval context/source. Preserve qualitative results as qualitative, not coerced numbers. Store original values/units; any normalized value requires a documented conversion and original retention. Never silently combine incompatible units, intervals, fasting states or time windows. Trend gaps remain gaps; no interpolation presented as an observed result. Flagging outside a supplied interval is informational, not an autonomous diagnosis or global risk score.

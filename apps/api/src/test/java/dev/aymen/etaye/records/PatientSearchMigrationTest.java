@@ -51,7 +51,7 @@ public class PatientSearchMigrationTest extends AbstractPostgresTest {
                     + "', 'Éloïse', 'Léger-Müller', '1985-11-02'); COMMIT;");
         }
 
-        var result = Flyway.configure().dataSource(url(), OWNER_USER, OWNER_PASSWORD).locations("classpath:db/migration").load().migrate();
+        var result = Flyway.configure().dataSource(url(), OWNER_USER, OWNER_PASSWORD).locations("classpath:db/migration").target("8").load().migrate();
         assertThat(result.success).isTrue();
         assertThat(result.targetSchemaVersion).isEqualTo("8");
 

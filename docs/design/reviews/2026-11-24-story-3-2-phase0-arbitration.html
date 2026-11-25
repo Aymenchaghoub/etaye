@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="fr" data-theme="clair">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Étaye · Arbitrage de la Story 3.2</title>
+  <link rel="stylesheet" href="../../../design/offline-reference/site/tokens/tokens.css">
+  <style>
+    * { box-sizing: border-box; }
+    :root { color-scheme: light; }
+    [data-theme="sombre"] { color-scheme: dark; }
+    body {
+      margin: 0;
+      color: var(--encre);
+      background: var(--fond);
+      font: 400 15px/22px "Atkinson Hyperlegible Next", sans-serif;
+    }
+    header { border-bottom: var(--trait-filet) solid var(--filet); }
+    .wrap { max-width: 1060px; margin: auto; padding: var(--espace-6); }
+    header .wrap { display: flex; justify-content: space-between; align-items: center; gap: var(--espace-4); }
+    .logo { display: block; height: 28px; }
+    [data-theme="clair"] .logo-dark, [data-theme="sombre"] .logo-light { display: none; }
+    main { overflow-wrap: anywhere; }
+    h1 { font: 500 32px/40px "Source Serif 4", serif; margin: 0; }
+    h2 { font-size: 22px; line-height: 28px; font-weight: 500; margin: 0 0 var(--espace-4); }
+    h3, legend { font-size: 16px; line-height: 24px; font-weight: 600; }
+    p, ul, ol { margin: 0 0 var(--espace-3); }
+    li + li { margin-top: var(--espace-1); }
+    a { color: var(--accent); text-underline-offset: 0.16em; }
+    .intro { max-width: 72ch; margin-top: var(--espace-3); color: var(--encre-2); }
+    section { margin-top: var(--espace-8); }
+    form > h3 { margin: var(--espace-6) 0 var(--espace-3); }
+    .columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--espace-4); margin-bottom: var(--espace-4); }
+    .panel, fieldset, .decision {
+      min-inline-size: 0;
+      background: var(--surface);
+      border: var(--trait-filet) solid var(--filet);
+      padding: var(--espace-5);
+    }
+    .panel h3 { margin: 0 0 var(--espace-2); }
+    .panel p:last-child, .panel ul:last-child, .panel ol:last-child { margin-bottom: 0; }
+    fieldset { margin: 0 0 var(--espace-4); }
+    legend { padding: 0 var(--espace-2); }
+    label.option { display: flex; align-items: baseline; gap: var(--espace-2); padding: var(--espace-2) 0; }
+    input[type="radio"] { accent-color: var(--accent); flex: 0 0 auto; }
+    button, textarea {
+      font: inherit;
+      color: var(--encre);
+      background: var(--surface);
+      border: var(--trait-filet) solid var(--filet-controle);
+      border-radius: var(--rayon-1);
+      padding: var(--espace-2) var(--espace-3);
+    }
+    button { min-height: 40px; cursor: pointer; }
+    .primary { background: var(--encre); color: var(--encre-inverse); }
+    .actions { display: flex; flex-wrap: wrap; gap: var(--espace-3); }
+    :focus-visible { outline: var(--trait-focus) solid var(--accent); outline-offset: 2px; }
+    textarea { display: block; width: 100%; min-height: 9em; resize: vertical; margin-top: var(--espace-2); }
+    .decision p { margin-top: var(--espace-2); color: var(--encre-2); }
+    .mock { margin: var(--espace-3) 0; padding: var(--espace-3); background: var(--surface-2); border: var(--trait-filet) solid var(--filet); border-radius: var(--rayon-1); }
+    .mock strong { font-weight: 600; }
+    .mock .row { display: flex; flex-wrap: wrap; gap: var(--espace-2); align-items: center; margin-top: var(--espace-2); }
+    .mock .btn { display: inline-block; padding: var(--espace-1) var(--espace-3); border: var(--trait-filet) solid var(--filet-controle); border-radius: var(--rayon-1); background: var(--surface); font-weight: 500; font-size: 14px; }
+    .mock .warn { border: var(--trait-filet) solid var(--attention); background: var(--attention-fond); padding: var(--espace-3); border-radius: var(--rayon-1); }
+    .mock .tabs { display: flex; flex-wrap: wrap; gap: var(--espace-2); list-style: none; padding: 0; margin: 0; }
+    .mock .tabs li { padding: var(--espace-1) var(--espace-3); border-radius: var(--rayon-1); margin: 0; }
+    .mock .tabs .on { background: var(--surface); border: var(--trait-filet) solid var(--filet); font-weight: 500; }
+    .mock .tabs .off { color: var(--encre-3); text-decoration: line-through; }
+    .tag { display: inline-block; font-size: 12px; line-height: 16px; font-weight: 600; padding: 0 var(--espace-2); border: var(--trait-filet) solid var(--filet-controle); border-radius: var(--rayon-1); color: var(--encre-2); margin-right: var(--espace-2); }
+    .tag.rec { border-color: var(--accent); color: var(--accent); }
+    .scroll { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; min-width: 36rem; font-size: 14px; line-height: 20px; }
+    th, td { text-align: left; vertical-align: top; overflow-wrap: normal; padding: var(--espace-2) var(--espace-3); border: var(--trait-filet) solid var(--filet); }
+    th { color: var(--encre-2); font-weight: 600; background: var(--surface-2); }
+    @media (max-width: 760px) {
+      .wrap { padding: var(--espace-4); }
+      .columns { grid-template-columns: 1fr; }
+      h1 { font-size: 26px; line-height: 32px; }
+    }
+    @media (max-width: 360px) {
+      .wrap { padding: var(--espace-3); }
+      .panel, fieldset, .decision { padding: var(--espace-3); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div>
+        <img class="logo logo-light" src="../../../design/offline-reference/site/logos/etaye-logo.svg" alt="Étaye">
+        <img class="logo logo-dark" src="../../../design/offline-reference/site/logos/etaye-logo-sombre.svg" alt="Étaye">
+      </div>
+      <button id="theme" type="button" aria-pressed="false">Thème sombre</button>
+    </div>
+  </header>
+  <main class="wrap">
+    <h1>Story 3.2 · Explorer la chronologie et les assertions explicites</h1>
+    <p class="intro">Arbitrage de préparation. Aucune ligne de code n’est écrite et rien n’est autorisé tant que tu n’as pas répondu par écrit. Les maquettes de S-09 et S-10 existent et portent ton approbation du 20/11 (UD-46), mais cette approbation ne couvre ni la vue « as of », ni les états de chargement et d’échec, ni le clavier, ni le contenu long, et plusieurs éléments des maquettes n’ont ni donnée ni contrat derrière eux. Chaque carte montre l’état actuel, ma proposition et des choix explicites ; la recommandation est en premier.</p>
+    <p><a href="../../implementation-artifacts/story-3-2-context-packet.md">Lire le context packet</a> · <a href="../../../design/offline-reference/site/ecrans/S-09/claire.html">S-09 Claire</a> · <a href="../../../design/offline-reference/site/ecrans/S-09/louis.html">S-09 Louis</a> · <a href="../../../design/offline-reference/site/ecrans/S-10/claire.html">S-10 Claire</a> · <a href="../../../design/offline-reference/site/ecrans/S-10/louis.html">S-10 Louis</a> · <a href="../../../design/offline-reference/site/ecrans/I-27/ouvert.html">I-27</a> · <a href="../../../design/offline-reference/site/ecrans/I-05/ouvert.html">I-05</a></p>
+
+    <section aria-labelledby="etat">
+      <h2 id="etat">Où en est la story</h2>
+      <div class="columns">
+        <article class="panel">
+          <h3>Vérifié dans le dépôt (main <code>9d283f5</code>)</h3>
+          <ul>
+            <li>Dépendance 3.1 fusionnée (PR #59). Autorisation de 3.2 : <strong>absente</strong>.</li>
+            <li>S-09 et S-10 : approuvés en lot le 20/11 (UD-46), niveau <strong>CORE</strong>, état principal montré = Louis ; tablette et mobile pour un seul état. I-05 et I-27 : « Prêt pour la conception », <strong>non approuvés</strong>.</li>
+            <li>Côté serveur il n’existe <strong>aucune table de sources ou d’assertions</strong> et aucune des six opérations du dossier (chronologie, sources, assertions). Seul <code>getPatientRecord</code> répond.</li>
+            <li>La maquette S-09 mêle des éléments d’autres stories (préparation, rendez-vous, diffusion, brief) et des champs reportés (statut patient, numéro de dossier, D-57).</li>
+            <li>Aucun membre du jeu de démo n’a la lecture clinique seule ; la maquette « lecture seule » est une variante de test.</li>
+          </ul>
+        </article>
+        <article class="panel">
+          <h3>Ce qui sépare les décisions</h3>
+          <ol>
+            <li><strong>Périmètre et règles</strong> (cartes A à F, H, I) : ta réponse devient UD-67.</li>
+            <li><strong>Approbation du design</strong> des états manquants (carte G).</li>
+            <li><strong>Autorisation écrite</strong> de développer la story 3.2 seule.</li>
+            <li>Approbation de l’interface <strong>en fonctionnement</strong>, plus tard.</li>
+            <li><strong>Autorisation de fusion</strong>, plus tard.</li>
+          </ol>
+          <p>Cette page prépare 1 sans accorder 2 à 5.</p>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="arbitrage">
+      <h2 id="arbitrage">Arbitrage d’Aymen</h2>
+      <p class="intro">Le bouton « Accepter toutes les recommandations » sélectionne une option par carte ; tu peux ensuite en changer. Les remarques libres vont dans le récapitulatif.</p>
+      <div class="actions"><button id="accept-all" type="button">Accepter toutes les recommandations</button></div>
+
+      <form id="choices">
+        <h3 id="carte-a">A · Lecture seule ou écriture aussi (I-05, I-27)</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>La traçabilité de FR-005 attribue à 3.1 et 3.2 la chronologie <em>et</em> l’ajout et la correction d’assertions, et la feuille de route n’en reporte rien. Mais les trois critères AT-010 ne testent que la lecture, la vue « as of » et l’affichage de l’inconnu. Les états de I-05 de la maquette vivent dans la consultation (S-19, Louis), pas dans S-10. S-10 a ses propres états d’ajout et d’« évaluation » avec une « Disposition » qui ne correspond à aucune interaction du catalogue. « Conserver à vérifier » (I-27) enregistre une décision humaine pour laquelle ni opération ni table n’existe : l’afficher sans l’enregistrer serait un faux succès. La session ne porte pas la liste des droits, donc l’interface ne pourrait pas masquer les actions d’écriture. 3.3 et 3.4 reportent déjà leur saisie à l’incrément 2 (D-24).</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>3.2 reste en lecture seule : chronologie, rubriques, vue « as of », états inconnus et discordants, et la partie lecture de I-27 (« Examiner les sources »). L’ajout et la correction d’assertions, I-05 sur S-10, la décision « Conserver à vérifier » et la liste des droits sur la session sont consignés dans D-60 (incrément 2, même schéma que D-24). L’epic, l’index des stories et la traçabilité sont alignés : I-27 remplace I-05 dans la ligne de design.</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix A</legend>
+          <label class="option"><input type="radio" name="A" value="A1" required><span><span class="tag rec">Recommandé</span><strong>A1.</strong> 3.2 est en lecture seule. L’écriture des assertions passe à D-60 (incrément 2). La table d’assertions n’est accessible qu’en lecture au rôle d’exécution.</span></label>
+          <label class="option"><input type="radio" name="A" value="A2"><span><strong>A2.</strong> 3.2 livre aussi <code>appendAssertion</code> et <code>correctAssertion</code>, I-05 hébergé dans S-10, la décision de I-27 et la liste des droits sur la session. Il faut alors approuver I-05, ajouter un critère AT-010-D (lignée, motif, 412 et 428, idempotence) et concevoir l’hébergement dans S-10.</span></label>
+        </fieldset>
+
+        <h3 id="carte-b">B · Ce que S-09 affiche dans 3.2</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>La maquette de Claire affiche aussi : « Espace patient activé » et « Dossier R-A-001 » (reportés, D-57), « Exporter » (8.x), « Ouvrir la préparation du 03/11 » (4.5), « Prochain rendez-vous » (4.x), « Diffusion » et « Historique des versions » (7.x), les onglets Mesures, Biologie et Documents (3.3 à 3.5), et des événements de type Publication, Validation, Brief, Compte rendu, Rendez-vous, Tâche. Avant 3.3, 3.4 et 3.5 les mesures, biologies et documents n’existent que comme sources datées. Aujourd’hui les lignes de S-07 et le panneau de doublon de S-08 ouvrent la page de correction d’identité faute de S-09.</p>
+            <div class="mock" aria-hidden="true">
+              <ul class="tabs">
+                <li class="on">Chronologie</li><li class="on">Antécédents et allergies</li>
+                <li class="off">Mesures</li><li class="off">Biologie</li><li class="off">Documents</li>
+              </ul>
+              <p class="row">Les onglets barrés ne sont pas rendus en 3.2 (pas de page non livrée, pas d’espace réservé).</p>
+            </div>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>Seuls les événements du dossier que le module <code>records</code> possède (consultations et notes, mesures, biologie et documents sous forme de sources datées, déclarations de la patiente) sont affichés. L’en-tête montre nom, naissance, âge, version du dossier et l’état des allergies calculé ; ni statut patient ni numéro de dossier. Aucun lien vers une page non livrée. Les autres types d’événements arrivent avec leurs stories (D-61). Les lignes de S-07 et le panneau de doublon de S-08 ouvrent désormais S-09. La variante « aucune » de la bannière d’identité est interdite (BR-008).</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix B</legend>
+          <label class="option"><input type="radio" name="B" value="B1" required><span><span class="tag rec">Recommandé</span><strong>B1.</strong> Éléments propres à 3.2 uniquement, onglets livrés uniquement, en-tête sans champs reportés, liens S-07 et S-08 vers S-09.</span></label>
+          <label class="option"><input type="radio" name="B" value="B2"><span><strong>B2.</strong> Conserver les onglets et les panneaux non livrés, désactivés, avec la mention de leur story. Cela montre la cible mais affiche des éléments sans fonction.</span></label>
+        </fieldset>
+
+        <h3 id="carte-c">C · Règle de l’état d’une rubrique et vocabulaire</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>BR-008 dit qu’une rubrique vide signifie inconnu et qu’une négation datée n’annule pas une déclaration plus récente, mais aucune règle ne précise comment obtenir l’état d’une rubrique ni comment l’écrire. La maquette écrit « Inconnu · à préciser » pour les allergies de Louis et « Non renseigné » pour ses traitements. Le brief de 5.2 devra calculer les mêmes contradictions (UD-30) : deux calculs séparés pourraient diverger.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>Une fonction pure côté serveur, enregistrée comme addendum de BR-008, utilisée par S-09, S-10 et plus tard par le brief.</p>
+          </article>
+        </div>
+        <div class="scroll" role="region" aria-label="Tableau de la règle proposée" tabindex="0">
+          <table>
+            <caption class="intro">Règle proposée pour une rubrique à l’instant T (maintenant, ou la date « as of »)</caption>
+            <thead><tr><th scope="col">Déclarations actuelles</th><th scope="col">État</th><th scope="col">Libellé</th></tr></thead>
+            <tbody>
+              <tr><td>Aucune</td><td>Inconnu (jamais renseigné)</td><td>« Non renseigné » · « Aucune source au dossier · ne signifie pas absence »</td></tr>
+              <tr><td>Seulement « inconnu » ou « non demandé »</td><td>Inconnu ou non demandé</td><td>« Inconnu · à préciser » ou « Non demandé »</td></tr>
+              <tr><td>Seulement une absence déclarée</td><td>Absence déclarée</td><td>« Absence déclarée le 14/09/2026 », jamais « Aucune allergie »</td></tr>
+              <tr><td>Une ou plusieurs présentes, aucune absence</td><td>Présent</td><td>Chaque déclaration datée, origine en mots ; patient : « Déclaré par la patiente · non confirmé »</td></tr>
+              <tr><td>Absence déclarée et présente, dans un ordre ou l’autre</td><td>Discordant (la rubrique reste inconnue)</td><td>« Déclarations discordantes à préciser · ne pas conclure à l’absence », les deux datées, rien de fusionné</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <fieldset>
+          <legend>Choix C</legend>
+          <label class="option"><input type="radio" name="C" value="C1" required><span><span class="tag rec">Recommandé</span><strong>C1.</strong> Règle et vocabulaire du tableau, calculés côté serveur, consignés dans BR-008 et dans le catalogue, réutilisés par 5.2.</span></label>
+          <label class="option"><input type="radio" name="C" value="C2"><span><strong>C2.</strong> Chaque écran dérive l’état à l’affichage à partir des déclarations brutes. Plus simple maintenant, mais la règle sera dupliquée avec le brief.</span></label>
+        </fieldset>
+
+        <h3 id="carte-d">D · Contrat et données</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>Le contrat et le jeu de données se contredisent : catégorie <code>MEDICAL_HISTORY</code> contre <code>HISTORY</code> ; lignes agrégées par catégorie contre une assertion par déclaration ; état « inconnu » sans texte alors que <code>text</code> est obligatoire en sortie ; <code>correctionReason</code> et <code>sourceType</code> obligatoires même pour un original. Un élément de chronologie n’a ni auteur ni type de source ; une source n’a ni texte cité ni motif de correction, alors que la maquette cite les deux. Il n’y a ni filtre de type, ni état de rubrique.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>Un commit de contrat avant le code : champs optionnels ajoutés (<code>sourceType</code>, <code>authorLabel</code>, <code>excerpt</code>, <code>kind</code>, <code>correctionReason</code>), filtres <code>kind</code> et <code>category</code>, règles d’ordre et de date inconnue, assouplissement des champs obligatoires de <code>Assertion</code> (correction du contrat de planification, à confirmer au regard d’ADR-009), une nouvelle lecture de l’état des rubriques (<code>getHistorySummary</code>), deux tables en lecture seule pour le rôle d’exécution avec RLS forcée, et une migration de démo qui sème Claire, Louis et Hugo et étend la réinitialisation.</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix D</legend>
+          <label class="option"><input type="radio" name="D" value="D1" required><span><span class="tag rec">Recommandé</span><strong>D1.</strong> Changements additifs, une nouvelle opération de lecture, correction de <code>Assertion</code>, migration en lecture seule et semis de démo.</span></label>
+          <label class="option"><input type="radio" name="D" value="D2"><span><strong>D2.</strong> Aucune nouvelle opération : le client calcule l’état des rubriques à partir de <code>listAssertions</code> parcouru en entier. Moins de contrat, mais la règle de C vit dans le navigateur et sera refaite pour le brief.</span></label>
+        </fieldset>
+
+        <h3 id="carte-e">E · Ouvrir une source depuis S-09 et S-10</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>Les maquettes déplient les sources en bas de page avec le texte cité et des repères numérotés. Le dépliage n’a pas de spécification (D-45, qui se déclenche avec la revue de S-09). Le tiroir I-09 approuvé couvre d’autres écrans (S-11 à S-21, S-29). L’aperçu en fenêtre contextuelle sur les repères est reporté (D-42). Le contrat n’a pas de texte de source.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>Un bouton de dépliage (<code>aria-expanded</code>, Entrée et Espace, le focus reste sur le bouton) qui montre le texte enregistré de la révision, sa date de survenue, sa date d’enregistrement, l’auteur et l’origine. Un repère est un lien vers l’entrée de source de la page, sans fenêtre contextuelle ni tiroir. Les documents et pages citées restent avec 3.5 et 5.3.</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix E</legend>
+          <label class="option"><input type="radio" name="E" value="E1" required><span><span class="tag rec">Recommandé</span><strong>E1.</strong> Dépliage en ligne avec le texte enregistré ; repères en liens ; D-45 spécifié dans la revue de 3.2 ; D-42 non déclenché.</span></label>
+          <label class="option"><input type="radio" name="E" value="E2"><span><strong>E2.</strong> Étendre le tiroir I-09 approuvé à S-09 et S-10. Plus conforme au catalogue, mais il faut étendre une interface approuvée et traiter D-42 maintenant.</span></label>
+          <label class="option"><input type="radio" name="E" value="E3"><span><strong>E3.</strong> Dates, auteurs et origines seulement, sans texte de source. Le contrat ne change pas, mais la contradiction ne montrerait plus les deux déclarations citées.</span></label>
+        </fieldset>
+
+        <h3 id="carte-f">F · La vue « as of » dans l’interface</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>UD-32 et le critère AT-010-A demandent de voir le dossier tel qu’il était connu à un instant passé, sans exposer les révisions ultérieures. DF-17 (sélecteur, bandeau « Vue historique — lecture seule », lien vers la correction) n’est dans aucune maquette. L’identité n’a pas d’historique (la correction modifie la ligne) : la vue passée ne peut pas reconstituer l’ancienne identité. Le poids de 86,4 kg n’a existé que de 10:13 à 10:15 le 20/10/2026 : une date seule ne suffit pas à le montrer.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>Un contrôle date et heure (champ segmenté de 3.1 plus l’heure, sans calendrier, D-48), instant lu et affiché dans le fuseau du cabinet, présent sur S-09 et S-10, un instant futur refusé avec un message, et un bandeau qui rappelle l’instant, la lecture seule, un lien « Revenir à l’état actuel » et la mention « Identité : état actuel ». L’instant est un paramètre non sensible de l’adresse.</p>
+            <div class="mock" aria-hidden="true">
+              <div class="warn"><strong>Vue historique — lecture seule</strong><br>Dossier tel qu’il était connu le 01/11/2026 à 12:00. Identité : état actuel.
+                <div class="row"><span class="btn">Revenir à l’état actuel</span></div></div>
+            </div>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix F</legend>
+          <label class="option"><input type="radio" name="F" value="F1" required><span><span class="tag rec">Recommandé</span><strong>F1.</strong> Contrôle date et heure, bandeau et identité actuelle sur S-09 et S-10.</span></label>
+          <label class="option"><input type="radio" name="F" value="F2"><span><strong>F2.</strong> Opérations et tests <code>asOf</code> dans 3.2, sélecteur reporté avec 3.3 (S-11). Moins de design maintenant, mais AT-010-A et DF-17 ne seraient visibles qu’à l’API.</span></label>
+        </fieldset>
+
+        <h3 id="carte-g">G · Design à produire et approbation</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>L’approbation UD-46 est une réponse de lot ; elle montrait Louis comme état principal et trois états critiques à 1440 px seulement, et ne jugeait ni le clavier, ni le contenu long, ni le thème sombre, ni le reflux à 320 px. Il manque : chargement, échec complet, aucun résultat filtré, vue « as of », état inconnu sur un vrai exemple (c’est un gabarit), absence déclarée seule, état historique, et la lecture de I-27. I-27 n’est pas approuvé. UD-16 permettrait de construire une famille non critique sans revue préalable, mais la règle du dépôt et le précédent de 3.1 (UD-64) approuvent les états avant l’autorisation.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>Je prépare la page de revue design des états manquants, avec les vrais tokens et les deux thèmes, ouverts à 1440×1024 et 390×844 avec le reflux à 320 px. Les captures de l’interface en marche suivent la matrice CORE : tous les états à 1440 px en clair et en sombre, et sept états à risque (dossier riche, dossier minimal, vue « as of », échec, chargement, restreint, contenu long français) à 1024, 390 et 320 px, environ 80 captures ouvertes. Tu approuves par écrit ; ton accord reste distinct de l’autorisation de développement.</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix G</legend>
+          <label class="option"><input type="radio" name="G" value="G1" required><span><span class="tag rec">Recommandé</span><strong>G1.</strong> Maquettes des états manquants et lecture de I-27, matrice CORE, approbation écrite avant l’autorisation.</span></label>
+          <label class="option"><input type="radio" name="G" value="G2"><span><strong>G2.</strong> M’appuyer sur UD-46 et construire les états manquants directement dans le code avec preuve visuelle échantillonnée. La preuve restera plus mince que le critère AT-010-C.</span></label>
+        </fieldset>
+
+        <h3 id="carte-h">H · Jeu de données, réinitialisation et matrice d’isolation</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>La réinitialisation de démo vide une liste explicite de tables et est définie dans une migration déjà appliquée. La matrice d’isolation de 1.4 (24 cas) laisse les sources en attente : D-55 se déclenche car 3.2 livre les opérations de sources. Claire donne huit événements de chronologie, sous la page de 25 ; aucun membre n’a la lecture seule ; le jeu de design est un baseline figé.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>Une migration de démo sème les sources et assertions et remplace la fonction de réinitialisation. La matrice de 1.4 gagne les cas de sources et de preuves du dossier, avec un témoin positif et les refus cachés. Le membre en lecture seule et un dossier de plus de 25 éléments sont créés dans la pile de test. Le jeu de design reste inchangé : le semis convertit <code>MEDICAL_HISTORY</code> en <code>HISTORY</code> et découpe chaque agrégat en déclarations liées à leurs sources.</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix H</legend>
+          <label class="option"><input type="radio" name="H" value="H1" required><span><span class="tag rec">Recommandé</span><strong>H1.</strong> Semis par migration de démo, réinitialisation étendue, matrice 1.4 étendue, cas de test créés dans la pile, jeu de design inchangé.</span></label>
+          <label class="option"><input type="radio" name="H" value="H2"><span><strong>H2.</strong> Modifier le jeu de design pour qu’il épouse le contrat (lignes par déclaration). Cela déplace les références approuvées et les assertions de réinitialisation de 9.1.</span></label>
+        </fieldset>
+
+        <h3 id="carte-i">I · Reports, alignement des documents et budget</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>Les reports de 3.2 n’ont pas d’entrée au registre. L’epic cite I-05 au lieu de I-27, la traçabilité et la feuille de route attribuent l’écriture à l’incrément 1. Le budget d’effort de M2 devait être recalibré avec les sessions mesurées de M1 (ADR-011) ; aucun document ne le consigne.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>Consigner après ta réponse D-60 (saisie et correction d’assertions, décision de I-27, liste des droits), D-61 (contributions des autres modules à la chronologie), D-62 (audit des lectures cliniques) et D-63 (historique d’identité), avec raison, dépendances, impact et déclencheur. Aligner l’epic, l’index, la traçabilité et l’allocation des opérations. Le budget de M2 reste « à vérifier » jusqu’à la porte M2.</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix I</legend>
+          <label class="option"><input type="radio" name="I" value="I1" required><span><span class="tag rec">Recommandé</span><strong>I1.</strong> Entrées D-60 à D-63 et alignement des documents ; budget M2 à la porte M2.</span></label>
+          <label class="option"><input type="radio" name="I" value="I2"><span><strong>I2.</strong> I1, plus le recalibrage du budget de M2 maintenant : tu me donnes le nombre de sessions réellement passées sur M1.</span></label>
+        </fieldset>
+
+        <h3 id="carte-j">J · Chemin vers l’autorisation</h3>
+        <div class="columns">
+          <article class="panel">
+            <h3>Actuel</h3>
+            <p>Les états manquants n’ont pas été montrés ; tu ne peux pas les approuver tels que présentés. Aucune autorisation écrite n’existe pour 3.2.</p>
+          </article>
+          <article class="panel">
+            <h3>Proposé</h3>
+            <p>Après tes réponses, je prépare la page de revue design des états de la carte G dans les deux thèmes. Tu l’approuves par écrit. Tu autorises ensuite la story 3.2 seule par écrit ; j’enregistre une ligne du registre, j’ajoute <code>"3.2"</code> à la liste BMAD (le drapeau global reste faux), j’étends le validateur et je lance le contrôle de préparation BMAD. La branche de développement part de <code>main</code>, premier commit : le contrat relu.</p>
+          </article>
+        </div>
+        <fieldset>
+          <legend>Choix J</legend>
+          <label class="option"><input type="radio" name="J" value="J1" required><span><span class="tag rec">Recommandé</span><strong>J1.</strong> Revue design d’abord, puis approbation écrite, puis autorisation écrite de 3.2 seule.</span></label>
+          <label class="option"><input type="radio" name="J" value="J2"><span><strong>J2.</strong> Je réserve toute décision de design et d’autorisation à plus tard ; la préparation reste valable.</span></label>
+        </fieldset>
+
+        <div class="decision">
+          <div class="actions"><button class="primary" type="submit">Préparer mon arbitrage</button></div>
+          <p>Copie le récapitulatif dans la conversation et ajoute tes remarques. Ce récapitulatif n’autorise pas le développement : il fixe le périmètre et le chemin à suivre.</p>
+          <label for="recap">Récapitulatif à transmettre</label>
+          <textarea id="recap" readonly></textarea>
+        </div>
+      </form>
+    </section>
+  </main>
+  <script>
+    const themeButton = document.getElementById('theme');
+    themeButton.addEventListener('click', () => {
+      const dark = document.documentElement.dataset.theme === 'clair';
+      document.documentElement.dataset.theme = dark ? 'sombre' : 'clair';
+      themeButton.setAttribute('aria-pressed', String(dark));
+      themeButton.textContent = dark ? 'Thème clair' : 'Thème sombre';
+    });
+
+    const recommended = { A: 'A1', B: 'B1', C: 'C1', D: 'D1', E: 'E1', F: 'F1', G: 'G1', H: 'H1', I: 'I1', J: 'J1' };
+    document.getElementById('accept-all').addEventListener('click', () => {
+      Object.entries(recommended).forEach(([name, value]) => {
+        const input = document.querySelector(`input[name="${name}"][value="${value}"]`);
+        if (input) input.checked = true;
+      });
+    });
+
+    const choices = document.getElementById('choices');
+    const recap = document.getElementById('recap');
+    choices.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const selections = new FormData(choices);
+      const order = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+      const summary = order.map((name) => selections.get(name)).join(', ');
+      const path = selections.get('J') === 'J1'
+        ? 'Prépare la revue design des états manquants ; je décide ensuite par écrit du design puis de l’autorisation de la Story 3.2.'
+        : 'Je réserve les décisions de design et d’autorisation à plus tard.';
+      recap.value = 'Arbitrage Story 3.2 — ' + summary + '.\n' + path;
+      recap.focus();
+      recap.select();
+    });
+  </script>
+</body>
+</html>

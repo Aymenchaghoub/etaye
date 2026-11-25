@@ -1804,7 +1804,7 @@
       "get": {
         "operationId": "getTimeline",
         "summary": "getTimeline",
-        "description": "Requires CLINICAL_READ. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README. Optional asOf returns the record as known at a past instant (UD-32).",
+        "description": "Requires CLINICAL_READ. Practice IDs select context, never grant authority. Lists the evidence items of the record, one per source lineage: the latest revision recorded at or before the view instant (`asOf`, UD-32; now when absent). Items are ordered by event date descending, then recording time descending, then id; items whose event date is unknown form a last group ordered by recording time and are never placed at their recording date. `from` (inclusive) and `to` (exclusive) bound the event date; a date-only event counts at 00:00 of its timezone; items with an unknown event date stay listed under any date filter so that a filter never hides a fact. The opaque cursor is bound to the practice, the actor, the record, the instant and the filters and carries only the id of the last item; a malformed or mismatched cursor is a 400. An `asOf` in the future is a 400 and no count, cursor or error discloses a later revision. The response is `Cache-Control: no-store`.",
         "x-required-permissions": [
           "CLINICAL_READ"
         ],
@@ -1851,6 +1851,22 @@
           },
           {
             "$ref": "#/components/parameters/AsOf"
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "maxItems": 5,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/components/schemas/SourceKind"
+              }
+            },
+            "style": "form",
+            "explode": true,
+            "description": "Keeps only items of these kinds (repeat the parameter). An unknown value is a 400."
           }
         ],
         "responses": {
@@ -1889,7 +1905,7 @@
       "get": {
         "operationId": "listRecordSources",
         "summary": "listRecordSources",
-        "description": "Requires CLINICAL_READ. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README. Optional asOf returns the record as known at a past instant (UD-32).",
+        "description": "Requires CLINICAL_READ. Lists the current revision of every source lineage of the record as known at `asOf` (now when absent), in the order of the timeline, with the stored text. Same cursor, `asOf` and `no-store` rules as getTimeline.",
         "x-required-permissions": [
           "CLINICAL_READ"
         ],
@@ -1958,7 +1974,7 @@
       "get": {
         "operationId": "getSourceRevision",
         "summary": "getSourceRevision",
-        "description": "Requires CLINICAL_READ. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README.",
+        "description": "Requires CLINICAL_READ. Returns one immutable source revision of the practice with its stored text and, for a correction, the reason and the identifier of the revision it supersedes. With `asOf`, a revision recorded after the instant is a 404, byte-identical to an absent resource. A revision of another practice is a 404. The response is `Cache-Control: no-store` and carries no ETag.",
         "x-required-permissions": [
           "CLINICAL_READ"
         ],
@@ -1980,6 +1996,9 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          {
+            "$ref": "#/components/parameters/AsOf"
           }
         ],
         "responses": {
@@ -2018,7 +2037,7 @@
       "get": {
         "operationId": "listAssertions",
         "summary": "listAssertions",
-        "description": "Requires CLINICAL_READ. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README. Optional asOf returns the record as known at a past instant (UD-32).",
+        "description": "Requires CLINICAL_READ. Lists the current statements (latest revision per lineage recorded at or before `asOf`, now when absent), oldest event date first with unknown dates last, then recording time and id. UNKNOWN and NOT_ASKED statements are listed like the others. A record with no statement returns an empty page, which means nothing is known and never means absence: use getHistorySummary for the derived state of each section. Same cursor, `asOf` and `no-store` rules as getTimeline.",
         "x-required-permissions": [
           "CLINICAL_READ"
         ],
@@ -2049,6 +2068,15 @@
           },
           {
             "$ref": "#/components/parameters/AsOf"
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/AssertionCategory"
+            },
+            "description": "Keeps only the statements of one category."
           }
         ],
         "responses": {
@@ -2167,6 +2195,69 @@
                 "$ref": "#/components/schemas/AssertionInput"
               }
             }
+          }
+        }
+      }
+    },
+    "/practices/{practiceId}/records/{recordId}/history": {
+      "get": {
+        "operationId": "getHistorySummary",
+        "summary": "getHistorySummary",
+        "description": "Requires CLINICAL_READ. Returns the derived state of the three history sections (allergies, history, reported treatments) and their current statements as known at `asOf` (now when absent). The state is computed on the server by the BR-008 rule so that the screen and the clinician brief cannot disagree (UD-30); an empty section is NOT_RECORDED, never \"none\". A section with a negative and a present statement is CONFLICTING and lists both. A future `asOf` is a 400. The response is `Cache-Control: no-store` and carries no ETag.",
+        "x-required-permissions": [
+          "CLINICAL_READ"
+        ],
+        "parameters": [
+          {
+            "name": "practiceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "recordId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/AsOf"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful outcome; no automatic review or publication.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistorySummary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem404"
+          },
+          "429": {
+            "$ref": "#/components/responses/Problem429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Problem503"
           }
         }
       }
@@ -9021,12 +9112,7 @@
             "format": "uuid"
           },
           "sourceType": {
-            "type": "string",
-            "enum": [
-              "PATIENT_REPORTED",
-              "PRACTITIONER_OBSERVED",
-              "DOCUMENT_REPORTED"
-            ]
+            "$ref": "#/components/schemas/SourceType"
           },
           "eventDate": {
             "$ref": "#/components/schemas/EventDate"
@@ -9052,6 +9138,39 @@
           "supersedesId": {
             "type": "string",
             "format": "uuid"
+          },
+          "reference": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "description": "Human identifier of the revision, for example SRC-A-007-v2."
+          },
+          "kind": {
+            "$ref": "#/components/schemas/SourceKind"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500,
+            "description": "Plain-text title of the evidence item, shown as written."
+          },
+          "excerpt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 5000,
+            "description": "The dated text stored with this immutable revision. Plain text: a client never renders it as markup."
+          },
+          "correctionReason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "description": "Reason recorded when this revision supersedes another; absent on an original."
+          },
+          "supersedesReference": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "description": "Human identifier of the superseded revision, present with `supersedesId`."
           }
         },
         "required": [
@@ -9140,21 +9259,10 @@
             "format": "uuid"
           },
           "category": {
-            "type": "string",
-            "enum": [
-              "HISTORY",
-              "ALLERGY",
-              "REPORTED_TREATMENT"
-            ]
+            "$ref": "#/components/schemas/AssertionCategory"
           },
           "assertionKind": {
-            "type": "string",
-            "enum": [
-              "PRESENT",
-              "EXPLICITLY_ABSENT",
-              "UNKNOWN",
-              "NOT_ASKED"
-            ]
+            "$ref": "#/components/schemas/AssertionKind"
           },
           "text": {
             "type": "string",
@@ -9165,12 +9273,7 @@
             "$ref": "#/components/schemas/EventDate"
           },
           "sourceType": {
-            "type": "string",
-            "enum": [
-              "PATIENT_REPORTED",
-              "PRACTITIONER_OBSERVED",
-              "DOCUMENT_REPORTED"
-            ]
+            "$ref": "#/components/schemas/SourceType"
           },
           "correctionReason": {
             "type": "string",
@@ -9180,6 +9283,33 @@
           "sourceRevisionId": {
             "type": "string",
             "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Server-provided recording instant. It decides which statements an `asOf` view contains."
+          },
+          "authorLabel": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "sourceReference": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "description": "Human identifier of the linked source revision."
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "supersedesId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceKind": {
+            "$ref": "#/components/schemas/SourceKind"
           }
         },
         "required": [
@@ -9190,12 +9320,10 @@
           "practiceId",
           "category",
           "assertionKind",
-          "text",
           "eventDate",
-          "sourceType",
-          "correctionReason",
-          "sourceRevisionId"
-        ]
+          "recordedAt"
+        ],
+        "description": "One dated statement. UNKNOWN and NOT_ASKED statements may carry no text, no source type and no source revision: a missing field is never a negative. `correctionReason` appears only on a corrected revision."
       },
       "MeasurementInput": {
         "type": "object",
@@ -11110,9 +11238,7 @@
             "format": "date-time"
           },
           "kind": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200
+            "$ref": "#/components/schemas/SourceKind"
           },
           "sourceRevisionId": {
             "type": "string",
@@ -11125,6 +11251,37 @@
           },
           "corrected": {
             "type": "boolean"
+          },
+          "reference": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "description": "Human identifier of the source revision, for example SRC-A-005."
+          },
+          "sourceType": {
+            "$ref": "#/components/schemas/SourceType"
+          },
+          "authorLabel": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Revision number inside the source lineage; the item is the latest revision recorded at or before the view instant."
+          },
+          "correctionReason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "description": "Present only on a corrected revision."
+          },
+          "excerpt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 5000,
+            "description": "The dated text stored with this revision, as written (plain text, never markup). Present for items that carry text; the same revision is opened in full by getSourceRevision."
           }
         },
         "required": [
@@ -11908,6 +12065,112 @@
             "description": "Monotonic generation of the synthetic demonstration fixture in the local demo package; incremented by each completed reset (UD-56 E1). Clients compare the generation observed at entry to detect a reset."
           }
         }
+      },
+      "SourceType": {
+        "type": "string",
+        "enum": [
+          "PATIENT_REPORTED",
+          "PRACTITIONER_OBSERVED",
+          "DOCUMENT_REPORTED"
+        ],
+        "description": "Origin of a fact (BR-008): what the patient reported, what the practitioner observed or what a document reports. An acknowledged patient report keeps its origin."
+      },
+      "SourceKind": {
+        "type": "string",
+        "enum": [
+          "CONSULTATION_NOTE",
+          "PRACTITIONER_MEASUREMENT",
+          "MANUAL_LAB_PANEL",
+          "UPLOADED_DOCUMENT",
+          "PATIENT_PREPARATION"
+        ],
+        "description": "Kind of an evidence item. Later stories add values with their owning stories (D-61); a client shows an unknown kind with a neutral label."
+      },
+      "AssertionCategory": {
+        "type": "string",
+        "enum": [
+          "HISTORY",
+          "ALLERGY",
+          "REPORTED_TREATMENT"
+        ]
+      },
+      "AssertionKind": {
+        "type": "string",
+        "enum": [
+          "PRESENT",
+          "EXPLICITLY_ABSENT",
+          "UNKNOWN",
+          "NOT_ASKED"
+        ]
+      },
+      "SectionState": {
+        "type": "string",
+        "enum": [
+          "NOT_RECORDED",
+          "UNKNOWN",
+          "NOT_ASKED",
+          "EXPLICITLY_ABSENT",
+          "PRESENT",
+          "CONFLICTING"
+        ],
+        "description": "State of one history section derived on the server by the BR-008 rule: NOT_RECORDED has no statement at all and never means absence; UNKNOWN and NOT_ASKED are the latest of those statements; EXPLICITLY_ABSENT has only dated negatives; PRESENT has at least one present statement and no negative; CONFLICTING has a negative and a present statement together, in either order, and reads as unknown."
+      },
+      "HistorySection": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/AssertionCategory"
+          },
+          "state": {
+            "$ref": "#/components/schemas/SectionState"
+          },
+          "statements": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/Assertion"
+            },
+            "description": "The current statements of the section, oldest first, including UNKNOWN and NOT_ASKED ones. Nothing is merged or removed; a conflict lists both sides."
+          },
+          "truncated": {
+            "type": "boolean",
+            "description": "True when more than 100 current statements exist; the state is still derived from all of them."
+          }
+        },
+        "required": [
+          "category",
+          "state",
+          "statements",
+          "truncated"
+        ]
+      },
+      "HistorySummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "asOf": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "description": "The instant of the view, or null for the current record."
+          },
+          "sections": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+              "$ref": "#/components/schemas/HistorySection"
+            },
+            "description": "Always the three categories, in the order ALLERGY, HISTORY, REPORTED_TREATMENT."
+          }
+        },
+        "required": [
+          "asOf",
+          "sections"
+        ]
       }
     },
     "responses": {

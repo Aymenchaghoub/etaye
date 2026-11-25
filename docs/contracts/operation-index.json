@@ -186,6 +186,12 @@
     "permission": "CLINICAL_WRITE"
   },
   {
+    "operationId": "getHistorySummary",
+    "method": "get",
+    "path": "/practices/{practiceId}/records/{recordId}/history",
+    "permission": "CLINICAL_READ"
+  },
+  {
     "operationId": "correctAssertion",
     "method": "post",
     "path": "/practices/{practiceId}/assertions/{assertionId}/corrections",

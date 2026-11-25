@@ -25,7 +25,15 @@
     {"id": "INP-MALFORMED-ID", "group": "input", "label": "Record identifier that is not a UUID", "expected": "400 INVALID_PARAMETER"},
     {"id": "TX-POOL-REUSE-AFTER-DENIAL", "group": "transaction", "label": "Reads on one reused pooled connection: hidden record, capability refusal, then a local read", "expected": "404 NOT_FOUND, 403 FORBIDDEN, 200; one backend, clean context"},
     {"id": "TX-DEPENDENCY-FAILURE", "group": "transaction", "label": "Record read while the database is unavailable", "expected": "503 SERVICE_UNAVAILABLE"},
-    {"id": "TX-DEPENDENCY-RECOVERY", "group": "transaction", "label": "Record read after the database is available again", "expected": "200"}
+    {"id": "TX-DEPENDENCY-RECOVERY", "group": "transaction", "label": "Record read after the database is available again", "expected": "200"},
+    {"id": "SRC-A-ALLOWED", "group": "source", "label": "Practitioner of practice A lists the sources of a record of practice A and reads one source revision", "expected": "200"},
+    {"id": "SRC-B-CONTROL", "group": "source", "label": "Practitioner of practice B reads a source revision of practice B (positive control: the hidden source exists)", "expected": "200"},
+    {"id": "SRC-HIDDEN-FOREIGN-ID", "group": "source", "label": "Practitioner of practice A requests the source revision of practice B through the practice A route", "expected": "404 NOT_FOUND"},
+    {"id": "SRC-HIDDEN-FOREIGN-PRACTICE", "group": "source", "label": "Practitioner of practice A requests the source revision of practice B through the practice B route", "expected": "404 NOT_FOUND"},
+    {"id": "SRC-HIDDEN-MISSING", "group": "source", "label": "Practitioner of practice A requests an absent source revision", "expected": "404 NOT_FOUND"},
+    {"id": "SRC-HIDDEN-FOREIGN-RECORD", "group": "source", "label": "Practitioner of practice A lists the sources of the record of practice B through the practice A route", "expected": "404 NOT_FOUND"},
+    {"id": "SRC-PAT-STAFF-ROUTE", "group": "source", "label": "Linked patient lists the sources of the own linked record through the staff clinical route", "expected": "404 NOT_FOUND"},
+    {"id": "SRC-ADM-NO-CLINICAL", "group": "source", "label": "Administrator without clinical capability lists the sources of a record of the visible practice", "expected": "403 FORBIDDEN"}
   ],
   "parity": {
     "hidden-record": [
@@ -36,15 +44,22 @@
       "PAT-OWN-RECORD-STAFF-ROUTE",
       "PAT-OTHER-RECORD-STAFF-ROUTE",
       "CUR-CONDITIONAL-HIDDEN"
+    ],
+    "hidden-source": [
+      "SRC-HIDDEN-FOREIGN-ID",
+      "SRC-HIDDEN-FOREIGN-PRACTICE",
+      "SRC-HIDDEN-MISSING",
+      "SRC-HIDDEN-FOREIGN-RECORD",
+      "SRC-PAT-STAFF-ROUTE"
     ]
   },
   "pending": [
     {
       "id": "PENDING-SOURCES",
-      "resource": "Internal record sources and patient source projections",
-      "operations": ["listRecordSources", "getSourceRevision", "readPublishedSources"],
-      "owners": ["3.2", "5.3", "7.4"],
-      "trigger": "First runtime delivery of each operation (D-55): add a positive control and hidden and missing refusal cases with the current record, role and audience checks."
+      "resource": "Patient source projections",
+      "operations": ["readPublishedSources"],
+      "owners": ["7.4"],
+      "trigger": "First runtime delivery of the operation (D-55): add a positive control and hidden and missing refusal cases with the current link, publication and audience checks. The internal source operations were delivered by story 3.2 and are covered by the source cases above."
     },
     {
       "id": "PENDING-TASKS",

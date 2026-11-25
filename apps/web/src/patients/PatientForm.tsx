@@ -7,7 +7,7 @@ import { AttemptKey } from './attempt-key';
 import { clearDraft, type DraftValues, readDraft, rememberConfirmation, takeConfirmation, writeDraft } from './memory';
 import { clockTime, EntryHeader, Notice, patientName, Skeleton } from './patient-ui';
 import { useShell } from './PractitionerShell';
-import { editPatientPath, patientsPath } from './routes';
+import { patientsPath, recordPath } from './routes';
 
 type Phase = 'idle' | 'saving' | 'verifying' | 'confirmed' | 'failed' | 'unconfirmed' | 'limited' | 'restricted' | 'gone';
 type Duplicate = { candidates: SchedulingPatient[]; changed: boolean };
@@ -473,10 +473,10 @@ function IdentityForm({ mode, scope, practiceId, base, patient, expire }: {
         <Notice kind="attention" alert title={duplicate.changed ? 'La liste des dossiers semblables a changé' : 'Un dossier semblable existe dans ce cabinet'}
           actions={<>
             {duplicate.candidates.length === 1 && <a className="etaye-bouton etaye-bouton--secondaire"
-              href={editPatientPath(base, duplicate.candidates[0].recordId)}
+              href={recordPath(base, duplicate.candidates[0].recordId)}
               onClick={(event) => {
                 event.preventDefault();
-                shell.navigate(`${base}/patients/${duplicate.candidates[0].recordId}/modifier`);
+                shell.navigate(recordPath(base, duplicate.candidates[0].recordId));
               }}>Ouvrir le dossier existant</a>}
             <button className="etaye-bouton etaye-bouton--discret" type="button"
               onClick={() => void submit(duplicate.candidates.map((candidate) => candidate.recordId))}>Créer quand même</button>
@@ -489,8 +489,8 @@ function IdentityForm({ mode, scope, practiceId, base, patient, expire }: {
               <li key={candidate.recordId}>
                 <strong>{patientName(candidate)}</strong>
                 <span>{candidateLine(candidate)}</span>
-                {duplicate.candidates.length > 1 && <a href={editPatientPath(base, candidate.recordId)}
-                  onClick={(event) => { event.preventDefault(); shell.navigate(`${base}/patients/${candidate.recordId}/modifier`); }}>
+                {duplicate.candidates.length > 1 && <a href={recordPath(base, candidate.recordId)}
+                  onClick={(event) => { event.preventDefault(); shell.navigate(recordPath(base, candidate.recordId)); }}>
                   Ouvrir ce dossier<span className="etaye-vh"> de {patientName(candidate)}</span>
                 </a>}
               </li>

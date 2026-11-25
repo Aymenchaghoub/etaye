@@ -1,15 +1,16 @@
 import type { ReactNode } from 'react';
 import { FocusedHeading } from '../auth/AuthComponents';
 
-export type NoticeKind = 'attention' | 'critique' | 'info';
+/** 'neutre' is the plain banner of the reference: an outlined note with no accent, for a statement that is not a warning. */
+export type NoticeKind = 'attention' | 'critique' | 'info' | 'neutre';
 
-const icons: Record<NoticeKind, string> = { attention: 'alerte', critique: 'alerte', info: 'info' };
+const icons: Record<NoticeKind, string> = { attention: 'alerte', critique: 'alerte', info: 'info', neutre: 'info' };
 
 export function Notice({ kind, title, children, actions, alert = false, icon }: {
   kind: NoticeKind; title: string; children?: ReactNode; actions?: ReactNode; alert?: boolean; icon?: string;
 }) {
   return (
-    <div className={`etaye-bandeau etaye-bandeau--${kind}`} role={alert ? 'alert' : 'status'}>
+    <div className={kind === 'neutre' ? 'etaye-bandeau' : `etaye-bandeau etaye-bandeau--${kind}`} role={alert ? 'alert' : 'status'}>
       <span aria-hidden="true" className={`etaye-icone etaye-icone--18 etaye-icone--${icon ?? icons[kind]}`} />
       <div>
         <div className="etaye-bandeau__titre">{title}</div>

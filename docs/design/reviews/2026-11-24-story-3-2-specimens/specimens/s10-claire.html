@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html data-theme="clair" lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>S-10 · Rubriques discordantes · Étaye</title>
+<link href="../../../../../design/offline-reference/site/tokens/tokens.css" rel="stylesheet"/>
+<link href="../../../../../design/offline-reference/site/css/etaye.css" rel="stylesheet"/>
+<link href="../../../../../design/offline-reference/site/css/review-corrections.css" rel="stylesheet"/>
+<style>
+body{margin:0;background:var(--fond);}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+.etaye-root h1[tabindex="-1"]:focus,.etaye-root h1[tabindex="-1"]:focus-visible{outline:none;}
+.spec-date{display:flex;flex-wrap:wrap;gap:var(--espace-3);align-items:end;}
+.spec-date .etaye-champ{width:auto;}
+.spec-date .j,.spec-date .m,.spec-date .h,.spec-date .mi{width:72px;}
+.spec-date .a{width:104px;}
+.etaye-filtres .spec-date .etaye-champ{min-width:0;}
+.spec-date .etaye-champ__libelle{font-weight:400;color:var(--encre-2);font-size:13px;}
+.etaye-bandeau .etaye-bandeau__actions{flex-wrap:wrap;}
+.spec-allergies--neutre{background:transparent;box-shadow:inset 0 0 0 1px var(--filet);}
+.spec-allergies--neutre .etaye-allergies__titre{color:var(--encre-2);}
+.spec-allergies--neutre .etaye-allergies__liste{font-weight:400;display:grid;gap:2px;}
+.spec-prov{font-size:12px;line-height:18px;margin-top:2px;}
+.spec-src{margin-top:var(--espace-1);}
+.spec-srcbody{display:grid;gap:var(--espace-2);margin-top:var(--espace-2);padding:var(--espace-3);border:var(--trait-filet) solid var(--filet);background:var(--surface);}
+.spec-srcbody[hidden]{display:none;}
+.spec-srcbody{font:400 14px/20px var(--font-texte);}
+.etaye-chrono__corps{min-width:0;overflow-wrap:anywhere;}
+.etaye-source-texte,.etaye-diff__corps,.etaye-controle li>div{overflow-wrap:anywhere;}
+.spec-sep{margin:var(--espace-4) 0 var(--espace-1);}
+.spec-grid{display:grid;gap:var(--espace-3);}
+.spec-voc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--espace-4);align-items:start;}
+.spec-voc .etaye-allergies{max-width:420px;}
+@media (max-width:760px){.spec-voc{grid-template-columns:minmax(0,1fr);}}
+.spec-t{display:block;}
+@media (max-width:760px){
+.etaye-chrono__item{grid-template-columns:16px minmax(0,1fr);column-gap:var(--espace-2);}
+.etaye-chrono__rail{grid-column:1;grid-row:1 / span 2;}
+.etaye-chrono__date{grid-column:2;grid-row:1;text-align:left;padding:var(--espace-3) 0 0;}
+.etaye-chrono__corps{grid-column:2;grid-row:2;padding-top:var(--espace-1);}
+.spec-t{display:inline;margin-left:var(--espace-2);}
+}
+</style>
+</head>
+<body class="etaye-root">
+<div class="etaye-root etaye-app"><header class="etaye-top"><button aria-expanded="false" aria-label="Ouvrir le menu" class="etaye-fermer etaye-top__menu" data-menu="true" type="button"><span aria-hidden="true" class="etaye-icone etaye-icone--18 etaye-icone--menu"></span></button><a class="etaye-top__logo" href="s07-liste.html"><img alt="Étaye" class="etaye-logo-c" src="../../../../../design/offline-reference/site/logos/etaye-logo.svg" style="height:22px"/><img alt="Étaye" class="etaye-logo-s" src="../../../../../design/offline-reference/site/logos/etaye-logo-sombre.svg" style="height:22px"/></a><div class="etaye-contexte"><span aria-hidden="true" class="etaye-icone etaye-icone--18 etaye-icone--cabinet"></span><span><span class="etaye-contexte__cabinet">Cabinet des Tilleuls</span> <span class="etaye-contexte__role">Praticienne · Dr Nora Lefebvre</span></span></div><div class="etaye-top__droite"><span class="etaye-demo">Démonstration — personnes et données fictives</span><span class="etaye-compte__nom">Dr Nora Lefebvre</span><button class="etaye-bouton etaye-bouton--discret" type="button">Se déconnecter</button></div></header><nav aria-label="Navigation principale" class="etaye-nav"><ul class="etaye-nav__liste"><li><a aria-current="page" class="etaye-nav__rangee" href="s07-liste.html"><span aria-hidden="true" class="etaye-icone etaye-icone--18 etaye-icone--patients"></span>Patients</a></li></ul></nav><main class="etaye-main" id="contenu"><header aria-label="Patient affiché" class="etaye-banniere"><div><div class="etaye-banniere__nom">MARTIN Claire</div><div class="etaye-banniere__traits"><span>Naissance <span class="etaye-num">18/04/1978</span> · <span class="etaye-num">48</span> ans</span></div></div><div class="etaye-allergies" role="note" style="background:var(--attention-fond)"><div class="etaye-allergies__titre" style="color:var(--attention)"><span aria-hidden="true" class="etaye-icone etaye-icone--alerte"></span>Allergies</div><div class="etaye-allergies__liste" style="font-weight:400">Déclarations discordantes à préciser · ne pas conclure à l'absence</div></div></header><div class="etaye-page"><div class="etaye-entete"><div><div class="etaye-entete__fil"><a href="s07-liste.html">Patients</a> › MARTIN Claire</div><h1 data-focus tabindex="-1">Antécédents et allergies</h1><div class="etaye-entete__meta">Chaque déclaration garde sa date, son auteur et son origine</div></div></div><nav aria-label="Sections" class="etaye-onglets"><a href="s09-claire.html">Chronologie</a><a aria-current="page" href="s10-claire.html">Antécédents et allergies</a></nav><div class="etaye-pile" style="max-width:880px"><section aria-labelledby="h-all" class="etaye-panneau"><div class="etaye-panneau__corps etaye-pile" style="gap:var(--espace-2)"><div class="etaye-ligne" style="justify-content:space-between"><h2 class="ui-section" id="h-all" style="margin:0">Allergies</h2><span class="etaye-etat etaye-etat--discordant">Déclarations discordantes</span></div><p class="etaye-2" style="margin:0;font-size:14px">Rubrique à préciser : deux déclarations datées se contredisent · ne pas conclure à l'absence d'allergie.</p><div class="etaye-bandeau etaye-bandeau--attention" role="note"><span aria-hidden="true" class="etaye-icone etaye-icone--18 etaye-icone--alerte"></span><div><div class="etaye-bandeau__titre">Informations à vérifier</div><div>Deux déclarations datées se contredisent. Aucune n'est supprimée ; rien n'est conclu automatiquement.</div></div><div class="etaye-bandeau__actions"><a class="etaye-bouton etaye-bouton--secondaire" href="i27-examiner.html">Examiner les sources</a></div></div><ul class="etaye-controle"><li style="grid-template-columns:24px minmax(0,1fr)"><a aria-label="Source 1 : SRC-A-001" class="etaye-repere etaye-repere--seul" data-marker="src-1" href="#src-1" id="m-1">1</a><div><strong>14/09/2026 · Note de consultation</strong><div class="doc-corps" style="font-size:15px;line-height:24px;margin:4px 0;overflow-wrap:anywhere">« Aucune allergie connue, selon la déclaration recueillie ce jour. »</div><div class="etaye-ligne"><span class="etaye-etat etaye-etat--negatif">Absence déclarée le 14/09/2026</span><span class="etaye-3" style="font-size:12px">Dr Nora Lefebvre · Déclaration de la patiente · SRC-A-001</span></div><div class="spec-src" id="src-1"><button aria-controls="srcr-1" aria-expanded="false" class="etaye-bouton etaye-bouton--discret" data-closed="Afficher la source" data-disclosure data-open="Masquer la source" type="button">Afficher la source</button><div class="spec-srcbody" id="srcr-1" role="region" aria-label="Source SRC-A-001" hidden><div class="etaye-source-tete"><div class="etaye-apercu__ref">SRC-A-001 · version 1 · section:allergies</div><div class="ui-section">Note de consultation</div><div class="etaye-2" style="font-size:14px">Survenu le <span class="etaye-num">14/09/2026 09:30</span> · enregistré le <span class="etaye-num">14/09/2026 09:45</span> · Dr Nora Lefebvre</div><div class="etaye-ligne"><span class="etaye-etat etaye-etat--negatif">Absence déclarée le 14/09/2026</span> <span class="etaye-3" style="font-size:12px">Déclaration de la patiente</span></div></div><div class="etaye-source-texte">Aucune allergie connue, selon la déclaration recueillie ce jour.</div><div><a class="etaye-bouton etaye-bouton--discret" data-back="m-1" href="#m-1">Revenir à l'élément</a></div></div></div></div></li><li style="grid-template-columns:24px minmax(0,1fr)"><a aria-label="Source 2 : SRC-A-005" class="etaye-repere etaye-repere--seul" data-marker="src-2" href="#src-2" id="m-2">2</a><div><strong>02/11/2026 · Préparation de visite</strong><div class="doc-corps" style="font-size:15px;line-height:24px;margin:4px 0;overflow-wrap:anywhere">« Je me souviens d’une réaction à la pénicilline dans ma jeunesse. Je ne sais plus laquelle. »</div><div class="etaye-ligne"><span class="etaye-etat etaye-etat--declare">Déclaré par la patiente · non confirmé</span><span class="etaye-3" style="font-size:12px">Claire Martin (patiente) · Déclaration de la patiente · SRC-A-005</span></div><div class="spec-src" id="src-2"><button aria-controls="srcr-2" aria-expanded="false" class="etaye-bouton etaye-bouton--discret" data-closed="Afficher la source" data-disclosure data-open="Masquer la source" type="button">Afficher la source</button><div class="spec-srcbody" id="srcr-2" role="region" aria-label="Source SRC-A-005" hidden><div class="etaye-source-tete"><div class="etaye-apercu__ref">SRC-A-005 · version 1 · PREP-A-001:allergies</div><div class="ui-section">Préparation de visite</div><div class="etaye-2" style="font-size:14px">Survenu le <span class="etaye-num">02/11/2026 09:10</span> · enregistré le <span class="etaye-num">02/11/2026 09:10</span> · Claire Martin (patiente)</div><div class="etaye-ligne"><span class="etaye-etat etaye-etat--declare">Déclaré par la patiente · non confirmé</span> <span class="etaye-3" style="font-size:12px">Déclaration de la patiente</span></div></div><div class="etaye-source-texte">Je me souviens d’une réaction à la pénicilline dans ma jeunesse. Je ne sais plus laquelle.</div><div><a class="etaye-bouton etaye-bouton--discret" data-back="m-2" href="#m-2">Revenir à l'élément</a></div></div></div></div></li></ul></div></section><section aria-labelledby="h-ant" class="etaye-panneau"><div class="etaye-panneau__corps etaye-pile" style="gap:var(--espace-2)"><div class="etaye-ligne" style="justify-content:space-between"><h2 class="ui-section" id="h-ant" style="margin:0">Antécédents</h2><span class="etaye-etat etaye-etat--manquant">Non renseigné</span></div><p class="etaye-2" style="margin:0;font-size:14px">Aucune source au dossier · ne signifie pas absence d'antécédent.</p></div></section><section aria-labelledby="h-trt" class="etaye-panneau"><div class="etaye-panneau__corps etaye-pile" style="gap:var(--espace-2)"><div class="etaye-ligne" style="justify-content:space-between"><h2 class="ui-section" id="h-trt" style="margin:0">Traitements déclarés</h2><span class="etaye-etat etaye-etat--manquant">Inconnu · à préciser</span></div><p class="etaye-2" style="margin:0;font-size:14px">Marqué inconnu au dossier. Ne pas écrire « aucun traitement ».</p></div></section></div></div></main></div>
+<script>
+(function(){
+  try{var t=new URLSearchParams(location.search).get('theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}
+  var first=document.querySelector('[data-focus]');if(first)first.focus({preventScroll:true});
+  document.querySelectorAll('[data-disclosure]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var r=document.getElementById(b.getAttribute('aria-controls'));
+      var open=b.getAttribute('aria-expanded')==='true';
+      b.setAttribute('aria-expanded',String(!open));
+      r.hidden=open;
+      b.textContent=open?b.getAttribute('data-closed'):b.getAttribute('data-open');
+    });
+  });
+  document.querySelectorAll('a[data-marker]').forEach(function(a){
+    a.addEventListener('click',function(e){
+      e.preventDefault();
+      var w=document.getElementById(a.getAttribute('data-marker'));
+      var b=w.querySelector('[data-disclosure]');
+      if(b.getAttribute('aria-expanded')!=='true')b.click();
+      b.focus();
+    });
+  });
+  document.querySelectorAll('a[data-back]').forEach(function(a){
+    a.addEventListener('click',function(e){e.preventDefault();var m=document.getElementById(a.getAttribute('data-back'));if(m)m.focus();});
+  });
+  var b=document.querySelector('[data-menu]'),n=document.querySelector('.etaye-nav');
+  if(!b||!n)return;
+  function close(returnFocus){n.removeAttribute('data-open');b.setAttribute('aria-expanded','false');b.setAttribute('aria-label','Ouvrir le menu');if(returnFocus)b.focus();}
+  function open(){n.setAttribute('data-open','true');b.setAttribute('aria-expanded','true');b.setAttribute('aria-label','Fermer le menu');var f=n.querySelector('a');if(f)f.focus();}
+  b.addEventListener('click',function(){n.getAttribute('data-open')==='true'?close(true):open();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&n.getAttribute('data-open')==='true')close(true);});
+  n.addEventListener('click',function(e){if(e.target.closest('a'))close(false);});
+  window.matchMedia('(min-width:761px)').addEventListener('change',function(e){if(e.matches)close(false);});
+  try{if(new URLSearchParams(location.search).get('menu')==='ouvert'&&getComputedStyle(b).display!=='none')open();}catch(e){}
+})();
+</script>
+</body>
+</html>

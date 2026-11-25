@@ -8,7 +8,7 @@ Status: Reviewed planning coverage, not implementation or design completion.2026
 | [FR-002](planning-artifacts/prd/prd.md#fr-002--practice-isolation) | BR-001–004 | J-01 | S-05, S-36 | Practice, Membership, PortalLink | getSession, listAuthorizedPractices, listOwnPortalLinks | 1.3, 1.4, 10.1 | AT-003, AT-004, AT-038 |
 | [FR-003](planning-artifacts/prd/prd.md#fr-003--team-administration) | BR-002–005 | J-07 | S-31, S-32 | Membership, Invitation | listMemberships, editMembershipCapabilities, suspendMembership | 2.1, 2.2 | AT-005, AT-006 |
 | [FR-004](planning-artifacts/prd/prd.md#fr-004--patient-identity) | BR-004 | J-02, J-03 | S-03, S-07, S-08 | Patient, PatientRecord, PortalLink | searchPatients, createPatient, editPatient, searchSchedulingPatients, registerSchedulingPatient | 1.1, 3.1, 4.2 | AT-001, AT-009, AT-015-D/E |
-| [FR-005](planning-artifacts/prd/prd.md#fr-005--longitudinal-record) | BR-008 | J-02 | S-07, S-09, S-10 | ClinicalAssertion, SourceRevision | getTimeline, appendAssertion, correctAssertion | 3.1, 3.2 | AT-009, AT-010 |
+| [FR-005](planning-artifacts/prd/prd.md#fr-005--longitudinal-record) | BR-008 | J-02 | S-07, S-09, S-10 | ClinicalAssertion, SourceRevision | getTimeline, listRecordSources, getSourceRevision, listAssertions, section-state read (3.2); appendAssertion, correctAssertion (increment 2, D-60) | 3.1, 3.2 | AT-009, AT-010 |
 | [FR-006](planning-artifacts/prd/prd.md#fr-006--measurements) | BR-008–009 | J-02 | S-11 | Measurement, SourceRevision | listMeasurements, appendMeasurement, correctMeasurement | 3.3 | AT-011 |
 | [FR-007](planning-artifacts/prd/prd.md#fr-007--laboratory-results) | BR-009 | J-02 | S-12 | LabResult, SourceRevision | listLabResults, appendLabResult, correctLabResult | 3.4 | AT-012 |
 | [FR-008](planning-artifacts/prd/prd.md#fr-008--documents-and-sources) | BR-010 | J-02 | S-09, S-13, S-30 | RecordDocument, SourceRevision | uploadRecordDocument, getSourceRevision, downloadRecordDocument | 3.5, 5.3 | AT-013, AT-021 |
@@ -38,7 +38,7 @@ Status: Reviewed planning coverage, not implementation or design completion.2026
 | [2.3](planning-artifacts/epics/epic-2.md) | FR-018, FR-009 | BR-002, BR-006 | J-07 | S-33 | I-24 | AT-007-A/B/C |
 | [2.4](planning-artifacts/epics/epic-2.md) | FR-018 | BR-002, BR-017 | J-07 | S-34, S-35 | I-25 | AT-008-A/B/C |
 | [3.1](planning-artifacts/epics/epic-3.md) | FR-004, FR-005 | BR-004 | J-02 | S-07, S-08 | I-04 | AT-009-A/B/C |
-| [3.2](planning-artifacts/epics/epic-3.md) | FR-005 | BR-008 | J-02 | S-09, S-10 | I-05 | AT-010-A/B/C |
+| [3.2](planning-artifacts/epics/epic-3.md) | FR-005 | BR-008 | J-02 | S-09, S-10 | I-27 (read subset); I-05 deferred (D-60) | AT-010-A/B/C |
 | [3.3](planning-artifacts/epics/epic-3.md) | FR-006 | BR-008–009 | J-02 | S-11 | I-06 | AT-011-A/B/C |
 | [3.4](planning-artifacts/epics/epic-3.md) | FR-007 | BR-009 | J-02 | S-12 | I-07 | AT-012-A/B/C |
 | [3.5](planning-artifacts/epics/epic-3.md) | FR-008 | BR-010 | J-02 | S-13 | I-08, I-09 | AT-013-A/B/C |
@@ -135,3 +135,29 @@ UD-63 allocates the patient identity work between stories 3.1 and 4.2 and record
 | Portal-status column and filter, local record identifier | Deferred (D-57) | Not applicable in increment 1 |
 | "Nom d'usage" and identity provenance | Deferred (D-58) | Not applicable in increment 1 |
 | Fuzzy duplicate matching | Deferred (D-59) | Not applicable in increment 1 |
+
+## Story 3.2 scope allocation
+
+UD-67 makes story 3.2 read-only and records what the build deliberately leaves out. [Epic 3](planning-artifacts/epics/epic-3.md#story-32-explore-chronology-and-explicit-assertions) · [Context packet](implementation-artifacts/story-3-2-context-packet.md#12-arbitration-outcome-ud-67) · [Deferred work D-60 to D-63](planning-artifacts/deferred-work.md)
+
+| Item | Delivered by | Acceptance proof |
+|---|---|---|
+| `getTimeline`, `listRecordSources`, `getSourceRevision`, `listAssertions`, the section-state read, the UD-32 `asOf` view, S-09, S-10, I-27 read subset | Story 3.2 | AT-010-A/B/C (CORE evidence for S-09 and S-10) |
+| Source cases of the story 1.4 isolation matrix | Story 3.2 | D-55, `api-isolation-matrix` |
+| `appendAssertion`, `correctAssertion`, I-05 on S-10, I-27 human disposition, capability projection | Deferred (D-60, increment 2) | Not applicable in increment 1 |
+| Cross-module timeline events (publications, validations, briefs, appointments, tasks, reports) | Owning stories | D-61 |
+| Read audit of clinical record views | Deferred (D-62) | Not applicable in increment 1 |
+| Identity history in the as-of view | Deferred (D-63) | Not applicable in increment 1 |
+
+## Story 3.2 record evidence verification
+
+Executed evidence for the delivered read side. [Implementation record](implementation-artifacts/story-3-2-implementation-record.md) · [Running-UI review](design/reviews/2026-11-24-story-3-2-runtime.md) (visual approval pending Aymen's decision).
+
+| Criterion | Executed evidence | Where |
+|---|---|---|
+| AT-010-A dated history, allergies, reported treatments, source types, `asOf` without later revisions | Real HTTP on PostgreSQL over the seeded fixture; real-stack browser spec | `RecordEvidenceFixtureHttpTest`, `RecordEvidenceHttpTest`, `apps/web/e2e/record.spec.ts` |
+| AT-010-B unknown or not asked, never absence; conflicting reports visible | The BR-008 section state as one pure rule, exhaustive test against an independent oracle; fixture and browser cases | `SectionStateRuleTest`, `RecordEvidenceFixtureHttpTest`, `apps/web/tests/record.spec.ts` |
+| AT-010-C long content, keyboard, loading and failure | Smoke on every state with axe-core, overflow and clipping measured on rendered boxes; opened side-by-side captures | `apps/web/tests/record.spec.ts`, [running-UI review](design/reviews/2026-11-24-story-3-2-runtime.md) |
+| D-55 source cases in the isolation matrix | Eight measured cases and the `hidden-source` parity group | `ResourceIsolationMatrixHttpTest`, `apps/api/src/test/resources/isolation/matrix-cases.json` |
+| D-54 reset restores the evidence | An added revision does not survive a reset; seeded rows and counts are restored; V8 to V10 upgrade of an existing demonstration database | `DemoHttpTest`, `RecordEvidenceMigrationTest` |
+| Read-only runtime role, immutability, row-level security | Catalog verification of privileges and RLS flags; owner updates and deletes rejected | `PracticeIsolationTest`, `RecordEvidenceHttpTest` |

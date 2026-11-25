@@ -421,6 +421,7 @@ Disable duplicate submits while pending, keep a stable idempotency key, and do n
 - **Loading/error/duplicate behavior:** shared contract; show safe processing state and exact failure without erasing entered information. Invalid input has field error; permission denial removes protected content. Ambiguous response checks operation outcome.
 - **Closing/input/focus/mobile:** shared contract applies fully; preserve safe entered work on validation/network failure, require explicit discard for dirty work, restore trigger focus. This long action becomes a full-width mobile page when content does not fit.
 - **Acceptance:** keyboard completion and error recovery work; result follows the exact allowed lifecycle, no duplicate side effect, no premature visibility. Capture opened desktop/tablet/mobile review evidence under I-27.
+- **Story 3.2 read subset (UD-67, UD-68):** only “Examiner les sources” exists. It opens the two sides of a conflict next to each other, oldest first, each with its in-place source, the note that nothing is merged or resolved, and “Retour aux antécédents et allergies”, which restores focus to the trigger. “Conserver à vérifier”, the human disposition and its toast are deferred to increment 2 (D-60).
 
 <a id="i-28"></a>
 ## I-28 — Authorized download outcome

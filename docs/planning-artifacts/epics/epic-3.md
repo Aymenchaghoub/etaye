@@ -30,9 +30,9 @@ As a practitioner or an authorized scheduler, I want to find and register practi
 As a practitioner, I want to explore a patient's chronology, history, allergies and reported treatments with explicit assertion states so that missing information is never mistaken for a normal finding.
 
 - Requirements: FR-005. Rules: BR-008. Journey: J-02.
-- Design: S-09, S-10; interactions I-05. Acceptance test design: AT-010.
+- Design: S-09, S-10; interactions I-27 (read subset); I-05 on S-10 is deferred ([D-60](../deferred-work.md)). Acceptance test design: AT-010.
 - Dependencies: Story 3.1 (see [roadmap](../roadmap.md)). Gates: Aymen's development authorization and the core design families (UD-16).
-- Delivery: Increment 1, Red-thread slice (web).
+- Delivery: Increment 1, Red-thread slice (web). Scope decisions of 2026-11-24 ([UD-67](../decisions-assumptions.md), [context packet](../../implementation-artifacts/story-3-2-context-packet.md#12-arbitration-outcome-ud-67)): this story is read-only. It delivers `getTimeline`, `listRecordSources`, `getSourceRevision`, `listAssertions` and a new section-state read over evidence tables seeded by migration, the derived section states of BR-008 computed on the server, the UD-32 `asOf` view, and S-09, S-10 and the read subset of I-27 with their loading, failure, empty, filtered and long-content states. Assertion entry and correction, I-05 on S-10, the human disposition of I-27 and the capability projection move to increment 2 ([D-60](../deferred-work.md)); other timeline contributions stay with their owning stories ([D-61](../deferred-work.md)); there is no read audit ([D-62](../deferred-work.md)) and no identity history in the as-of view ([D-63](../deferred-work.md)). These decisions are not a design approval and not a development authorization.
 - Read before refinement: [PRD](../prd/prd.md), [rules](../business-rules.md), [access](../access-matrix.md), [architecture](../architecture/ARCHITECTURE-SPINE.md), [data](../data-model.md), [contracts](../../contracts/openapi.yaml), [screen catalog](../../design/screen-catalog.md), [test strategy](../../test-artifacts/test-strategy.md).
 - Assumptions: apply relevant A-01–A-12 from the decision register; never treat them as verified facts. Record any changed source/version and resulting AC change in the future story.
 

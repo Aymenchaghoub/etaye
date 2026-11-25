@@ -221,6 +221,7 @@ Every row inherits these checks; the local acceptance criterion adds the product
 | Figma | Required: new S-09 journey frame and relevant state variants; foundations/component source refs per SP-FIGMA |
 | Functional acceptance | **AC-S09-F:** An event’s occurrence date and recording date can be distinguished; missing information is not rendered as “none”. Also satisfy SP-SECURITY and the applicable business-rule guards |
 | Visual acceptance | **AC-S09-V:** Chronology remains the main organizing structure at desktop and mobile sizes; source references are keyboard readable. Also satisfy SP-A11Y and matching-viewport visual review |
+| Story 3.2 states (UD-67, UD-68) | Read-only: the identity banner carries the derived allergy state (the neutral "none" variant is never built); evidence items show occurrence and recording dates, author, origin in words, identifier and a numbered marker; each source opens in place (button with `aria-expanded`, loading and failure states, no popover); loading skeletons never show an unknown label; partial failure (timeline or sections), full failure, forbidden and not found; type and date filters with a reset, the unknown-date group kept under a date filter; thin, empty-at-date and filter-without-result states; the past-instant view with the banner "Vue historique — lecture seule" (DF-17). Below 760 px the date stacks above the event so no date is clipped. Delivered with [implementation record](../implementation-artifacts/story-3-2-implementation-record.md) |
 
 <a id="s-10"></a>
 ## S-10 — History, allergies and reported treatments
@@ -238,6 +239,7 @@ Every row inherits these checks; the local acceptance criterion adds the product
 | Reused components | Information state; structured list; source panel; correction form; visual/behavioral specification in the UX spines |
 | Figma | Required: new S-10 journey frame and relevant state variants; foundations/component source refs per SP-FIGMA |
 | Functional acceptance | **AC-S10-F:** The contradiction shows both dated sources; a missing treatment list is never converted to “aucun traitement”. Also satisfy SP-SECURITY and the applicable business-rule guards |
+| Story 3.2 states (UD-67, UD-68) | Read-only: the three sections in one order (Allergies, Antécédents, Traitements déclarés), each with one wording per derived state (BR-008 section state); dated statements with author, origin and in-place source; the conflict panel "Informations à vérifier" with "Examiner les sources" (I-27 read subset); loading and failure of the sections; the past-instant view. Entering and correcting statements, "Conserver à vérifier" and the S-10 "Ajouter…" states belong to increment 2 (D-60) |
 | Visual acceptance | **AC-S10-V:** Origin/status is conveyed in words and not only colored dots; long notes wrap. Also satisfy SP-A11Y and matching-viewport visual review |
 
 <a id="s-11"></a>

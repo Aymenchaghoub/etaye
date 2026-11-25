@@ -102,7 +102,13 @@
     },
     "3.2": {
       "increment": 1,
-      "deferredParts": []
+      "deferredParts": [
+        {
+          "part": "Entering and correcting assertions (I-05 on S-10, the I-27 human disposition; appendAssertion, correctAssertion)",
+          "increment": 2,
+          "ref": "D-60"
+        }
+      ]
     },
     "3.3": {
       "increment": 1,
@@ -350,7 +356,13 @@
     },
     "S-10": {
       "increment": 1,
-      "parts": []
+      "parts": [
+        {
+          "part": "Assertion entry and correction states (I-05)",
+          "increment": 2,
+          "ref": "D-60"
+        }
+      ]
     },
     "S-11": {
       "increment": 1,
@@ -644,7 +656,13 @@
     },
     "I-27": {
       "increment": 1,
-      "parts": []
+      "parts": [
+        {
+          "part": "Human disposition \"Conserver à vérifier\"",
+          "increment": 2,
+          "ref": "D-60"
+        }
+      ]
     },
     "I-28": {
       "increment": 1,
@@ -797,11 +815,15 @@
       "status": "contract"
     },
     "appendAssertion": {
+      "increment": 2,
+      "status": "contract"
+    },
+    "getHistorySummary": {
       "increment": 1,
       "status": "contract"
     },
     "correctAssertion": {
-      "increment": 1,
+      "increment": 2,
       "status": "contract"
     },
     "listMeasurements": {

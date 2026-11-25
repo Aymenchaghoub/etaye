@@ -153,6 +153,18 @@ class DemoHttpTest {
                 UPDATE public.invitation SET state = 'REVOKED' WHERE id = etaye_demo.fixture_id('INV-TEAM-01');
                 COMMIT;
                 """);
+        // Story 3.2 evidence: an added revision must not survive the reset, and the seeded rows must be restored.
+        ownerExecute("""
+                BEGIN;
+                SELECT set_config('etaye.practice_id', etaye_demo.fixture_id('PRA-A')::text, true);
+                INSERT INTO public.source_revision (practice_id, record_id, lineage_id, revision, reference, kind, label,
+                    source_type, event_precision, recorded_at, author_label)
+                VALUES (etaye_demo.fixture_id('PRA-A'), etaye_demo.fixture_id('R-A-001'), gen_random_uuid(), 1,
+                    'SRC-EXTRA', 'CONSULTATION_NOTE', 'Ajout avant la réinitialisation', 'PRACTITIONER_OBSERVED',
+                    'UNKNOWN', now(), 'Dr Test');
+                COMMIT;
+                """);
+        assertThat(evidenceCount("source_revision")).isEqualTo(11);
         var operatorCsrf = csrf(operator);
         var otherCsrf = csrf(anotherOperator);
         var lateLoginCsrf = csrf(null);
@@ -213,6 +225,11 @@ class DemoHttpTest {
                 assertThat(row.getInt(1)).isEqualTo(2);
             }
         }
+        assertThat(evidenceCount("source_revision")).isEqualTo(10);
+        assertThat(evidenceCount("clinical_assertion")).isEqualTo(4);
+        // The restored rows are exactly the seeded ones: the added revision is gone and no seeded revision is missing.
+        assertThat(evidenceReferences()).containsExactlyInAnyOrder("SRC-A-001", "SRC-A-002", "SRC-A-003", "SRC-A-004", "SRC-A-005",
+                "SRC-A-006", "SRC-A-007-v1", "SRC-A-007-v2", "SRC-A-008", "SRC-B-001");
         assertThat(request(HttpMethod.GET, "/session", nora, null, null).getStatusCode().value()).isEqualTo(401);
         assertThat(request(HttpMethod.GET, "/session", operator, null, null).getStatusCode().value()).isEqualTo(401);
         assertThat(request(HttpMethod.GET, "/session", new Browser(lateCookie, null), null, null)
@@ -293,6 +310,24 @@ class DemoHttpTest {
              var command = connection.createStatement(); var result = command.executeQuery(sql)) {
             assertThat(result.next()).isTrue();
             return result.getString(1);
+        }
+    }
+
+    /** Counts through the superuser so that the oracle sees every practice despite forced row-level security. */
+    private int evidenceCount(String table) throws SQLException {
+        try (var connection = DemoDatabase.adminConnection(); var command = connection.createStatement();
+             var result = command.executeQuery("SELECT count(*) FROM public." + table)) {
+            assertThat(result.next()).isTrue();
+            return result.getInt(1);
+        }
+    }
+
+    private java.util.List<String> evidenceReferences() throws SQLException {
+        try (var connection = DemoDatabase.adminConnection(); var command = connection.createStatement();
+             var result = command.executeQuery("SELECT reference FROM public.source_revision")) {
+            var references = new java.util.ArrayList<String>();
+            while (result.next()) references.add(result.getString(1));
+            return references;
         }
     }
 

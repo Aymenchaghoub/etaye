@@ -209,7 +209,8 @@ test.describe('S-08 identity form', () => {
     await expect(alert).toContainText('MARTIN Claire');
     await expect(alert).toContainText('naissance 18/04/1978 · coordonnées : non renseignées');
     await expect(alert).toContainText('« Créer quand même » confirme qu’il s’agit d’une autre personne que MARTIN Claire.');
-    await expect(page.getByRole('link', { name: 'Ouvrir le dossier existant' })).toHaveAttribute('href', `${base}/patients/${claire.recordId}/modifier`);
+    // Story 3.2 (C17): the existing record opens its chronology, which replaces the 3.1 stopgap to the identity form.
+    await expect(page.getByRole('link', { name: 'Ouvrir le dossier existant' })).toHaveAttribute('href', `${base}/patients/${claire.recordId}`);
     await accessible(page);
 
     await page.getByRole('button', { name: 'Créer quand même' }).click();
