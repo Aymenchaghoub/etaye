@@ -26,6 +26,9 @@ reviews:
     # Story 3.2: the same exclusion for its 26 static specimens and its running-UI comparison sheets.
     - "!docs/design/reviews/2026-11-24-story-3-2-specimens/**"
     - "!docs/design/reviews/2026-11-24-story-3-2-runtime/**"
+    # Story 3.3: the same exclusion for its 13 static specimens and its running-UI comparison sheets.
+    - "!docs/design/reviews/2026-11-25-story-3-3-specimens/**"
+    - "!docs/design/reviews/2026-11-25-story-3-3-runtime/**"
     - "!apps/web/src/api/generated/**"
     - "!pnpm-lock.yaml"
     - "!apps/api/mvnw"
