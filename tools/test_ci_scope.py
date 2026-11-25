@@ -6,7 +6,7 @@ import subprocess
 import tempfile
 import unittest
 from io import StringIO
-from unittest import mock
+from unittest.mock import patch
 from pathlib import Path
 
 import ci_scope
@@ -267,7 +267,7 @@ class GitScenarioTest(unittest.TestCase):
 
     def run_push(self, scope, before):
         with contextlib.chdir(self.repo), contextlib.redirect_stdout(StringIO()) as printed, \
-                mock.patch.dict(os.environ, {"GITHUB_EVENT_PATH": str(self.push_payload(before))}):
+                patch.dict(os.environ, {"GITHUB_EVENT_PATH": str(self.push_payload(before))}):
             output = self.repo / "github-output"
             output.write_text("")
             ci_scope.main(["--scope", scope, "--event", "push", "--github-output", str(output)])
