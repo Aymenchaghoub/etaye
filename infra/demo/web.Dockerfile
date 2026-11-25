@@ -1,4 +1,4 @@
-FROM node:26-bookworm-slim AS build
+FROM node:26-bookworm-slim@sha256:0042e17d232a87a2cd485be1da7900fca4d10a4ad11b29e9285da1d2e54798c9 AS build
 WORKDIR /src
 COPY tools/install_corepack.sh /usr/local/bin/install-corepack
 RUN apt-get update && apt-get install -y --no-install-recommends python3 && rm -rf /var/lib/apt/lists/* \
@@ -17,6 +17,6 @@ COPY infra/demo/README.md /demo-guide.txt
 ENV VITE_ETAYE_LOCAL_DEMO=true
 RUN corepack pnpm --filter etaye-web build && cp /demo-guide.txt apps/web/dist/demo-guide.txt
 
-FROM nginx:1.28-alpine
+FROM nginx:1.28-alpine@sha256:a8b39bd9cf0f83869a2162827a0caf6137ddf759d50a171451b335cecc87d236
 COPY infra/demo/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /src/apps/web/dist /usr/share/nginx/html
