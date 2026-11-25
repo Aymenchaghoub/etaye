@@ -4,7 +4,7 @@ Updated: 2026-11-25. Owner: Aymen Chaghoub.
 
 ## README and architecture views refreshed — 2026-11-25
 
-**Phase.** Documentation refresh on the branch `docs/readme-architecture-refresh`, based on verified `origin/main` at `e48f0f8`. Nothing is committed or pushed. Aymen asked to update the README and the Archify diagram if needed.
+**Phase.** Documentation refresh on the branch `docs/readme-architecture-refresh`, based on verified `origin/main` at `e48f0f8`. Aymen asked to update the README and the Archify diagram if needed, then wrote “parfait, commit PR et fusionne”: [PR #70](https://github.com/Aymenchaghoub/etaye/pull/70) is authorized for squash-merge once the required checks pass on the exact head; the authorization covers this pull request only.
 
 **Findings (Verified observation).** (1) The root README listed three stories (10.1, 10.2, 1.2) and omitted the six others merged since (1.1, 1.3, 9.1, 1.4, 3.1, 3.2). (2) The five diagrams said “Nothing here is an implemented runtime”, counted 96 contract operations (100 declared, 23 served) and called Radix and ArchUnit proposals (ADR-013 replaced Radix; ArchUnit runs in API verify). 26 of their 116 cited source ranges had drifted (17 only moved, 9 were edited without changing what they support). (3) `ARCHITECTURE-SPINE.md` is unchanged since the diagram baseline `f05b30b`, so the planned structure itself did not change. (4) A node `tag` shows only in the detail panel and a glyph before a title reads as a bullet, so the status had to go in the node subtitle.
 
@@ -14,7 +14,7 @@ Updated: 2026-11-25. Owner: Aymen Chaghoub.
 
 **Actual verification.** Archify 3.2.0 `finalize` (validate, deliver, strict check, real-browser check) passed for the five candidates and `visual-check` passed with current provenance. I opened the captures of system (light), access (light), documents (light), modules (dark) and delivery (dark), and the exported SVG in the dark scheme. `python3 tools/validate_docs.py` reports `ok: true` with zero errors, the 123 tooling tests pass and `git diff --check` is clean. These checks cover documentation and the diagram artifacts, not application behavior. Not done: the other theme of each capture, the exported SVG in the light scheme, mobile widths of the diagrams and the GitHub Pages deployment (it runs after a merge to `main`).
 
-**Next action.** Aymen reviews the diff. Committing, opening the pull request (`docs/readme-architecture-refresh`, Conventional Commit `docs: ...`) and merging each need his request; the unrelated untracked `infra/demo/orca-paste-*.png` must not be committed. After the merge, check that the Pages workflow republished the site. Story 3.3 phase 0 (D-64, S-11) stays the next story action below.
+**Next action.** Merge PR #70 when its required checks pass on the exact head, then check that the Pages workflow republished the site. The unrelated untracked `infra/demo/orca-paste-*.png` is not committed. Story 3.3 phase 0 (D-64, S-11) stays the next story action below.
 
 ## Story 3.2 merged (PR #68) — 2026-11-25
 
