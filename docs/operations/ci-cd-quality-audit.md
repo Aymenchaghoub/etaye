@@ -343,7 +343,8 @@ Nothing below was changed. Each item gives the current state, the proposal, the 
 3. **SonarQube Cloud Free (section 8).** Runbook, about 15 minutes, all by the owner: sign in at SonarQube Cloud with the GitHub account; create an organization from the personal account; install the SonarQubeCloud GitHub App on this repository only and read the permissions GitHub shows; choose the Free plan (no card, no Team trial); create three projects bound to this repository (`apps/api`, `apps/web`, `tools`) and turn Automatic Analysis off; create a personal token and store it as the Actions secret `SONAR_TOKEN` (and as a Dependabot secret if Dependabot pull requests should be analyzed). Repository side, afterwards and not prepared in this pull request because it cannot be verified without those steps: a workflow that runs `./mvnw -B -ntp verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar` for the API (no third-party action) and the scanner CLI with a verified checksum for the Web and Python projects, importing `jacoco.xml` and `lcov.info`; `sonar.qualitygate.wait=true`; then require the status Sonar reports. The workflow policy of this repository forbids secrets in pull-request workflows, so the Sonar workflow needs an explicit, reviewed exception. Risks: a free plan gives only the read-only "Sonar way" gate; the account is a new third-party processor of public code. Rollback: delete the workflow and the projects. Approval: Aymen.
 4. **Third-party Actions allowlist.** This work adds none. A future dependency-submission or SBOM action from a non-GitHub owner would need an explicit allowlist entry in Settings, Actions, General; prefer GitHub-owned actions (`actions/attest-build-provenance`, `actions/attest-sbom`) when a release target exists.
 5. **Dependabot activation.** The new ecosystems start on the first schedule after merge. Observe the first pull requests; the groups and the PR limit of 3 per ecosystem are the noise controls. Rollback: remove the entry.
-6. **Review policy.** No change proposed: zero mandatory approvals with resolved threads stays right for a solo maintainer. The floors and the pinned-floor test are the second key against a weak-model shortcut.
+6. **Approve the two bounded debt baselines.** Current: the lint gate accepts the 21 violations recorded in `apps/web/eslint-suppressions.json` (D-67) and production compilation excludes the `serial` and `deprecation` lint categories (D-68); AGENTS.md forbids adding suppressions to pass a build, so these are named, bounded exceptions that can only shrink (a pinned limit and a stale-suppression failure enforce it). Proposal: accept them with this pull request. The alternative is to fix the 34 deprecated uses and the recorded violations first, which edits product and test code outside this mission. Rollback: remove the lint step and the exclusions. Approval: Aymen, by merging or by asking for the fixes.
+7. **Review policy.** No change proposed: zero mandatory approvals with resolved threads stays right for a solo maintainer. The floors and the pinned-floor test are the second key against a weak-model shortcut.
 
 ## 12. Deferred, with the reason
 
@@ -388,5 +389,20 @@ Each finding was checked against the code before a disposition. The reviewer als
 | 9 | Low | the token reaches the whole lint step | yes | `zizmor` has its own step with the token |
 | 10 | Low | overlapping tooling (two report parsers, floors in four places, three workflow validators) | yes | accepted: the parsers answer different questions, the floors are the two-key design, the two older validators protect other decisions |
 | 11 | Low | a Hooks violation sits in the lint baseline | yes, but it is a false positive: `useNewAccount` is an async event helper with no Hook call | kept in the baseline and described in D-67 |
+
+### 13.3 CodeRabbit review (manual request, head `6c43878`)
+
+Eight inline findings, each checked against the code.
+
+| # | Where | Finding | Verified | Disposition |
+|---|---|---|---|---|
+| 1 | `apps/api/pom.xml` | the `-serial,-deprecation` exclusions disable categories before `-Werror` | yes | kept as a bounded exception: removing them needs 34 call sites in product and test code edited; recorded as D-68 and in owner decision 6; AGENTS.md now says so |
+| 2 | `eslint-suppressions.json` | the baseline conflicts with the policy against suppressions | yes | the policy sentence now names the two bounded baselines as the only exceptions, and owner decision 6 asks for their approval |
+| 3 | strategy | the command block leaves the shell in `apps/api` | yes | fixed with a subshell |
+| 4 | `check_workflow_policy.py` | a required workflow without `pull_request` passes | yes | fixed with an invariant and a test |
+| 5 | `ci_scope.py` | a push of several commits is compared by its last commit only | yes in general; not reachable on `main` today (squash only, no bypass) | fixed anyway: a push is compared with the `before` revision of its payload and fails closed when it is missing |
+| 6 | `run_package_smoke.sh` | the example exports the project name for one command only | yes | comment and docs fixed with `export` |
+| 7 | `test_assert_changed_line_coverage.py` | no test adds a file inside the diff range | yes | a test with a `-0,0` header and an added file, and a unit case |
+| 8 | `test_coverage_policy.py` | the per-file floor is unpinned and a greedy regex can read a later step | yes | the gate command is read from the parsed workflow step and the per-file options may only tighten; two mutants killed |
 
 An AI reviewer's approval is not evidence; the evidence above is the reproductions, the tests and the mutants.

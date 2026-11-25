@@ -28,7 +28,7 @@ Operational dependencies worth knowing when a required check turns red without a
 Run before opening a pull request (Java 25, Node 26 with Corepack, Docker):
 
 ```bash
-cd apps/api && ./mvnw -B -ntp verify                      # tests, Enforcer, -Werror, coverage floors
+(cd apps/api && ./mvnw -B -ntp verify)                    # tests, Enforcer, -Werror, coverage floors
 corepack pnpm install --frozen-lockfile
 corepack pnpm --filter etaye-web verify                   # lint, SDK drift, types, unit tests and floors
 corepack pnpm --filter etaye-web build && corepack pnpm --filter etaye-web test:smoke
@@ -40,6 +40,7 @@ python3 tools/assert_changed_line_coverage.py jacoco apps/api/target/site/jacoco
   --prefix apps/api/src/main/java/ --include 'apps/api/src/main/java/**/*.java' \
   --base "$(git merge-base origin/main HEAD)" --head HEAD
 # Delivery package, when infrastructure or either application changed
+export COMPOSE_PROJECT_NAME=etaye-demo-ci ETAYE_DEMO_WEB_PORT=4179
 ./infra/demo/start.sh && bash tools/run_package_smoke.sh && bash infra/local/verify-init-roles.sh
 ```
 
