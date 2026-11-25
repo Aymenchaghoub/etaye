@@ -2,22 +2,23 @@
   "schema_version": 1,
   "diagram_type": "architecture",
   "meta": {
-    "title": "Étaye — planned deployment and delivery",
+    "title": "Étaye — deployment and delivery",
     "locale": "en",
-    "output": ".archify/architecture-etaye-native-expo-20261119-112639/delivery/delivery.html",
+    "output": ".archify/architecture-etaye-built-status-20261125-095552/delivery.html",
     "quality_profile": "showcase",
     "repository": {
       "url": "git@github.com:Aymenchaghoub/etaye.git",
-      "revision": "f05b30b527d910872da79bd62f55f68447921961",
+      "revision": "e48f0f8dcdfb3bb6f79fa9156dd15120624e199b",
       "link_mode": "local-only"
-    }
+    },
+    "subtitle": "“Built” and “Partly” mark code on main as of 25 Nov 2026; unmarked nodes are planned."
   },
   "components": [
     {
       "id": "repo",
       "type": "external",
       "label": "GitHub source",
-      "sublabel": "PR branch / exact candidate SHA",
+      "sublabel": "Built · PR branch / candidate SHA",
       "pos": [
         40,
         40
@@ -30,7 +31,7 @@
         {
           "path": "docs/operations/cicd-deployment-strategy.md",
           "line": 3,
-          "end_line": 7
+          "end_line": 15
         },
         {
           "path": "docs/planning-artifacts/decisions-assumptions.md",
@@ -38,13 +39,13 @@
           "end_line": 20
         }
       ],
-      "tag": "Application pipeline planned"
+      "tag": "Required checks on main"
     },
     {
       "id": "ci",
       "type": "backend",
       "label": "Isolated validation",
-      "sublabel": "Build / PostgreSQL / browser tests",
+      "sublabel": "Partly · build, PostgreSQL, smoke",
       "pos": [
         390,
         40
@@ -56,16 +57,21 @@
       "sources": [
         {
           "path": "docs/operations/cicd-deployment-strategy.md",
-          "line": 7,
-          "end_line": 14
+          "line": 19,
+          "end_line": 26
         },
         {
-          "path": "docs/planning-artifacts/roadmap.md",
-          "line": 90,
-          "end_line": 101
+          "path": ".github/workflows/api.yml",
+          "line": 25,
+          "end_line": 40
+        },
+        {
+          "path": ".github/workflows/web.yml",
+          "line": 41,
+          "end_line": 56
         }
       ],
-      "tag": "Real stack · nonempty suites"
+      "tag": "Real-stack replay planned (D-56)"
     },
     {
       "id": "artifacts",
@@ -88,8 +94,8 @@
         },
         {
           "path": "docs/operations/cicd-deployment-strategy.md",
-          "line": 14,
-          "end_line": 15
+          "line": 26,
+          "end_line": 27
         }
       ],
       "tag": "Validate once / no rebuild"
@@ -157,7 +163,7 @@
       "id": "app",
       "type": "backend",
       "label": "Application runtime",
-      "sublabel": "Spring Boot + validated React assets",
+      "sublabel": "Partly · local Compose only",
       "pos": [
         390,
         520
@@ -176,15 +182,20 @@
           "path": "docs/planning-artifacts/architecture/runtime-architecture.md",
           "line": 18,
           "end_line": 24
+        },
+        {
+          "path": "infra/demo/compose.yml",
+          "line": 37,
+          "end_line": 60
         }
       ],
-      "tag": "One process incl. workers"
+      "tag": "Hosting open · Planned: one process incl. workers"
     },
     {
       "id": "pg",
       "type": "database",
       "label": "PostgreSQL",
-      "sublabel": "Managed DB or selected VPS",
+      "sublabel": "Partly · local Compose only",
       "pos": [
         40,
         520
@@ -200,17 +211,17 @@
           "end_line": 15
         },
         {
-          "path": "docs/operations/hosting-cost-assessment.md",
-          "line": 31,
-          "end_line": 33
+          "path": "infra/demo/compose.yml",
+          "line": 4,
+          "end_line": 36
         },
         {
-          "path": "docs/decisions/ADR-003-practice-isolation.md",
-          "line": 12,
-          "end_line": 18
+          "path": "infra/local/init-roles.sh",
+          "line": 3,
+          "end_line": 7
         }
       ],
-      "tag": "Separate migration role"
+      "tag": "Separate migration role · Managed DB or selected VPS"
     },
     {
       "id": "storage",
@@ -255,8 +266,8 @@
         },
         {
           "path": "docs/operations/cicd-deployment-strategy.md",
-          "line": 16,
-          "end_line": 16
+          "line": 28,
+          "end_line": 28
         }
       ],
       "tag": "Smoke exact deployed digest"
@@ -277,8 +288,8 @@
       "sources": [
         {
           "path": "docs/operations/cicd-deployment-strategy.md",
-          "line": 32,
-          "end_line": 34
+          "line": 44,
+          "end_line": 46
         },
         {
           "path": "docs/operations/hosting-cost-assessment.md",
@@ -305,8 +316,8 @@
       "sources": [
         {
           "path": "docs/operations/cicd-deployment-strategy.md",
-          "line": 32,
-          "end_line": 34
+          "line": 44,
+          "end_line": 46
         },
         {
           "path": "docs/decisions/ADR-006-files-pdf-storage.md",
@@ -401,8 +412,9 @@
       "dot": "cyan",
       "title": "Delivery order",
       "items": [
-        "Increment 1 CI: build, meaningful tests, CodeQL, secret scan and reproducible synthetic journey/isolation evidence. This diagram also includes the later release target.",
-        "Promotion pipeline, SBOM/provenance/signing, Sonar projects and rollback rehearsal are deferred to increment 4 / D-29. They are not active application checks today."
+        "Increment 1 CI runs on every pull request: API verify (Testcontainers PostgreSQL, JaCoCo, isolation matrix), Web verify (build, Vitest, Chromium smoke), planning package checks, CodeQL for Java, TypeScript and Python, and dependency review. Scripted real-stack journeys run locally; their CI replay is planned (D-56). This diagram also includes the later release target.",
+        "Promotion pipeline, SBOM/provenance/signing, Sonar projects and rollback rehearsal are deferred to increment 4 / D-29. They are not active application checks today.",
+        "A local Compose package (PostgreSQL with owner, runtime and identity roles, a migration job, the API and an nginx web tier) runs the application on loopback only; it is not a hosting choice."
       ]
     },
     {

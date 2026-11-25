@@ -1,6 +1,6 @@
 # Documentation index
 
-The planning, design and implementation records cover different stages of Étaye. Story 10.1 provides the runnable platform foundation. Story 10.2 adds the generated client and token bridge. See [implementation records](implementation-artifacts/README.md) for the verified scope and [design coverage](design/coverage.csv) for approved surfaces. Development authorization is granted per story.
+The planning, design and implementation records cover different stages of Étaye. Stories 10.1 and 10.2 provide the runnable platform foundation, the generated client and the token bridge; stories 1.1 to 1.4, 3.1, 3.2 and 9.1 add access, patient and record screens and the local demonstration. See [implementation records](implementation-artifacts/README.md) for the verified scope and [design coverage](design/coverage.csv) for approved surfaces. Development authorization is granted per story.
 
 | Authority / purpose | Artifact |
 |---|---|
@@ -13,7 +13,7 @@ The planning, design and implementation records cover different stages of Étaye
 | Terminology and French–English translation | [Glossary](planning-artifacts/glossary.md) |
 | Decisions, assumptions and work outside increment | [Decision register](planning-artifacts/decisions-assumptions.md), [deferred work](planning-artifacts/deferred-work.md) |
 | Cross-module decisions | [Architecture spine](planning-artifacts/architecture/ARCHITECTURE-SPINE.md), [runtime/module design](planning-artifacts/architecture/runtime-architecture.md), [ADRs](decisions/README.md) |
-| Planned architecture diagrams | [Interactive views and source files](architecture-views/README.md) |
+| Architecture diagrams, built and planned | [Interactive views and source files](architecture-views/README.md) |
 | Data ownership and shape | [Data model](planning-artifacts/data-model.md), [data dictionary](planning-artifacts/data-dictionary.md) |
 | Transport contract and validation | [API guide](contracts/README.md), [OpenAPI](contracts/openapi.yaml), [operation index](contracts/operation-index.json) |
 | AI behavior and evaluation | [AI specification](planning-artifacts/ai-specification.md) |
