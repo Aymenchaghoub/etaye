@@ -256,7 +256,7 @@ Verified locally on 2026-11-25 with Java 25, Node 26.13.1, Docker 29.9.3 and Pyt
 | CI-06, CI-07 | `Package verify` (`.github/workflows/package.yml`): role-script verification, a four-image build and start, three real-stack specs (11 tests), report-only image scan on `main` and weekly; base images pinned by digest | role mutant caught; 11 real-stack tests pass in 48 s; scan reports below |
 | CI-08 | Dependabot for npm, Maven, Docker and Docker Compose with groups, a PR limit and a cooldown; the shipped API image (and its jar) is scanned | `dependabot.yml` validates against the SchemaStore schema; activation is observed after merge |
 | CI-10 | `tools/install_corepack.sh` verifies the Corepack tarball digest; `packageManager` carries pnpm's integrity hash; `package.yml`, `web.yml`, `dependency-review.yml` and the web image use them | tampered pnpm hash and wrong Corepack digest both fail |
-| CI-11 | `trace: 'retain-on-failure'` and screenshots on failure in both Playwright configurations; failed-run traces and package logs are uploaded for seven days | a deliberately failing test produced `trace.zip`, a screenshot and `error-context.md` |
+| CI-11 | a screenshot of each failed test; the failed tests of `Web verify` rerun alone with `--trace on` (the verdict stays failed, a passing rerun warns of a flake); the real-stack suite records traces on failure; traces and package logs are uploaded for seven days | a deliberately failing spec failed the run, then reran alone and produced `trace.zip`; recording a trace on every test was tried first and cost 50 s (+35 %) per full Web run, so it was dropped |
 | CI-12 | five workflows that run on push (`api`, `web`, `package`, `documentation`, `codeql`) use `cancel-in-progress` only for pull requests and a concurrency group of their own outside pull requests (concurrency keeps one pending run per group, so a shared group would drop a merge's run when two more arrive); the policy validator forbids an unconditional cancel on a workflow that also runs on push | policy test; it flagged `documentation.yml` and `codeql.yml`, which the first version of this change had missed |
 | CI-13 | version comments on the three `checkout` pins of `codeql.yml` | the policy validator reported them before the fix |
 
@@ -307,7 +307,7 @@ The last row is the confirmed structural defect of CI-02: the old positive lists
 | Package | never built in CI | 55 s to build and start with a warm cache, 48 s for 11 real-stack tests |
 | Image scan (fixable HIGH and CRITICAL) | none | API image 0; web (nginx) 85; Flyway 7 + 79 (OS and bundled drivers); PostgreSQL 2 + 26 (`gosu`); 3 m 24 s here, mostly the Java database download |
 
-CI timings on the final head are in the pull request. [To verify] The new steps add about 12 s of lint and a few seconds of gates to `Web verify`, and about 15 s of linting to `Planning package checks`; the package job is separate and not required.
+Remote timings on head `d30a179` (one run each): `API verify` 149 s, `Web verify` 272 s with the 206 browser tests at 194 s, `Planning package checks` 38 s, `Package verify` 171 s (role script 14 s, image build and start 53 s, real-stack journeys 57 s), CodeQL jobs 55 to 94 s, `Dependency review` 21 s. The lint step takes 10 s and the gates under 1 s. The first remote Web run exposed a cost of this work: recording a trace on every Playwright test made the browser step 194 to 197 s against 121 to 169 s before, so the trace is now recorded by a rerun of the failed tests only.
 
 ### 10.4 Security findings and remaining risk
 

@@ -64,6 +64,7 @@ jobs:
         working-directory: apps/web
         run: pnpm exec playwright install --with-deps chromium
       - name: Run browser smoke tests with stubbed API responses
+        id: smoke
         if: steps.changes.outputs.relevant == 'true'
         working-directory: apps/web
         env:
@@ -89,6 +90,15 @@ jobs:
           name: web-playwright-report
           path: apps/web/playwright-report/smoke.json
           retention-days: 7
+      - name: Rerun the failed browser tests with traces (diagnostics only)
+        # Recording a trace on every test cost about 50 s (35 %) of the suite, so only the failed tests rerun with one.
+        # The job stays failed whatever this step reports: it exists to produce evidence, never to pass a flake.
+        if: failure() && steps.smoke.outcome == 'failure'
+        working-directory: apps/web
+        run: |
+          if pnpm test:smoke --last-failed --trace on --reporter=line; then
+            echo "::warning::The failed browser tests passed when rerun for diagnostics: the original failure is a flake to investigate, not a pass."
+          fi
       - name: Upload Playwright traces of failed tests
         # The stubbed suite uses synthetic data only. A trace holds the DOM, the stubbed requests and the console.
         if: failure() && steps.changes.outputs.relevant == 'true'

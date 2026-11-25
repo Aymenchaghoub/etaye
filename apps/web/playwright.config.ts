@@ -16,8 +16,8 @@ export default defineConfig({
     baseURL,
     browserName: 'chromium',
     headless: true,
-    // Diagnostics for a failed test only; retries stay at 0 so a flake is never hidden.
-    trace: 'retain-on-failure',
+    // A screenshot of a failed test only. Recording a trace on every test cost about 50 s (35 %) of this suite in CI,
+    // so CI reruns the failed tests with `--trace on` instead (see .github/workflows/web.yml). Retries stay at 0.
     screenshot: 'only-on-failure'
   }
 });
