@@ -164,9 +164,17 @@ class AccountAccessHttpTest extends AbstractPostgresTest {
                         "Agenda fictif", "SCHEDULING")));
     }
 
+    /**
+     * The exact context projection: a membership also carries the IANA time zone of its practice (D-64, the default
+     * practice zone of the test schema), a portal link carries none.
+     */
     private static Map<String, String> context(String kind, UUID grant, UUID practice, String name, String role) {
-        return Map.of("kind", kind, "grantId", grant.toString(), "practiceId", practice.toString(),
-                "practiceName", name, "displayRole", role);
+        var context = new java.util.HashMap<>(Map.of("kind", kind, "grantId", grant.toString(), "practiceId", practice.toString(),
+                "practiceName", name, "displayRole", role));
+        if ("MEMBERSHIP".equals(kind)) {
+            context.put("timezone", "Europe/Paris");
+        }
+        return context;
     }
 
     @Test

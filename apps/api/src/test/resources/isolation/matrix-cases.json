@@ -33,7 +33,15 @@
     {"id": "SRC-HIDDEN-MISSING", "group": "source", "label": "Practitioner of practice A requests an absent source revision", "expected": "404 NOT_FOUND"},
     {"id": "SRC-HIDDEN-FOREIGN-RECORD", "group": "source", "label": "Practitioner of practice A lists the sources of the record of practice B through the practice A route", "expected": "404 NOT_FOUND"},
     {"id": "SRC-PAT-STAFF-ROUTE", "group": "source", "label": "Linked patient lists the sources of the own linked record through the staff clinical route", "expected": "404 NOT_FOUND"},
-    {"id": "SRC-ADM-NO-CLINICAL", "group": "source", "label": "Administrator without clinical capability lists the sources of a record of the visible practice", "expected": "403 FORBIDDEN"}
+    {"id": "SRC-ADM-NO-CLINICAL", "group": "source", "label": "Administrator without clinical capability lists the sources of a record of the visible practice", "expected": "403 FORBIDDEN"},
+    {"id": "MEAS-A-ALLOWED", "group": "measurement", "label": "Practitioner of practice A lists the measurements of a record of practice A and reads the lineage of one measurement", "expected": "200"},
+    {"id": "MEAS-B-CONTROL", "group": "measurement", "label": "Practitioner of practice B lists the measurements of a record of practice B and reads the lineage of its measurement (positive control: the hidden measurement exists)", "expected": "200"},
+    {"id": "MEAS-HIDDEN-FOREIGN-ID", "group": "measurement", "label": "Practitioner of practice A lists the measurements of the record of practice B through the practice A route", "expected": "404 NOT_FOUND"},
+    {"id": "MEAS-HIDDEN-FOREIGN-PRACTICE", "group": "measurement", "label": "Practitioner of practice A lists the measurements of the record of practice B through the practice B route", "expected": "404 NOT_FOUND"},
+    {"id": "MEAS-HIDDEN-MISSING", "group": "measurement", "label": "Practitioner of practice A lists the measurements of an absent record of practice A", "expected": "404 NOT_FOUND"},
+    {"id": "MEAS-HIDDEN-FOREIGN-MEASUREMENT", "group": "measurement", "label": "Practitioner of practice A reads the lineage of a measurement of practice B through the practice A route", "expected": "404 NOT_FOUND"},
+    {"id": "MEAS-PAT-STAFF-ROUTE", "group": "measurement", "label": "Linked patient lists the measurements of the own linked record through the staff clinical route", "expected": "404 NOT_FOUND"},
+    {"id": "MEAS-ADM-NO-CLINICAL", "group": "measurement", "label": "Administrator without clinical capability lists the measurements of a record of the visible practice", "expected": "403 FORBIDDEN"}
   ],
   "parity": {
     "hidden-record": [
@@ -51,6 +59,13 @@
       "SRC-HIDDEN-MISSING",
       "SRC-HIDDEN-FOREIGN-RECORD",
       "SRC-PAT-STAFF-ROUTE"
+    ],
+    "hidden-measurement": [
+      "MEAS-HIDDEN-FOREIGN-ID",
+      "MEAS-HIDDEN-FOREIGN-PRACTICE",
+      "MEAS-HIDDEN-MISSING",
+      "MEAS-HIDDEN-FOREIGN-MEASUREMENT",
+      "MEAS-PAT-STAFF-ROUTE"
     ]
   },
   "pending": [

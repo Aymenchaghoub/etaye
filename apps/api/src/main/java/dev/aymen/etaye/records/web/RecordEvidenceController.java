@@ -7,6 +7,8 @@ import dev.aymen.etaye.records.domain.AssertionCategory;
 import dev.aymen.etaye.records.domain.SourceKind;
 import dev.aymen.etaye.records.dto.AssertionPageResponse;
 import dev.aymen.etaye.records.dto.HistorySummaryResponse;
+import dev.aymen.etaye.records.dto.MeasurementPageResponse;
+import dev.aymen.etaye.records.dto.MeasurementRevisionListResponse;
 import dev.aymen.etaye.records.dto.SourcePageResponse;
 import dev.aymen.etaye.records.dto.SourceResponse;
 import dev.aymen.etaye.records.dto.TimelinePageResponse;
@@ -27,7 +29,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * The record evidence reads of story 3.2. The capability is checked against the actor's current membership in the
+ * The record evidence reads of story 3.2 and the measurement reads of story 3.3. The capability is checked against the actor's current membership in the
  * route practice before anything is read; every response is private and no-store, and none carries an ETag.
  */
 @RestController
@@ -104,6 +106,34 @@ public class RecordEvidenceController {
             HttpServletRequest request) {
         practiceSecurityService.requireCapability(request, practiceId, CAPABILITY);
         return noStore(service.history(practiceId, recordId, instant("asOf", asOf)));
+    }
+
+    @GetMapping(value = "/api/v1/practices/{practiceId}/records/{recordId}/measurements", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MeasurementPageResponse> listMeasurements(
+            @PathVariable UUID practiceId,
+            @PathVariable UUID recordId,
+            @RequestParam(value = "cursor", required = false) String cursor,
+            @RequestParam(value = "limit", required = false) Integer limit,
+            @RequestParam(value = "from", required = false) String from,
+            @RequestParam(value = "to", required = false) String to,
+            @RequestParam(value = "asOf", required = false) String asOf,
+            HttpServletRequest request) {
+        AuthenticatedAccount account = practiceSecurityService.requireCapability(request, practiceId, CAPABILITY);
+        // The raw values are read: a bound List<String> turns an empty `concept=` into no filter, which would silently
+        // show every measurement instead of refusing the request.
+        String[] concepts = request.getParameterValues("concept");
+        return noStore(service.measurements(practiceId, account.account().id(), recordId, cursor, limit,
+                instant("from", from), instant("to", to), concepts == null ? null : List.of(concepts), instant("asOf", asOf)));
+    }
+
+    @GetMapping(value = "/api/v1/practices/{practiceId}/measurements/{measurementId}/revisions", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MeasurementRevisionListResponse> listMeasurementRevisions(
+            @PathVariable UUID practiceId,
+            @PathVariable UUID measurementId,
+            @RequestParam(value = "asOf", required = false) String asOf,
+            HttpServletRequest request) {
+        practiceSecurityService.requireCapability(request, practiceId, CAPABILITY);
+        return noStore(service.measurementRevisions(practiceId, measurementId, instant("asOf", asOf)));
     }
 
     private static <T> ResponseEntity<T> noStore(T body) {

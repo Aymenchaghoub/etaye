@@ -377,6 +377,74 @@ class ResourceIsolationMatrixHttpTest {
         IsolationMatrix.observe("SRC-ADM-NO-CLINICAL", refusal.outcome());
     }
 
+    @Test
+    @DisplayName("D-55: the measurement operations follow the same isolation as the record, with a positive control")
+    void measurementsFollowTheRecordIsolation() throws SQLException {
+        Browser nora = login(NORA);
+        Browser elodie = login(ELODIE);
+        // The fixture holds measurements for Claire only; the hidden one is created here in practice B and removed by the reset.
+        ownerExecute("""
+                BEGIN;
+                SELECT set_config('etaye.practice_id', etaye_demo.fixture_id('PRA-B')::text, true);
+                INSERT INTO public.measurement (id, practice_id, record_id, lineage_id, revision, concept, value_decimal, unit,
+                    observed_at, recorded_at, author_label, source_revision_id)
+                VALUES (etaye_demo.fixture_id('MEAS-B-001'), etaye_demo.fixture_id('PRA-B'), etaye_demo.fixture_id('R-B-001'),
+                    etaye_demo.fixture_id('lineage/MEAS-B-001'), 1, 'WEIGHT', 90, 'kg', '2026-10-28 11:00:00+01',
+                    '2026-10-28 11:20:00+01', 'Dr Élodie Morel', etaye_demo.fixture_id('SRC-B-001'));
+                COMMIT;
+                """);
+        String ownMeasurement = ownerValue("SELECT etaye_demo.fixture_id('MEAS-A-003-v2')");
+        String foreignMeasurement = ownerValue("SELECT etaye_demo.fixture_id('MEAS-B-001')");
+
+        Exchange list = get("/api/v1/practices/" + practiceA + "/records/" + recordA + "/measurements", nora, null);
+        Exchange lineage = get("/api/v1/practices/" + practiceA + "/measurements/" + ownMeasurement + "/revisions", nora, null);
+        assertThat(list.status()).isEqualTo(200);
+        assertThat(list.headers().getCacheControl()).contains("no-store");
+        assertThat(((List<?>) list.body().get("items"))).isNotEmpty();
+        assertThat(lineage.status()).isEqualTo(200);
+        assertThat(lineage.headers().getETag()).isNull();
+        IsolationMatrix.observe("MEAS-A-ALLOWED", list.status() == 200 && lineage.status() == 200 ? "200" : list.outcome() + ", " + lineage.outcome());
+
+        // The hidden measurement demonstrably exists: its own practice reads it.
+        Exchange controlList = get("/api/v1/practices/" + practiceB + "/records/" + recordB + "/measurements", elodie, null);
+        Exchange controlLineage = get("/api/v1/practices/" + practiceB + "/measurements/" + foreignMeasurement + "/revisions", elodie, null);
+        assertThat(controlList.status()).isEqualTo(200);
+        assertThat(((List<?>) controlList.body().get("items"))).hasSize(1);
+        assertThat(controlLineage.status()).isEqualTo(200);
+        IsolationMatrix.observe("MEAS-B-CONTROL", controlList.status() == 200 && controlLineage.status() == 200 ? "200" : controlList.outcome() + ", " + controlLineage.outcome());
+
+        Map<String, Exchange> hidden = new java.util.LinkedHashMap<>();
+        hidden.put("MEAS-HIDDEN-FOREIGN-ID", get("/api/v1/practices/" + practiceA + "/records/" + recordB + "/measurements", nora, null));
+        hidden.put("MEAS-HIDDEN-FOREIGN-PRACTICE", get("/api/v1/practices/" + practiceB + "/records/" + recordB + "/measurements", nora, null));
+        hidden.put("MEAS-HIDDEN-MISSING", get("/api/v1/practices/" + practiceA + "/records/" + UUID.randomUUID() + "/measurements", nora, null));
+        hidden.put("MEAS-HIDDEN-FOREIGN-MEASUREMENT", get("/api/v1/practices/" + practiceA + "/measurements/" + foreignMeasurement + "/revisions", nora, null));
+        hidden.put("MEAS-PAT-STAFF-ROUTE", get("/api/v1/practices/" + practiceA + "/records/" + recordA + "/measurements", login(CLAIRE), null));
+        hidden.forEach((id, response) -> {
+            assertThat(response.headers().getContentType()).as(id).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
+            assertThat(response.headers().getETag()).as("%s must carry no validator", id).isNull();
+            // The same existence-hiding header policy as the record refusals: none of these may appear, whatever the value.
+            for (String header : List.of("Location", "Content-Location", "Set-Cookie", "Content-Disposition",
+                    "Last-Modified", "Retry-After", "WWW-Authenticate")) {
+                assertThat(response.headers().containsHeader(header)).as("%s must not carry %s", id, header).isFalse();
+            }
+            Map<String, Object> problem = new java.util.LinkedHashMap<>(response.body());
+            problem.remove("correlationId");
+            assertThat(problem).as(id).isEqualTo(NOT_FOUND);
+            for (String target : List.of(foreignMeasurement, ownMeasurement, recordA, recordB)) {
+                assertThat(response.body().toString()).as(id).doesNotContain(target);
+            }
+            IsolationMatrix.observe(id, response.outcome(), response.fingerprint());
+        });
+        assertThat(hidden.values().stream().map(Exchange::fingerprint).distinct()).hasSize(1);
+
+        Exchange refusal = get("/api/v1/practices/" + practiceA + "/records/" + recordA + "/measurements", login(MILA), null);
+        assertThat(refusal.status()).isEqualTo(403);
+        assertThat(refusal.body()).containsOnlyKeys("type", "title", "status", "code", "detail", "correlationId")
+                .containsEntry("code", "FORBIDDEN");
+        assertThat(refusal.body().toString()).doesNotContain(recordA, practiceA, ownMeasurement);
+        IsolationMatrix.observe("MEAS-ADM-NO-CLINICAL", refusal.outcome());
+    }
+
     private Exchange read(String practiceId, String recordId, Browser browser, String ifNoneMatch) {
         return get("/api/v1/practices/" + practiceId + "/records/" + recordId, browser, ifNoneMatch);
     }
