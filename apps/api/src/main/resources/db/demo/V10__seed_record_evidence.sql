@@ -148,14 +148,26 @@ BEGIN
         ('SRC-A-007-v1', 'SRC-A-007', 1, 'PRACTITIONER_MEASUREMENT', 'Poids 86,4 kg', 'Poids saisi : 86,4 kg.',
             'PRACTITIONER_OBSERVED', '2026-10-20 10:12:00+02'::timestamptz, '2026-10-20 10:13:00+02'::timestamptz,
             'Dr Nora Lefebvre', 'MEAS-A-003:version-1', NULL, NULL),
-        ('SRC-A-007-v2', 'SRC-A-007', 2, 'PRACTITIONER_MEASUREMENT', 'Poids 68,4 kg', 'Poids corrigé : 68,4 kg.',
-            'PRACTITIONER_OBSERVED', '2026-10-20 10:12:00+02'::timestamptz, '2026-10-20 10:15:00+02'::timestamptz,
-            'Dr Nora Lefebvre', 'MEAS-A-003:version-2', 'SRC-A-007-v1',
-            'Correction d’une erreur de saisie, 86,4 devient 68,4 kg.'),
         ('SRC-A-008', 'SRC-A-008', 1, 'PRACTITIONER_MEASUREMENT', 'Pression artérielle 128/80 mmHg',
             'Pression artérielle : 128/80 mmHg.', 'PRACTITIONER_OBSERVED',
             '2026-09-14 09:35:00+02'::timestamptz, '2026-09-14 09:36:00+02'::timestamptz, 'Dr Nora Lefebvre',
             'MEAS-A-001', NULL, NULL)
+    ) sources(alias, lineage, revision, kind, label, excerpt, source_type, occurred, recorded, author, locator,
+        supersedes, reason);
+
+    -- The correction is inserted after the revision it supersedes: the order guard of V9 reads its predecessor.
+    INSERT INTO public.source_revision (id, practice_id, record_id, lineage_id, revision, reference, kind, label, excerpt,
+        source_type, event_precision, event_at, event_timezone, recorded_at, author_label, locator, supersedes_id,
+        correction_reason)
+    SELECT etaye_demo.fixture_id(alias), practice_a, etaye_demo.fixture_id('R-A-001'),
+        etaye_demo.fixture_id('lineage/' || lineage), revision, alias, kind, label, excerpt, source_type,
+        'INSTANT', occurred, 'Europe/Paris', recorded, author, locator,
+        CASE WHEN supersedes IS NOT NULL THEN etaye_demo.fixture_id(supersedes) END, reason
+    FROM (VALUES
+        ('SRC-A-007-v2', 'SRC-A-007', 2, 'PRACTITIONER_MEASUREMENT', 'Poids 68,4 kg', 'Poids corrigé : 68,4 kg.',
+            'PRACTITIONER_OBSERVED', '2026-10-20 10:12:00+02'::timestamptz, '2026-10-20 10:15:00+02'::timestamptz,
+            'Dr Nora Lefebvre', 'MEAS-A-003:version-2', 'SRC-A-007-v1',
+            'Correction d’une erreur de saisie, 86,4 devient 68,4 kg.')
     ) sources(alias, lineage, revision, kind, label, excerpt, source_type, occurred, recorded, author, locator,
         supersedes, reason);
 

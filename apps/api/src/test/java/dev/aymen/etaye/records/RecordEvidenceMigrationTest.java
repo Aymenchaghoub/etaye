@@ -13,6 +13,7 @@ import java.sql.Statement;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Upgrades isolated databases to the evidence tables of story 3.2: an ordinary database from V8 to V9 with a
@@ -79,6 +80,21 @@ public class RecordEvidenceMigrationTest extends AbstractPostgresTest {
             // The practice and the record that own a revision cannot be bypassed: a foreign record is a key violation.
             st.execute("INSERT INTO source_revision (practice_id, record_id, lineage_id, revision, reference, kind, label, source_type, event_precision, recorded_at, author_label) "
                     + "VALUES ('" + practice + "', '" + record + "', gen_random_uuid(), 1, 'SRC-U-1', 'CONSULTATION_NOTE', 'Note', 'PRACTITIONER_OBSERVED', 'UNKNOWN', now(), 'Dr Test')");
+        }
+        // Negative control: a revision cannot name the record of another practice (the composite key refuses it).
+        UUID otherPractice = UUID.randomUUID();
+        UUID otherPatient = UUID.randomUUID();
+        UUID otherRecord = UUID.randomUUID();
+        try (Connection c = DriverManager.getConnection(url(database), OWNER_USER, OWNER_PASSWORD); Statement st = c.createStatement()) {
+            st.execute("INSERT INTO practice (id, display_name, timezone) VALUES ('" + otherPractice + "', 'Autre cabinet', 'Europe/Paris')");
+            st.execute("BEGIN; SELECT set_config('etaye.practice_id', '" + otherPractice + "', true); "
+                    + "INSERT INTO patient (id, practice_id, first_name, last_name, date_of_birth) VALUES ('" + otherPatient + "', '" + otherPractice
+                    + "', 'Autre', 'Patient', '1990-01-01'); "
+                    + "INSERT INTO patient_record (id, practice_id, patient_id) VALUES ('" + otherRecord + "', '" + otherPractice + "', '" + otherPatient + "'); COMMIT;");
+            st.execute("SELECT set_config('etaye.practice_id', '" + practice + "', false)");
+            assertThatThrownBy(() -> st.execute("INSERT INTO source_revision (practice_id, record_id, lineage_id, revision, reference, kind, label, source_type, event_precision, recorded_at, author_label) "
+                    + "VALUES ('" + practice + "', '" + otherRecord + "', gen_random_uuid(), 1, 'SRC-U-2', 'CONSULTATION_NOTE', 'Note', 'PRACTITIONER_OBSERVED', 'UNKNOWN', now(), 'Dr Test')"))
+                    .hasMessageContaining("fk_source_revision_record");
         }
     }
 

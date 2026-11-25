@@ -28,6 +28,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.HexFormat;
 import java.util.List;
@@ -76,13 +77,32 @@ public class RecordEvidenceService {
         return new Paging(Math.min(asked, MAX_LIMIT), cursor);
     }
 
-    /** The instant of the view: the requested past instant, or now. A future instant is refused, never clamped. */
+    /**
+     * The instant of the view: the requested past instant, or now. A future instant is refused, never clamped; the request
+     * is compared as the client wrote it, then cut down to the microsecond PostgreSQL stores, because rounding it up would
+     * let a revision recorded just after the requested instant into the view.
+     */
     private Instant viewInstant(Instant asOf) {
         Instant now = clock.instant();
         if (asOf != null && asOf.isAfter(now)) {
             throw new InvalidParameterException("asOf must not be in the future");
         }
-        return asOf == null ? now : asOf;
+        return (asOf == null ? now : asOf).truncatedTo(ChronoUnit.MICROS);
+    }
+
+    /** The inclusive lower bound of an event date: a fractional microsecond rounds up so no earlier event passes. */
+    private static Instant lowerBound(Instant from) {
+        return from == null ? null : ceilMicros(from);
+    }
+
+    /** The exclusive upper bound: rounded up in the same way, so an event before the written bound is never excluded. */
+    private static Instant upperBound(Instant to) {
+        return to == null ? null : ceilMicros(to);
+    }
+
+    private static Instant ceilMicros(Instant instant) {
+        Instant floor = instant.truncatedTo(ChronoUnit.MICROS);
+        return floor.equals(instant) ? floor : floor.plus(1, ChronoUnit.MICROS);
     }
 
     private void requireRecord(UUID practiceId, UUID recordId) {
@@ -107,7 +127,7 @@ public class RecordEvidenceService {
             String binding = binding("timeline", practiceId, actorId, recordId, asOf,
                     kindFilter + "|" + from + "|" + to);
             Position after = sourceCursor(practiceId, recordId, view, page.cursor(), binding);
-            List<SourceView> rows = evidence.pageSources(practiceId, recordId, view, kindFilter, from, to, after,
+            List<SourceView> rows = evidence.pageSources(practiceId, recordId, view, kindFilter, lowerBound(from), upperBound(to), after,
                     page.limit() + 1);
             return pageOf(rows, page.limit(), binding, SourceView::id, TimelineItemResponse::of,
                     (items, next) -> new TimelinePageResponse(items, next));

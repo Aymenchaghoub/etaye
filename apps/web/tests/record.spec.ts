@@ -151,10 +151,13 @@ test.describe('S-09 chronology (AT-010-A, AT-010-B)', () => {
     const rows: Row[] = [...claireRows, {
       id: ids(5900), lineage: ids(6900), revision: 1, reference: 'SRC-GABARIT', kind: 'UPLOADED_DOCUMENT', label: 'Courrier scanné sans date lisible',
       sourceType: 'DOCUMENT_REPORTED', recordedAt: '2026-10-25T13:30:00Z', author: 'Dr Sami Rahmani',
+    }, {
+      id: ids(5901), lineage: ids(6901), revision: 1, reference: 'SRC-JOUR', kind: 'CONSULTATION_NOTE', label: 'Note datée au jour',
+      excerpt: 'Note dont seul le jour est connu.', sourceType: 'PRACTITIONER_OBSERVED', day: '2026-10-15', recordedAt: '2026-10-16T08:00:00Z', author: 'Dr Nora Lefebvre',
     }];
     const { evidence } = await stubRecord(page, { rows });
     await page.goto(RECORD);
-    await expect(items(page)).toHaveCount(9);
+    await expect(items(page)).toHaveCount(10);
     await expect(page.getByRole('heading', { name: 'Date inconnue', level: 3 })).toBeVisible();
     await expect(items(page).last().locator('.etaye-chrono__date')).toHaveText('Date inconnue');
     await expect(items(page).last()).toContainText('Date de survenue inconnue');
@@ -181,7 +184,10 @@ test.describe('S-09 chronology (AT-010-A, AT-010-B)', () => {
     const last = evidence.timelines.at(-1)!.searchParams;
     expect(last.get('from')).toBe('2026-09-30T22:00:00.000Z');
     expect(last.get('to')).toBe('2026-10-31T23:00:00.000Z');
-    await expect.poll(() => refs(page)).toEqual(['SRC-A-006', 'SRC-A-007-v2', 'SRC-A-004', 'SRC-A-003', 'SRC-GABARIT']);
+    await expect.poll(() => refs(page)).toEqual(['SRC-A-006', 'SRC-A-007-v2', 'SRC-A-004', 'SRC-JOUR', 'SRC-A-003', 'SRC-GABARIT']);
+    // A note known only by its day keeps its date in the list, and its source says so.
+    await expect(items(page).filter({ hasText: 'SRC-JOUR' })).toContainText('survenu le 15/10/2026');
+    await expect(items(page).filter({ hasText: 'SRC-JOUR' })).not.toContainText('15/10/2026 00:00');
     await accessible(page);
 
     // The date filter keeps the undated group, but a type filter still applies to it: nothing matches here, and the
@@ -191,7 +197,7 @@ test.describe('S-09 chronology (AT-010-A, AT-010-B)', () => {
     await expect(page.getByText('Aucun événement ne correspond à ces filtres')).toBeVisible();
     await expect(page.getByText('Historique peu renseigné')).toHaveCount(0);
     await page.getByRole('button', { name: 'Réinitialiser les filtres' }).last().click();
-    await expect(items(page)).toHaveCount(9);
+    await expect(items(page)).toHaveCount(10);
     await expect(page.getByLabel('Type d’événement')).toHaveValue('');
   });
 
@@ -264,13 +270,16 @@ test.describe('review findings of story 3.2', () => {
     await stubRecord(page, { rows, timeline: (url) => (url.searchParams.get('cursor') ? { json: { items: [timelineItem(rows[29])], nextCursor: null }, delay: 1200 } : undefined) });
     await page.goto(RECORD);
     await expect(items(page)).toHaveCount(25);
+    const isNextPage = (request: { url: () => string }) => request.url().includes('cursor=');
+    const stale = Promise.race([page.waitForEvent('requestfinished', isNextPage), page.waitForEvent('requestfailed', isNextPage)]);
     await page.getByRole('button', { name: 'Afficher plus' }).click();
     // While the next page loads, the practitioner chooses an earlier instant: nothing was recorded yet.
     await page.locator('button[aria-controls="asof-region"]').click();
     for (const [id, value] of [['as-j', '01'], ['as-m', '10'], ['as-a', '2026'], ['as-h', '10'], ['as-mi', '00']]) await page.locator(`#${id}`).fill(value);
     await page.getByRole('button', { name: 'Afficher cette date' }).click();
     await expect(page.getByText('Rien n’était enregistré à cette date')).toBeVisible();
-    await page.waitForTimeout(1600);
+    // The delayed page of the earlier view was cancelled or has settled: the chosen view must be unchanged either way.
+    await stale;
     await expect(items(page)).toHaveCount(0);
     await expect(page.getByText('Rien n’était enregistré à cette date')).toBeVisible();
     await expect(page.getByText('SRC-L-29')).toHaveCount(0);
@@ -456,9 +465,13 @@ test.describe('the past-instant view (UD-32)', () => {
     expect(page.url()).not.toContain('asOf');
     expect(page.url()).not.toContain('2026-11');
 
+    // Another practice and back, through the application only (no reload): the choice must be gone.
+    await page.getByRole('button', { name: /Changer de contexte/ }).click();
+    await page.getByRole('button', { name: /Ouvrir · Praticien · Cabinet du Canal/ }).click();
     await page.getByRole('button', { name: /Changer de contexte/ }).click();
     await page.getByRole('button', { name: /Ouvrir · Praticien · Cabinet des Tilleuls/ }).click();
-    await page.goto(RECORD);
+    await page.getByRole('link', { name: 'Patients', exact: true }).first().click();
+    await page.getByRole('link', { name: 'MARTIN Claire', exact: true }).click();
     await expect(items(page)).toHaveCount(8);
     await expect(page.getByText('Vue historique — lecture seule')).toHaveCount(0);
   });

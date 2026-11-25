@@ -2,7 +2,10 @@ import type {
   Assertion, AssertionCategory, EventDate, HistorySection, SectionState, SourceKind, SourceType,
 } from '../api/generated/types.gen';
 
-/** The practice time zone: dates and the past-instant control are read and shown in Paris time (UD-67 F1). */
+/**
+ * The zone in which dates are read and shown. UD-67 F1 asks for the practice time zone, which the session does not carry yet:
+ * until a decision says how it reaches the client, Paris (the zone of the dataset) is a disclosed deviation.
+ */
 export const PRACTICE_ZONE = 'Europe/Paris';
 
 const dateTime = new Intl.DateTimeFormat('fr-FR', {
@@ -121,7 +124,7 @@ export function sectionWords(category: AssertionCategory, section: Pick<HistoryS
       };
     case 'EXPLICITLY_ABSENT': {
       const day = absentDay(section.statements);
-      const label = `Absence déclarée${day ? ` le ${day}` : ''}`;
+      const label = absentLabel(day);
       return {
         chip: label, tone: 'negatif',
         sentence: 'Déclaration datée, avec son auteur et son origine · une information plus récente peut la remplacer.',
@@ -145,6 +148,11 @@ export function sectionWords(category: AssertionCategory, section: Pick<HistoryS
   }
 }
 
+/** An absence is dated by its occurrence; with no known date it says so and never borrows the recording date. */
+function absentLabel(day: string | undefined): string {
+  return day ? `Absence déclarée le ${day}` : 'Absence déclarée · date inconnue';
+}
+
 function absentDay(statements: Assertion[]): string | undefined {
   const absent = statements.filter((statement) => statement.assertionKind === 'EXPLICITLY_ABSENT');
   const latest = absent.at(-1);
@@ -156,7 +164,7 @@ function conflictSummary(statements: Assertion[]): string {
   return statements.filter((statement) => statement.assertionKind === 'PRESENT' || statement.assertionKind === 'EXPLICITLY_ABSENT')
     .map((statement) => {
       const day = eventDay(statement.eventDate);
-      if (statement.assertionKind === 'EXPLICITLY_ABSENT') return `Absence déclarée${day ? ` le ${day}` : ''}`;
+      if (statement.assertionKind === 'EXPLICITLY_ABSENT') return absentLabel(day);
       const unconfirmed = statement.sourceType === 'PATIENT_REPORTED' ? ' · non confirmée' : '';
       return `Déclaration présente${day ? ` signalée le ${day}` : ''}${unconfirmed}`;
     }).join(', ');
@@ -180,7 +188,7 @@ export function statementState(statement: Assertion): { label: string; tone: Sec
   switch (statement.assertionKind) {
     case 'EXPLICITLY_ABSENT': {
       const day = eventDay(statement.eventDate);
-      return { label: `Absence déclarée${day ? ` le ${day}` : ''}`, tone: 'negatif' };
+      return { label: absentLabel(day), tone: 'negatif' };
     }
     case 'UNKNOWN': return { label: 'Inconnu · à préciser', tone: 'manquant' };
     case 'NOT_ASKED': return { label: 'Non demandé', tone: 'manquant' };
@@ -191,14 +199,19 @@ export function statementState(statement: Assertion): { label: string; tone: Sec
   }
 }
 
-/** The conflict sentence of the I-27 panel; the negative statement is compared with the present one by date. */
+/**
+ * The conflict sentence of the I-27 panel. It says an older negative does not contradict a later report only when the
+ * occurrence days show it (a strictly earlier day for the negative); otherwise it stays neutral, because the order in which
+ * two statements were recorded does not tell which one describes the earlier fact.
+ */
 export function conflictNote(statements: Assertion[]): { lead: string; rest: string } {
   const absent = statements.find((statement) => statement.assertionKind === 'EXPLICITLY_ABSENT');
   const present = statements.find((statement) => statement.assertionKind === 'PRESENT');
-  const absentDay_ = absent && eventDay(absent.eventDate);
-  const older = absent && present && absent.recordedAt <= present.recordedAt;
-  const lead = older && absentDay_
-    ? `La déclaration négative du ${absentDay_} ne contredit pas une réaction rapportée ensuite : elle date d’avant.`
+  const absentDay = absent && eventDay(absent.eventDate);
+  const presentDay = present && eventDay(present.eventDate);
+  const earlier = absentDay && presentDay && absentDay.split('/').reverse().join('') < presentDay.split('/').reverse().join('');
+  const lead = earlier
+    ? `La déclaration négative du ${absentDay} ne contredit pas une réaction rapportée ensuite : elle date d’avant.`
     : 'Une déclaration négative et une déclaration présente se contredisent : aucune n’est retenue à la place de l’autre.';
   return { lead, rest: 'Rien n’est fusionné ni résolu automatiquement. La rubrique reste « à préciser ».' };
 }

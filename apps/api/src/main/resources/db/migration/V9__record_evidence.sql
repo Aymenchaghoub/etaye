@@ -3,16 +3,12 @@
 -- Every row is practice and record owned, the keys are composite so a row can never point at another practice or
 -- record, and forced row-level security applies on top (BR-001, data model).
 
--- A stored zone is always one PostgreSQL knows: a misspelled zone would otherwise make every read of the record fail.
+-- A stored zone is always an IANA name PostgreSQL knows: a misspelled one would make every read of the record fail, and
+-- a POSIX specification such as FOOBAR3 would be accepted by AT TIME ZONE with a fixed offset.
 CREATE FUNCTION public.valid_time_zone(zone text) RETURNS boolean
-LANGUAGE plpgsql STABLE
+LANGUAGE sql STABLE
 AS $$
-BEGIN
-    PERFORM now() AT TIME ZONE zone;
-    RETURN true;
-EXCEPTION WHEN invalid_parameter_value THEN
-    RETURN false;
-END
+    SELECT EXISTS (SELECT 1 FROM pg_catalog.pg_timezone_names WHERE name = zone)
 $$;
 
 CREATE TABLE source_revision (

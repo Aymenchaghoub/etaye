@@ -219,6 +219,19 @@ class RecordEvidenceFixtureHttpTest {
     }
 
     @Test
+    @DisplayName("Timeline bounds keep their inclusive and exclusive meaning below the microsecond, and reversed bounds are 400")
+    void fractionalBoundsKeepTheirMeaning() {
+        String nora = login("nora.lefebvre@example.test");
+        String base = "/practices/" + practiceA + "/records/" + claire + "/timeline";
+        // SRC-A-004 occurred at exactly 08:10:00Z. A lower bound a little after it excludes it; an upper bound a little after
+        // it still includes it (the upper bound is exclusive and the event is before it).
+        assertThat(references(get(nora, base + "?from=2026-10-20T08:10:00.000000900Z&to=2026-10-20T08:11:00Z"))).doesNotContain("SRC-A-004");
+        assertThat(references(get(nora, base + "?from=2026-10-20T08:10:00Z&to=2026-10-20T08:10:00.000000900Z"))).containsExactly("SRC-A-004");
+        // Bounds that cross only after their precision is reduced are still reversed.
+        assertThat(get(nora, base + "?from=2026-10-20T08:10:00.000000900Z&to=2026-10-20T08:10:00.000000100Z").getStatusCode().value()).isEqualTo(400);
+    }
+
+    @Test
     @DisplayName("UD-32: an instant finer than PostgreSQL stores is cut down, never rounded up into a later revision")
     void asOfIsNeverRoundedUpIntoALaterRevision() {
         String nora = login("nora.lefebvre@example.test");
@@ -235,7 +248,7 @@ class RecordEvidenceFixtureHttpTest {
     }
 
     @Test
-    @DisplayName("UD-32: a revision recorded after the instant is a 404 byte-identical to an absent source")
+    @DisplayName("UD-32: a revision recorded after the instant is a 404 with the same problem body as an absent source")
     void sourceRevisionRecordedLaterIsHiddenInThePastView() {
         String nora = login("nora.lefebvre@example.test");
         var current = get(nora, "/practices/" + practiceA + "/records/" + claire + "/timeline?asOf=2026-10-20T10:16:00%2B02:00");
@@ -248,6 +261,7 @@ class RecordEvidenceFixtureHttpTest {
         var hidden = get(nora, "/practices/" + practiceA + "/sources/" + weightV2 + "?asOf=2026-10-20T10:14:00%2B02:00");
         var absent = get(nora, "/practices/" + practiceA + "/sources/" + UUID.randomUUID() + "?asOf=2026-10-20T10:14:00%2B02:00");
         assertThat(hidden.getStatusCode().value()).isEqualTo(404);
+        assertThat(absent.getStatusCode().value()).isEqualTo(404);
         assertThat(withoutCorrelation(hidden.getBody())).isEqualTo(withoutCorrelation(absent.getBody()));
     }
 

@@ -168,7 +168,8 @@ function Frame({ tab, patientLabel, ready, children }: { tab: RecordTab; patient
   const banner = useRef<HTMLDivElement>(null);
   const focusBanner = useRef(false);
   const focusToggle = useRef(false);
-  const past = ctx.asOf ? new Date(ctx.asOf) : undefined;
+  // One Date per applied instant: a session poll re-renders the frame and must not refill a draft of the control.
+  const past = useMemo(() => (ctx.asOf ? new Date(ctx.asOf) : undefined), [ctx.asOf]);
   const { date, time } = past ? clock(past) : { date: '', time: '' };
 
   useEffect(() => {

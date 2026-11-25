@@ -30,7 +30,8 @@ export function useSource(source: SourceHandle, practiceId: string, asOf: string
   expireRef.current = expire;
 
   useEffect(() => {
-    if (!open) return undefined;
+    // Closing forgets the loaded source: a reopening reads it again and shows nothing from the earlier reading meanwhile.
+    if (!open) { setRemote(undefined); return undefined; }
     const request = new AbortController();
     setRemote({ phase: 'loading' });
     void accountApi.readSource(practiceId, source.id, asOf, request.signal).then((result) => {

@@ -307,10 +307,11 @@ class RecordEvidenceHttpTest extends AbstractPostgresTest {
     @DisplayName("A section of more than 100 statements still lists both sides of a conflict and says it is truncated")
     void aLongSectionKeepsBothSidesOfAConflict() throws SQLException {
         UUID src = source(practiceA, recordA, "SRC-T-1", "CONSULTATION_NOTE", "Note", "Texte", "I:2026-09-01T09:00:00+02:00", "2026-09-01T10:00:00+02:00");
+        // The one present statement is the oldest recorded: a plain "newest 100" cap would drop it.
+        assertion(practiceA, recordA, "ALLERGY", "PRESENT", "Réaction signalée", src, "2026-09-01T10:30:00+02:00");
         for (int i = 0; i < 101; i++) {
             assertion(practiceA, recordA, "ALLERGY", "EXPLICITLY_ABSENT", "Aucune allergie " + i, src, "2026-09-02T10:%02d:00+02:00".formatted(i % 60));
         }
-        assertion(practiceA, recordA, "ALLERGY", "PRESENT", "Réaction signalée", src, "2026-10-01T10:00:00+02:00");
         var sections = (List<Map<String, Object>>) get(clinicalA, "/practices/" + practiceA + "/records/" + recordA + "/history")
                 .getBody().get("sections");
         var allergy = sections.getFirst();
@@ -410,15 +411,22 @@ class RecordEvidenceHttpTest extends AbstractPostgresTest {
         UUID src = source(practiceA, recordA, "SRC-R", "CONSULTATION_NOTE", "Note", "Texte", "I:2026-10-01T09:00:00+02:00", "2026-10-02T10:00:00+02:00");
         assertion(practiceA, recordA, "ALLERGY", "PRESENT", "Texte", src, "2026-10-02T10:00:00+02:00");
         String before = recordState();
-        int auditBefore = auditRows();
         String base = "/practices/" + practiceA + "/records/" + recordA;
+        List<String> correlations = new ArrayList<>();
         for (String suffix : List.of("/timeline", "/sources", "/assertions", "/history")) {
-            assertThat(get(clinicalA, base + suffix).getStatusCode().value()).isEqualTo(200);
+            var response = get(clinicalA, base + suffix);
+            assertThat(response.getStatusCode().value()).isEqualTo(200);
+            correlations.add(response.getHeaders().getFirst("X-Correlation-Id"));
         }
-        assertThat(get(clinicalA, "/practices/" + practiceA + "/sources/" + src).getStatusCode().value()).isEqualTo(200);
+        var one = get(clinicalA, "/practices/" + practiceA + "/sources/" + src);
+        assertThat(one.getStatusCode().value()).isEqualTo(200);
+        correlations.add(one.getHeaders().getFirst("X-Correlation-Id"));
         assertThat(recordState()).isEqualTo(before);
-        // D-62: routine reads are not audited.
-        assertThat(auditRows()).isEqualTo(auditBefore);
+        // D-62: a routine read writes no audit row of any type under its correlation identifier.
+        assertThat(correlations).doesNotContainNull();
+        for (String correlation : correlations) {
+            assertThat(auditRowsFor(correlation)).as(correlation).isZero();
+        }
 
         try (Connection runtime = DriverManager.getConnection(POSTGRES_CONTAINER.getJdbcUrl(), RUNTIME_USER, RUNTIME_PASSWORD);
              Statement st = runtime.createStatement()) {
@@ -469,11 +477,14 @@ class RecordEvidenceHttpTest extends AbstractPostgresTest {
         }
     }
 
-    private int auditRows() throws SQLException {
+    private int auditRowsFor(String correlationId) throws SQLException {
         try (Connection c = DriverManager.getConnection(POSTGRES_CONTAINER.getJdbcUrl(), POSTGRES_CONTAINER.getUsername(), POSTGRES_CONTAINER.getPassword());
-             Statement st = c.createStatement(); ResultSet rs = st.executeQuery("SELECT count(*) FROM audit_event WHERE event_type <> 'ACCESS_DENIED'")) {
-            rs.next();
-            return rs.getInt(1);
+             PreparedStatement ps = c.prepareStatement("SELECT count(*) FROM audit_event WHERE correlation_id = ?")) {
+            ps.setString(1, correlationId);
+            try (ResultSet rs = ps.executeQuery()) {
+                rs.next();
+                return rs.getInt(1);
+            }
         }
     }
 
@@ -535,6 +546,14 @@ class RecordEvidenceHttpTest extends AbstractPostgresTest {
                     INSERT INTO source_revision (practice_id, record_id, lineage_id, revision, reference, kind, label, source_type,
                         event_precision, event_date, event_timezone, recorded_at, author_label)
                     VALUES ('%s', '%s', gen_random_uuid(), 1, 'Z', 'CONSULTATION_NOTE', 'x', 'PATIENT_REPORTED', 'DATE', '2026-10-01', 'Europe/Pariss', now(), 'x')
+                    """.formatted(practiceA, recordA))).hasMessageContaining("ck_source_revision_zone");
+            c.rollback();
+            scope(c, practiceA);
+            // A POSIX specification is not an IANA zone: it would give a fixed offset to every date-only event.
+            assertThatThrownBy(() -> st.execute("""
+                    INSERT INTO source_revision (practice_id, record_id, lineage_id, revision, reference, kind, label, source_type,
+                        event_precision, event_date, event_timezone, recorded_at, author_label)
+                    VALUES ('%s', '%s', gen_random_uuid(), 1, 'P', 'CONSULTATION_NOTE', 'x', 'PATIENT_REPORTED', 'DATE', '2026-10-01', 'FOOBAR3', now(), 'x')
                     """.formatted(practiceA, recordA))).hasMessageContaining("ck_source_revision_zone");
             c.rollback();
             scope(c, practiceA);

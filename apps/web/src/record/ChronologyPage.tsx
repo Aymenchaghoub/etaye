@@ -17,9 +17,11 @@ type Phase = 'loading' | 'ready' | 'failed' | 'limited';
 export function ChronologyPage() {
   const ctx = useRecord();
   const applied = ctx.view.filters;
-  const [items, setItems] = useState<TimelineItem[]>([]);
-  const [next, setNext] = useState<string | null>(null);
-  const [phase, setPhase] = useState<Phase>('loading');
+  const [itemsState, setItems] = useState<TimelineItem[]>([]);
+  const [nextState, setNext] = useState<string | null>(null);
+  const [phaseState, setPhase] = useState<Phase>('loading');
+  // The view (instant and filters) the rows on screen were requested for: rows of another view are never shown.
+  const [rowsOf, setRowsOf] = useState<string | undefined>();
   const [wait, setWait] = useState(0);
   const [more, setMore] = useState<'idle' | 'loading' | 'failed'>('idle');
   const [attempt, setAttempt] = useState(0);
@@ -44,14 +46,22 @@ export function ChronologyPage() {
   const filtered = applied.kind !== '' || dateFiltered;
   const { practiceId, recordId, refused } = ctx;
   // The session poll hands the screen a new `expire` function every time: it is read through a ref so a poll never
-  // reloads the first page. `epoch` numbers the first-page loads, so a late "Afficher plus" of an earlier view is dropped.
+  // reloads the first page.
   const expireRef = useRef(ctx.expire);
   expireRef.current = ctx.expire;
-  const epoch = useRef(0);
+  // The "Afficher plus" request in flight: cancelled when the view changes or the page is left, so a late page never
+  // replaces the view chosen after it and never ends a session from a page the practitioner has left.
+  const moreRequest = useRef<AbortController | null>(null);
+  const viewKey = JSON.stringify(query);
+  const sameView = rowsOf === viewKey;
+  const items = sameView ? itemsState : [];
+  const next = sameView ? nextState : null;
+  const phase: Phase = sameView ? phaseState : 'loading';
 
   useEffect(() => {
     const request = new AbortController();
-    epoch.current += 1;
+    moreRequest.current?.abort();
+    setRowsOf(viewKey);
     setPhase('loading');
     setItems([]);
     setNext(null);
@@ -68,16 +78,17 @@ export function ChronologyPage() {
       else if (result.status === 429) { setWait(result.retryAfter); setPhase('limited'); }
       else setPhase('failed');
     });
-    return () => request.abort();
-  }, [practiceId, recordId, query, attempt, refused]);
+    return () => { request.abort(); moreRequest.current?.abort(); };
+  }, [practiceId, recordId, query, viewKey, attempt, refused]);
 
   async function showMore() {
     if (!next || more === 'loading') return;
-    const started = epoch.current;
+    const request = new AbortController();
+    moreRequest.current = request;
     setMore('loading');
-    const result = await accountApi.readTimeline(practiceId, recordId, { ...query, cursor: next, limit: PAGE });
-    // The view changed while the page was loading (another instant or filter): this page belongs to the earlier view.
-    if (started !== epoch.current) return;
+    const result = await accountApi.readTimeline(practiceId, recordId, { ...query, cursor: next, limit: PAGE }, request.signal);
+    // The view changed or the page was left while the page was loading: this answer belongs to something else.
+    if (request.signal.aborted) return;
     if (!result.ok) {
       if (result.status === 401) expireRef.current();
       else if (result.status === 403 || result.status === 404) refused(result.status);

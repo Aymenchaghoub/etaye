@@ -97,7 +97,7 @@ function SectionPanel({ section, past, first, listed, examine }: {
         )}
         {section.truncated && (
           <p className="etaye-2" style={{ margin: 0, fontSize: 13 }}>
-            D’autres déclarations existent pour cette rubrique ; seules les {section.statements.length} premières sont listées. L’état affiché tient compte de toutes.
+            D’autres déclarations existent pour cette rubrique ; {section.statements.length} sont listées. L’état affiché tient compte de toutes.
           </p>
         )}
       </div>
@@ -127,7 +127,7 @@ function StatementRow({ statement, number }: { statement: Assertion; number: num
           <span className="etaye-3" style={{ fontSize: 12 }}>
             {[statement.authorLabel, statement.sourceType ? originLabel[statement.sourceType] : undefined, statement.sourceReference]
               .filter(Boolean).join(' · ')}
-            {!statement.sourceReference && ` enregistré le ${recorded.date} ${recorded.time}`}
+            {` · enregistrée le ${recorded.date} ${recorded.time}`}
           </span>
         </div>
         {hasSource && source.panel}
@@ -176,6 +176,7 @@ function Side({ statement, number, label }: { statement: Assertion; number: numb
   const source = useSource({ id: statement.sourceRevisionId ?? statement.id, reference: statement.sourceReference ?? '', number },
     ctx.practiceId, ctx.asOf, ctx.expire, 'alone');
   const when = eventLabel(statement.eventDate);
+  const recordedAt = clock(statement.recordedAt);
   return (
     <div className="etaye-carte">
       <div className="etaye-carte__tete">
@@ -189,6 +190,7 @@ function Side({ statement, number, label }: { statement: Assertion; number: numb
       <span className="etaye-3" style={{ fontSize: 12 }}>
         {[statement.authorLabel, statement.sourceType ? originLabel[statement.sourceType] : undefined,
           statement.sourceReference].filter(Boolean).join(' · ')}
+        {` · enregistrée le ${recordedAt.date} ${recordedAt.time}`}
       </span>
       {statement.sourceRevisionId && source.panel}
     </div>

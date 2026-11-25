@@ -17,7 +17,7 @@ export type Remote<T> =
 export function useRemote<T>(
   load: (signal: AbortSignal) => Promise<AccountResult<T>>, key: string, expire: () => void,
 ): [Remote<T>, () => void] {
-  const [state, setState] = useState<Remote<T>>({ phase: 'loading' });
+  const [held, setHeld] = useState<{ key: string; state: Remote<T> }>({ key, state: { phase: 'loading' } });
   const [attempt, setAttempt] = useState(0);
   const loader = useRef(load);
   loader.current = load;
@@ -25,13 +25,15 @@ export function useRemote<T>(
   expireRef.current = expire;
   useEffect(() => {
     const request = new AbortController();
-    setState({ phase: 'loading' });
+    setHeld({ key, state: { phase: 'loading' } });
     void loader.current(request.signal).then((result) => {
       if (request.signal.aborted) return;
-      setState(outcome(result, () => expireRef.current()));
+      setHeld({ key, state: outcome(result, () => expireRef.current()) });
     });
     return () => request.abort();
   }, [key, attempt]);
+  // A result belongs to the key it was requested for: in the render that carries a new key, the old result is not shown.
+  const state: Remote<T> = held.key === key ? held.state : { phase: 'loading' };
   return [state, useCallback(() => setAttempt((count) => count + 1), [])];
 }
 

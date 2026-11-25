@@ -52,6 +52,12 @@ describe('the date filter', () => {
     expect(parseFilterDay('Au', { day: '30', month: '02', year: '2026' })).toMatchObject({ ok: false });
   });
 
+  it('keeps a date bound on a day whose midnight repeats (clocks went back at 00:00 on 26/09/1976)', () => {
+    expect(dayStart({ year: 1976, month: 9, day: 26 })).toBeDefined();
+    expect(nextDayStart({ year: 1976, month: 9, day: 25 })).toBeDefined();
+    expect(nextDayStart({ year: 1976, month: 9, day: 26 })).toBeDefined();
+  });
+
   it('bounds a day by its Paris midnights so the last day is included in full', () => {
     const day = { year: 2026, month: 10, day: 20 };
     expect(dayStart(day)?.toISOString()).toBe('2026-10-19T22:00:00.000Z');

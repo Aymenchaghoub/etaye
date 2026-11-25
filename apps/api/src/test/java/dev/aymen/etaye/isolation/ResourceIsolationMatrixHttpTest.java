@@ -354,6 +354,11 @@ class ResourceIsolationMatrixHttpTest {
         hidden.forEach((id, response) -> {
             assertThat(response.headers().getContentType()).as(id).isEqualTo(MediaType.APPLICATION_PROBLEM_JSON);
             assertThat(response.headers().getETag()).as("%s must carry no validator", id).isNull();
+            // The same existence-hiding header policy as the record refusals: none of these may appear, whatever the value.
+            for (String header : List.of("Location", "Content-Location", "Set-Cookie", "Content-Disposition",
+                    "Last-Modified", "Retry-After", "WWW-Authenticate")) {
+                assertThat(response.headers().containsHeader(header)).as("%s must not carry %s", id, header).isFalse();
+            }
             Map<String, Object> problem = new java.util.LinkedHashMap<>(response.body());
             problem.remove("correlationId");
             assertThat(problem).as(id).isEqualTo(NOT_FOUND);

@@ -98,13 +98,18 @@ export function parseFilterDay(label: string, parts: DayParts): ParseResult<{ ye
   return { ok: true, value: { year, month, day } };
 }
 
+/** The first instant of a Paris calendar day: when midnight repeats (clocks going back at 00:00), the earlier reading. */
+function firstInstantOfDay(year: number, month: number, day: number): Date | undefined {
+  return parisInstants(year, month, day, 0, 0)[0];
+}
+
 /** Start of a Paris day, as the inclusive `from` of the timeline. */
 export function dayStart(day: { year: number; month: number; day: number }): Date | undefined {
-  return parisInstant(day.year, day.month, day.day, 0, 0);
+  return firstInstantOfDay(day.year, day.month, day.day);
 }
 
 /** Start of the day after, as the exclusive `to`: the last day chosen is included in full. */
 export function nextDayStart(day: { year: number; month: number; day: number }): Date | undefined {
   const next = new Date(Date.UTC(day.year, day.month - 1, day.day + 1));
-  return parisInstant(next.getUTCFullYear(), next.getUTCMonth() + 1, next.getUTCDate(), 0, 0);
+  return firstInstantOfDay(next.getUTCFullYear(), next.getUTCMonth() + 1, next.getUTCDate());
 }

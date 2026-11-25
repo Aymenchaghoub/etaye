@@ -38,7 +38,7 @@ export const louisStatements: Statement[] = [
 
 const asDate = (iso: string) => ({ precision: 'INSTANT' as const, instant: iso });
 function current<T extends { lineage?: string; recordedAt: string; revision?: number }>(rows: T[], asOf: string | null): T[] {
-  const visible = rows.filter((candidate) => !asOf || candidate.recordedAt <= asOf);
+  const visible = rows.filter((candidate) => !asOf || Date.parse(candidate.recordedAt) <= Date.parse(asOf));
   const latest = new Map<string, T>();
   for (const candidate of visible) {
     const key = candidate.lineage ?? '';
@@ -48,9 +48,16 @@ function current<T extends { lineage?: string; recordedAt: string; revision?: nu
   return [...latest.values()];
 }
 
+/** The event date of a row: an instant, a date with its zone, or unknown. A known date never becomes unknown. */
+const eventOf = (source: Row) => (source.at ? asDate(source.at) : source.day
+  ? { precision: 'DATE' as const, date: source.day, timezone: 'Europe/Paris' } : { precision: 'UNKNOWN' as const });
+/** The point a dated event sorts and filters at: its instant, or midnight of its date for a date-only event. */
+const sortAt = (item: TimelineItem): number => (item.eventDate.instant ? Date.parse(item.eventDate.instant)
+  : item.eventDate.date ? Date.parse(`${item.eventDate.date}T00:00:00+02:00`) : Number.NEGATIVE_INFINITY);
+
 export function timelineItem(source: Row): TimelineItem {
   return {
-    id: source.id, eventDate: source.at ? asDate(source.at) : source.day ? { precision: 'DATE', date: source.day, timezone: 'Europe/Paris' } : { precision: 'UNKNOWN' },
+    id: source.id, eventDate: eventOf(source),
     recordedAt: source.recordedAt, kind: source.kind, sourceRevisionId: source.id, label: source.label, corrected: source.revision > 1,
     reference: source.reference, sourceType: source.sourceType, authorLabel: source.author, revision: source.revision,
     ...(source.reason ? { correctionReason: source.reason } : {}), ...(source.excerpt ? { excerpt: source.excerpt } : {}),
@@ -60,7 +67,7 @@ export function sourceBody(source: Row, rows: Row[], recordId: string): Source {
   const previous = rows.find((candidate) => candidate.id === source.supersedes);
   return {
     id: source.id, practiceId: tilleuls.practiceId, recordId, sourceType: source.sourceType,
-    eventDate: source.at ? asDate(source.at) : { precision: 'UNKNOWN' }, recordedAt: source.recordedAt, authorLabel: source.author,
+    eventDate: eventOf(source), recordedAt: source.recordedAt, authorLabel: source.author,
     revision: source.revision, reference: source.reference, kind: source.kind, label: source.label,
     ...(source.excerpt ? { excerpt: source.excerpt } : {}), ...(source.locator ? { locator: source.locator } : {}),
     ...(previous ? { supersedesId: previous.id, supersedesReference: previous.reference } : {}),
@@ -72,8 +79,7 @@ const order = (a: TimelineItem, b: TimelineItem) => {
   const unknownA = a.eventDate.precision === 'UNKNOWN';
   const unknownB = b.eventDate.precision === 'UNKNOWN';
   if (unknownA !== unknownB) return unknownA ? 1 : -1;
-  const at = (item: TimelineItem) => item.eventDate.instant ?? '';
-  return at(b).localeCompare(at(a)) || b.recordedAt.localeCompare(a.recordedAt) || b.id.localeCompare(a.id);
+  return sortAt(b) - sortAt(a) || b.recordedAt.localeCompare(a.recordedAt) || b.id.localeCompare(a.id);
 };
 
 /** The derived state of a section, written again from BR-008 so the stub never depends on the screen's own code. */
@@ -100,7 +106,7 @@ export function assertionBody(statement: Statement, rows: Row[]): Assertion {
 }
 
 export function historyBody(statements: Statement[], rows: Row[], asOf: string | null): HistorySummary {
-  const visible = statements.filter((statement) => !asOf || statement.recordedAt <= asOf);
+  const visible = statements.filter((statement) => !asOf || Date.parse(statement.recordedAt) <= Date.parse(asOf));
   const sections = (['ALLERGY', 'HISTORY', 'REPORTED_TREATMENT'] as const).map((category): HistorySection => {
     const own = visible.filter((statement) => statement.category === category)
       .sort((a, b) => (a.at ?? '9').localeCompare(b.at ?? '9'));
@@ -138,7 +144,7 @@ export async function stubRecord(page: Page, options: RecordStub = {}, handlers:
       if (custom) return reply(route, custom);
       const all = Object.entries(byRecord).flatMap(([recordId, rows]) => rows.map((candidate) => ({ recordId, candidate })));
       const found = all.find(({ candidate }) => candidate.id === parts[2]);
-      if (!found || (asOf && found.candidate.recordedAt > asOf)) return reply(route, { status: 404, json: problem(404, 'NOT_FOUND') });
+      if (!found || (asOf && Date.parse(found.candidate.recordedAt) > Date.parse(asOf))) return reply(route, { status: 404, json: problem(404, 'NOT_FOUND') });
       return reply(route, { json: sourceBody(found.candidate, byRecord[found.recordId], found.recordId) });
     }
     const recordId = parts[2];
@@ -153,7 +159,7 @@ export async function stubRecord(page: Page, options: RecordStub = {}, handlers:
       const to = url.searchParams.get('to');
       const filtered = current(rows, asOf).map(timelineItem)
         .filter((item) => !kinds.length || kinds.includes(item.kind))
-        .filter((item) => item.eventDate.precision === 'UNKNOWN' || ((!from || (item.eventDate.instant ?? '') >= from) && (!to || (item.eventDate.instant ?? '') < to)))
+        .filter((item) => item.eventDate.precision === 'UNKNOWN' || ((!from || sortAt(item) >= Date.parse(from)) && (!to || sortAt(item) < Date.parse(to))))
         .sort(order);
       const limit = Number(url.searchParams.get('limit') ?? 25);
       const offset = Number(Buffer.from(url.searchParams.get('cursor') ?? '', 'base64').toString() || 0);

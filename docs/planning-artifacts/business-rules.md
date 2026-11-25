@@ -96,8 +96,8 @@ Corrections append a superseding revision with correction reason, actor and time
 | Current statements | State | Reading |
 |---|---|---|
 | None | NOT_RECORDED | "Non renseigné", "Aucune source au dossier · ne signifie pas absence" |
-| Only UNKNOWN or NOT_ASKED (the latest by recording time wins) | UNKNOWN or NOT_ASKED | "Inconnu · à préciser" or "Non demandé" |
-| Only EXPLICITLY_ABSENT | EXPLICITLY_ABSENT | "Absence déclarée le {date}" with author and origin, never "Aucune allergie" |
+| Only UNKNOWN or NOT_ASKED (the latest by recording time wins; equal recording times are broken by statement identifier, so every consumer reaches the same winner) | UNKNOWN or NOT_ASKED | "Inconnu · à préciser" or "Non demandé" |
+| Only EXPLICITLY_ABSENT | EXPLICITLY_ABSENT | "Absence déclarée le {date}" with author and origin, never "Aucune allergie"; with an unknown event date, "Absence déclarée · date inconnue" (the recording date never replaces the event date) |
 | One or more PRESENT and no EXPLICITLY_ABSENT | PRESENT | Each statement dated, with its origin in words; a patient report reads "Déclaré par la patiente · non confirmé" until a practitioner adds a separate assessment |
 | EXPLICITLY_ABSENT and PRESENT together, in either order | CONFLICTING (reads as unknown) | "Déclarations discordantes à préciser · ne pas conclure à l'absence", both statements oldest first, nothing merged or resolved |
 
