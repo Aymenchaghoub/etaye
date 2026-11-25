@@ -392,7 +392,7 @@ Each finding was checked against the code before a disposition. The reviewer als
 
 ### 13.3 CodeRabbit review (manual request, head `6c43878`)
 
-Eight inline findings, each checked against the code.
+Eight inline findings, each checked against the code. The fixes were pushed and the threads answered and resolved. A second `@coderabbitai full review` on the final head was refused: "Review rate limited", the free open-source review allowance was used up. No paid plan was activated, so the final head was reviewed by the separate reviewer of 13.2, by the checks and by the author, not by CodeRabbit.
 
 | # | Where | Finding | Verified | Disposition |
 |---|---|---|---|---|
