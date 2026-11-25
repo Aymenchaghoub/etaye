@@ -9,7 +9,7 @@ Status: Reviewed planning coverage, not implementation or design completion.2026
 | [FR-003](planning-artifacts/prd/prd.md#fr-003--team-administration) | BR-002–005 | J-07 | S-31, S-32 | Membership, Invitation | listMemberships, editMembershipCapabilities, suspendMembership | 2.1, 2.2 | AT-005, AT-006 |
 | [FR-004](planning-artifacts/prd/prd.md#fr-004--patient-identity) | BR-004 | J-02, J-03 | S-03, S-07, S-08 | Patient, PatientRecord, PortalLink | searchPatients, createPatient, editPatient, searchSchedulingPatients, registerSchedulingPatient | 1.1, 3.1, 4.2 | AT-001, AT-009, AT-015-D/E |
 | [FR-005](planning-artifacts/prd/prd.md#fr-005--longitudinal-record) | BR-008 | J-02 | S-07, S-09, S-10 | ClinicalAssertion, SourceRevision | getTimeline, listRecordSources, getSourceRevision, listAssertions, section-state read (3.2); appendAssertion, correctAssertion (increment 2, D-60) | 3.1, 3.2 | AT-009, AT-010 |
-| [FR-006](planning-artifacts/prd/prd.md#fr-006--measurements) | BR-008–009 | J-02 | S-11 | Measurement, SourceRevision | listMeasurements, appendMeasurement, correctMeasurement | 3.3 | AT-011 |
+| [FR-006](planning-artifacts/prd/prd.md#fr-006--measurements) | BR-008–009 | J-02 | S-11 | Measurement, SourceRevision | listMeasurements, measurement lineage read (3.3); appendMeasurement, correctMeasurement (increment 2, D-24) | 3.3 | AT-011 |
 | [FR-007](planning-artifacts/prd/prd.md#fr-007--laboratory-results) | BR-009 | J-02 | S-12 | LabResult, SourceRevision | listLabResults, appendLabResult, correctLabResult | 3.4 | AT-012 |
 | [FR-008](planning-artifacts/prd/prd.md#fr-008--documents-and-sources) | BR-010 | J-02 | S-09, S-13, S-30 | RecordDocument, SourceRevision | uploadRecordDocument, getSourceRevision, downloadRecordDocument | 3.5, 5.3 | AT-013, AT-021 |
 | [FR-009](planning-artifacts/prd/prd.md#fr-009--real-scheduling) | BR-006 | J-03 | S-06, S-14, S-15, S-16, S-26 | AvailabilityRule/Exception, Appointment | searchSchedulingPatients, registerSchedulingPatient, listOfferedSlots, bookAppointment, rescheduleAppointment, cancelAppointment | 2.3, 4.1, 4.2, 4.3, 4.4, 5.1, 7.5, 8.3, 10.7 | AT-007, AT-014, AT-015, AT-016, AT-017, AT-019, AT-031, AT-034, AT-044 |
@@ -148,6 +148,18 @@ UD-67 makes story 3.2 read-only and records what the build deliberately leaves o
 | Cross-module timeline events (publications, validations, briefs, appointments, tasks, reports) | Owning stories | D-61 |
 | Read audit of clinical record views | Deferred (D-62) | Not applicable in increment 1 |
 | Identity history in the as-of view | Deferred (D-63) | Not applicable in increment 1 |
+
+## Story 3.3 scope allocation
+
+UD-71 confirms that story 3.3 is read-only and records what the build deliberately leaves out. [Epic 3](planning-artifacts/epics/epic-3.md#story-33-enter-and-correct-measurements) · [Context packet](implementation-artifacts/story-3-3-context-packet.md#12-arbitration-outcome-ud-71) · [Deferred work D-24, D-65, D-66](planning-artifacts/deferred-work.md)
+
+| Item | Delivered by | Acceptance proof |
+|---|---|---|
+| `listMeasurements`, the lineage read of a measurement, the `measurement` table, the UD-32 `asOf` view on measurements, S-11 | Story 3.3 | AT-011-A/B/C (SAMPLED evidence for S-11), read side only |
+| The practice time zone on the membership access context (D-64 decided, UD-71 D1) | Story 3.3 | Test with a practice in another zone |
+| Measurement cases of the story 1.4 isolation matrix, runtime reset assertion on the corrected weight | Story 3.3 | D-55 note, D-54, `api-isolation-matrix` |
+| `appendMeasurement`, `correctMeasurement`, I-06, the AT-011-B parts that need writes (invalid input, stale correction, unit validation), the concept and unit catalogue | Deferred (D-24, D-66, increment 2) | Not applicable in increment 1 |
+| Date-only and unknown observed time, "Date inconnue" row | Deferred (D-65) | Not applicable in increment 1 |
 
 ## Story 3.2 record evidence verification
 

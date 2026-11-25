@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="fr" data-theme="clair">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Étaye · Revue design de la Story 3.3</title>
+  <link rel="stylesheet" href="../../../../design/offline-reference/site/tokens/tokens.css">
+  <style>
+    * { box-sizing: border-box; }
+    :root { color-scheme: light; }
+    [data-theme="sombre"] { color-scheme: dark; }
+    body { margin: 0; color: var(--encre); background: var(--fond); font: 400 15px/22px "Atkinson Hyperlegible Next", sans-serif; }
+    header { border-bottom: var(--trait-filet) solid var(--filet); }
+    .wrap { max-width: 1200px; margin: auto; padding: var(--espace-6); }
+    header .wrap { display: flex; justify-content: space-between; align-items: center; gap: var(--espace-4); }
+    .logo { display: block; height: 28px; }
+    [data-theme="clair"] .logo-dark, [data-theme="sombre"] .logo-light { display: none; }
+    main { overflow-wrap: anywhere; }
+    h1 { font: 500 32px/40px "Source Serif 4", serif; margin: 0; }
+    h2 { font-size: 22px; line-height: 28px; font-weight: 500; margin: 0 0 var(--espace-4); }
+    h3, legend { font-size: 16px; line-height: 24px; font-weight: 600; }
+    p, ul, ol { margin: 0 0 var(--espace-3); }
+    li + li { margin-top: var(--espace-1); }
+    a { color: var(--accent); text-underline-offset: 0.16em; }
+    .intro { max-width: 74ch; margin-top: var(--espace-3); color: var(--encre-2); }
+    section { margin-top: var(--espace-8); }
+    .columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--espace-4); }
+    .panel, fieldset, .decision { min-inline-size: 0; background: var(--surface); border: var(--trait-filet) solid var(--filet); padding: var(--espace-5); }
+    .panel h3 { margin: 0 0 var(--espace-2); }
+    .panel p:last-child, .panel ul:last-child { margin-bottom: 0; }
+    fieldset { margin: 0 0 var(--espace-4); }
+    legend { padding: 0 var(--espace-2); }
+    label.option { display: flex; align-items: baseline; gap: var(--espace-2); padding: var(--espace-2) 0; }
+    input[type="radio"] { accent-color: var(--accent); flex: 0 0 auto; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: var(--espace-3); align-items: end; margin-bottom: var(--espace-3); }
+    .toolbar label { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--espace-1); min-width: 0; max-width: 100%; font-weight: 500; font-size: 13px; }
+    select, button, textarea, a.btn { font: inherit; color: var(--encre); background: var(--surface); border: var(--trait-filet) solid var(--filet-controle); border-radius: var(--rayon-1); padding: var(--espace-2) var(--espace-3); min-height: 40px; }
+    select { max-width: 100%; }
+    button { cursor: pointer; }
+    button.link { border: 0; background: transparent; color: var(--accent); text-decoration: underline; padding: 0; min-height: 0; text-align: left; font-weight: 500; }
+    .primary { background: var(--encre); color: var(--encre-inverse); }
+    a.btn { display: inline-flex; align-items: center; text-decoration: none; }
+    :focus-visible { outline: var(--trait-focus) solid var(--accent); outline-offset: 2px; }
+    .stage { overflow: auto; border: var(--trait-filet) solid var(--filet-controle); background: var(--surface-2); padding: var(--espace-3); }
+    #fit { margin: 0 auto; position: relative; }
+    iframe { display: block; transform-origin: 0 0; border: var(--trait-filet) solid var(--filet); background: var(--fond); width: 1440px; max-width: none; height: 900px; }
+    .note { margin-bottom: var(--espace-3); }
+    .note dl { margin: 0; display: grid; gap: var(--espace-2); }
+    .note dt { font-size: 13px; font-weight: 600; color: var(--encre-2); }
+    .note dd { margin: 0; }
+    table { width: 100%; border-collapse: collapse; background: var(--surface); min-width: 44rem; }
+    th, td { text-align: left; vertical-align: top; padding: var(--espace-2) var(--espace-3); border-bottom: var(--trait-filet) solid var(--filet); font-size: 14px; line-height: 20px; overflow-wrap: normal; }
+    thead th { color: var(--encre-2); font-size: 13px; }
+    .table-scroll { overflow-x: auto; }
+    textarea { display: block; width: 100%; min-height: 9em; resize: vertical; margin-top: var(--espace-2); }
+    .decision p { color: var(--encre-2); }
+    .refs { display: flex; flex-wrap: wrap; gap: var(--espace-1) var(--espace-4); }
+    @media (max-width: 760px) { .wrap { padding: var(--espace-4); } .columns { grid-template-columns: 1fr; } h1 { font-size: 26px; line-height: 32px; } }
+    @media (max-width: 360px) { .wrap { padding: var(--espace-3); } .panel, fieldset, .decision { padding: var(--espace-3); } }
+  </style>
+</head>
+<body>
+  <header aria-label="En-tête de la page de revue">
+    <div class="wrap">
+      <div>
+        <img class="logo logo-light" src="../../../../design/offline-reference/site/logos/etaye-logo.svg" alt="Étaye">
+        <img class="logo logo-dark" src="../../../../design/offline-reference/site/logos/etaye-logo-sombre.svg" alt="Étaye">
+      </div>
+      <button id="page-theme" type="button" aria-pressed="false">Thème sombre</button>
+    </div>
+  </header>
+  <main class="wrap" aria-label="Revue design de la Story 3.3">
+    <h1>Story 3.3 · Revue design des états manquants de S-11</h1>
+    <p class="intro">Tu as arbitré le périmètre le 25 novembre (UD-71) : la 3.3 lit les mesures, trace leur tendance et montre la lignée des corrections, sans saisie ni correction (I-06 est en incrément 2). Cette page montre les états de S-11 tels qu’ils seraient construits, y compris ceux qui n’existaient dans aucune maquette : échec des mesures, filtre sans résultat, vue historique avant et après la correction, lignée ouverte, unités mélangées, tension incomplète, contenu long et série tronquée. Les 13 spécimens sont des maquettes statiques construites avec les tokens et le CSS de la référence hors ligne : aucune donnée réelle, aucun service. Chaque spécimen s’ouvre dans les deux thèmes et à quatre largeurs.</p>
+    <p class="refs"><a href="../../../implementation-artifacts/story-3-3-context-packet.md">Context packet</a> <a href="../2026-11-25-story-3-3-design-review.md">Dossier de revue</a> <a href="../2026-11-25-story-3-3-phase0-arbitration.html">Page d’arbitrage</a> <a href="../../../../design/offline-reference/site/ecrans/S-11/claire.html">Référence S-11</a> <a href="../../../../design/offline-reference/site/ecrans/S-11/gabarits.html">Gabarits S-11</a> <a href="../2026-11-24-story-3-2-specimens/specimens/s09-echec.html">Dossier non chargé (approuvé, 3.2)</a> <a href="../../../../design/offline-reference/site/ecrans/S-36/interdit.html">S-36 refus (approuvé, 1.4)</a> <a href="../../../../design/offline-reference/site/ecrans/S-36/introuvable.html">S-36 introuvable (approuvé, 1.4)</a></p>
+
+    <section aria-labelledby="visionneuse">
+      <h2 id="visionneuse">Spécimens</h2>
+      <div class="toolbar">
+        <label>État<select id="state"><option value="s11-claire">Mesures de Claire Martin</option><option value="s11-historique">Historique d’une mesure corrigée</option><option value="s11-louis">Dossier sans mesure (Louis Bernard)</option><option value="s11-chargement">Chargement</option><option value="s11-erreur-partielle">Mesures non chargées</option><option value="s11-filtre-vide">Aucune mesure pour ces filtres</option><option value="s11-asof-avant-correction">Vue historique : avant la correction (20/10/2026 10:14)</option><option value="s11-asof-apres-correction">Vue historique : après la correction (20/10/2026 10:16)</option><option value="s11-asof-avant-tout">Vue historique : avant le premier enregistrement</option><option value="s11-unites-melangees">Unités mélangées (gabarit)</option><option value="s11-groupe-incomplet">Tension incomplète (gabarit)</option><option value="s11-long">Contenu long (gabarit)</option><option value="s11-serie-tronquee">Série plus longue que les pages chargées (gabarit)</option></select></label>
+        <label>Thème<select id="theme"><option value="clair">Clair</option><option value="sombre">Sombre</option></select></label>
+        <label>Largeur<select id="width"><option value="1440">1440 × 1024 (bureau)</option><option value="1024">1024 × 768 (tablette)</option><option value="390">390 × 844 (mobile)</option><option value="320">320 × 844 (repli)</option></select></label>
+        <a class="btn" id="open" href="#" target="_blank" rel="noopener">Ouvrir seul</a>
+      </div>
+      <article class="panel note" aria-live="polite">
+        <h3 id="note-title">État</h3>
+        <dl>
+          <div><dt>Référence de départ</dt><dd id="note-ref"></dd></div>
+          <div><dt>Ce qui change et pourquoi</dt><dd id="note-change"></dd></div>
+        </dl>
+      </article>
+      <div class="stage" role="region" aria-label="Aperçu du spécimen" tabindex="0"><div id="fit"><iframe id="frame" title="Spécimen de revue" src="about:blank"></iframe></div></div>
+    </section>
+
+    <section aria-labelledby="points">
+      <h2 id="points">Six points à regarder en particulier</h2>
+      <div class="columns">
+        <article class="panel"><h3>1 · La valeur courante et sa lignée</h3><p>Ouvre « Mesures de Claire Martin » puis « Historique d’une mesure corrigée » : le poids est 68,4 kg, « Corrigé · version 2 », la version précédente 86,4 kg est conservée avec son motif tel qu’il est écrit (la référence le résumait en « erreur de saisie »). L’original n’est jamais effacé.</p></article>
+        <article class="panel"><h3>2 · Jamais de fusion silencieuse</h3><p>Ouvre « Unités mélangées » et « Tension incomplète » : deux unités font deux séries avec leur axe, sans conversion ; une tension à une seule composante est dite incomplète dans le tableau et n’est pas tracée sur la courbe appariée. Ce sont des gabarits : le jeu ne contient aucun de ces cas.</p></article>
+        <article class="panel"><h3>3 · Un trait n’est pas une mesure</h3><p>Le graphique relie les points consécutifs sans porter de valeur et le dit en toutes lettres ; un point seul ne trace aucune courbe ; « Série plus longue que les pages chargées » dit que la courbe n’est pas la tendance entière. Le tableau fait foi. Tu confirmes ce tracé dans la décision ci-dessous.</p></article>
+        <article class="panel"><h3>4 · La vue historique (DF-17)</h3><p>Ouvre les trois vues historiques et « Aucune mesure pour ces filtres » : à 10:14 le poids est 86,4 kg sans aucune trace d’une correction, à 10:16 il est 68,4 kg, avant le 14/09 rien n’était enregistré. Le contrôle et le bandeau sont ceux de 3.2.</p></article>
+        <article class="panel"><h3>5 · Un chargement ou un échec n’est jamais « aucune mesure »</h3><p>« Chargement » et « Mesures non chargées » : jamais « Aucune mesure » tant que la lecture n’a pas réussi, et un échec ne vide pas le bandeau d’identité ni les onglets. L’échec du dossier entier est celui de S-09 déjà approuvé ; le refus et l’absence gardent S-36.</p></article>
+        <article class="panel"><h3>6 · Ce que la 3.3 ne montre pas (A1, C1)</h3><p>Pas de « Saisir une mesure » ni de « Corriger » (I-06, incrément 2), pas d’onglet Biologie ni Documents, pas de ligne « Date inconnue » (D-65), pas d’en-tête triable (D-44). C’est la conséquence visible de la lecture seule : une mesure fausse se voit, mais elle ne se corrige pas encore depuis l’écran.</p></article>
+      </div>
+    </section>
+
+    <section aria-labelledby="liste">
+      <h2 id="liste">Tous les états</h2>
+      <div class="table-scroll" role="region" aria-label="Liste des états" tabindex="0"><table>
+        <thead><tr><th scope="col">État</th><th scope="col">Référence</th><th scope="col">Changement proposé</th></tr></thead>
+        <tbody><tr><th scope="row"><button class="link" type="button" data-pick="s11-claire">Mesures de Claire Martin</button></th><td>S-11/claire</td><td>Enveloppe, bandeau d&#x27;identité et onglets livrés en 3.2 : ni « Dossier R-A-001 » ni pastille « Espace patient » (D-57), pas d&#x27;onglet Biologie ni Documents (3.4, 3.5), pas de « Saisir une mesure » (D-24, UD-71 A1). La pression artérielle reste deux séries sur une même unité, le poids un point unique sans courbe. Le poids corrigé affiche la valeur courante, « Corrigé · version 2 », la version précédente conservée et le motif tel qu&#x27;il est écrit (la référence le résumait en « erreur de saisie »). « Voir l&#x27;historique » est une divulgation en place. Le tableau garde six colonnes et un ordre fixe, sans en-tête triable (D-44 non déclenché) ; chaque ligne a un repère numéroté lié à sa source, ouverte sur place (E1). Le graphique est un SVG avec une alternative textuelle qui énonce chaque valeur ; le tableau fait foi. Le contrôle de date passée est celui de 3.2.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s11-historique">Historique d’une mesure corrigée</button></th><td>S-11/claire (« Voir l’historique »)</td><td>Le lien « Voir l&#x27;historique » de la référence n&#x27;avait aucune interaction définie : c&#x27;est un bouton avec `aria-expanded` (D-45, focus conservé sur le bouton, Entrée et Espace). La lignée est listée de la plus ancienne à la plus récente : version, valeur et unité, date d&#x27;enregistrement, auteur, origine en toutes lettres, motif de la correction tel qu&#x27;il est écrit. L&#x27;original n&#x27;est jamais effacé ni présenté comme une autre mesure (BR-008). Dans cette maquette le focus clavier est sur le bouton ouvert (anneau visible).</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s11-louis">Dossier sans mesure (Louis Bernard)</button></th><td>S-11/louis</td><td>Même phrase que la référence, complétée : « ce n&#x27;est ni zéro ni une valeur normale » (BR-009, AC-S11-V). Aucun bouton « Saisir une mesure » (D-24). Les filtres sont masqués tant que le dossier est vide, ce qui distingue « dossier sans mesure » de « filtre sans résultat ». Le bloc Allergies dit « Non renseigné », jamais « Aucune ».</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s11-chargement">Chargement</button></th><td>S-11/chargement</td><td>Squelettes pour les panneaux et le tableau ; une zone d&#x27;état polie annonce l&#x27;attente. Aucune phrase « Aucune mesure » ni valeur tant que la réponse n&#x27;est pas arrivée (C3, BR-009). Le bloc Allergies a son propre squelette. Le choix de date passée n&#x27;est pas proposé tant que le dossier n&#x27;est pas chargé (comme en 3.2).</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s11-erreur-partielle">Mesures non chargées</button></th><td>S-11 (absent des références, SP-STATE) ; S-09/erreur-partielle (3.2)</td><td>Le dossier se charge mais les mesures échouent : le bandeau d&#x27;identité, le bloc Allergies et les onglets restent affichés (C11). La zone dit « ceci n&#x27;est pas un dossier sans mesure » : pas d&#x27;état vide à la place d&#x27;une erreur. « Réessayer » ne recharge que les mesures. Le refus 429 utilise le même bandeau avec le délai d&#x27;attente. Le 403 d&#x27;un compte d&#x27;administration et le 404 d&#x27;un dossier absent ou d&#x27;un autre cabinet gardent les états S-36 approuvés en 1.4 ; l&#x27;échec du dossier entier est celui de S-09 (spécimen « Dossier non chargé » approuvé en 3.2), sans nouveau spécimen.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s11-filtre-vide">Aucune mesure pour ces filtres</button></th><td>Absent des références (SP-STATE, C10)</td><td>Filtre sans résultat, distinct du dossier sans mesure : la phrase dit que des mesures peuvent exister hors filtre, « Réinitialiser les filtres » est visible deux fois (barre et état) et le compteur dit « 0 mesure affichée ». Le cas réel du jeu : la vue du 15/09/2026 contient la pression artérielle du 14/09 mais pas encore le poids, donc le filtre « Poids » ne trouve rien. Les périodes relatives (3 derniers mois, 12 derniers mois) comptent à partir de l&#x27;instant de la vue (maintenant, ou la date passée) dans le fuseau du cabinet : [ASSUMPTION] à confirmer.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s11-asof-avant-correction">Vue historique : avant la correction (20/10/2026 10:14)</button></th><td>S-11/claire + S-09/asof (3.2)</td><td>DF-17 pour S-11 : le contrôle et le bandeau de 3.2, partagés entre les onglets. À 10:14 le poids est à sa version 1 (86,4 kg, enregistrée à 10:13) : aucune trace qu&#x27;une correction existe, aucun « Corrigé », aucun lien vers l&#x27;historique, et la source ouverte affiche le texte de l&#x27;époque (« Poids saisi : 86,4 kg. »). L&#x27;identité affichée est l&#x27;identité actuelle (D-63). Le bloc Allergies dit l&#x27;état à cette date.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s11-asof-apres-correction">Vue historique : après la correction (20/10/2026 10:16)</button></th><td>S-11/claire + S-09/asof (3.2)</td><td>À 10:16 la version 2 est déjà enregistrée (10:15) : le poids est 68,4 kg, corrigé, et « Voir l&#x27;historique » montre les deux versions. Le lien vers la correction de DF-17 n&#x27;existe pas : il suit D-60. Avec le spécimen précédent, ce spécimen est la preuve visible de AT-011-A : le poids avant et après la correction (UD-32).</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s11-asof-avant-tout">Vue historique : avant le premier enregistrement</button></th><td>S-09/asof-avant (3.2)</td><td>Avant la première mesure enregistrée (14/09/2026 à 09:36) la vue dit que rien n&#x27;était enregistré, sans jamais conclure à des valeurs normales (UD-32, BR-009). Même formulation que le spécimen équivalent de S-09.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s11-unites-melangees">Unités mélangées (gabarit)</button></th><td>S-11/gabarits</td><td>Un vrai spécimen au lieu d&#x27;une ligne de gabarit : deux séries de la même mesure dans deux unités, chacune dans son panneau avec son axe, jamais convertie ni sommée (BR-009, AT-011-B). Une série est l&#x27;association exacte du concept et de l&#x27;unité ; deux orthographes d&#x27;une même unité donnent deux séries, l&#x27;échec est un éclatement, jamais une fusion silencieuse. Au-delà de deux séries le tableau liste tout et le graphique ne montre que celles que le praticien choisit. Gabarit de mise en page : aucun dossier du jeu n&#x27;a ce cas, les valeurs sont fictives et sans portée clinique.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s11-groupe-incomplet">Tension incomplète (gabarit)</button></th><td>Absent des références (BR-009, C7)</td><td>Une pression artérielle est deux composantes liées par un groupe : elle s&#x27;affiche comme une paire seulement si les deux existent. Une lecture incomplète est dite incomplète dans le tableau (« 130 / — », « diastolique manquante », avec une étiquette et pas seulement une couleur), n&#x27;est pas tracée sur la courbe appariée et le panneau le dit. Aucune composante absente n&#x27;est remplacée par zéro ni par une valeur voisine. [Proposal] à confirmer ; gabarit de mise en page, valeur fictive.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s11-long">Contenu long (gabarit)</button></th><td>Absent des références (AT-011-C, C12)</td><td>Texte non fiable rendu comme texte : le concept, l&#x27;unité et l&#x27;auteur passent à la ligne, aucune date, unité, auteur ni source n&#x27;est coupé à 1440, 390 et 320 px. Le texte d&#x27;un SVG ne se replie pas : l&#x27;unité est dite dans l&#x27;en-tête du panneau, les étiquettes de valeurs et d&#x27;axe sont masquées quand elles déborderaient, et la phrase l&#x27;annonce ; le tableau affiche la valeur entière avec ses décimales, sans arrondi silencieux (virgule française). Gabarit de mise en page.</td></tr><tr><th scope="row"><button class="link" type="button" data-pick="s11-serie-tronquee">Série plus longue que les pages chargées (gabarit)</button></th><td>Absent des références (G-07, C9)</td><td>Une page de réponse contient au plus 100 mesures et la réponse n&#x27;a pas de total : un graphique tracé depuis les pages chargées ne doit pas se faire passer pour la tendance entière. Le panneau dit « 25 mesures affichées », le bandeau dit que la courbe est limitée aux mesures chargées et que d&#x27;autres existent, avec « Afficher plus de mesures ». Le tableau n&#x27;affiche que les lignes chargées (quatre sont montrées ici). Aucune étiquette de valeur sur une série dense : le tableau fait foi. Gabarit de mise en page, valeurs fictives.</td></tr></tbody>
+      </table></div>
+    </section>
+
+    <section aria-labelledby="decision">
+      <h2 id="decision">Ta décision de design</h2>
+      <p class="intro">Cette réponse approuve ou non les 13 états ci-dessus comme spécimens de design de S-11 (UD-71). Elle n’autorise pas le développement : l’autorisation de la Story 3.3 est une décision écrite distincte, de même que l’approbation de l’interface en fonctionnement et la fusion. I-06 n’est pas concerné.</p>
+      <form id="choices">
+        <fieldset>
+          <legend>Design de S-11</legend>
+          <label class="option"><input type="radio" name="design" value="OK" required><span><strong>J’approuve ces états tels que présentés.</strong> Y compris les écarts avec la référence listés ci-dessus et les cinq gabarits (unités mélangées, tension incomplète, contenu long, série tronquée, valeurs fictives).</span></label>
+          <label class="option"><input type="radio" name="design" value="MOD"><span><strong>J’approuve avec modifications.</strong> Je les précise dans les remarques.</span></label>
+          <label class="option"><input type="radio" name="design" value="NON"><span><strong>Je ne valide pas.</strong> Il faut reprendre les états signalés dans les remarques.</span></label>
+        </fieldset>
+        <fieldset>
+          <legend>Point à confirmer (G-19) : les périodes relatives</legend>
+          <label class="option"><input type="radio" name="periode" value="VUE" required><span><strong>« 3 derniers mois » et « 12 derniers mois » comptent à partir de l’instant de la vue (recommandé).</strong> Maintenant, ou la date passée choisie, dans le fuseau du cabinet.</span></label>
+          <label class="option"><input type="radio" name="periode" value="MAINTENANT"><span><strong>Ils comptent toujours à partir de maintenant,</strong> même dans une vue historique.</span></label>
+        </fieldset>
+        <fieldset>
+          <legend>Point à confirmer (F1) : le trait entre deux points</legend>
+          <label class="option"><input type="radio" name="trait" value="TRAIT" required><span><strong>Les points consécutifs sont reliés par un trait sans valeur, avec la phrase « Le trait n’est pas une mesure » (recommandé).</strong> C’est le tracé de la référence.</span></label>
+          <label class="option"><input type="radio" name="trait" value="POINTS"><span><strong>Marqueurs seuls, sans trait,</strong> avec la phrase « Aucune mesure entre … et … » : lecture stricte de « périodes manquantes dessinées comme des trous ».</span></label>
+        </fieldset>
+        <div class="decision">
+          <button class="primary" type="submit">Préparer ma réponse</button>
+          <label for="recap" style="display:block;margin-top:var(--espace-3)">Récapitulatif à transmettre (ajoute tes remarques dans la conversation)</label>
+          <textarea id="recap" readonly></textarea>
+        </div>
+      </form>
+    </section>
+  </main>
+  <script>
+    const specs = {"s11-claire": {"family": "S-11", "title": "Mesures de Claire Martin", "reference": "S-11/claire", "change": "Enveloppe, bandeau d'identité et onglets livrés en 3.2 : ni « Dossier R-A-001 » ni pastille « Espace patient » (D-57), pas d'onglet Biologie ni Documents (3.4, 3.5), pas de « Saisir une mesure » (D-24, UD-71 A1). La pression artérielle reste deux séries sur une même unité, le poids un point unique sans courbe. Le poids corrigé affiche la valeur courante, « Corrigé · version 2 », la version précédente conservée et le motif tel qu'il est écrit (la référence le résumait en « erreur de saisie »). « Voir l'historique » est une divulgation en place. Le tableau garde six colonnes et un ordre fixe, sans en-tête triable (D-44 non déclenché) ; chaque ligne a un repère numéroté lié à sa source, ouverte sur place (E1). Le graphique est un SVG avec une alternative textuelle qui énonce chaque valeur ; le tableau fait foi. Le contrôle de date passée est celui de 3.2."}, "s11-historique": {"family": "S-11", "title": "Historique d’une mesure corrigée", "reference": "S-11/claire (« Voir l’historique »)", "change": "Le lien « Voir l'historique » de la référence n'avait aucune interaction définie : c'est un bouton avec `aria-expanded` (D-45, focus conservé sur le bouton, Entrée et Espace). La lignée est listée de la plus ancienne à la plus récente : version, valeur et unité, date d'enregistrement, auteur, origine en toutes lettres, motif de la correction tel qu'il est écrit. L'original n'est jamais effacé ni présenté comme une autre mesure (BR-008). Dans cette maquette le focus clavier est sur le bouton ouvert (anneau visible)."}, "s11-louis": {"family": "S-11", "title": "Dossier sans mesure (Louis Bernard)", "reference": "S-11/louis", "change": "Même phrase que la référence, complétée : « ce n'est ni zéro ni une valeur normale » (BR-009, AC-S11-V). Aucun bouton « Saisir une mesure » (D-24). Les filtres sont masqués tant que le dossier est vide, ce qui distingue « dossier sans mesure » de « filtre sans résultat ». Le bloc Allergies dit « Non renseigné », jamais « Aucune »."}, "s11-chargement": {"family": "S-11", "title": "Chargement", "reference": "S-11/chargement", "change": "Squelettes pour les panneaux et le tableau ; une zone d'état polie annonce l'attente. Aucune phrase « Aucune mesure » ni valeur tant que la réponse n'est pas arrivée (C3, BR-009). Le bloc Allergies a son propre squelette. Le choix de date passée n'est pas proposé tant que le dossier n'est pas chargé (comme en 3.2)."}, "s11-erreur-partielle": {"family": "S-11", "title": "Mesures non chargées", "reference": "S-11 (absent des références, SP-STATE) ; S-09/erreur-partielle (3.2)", "change": "Le dossier se charge mais les mesures échouent : le bandeau d'identité, le bloc Allergies et les onglets restent affichés (C11). La zone dit « ceci n'est pas un dossier sans mesure » : pas d'état vide à la place d'une erreur. « Réessayer » ne recharge que les mesures. Le refus 429 utilise le même bandeau avec le délai d'attente. Le 403 d'un compte d'administration et le 404 d'un dossier absent ou d'un autre cabinet gardent les états S-36 approuvés en 1.4 ; l'échec du dossier entier est celui de S-09 (spécimen « Dossier non chargé » approuvé en 3.2), sans nouveau spécimen."}, "s11-filtre-vide": {"family": "S-11", "title": "Aucune mesure pour ces filtres", "reference": "Absent des références (SP-STATE, C10)", "change": "Filtre sans résultat, distinct du dossier sans mesure : la phrase dit que des mesures peuvent exister hors filtre, « Réinitialiser les filtres » est visible deux fois (barre et état) et le compteur dit « 0 mesure affichée ». Le cas réel du jeu : la vue du 15/09/2026 contient la pression artérielle du 14/09 mais pas encore le poids, donc le filtre « Poids » ne trouve rien. Les périodes relatives (3 derniers mois, 12 derniers mois) comptent à partir de l'instant de la vue (maintenant, ou la date passée) dans le fuseau du cabinet : [ASSUMPTION] à confirmer."}, "s11-asof-avant-correction": {"family": "S-11", "title": "Vue historique : avant la correction (20/10/2026 10:14)", "reference": "S-11/claire + S-09/asof (3.2)", "change": "DF-17 pour S-11 : le contrôle et le bandeau de 3.2, partagés entre les onglets. À 10:14 le poids est à sa version 1 (86,4 kg, enregistrée à 10:13) : aucune trace qu'une correction existe, aucun « Corrigé », aucun lien vers l'historique, et la source ouverte affiche le texte de l'époque (« Poids saisi : 86,4 kg. »). L'identité affichée est l'identité actuelle (D-63). Le bloc Allergies dit l'état à cette date."}, "s11-asof-apres-correction": {"family": "S-11", "title": "Vue historique : après la correction (20/10/2026 10:16)", "reference": "S-11/claire + S-09/asof (3.2)", "change": "À 10:16 la version 2 est déjà enregistrée (10:15) : le poids est 68,4 kg, corrigé, et « Voir l'historique » montre les deux versions. Le lien vers la correction de DF-17 n'existe pas : il suit D-60. Avec le spécimen précédent, ce spécimen est la preuve visible de AT-011-A : le poids avant et après la correction (UD-32)."}, "s11-asof-avant-tout": {"family": "S-11", "title": "Vue historique : avant le premier enregistrement", "reference": "S-09/asof-avant (3.2)", "change": "Avant la première mesure enregistrée (14/09/2026 à 09:36) la vue dit que rien n'était enregistré, sans jamais conclure à des valeurs normales (UD-32, BR-009). Même formulation que le spécimen équivalent de S-09."}, "s11-unites-melangees": {"family": "S-11", "title": "Unités mélangées (gabarit)", "reference": "S-11/gabarits", "change": "Un vrai spécimen au lieu d'une ligne de gabarit : deux séries de la même mesure dans deux unités, chacune dans son panneau avec son axe, jamais convertie ni sommée (BR-009, AT-011-B). Une série est l'association exacte du concept et de l'unité ; deux orthographes d'une même unité donnent deux séries, l'échec est un éclatement, jamais une fusion silencieuse. Au-delà de deux séries le tableau liste tout et le graphique ne montre que celles que le praticien choisit. Gabarit de mise en page : aucun dossier du jeu n'a ce cas, les valeurs sont fictives et sans portée clinique."}, "s11-groupe-incomplet": {"family": "S-11", "title": "Tension incomplète (gabarit)", "reference": "Absent des références (BR-009, C7)", "change": "Une pression artérielle est deux composantes liées par un groupe : elle s'affiche comme une paire seulement si les deux existent. Une lecture incomplète est dite incomplète dans le tableau (« 130 / — », « diastolique manquante », avec une étiquette et pas seulement une couleur), n'est pas tracée sur la courbe appariée et le panneau le dit. Aucune composante absente n'est remplacée par zéro ni par une valeur voisine. [Proposal] à confirmer ; gabarit de mise en page, valeur fictive."}, "s11-long": {"family": "S-11", "title": "Contenu long (gabarit)", "reference": "Absent des références (AT-011-C, C12)", "change": "Texte non fiable rendu comme texte : le concept, l'unité et l'auteur passent à la ligne, aucune date, unité, auteur ni source n'est coupé à 1440, 390 et 320 px. Le texte d'un SVG ne se replie pas : l'unité est dite dans l'en-tête du panneau, les étiquettes de valeurs et d'axe sont masquées quand elles déborderaient, et la phrase l'annonce ; le tableau affiche la valeur entière avec ses décimales, sans arrondi silencieux (virgule française). Gabarit de mise en page."}, "s11-serie-tronquee": {"family": "S-11", "title": "Série plus longue que les pages chargées (gabarit)", "reference": "Absent des références (G-07, C9)", "change": "Une page de réponse contient au plus 100 mesures et la réponse n'a pas de total : un graphique tracé depuis les pages chargées ne doit pas se faire passer pour la tendance entière. Le panneau dit « 25 mesures affichées », le bandeau dit que la courbe est limitée aux mesures chargées et que d'autres existent, avec « Afficher plus de mesures ». Le tableau n'affiche que les lignes chargées (quatre sont montrées ici). Aucune étiquette de valeur sur une série dense : le tableau fait foi. Gabarit de mise en page, valeurs fictives."}};
+    const state = document.getElementById('state');
+    const theme = document.getElementById('theme');
+    const width = document.getElementById('width');
+    const frame = document.getElementById('frame');
+    const open = document.getElementById('open');
+    function refresh() {
+      const id = state.value;
+      const url = 'specimens/' + id + '.html?theme=' + theme.value;
+      frame.src = url;
+      open.href = url;
+      const w = Number(width.value);
+      const h = w === 1440 ? 900 : w === 1024 ? 768 : 844;
+      const stage = document.querySelector('.stage');
+      const scale = Math.min(1, (stage.clientWidth - 24) / w);
+      frame.style.width = w + 'px';
+      frame.style.height = h + 'px';
+      frame.style.transform = 'scale(' + scale + ')';
+      const fit = document.getElementById('fit');
+      fit.style.width = Math.round(w * scale) + 'px';
+      fit.style.height = Math.round(h * scale) + 'px';
+      const s = specs[id];
+      document.getElementById('note-title').textContent = s.family + ' · ' + s.title;
+      document.getElementById('note-ref').textContent = s.reference;
+      document.getElementById('note-change').textContent = s.change;
+    }
+    [state, theme, width].forEach((el) => el.addEventListener('change', refresh));
+    document.querySelectorAll('[data-pick]').forEach((b) => b.addEventListener('click', () => {
+      state.value = b.dataset.pick;
+      refresh();
+      document.getElementById('visionneuse').scrollIntoView();
+    }));
+    const pageTheme = document.getElementById('page-theme');
+    pageTheme.addEventListener('click', () => {
+      const dark = document.documentElement.dataset.theme === 'clair';
+      document.documentElement.dataset.theme = dark ? 'sombre' : 'clair';
+      pageTheme.setAttribute('aria-pressed', String(dark));
+      pageTheme.textContent = dark ? 'Thème clair' : 'Thème sombre';
+    });
+    const labels = { OK: 'J’approuve ces états tels que présentés.', MOD: 'J’approuve avec modifications.', NON: 'Je ne valide pas.' };
+    const periode = { VUE: 'les périodes relatives comptent à partir de l’instant de la vue (maintenant ou la date passée), dans le fuseau du cabinet', MAINTENANT: 'les périodes relatives comptent toujours à partir de maintenant, même dans une vue historique' };
+    const trait = { TRAIT: 'les points consécutifs sont reliés par un trait sans valeur, avec la phrase « Le trait n’est pas une mesure »', POINTS: 'marqueurs seuls, sans trait, avec la phrase « Aucune mesure entre … et … »' };
+    document.getElementById('choices').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const data = new FormData(event.target);
+      const recap = document.getElementById('recap');
+      recap.value = 'Revue design Story 3.3 (S-11, 13 états) — ' + labels[data.get('design')] + '\nPériodes : ' + periode[data.get('periode')] + '.\nTracé : ' + trait[data.get('trait')] + '.\nCette réponse est une approbation de design seulement ; mon autorisation de développement reste une décision écrite distincte.';
+      recap.focus();
+      recap.select();
+    });
+    window.addEventListener('resize', refresh);
+    refresh();
+  </script>
+</body>
+</html>

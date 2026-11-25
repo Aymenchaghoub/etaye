@@ -1,0 +1,106 @@
+[
+ {
+  "id": "s11-claire",
+  "family": "S-11",
+  "title": "Mesures de Claire Martin",
+  "focus": "h1",
+  "reference": "S-11/claire",
+  "change": "Enveloppe, bandeau d'identité et onglets livrés en 3.2 : ni « Dossier R-A-001 » ni pastille « Espace patient » (D-57), pas d'onglet Biologie ni Documents (3.4, 3.5), pas de « Saisir une mesure » (D-24, UD-71 A1). La pression artérielle reste deux séries sur une même unité, le poids un point unique sans courbe. Le poids corrigé affiche la valeur courante, « Corrigé · version 2 », la version précédente conservée et le motif tel qu'il est écrit (la référence le résumait en « erreur de saisie »). « Voir l'historique » est une divulgation en place. Le tableau garde six colonnes et un ordre fixe, sans en-tête triable (D-44 non déclenché) ; chaque ligne a un repère numéroté lié à sa source, ouverte sur place (E1). Le graphique est un SVG avec une alternative textuelle qui énonce chaque valeur ; le tableau fait foi. Le contrôle de date passée est celui de 3.2."
+ },
+ {
+  "id": "s11-historique",
+  "family": "S-11",
+  "title": "Historique d’une mesure corrigée",
+  "focus": "disclosure",
+  "reference": "S-11/claire (« Voir l’historique »)",
+  "change": "Le lien « Voir l'historique » de la référence n'avait aucune interaction définie : c'est un bouton avec `aria-expanded` (D-45, focus conservé sur le bouton, Entrée et Espace). La lignée est listée de la plus ancienne à la plus récente : version, valeur et unité, date d'enregistrement, auteur, origine en toutes lettres, motif de la correction tel qu'il est écrit. L'original n'est jamais effacé ni présenté comme une autre mesure (BR-008). Dans cette maquette le focus clavier est sur le bouton ouvert (anneau visible)."
+ },
+ {
+  "id": "s11-louis",
+  "family": "S-11",
+  "title": "Dossier sans mesure (Louis Bernard)",
+  "focus": "h1",
+  "reference": "S-11/louis",
+  "change": "Même phrase que la référence, complétée : « ce n'est ni zéro ni une valeur normale » (BR-009, AC-S11-V). Aucun bouton « Saisir une mesure » (D-24). Les filtres sont masqués tant que le dossier est vide, ce qui distingue « dossier sans mesure » de « filtre sans résultat ». Le bloc Allergies dit « Non renseigné », jamais « Aucune »."
+ },
+ {
+  "id": "s11-chargement",
+  "family": "S-11",
+  "title": "Chargement",
+  "focus": "h1",
+  "reference": "S-11/chargement",
+  "change": "Squelettes pour les panneaux et le tableau ; une zone d'état polie annonce l'attente. Aucune phrase « Aucune mesure » ni valeur tant que la réponse n'est pas arrivée (C3, BR-009). Le bloc Allergies a son propre squelette. Le choix de date passée n'est pas proposé tant que le dossier n'est pas chargé (comme en 3.2)."
+ },
+ {
+  "id": "s11-erreur-partielle",
+  "family": "S-11",
+  "title": "Mesures non chargées",
+  "focus": "h1",
+  "reference": "S-11 (absent des références, SP-STATE) ; S-09/erreur-partielle (3.2)",
+  "change": "Le dossier se charge mais les mesures échouent : le bandeau d'identité, le bloc Allergies et les onglets restent affichés (C11). La zone dit « ceci n'est pas un dossier sans mesure » : pas d'état vide à la place d'une erreur. « Réessayer » ne recharge que les mesures. Le refus 429 utilise le même bandeau avec le délai d'attente. Le 403 d'un compte d'administration et le 404 d'un dossier absent ou d'un autre cabinet gardent les états S-36 approuvés en 1.4 ; l'échec du dossier entier est celui de S-09 (spécimen « Dossier non chargé » approuvé en 3.2), sans nouveau spécimen."
+ },
+ {
+  "id": "s11-filtre-vide",
+  "family": "S-11",
+  "title": "Aucune mesure pour ces filtres",
+  "focus": "h1",
+  "reference": "Absent des références (SP-STATE, C10)",
+  "change": "Filtre sans résultat, distinct du dossier sans mesure : la phrase dit que des mesures peuvent exister hors filtre, « Réinitialiser les filtres » est visible deux fois (barre et état) et le compteur dit « 0 mesure affichée ». Le cas réel du jeu : la vue du 15/09/2026 contient la pression artérielle du 14/09 mais pas encore le poids, donc le filtre « Poids » ne trouve rien. Les périodes relatives (3 derniers mois, 12 derniers mois) comptent à partir de l'instant de la vue (maintenant, ou la date passée) dans le fuseau du cabinet : [ASSUMPTION] à confirmer."
+ },
+ {
+  "id": "s11-asof-avant-correction",
+  "family": "S-11",
+  "title": "Vue historique : avant la correction (20/10/2026 10:14)",
+  "focus": "h1",
+  "reference": "S-11/claire + S-09/asof (3.2)",
+  "change": "DF-17 pour S-11 : le contrôle et le bandeau de 3.2, partagés entre les onglets. À 10:14 le poids est à sa version 1 (86,4 kg, enregistrée à 10:13) : aucune trace qu'une correction existe, aucun « Corrigé », aucun lien vers l'historique, et la source ouverte affiche le texte de l'époque (« Poids saisi : 86,4 kg. »). L'identité affichée est l'identité actuelle (D-63). Le bloc Allergies dit l'état à cette date."
+ },
+ {
+  "id": "s11-asof-apres-correction",
+  "family": "S-11",
+  "title": "Vue historique : après la correction (20/10/2026 10:16)",
+  "focus": "h1",
+  "reference": "S-11/claire + S-09/asof (3.2)",
+  "change": "À 10:16 la version 2 est déjà enregistrée (10:15) : le poids est 68,4 kg, corrigé, et « Voir l'historique » montre les deux versions. Le lien vers la correction de DF-17 n'existe pas : il suit D-60. Avec le spécimen précédent, ce spécimen est la preuve visible de AT-011-A : le poids avant et après la correction (UD-32)."
+ },
+ {
+  "id": "s11-asof-avant-tout",
+  "family": "S-11",
+  "title": "Vue historique : avant le premier enregistrement",
+  "focus": "h1",
+  "reference": "S-09/asof-avant (3.2)",
+  "change": "Avant la première mesure enregistrée (14/09/2026 à 09:36) la vue dit que rien n'était enregistré, sans jamais conclure à des valeurs normales (UD-32, BR-009). Même formulation que le spécimen équivalent de S-09."
+ },
+ {
+  "id": "s11-unites-melangees",
+  "family": "S-11",
+  "title": "Unités mélangées (gabarit)",
+  "focus": "h1",
+  "reference": "S-11/gabarits",
+  "change": "Un vrai spécimen au lieu d'une ligne de gabarit : deux séries de la même mesure dans deux unités, chacune dans son panneau avec son axe, jamais convertie ni sommée (BR-009, AT-011-B). Une série est l'association exacte du concept et de l'unité ; deux orthographes d'une même unité donnent deux séries, l'échec est un éclatement, jamais une fusion silencieuse. Au-delà de deux séries le tableau liste tout et le graphique ne montre que celles que le praticien choisit. Gabarit de mise en page : aucun dossier du jeu n'a ce cas, les valeurs sont fictives et sans portée clinique."
+ },
+ {
+  "id": "s11-groupe-incomplet",
+  "family": "S-11",
+  "title": "Tension incomplète (gabarit)",
+  "focus": "h1",
+  "reference": "Absent des références (BR-009, C7)",
+  "change": "Une pression artérielle est deux composantes liées par un groupe : elle s'affiche comme une paire seulement si les deux existent. Une lecture incomplète est dite incomplète dans le tableau (« 130 / — », « diastolique manquante », avec une étiquette et pas seulement une couleur), n'est pas tracée sur la courbe appariée et le panneau le dit. Aucune composante absente n'est remplacée par zéro ni par une valeur voisine. [Proposal] à confirmer ; gabarit de mise en page, valeur fictive."
+ },
+ {
+  "id": "s11-long",
+  "family": "S-11",
+  "title": "Contenu long (gabarit)",
+  "focus": "h1",
+  "reference": "Absent des références (AT-011-C, C12)",
+  "change": "Texte non fiable rendu comme texte : le concept, l'unité et l'auteur passent à la ligne, aucune date, unité, auteur ni source n'est coupé à 1440, 390 et 320 px. Le texte d'un SVG ne se replie pas : l'unité est dite dans l'en-tête du panneau, les étiquettes de valeurs et d'axe sont masquées quand elles déborderaient, et la phrase l'annonce ; le tableau affiche la valeur entière avec ses décimales, sans arrondi silencieux (virgule française). Gabarit de mise en page."
+ },
+ {
+  "id": "s11-serie-tronquee",
+  "family": "S-11",
+  "title": "Série plus longue que les pages chargées (gabarit)",
+  "focus": "h1",
+  "reference": "Absent des références (G-07, C9)",
+  "change": "Une page de réponse contient au plus 100 mesures et la réponse n'a pas de total : un graphique tracé depuis les pages chargées ne doit pas se faire passer pour la tendance entière. Le panneau dit « 25 mesures affichées », le bandeau dit que la courbe est limitée aux mesures chargées et que d'autres existent, avec « Afficher plus de mesures ». Le tableau n'affiche que les lignes chargées (quatre sont montrées ici). Aucune étiquette de valeur sur une série dense : le tableau fait foi. Gabarit de mise en page, valeurs fictives."
+ }
+]
