@@ -4,20 +4,21 @@
   "meta": {
     "title": "Étaye — client sessions and resource isolation",
     "locale": "en",
-    "output": ".archify/architecture-etaye-native-expo-20261119-112639/access/access.html",
+    "output": ".archify/architecture-etaye-built-status-20261125-095552/access.html",
     "quality_profile": "showcase",
     "repository": {
       "url": "git@github.com:Aymenchaghoub/etaye.git",
-      "revision": "f05b30b527d910872da79bd62f55f68447921961",
+      "revision": "e48f0f8dcdfb3bb6f79fa9156dd15120624e199b",
       "link_mode": "local-only"
-    }
+    },
+    "subtitle": "“Built” and “Partly” mark code on main as of 25 Nov 2026; unmarked nodes are planned."
   },
   "components": [
     {
       "id": "web",
       "type": "frontend",
       "label": "Web / installed PWA",
-      "sublabel": "Responsive clinical + patient routes",
+      "sublabel": "Partly · web built, PWA planned",
       "pos": [
         40,
         40
@@ -36,15 +37,20 @@
           "path": "docs/decisions/ADR-008-multi-client-access.md",
           "line": 9,
           "end_line": 14
+        },
+        {
+          "path": "apps/web/src/App.tsx",
+          "line": 1,
+          "end_line": 62
         }
       ],
-      "tag": "I1 web · I3 PWA"
+      "tag": "Web built · I1 web · I3 PWA"
     },
     {
       "id": "cookie",
       "type": "security",
       "label": "Cookie transport",
-      "sublabel": "HttpOnly / Secure / CSRF header",
+      "sublabel": "Built · HttpOnly / Secure / CSRF",
       "pos": [
         365,
         40
@@ -63,6 +69,11 @@
           "path": "docs/decisions/ADR-004-authentication-sessions.md",
           "line": 7,
           "end_line": 15
+        },
+        {
+          "path": "apps/api/src/main/java/dev/aymen/etaye/infrastructure/security/ExistingSessionCsrfFilter.java",
+          "line": 17,
+          "end_line": 53
         }
       ],
       "tag": "Same-origin · opaque secret"
@@ -71,7 +82,7 @@
       "id": "sessions",
       "type": "backend",
       "label": "One session authority",
-      "sublabel": "Opaque JDBC sessions / revocation",
+      "sublabel": "Built · opaque sessions, revocation",
       "pos": [
         690,
         40
@@ -87,9 +98,14 @@
           "end_line": 13
         },
         {
-          "path": "docs/decisions/ADR-008-multi-client-access.md",
-          "line": 9,
-          "end_line": 12
+          "path": "apps/api/src/main/resources/db/migration/V1__initial_schema.sql",
+          "line": 134,
+          "end_line": 156
+        },
+        {
+          "path": "apps/api/src/main/java/dev/aymen/etaye/infrastructure/security/RejectBearerFilter.java",
+          "line": 16,
+          "end_line": 37
         }
       ],
       "tag": "Reject cookie + bearer mixing"
@@ -98,7 +114,7 @@
       "id": "grants",
       "type": "security",
       "label": "Current authorization",
-      "sublabel": "Capability + practice + record",
+      "sublabel": "Built · capability/practice/record",
       "pos": [
         1030,
         40
@@ -117,6 +133,11 @@
           "path": "docs/decisions/ADR-003-practice-isolation.md",
           "line": 12,
           "end_line": 18
+        },
+        {
+          "path": "apps/api/src/main/java/dev/aymen/etaye/infrastructure/security/PracticeSecurityService.java",
+          "line": 15,
+          "end_line": 75
         }
       ],
       "tag": "Membership or exact PortalLink"
@@ -142,8 +163,8 @@
         },
         {
           "path": "docs/planning-artifacts/roadmap.md",
-          "line": 112,
-          "end_line": 134
+          "line": 114,
+          "end_line": 136
         }
       ],
       "tag": "I3 Android · I4 iOS demo gate"
@@ -211,7 +232,7 @@
       "id": "transaction",
       "type": "backend",
       "label": "Scoped transaction",
-      "sublabel": "SET LOCAL / If-Match / idempotency",
+      "sublabel": "Built · SET LOCAL / If-Match",
       "pos": [
         1030,
         280
@@ -227,9 +248,14 @@
           "end_line": 22
         },
         {
-          "path": "docs/planning-artifacts/data-model.md",
-          "line": 37,
-          "end_line": 43
+          "path": "apps/api/src/main/java/dev/aymen/etaye/infrastructure/transaction/PracticeTransaction.java",
+          "line": 165,
+          "end_line": 172
+        },
+        {
+          "path": "apps/api/src/main/java/dev/aymen/etaye/infrastructure/idempotency/IdempotencyService.java",
+          "line": 23,
+          "end_line": 60
         }
       ],
       "tag": "Audit + outbox commit together"
@@ -238,7 +264,7 @@
       "id": "database",
       "type": "database",
       "label": "PostgreSQL protection",
-      "sublabel": "practice_id / composite FKs / RLS",
+      "sublabel": "Built · practice_id / FKs / RLS",
       "pos": [
         690,
         280
@@ -254,9 +280,14 @@
           "end_line": 20
         },
         {
-          "path": "docs/planning-artifacts/data-model.md",
-          "line": 5,
-          "end_line": 5
+          "path": "apps/api/src/main/resources/db/migration/V1__initial_schema.sql",
+          "line": 158,
+          "end_line": 190
+        },
+        {
+          "path": "infra/local/init-roles.sh",
+          "line": 3,
+          "end_line": 7
         }
       ],
       "tag": "Runtime nonowner / no BYPASSRLS"
@@ -277,13 +308,13 @@
       "sources": [
         {
           "path": "docs/planning-artifacts/business-rules.md",
-          "line": 100,
-          "end_line": 102
+          "line": 112,
+          "end_line": 114
         },
         {
           "path": "docs/planning-artifacts/business-rules.md",
-          "line": 135,
-          "end_line": 159
+          "line": 147,
+          "end_line": 171
         },
         {
           "path": "docs/decisions/ADR-006-files-pdf-storage.md",
@@ -365,7 +396,7 @@
       "title": "Authorization applies everywhere",
       "items": [
         "A route practiceId, stale client role or hidden button grants nothing. Every read/write/job/source/file/export resolves current capability and ownership.",
-        "Administrator has no implicit clinical access. Scheduler sees minimum identity/contact; registration needs both SCHEDULE_MANAGE and PATIENT_REGISTER. Patient gets only their record link and curated publications."
+        "Administrator has no implicit clinical access. Scheduler sees minimum identity/contact; registration needs both SCHEDULE_MANAGE and PATIENT_REGISTER. Patient gets only their record link and curated publications. An adversarial isolation matrix measures the cross-practice, capability and patient cases in API verify (story 1.4)."
       ]
     },
     {
@@ -373,7 +404,7 @@
       "title": "Session and device decisions — ADR-008 and ADR-010 accepted",
       "items": [
         "Web/PWA: secure host-only opaque cookie and CSRF, no bearer in browser storage. Native: same opaque server session over the Authorization header after credential verification to a registered device; platform secure storage only.",
-        "No mixed transports; a bearer request carrying a cookie or browser origin headers is refused. Revoke on logout, reset and suspension; device registration can be revoked. Native duration and the exact header rule remain story 10.5 checks."
+        "No mixed transports; a bearer request carrying a cookie or browser origin headers is refused. Revoke on logout, reset and suspension; device registration can be revoked. Native duration and the exact header rule remain story 10.5 checks. Built: the web cookie session with CSRF, revocation on recovery and the refusal of any Bearer header; the native transport and devices are planned."
       ]
     },
     {
@@ -381,7 +412,7 @@
       "title": "Contract and client compatibility — ADR-009 accepted",
       "items": [
         "One OpenAPI source and generated TypeScript client; additive /api/v1 evolution, X-Client-Version and minimum-version policy; outdated clients show an update screen.",
-        "96 operations are currently declared. getApiMeta and four native/device operations remain planned contract additions; CLIENT_TOO_OLD / 426 is not yet declared. Compatibility window numbers remain an assumption."
+        "The contract (0.5.0-planning) declares 100 operations and 23 are served. getApiMeta, getHistorySummary, listDemoScenarios and resetSyntheticDemo were added since the first snapshot. The four native/device operations and CLIENT_TOO_OLD / 426 (story 10.4) are not yet declared. Compatibility window numbers remain an assumption."
       ]
     },
     {

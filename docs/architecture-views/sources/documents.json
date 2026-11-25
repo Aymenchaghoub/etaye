@@ -4,20 +4,21 @@
   "meta": {
     "title": "Étaye — evidence, drafts and publication",
     "locale": "en",
-    "output": ".archify/architecture-etaye-native-expo-20261119-112639/documents/documents.html",
+    "output": ".archify/architecture-etaye-built-status-20261125-095552/documents.html",
     "quality_profile": "showcase",
     "repository": {
       "url": "git@github.com:Aymenchaghoub/etaye.git",
-      "revision": "f05b30b527d910872da79bd62f55f68447921961",
+      "revision": "e48f0f8dcdfb3bb6f79fa9156dd15120624e199b",
       "link_mode": "local-only"
-    }
+    },
+    "subtitle": "“Built” and “Partly” mark code on main as of 25 Nov 2026; unmarked nodes are planned."
   },
   "components": [
     {
       "id": "sources",
       "type": "database",
       "label": "Source revisions",
-      "sublabel": "Facts / preparation / encounter notes",
+      "sublabel": "Partly · dated sources, read-only",
       "pos": [
         40,
         40
@@ -30,15 +31,20 @@
         {
           "path": "docs/planning-artifacts/business-rules.md",
           "line": 88,
-          "end_line": 106
+          "end_line": 118
         },
         {
-          "path": "docs/planning-artifacts/data-model.md",
-          "line": 37,
-          "end_line": 43
+          "path": "apps/api/src/main/resources/db/migration/V9__record_evidence.sql",
+          "line": 14,
+          "end_line": 66
+        },
+        {
+          "path": "apps/api/src/main/java/dev/aymen/etaye/records/web/RecordEvidenceController.java",
+          "line": 34,
+          "end_line": 70
         }
       ],
-      "tag": "Immutable · new facts → STALE"
+      "tag": "Writes in I2 · Immutable · new facts → STALE"
     },
     {
       "id": "snapshot",
@@ -61,8 +67,8 @@
         },
         {
           "path": "docs/planning-artifacts/business-rules.md",
-          "line": 104,
-          "end_line": 106
+          "line": 116,
+          "end_line": 118
         }
       ],
       "tag": "One practice + record"
@@ -110,8 +116,8 @@
       "sources": [
         {
           "path": "docs/planning-artifacts/business-rules.md",
-          "line": 104,
-          "end_line": 129
+          "line": 116,
+          "end_line": 141
         },
         {
           "path": "docs/planning-artifacts/data-dictionary.md",
@@ -137,8 +143,8 @@
       "sources": [
         {
           "path": "docs/planning-artifacts/business-rules.md",
-          "line": 104,
-          "end_line": 106
+          "line": 116,
+          "end_line": 118
         },
         {
           "path": "docs/planning-artifacts/decisions-assumptions.md",
@@ -164,8 +170,8 @@
       "sources": [
         {
           "path": "docs/planning-artifacts/business-rules.md",
-          "line": 131,
-          "end_line": 133
+          "line": 143,
+          "end_line": 145
         }
       ],
       "tag": "Never validated / published"
@@ -186,8 +192,8 @@
       "sources": [
         {
           "path": "docs/planning-artifacts/business-rules.md",
-          "line": 119,
-          "end_line": 131
+          "line": 131,
+          "end_line": 143
         }
       ],
       "tag": "CLINICAL_VALIDATE + CURRENT"
@@ -208,8 +214,8 @@
       "sources": [
         {
           "path": "docs/planning-artifacts/business-rules.md",
-          "line": 123,
-          "end_line": 129
+          "line": 135,
+          "end_line": 141
         },
         {
           "path": "docs/planning-artifacts/data-dictionary.md",
@@ -235,8 +241,8 @@
       "sources": [
         {
           "path": "docs/planning-artifacts/business-rules.md",
-          "line": 135,
-          "end_line": 151
+          "line": 147,
+          "end_line": 163
         },
         {
           "path": "docs/planning-artifacts/data-dictionary.md",
@@ -289,8 +295,8 @@
       "sources": [
         {
           "path": "docs/planning-artifacts/business-rules.md",
-          "line": 157,
-          "end_line": 163
+          "line": 169,
+          "end_line": 175
         },
         {
           "path": "docs/planning-artifacts/data-dictionary.md",
@@ -316,8 +322,8 @@
       "sources": [
         {
           "path": "docs/planning-artifacts/business-rules.md",
-          "line": 157,
-          "end_line": 159
+          "line": 169,
+          "end_line": 171
         },
         {
           "path": "docs/planning-artifacts/data-dictionary.md",
@@ -425,7 +431,8 @@
       "title": "Source and generation ownership",
       "items": [
         "Brief: the server derives its entire source manifest from the record watermark; deterministic composition creates cited facts, gaps and contradictions.",
-        "Reports/explanations: the requester selects a bounded source subset; relevant exclusions carry reasons. An explanation is separately authored and reviewed; a report does not automatically become one."
+        "Reports/explanations: the requester selects a bounded source subset; relevant exclusions carry reasons. An explanation is separately authored and reviewed; a report does not automatically become one.",
+        "Built: dated source revisions and clinical assertions with their read operations (story 3.2, seeded by the demonstration). Appending and correcting assertions waits for increment 2 (D-60); every other node in this view is planned."
       ]
     },
     {
