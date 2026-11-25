@@ -18,7 +18,7 @@ permissions:
   contents: read
 concurrency:
   group: example-${{{{ github.ref }}}}
-  cancel-in-progress: true
+  cancel-in-progress: ${{{{ github.event_name == 'pull_request' }}}}
 jobs:
   verify:
     name: API verify
@@ -131,7 +131,7 @@ class WorkflowInvariantTest(unittest.TestCase):
         self.assert_flags(mutate("retention-days: 7", "retention-days: 90"), "retention-days")
 
     def test_concurrency_is_required_for_pull_request_workflows(self):
-        text = mutate("concurrency:\n  group: example-${{ github.ref }}\n  cancel-in-progress: true\n", "")
+        text = mutate("concurrency:\n  group: example-${{ github.ref }}\n  cancel-in-progress: ${{ github.event_name == 'pull_request' }}\n", "")
         self.assert_flags(text, "missing concurrency")
 
     def test_required_check_workflow_must_not_filter_pull_requests(self):
@@ -141,6 +141,28 @@ class WorkflowInvariantTest(unittest.TestCase):
         other = mutate("  pull_request:\n", "  pull_request:\n    paths: ['apps/**']\n").replace(
             "API verify", "Something else")
         self.assertEqual(problems(other), [])
+
+    def test_a_required_job_must_not_be_skippable(self):
+        self.assert_flags(mutate("    timeout-minutes: 20\n", "    timeout-minutes: 20\n    if: github.event_name == 'never'\n"),
+                          "must not use if")
+        self.assert_flags(mutate("    timeout-minutes: 20\n", "    timeout-minutes: 20\n    needs: [other]\n"),
+                          "must not use needs")
+        other = mutate("    timeout-minutes: 20\n", "    timeout-minutes: 20\n    if: always()\n").replace(
+            "API verify", "Something else")
+        self.assertEqual(problems(other), [])
+
+    def test_pull_request_filters_that_narrow_a_required_check_are_rejected(self):
+        for trigger in ("    branches: [release]\n", "    branches-ignore: [main]\n", "    types: [opened]\n"):
+            with self.subTest(trigger=trigger):
+                self.assertTrue(problems(mutate("  pull_request:\n", "  pull_request:\n" + trigger)), trigger)
+        self.assertEqual(problems(mutate("  pull_request:\n", "  pull_request:\n    branches: [main]\n")), [])
+
+    def test_a_push_workflow_must_not_cancel_unconditionally(self):
+        unconditional = mutate("cancel-in-progress: ${{ github.event_name == 'pull_request' }}", "cancel-in-progress: true")
+        self.assert_flags(unconditional, "must not cancel a run unconditionally")
+        self.assertEqual(problems(GOOD), [])
+        pull_request_only = mutate("  push:\n    branches: [main]\n", "")
+        self.assertEqual(problems(pull_request_only), [])
 
     def test_secrets_are_rejected_on_pull_request_workflows(self):
         text = mutate("          EVENT: ${{ github.event_name }}\n",

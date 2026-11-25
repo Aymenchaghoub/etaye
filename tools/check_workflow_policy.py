@@ -99,10 +99,18 @@ def check_workflow(name, text):
     owns_required_check = any(job.get("name") in REQUIRED_JOB_NAMES for job in workflow["jobs"].values()
                               if isinstance(job, dict))
     if owns_required_check and isinstance(pull_request, dict):
-        for filter_name in ("paths", "paths-ignore"):
+        # A required check that never starts blocks the merge; one that is skipped reports success.
+        for filter_name in ("paths", "paths-ignore", "branches-ignore", "types"):
             if filter_name in pull_request:
                 fail(f"a workflow that owns a required check must not filter pull requests with {filter_name}: "
-                     "the check would never start and would block the merge")
+                     "the check would not start, or would not cover every pull request")
+        if pull_request.get("branches", ["main"]) != ["main"]:
+            fail("a workflow that owns a required check may only restrict pull requests to the main branch")
+
+    concurrency = workflow.get("concurrency")
+    if "push" in triggers and isinstance(concurrency, dict) and concurrency.get("cancel-in-progress") == "true":
+        fail("concurrency must not cancel a run unconditionally in a workflow that also runs on push: a merge to "
+             "main would cancel the verification of the previous one")
 
     for job_id, job in workflow["jobs"].items():
         where = f"job {job_id}"
@@ -114,6 +122,10 @@ def check_workflow(name, text):
             fail(f"{where} needs timeout-minutes between 1 and {MAX_TIMEOUT_MINUTES}")
         if "continue-on-error" in job and job["continue-on-error"] != "false":
             fail(f"{where} must not use continue-on-error")
+        if job.get("name") in REQUIRED_JOB_NAMES:
+            for key in ("if", "needs"):
+                if key in job:
+                    fail(f"{where} owns a required check and must not use {key}: a skipped job reports success")
         runner = job.get("runs-on")
         if not isinstance(runner, str) or runner.endswith("-latest") or "${{" in runner:
             fail(f"{where} must pin its runner image, not use a floating label or an expression")

@@ -10,8 +10,11 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: codeql-${{ github.ref }}
-  cancel-in-progress: true
+  # Pull request runs share a group per pull request and a newer push supersedes the older run. A run for a push to
+  # main, a schedule or a manual start gets a group of its own: concurrency keeps only one pending run per group, so
+  # a shared group would silently drop the verification of a merge when two more arrive.
+  group: codeql-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   analyze:
     name: Analyze tooling

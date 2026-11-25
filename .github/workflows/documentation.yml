@@ -11,8 +11,11 @@ permissions:
   contents: read
 
 concurrency:
-  group: documentation-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # Pull request runs share a group per pull request and a newer push supersedes the older run. A run for a push to
+  # main, a schedule or a manual start gets a group of its own: concurrency keeps only one pending run per group, so
+  # a shared group would silently drop the verification of a merge when two more arrive.
+  group: documentation-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   documentation:
@@ -67,14 +70,16 @@ jobs:
         run: .venv-docs/bin/python -m openapi_spec_validator docs/contracts/openapi.yaml
       - name: Lint the architecture spine
         run: .venv-docs/bin/python .claude/skills/bmad-architecture/scripts/lint_spine.py --workspace docs/planning-artifacts/architecture -o reports/architecture-lint.json
-      - name: Lint GitHub workflows (policy, syntax and security)
-        env:
-          # The read-only token of the run: zizmor checks pinned action references against GitHub.
-          GH_TOKEN: ${{ github.token }}
+      - name: Lint GitHub workflows (repository policy and syntax)
         run: |
           .venv-docs/bin/python tools/check_workflow_policy.py
           bash tools/run_actionlint.sh
-          .venv-docs/bin/zizmor --no-progress --format plain .github/workflows
+      - name: Audit GitHub workflows for security findings (zizmor)
+        env:
+          # The read-only token of the run, for this command only: zizmor checks pinned action references against
+          # GitHub. A new advisory on a pinned action turns this step red until the action is updated.
+          GH_TOKEN: ${{ github.token }}
+        run: .venv-docs/bin/zizmor --no-progress --format plain .github/workflows
       - name: Verify workflow policy and whitespace
         run: |
           .venv-docs/bin/python tools/check_doc_workflow.py
