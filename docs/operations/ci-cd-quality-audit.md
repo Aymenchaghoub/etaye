@@ -307,7 +307,7 @@ The last row is the confirmed structural defect of CI-02: the old positive lists
 | Package | never built in CI | 55 s to build and start with a warm cache, 48 s for 11 real-stack tests |
 | Image scan (fixable HIGH and CRITICAL) | none | API image 0; web (nginx) 85; Flyway 7 + 79 (OS and bundled drivers); PostgreSQL 2 + 26 (`gosu`); 3 m 24 s here, mostly the Java database download |
 
-Remote timings on head `d30a179` (one run each): `API verify` 149 s, `Web verify` 272 s with the 206 browser tests at 194 s, `Planning package checks` 38 s, `Package verify` 171 s (role script 14 s, image build and start 53 s, real-stack journeys 57 s), CodeQL jobs 55 to 94 s, `Dependency review` 21 s. The lint step takes 10 s and the gates under 1 s. The first remote Web run exposed a cost of this work: recording a trace on every Playwright test made the browser step 194 to 197 s against 121 to 169 s before, so the trace is now recorded by a rerun of the failed tests only.
+Remote timings on head `85f381a` (one run each): `API verify` 137 s (112 s for the Maven build, tests and gates), `Web verify` 242 s with the 206 browser tests at 151 s, `Planning package checks` 39 s, `Package verify` 179 s (role script 18 s, image build and start 47 s, real-stack journeys 47 s), CodeQL jobs 59 to 111 s, `Dependency review` 24 s. The lint step takes 10 s and the gates under 1 s. The first remote Web runs exposed a cost of this work: recording a trace on every Playwright test made the browser step 194 to 197 s against 121 to 169 s before, so the trace is now recorded by a rerun of the failed tests only.
 
 ### 10.4 Security findings and remaining risk
 
