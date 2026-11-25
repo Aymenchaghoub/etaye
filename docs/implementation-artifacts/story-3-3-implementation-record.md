@@ -1,8 +1,8 @@
 # Story 3.3 implementation record — Enter and correct measurements (read side)
 
-2026-11-25 · Epic 3 · Increment 1 · FR-006, BR-008, BR-009, J-02 · AT-011-A/B/C · branch `feat/3.3-measurements-trends`. Authorization: [UD-73](../planning-artifacts/decisions-assumptions.md) (story 3.3 only; `development_authorized` stays false). Scope: [UD-71](../planning-artifacts/decisions-assumptions.md). Design: [UD-72](../planning-artifacts/decisions-assumptions.md) (13 specimens). Review tool: [UD-74](../planning-artifacts/decisions-assumptions.md). [Context packet](story-3-3-context-packet.md) · [Running-UI review](../design/reviews/2026-11-25-story-3-3-runtime.md) · [Comparison sheets](../design/reviews/2026-11-25-story-3-3-runtime/index.html).
+2026-11-25 · Epic 3 · Increment 1 · FR-006, BR-008, BR-009, J-02 · AT-011-A/B/C · branch `feat/3.3-measurements-trends`. Authorization: [UD-73](../planning-artifacts/decisions-assumptions.md) (story 3.3 only; `development_authorized` stays false). Scope: [UD-71](../planning-artifacts/decisions-assumptions.md). Design: [UD-72](../planning-artifacts/decisions-assumptions.md) (13 specimens). Review tool: [UD-74](../planning-artifacts/decisions-assumptions.md). Running UI and merge: [UD-75](../planning-artifacts/decisions-assumptions.md). [Context packet](story-3-3-context-packet.md) · [Running-UI review](../design/reviews/2026-11-25-story-3-3-runtime.md) · [Comparison sheets](../design/reviews/2026-11-25-story-3-3-runtime/index.html).
 
-**Status: implemented and verified locally; the running UI is not yet approved and the merge is not authorized.** This record states what was built, what evidence exists and what it does not show.
+**Status: implemented and verified; the running UI was approved and the merge authorized by Aymen on 2026-11-25 ([UD-75](../planning-artifacts/decisions-assumptions.md), [ASSUMPTION] reading of his message, with the nine disclosed differences, the three states added by the review fixes and the limits below).** This record states what was built, what evidence exists and what it does not show.
 
 ## 1. What the story delivers
 
