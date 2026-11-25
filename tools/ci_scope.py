@@ -12,10 +12,12 @@ A required check must still start on every pull request, so the workflows always
 decision to skip only the heavy steps.
 """
 import argparse
+import json
+import os
 import re
 import subprocess
 import sys
-from pathlib import PurePosixPath
+from pathlib import Path, PurePosixPath
 
 SCOPES = ("api", "web", "package", "pnpm")
 ALL = frozenset(SCOPES)
@@ -159,6 +161,23 @@ def changed_paths(base, head, runner=subprocess.run):
     return [name.decode("utf-8", "surrogateescape") for name in result.stdout.split(b"\0") if name]
 
 
+def event_base(event, explicit, event_path):
+    """The revision a change is compared with. A pull request merge commit and a squash commit on main both have the
+    base tip as first parent, but a push may carry several commits: its payload names the revision before it. When that
+    revision is missing (a new branch, a force push, a shallow checkout) the diff fails and everything is verified."""
+    if explicit:
+        return explicit
+    if event == "push" and event_path:
+        try:
+            before = json.loads(Path(event_path).read_text(encoding="utf-8")).get("before")
+        except (OSError, ValueError, AttributeError):
+            before = None
+        # A push payload without a usable `before` is abnormal: a name that Git cannot resolve fails the diff, so
+        # everything is verified instead of assuming a single squash commit.
+        return before if isinstance(before, str) and before else "missing-before-revision"
+    return "HEAD^1"
+
+
 def run(scope, event, base, head, runner=subprocess.run):
     """Return (relevant, reason) for one scope."""
     if scope not in SCOPES:
@@ -181,11 +200,12 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--scope", required=True, choices=SCOPES)
     parser.add_argument("--event", default="")
-    parser.add_argument("--base", default="HEAD^1")
+    parser.add_argument("--base", default=None, help="default: HEAD^1, or the `before` revision of a push event")
     parser.add_argument("--head", default="HEAD")
     parser.add_argument("--github-output", help="append relevant=<bool> to this file")
     args = parser.parse_args(argv)
-    relevant, reason = run(args.scope, args.event, args.base, args.head)
+    base = event_base(args.event, args.base, os.environ.get("GITHUB_EVENT_PATH"))
+    relevant, reason = run(args.scope, args.event, base, args.head)
     print(f"{args.scope} verification needed: {str(relevant).lower()} ({reason})")
     if args.github_output:
         with open(args.github_output, "a", encoding="utf-8") as output:

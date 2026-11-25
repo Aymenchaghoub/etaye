@@ -2,8 +2,10 @@
 set -euo pipefail
 
 # Real-stack browser journeys against the running demonstration package (Spring, PostgreSQL, React, real sessions
-# and CSRF): the same three specs that every story runs by hand. Start the package first:
-#   COMPOSE_PROJECT_NAME=etaye-demo-ci ETAYE_DEMO_WEB_PORT=4179 ./infra/demo/start.sh
+# and CSRF): the same three specs that every story runs by hand. Start the package first, with the same two
+# variables exported for both commands (this script restarts the API container of that Compose project):
+#   export COMPOSE_PROJECT_NAME=etaye-demo-ci ETAYE_DEMO_WEB_PORT=4179
+#   ./infra/demo/start.sh && bash tools/run_package_smoke.sh
 # Each spec result is validated for zero-test, skipped and failed runs; the package stays disposable.
 project=${COMPOSE_PROJECT_NAME:-etaye-demo}
 port=${ETAYE_DEMO_WEB_PORT:-4179}

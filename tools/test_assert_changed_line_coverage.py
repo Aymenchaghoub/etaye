@@ -33,6 +33,10 @@ class HunkTest(unittest.TestCase):
     def test_a_pure_deletion_adds_no_line(self):
         self.assertEqual(gate.parse_hunks("@@ -10,3 +9,0 @@\n"), set())
 
+    def test_a_new_file_header_covers_every_line_from_the_first(self):
+        self.assertEqual(gate.parse_hunks("@@ -0,0 +1,30 @@\n"), set(range(1, 31)))
+        self.assertEqual(gate.parse_hunks("@@ -0,0 +1 @@\n"), {1})
+
     def test_a_unicode_line_separator_cannot_forge_a_hunk(self):
         forged = "+added text\u2028@@ -1 +999 @@ forged\n@@ -3 +3 @@\n"
         self.assertEqual(gate.parse_hunks(forged), {3})
@@ -202,14 +206,16 @@ class GateTest(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertIn("0 changed source file(s)", out)
 
-    def test_a_new_file_is_measured_from_its_first_line(self):
-        new = "apps/api/src/main/java/dev/aymen/etaye/records/Service.java"
-        self.write(new, "\n".join(f"new {n}" for n in range(1, 31)) + "\n")  # every line is new
+    def test_a_file_added_by_the_change_is_measured_from_its_first_line(self):
+        added = "apps/api/src/main/java/dev/aymen/etaye/records/Added.java"
+        self.write(added, "\n".join(f"new {n}" for n in range(1, 6)) + "\n")
         self.git("add", "-A")
-        self.git("commit", "-q", "-m", "rewrite")
-        code, out, _ = self.run_gate(JACOCO)
-        self.assertEqual(code, 1, out)  # lines 12 and 13 are not executed
-        self.assertIn("3/5", out)
+        self.git("commit", "-q", "-m", "add a file")
+        report = JACOCO.replace("</package>", '<sourcefile name="Added.java"><line nr="1" mi="0" ci="2"/>'
+                                '<line nr="2" mi="3" ci="0"/></sourcefile></package>')
+        code, out, _ = self.run_gate(report)
+        self.assertEqual(code, 1, out)
+        self.assertIn("Added.java: 1/2  uncovered lines 2", out)
 
     def test_deleted_file_adds_no_line(self):
         kept = "apps/api/src/main/java/dev/aymen/etaye/records/Kept.java"

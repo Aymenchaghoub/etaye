@@ -98,6 +98,8 @@ def check_workflow(name, text):
 
     owns_required_check = any(job.get("name") in REQUIRED_JOB_NAMES for job in workflow["jobs"].values()
                               if isinstance(job, dict))
+    if owns_required_check and not runs_on_pull_request:
+        fail("a workflow that owns a required check must run on pull_request, or the check never reports on one")
     if owns_required_check and isinstance(pull_request, dict):
         # A required check that never starts blocks the merge; one that is skipped reports success.
         for filter_name in ("paths", "paths-ignore", "branches-ignore", "types"):

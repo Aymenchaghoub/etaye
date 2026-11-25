@@ -157,6 +157,14 @@ class WorkflowInvariantTest(unittest.TestCase):
                 self.assertTrue(problems(mutate("  pull_request:\n", "  pull_request:\n" + trigger)), trigger)
         self.assertEqual(problems(mutate("  pull_request:\n", "  pull_request:\n    branches: [main]\n")), [])
 
+    def test_a_required_check_must_run_on_pull_requests(self):
+        push_only = mutate("on:\n  pull_request:\n  push:\n    branches: [main]\n", "on:\n  push:\n    branches: [main]\n")
+        self.assert_flags(push_only, "must run on pull_request")
+        # A null-valued `pull_request:` is the plain, unfiltered form and stays valid.
+        self.assertEqual(problems(GOOD), [])
+        other = push_only.replace("API verify", "Something else")
+        self.assertEqual(problems(other), [])
+
     def test_a_push_workflow_must_not_cancel_unconditionally(self):
         unconditional = mutate("cancel-in-progress: ${{ github.event_name == 'pull_request' }}", "cancel-in-progress: true")
         self.assert_flags(unconditional, "must not cancel a run unconditionally")

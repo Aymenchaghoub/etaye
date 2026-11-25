@@ -1,10 +1,12 @@
 import contextlib
+import json
 import os
 import re
 import subprocess
 import tempfile
 import unittest
 from io import StringIO
+from unittest import mock
 from pathlib import Path
 
 import ci_scope
@@ -257,6 +259,43 @@ class GitScenarioTest(unittest.TestCase):
         self.write("docs/another.md", "d\n")
         self.commit("docs squash")
         self.assertFalse(self.decision("web", "push")[0])
+
+    def push_payload(self, before):
+        path = self.repo / "event.json"
+        path.write_text(json.dumps({"before": before}))
+        return path
+
+    def run_push(self, scope, before):
+        with contextlib.chdir(self.repo), contextlib.redirect_stdout(StringIO()) as printed, \
+                mock.patch.dict(os.environ, {"GITHUB_EVENT_PATH": str(self.push_payload(before))}):
+            output = self.repo / "github-output"
+            output.write_text("")
+            ci_scope.main(["--scope", scope, "--event", "push", "--github-output", str(output)])
+        return output.read_text().strip(), printed.getvalue()
+
+    def test_a_push_of_several_commits_is_compared_with_the_revision_before_it(self):
+        base = self.git("rev-parse", "HEAD").stdout.strip()
+        self.write("apps/web/src/b.ts", "b\n")
+        self.commit("web change")
+        self.write("docs/last.md", "last\n")
+        self.commit("documentation-only last commit")
+        # HEAD^1..HEAD sees the documentation file alone; the push as a whole changed the web application.
+        self.assertFalse(self.decision("web", "push")[0])
+        self.assertEqual(self.run_push("web", base)[0], "relevant=true")
+        self.assertEqual(self.run_push("api", base)[0], "relevant=false")
+
+    def test_a_squash_push_still_uses_its_parent(self):
+        before = self.git("rev-parse", "HEAD").stdout.strip()
+        self.write("docs/only.md", "x\n")
+        self.commit("docs squash")
+        self.assertEqual(self.run_push("web", before)[0], "relevant=false")
+
+    def test_a_push_whose_before_revision_is_unavailable_fails_closed(self):
+        self.write("docs/only.md", "x\n")
+        self.commit("docs")
+        for before in ("1" * 40, "0" * 40, "", None):
+            with self.subTest(before=before):
+                self.assertEqual(self.run_push("web", before)[0], "relevant=true")
 
     def test_missing_parent_history_fails_closed(self):
         # A root commit has no HEAD^1: the change list is unavailable, so everything is verified.

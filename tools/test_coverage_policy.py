@@ -11,6 +11,8 @@ import unittest
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+import yaml
+
 ROOT = Path(__file__).resolve().parents[1]
 NS = {"m": "http://maven.apache.org/POM/4.0.0"}
 
@@ -138,12 +140,25 @@ class WorkflowsKeepTheGatesTest(unittest.TestCase):
             with self.subTest(bypass=bypass):
                 self.assertNotIn(bypass, text)
 
-    def test_the_changed_line_gate_keeps_its_threshold(self):
+    def gate_command(self, name):
+        workflow = yaml.safe_load(self.text(name))
+        commands = [step["run"] for job in workflow["jobs"].values() for step in job["steps"]
+                    if "assert_changed_line_coverage.py" in step.get("run", "")]
+        self.assertEqual(len(commands), 1, f"{name} must run the changed-line gate exactly once")
+        return " ".join(commands[0].split())
+
+    def test_the_changed_line_gate_keeps_its_thresholds(self):
         for name in ("api.yml", "web.yml"):
             with self.subTest(workflow=name):
-                match = re.search(r"assert_changed_line_coverage\.py.*?--min-percent\s+(\d+)", self.text(name), re.S)
-                self.assertIsNotNone(match, "the changed-line gate is missing")
-                self.assertGreaterEqual(int(match[1]), CHANGED_LINE_MINIMUM)
+                command = self.gate_command(name)
+                threshold = re.search(r"--min-percent (\d+)", command)
+                self.assertIsNotNone(threshold, "the changed-line gate no longer states its --min-percent")
+                self.assertGreaterEqual(int(threshold[1]), CHANGED_LINE_MINIMUM)
+                # The per-file floor defaults to 50 percent over ten lines; a workflow may only tighten it.
+                percent = re.search(r"--min-file-percent (\d+)", command)
+                lines = re.search(r"--min-file-lines (\d+)", command)
+                self.assertTrue(percent is None or int(percent[1]) >= 50, "the per-file floor was lowered")
+                self.assertTrue(lines is None or int(lines[1]) <= 10, "the per-file floor now ignores small files")
 
 
 if __name__ == "__main__":
