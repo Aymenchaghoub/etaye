@@ -811,10 +811,14 @@ export type MeasurementPage = {
 };
 
 /**
- * The revisions of one measurement lineage, oldest first. A lineage has at most 100 revisions in this response.
+ * The revisions of one measurement lineage, oldest first. A lineage has at most 100 revisions in this response; a longer one keeps its original revision and its newest 99 and says so with truncated.
  */
 export type MeasurementRevisionList = {
     items: Array<Measurement>;
+    /**
+     * Present and true only when the lineage has more than 100 revisions: the response then lists the original revision and the newest 99, and the revisions between them are left out. Absent when the whole lineage is listed.
+     */
+    truncated?: boolean;
 };
 
 export type LabResultPage = {
