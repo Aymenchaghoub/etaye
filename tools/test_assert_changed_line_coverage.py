@@ -33,6 +33,10 @@ class HunkTest(unittest.TestCase):
     def test_a_pure_deletion_adds_no_line(self):
         self.assertEqual(gate.parse_hunks("@@ -10,3 +9,0 @@\n"), set())
 
+    def test_a_unicode_line_separator_cannot_forge_a_hunk(self):
+        forged = "+added text\u2028@@ -1 +999 @@ forged\n@@ -3 +3 @@\n"
+        self.assertEqual(gate.parse_hunks(forged), {3})
+
     def test_context_rows_and_headers_are_ignored(self):
         self.assertEqual(gate.parse_hunks("diff --git a/x b/x\n+++ b/x\n+added\n-removed\n"), set())
 
@@ -132,12 +136,15 @@ class GateTest(unittest.TestCase):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(text)
 
-    def change_lines(self, numbers, name=None):
+    def edit_lines(self, numbers, name=None):
         name = name or self.source
         lines = (self.repo / name).read_text().splitlines()
         for number in numbers:
             lines[number - 1] = f"changed {number}"
         self.write(name, "\n".join(lines) + "\n")
+
+    def change_lines(self, numbers, name=None):
+        self.edit_lines(numbers, name)
         self.git("add", "-A")
         self.git("commit", "-q", "-m", "change")
 
@@ -145,7 +152,8 @@ class GateTest(unittest.TestCase):
         report = self.repo / "report.xml"
         report.write_text(report_text)
         argv = [kind, str(report), "--prefix", "apps/api/src/main/java/" if kind == "jacoco" else "apps/web/",
-                "--include", include or "apps/api/src/main/java/**/*.java", "--base", "HEAD^1", "--head", "HEAD", *extra]
+                "--include", include or "apps/api/src/main/java/**/*.java", "--base", "HEAD^1", "--head", "HEAD",
+                "--root", str(self.repo), *extra]
         out, err = StringIO(), StringIO()
         runner = lambda command, **kwargs: subprocess.run(command, cwd=self.repo, **kwargs)  # noqa: E731
         with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
@@ -204,9 +212,14 @@ class GateTest(unittest.TestCase):
         self.assertIn("3/5", out)
 
     def test_deleted_file_adds_no_line(self):
+        kept = "apps/api/src/main/java/dev/aymen/etaye/records/Kept.java"
+        self.write(kept, "kept\n")
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "kept")
         self.git("rm", "-q", self.source)
         self.git("commit", "-q", "-m", "delete")
-        self.assertEqual(self.run_gate(JACOCO)[0], 0)
+        report = JACOCO.replace("</package>", '<sourcefile name="Kept.java"><line nr="1" mi="0" ci="1"/></sourcefile></package>')
+        self.assertEqual(self.run_gate(report)[0], 0)
 
     def test_malformed_missing_or_empty_report_fails(self):
         self.change_lines([10])
@@ -222,13 +235,64 @@ class GateTest(unittest.TestCase):
         failing = lambda command, **kwargs: subprocess.CompletedProcess(command, 128, b"", b"")  # noqa: E731
         err = StringIO()
         with contextlib.redirect_stderr(err):
-            code = gate.main(["jacoco", str(report), "--prefix", "p", "--include", "**"], failing)
+            code = gate.main(["jacoco", str(report), "--prefix", "apps/api/src/main/java/", "--include", "**",
+                              "--root", str(self.repo)], failing)
         self.assertEqual(code, 1)
         self.assertIn("exited with 128", err.getvalue())
 
     def test_invalid_threshold_is_rejected(self):
         self.change_lines([10])
         self.assertEqual(self.run_gate(JACOCO, "--min-percent", "101")[0], 1)
+
+    def test_a_diff_attribute_does_not_hide_the_changed_lines(self):
+        self.write(".gitattributes", "*.java -diff\n")
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "attributes")
+        self.change_lines([10, 12, 13])  # two of three executable lines are not executed
+        code, out, _ = self.run_gate(JACOCO)
+        self.assertEqual(code, 1, out)
+        self.assertIn("1/3", out)
+
+    def test_report_paths_that_do_not_exist_in_the_checkout_fail_closed(self):
+        self.change_lines([10])
+        for prefix_problem in ("absolute", "wrong-prefix"):
+            with self.subTest(prefix_problem):
+                report = self.repo / "report.info"
+                source = "/home/runner/work/etaye/apps/web/src/a.ts" if prefix_problem == "absolute" else "src/a.ts"
+                report.write_text(f"SF:{source}\nDA:1,1\nend_of_record\n")
+                argv = ["lcov", str(report), "--prefix", "elsewhere/", "--include", "**", "--base", "HEAD^1",
+                        "--head", "HEAD", "--root", str(self.repo)]
+                err = StringIO()
+                with contextlib.redirect_stderr(err):
+                    code = gate.main(argv, lambda command, **kwargs: subprocess.run(command, cwd=self.repo, **kwargs))
+                self.assertEqual(code, 1)
+                self.assertIn("exists under", err.getvalue())
+
+    def test_a_wholly_untested_file_fails_even_when_the_total_passes(self):
+        second = "apps/api/src/main/java/dev/aymen/etaye/records/Other.java"
+        self.write(second, "\n".join(f"other {n}" for n in range(1, 31)) + "\n")
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "other")
+        covered_lines = "".join(f'<line nr="{n}" mi="0" ci="1"/>' for n in range(1, 31))
+        untested_lines = "".join(f'<line nr="{n}" mi="1" ci="0"/>' for n in range(1, 13))
+        report = ('<?xml version="1.0"?><report name="x"><package name="dev/aymen/etaye/records">'
+                  f'<sourcefile name="Service.java">{covered_lines}</sourcefile>'
+                  f'<sourcefile name="Other.java">{untested_lines}</sourcefile></package></report>')
+        # One commit changes both: 30 covered lines in Service.java and 12 untested lines in Other.java (71.4 %).
+        self.edit_lines(range(1, 31))
+        self.edit_lines(range(1, 13), name=second)
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "both")
+        code, out, _ = self.run_gate(report, "--min-percent", "70")
+        self.assertEqual(code, 1, out)
+        self.assertIn("Other.java: below 50% with at least 10 executable changed lines", out)
+        self.assertIn("30/42 executable changed lines (71.4%", out)
+        # A small untested file does not trip the per-file floor.
+        small = ('<?xml version="1.0"?><report name="x"><package name="dev/aymen/etaye/records">'
+                 f'<sourcefile name="Service.java">{covered_lines}</sourcefile>'
+                 '<sourcefile name="Other.java"><line nr="1" mi="1" ci="0"/><line nr="2" mi="1" ci="0"/>'
+                 '</sourcefile></package></report>')
+        self.assertEqual(self.run_gate(small, "--min-percent", "70")[0], 0)
 
     def test_lcov_reports_are_supported(self):
         web = "apps/web/src/record/asof.ts"

@@ -25,7 +25,8 @@ HUNK = re.compile(r"^@@ -\d+(?:,\d+)? \+(?P<start>\d+)(?:,(?P<count>\d+))? @@")
 def parse_hunks(patch):
     """Line numbers, in the new file, of every added or modified line of a zero-context patch."""
     lines = set()
-    for row in patch.splitlines():
+    # Split on "\n" only: str.splitlines also breaks on U+2028, so an added line could forge a hunk header.
+    for row in patch.split("\n"):
         match = HUNK.match(row)
         if match:
             start = int(match["start"])
@@ -47,7 +48,8 @@ def changed_lines(base, head, in_scope, runner=subprocess.run):
         name = raw.decode("utf-8", "surrogateescape")
         if not in_scope(name):
             continue
-        patch = runner(["git", "-c", "core.quotepath=off", "diff", "--unified=0", "--no-renames", "--no-color",
+        # --text: a `-diff` attribute must not hide the hunks behind "Binary files differ".
+        patch = runner(["git", "-c", "core.quotepath=off", "diff", "--text", "--unified=0", "--no-renames", "--no-color",
                         "--end-of-options", base, head, "--", name], capture_output=True, check=False)
         if patch.returncode != 0:
             raise RuntimeError(f"git diff of {name} exited with {patch.returncode}")
@@ -126,6 +128,15 @@ def load_lcov(report, prefix):
     return coverage
 
 
+def require_resolvable(coverage, root):
+    """Fail when no path of the report exists in the checkout: a drifted prefix or absolute paths would otherwise turn
+    every changed file into "not measured" and let the gate pass without measuring anything."""
+    if coverage and not any((root / path).is_file() for path in coverage):
+        sample = next(iter(coverage))
+        raise ValueError(f"none of the {len(coverage)} source paths of the report exists under {root} "
+                         f"(for example {sample}); check --prefix and the report format")
+
+
 def evaluate(changed, coverage):
     """Per file (covered, missed, uncovered lines) over changed lines the report instruments, plus unmeasured files."""
     rows, unmeasured = {}, []
@@ -165,6 +176,10 @@ def main(argv=None, runner=subprocess.run):
                         help="repository-relative source files subject to the gate")
     parser.add_argument("--exclude", action="append", default=[], metavar="GLOB")
     parser.add_argument("--min-percent", type=float, default=80.0)
+    parser.add_argument("--min-file-percent", type=float, default=50.0,
+                        help="a changed file with at least --min-file-lines executable changed lines must reach this")
+    parser.add_argument("--min-file-lines", type=int, default=10)
+    parser.add_argument("--root", type=Path, default=Path("."), help="repository root, to resolve report paths")
     parser.add_argument("--base", default="HEAD^1")
     parser.add_argument("--head", default="HEAD")
     args = parser.parse_args(argv)
@@ -176,9 +191,10 @@ def main(argv=None, runner=subprocess.run):
         return any(rx.fullmatch(path) for rx in includes) and not any(rx.fullmatch(path) for rx in excludes)
 
     try:
-        if not 0 <= args.min_percent <= 100:
-            raise ValueError("--min-percent must be between 0 and 100")
+        if not 0 <= args.min_percent <= 100 or not 0 <= args.min_file_percent <= 100:
+            raise ValueError("--min-percent and --min-file-percent must be between 0 and 100")
         coverage = (load_jacoco if args.format == "jacoco" else load_lcov)(args.report, args.prefix)
+        require_resolvable(coverage, args.root)
         changed = changed_lines(args.base, args.head, in_scope, runner)
         rows, unmeasured = evaluate(changed, coverage)
     except (ValueError, RuntimeError, OSError) as exc:
@@ -196,7 +212,12 @@ def main(argv=None, runner=subprocess.run):
         print(f"PASS changed-line coverage: no executable changed line to measure ({len(changed)} changed source file(s))")
         return 0
     percent = 100 * covered / (covered + missed)
-    verdict = "PASS" if percent >= args.min_percent else "FAIL"
+    # An aggregate can hide a new file that no test touches: 400 covered lines dilute a 30-line untested class.
+    untested = [path for path, (hit, miss, _) in rows.items()
+                if hit + miss >= args.min_file_lines and 100 * hit / (hit + miss) < args.min_file_percent]
+    for path in untested:
+        print(f"  {path}: below {args.min_file_percent:g}% with at least {args.min_file_lines} executable changed lines")
+    verdict = "PASS" if percent >= args.min_percent and not untested else "FAIL"
     print(f"{verdict} changed-line coverage: {covered}/{covered + missed} executable changed lines "
           f"({percent:.1f}%, required {args.min_percent:g}%)")
     return 0 if verdict == "PASS" else 1
