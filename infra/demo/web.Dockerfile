@@ -1,7 +1,8 @@
 FROM node:26-bookworm-slim AS build
 WORKDIR /src
+COPY tools/install_corepack.sh /usr/local/bin/install-corepack
 RUN apt-get update && apt-get install -y --no-install-recommends python3 && rm -rf /var/lib/apt/lists/* \
-    && npm install --global corepack@0.36.0
+    && install-corepack
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml tsconfig.base.json ./
 COPY apps/web/package.json apps/web/package.json
 RUN corepack pnpm install --frozen-lockfile
