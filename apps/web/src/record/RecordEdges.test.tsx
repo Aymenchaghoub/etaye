@@ -308,7 +308,6 @@ describe('PatientsPage and Record edge states', () => {
   it('exercises MeasurementsPage filtering, pagination, lineage retry, and PatientsArea view routing', async () => {
     const user = userEvent.setup();
     let lineageCalls = 0;
-    let firstMeasurePage = true;
     vi.stubGlobal('fetch', vi.fn((request: Request) => {
       const url = new URL(request.url);
       if (url.pathname.endsWith('/patients')) {
@@ -351,7 +350,6 @@ describe('PatientsPage and Record edge states', () => {
             truncated: false,
           }));
         }
-        firstMeasurePage = false;
         return Promise.resolve(Response.json({
           items: [
             {
@@ -366,7 +364,7 @@ describe('PatientsPage and Record edge states', () => {
               sourceType: 'PRACTITIONER_OBSERVED', sourceRevisionId: 'src-1b', recordedAt: '2026-09-25T08:00:00Z', authorLabel: 'Dr Nora', sourceReference: 'S-1b',
             },
           ],
-          nextCursor: firstMeasurePage ? null : 'c2',
+          nextCursor: 'c2',
           truncated: true,
         }));
       }
