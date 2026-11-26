@@ -159,18 +159,31 @@ class WorkflowsKeepTheGatesTest(unittest.TestCase):
         relevant = "steps.changes.outputs.relevant == 'true'"
         expected = {
             "api.yml": {
+                "Detect relevant changes": None,
                 "Check compiler debt": relevant,
                 "Verify API with Testcontainers": relevant,
+                "Verify Surefire test counts": relevant,
+                "Verify isolation matrix report": relevant,
+                "Verify API coverage report": relevant,
                 "Gate coverage of the changed API lines": f"github.event_name == 'pull_request' && {relevant}",
             },
             "web.yml": {
+                "Detect relevant changes": None,
+                "Install Corepack (no longer bundled with Node 26), enable it and install locked dependencies": relevant,
                 "Lint (correctness, security, accessibility)": relevant,
                 "Run browser smoke tests with stubbed API responses": relevant,
+                "Verify Playwright test counts": relevant,
                 "Run Web unit tests with coverage": "${{ !cancelled() && steps.dependencies.outcome == 'success' }}",
                 "Verify Web coverage report": "${{ !cancelled() && steps.unit-tests.outcome == 'success' }}",
                 "Gate coverage of the changed Web logic lines":
                     "github.event_name == 'pull_request' && steps.unit-coverage.outcome == 'success'",
             },
+        }
+        step_ids = {
+            "Detect relevant changes": "changes",
+            "Install Corepack (no longer bundled with Node 26), enable it and install locked dependencies": "dependencies",
+            "Run Web unit tests with coverage": "unit-tests",
+            "Verify Web coverage report": "unit-coverage",
         }
         for workflow, conditions in expected.items():
             steps = yaml.safe_load(self.text(workflow))["jobs"]["verify"]["steps"]
@@ -180,6 +193,8 @@ class WorkflowsKeepTheGatesTest(unittest.TestCase):
                     self.assertEqual(len(matches), 1)
                     self.assertEqual(matches[0].get("if"), condition)
                     self.assertNotIn("continue-on-error", matches[0])
+                    if name in step_ids:
+                        self.assertEqual(matches[0].get("id"), step_ids[name])
 
     def test_the_changed_line_gate_keeps_its_thresholds(self):
         for name in ("api.yml", "web.yml"):

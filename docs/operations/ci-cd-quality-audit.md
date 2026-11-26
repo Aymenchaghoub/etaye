@@ -468,7 +468,7 @@ The read-only reviewer inspected the complete PR diff from `7980407` to `eb5c442
 | Finding | Disposition and evidence |
 | --- | --- |
 | An identical warning could be moved elsewhere and keep the same debt fingerprint | Confirmed from repeated javac fingerprints in `PracticeIsolationTest`. The debt gate now rejects a warning that still lies on a changed line. A Git-backed regression distinguishes relocation from an unaffected warning shifted by a comment. |
-| Required jobs could start with a verification step condition made unconditionally false | The job-level validator focuses on availability. The test pins the selected API and Web step conditions and disallows `continue-on-error` on them. |
+| Required jobs could start with a verification step condition made unconditionally false | The job-level validator focuses on availability. The test pins the unconditional change classifier and its step ID, the selected API and Web step conditions, and their prerequisite IDs. It also disallows `continue-on-error` on those steps. |
 | An API coverage floor could be rewired while leaving its property value intact | The POM uses the correct values. The test now checks each goal limit's element, counter, COVEREDRATIO metric and property reference individually. |
 | Using an explicit root from a nested directory could miss a changed file | Confirmed against a real Git fixture. Report and patch operations use the same repository root. The nested-directory regression reports the missed line and fails the gate. |
 | PostgreSQL APT tolerated a failed index refresh | Package updates fail on any index error and use a bounded HTTP timeout. The scan still reports observations separately. |
