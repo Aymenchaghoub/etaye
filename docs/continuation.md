@@ -8,6 +8,8 @@ Updated: 2026-11-26. Owner: Aymen Chaghoub.
 
 **Artifacts and decisions.** The [audit addendum](operations/ci-cd-quality-audit.md#14-targeted-hardening-on-pr-73) records the stricter coverage evidence, exact diagnostic baselines, four-image scan and narrow Maven fallback. It also records the sequence for requiring `Dependency review`, keeping `Package verify` optional during at least ten pull requests, and deferring SonarQube Cloud and release engineering.
 
+**Actual verification.** The local API and Web unit suites passed (259 and 102 tests), role provisioning passed five cases, and the freshly started demonstration package passed 11 browser tests. Trivy scanned all four images. PostgreSQL and Flyway retain upstream findings, with the counts and remediation triggers recorded in the audit addendum. The pull request checks page records the executed jobs on the current head.
+
 **Next action.** Check the evidence and remaining choices in the audit addendum and on [PR #73](https://github.com/Aymenchaghoub/etaye/pull/73/checks). Aymen decides whether to merge. After a confirmed merge, observe the next PR's `Dependency review` and the first `Package verify` runs on `main`.
 
 ## CI/CD quality hardening, pull request in review — 2026-11-25

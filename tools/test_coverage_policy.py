@@ -49,9 +49,17 @@ class ApiCoverageGateTest(unittest.TestCase):
         self.assertEqual(elements, {"BUNDLE", "PACKAGE"})
         included = {include.text for include in execution.iterfind(".//m:include", NS)}
         self.assertTrue(CRITICAL_PACKAGES <= included, f"critical packages dropped: {CRITICAL_PACKAGES - included}")
-        counters = {(rule.findtext("m:element", namespaces=NS), limit.findtext("m:counter", namespaces=NS))
-                    for rule in execution.iterfind(".//m:rule", NS) for limit in rule.iterfind(".//m:limit", NS)}
-        self.assertEqual(counters, {("BUNDLE", "LINE"), ("BUNDLE", "BRANCH"), ("PACKAGE", "LINE"), ("PACKAGE", "BRANCH")})
+        limits = [
+            (rule.findtext("m:element", namespaces=NS), limit.findtext("m:counter", namespaces=NS),
+             limit.findtext("m:value", namespaces=NS), limit.findtext("m:minimum", namespaces=NS))
+            for rule in execution.iterfind(".//m:rule", NS) for limit in rule.iterfind(".//m:limit", NS)
+        ]
+        self.assertCountEqual(limits, [
+            ("BUNDLE", "LINE", "COVEREDRATIO", "${coverage.line.minimum}"),
+            ("BUNDLE", "BRANCH", "COVEREDRATIO", "${coverage.branch.minimum}"),
+            ("PACKAGE", "LINE", "COVEREDRATIO", "${coverage.critical.line.minimum}"),
+            ("PACKAGE", "BRANCH", "COVEREDRATIO", "${coverage.critical.branch.minimum}"),
+        ])
 
     def test_a_halting_failure_is_not_disabled(self):
         text = (ROOT / "apps/api/pom.xml").read_text()
@@ -146,6 +154,32 @@ class WorkflowsKeepTheGatesTest(unittest.TestCase):
                     if "assert_changed_line_coverage.py" in step.get("run", "")]
         self.assertEqual(len(commands), 1, f"{name} must run the changed-line gate exactly once")
         return " ".join(commands[0].split())
+
+    def test_required_verification_steps_keep_their_conditions(self):
+        relevant = "steps.changes.outputs.relevant == 'true'"
+        expected = {
+            "api.yml": {
+                "Check compiler debt": relevant,
+                "Verify API with Testcontainers": relevant,
+                "Gate coverage of the changed API lines": f"github.event_name == 'pull_request' && {relevant}",
+            },
+            "web.yml": {
+                "Lint (correctness, security, accessibility)": relevant,
+                "Run browser smoke tests with stubbed API responses": relevant,
+                "Run Web unit tests with coverage": "${{ !cancelled() && steps.dependencies.outcome == 'success' }}",
+                "Verify Web coverage report": "${{ !cancelled() && steps.unit-tests.outcome == 'success' }}",
+                "Gate coverage of the changed Web logic lines":
+                    "github.event_name == 'pull_request' && steps.unit-coverage.outcome == 'success'",
+            },
+        }
+        for workflow, conditions in expected.items():
+            steps = yaml.safe_load(self.text(workflow))["jobs"]["verify"]["steps"]
+            for name, condition in conditions.items():
+                with self.subTest(workflow=workflow, step=name):
+                    matches = [step for step in steps if step.get("name") == name]
+                    self.assertEqual(len(matches), 1)
+                    self.assertEqual(matches[0].get("if"), condition)
+                    self.assertNotIn("continue-on-error", matches[0])
 
     def test_the_changed_line_gate_keeps_its_thresholds(self):
         for name in ("api.yml", "web.yml"):

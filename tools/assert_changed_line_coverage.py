@@ -11,6 +11,7 @@ All in-scope Git sources must appear in the report, including zero-line records.
 containing only comments, a package declaration or imports can legitimately produce no class.
 """
 import argparse
+from functools import partial
 import json
 import re
 import subprocess
@@ -320,7 +321,7 @@ def main(argv=None, runner=subprocess.run):
                 raise ValueError("--line-map is required for LCOV")
             require_fresh(args.line_map, args.started, args.head, args.root, args.prefix, runner)
             verify_lcov_line_map(args.line_map, coverage, args.root)
-        changed = changed_lines(args.base, args.head, in_scope, runner)
+        changed = changed_lines(args.base, args.head, in_scope, partial(runner, cwd=args.root))
         rows = evaluate(changed, coverage)
     except (ValueError, RuntimeError, OSError, KeyError, TypeError, AttributeError) as exc:
         print(f"FAIL changed-line coverage: {exc}", file=sys.stderr)
@@ -332,7 +333,7 @@ def main(argv=None, runner=subprocess.run):
         suffix = f"  uncovered lines {ranges(lines)}" if lines else ""
         print(f"  {path}: {hit}/{hit + miss}{suffix}")
     if covered + missed == 0:
-        print(f"PASS changed-line coverage: no executable changed line to measure ({len(changed)} changed source file(s))")
+        print(f"PASS changed-line coverage: no executable changed line mapped by the coverage tool ({len(changed)} changed source file(s))")
         return 0
     percent = 100 * covered / (covered + missed)
     # An aggregate can hide a new file that no test touches: 400 covered lines dilute a 30-line untested class.

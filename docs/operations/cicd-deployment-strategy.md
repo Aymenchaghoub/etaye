@@ -4,7 +4,7 @@ Status: API and Web validation run through GitHub Actions. The promotion, deploy
 
 ## Verification gates and local commands
 
-Updated 2026-11-26 after the [CI/CD quality audit](ci-cd-quality-audit.md#14-targeted-hardening-on-pr-73). Use the commands below to reproduce the required gates. A coverage gate can pass with zero changed executable lines once the source inventory, report counters and test-run marker have been verified.
+Updated 2026-11-26 after the [CI/CD quality audit](ci-cd-quality-audit.md#14-targeted-hardening-on-pr-73). Use the commands below to reproduce the required gates. A coverage gate can pass with zero changed instrumented lines once the source inventory, report counters and test-run marker have been verified.
 
 | Gate | Enforced by | Fails when |
 |---|---|---|
@@ -19,7 +19,7 @@ Updated 2026-11-26 after the [CI/CD quality audit](ci-cd-quality-audit.md#14-tar
 | Workflow policy | `tools/check_workflow_policy.py`, `actionlint`, `zizmor` in `Planning package checks` | an unpinned action, a dangerous trigger, an expression in a shell script, a missing timeout, a required job that can be skipped (`if`, `needs`) or a required workflow that filters pull requests, a run on push that cancels unconditionally, an orphaned required check name, a syntax or security finding |
 | Pinned floors | `tools/test_coverage_policy.py` | a floor above is lowered, a gate removed, the lint baseline grows, or a workflow switches a gate off from the command line (`-Djacoco.skip`, `--passWithNoTests`, a lower `--min-percent`) without editing this test |
 
-The floors are a ratchet set just under the baseline of 2026-11-25. Raise them as coverage grows; never lower one to pass a build. The 23 page and component files (`.tsx`) read 0 % in the unit report because the Playwright suite collects no coverage; they are verified by that suite, not by a line measure.
+The changed-line measure uses coverage-tool source locations. A multiline expression may map to a single physical line. The floors are a ratchet set just under the baseline of 2026-11-25. Raise them as coverage grows; never lower one to pass a build. The 23 page and component files (`.tsx`) read 0 % in the unit report because the Playwright suite collects no coverage; they are verified by that suite, not by a line measure.
 
 `Package verify` (`.github/workflows/package.yml`, optional during the observation period, D-56) exercises the PostgreSQL role provisioning on throwaway containers, builds the four demo images, starts the package and runs 11 tests in `record`, `measurements` and `patients`. The tests cover selected cross-practice denials and stale-version handling. The separate outage spec, story 9.1 demonstration and full story 1.4 isolation replay remain deferred. Trivy reports all HIGH and CRITICAL findings with per-image JSON on relevant pull requests, pushes to `main`, weekly runs and manual runs. Vulnerability findings are informational during observation. Failure to scan all four images fails the step.
 

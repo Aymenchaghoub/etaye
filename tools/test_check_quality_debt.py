@@ -3,6 +3,7 @@ from contextlib import redirect_stderr
 from io import StringIO
 import json
 from pathlib import Path
+import subprocess
 import tempfile
 import unittest
 
@@ -35,13 +36,37 @@ class QualityDebtTest(unittest.TestCase):
             message = {"ruleId": "example", "message": "problem", "line": 1, "column": 1,
                        "suppressions": [{"kind": "file"}]}
             results = [{"filePath": str(path), "messages": [], "suppressedMessages": [message]}]
-            previous = Counter(debt.eslint_diagnostics(root, json.dumps(results)))
+            previous = Counter(warning.identity for warning in debt.eslint_diagnostics(root, json.dumps(results)))
             message["line"] = 2
-            actual = Counter(debt.eslint_diagnostics(root, json.dumps(results)))
+            actual = Counter(warning.identity for warning in debt.eslint_diagnostics(root, json.dumps(results)))
             self.assertNotEqual(actual, previous)
             message["suppressions"] = [{"kind": "directive"}]
             with self.assertRaisesRegex(ValueError, "inline suppression"):
                 list(debt.eslint_diagnostics(root, json.dumps(results)))
+
+    def test_an_identical_warning_can_shift_down_but_cannot_move_to_new_code(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+
+            def git(*args):
+                subprocess.run(["git", *args], cwd=root, capture_output=True, check=True)
+
+            git("init", "-q", "-b", "main")
+            git("config", "user.name", "CI")
+            git("config", "user.email", "ci@example.test")
+            git("config", "commit.gpgsign", "false")
+            path = root / "Example.java"
+            path.write_text("void first() {\n  old();\n}\nvoid second() {\n  other();\n}\n")
+            git("add", "Example.java")
+            git("commit", "-qm", "base")
+            identity = ("Example.java", "javac", "deprecated", "old();", 1)
+            path.write_text("// Comment\n" + path.read_text())
+            git("commit", "-qam", "shift existing diagnostic")
+            debt.reject_changed_occurrences([debt.Diagnostic(identity, 3)], "HEAD^", root)
+            path.write_text("// Comment\nvoid first() {\n  fixed();\n}\nvoid second() {\n  old();\n}\n")
+            git("commit", "-qam", "move the diagnostic to new code")
+            with self.assertRaisesRegex(ValueError, "diagnostic on a changed line"):
+                debt.reject_changed_occurrences([debt.Diagnostic(identity, 6)], "HEAD^", root)
 
     def test_javac_reports_new_deprecation_and_requires_both_fresh_compilations(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -55,7 +80,7 @@ class QualityDebtTest(unittest.TestCase):
                 "[INFO] BUILD SUCCESS\n"
             )
             self.assertEqual(list(debt.javac_diagnostics(root, report)),
-                             [("Example.java", "javac", "call() has been deprecated", "call();", 1)])
+                             [debt.Diagnostic(("Example.java", "javac", "call() has been deprecated", "call();", 1), 1)])
             for invalid in (report.replace("target/test-classes", "elsewhere"),
                             report + "[WARNING] unmatched warning\n",
                             report.replace("BUILD SUCCESS", "BUILD FAILURE")):

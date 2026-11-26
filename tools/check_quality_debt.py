@@ -2,11 +2,15 @@
 """Check the exact ESLint and javac diagnostics accepted as existing debt."""
 import argparse
 from collections import Counter
+from functools import partial
 import json
 from pathlib import Path
 import re
 import subprocess
 import sys
+from typing import NamedTuple
+
+from assert_changed_line_coverage import changed_lines
 
 BASELINES = {
     "eslint": Path("apps/web/eslint-debt.json"),
@@ -15,10 +19,16 @@ BASELINES = {
 JAVAC_WARNING = re.compile(r"^\[WARNING\] (.+\.java):\[(\d+),(\d+)\] (.+)$", re.MULTILINE)
 
 
+class Diagnostic(NamedTuple):
+    identity: tuple[str, str, str, str, int]
+    line: int
+
+
 def diagnostic(root, path, line, column, rule, message):
     relative = Path(path).relative_to(root)
     source = (root / relative).read_text(encoding="utf-8").split("\n")[line - 1]
-    return (relative.as_posix(), rule, message, source.strip(), column - (len(source) - len(source.lstrip())))
+    identity = (relative.as_posix(), rule, message, source.strip(), column - (len(source) - len(source.lstrip())))
+    return Diagnostic(identity, line)
 
 
 def eslint_diagnostics(root, text):
@@ -29,10 +39,12 @@ def eslint_diagnostics(root, text):
         if result["messages"]:
             raise ValueError(f"ESLint found unsuppressed diagnostics in {result['filePath']}")
         for message in result["suppressedMessages"]:
-            if not all(item["kind"] == "file" for item in message["suppressions"]):
+            suppressions = message["suppressions"]
+            if not suppressions or any(item["kind"] != "file" for item in suppressions):
                 raise ValueError(f"unexpected inline suppression in {result['filePath']}")
+            text_without_line = re.sub(r"\(at line \d+\)", "(at referenced line)", message["message"])
             yield diagnostic(root, result["filePath"], message["line"], message["column"],
-                             message["ruleId"], re.sub(r"\(at line \d+\)", "(at referenced line)", message["message"]))
+                             message["ruleId"], text_without_line)
 
 
 def javac_diagnostics(root, text):
@@ -55,6 +67,17 @@ def require_decreasing(current, previous):
     additions = current - previous
     if additions:
         raise ValueError(f"the baseline adds or restores debt: {next(iter(additions))!r}")
+
+
+def reject_changed_occurrences(diagnostics, base, root):
+    # An old warning and a new warning can have identical text in the same file.
+    # Resolve actual occurrences against changed lines so moving debt cannot keep the check green.
+    paths = {warning.identity[0] for warning in diagnostics}
+    changed = changed_lines(base, "HEAD", paths.__contains__, partial(subprocess.run, cwd=root))
+    for warning in diagnostics:
+        path, rule, message, _, _ = warning.identity
+        if warning.line in changed.get(path, ()):
+            raise ValueError(f"diagnostic on a changed line: {path}:{warning.line} [{rule}] {message}")
 
 
 def compare(actual, expected):
@@ -84,12 +107,15 @@ def main():
                 previous = subprocess.check_output(["git", "show", f"{args.base}:{path}"], cwd=root)
                 require_decreasing(baseline, read_baseline(previous))
         parse = eslint_diagnostics if args.tool == "eslint" else javac_diagnostics
-        actual = Counter(parse(root, args.report.read_text(encoding="utf-8")))
+        diagnostics = list(parse(root, args.report.read_text(encoding="utf-8")))
+        actual = Counter(warning.identity for warning in diagnostics)
         if not compare(actual, baseline):
             return 1
+        if args.base:
+            reject_changed_occurrences(diagnostics, args.base, root)
         print(f"{args.tool}: {actual.total()} recorded diagnostics, no new or stale debt")
         return 0
-    except (ValueError, OSError, subprocess.CalledProcessError, KeyError, IndexError, TypeError) as exc:
+    except (ValueError, OSError, RuntimeError, subprocess.CalledProcessError, KeyError, IndexError, TypeError) as exc:
         print(f"FAIL quality debt check: {exc}", file=sys.stderr)
         return 1
 

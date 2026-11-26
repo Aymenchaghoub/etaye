@@ -194,7 +194,8 @@ class GateTest(unittest.TestCase):
         self.git("add", "-A")
         self.git("commit", "-q", "-m", "change")
 
-    def run_gate(self, report_text, *extra, kind="jacoco", include=None, stale=False, wrong_revision=False, original_lcov=None):
+    def run_gate(self, report_text, *extra, kind="jacoco", include=None, stale=False, wrong_revision=False,
+                 original_lcov=None, working_directory=None):
         report = self.repo / "report.xml"
         started = self.repo / "started"
         started.write_text(self.git("rev-parse", "HEAD^1" if wrong_revision else "HEAD").stdout)
@@ -221,7 +222,10 @@ class GateTest(unittest.TestCase):
             os.utime(line_map, ns=(stamp, stamp))
             argv += ["--line-map", str(line_map)]
         out, err = StringIO(), StringIO()
-        runner = lambda command, **kwargs: subprocess.run(command, **({"cwd": self.repo} | kwargs))  # noqa: E731
+        def runner(command, **kwargs):
+            kwargs.setdefault("cwd", working_directory or self.repo)
+            return subprocess.run(command, **kwargs)
+
         with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
             code = gate.main(argv, runner)
         return code, out.getvalue(), err.getvalue()
@@ -231,6 +235,12 @@ class GateTest(unittest.TestCase):
         code, out, _ = self.run_gate(JACOCO)
         self.assertEqual(code, 0, out)
         self.assertIn("PASS changed-line coverage: 3/3 executable changed lines (100.0%", out)
+
+    def test_explicit_root_resolves_diff_from_a_nested_working_directory(self):
+        self.change_lines([12])
+        code, out, _ = self.run_gate(JACOCO, working_directory=self.repo / "apps/api")
+        self.assertEqual(code, 1)
+        self.assertIn("uncovered lines 12", out)
 
     def test_untested_addition_fails_and_names_the_lines(self):
         self.change_lines([10, 12, 13])
@@ -254,7 +264,7 @@ class GateTest(unittest.TestCase):
         self.change_lines([1, 2, 3])  # lines the report does not instrument: comments, declarations
         code, out, _ = self.run_gate(JACOCO)
         self.assertEqual(code, 0)
-        self.assertIn("no executable changed line to measure", out)
+        self.assertIn("no executable changed line mapped by the coverage tool", out)
 
     def test_documentation_only_change_has_nothing_to_measure(self):
         self.change_lines([1], name="docs/note.md")
