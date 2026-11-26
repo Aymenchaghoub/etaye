@@ -15,11 +15,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
@@ -67,17 +69,12 @@ public class IdentityLookupTest extends AbstractPostgresTest {
 
     @Test
     @DisplayName("Identity: Column-level grant enforces password_hash is NEVER selectable under etaye_identity role")
-    void shouldDenyPasswordHashSelectionOnIdentityRole() {
-        assertThatThrownBy(() -> {
-            try (Connection conn = identityDataSource.getConnection();
-                 Statement stmt = conn.createStatement();
-                 ResultSet rs = stmt.executeQuery("SELECT password_hash FROM account")) {
-                if (rs.next()) {
-                    rs.getString(1);
-                }
-            }
-        }).isInstanceOf(Exception.class)
-                .hasMessageFindingMatch("(?i).*permission denied.*(?:table|relation|column).*account.*");
+    void shouldDenyPasswordHashSelectionOnIdentityRole() throws SQLException {
+        try (Connection conn = identityDataSource.getConnection();
+             Statement stmt = conn.createStatement()) {
+            assertThatExceptionOfType(SQLException.class).isThrownBy(() -> stmt.executeQuery("SELECT password_hash FROM account"))
+                    .satisfies(error -> assertThat(error.getSQLState()).isEqualTo("42501"));
+        }
     }
 
     @Test
@@ -85,12 +82,12 @@ public class IdentityLookupTest extends AbstractPostgresTest {
     void shouldDenyAccountAndMembershipAccessOnRuntimeRole() {
         assertThatThrownBy(() -> runtimeJdbcTemplate.queryForList("SELECT id FROM account"))
                 .isInstanceOf(DataAccessException.class)
-                .getRootCause()
+                .rootCause()
                 .hasMessageFindingMatch("(?i).*permission denied.*(?:table|relation).*account.*");
 
         assertThatThrownBy(() -> runtimeJdbcTemplate.queryForList("SELECT id FROM membership"))
                 .isInstanceOf(DataAccessException.class)
-                .getRootCause()
+                .rootCause()
                 .hasMessageFindingMatch("(?i).*permission denied.*(?:table|relation).*membership.*");
     }
 

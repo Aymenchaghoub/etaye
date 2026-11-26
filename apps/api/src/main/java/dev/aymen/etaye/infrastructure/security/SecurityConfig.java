@@ -145,7 +145,6 @@ public class SecurityConfig {
             .csrf(csrf -> csrf
                 .csrfTokenRepository(csrfTokenRepository())
                 .csrfTokenRequestHandler(csrfRequestHandler)
-                .ignoringRequestMatchers("/api/v1/csrf")
             )
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)

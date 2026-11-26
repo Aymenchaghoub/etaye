@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.time.Clock;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.SequencedMap;
@@ -24,27 +25,38 @@ public class LocalRecoveryInbox {
 
     private static final String HOST = "127.0.0.1";
     private static final int PORT = 8025;
-    private static final String INBOX_ORIGIN = "http://" + HOST + ":" + PORT;
     private static final String RESET_URL = "http://localhost:5173/recuperation/nouveau#";
     private static final int CAPACITY = 64;
 
     private final SequencedMap<String, CapturedLink> links = new LinkedHashMap<>();
     private final HttpServer server;
+    private final String authority;
+    private final Clock clock;
     private final ScheduledExecutorService expiry;
 
     public LocalRecoveryInbox() throws IOException {
-        server = HttpServer.create(new InetSocketAddress(InetAddress.getByName(HOST), PORT), 4);
+        this(PORT, Clock.systemUTC());
+    }
+
+    LocalRecoveryInbox(int port, Clock clock) throws IOException {
+        this.clock = clock;
+        server = HttpServer.create(new InetSocketAddress(InetAddress.getByName(HOST), port), 4);
+        authority = HOST + ":" + server.getAddress().getPort();
         server.createContext("/", this::showInbox);
         server.start();
         expiry = Executors.newSingleThreadScheduledExecutor(Thread.ofPlatform().daemon().factory());
         expiry.scheduleAtFixedRate(this::purgeExpired, 1, 1, TimeUnit.SECONDS);
     }
 
+    InetSocketAddress address() {
+        return server.getAddress();
+    }
+
     public synchronized void capture(String email, String token, Instant expiresAt) {
         if (!email.endsWith("@example.test")) {
             return;
         }
-        var now = Instant.now();
+        var now = clock.instant();
         removeExpired(now);
         if (!expiresAt.isAfter(now)) {
             return;
@@ -74,7 +86,7 @@ public class LocalRecoveryInbox {
     }
 
     private synchronized void purgeExpired() {
-        removeExpired(Instant.now());
+        removeExpired(clock.instant());
     }
 
     private void showInbox(HttpExchange exchange) throws IOException {
@@ -83,8 +95,8 @@ public class LocalRecoveryInbox {
             String origin = request.getFirst("Origin");
             String site = request.getFirst("Sec-Fetch-Site");
             if (!exchange.getRemoteAddress().getAddress().isLoopbackAddress()
-                    || !(HOST + ":" + PORT).equals(request.getFirst("Host"))
-                    || (origin != null && !INBOX_ORIGIN.equals(origin))
+                    || !authority.equals(request.getFirst("Host"))
+                    || (origin != null && !origin.equals("http://" + authority))
                     || (site != null && !"none".equals(site) && !"same-origin".equals(site))
                     || !"/".equals(exchange.getRequestURI().toString())
                     || !"GET".equals(exchange.getRequestMethod())) {
@@ -105,7 +117,7 @@ public class LocalRecoveryInbox {
     }
 
     private synchronized String page() {
-        removeExpired(Instant.now());
+        removeExpired(clock.instant());
         var html = new StringBuilder("""
                 <!doctype html>
                 <html lang="fr"><meta charset="utf-8">
