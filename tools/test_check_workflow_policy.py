@@ -69,6 +69,20 @@ class WorkflowInvariantTest(unittest.TestCase):
         self.assert_flags(mutate(f"actions/checkout@{SHA} # v7.0.1", f"actions/checkout@{SHA} # latest"),
                           "no version comment")
 
+    def test_flow_mapping_action_reference_keeps_the_same_pin_rules(self):
+        account = "example/sample-action"
+        replace_step = f"      - {{uses: '{account}@v1'}}"
+        text = mutate("      - name: Run", replace_step + "\n      - name: Run")
+        self.assert_flags(text, "not pinned to a full commit SHA")
+        pinned = text.replace(f"{account}@v1", f"{account}@{SHA}")
+        self.assert_flags(pinned, "no version comment")
+        pinned = pinned.replace(f"{account}@{SHA}'}}", f"{account}@{SHA}'}} # v1.2.3")
+        self.assertEqual(problems(pinned), [])
+
+    def test_scope_reference_is_checked_when_the_shell_call_continues_on_another_line(self):
+        script = '        run: |\n          python3 tools/ci_scope.py \\\n            --event pull_request --scope sandbox\n'
+        self.assert_flags(mutate('        run: echo "$EVENT"\n', script), "unknown scope 'sandbox'")
+
     def test_local_actions_need_no_pin(self):
         text = mutate("      - name: Run", "      - uses: ./.github/actions/local\n      - name: Run")
         self.assertEqual(problems(text), [])
@@ -85,6 +99,10 @@ class WorkflowInvariantTest(unittest.TestCase):
 
     def test_empty_top_level_permissions_are_valid(self):
         self.assertEqual(problems(mutate("permissions:\n  contents: read\n", "permissions: {}\n")), [])
+
+    def test_invalid_permission_shape_reports_a_policy_failure(self):
+        self.assert_flags(mutate("permissions:\n  contents: read\n", "permissions: [read]\n"),
+                          "top-level permissions grant more")
 
     def test_job_write_scopes_are_limited(self):
         allowed = mutate("    timeout-minutes: 20\n",

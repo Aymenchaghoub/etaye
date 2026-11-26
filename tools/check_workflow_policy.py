@@ -42,9 +42,7 @@ RESTRICTED_CONTEXT_REF = re.compile(
     r"\bsecrets(?:\.([A-Za-z0-9_]+)|\[['\"]([A-Za-z0-9_]+)['\"]\])"
 )
 PINNED_USE = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_./-]+@[0-9a-f]{40}")
-USE_LINE = re.compile(r"^\s*(?:-\s*)?uses:\s*(?P<ref>\S+)\s*(?:#\s*(?P<comment>.*))?$")
 VERSION_COMMENT = re.compile(r"v?\d+(?:\.\d+){1,2}\b")
-SCOPE_CALL = re.compile(r"ci_scope\.py\s+(?:.*\s)?--scope\s+(?P<scope>\S+)")
 
 
 def _load(text):
@@ -65,9 +63,37 @@ def _elevated(permissions):
     """Token scopes above read. `write-all` and unknown string forms are elevated as a whole."""
     if permissions is None:
         return {}
-    if isinstance(permissions, str):
+    if not isinstance(permissions, dict):
         return {} if permissions == "read-all" else {"*": permissions}
     return {scope: level for scope, level in permissions.items() if level not in ("read", "none")}
+
+
+def _yaml_values(mapping, name):
+    if isinstance(mapping, yaml.MappingNode):
+        for key, value in mapping.value:
+            if key.value == name:
+                yield value
+
+
+def _action_refs(syntax):
+    # Read the scalar and its source location from YAML. A textual search misses values in flow mappings.
+    for jobs in _yaml_values(syntax, "jobs"):
+        if not isinstance(jobs, yaml.MappingNode):
+            continue
+        for _, job in jobs.value:
+            yield from _yaml_values(job, "uses")
+            for steps in _yaml_values(job, "steps"):
+                if isinstance(steps, yaml.SequenceNode):
+                    for step in steps.value:
+                        yield from _yaml_values(step, "uses")
+
+
+def _static_scope_calls(script):
+    for line in script.replace("\\\n", "").splitlines():
+        arguments = iter(line.partition("ci_scope.py")[2].split())
+        for argument in arguments:
+            if argument == "--scope":
+                yield next(arguments, "")
 
 
 def check_workflow(name, text):
@@ -159,23 +185,28 @@ def check_workflow(name, text):
                 retention = str(options.get("retention-days", ""))
                 if not re.fullmatch(r"[0-9]+", retention) or not 0 < int(retention) <= MAX_ARTIFACT_RETENTION_DAYS:
                     fail(f"{label} needs retention-days between 1 and {MAX_ARTIFACT_RETENTION_DAYS}")
-            for scope in SCOPE_CALL.findall(script):
+            for scope in _static_scope_calls(script):
                 if scope not in ci_scope.SCOPES:
                     fail(f"{label} asks tools/ci_scope.py for an unknown scope {scope!r}")
 
-    uses_seen = 0
-    for number, line in enumerate(text.splitlines(), 1):
-        match = USE_LINE.match(line)
-        if not match:
+    lines = text.split("\n")
+    syntax = yaml.compose(text, Loader=yaml.BaseLoader)
+    for action in _action_refs(syntax):
+        number = action.start_mark.line + 1
+        if not isinstance(action, yaml.ScalarNode):
+            fail(f"line {number}: uses must be a scalar action reference")
             continue
-        uses_seen += 1
-        reference = match["ref"].strip("'\"")
+        reference = action.value
         if reference.startswith("./"):
             continue
         if not PINNED_USE.fullmatch(reference):
             fail(f"line {number}: {reference} is not pinned to a full commit SHA")
-        elif not VERSION_COMMENT.match(match["comment"] or ""):
-            fail(f"line {number}: {reference} has no version comment such as '# v1.2.3'")
+        else:
+            end = action.end_mark
+            suffix = lines[end.line][end.column:] if end.line < len(lines) else ""
+            _, _, comment = suffix.partition("#")
+            if not VERSION_COMMENT.match(comment.lstrip()):
+                fail(f"line {number}: {reference} has no version comment such as '# v1.2.3'")
 
     declared_refs = _restricted_context_refs(text)
     if declared_refs and runs_on_pull_request:

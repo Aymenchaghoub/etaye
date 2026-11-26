@@ -42,11 +42,21 @@ TARGET_NAMES = {"cible-soignant": "Clinician touch target", "cible-patient": "Pa
 BLOCKS = ("colors", "typography", "scale", "motion-effects", "icons")
 
 
+def _declarations(body, prefix=""):
+    declarations = {}
+    # The received generator emits a semicolon after every property in these blocks.
+    for declaration in body.split(";")[:-1]:
+        name, separator, value = declaration.lstrip().partition(":")
+        if separator and name.startswith(prefix) and re.fullmatch(r"[a-z0-9-]+", name):
+            declarations[name.removeprefix(prefix)] = value.lstrip()
+    return declarations
+
+
 def _block(text, pattern):
     match = re.search(pattern, text, re.S | re.M)
     if not match:
         raise ValueError("Token block not found: " + pattern)
-    return dict(re.findall(r"--([a-z0-9-]+):\s*([^;]+);", match.group(1)))
+    return _declarations(match.group(1), "--")
 
 
 def read_tokens(css_path=TOKENS_CSS, icons_path=ICONS_CSS):
@@ -59,8 +69,7 @@ def read_tokens(css_path=TOKENS_CSS, icons_path=ICONS_CSS):
         "icons": re.findall(r"^\.etaye-icone--([a-z0-9]+)\{--i:", Path(icons_path).read_text(encoding="utf-8"), re.M),
     }
     for name, body in re.findall(r"^\.([a-z-]+) \{ (font-family[^}]*)\}", css, re.M):
-        props = dict(re.findall(r"([a-z-]+):\s*([^;]+);", body))
-        tokens["typography"][name] = props
+        tokens["typography"][name] = _declarations(body)
     if len(tokens["typography"]) != 14:
         raise ValueError("Expected 14 typography classes, found %d" % len(tokens["typography"]))
     return tokens
