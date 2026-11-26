@@ -26,10 +26,18 @@ class Page(HTMLParser):
                 self.references.append((tag, key, attributes[key]))
 
 
+def local_sources(site, pattern, escapes):
+    for path in sorted(site.rglob(pattern)):
+        if not path.resolve().is_relative_to(site):
+            escapes.append([str(path.relative_to(site)), "source file resolves outside site"])
+        elif path.is_file():
+            yield path
+
+
 def inspect(site):
     site = site.resolve()
-    pages = {p: Page(p.read_text(encoding="utf-8")) for p in sorted(site.rglob("*.html"))}
     missing, fragments, duplicate_ids, escapes = [], [], [], []
+    pages = {p: Page(p.read_text(encoding="utf-8")) for p in local_sources(site, "*.html", escapes)}
     placeholders = 0
     checked = 0
     for path, page in pages.items():
@@ -56,7 +64,7 @@ def inspect(site):
                 and unquote(url.fragment) not in pages[target].ids
             ):
                 fragments.append([relative, link])
-    for path in site.rglob("*.css"):
+    for path in local_sources(site, "*.css", escapes):
         for link in re.findall(r"url\(['\"]?([^\)'\"]+)", path.read_text(encoding="utf-8")):
             url = urlsplit(link)
             if url.scheme or url.netloc:
@@ -80,14 +88,19 @@ def inspect(site):
     }
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--site", type=Path, required=True)
-    parser.add_argument("--report", type=Path, required=True)
-    args = parser.parse_args()
+    parser.add_argument("--report", type=Path, required=True, help="Output file selected by the local caller")
+    args = parser.parse_args(argv)
+    if ".." in args.site.parts or ".." in args.report.parts:
+        raise ValueError("paths must not contain '..' segments")
+    if args.report.is_symlink():
+        raise ValueError("report path must not be a symlink")
     result = inspect(args.site.expanduser())
-    args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n")
+    report_path = args.report.resolve()
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(
         json.dumps(
             {

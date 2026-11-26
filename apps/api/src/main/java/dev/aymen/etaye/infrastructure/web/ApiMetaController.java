@@ -15,12 +15,13 @@ import java.util.regex.Pattern;
 @RestController
 public class ApiMetaController {
 
-    private static final String NUMBER = "(?:0|[1-9][0-9]*)";
-    private static final String PRERELEASE_PART = "(?:" + NUMBER + "|[0-9]*[A-Za-z-][0-9A-Za-z-]*)";
+    private static final String NUMBER = "(?:0|[1-9][0-9]*+)";
+    private static final String PRERELEASE_PART = "(?:[0-9]*+[A-Za-z-][0-9A-Za-z-]*+|" + NUMBER + ")";
+    // Identifiers cannot consume delimiters, so possessive repetitions avoid recursive backtracking.
     private static final Pattern SEMANTIC_VERSION = Pattern.compile(
             NUMBER + "\\." + NUMBER + "\\." + NUMBER
-                    + "(?:-" + PRERELEASE_PART + "(?:\\." + PRERELEASE_PART + ")*)?"
-                    + "(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?");
+                    + "(?:-" + PRERELEASE_PART + "(?:\\." + PRERELEASE_PART + ")*+)?"
+                    + "(?:\\+[0-9A-Za-z-]++(?:\\.[0-9A-Za-z-]++)*+)?");
 
     private final ApiMeta metadata;
     private final DemoFixture fixture;

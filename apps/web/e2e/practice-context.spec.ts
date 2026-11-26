@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { pbkdf2Sync, randomBytes, randomUUID } from 'node:crypto';
 import { resolve, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from '../tests/support/browser-coverage';
 
 const container = process.env.ETAYE_E2E_DB_CONTAINER;
 const captures = process.env.ETAYE_E2E_CONTEXT_CAPTURES;

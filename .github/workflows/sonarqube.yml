@@ -170,13 +170,23 @@ jobs:
           bash tools/install_corepack.sh
           corepack enable
           pnpm install --frozen-lockfile
-      - name: Generate Web unit coverage report
+      - name: Install Playwright Chromium for Web browser coverage
+        working-directory: apps/web
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Generate combined Web unit, component and browser coverage report
         working-directory: apps/web
         run: |
-          rm -rf reports/unit-coverage
-          pnpm test:coverage
+          rm -rf reports/unit-coverage reports/unit-only-coverage reports/component-coverage reports/smoke-coverage reports/combined-coverage
+          pnpm test:unit:coverage
+          pnpm test:components:coverage
+          pnpm test:smoke:coverage --reporter=dot
+          pnpm coverage:merge
       - name: Verify Web LCOV report integrity
-        run: python3 tools/assert_coverage_reports.py lcov apps/web/reports/unit-coverage/lcov.info
+        run: |
+          python3 tools/assert_coverage_reports.py lcov apps/web/reports/unit-only-coverage/lcov.info
+          python3 tools/assert_coverage_reports.py lcov apps/web/reports/component-coverage/lcov.info
+          python3 tools/assert_coverage_reports.py lcov apps/web/reports/smoke-coverage/lcov.info
+          python3 tools/assert_coverage_reports.py lcov apps/web/reports/combined-coverage/lcov.info
       - name: Scan Web with SonarScanner for NPM
         working-directory: apps/web
         env:

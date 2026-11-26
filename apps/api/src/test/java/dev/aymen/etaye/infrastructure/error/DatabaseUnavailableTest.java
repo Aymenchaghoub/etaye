@@ -94,8 +94,42 @@ class DatabaseUnavailableTest {
                         "JpaSystemException over SQLState 23505",
                         new JpaSystemException(new RuntimeException(new SQLException("duplicate key", "23505"))),
                         false
+                ),
+                Arguments.of(
+                        "Null throwable",
+                        null,
+                        false
+                ),
+                Arguments.of(
+                        "SQLState 57P02 crash shutdown",
+                        new SQLException("terminating connection due to crash", "57P02"),
+                        true
+                ),
+                Arguments.of(
+                        "Direct Hibernate JDBCConnectionException",
+                        new org.hibernate.exception.JDBCConnectionException("conn lost", new SQLException("closed", "08003")),
+                        true
+                ),
+                Arguments.of(
+                        "Spring TransactionSystemException over Hikari closed connection",
+                        new org.springframework.transaction.TransactionSystemException("commit failed", new SQLException("Connection is closed")),
+                        true
+                ),
+                Arguments.of(
+                        "SQLException with null SQLState outside rollback",
+                        new SQLException("arbitrary null sqlstate"),
+                        false
                 )
         );
+    }
+
+    @org.junit.jupiter.api.Test
+    @DisplayName("Cyclic throwable cause chain terminates cleanly as false")
+    void cyclicCauseChainTerminates() {
+        RuntimeException a = new RuntimeException("a");
+        RuntimeException b = new RuntimeException("b", a);
+        a.initCause(b);
+        assertThat(DatabaseUnavailable.isConnectionFailure(a)).isFalse();
     }
 
     @ParameterizedTest(name = "{0} -> expected {2}")

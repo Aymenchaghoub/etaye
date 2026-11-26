@@ -53,8 +53,7 @@ public class GlobalExceptionHandler {
 
     private ResponseEntity<ApiProblem> buildProblem(HttpStatus status, String code, String publicDetail, Exception ex, HttpServletRequest request) {
         String correlationId = CorrelationIdFilter.getCorrelationId(request);
-        Throwable rootCause = NestedExceptionUtils.getMostSpecificCause(ex);
-        String rootCauseClass = rootCause != null ? rootCause.getClass().getName() : ex.getClass().getName();
+        String rootCauseClass = NestedExceptionUtils.getMostSpecificCause(ex).getClass().getName();
         if (status.is5xxServerError()) {
             if (status == HttpStatus.INTERNAL_SERVER_ERROR) {
                 log.error("Unhandled server exception: class={}, rootCauseClass={}, code={}, correlationId={}",
@@ -123,8 +122,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
     public ResponseEntity<ApiProblem> handleMediaTypeNotAcceptable(HttpMediaTypeNotAcceptableException ex, HttpServletRequest request) {
         String correlationId = CorrelationIdFilter.getCorrelationId(request);
-        Throwable rootCause = NestedExceptionUtils.getMostSpecificCause(ex);
-        String rootCauseClass = rootCause != null ? rootCause.getClass().getName() : ex.getClass().getName();
+        String rootCauseClass = NestedExceptionUtils.getMostSpecificCause(ex).getClass().getName();
         log.warn("Request rejected: class={}, rootCauseClass={}, code={}, correlationId={}",
                 ex.getClass().getName(), rootCauseClass, "NOT_ACCEPTABLE", correlationId);
         ApiProblem problem = ApiProblem.of(
@@ -211,21 +209,20 @@ public class GlobalExceptionHandler {
             fieldErrors.add(new FieldErrorItem(fe.getField(), fe.getCode(), fe.getDefaultMessage()));
         }
 
-        Throwable rootCause = NestedExceptionUtils.getMostSpecificCause(ex);
-        String rootCauseClass = rootCause != null ? rootCause.getClass().getName() : ex.getClass().getName();
+        String rootCauseClass = NestedExceptionUtils.getMostSpecificCause(ex).getClass().getName();
 
         if (futureDateOfBirth) {
             log.warn("Future birth date validation failure: class={}, rootCauseClass={}, code={}, correlationId={}",
                     ex.getClass().getName(), rootCauseClass, "VALIDATION_FAILED", correlationId);
             ApiProblem problem = ApiProblem.withFieldErrors(
-                    HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                    HttpStatus.UNPROCESSABLE_CONTENT.value(),
                     "Unprocessable Content",
                     "VALIDATION_FAILED",
                     "Input validation failed",
                     correlationId,
                     fieldErrors
             );
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT)
                     .contentType(MediaType.APPLICATION_PROBLEM_JSON)
                     .body(problem);
         }

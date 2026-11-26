@@ -34,8 +34,7 @@ public class ProblemAccessDeniedHandler implements AccessDeniedHandler {
         String code = isCsrf ? "CSRF_REJECTED" : "FORBIDDEN";
         String detail = isCsrf ? "CSRF token is missing or invalid" : "Access denied";
 
-        Throwable rootCause = NestedExceptionUtils.getMostSpecificCause(accessDeniedException);
-        String rootCauseClass = rootCause != null ? rootCause.getClass().getName() : accessDeniedException.getClass().getName();
+        String rootCauseClass = NestedExceptionUtils.getMostSpecificCause(accessDeniedException).getClass().getName();
         log.warn("Access denied: class={}, rootCauseClass={}, code={}, correlationId={}",
                 accessDeniedException.getClass().getName(), rootCauseClass, code, correlationId);
 

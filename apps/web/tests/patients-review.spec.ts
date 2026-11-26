@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './support/browser-coverage';
 import {
   accessible, base, canal, candidate, claire, fillIdentity, heading, ids, LIST, NEW, person, problem, roster, rowNames, snapshot,
   stubApi, tilleuls,

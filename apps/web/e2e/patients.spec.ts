@@ -1,6 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import { pbkdf2Sync, randomBytes, randomUUID } from 'node:crypto';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from '../tests/support/browser-coverage';
 
 /**
  * Real Spring, PostgreSQL and React stack for story 3.1. Run with ETAYE_E2E_DB_CONTAINER set to a disposable database

@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from '../tests/support/browser-coverage';
 
 const probePath = '/api/v1/probes/readiness';
 

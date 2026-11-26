@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -77,6 +78,41 @@ public class SecurityIntegrationTest extends AbstractPostgresTest {
         assertThat(response.getHeaders().getCacheControl()).isEqualTo("no-store");
         assertThat(response.getHeaders().getFirst(HttpHeaders.SET_COOKIE)).isNull();
         assertThat(countSpringSessions()).isEqualTo(sessions);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/api/v1/meta", "/api/v1/probes/readiness"})
+    void publicReadsDoNotAcceptWritesOrCreateSessions(String path) {
+        int initialSessions = countSpringSessions();
+
+        var response = client().post().uri(path)
+                .retrieve().onStatus(HttpStatus.METHOD_NOT_ALLOWED::equals, (req, res) -> {}).toEntity(Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.METHOD_NOT_ALLOWED);
+        assertThat(response.getHeaders().getAllow()).contains(HttpMethod.GET);
+        assertThat(response.getHeaders().getFirst(HttpHeaders.SET_COOKIE)).isNull();
+        assertThat(response.getBody()).containsEntry("code", "METHOD_NOT_ALLOWED");
+        assertThat(countSpringSessions()).isEqualTo(initialSessions);
+    }
+
+    @Test
+    void onlySafeMethodsReachCsrfIssuanceWithoutAToken() {
+        UUID account = createAccountAsOwner("csrf.method." + UUID.randomUUID() + "@example.com", "Csrf Method Fixture");
+        String cookie = testSessionHelper.createSessionCookie(account);
+        var issued = client().get().uri("/api/v1/csrf").header(HttpHeaders.COOKIE, cookie)
+                .retrieve().toEntity(Map.class);
+        String token = (String) issued.getBody().get("token");
+
+        var denied = client().post().uri("/api/v1/csrf").header(HttpHeaders.COOKIE, cookie)
+                .retrieve().onStatus(HttpStatus.FORBIDDEN::equals, (req, res) -> {}).toEntity(Map.class);
+        assertThat(denied.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        assertThat(denied.getBody()).containsEntry("code", "CSRF_REJECTED").doesNotContainKey("token");
+
+        var unsupported = client().post().uri("/api/v1/csrf").header(HttpHeaders.COOKIE, cookie)
+                .header("X-CSRF-TOKEN", token)
+                .retrieve().onStatus(HttpStatus.METHOD_NOT_ALLOWED::equals, (req, res) -> {}).toEntity(Map.class);
+        assertThat(unsupported.getStatusCode()).isEqualTo(HttpStatus.METHOD_NOT_ALLOWED);
+        assertThat(unsupported.getBody()).containsEntry("code", "METHOD_NOT_ALLOWED").doesNotContainKey("token");
     }
 
     @Test

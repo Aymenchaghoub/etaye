@@ -1,5 +1,5 @@
 import { AxeBuilder } from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './support/browser-coverage';
 import type { AccessContext, Session } from '../src/api/generated/types.gen';
 
 const ids = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
