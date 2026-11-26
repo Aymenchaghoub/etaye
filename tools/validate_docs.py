@@ -250,7 +250,12 @@ def main():
     ROOT = Path(__file__).resolve().parents[1]
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--report", type=Path, default=ROOT / "docs/test-artifacts/document-validation.json")
-    report_path = parser.parse_args().report
+    report_arg = parser.parse_args().report
+    if ".." in report_arg.parts:
+        raise ValueError("report path must not contain '..' segments")
+    if report_arg.is_symlink():
+        raise ValueError("report path must not be a symlink")
+    report_path = report_arg.resolve()
     errors = []
     checks = {}
 

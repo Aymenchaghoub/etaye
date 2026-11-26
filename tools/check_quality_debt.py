@@ -16,7 +16,22 @@ BASELINES = {
     "eslint": Path("apps/web/eslint-debt.json"),
     "javac": Path("apps/api/compiler-debt.json"),
 }
-JAVAC_WARNING = re.compile(r"^\[WARNING\] (.+\.java):\[(\d+),(\d+)\] (.+)$", re.MULTILINE)
+JAVAC_LOCATION = re.compile(r"\.java:\[([0-9]+),([0-9]+)\] ")
+WARNING_PREFIX = "[WARNING] "
+GIT_REF = re.compile(r"[0-9A-Za-z][0-9A-Za-z._/~^-]{0,127}")
+COMMIT_SHA = re.compile(r"[0-9a-f]{40,64}")
+
+
+def resolve_commit(root, ref):
+    if not GIT_REF.fullmatch(ref) or ".." in ref or "@{" in ref:
+        raise ValueError(f"invalid Git revision: {ref!r}")
+    resolved = subprocess.check_output(
+        ["git", "rev-parse", "--verify", "--end-of-options", f"{ref}^{{commit}}"],
+        text=True, cwd=root, stderr=subprocess.PIPE,
+    ).strip()
+    if not COMMIT_SHA.fullmatch(resolved):
+        raise ValueError("git rev-parse returned an unexpected commit digest")
+    return resolved
 
 
 class Diagnostic(NamedTuple):
@@ -25,8 +40,15 @@ class Diagnostic(NamedTuple):
 
 
 def diagnostic(root, path, line, column, rule, message):
-    relative = Path(path).relative_to(root)
-    source = (root / relative).read_text(encoding="utf-8").split("\n")[line - 1]
+    source_path = Path(path).resolve()
+    if not source_path.is_relative_to(root):
+        raise ValueError("diagnostic source is outside the checkout")
+    if not source_path.is_file():
+        raise ValueError("diagnostic source is not a regular file")
+    if type(line) is not int or type(column) is not int or min(line, column) < 1:
+        raise ValueError("diagnostic line and column must be positive integers")
+    relative = source_path.relative_to(root)
+    source = source_path.read_text(encoding="utf-8").split("\n")[line - 1]
     identity = (relative.as_posix(), rule, message, source.strip(), column - (len(source) - len(source.lstrip())))
     return Diagnostic(identity, line)
 
@@ -52,15 +74,18 @@ def javac_diagnostics(root, text):
         if not re.search(rf"^\[INFO\] Compiling [1-9]\d* sources? files? .* to (?:[^\n]*/)?target/{directory}$",
                          text, re.MULTILINE):
             raise ValueError(f"javac did not report a fresh compilation to {directory}")
-    if "[INFO] BUILD SUCCESS" not in text:
+    lines = text.split("\n")
+    if "[INFO] BUILD SUCCESS" not in lines:
         raise ValueError("the compiler debt build did not finish successfully")
-    warnings = re.findall(r"^\[WARNING\] .*", text, re.MULTILINE)
-    matches = list(JAVAC_WARNING.finditer(text))
-    if len(warnings) != len(matches):
-        raise ValueError("javac emitted an unrecognized warning; inspect the compiler log")
-    for match in matches:
-        path, line, column, message = match.groups()
-        yield diagnostic(root, path, int(line), int(column), "javac", message)
+    for warning in lines:
+        if not warning.startswith(WARNING_PREFIX):
+            continue
+        match = JAVAC_LOCATION.search(warning, len(WARNING_PREFIX))
+        if match is None or match.end() == len(warning):
+            raise ValueError("javac emitted an unrecognized warning; inspect the compiler log")
+        path = warning[len(WARNING_PREFIX):match.start()] + ".java"
+        line, column = match.groups()
+        yield diagnostic(root, path, int(line), int(column), "javac", warning[match.end():])
 
 
 def require_decreasing(current, previous):
@@ -91,28 +116,30 @@ def read_baseline(data):
     return Counter(tuple(item) for item in json.loads(data))
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("tool", choices=BASELINES)
     parser.add_argument("report", type=Path)
     parser.add_argument("--base", help="Git revision whose baseline must not grow")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     try:
-        root = Path(subprocess.check_output(["git", "rev-parse", "--show-toplevel"], text=True).strip())
+        root = Path(subprocess.check_output(["git", "rev-parse", "--show-toplevel"], text=True).strip()).resolve()
         path = BASELINES[args.tool]
         baseline = read_baseline((root / path).read_text(encoding="utf-8"))
+        base = None
         if args.base:
+            base = resolve_commit(root, args.base)
             # A successful ls-tree with no entry is possible while bootstrapping the baseline.
-            if subprocess.check_output(["git", "ls-tree", args.base, "--", path], cwd=root):
-                previous = subprocess.check_output(["git", "show", f"{args.base}:{path}"], cwd=root)
+            if subprocess.check_output(["git", "ls-tree", base, "--", path], cwd=root):
+                previous = subprocess.check_output(["git", "show", f"{base}:{path}"], cwd=root)
                 require_decreasing(baseline, read_baseline(previous))
         parse = eslint_diagnostics if args.tool == "eslint" else javac_diagnostics
         diagnostics = list(parse(root, args.report.read_text(encoding="utf-8")))
         actual = Counter(warning.identity for warning in diagnostics)
         if not compare(actual, baseline):
             return 1
-        if args.base:
-            reject_changed_occurrences(diagnostics, args.base, root)
+        if base:
+            reject_changed_occurrences(diagnostics, base, root)
         print(f"{args.tool}: {actual.total()} recorded diagnostics, no new or stale debt")
         return 0
     except (ValueError, OSError, RuntimeError, subprocess.CalledProcessError, KeyError, IndexError, TypeError) as exc:
