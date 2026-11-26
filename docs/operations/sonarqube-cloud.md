@@ -48,7 +48,7 @@ Three integration options were compared:
 
 ## 5. Coverage validation and initial observed baseline (PR #82)
 
-Before invoking each scanner, `tools/assert_coverage_reports.py` validates non-empty, well-formed report evidence (`jacoco`, `lcov`, and new `cobertura` with DTD/entity rejection and counter reconciliation).
+Before invoking each scanner, `tools/assert_coverage_reports.py` checks measured source rows. JaCoCo and LCOV use the same readers as the changed-line gate. The readers reconcile JaCoCo instruction, line and branch summaries and LCOV line and branch totals. The Cobertura reader rejects unsafe XML declarations, duplicate file and line records, and aggregate line counts that disagree with the rows. Fresh generation in each CI job ties the evidence to its checkout. See the [engineering quality baseline](quality-baseline.md) for scanner-to-native comparisons.
 
 Observed on [PR #82](https://github.com/Aymenchaghoub/etaye/pull/82) ([workflow run](https://github.com/Aymenchaghoub/etaye/actions/runs/45800748673), `2026-11-26`, prior to `main` baseline push):
 

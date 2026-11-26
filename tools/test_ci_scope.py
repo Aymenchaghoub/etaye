@@ -73,6 +73,10 @@ class PathScenarioTest(unittest.TestCase):
         self.assertEqual(scopes_of("tools/assert_test_reports.py"), {"api", "web", "package", "sonar-tooling"})
         self.assertEqual(scopes_of("tools/assert_coverage_reports.py"),
                          {"api", "web", "sonar-api", "sonar-web", "sonar-tooling"})
+        self.assertEqual(scopes_of("tools/assert_changed_line_coverage.py"),
+                         {"api", "web", "sonar-api", "sonar-web", "sonar-tooling"})
+        self.assertEqual(scopes_of("tools/test_assert_changed_line_coverage.py"),
+                         {"api", "web", "sonar-api", "sonar-web", "sonar-tooling"})
         self.assertEqual(scopes_of("tools/run_package_smoke.sh"), {"package"})
         self.assertEqual(scopes_of("tools/run_image_scan.sh"), {"package"})
         self.assertEqual(scopes_of("tools/install_corepack.sh"), {"web", "package", "pnpm", "sonar-web"})
@@ -326,9 +330,23 @@ class GitScenarioTest(unittest.TestCase):
     def test_a_push_whose_before_revision_is_unavailable_fails_closed(self):
         self.write("docs/only.md", "x\n")
         self.commit("docs")
-        for before in ("1" * 40, "0" * 40, "", None):
+        self.git("branch", "missing-before-revision", "HEAD^1")
+        for before in ("1" * 40, "0" * 40, "HEAD^1", ["1" * 40], "", None):
             with self.subTest(before=before):
                 self.assertEqual(self.run_push("web", before)[0], "relevant=true")
+
+    def test_pull_request_uses_its_merge_parent_even_when_the_event_has_a_before_revision(self):
+        before = self.git("rev-parse", "HEAD").stdout.strip()
+        self.write("apps/web/src/unrelated.ts", "x\n")
+        self.commit("earlier web change on main")
+        self.pull_request_merge(lambda: self.write("docs/only.md", "x\n"))
+        output = self.repo / "github-output"
+        payload = self.push_payload(before)
+        with contextlib.chdir(self.repo), contextlib.redirect_stdout(StringIO()), \
+                patch.dict(os.environ, {"GITHUB_EVENT_PATH": str(payload)}):
+            self.assertEqual(ci_scope.main(["--scope", "web", "--event", "pull_request",
+                                            "--github-output", str(output)]), 0)
+        self.assertEqual(output.read_text(), "relevant=false\n")
 
     def test_missing_parent_history_fails_closed(self):
         # A root commit has no HEAD^1: the change list is unavailable, so everything is verified.
@@ -350,6 +368,15 @@ class GitScenarioTest(unittest.TestCase):
 
         self.assertTrue(run("api", "pull_request", "a", "b", failing)[0])
 
+    def test_timed_out_diff_fails_closed(self):
+        def delayed(command, *, timeout, **_kwargs):
+            self.assertGreater(timeout, 0)
+            raise subprocess.TimeoutExpired(command, timeout)
+
+        relevant, reason = run("web", "pull_request", "HEAD^1", "HEAD", delayed)
+        self.assertTrue(relevant)
+        self.assertIn("change list unavailable", reason)
+
     def test_empty_diff_fails_closed(self):
         self.git("commit", "-q", "--allow-empty", "-m", "empty")
         relevant, reason = self.decision("api")
@@ -364,6 +391,13 @@ class GitScenarioTest(unittest.TestCase):
     def test_path_with_unusual_characters(self):
         self.pull_request_merge(lambda: self.write("apps/web/src/café à déjà.ts", "x\n"))
         self.assertTrue(self.decision("web")[0])
+
+    def test_path_with_a_newline_keeps_the_diagnostic_on_one_line(self):
+        self.pull_request_merge(lambda: self.write("apps/web/src/first\nsecond.ts", "x\n"))
+        relevant, reason = self.decision("web")
+        self.assertTrue(relevant)
+        self.assertIn("first\\nsecond.ts", reason)
+        self.assertEqual(len(reason.splitlines()), 1)
 
     def test_unknown_scope_is_rejected(self):
         with self.assertRaises(ValueError):
@@ -380,6 +414,17 @@ class GitScenarioTest(unittest.TestCase):
         with contextlib.chdir(self.repo), contextlib.redirect_stdout(StringIO()):
             ci_scope.main(["--scope", "api", "--event", "workflow_dispatch", "--github-output", str(output)])
         self.assertEqual(output.read_text(), "relevant=false\nrelevant=true\n")
+
+    def test_command_line_rejects_traversal_and_symlink_github_output(self):
+        with contextlib.chdir(self.repo), contextlib.redirect_stdout(StringIO()):
+            with self.assertRaisesRegex(ValueError, "must not contain"):
+                ci_scope.main(["--scope", "api", "--event", "workflow_dispatch",
+                               "--github-output", "../outside-output"])
+            link = self.repo / "output-link"
+            link.symlink_to(self.repo / "README.md")
+            with self.assertRaisesRegex(ValueError, "must not be a symlink"):
+                ci_scope.main(["--scope", "api", "--event", "workflow_dispatch",
+                               "--github-output", str(link)])
 
     def test_option_like_revision_names_are_not_interpreted(self):
         relevant, reason = run("api", "pull_request", "--output=/tmp/should-not-exist", "HEAD", self.runner)

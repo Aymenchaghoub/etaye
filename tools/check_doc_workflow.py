@@ -6,69 +6,81 @@ import re
 import tomllib
 import yaml
 
-root = Path(__file__).resolve().parents[1]
-path = root / ".github/workflows/documentation.yml"
-# BaseLoader keeps the GitHub key `on` from YAML 1.1 boolean coercion.
-workflow = yaml.load(path.read_text(), Loader=yaml.BaseLoader)
-assert set(workflow["on"]) == {"pull_request", "push", "workflow_dispatch"}
-assert workflow["permissions"] == {"contents": "read"}
-jobs = workflow["jobs"]
-assert set(jobs) == {"documentation"}
-job = jobs["documentation"]
-assert "continue-on-error" not in job
-assert int(job["timeout-minutes"]) <= 10
-steps = job["steps"]
-for step in steps:
-    if "uses" in step:
-        assert re.fullmatch(r"[A-Za-z0-9_./-]+@[a-f0-9]{40}", step["uses"]), "Unpinned action"
-    assert "continue-on-error" not in step, "Required checks must not suppress failure"
-assert "${{ secrets." not in path.read_text(), "Planning CI must not consume secrets"
-assert "persist-credentials: false" in path.read_text()
-assert all(command in path.read_text() for command in [
-    "tools/validate_docs.py", "tools/check_doc_workflow.py", "openapi_spec_validator",
-    "lint_spine.py", "git diff --check HEAD^1 HEAD", "--require-hashes",
-    "unittest discover -s tools -p 'test_*.py'",
-])
-assert "pull_request_target" not in workflow["on"]
-codeql = yaml.load((root / ".github/workflows/codeql.yml").read_text(), Loader=yaml.BaseLoader)
-assert codeql["permissions"] == {"contents": "read"}
-assert set(codeql["jobs"].keys()) == {"analyze", "analyze-api", "analyze-web"}
-for job_name, job_def in codeql["jobs"].items():
-    assert job_def["permissions"] == {"contents": "read", "security-events": "write"}
-    assert "continue-on-error" not in job_def
-    assert int(job_def["timeout-minutes"]) <= 15
-    for step in job_def["steps"]:
+
+def check_doc_workflows(root: Path | None = None) -> dict:
+    root = (root or Path(__file__).resolve().parents[1]).resolve()
+    path = root / ".github/workflows/documentation.yml"
+    # BaseLoader keeps the GitHub key `on` from YAML 1.1 boolean coercion.
+    workflow = yaml.load(path.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
+    assert set(workflow["on"]) == {"pull_request", "push", "workflow_dispatch"}
+    assert workflow["permissions"] == {"contents": "read"}
+    jobs = workflow["jobs"]
+    assert set(jobs) == {"documentation"}
+    job = jobs["documentation"]
+    assert "continue-on-error" not in job
+    assert int(job["timeout-minutes"]) <= 10
+    steps = job["steps"]
+    for step in steps:
         if "uses" in step:
-            assert re.fullmatch(r"[A-Za-z0-9_./-]+@[a-f0-9]{40}", step["uses"])
+            assert re.fullmatch(r"[A-Za-z0-9_./-]+@[a-f0-9]{40}", step["uses"]), "Unpinned action"
         assert "continue-on-error" not in step, "Required checks must not suppress failure"
-pages = yaml.load((root / ".github/workflows/architecture-pages.yml").read_text(), Loader=yaml.BaseLoader)
-assert set(pages["on"]) == {"push", "workflow_dispatch"}
-assert pages["on"]["push"]["branches"] == ["main"]
-assert pages["permissions"] == {}
-assert set(pages["jobs"]) == {"publish"}
-publish = pages["jobs"]["publish"]
-assert publish["if"] == "github.ref == 'refs/heads/main'"
-assert publish["environment"]["name"] == "github-pages"
-assert publish["permissions"] == {"contents": "read", "pages": "write", "id-token": "write"}
-steps = publish["steps"]
-assert [step["uses"].split("@")[0] for step in steps] == [
-    "actions/checkout", "actions/configure-pages", "actions/upload-pages-artifact", "actions/deploy-pages",
-]
-assert all(re.fullmatch(r"[A-Za-z0-9_./-]+@[a-f0-9]{40}", step["uses"]) for step in steps)
-assert steps[0]["with"]["persist-credentials"] == "false"
-assert steps[2]["with"] == {"path": "docs/architecture-views/site"}
-config = yaml.load((root / ".github/codeql-config.yml").read_text(), Loader=yaml.BaseLoader)
-assert config["paths"] == ["tools", "design/corrections"], "CodeQL covers first-party planning/design tooling"
-api_config = yaml.load((root / ".github/codeql-api-config.yml").read_text(), Loader=yaml.BaseLoader)
-assert api_config["paths"] == ["apps/api"], "CodeQL API config covers apps/api"
-web_config = yaml.load((root / ".github/codeql-web-config.yml").read_text(), Loader=yaml.BaseLoader)
-assert web_config["paths"] == ["apps/web"], "CodeQL Web config covers apps/web"
-rabbit = yaml.safe_load((root / ".coderabbit.yaml").read_text())
-assert rabbit["language"] == "en-US" and rabbit["early_access"] is False
-assert rabbit["reviews"]["auto_approvals"]["enabled"] is False
-assert rabbit["reviews"]["post_merge_actions"] == []
-assert all(item["enabled"] is False for item in rabbit["reviews"]["finishing_touches"].values())
-qodo = tomllib.loads((root / ".pr_agent.toml").read_text())["github_app"]
-assert qodo == {"pr_commands": [], "handle_push_trigger": False, "push_commands": []}
-print(json.dumps({"ok": True, "kind": "documentation-workflow-policy", "jobs": len(jobs),
-                  "applicationBuild": False, "applicationDeployment": False, "architecturePages": True}))
+    doc_text = path.read_text(encoding="utf-8")
+    assert "${{ secrets." not in doc_text, "Planning CI must not consume secrets"
+    assert "persist-credentials: false" in doc_text
+    assert all(command in doc_text for command in [
+        "tools/validate_docs.py", "tools/check_doc_workflow.py", "openapi_spec_validator",
+        "lint_spine.py", "git diff --check HEAD^1 HEAD", "--require-hashes",
+        "unittest discover -s tools -p 'test_*.py'",
+    ])
+    assert "pull_request_target" not in workflow["on"]
+    codeql = yaml.load((root / ".github/workflows/codeql.yml").read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
+    assert codeql["permissions"] == {"contents": "read"}
+    assert set(codeql["jobs"].keys()) == {"analyze", "analyze-api", "analyze-web"}
+    for job_def in codeql["jobs"].values():
+        assert job_def["permissions"] == {"contents": "read", "security-events": "write"}
+        assert "continue-on-error" not in job_def
+        assert int(job_def["timeout-minutes"]) <= 15
+        for step in job_def["steps"]:
+            if "uses" in step:
+                assert re.fullmatch(r"[A-Za-z0-9_./-]+@[a-f0-9]{40}", step["uses"])
+            assert "continue-on-error" not in step, "Required checks must not suppress failure"
+    pages = yaml.load((root / ".github/workflows/architecture-pages.yml").read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
+    assert set(pages["on"]) == {"push", "workflow_dispatch"}
+    assert pages["on"]["push"]["branches"] == ["main"]
+    assert pages["permissions"] == {}
+    assert set(pages["jobs"]) == {"publish"}
+    publish = pages["jobs"]["publish"]
+    assert publish["if"] == "github.ref == 'refs/heads/main'"
+    assert publish["environment"]["name"] == "github-pages"
+    assert publish["permissions"] == {"contents": "read", "pages": "write", "id-token": "write"}
+    steps = publish["steps"]
+    assert [step["uses"].split("@")[0] for step in steps] == [
+        "actions/checkout", "actions/configure-pages", "actions/upload-pages-artifact", "actions/deploy-pages",
+    ]
+    assert all(re.fullmatch(r"[A-Za-z0-9_./-]+@[a-f0-9]{40}", step["uses"]) for step in steps)
+    assert steps[0]["with"]["persist-credentials"] == "false"
+    assert steps[2]["with"] == {"path": "docs/architecture-views/site"}
+    config = yaml.load((root / ".github/codeql-config.yml").read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
+    assert config["paths"] == ["tools", "design/corrections"], "CodeQL covers first-party planning/design tooling"
+    api_config = yaml.load((root / ".github/codeql-api-config.yml").read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
+    assert api_config["paths"] == ["apps/api"], "CodeQL API config covers apps/api"
+    web_config = yaml.load((root / ".github/codeql-web-config.yml").read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
+    assert web_config["paths"] == ["apps/web"], "CodeQL Web config covers apps/web"
+    rabbit = yaml.safe_load((root / ".coderabbit.yaml").read_text(encoding="utf-8"))
+    assert rabbit["language"] == "en-US" and rabbit["early_access"] is False
+    assert rabbit["reviews"]["auto_approvals"]["enabled"] is False
+    assert rabbit["reviews"]["post_merge_actions"] == []
+    assert all(item["enabled"] is False for item in rabbit["reviews"]["finishing_touches"].values())
+    qodo = tomllib.loads((root / ".pr_agent.toml").read_text(encoding="utf-8"))["github_app"]
+    assert qodo == {"pr_commands": [], "handle_push_trigger": False, "push_commands": []}
+    return {"ok": True, "kind": "documentation-workflow-policy", "jobs": len(jobs),
+            "applicationBuild": False, "applicationDeployment": False, "architecturePages": True}
+
+
+def main() -> int:
+    print(json.dumps(check_doc_workflows()))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
