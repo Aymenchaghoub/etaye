@@ -1,12 +1,15 @@
 """A valid file path alone must not mask a missing target fragment or asset."""
 
+from contextlib import redirect_stdout
+from io import StringIO
+import json
 from pathlib import Path
 import tempfile
 import unittest
 import subprocess
 import sys
 
-from audit_design_receipt import inspect
+from audit_design_receipt import inspect, main as audit_main
 
 
 class DesignReferenceTests(unittest.TestCase):
@@ -80,6 +83,26 @@ class DesignReferenceTests(unittest.TestCase):
             self.assertFalse(result["ok"])
             self.assertEqual(result["htmlPages"], 1)
             self.assertEqual({name for name, _ in result["referencesOutsideSite"]}, {"foreign.html", "foreign.css"})
+
+    def test_cli_writes_report_and_rejects_traversal_or_symlink(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            site = root / "site"
+            site.mkdir()
+            (site / "index.html").write_text("<p>OK</p>", encoding="utf-8")
+            report = root / "out/report.json"
+            with redirect_stdout(StringIO()) as out:
+                code = audit_main(["--site", str(site), "--report", str(report)])
+            self.assertEqual(code, 0)
+            self.assertTrue(json.loads(report.read_text(encoding="utf-8"))["ok"])
+            self.assertIn('"ok": true', out.getvalue())
+
+            with self.assertRaisesRegex(ValueError, "must not contain"):
+                audit_main(["--site", str(site), "--report", "../bad.json"])
+            link = root / "link.json"
+            link.symlink_to(report)
+            with self.assertRaisesRegex(ValueError, "must not be a symlink"):
+                audit_main(["--site", str(site), "--report", str(link)])
 
 
 if __name__ == "__main__":

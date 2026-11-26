@@ -18,6 +18,20 @@ BASELINES = {
 }
 JAVAC_LOCATION = re.compile(r"\.java:\[([0-9]+),([0-9]+)\] ")
 WARNING_PREFIX = "[WARNING] "
+GIT_REF = re.compile(r"[0-9A-Za-z][0-9A-Za-z._/~^-]{0,127}")
+COMMIT_SHA = re.compile(r"[0-9a-f]{40,64}")
+
+
+def resolve_commit(root, ref):
+    if not GIT_REF.fullmatch(ref) or ".." in ref or "@{" in ref:
+        raise ValueError(f"invalid Git revision: {ref!r}")
+    resolved = subprocess.check_output(
+        ["git", "rev-parse", "--verify", "--end-of-options", f"{ref}^{{commit}}"],
+        text=True, cwd=root, stderr=subprocess.PIPE,
+    ).strip()
+    if not COMMIT_SHA.fullmatch(resolved):
+        raise ValueError("git rev-parse returned an unexpected commit digest")
+    return resolved
 
 
 class Diagnostic(NamedTuple):
@@ -114,10 +128,7 @@ def main(argv=None):
         baseline = read_baseline((root / path).read_text(encoding="utf-8"))
         base = None
         if args.base:
-            base = subprocess.check_output(
-                ["git", "rev-parse", "--verify", "--end-of-options", f"{args.base}^{{commit}}"],
-                text=True, cwd=root, stderr=subprocess.PIPE,
-            ).strip()
+            base = resolve_commit(root, args.base)
             # A successful ls-tree with no entry is possible while bootstrapping the baseline.
             if subprocess.check_output(["git", "ls-tree", base, "--", path], cwd=root):
                 previous = subprocess.check_output(["git", "show", f"{base}:{path}"], cwd=root)

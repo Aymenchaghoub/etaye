@@ -137,6 +137,11 @@ class QualityDebtTest(unittest.TestCase):
                 self.assertIn("0 recorded diagnostics", output.getvalue())
                 self.assertEqual(debt.main(["eslint", str(report), "--base", "unknown-reference"]), 1)
                 self.assertIn("FAIL quality debt check", errors.getvalue())
+                for bad_ref in ("--base=--option", "../escape", "head@{0}", "bad ref"):
+                    with self.subTest(bad_ref=bad_ref):
+                        argv = ["eslint", str(report), bad_ref] if bad_ref.startswith("--base=") else ["eslint", str(report), "--base", bad_ref]
+                        self.assertEqual(debt.main(argv), 1)
+                        self.assertIn("invalid Git revision", errors.getvalue())
 
     def test_rejects_incomplete_and_malformed_eslint_results(self):
         for invalid, error in (("[]", ValueError), ("{}", ValueError), ("not JSON", json.JSONDecodeError)):

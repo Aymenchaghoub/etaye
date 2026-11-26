@@ -224,7 +224,12 @@ def main(argv=None):
     relevant, reason = run(args.scope, args.event, base, args.head)
     print(f"{args.scope} verification needed: {str(relevant).lower()} ({reason})")
     if args.github_output:
-        with args.github_output.open("a", encoding="utf-8") as output:
+        if ".." in args.github_output.parts:
+            raise ValueError("github-output path must not contain '..' segments")
+        output_path = args.github_output.resolve()
+        if args.github_output.is_symlink():
+            raise ValueError("github-output path must not be a symlink")
+        with output_path.open("a", encoding="utf-8") as output:
             output.write(f"relevant={str(relevant).lower()}\n")
     return 0
 

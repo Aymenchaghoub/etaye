@@ -411,6 +411,17 @@ class GitScenarioTest(unittest.TestCase):
             ci_scope.main(["--scope", "api", "--event", "workflow_dispatch", "--github-output", str(output)])
         self.assertEqual(output.read_text(), "relevant=false\nrelevant=true\n")
 
+    def test_command_line_rejects_traversal_and_symlink_github_output(self):
+        with contextlib.chdir(self.repo), contextlib.redirect_stdout(StringIO()):
+            with self.assertRaisesRegex(ValueError, "must not contain"):
+                ci_scope.main(["--scope", "api", "--event", "workflow_dispatch",
+                               "--github-output", "../outside-output"])
+            link = self.repo / "output-link"
+            link.symlink_to(self.repo / "README.md")
+            with self.assertRaisesRegex(ValueError, "must not be a symlink"):
+                ci_scope.main(["--scope", "api", "--event", "workflow_dispatch",
+                               "--github-output", str(link)])
+
     def test_option_like_revision_names_are_not_interpreted(self):
         relevant, reason = run("api", "pull_request", "--output=/tmp/should-not-exist", "HEAD", self.runner)
         self.assertTrue(relevant)
