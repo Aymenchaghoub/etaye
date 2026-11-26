@@ -47,6 +47,7 @@ RULES = (
     (".github/workflows/api.yml", frozenset({"api"})),
     (".github/workflows/web.yml", frozenset({"web"})),
     (".github/workflows/package.yml", frozenset({"package"})),
+    (".github/workflows/release.yml", frozenset({"package"})),
     (".github/workflows/dependency-review.yml", frozenset({"pnpm"})),
     (".github/workflows/sonarqube.yml", frozenset({"sonar-api", "sonar-web", "sonar-tooling"})),
     # SonarQube project configuration files outside the application runtime.
@@ -62,6 +63,9 @@ RULES = (
     ("tools/test_build_demo_package.py", frozenset({"package", "sonar-tooling"})),
     ("tools/run_package_smoke.sh", frozenset({"package"})),
     ("tools/run_image_scan.sh", frozenset({"package"})),
+    ("tools/install_trivy.sh", frozenset({"package"})),
+    ("tools/prepare_release_candidate.sh", frozenset({"package"})),
+    ("tools/release_artifacts.py", frozenset({"package", "sonar-tooling"})),
     ("tools/assert_test_reports.py", frozenset({"api", "web", "package", "sonar-tooling"})),
     ("tools/test_assert_test_reports.py", frozenset({"api", "web", "package", "sonar-tooling"})),
     ("tools/check_quality_debt.py", frozenset({"api", "web", "sonar-tooling"})),

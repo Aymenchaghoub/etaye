@@ -78,12 +78,15 @@ class PathScenarioTest(unittest.TestCase):
         self.assertEqual(scopes_of("tools/test_assert_changed_line_coverage.py"),
                          {"api", "web", "sonar-api", "sonar-web", "sonar-tooling"})
         self.assertEqual(scopes_of("tools/run_package_smoke.sh"), {"package"})
-        self.assertEqual(scopes_of("tools/run_image_scan.sh"), {"package"})
+        for path in ("tools/run_image_scan.sh", "tools/install_trivy.sh", "tools/prepare_release_candidate.sh"):
+            self.assertEqual(scopes_of(path), {"package"})
+        self.assertEqual(scopes_of("tools/release_artifacts.py"), {"package", "sonar-tooling"})
         self.assertEqual(scopes_of("tools/install_corepack.sh"), {"web", "package", "pnpm", "sonar-web"})
         self.assertEqual(scopes_of("tools/assert_isolation_matrix.py"), {"api", "sonar-tooling"})
         self.assertEqual(scopes_of(".github/workflows/api.yml"), {"api"})
         self.assertEqual(scopes_of(".github/workflows/web.yml"), {"web"})
         self.assertEqual(scopes_of(".github/workflows/dependency-review.yml"), {"pnpm"})
+        self.assertEqual(scopes_of(".github/workflows/release.yml"), {"package"})
         self.assertEqual(scopes_of(".github/workflows/sonarqube.yml"),
                          {"sonar-api", "sonar-web", "sonar-tooling"})
 
