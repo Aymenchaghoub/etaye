@@ -39,17 +39,17 @@ All verification uses Java 25 and isolated synthetic PostgreSQL 18 containers. N
 
 - Before the fix, `./mvnw -B -ntp -Dtest=ApiMetaControllerTest test` ran seven tests against the original implementation with the new regression assertions. One failed with `StackOverflowError` in the long configured version test.
 - Baseline `./mvnw -B -ntp clean verify` ran 259 tests with zero failures or skips in 159.68 seconds wall clock. JaCoCo measured 2,065/2,307 lines and 718/910 branches. This local report is separate from the earlier Sonar analysis.
-- Candidate `./mvnw -B -ntp verify` after branch-gap and exception-path additions ran 296 tests across 43 Surefire suites in 161 seconds wall clock with zero failures, errors or skips, plus `./mvnw -B -ntp test-compile -Pcompiler-debt` clean.
+- Candidate `./mvnw -B -ntp verify` after branch-gap, `java:S6829` (`@Autowired` on `LocalRecoveryInbox`) and exception-path additions ran 297 tests across 43 Surefire suites with zero failures, errors or skips, plus `./mvnw -B -ntp test-compile -Pcompiler-debt` clean.
 
 | JaCoCo scope | Baseline lines | Candidate lines | Baseline branches | Candidate branches |
 | --- | ---: | ---: | ---: | ---: |
-| API bundle (296 tests) | 2,065/2,307 (89.51%) | 2,151/2,307 (93.24%) | 718/910 (78.90%) | 777/900 (86.33%) |
-| Identity recovery | 0/64 | 65/69 (94.20%) | 0/32 | 29/32 (90.62%) |
+| API bundle (297 tests) | 2,065/2,307 (89.51%) | 2,155/2,307 (93.41%) | 718/910 (78.90%) | 778/900 (86.44%) |
+| Identity recovery | 0/64 | 69/69 (100.00%) | 0/32 | 30/32 (93.75%) |
 | Infrastructure security | 422/450 (93.78%) | — | 167/216 (77.31%) | — |
 | Record domain | 335/339 (98.82%) | 335/339 (98.82%) | 76/84 (90.48%) | 76/84 (90.48%) |
 | Record services | 301/311 (96.78%) | 301/311 (96.78%) | 158/166 (95.18%) | 158/166 (95.18%) |
 
-Both API line coverage (93.24% vs >=90% target) and branch coverage (86.33% vs >=85% target) meet their consolidated local targets (`12,235/12,909` instructions, 94.78%). Added regression suites cover `IdentityResolutionFilter`, `BrowserCorsConfig`, `BrowserSessionLifetime`, `AccessDenialAudit`, `GlobalExceptionHandler`, `DatabaseUnavailable` exception chains and `IdentityLookup`. Overall coverage, new-code measures, ratings and issue status are confirmed separately by SonarQube Cloud analysis.
+Both API line coverage (93.41% vs >=90% target) and branch coverage (86.44% vs >=85% target) meet their consolidated local targets (`12,246/12,909` instructions, 94.86%). Added regression suites cover `IdentityResolutionFilter`, `BrowserCorsConfig`, `BrowserSessionLifetime`, `AccessDenialAudit`, `GlobalExceptionHandler`, `DatabaseUnavailable`, `LocalRecoveryInbox` and `IdentityLookup`. Overall coverage, new-code measures, ratings and issue status are confirmed separately by SonarQube Cloud analysis.
 
 ## Java mutation pilot
 

@@ -3,6 +3,7 @@ package dev.aymen.etaye.identity.recovery;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import jakarta.annotation.PreDestroy;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
@@ -21,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 @ConditionalOnProperty(name = "etaye.demo.recovery-inbox", havingValue = "true")
-public class LocalRecoveryInbox {
+public final class LocalRecoveryInbox {
 
     private static final String HOST = "127.0.0.1";
     private static final int PORT = 8025;
@@ -34,6 +35,7 @@ public class LocalRecoveryInbox {
     private final Clock clock;
     private final ScheduledExecutorService expiry;
 
+    @Autowired
     public LocalRecoveryInbox() throws IOException {
         this(PORT, Clock.systemUTC());
     }
@@ -85,7 +87,7 @@ public class LocalRecoveryInbox {
         }
     }
 
-    private synchronized void purgeExpired() {
+    synchronized void purgeExpired() {
         removeExpired(clock.instant());
     }
 

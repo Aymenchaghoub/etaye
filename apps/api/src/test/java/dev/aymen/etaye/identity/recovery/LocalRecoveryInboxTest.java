@@ -47,6 +47,7 @@ class LocalRecoveryInboxTest {
         inbox.capture("redeemed@example.test", "redeemed-link", now.plusSeconds(60));
         inbox.remove("redeemed-link");
         clock.advanceSeconds(20);
+        inbox.purgeExpired();
 
         var page = send(request("/").header("Origin", origin.toString()).header("Sec-Fetch-Site", "same-origin"));
 
@@ -90,6 +91,29 @@ class LocalRecoveryInboxTest {
         assertThat(page.statusCode()).isEqualTo(200);
         assertThat(page.body()).doesNotContain("fixture-0@example.test")
                 .contains("fixture-1@example.test", "fixture-64@example.test");
+    }
+
+    @Test
+    void rejectsUnexpectedHostHeaderAndBindsDefaultPort() throws Exception {
+        try (var socket = new java.net.Socket("127.0.0.1", inbox.address().getPort())) {
+            socket.setSoTimeout(3000);
+            var out = socket.getOutputStream();
+            out.write("GET / HTTP/1.1\r\nHost: wrong.example:8025\r\nConnection: close\r\n\r\n"
+                    .getBytes(java.nio.charset.StandardCharsets.US_ASCII));
+            out.flush();
+            String raw = new String(socket.getInputStream().readAllBytes(), java.nio.charset.StandardCharsets.US_ASCII);
+            assertThat(raw).startsWith("HTTP/1.1 404");
+        }
+
+        LocalRecoveryInbox defaultInbox = null;
+        try {
+            defaultInbox = new LocalRecoveryInbox();
+            assertThat(defaultInbox.address().getPort()).isEqualTo(8025);
+        } finally {
+            if (defaultInbox != null) {
+                defaultInbox.stop();
+            }
+        }
     }
 
     private HttpRequest.Builder request(String path) {
