@@ -1,4 +1,4 @@
-import { createContext, type KeyboardEvent, type ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { createContext, type KeyboardEvent as ReactKeyboardEvent, type ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import '../../../../design/received/2026-11-03/icons.css';
 import type { AccessContext, Session } from '../api/generated/types.gen';
 import { contextPath, practiceLabel, roleLabel } from '../auth/access-contexts';
@@ -137,7 +137,7 @@ export function PractitionerShell({ session, context, contexts, select, signOut,
     setMenuOpen(false);
     navigate(path);
   };
-  const dismissGuardOnEscape = (event: KeyboardEvent) => {
+  const dismissGuardOnEscape = (event: ReactKeyboardEvent) => {
     if (event.key === 'Escape') hold(null);
   };
   const label = <>
