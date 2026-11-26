@@ -197,7 +197,7 @@ def load_lcov(report, prefix):
             raise ValueError(f"missing or duplicate LCOV source: {source}")
         if totals != {"LF": len(lines), "LH": sum(lines.values())}:
             raise ValueError(f"inconsistent LCOV LF/LH counters in {source}")
-        if (branches or branch_totals) and branch_totals != {"BRF": len(branches), "BRH": sum(branches.values())}:
+        if branch_totals != {"BRF": len(branches), "BRH": sum(branches.values())}:
             raise ValueError(f"inconsistent LCOV BRF/BRH counters in {source}")
         coverage[source] = lines
     return coverage

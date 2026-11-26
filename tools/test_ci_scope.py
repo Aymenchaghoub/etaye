@@ -73,6 +73,10 @@ class PathScenarioTest(unittest.TestCase):
         self.assertEqual(scopes_of("tools/assert_test_reports.py"), {"api", "web", "package", "sonar-tooling"})
         self.assertEqual(scopes_of("tools/assert_coverage_reports.py"),
                          {"api", "web", "sonar-api", "sonar-web", "sonar-tooling"})
+        self.assertEqual(scopes_of("tools/assert_changed_line_coverage.py"),
+                         {"api", "web", "sonar-api", "sonar-web", "sonar-tooling"})
+        self.assertEqual(scopes_of("tools/test_assert_changed_line_coverage.py"),
+                         {"api", "web", "sonar-api", "sonar-web", "sonar-tooling"})
         self.assertEqual(scopes_of("tools/run_package_smoke.sh"), {"package"})
         self.assertEqual(scopes_of("tools/run_image_scan.sh"), {"package"})
         self.assertEqual(scopes_of("tools/install_corepack.sh"), {"web", "package", "pnpm", "sonar-web"})

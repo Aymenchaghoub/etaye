@@ -16,7 +16,7 @@ class CoverageReportsTest(unittest.TestCase):
     def test_lcov_retains_uncovered_files_in_total(self):
         self.report.write_text("SF:used.ts\nDA:1,1\nDA:2,0\nDA:3,2\nLF:3\nLH:2\n"
                                "BRDA:2,0,0,-\nBRDA:2,0,1,1\nBRF:2\nBRH:1\nend_of_record\n"
-                               "SF:unused.ts\nDA:1,0\nDA:2,0\nLF:2\nLH:0\nend_of_record\n")
+                               "SF:unused.ts\nDA:1,0\nDA:2,0\nLF:2\nLH:0\nBRF:0\nBRH:0\nend_of_record\n")
         with redirect_stdout(StringIO()) as output:
             self.assertEqual(main(["lcov", str(self.report)]), 0)
         self.assertIn("2/5 (40.00%)", output.getvalue())
@@ -76,11 +76,12 @@ class CoverageReportsTest(unittest.TestCase):
             ("missing counters", "SF:a.ts\nend_of_record\n"),
             ("non-numeric counters", "SF:a.ts\nLF:two\nLH:1\nend_of_record\n"),
             ("claimed hits without DA records", "SF:a.ts\nLF:2\nLH:1\nend_of_record\n"),
-            ("duplicate source", (measured + "end_of_record\n") * 2),
+            ("duplicate source", (measured + "BRF:0\nBRH:0\nend_of_record\n") * 2),
             ("negative branch hits", measured + "BRDA:1,0,0,-2\nBRF:1\nBRH:0\nend_of_record\n"),
             ("duplicate branch", measured + "BRDA:1,0,0,1\nBRDA:1,0,0,1\nBRF:2\nBRH:2\nend_of_record\n"),
             ("claimed branch hits disagree", measured + "BRDA:1,0,0,0\nBRF:1\nBRH:1\nend_of_record\n"),
             ("branch summary missing", measured + "BRDA:1,0,0,1\nend_of_record\n"),
+            ("complete omission of branch evidence", measured + "end_of_record\n"),
             ("empty file", ""),
         ):
             with self.subTest(label):
