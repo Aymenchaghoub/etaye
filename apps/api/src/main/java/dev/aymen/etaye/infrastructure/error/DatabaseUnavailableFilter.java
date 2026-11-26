@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.NestedExceptionUtils;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -68,9 +69,9 @@ public class DatabaseUnavailableFilter extends OncePerRequestFilter {
                 throw ioe;
             }
             String correlationId = CorrelationIdFilter.getCorrelationId(request);
-            Throwable root = org.springframework.core.NestedExceptionUtils.getMostSpecificCause(ex);
+            String rootCauseClass = NestedExceptionUtils.getMostSpecificCause(ex).getClass().getName();
             log.error("Unhandled exception escaped the filter chain: class={}, rootCauseClass={}, code={}, correlationId={}",
-                    ex.getClass().getName(), root != null ? root.getClass().getName() : ex.getClass().getName(),
+                    ex.getClass().getName(), rootCauseClass,
                     "INTERNAL_ERROR", correlationId);
             ApiProblem problem = ApiProblem.of(
                     HttpStatus.INTERNAL_SERVER_ERROR.value(),

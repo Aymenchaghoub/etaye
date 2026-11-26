@@ -101,6 +101,16 @@ class DemoHttpTest {
     }
 
     @Test
+    void publicCatalogueDoesNotAcceptWritesOrIssueCookies() {
+        var response = request(HttpMethod.POST, "/demo/scenarios", null, null, null);
+
+        assertThat(response.getStatusCode().value()).isEqualTo(405);
+        assertThat(response.getHeaders().getAllow()).contains(HttpMethod.GET);
+        assertThat(response.getHeaders().getFirst(HttpHeaders.SET_COOKIE)).isNull();
+        assertThat(response.getBody()).containsEntry("code", "METHOD_NOT_ALLOWED");
+    }
+
+    @Test
     void resetOnlyRestoresTheDedicatedFixtureAndClosesExistingSessions() throws Exception {
         var nora = login("nora.lefebvre@example.test");
         var mila = login("mila.dubois@example.test");
