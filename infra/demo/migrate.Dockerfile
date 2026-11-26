@@ -1,4 +1,4 @@
-FROM flyway/flyway:12.11.0@sha256:d24a5083a9d423bbbd5b8faa49819b6211740efef9c9d4c9d5d6307788952936
+FROM flyway/flyway:13.13.0@sha256:53b3979ee3928ffab3019aadac89704dc939d54489e02dc3a600d86a4afb110c
 # Keep the Ubuntu base while applying fixes already shipped in its signed repositories.
 RUN sed 's/^Components:.*/Components: main/' /etc/apt/sources.list.d/ubuntu.sources > /tmp/main.sources \
     && apt-get -o Dir::Etc::sourcelist=/tmp/main.sources -o Dir::Etc::sourceparts=- \
