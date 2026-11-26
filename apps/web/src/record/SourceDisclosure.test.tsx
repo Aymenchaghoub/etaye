@@ -145,4 +145,51 @@ describe('SourceDisclosure', () => {
     await user.click(screen.getByRole('button', { name: /Afficher la source/ }));
     await waitFor(() => expect(screen.getByText(/Accès non autorisé/)).toBeDefined());
   });
+
+  it('activates via marker, covers unknown occurrence date, replacement reason, and back-link focus', async () => {
+    const user = userEvent.setup();
+    const expire = vi.fn();
+    vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => {
+      const url = typeof input === 'string' ? input : (input as Request).url;
+      const pathname = new URL(url, 'http://localhost').pathname;
+      if (pathname.endsWith(`/records/${recordId}`)) return Response.json(recordPayload);
+      if (pathname.endsWith('/history')) return Response.json(historyPayload);
+      if (pathname.includes(`/sources/${sourceId}`)) {
+        return Response.json({
+          ...sourcePayload,
+          locator: undefined,
+          kind: undefined,
+          sourceType: 'PATIENT_REPORTED',
+          eventDate: { precision: 'UNKNOWN' },
+          supersedesReference: 'SRC-OLD-1',
+          correctionReason: 'Erreur de saisie',
+          excerpt: undefined,
+        });
+      }
+      throw new Error(`Unexpected ${pathname}`);
+    }));
+
+    function AloneHarness() {
+      const s = useSource({ id: sourceId, reference: 'SRC-UNIT-002', number: 2 }, practiceId, undefined, expire, 'alone');
+      return <div>{s.marker}{s.panel}</div>;
+    }
+
+    render(
+      <PractitionerShell session={session} context={context} contexts={[context]} select={vi.fn()} signOut={vi.fn()}>
+        <RecordPage tab="record" scope="unit-record-2" practiceId={practiceId} base={base}
+          recordId={recordId} zone="Europe/Paris" expire={expire}>
+          {() => <AloneHarness />}
+        </RecordPage>
+      </PractitionerShell>,
+    );
+
+    const marker = await screen.findByRole('link', { name: 'Source 2 : SRC-UNIT-002' });
+    await user.click(marker);
+    expect(await screen.findByText(/Date de survenue inconnue/)).toBeDefined();
+    expect(screen.getByText(/Remplace SRC-OLD-1 · motif : Erreur de saisie/)).toBeDefined();
+    await user.click(marker);
+    expect(document.activeElement?.getAttribute('aria-expanded')).toBe('true');
+    await user.click(screen.getByRole('link', { name: 'Revenir à l’élément' }));
+    expect(document.activeElement).toBe(marker);
+  });
 });

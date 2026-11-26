@@ -10,6 +10,7 @@ import { ChronologyPage } from './ChronologyPage';
 import { HistoryPage } from './HistoryPage';
 import { MeasurementsPage } from './MeasurementsPage';
 import { RecordPage } from './RecordPage';
+import { PatientsArea } from '../patients/PatientsArea';
 
 const practiceId = '00000000-0000-4000-8000-000000000010';
 const recordId = '00000000-0000-4000-8000-000000000021';
@@ -302,5 +303,111 @@ describe('PatientsPage and Record edge states', () => {
       </PractitionerShell>,
     );
     expect(await screen.findByRole('heading', { name: 'Élément introuvable' })).toBeTruthy();
+  });
+
+  it('exercises MeasurementsPage filtering, pagination, lineage retry, and PatientsArea view routing', async () => {
+    const user = userEvent.setup();
+    let lineageCalls = 0;
+    let firstMeasurePage = true;
+    vi.stubGlobal('fetch', vi.fn((request: Request) => {
+      const url = new URL(request.url);
+      if (url.pathname.endsWith('/patients')) {
+        return Promise.resolve(Response.json({ items: [], nextCursor: null }));
+      }
+      if (url.pathname.endsWith(`/records/${recordId}`)) return Promise.resolve(Response.json(recordPayload));
+      if (url.pathname.endsWith('/history')) return Promise.resolve(Response.json(conflictingHistory));
+      if (url.pathname.endsWith('/timeline')) return Promise.resolve(Response.json({ items: [], nextCursor: null }));
+      if (url.pathname.endsWith('/revisions')) {
+        lineageCalls += 1;
+        if (lineageCalls === 1) return Promise.resolve(Response.json({ code: 'UNAVAILABLE' }, { status: 503 }));
+        return Promise.resolve(Response.json({
+          items: [
+            {
+              id: 'm-1', version: 1, revision: 1, createdAt: '2026-10-01T08:00:00Z', updatedAt: '2026-10-01T08:00:00Z',
+              practiceId, concept: 'WEIGHT', value: '68.0', unit: 'kg', observedAt: '2026-10-01T08:00:00Z',
+              sourceType: 'PRACTITIONER_OBSERVED', sourceRevisionId: 'src-1', recordedAt: '2026-10-01T08:00:00Z', authorLabel: 'Dr Nora', sourceReference: 'S-1',
+            },
+            {
+              id: 'm-2', version: 2, revision: 2, createdAt: '2026-10-02T08:00:00Z', updatedAt: '2026-10-02T08:00:00Z',
+              practiceId, concept: 'WEIGHT', value: '69.2', unit: 'kg', observedAt: '2026-10-02T08:00:00Z',
+              sourceType: 'PRACTITIONER_OBSERVED', sourceRevisionId: 'src-2', recordedAt: '2026-10-02T08:00:00Z', authorLabel: 'Dr Nora', sourceReference: 'S-2',
+              correctionReason: 'Balance étalonnée',
+            },
+          ],
+        }));
+      }
+      if (url.pathname.endsWith('/measurements')) {
+        if (url.searchParams.get('from')) {
+          return Promise.resolve(Response.json({ items: [], nextCursor: null, truncated: false }));
+        }
+        if (url.searchParams.get('cursor') === 'c2') {
+          return Promise.resolve(Response.json({
+            items: [{
+              id: 'm-3', version: 1, revision: 1, createdAt: '2026-09-15T08:00:00Z', updatedAt: '2026-09-15T08:00:00Z',
+              practiceId, concept: 'WEIGHT', value: '67.5', unit: 'kg', observedAt: '2026-09-15T08:00:00Z',
+              sourceType: 'PRACTITIONER_OBSERVED', sourceRevisionId: 'src-3', recordedAt: '2026-09-15T08:00:00Z', authorLabel: 'Dr Nora', sourceReference: 'S-3',
+            }],
+            nextCursor: null,
+            truncated: false,
+          }));
+        }
+        firstMeasurePage = false;
+        return Promise.resolve(Response.json({
+          items: [
+            {
+              id: 'm-2', version: 2, revision: 2, createdAt: '2026-10-02T08:00:00Z', updatedAt: '2026-10-02T08:00:00Z',
+              practiceId, concept: 'WEIGHT', value: '69.2', unit: 'kg', observedAt: '2026-10-02T08:00:00Z',
+              sourceType: 'PRACTITIONER_OBSERVED', sourceRevisionId: 'src-2', recordedAt: '2026-10-02T08:00:00Z', authorLabel: 'Dr Nora', sourceReference: 'S-2',
+              correctionReason: 'Balance étalonnée',
+            },
+            {
+              id: 'm-1b', version: 1, revision: 1, createdAt: '2026-09-25T08:00:00Z', updatedAt: '2026-09-25T08:00:00Z',
+              practiceId, concept: 'WEIGHT', value: '68.5', unit: 'kg', observedAt: '2026-09-25T08:00:00Z',
+              sourceType: 'PRACTITIONER_OBSERVED', sourceRevisionId: 'src-1b', recordedAt: '2026-09-25T08:00:00Z', authorLabel: 'Dr Nora', sourceReference: 'S-1b',
+            },
+          ],
+          nextCursor: firstMeasurePage ? null : 'c2',
+          truncated: true,
+        }));
+      }
+      throw new Error(`Unexpected ${url.pathname}`);
+    }));
+
+    const select = vi.fn();
+    const expire = vi.fn();
+    const { rerender } = render(
+      <PatientsArea session={session} context={context} contexts={[context]} route={{ base, view: 'measurements', recordId }}
+        select={select} signOut={vi.fn()} expire={expire} />,
+    );
+    expect(await screen.findByText(/Courbe limitée aux mesures chargées/)).toBeTruthy();
+    await user.click(screen.getByRole('button', { name: 'Afficher plus de mesures' }));
+    expect((await screen.findAllByText('67,5')).length).toBeGreaterThanOrEqual(1);
+
+    await user.click(screen.getByRole('button', { name: /Voir l’historique/ }));
+    expect(await screen.findByText(/L’historique n’a pas pu être chargé/)).toBeTruthy();
+    await user.click(screen.getByRole('button', { name: 'Réessayer' }));
+    expect(await screen.findByText(/version précédente 68,0 kg conservée/)).toBeTruthy();
+
+    const search = within(screen.getByRole('search', { name: 'Filtrer les mesures' }));
+    await user.selectOptions(search.getByLabelText('Période'), '3m');
+    await user.selectOptions(search.getByLabelText('Mesure'), 'c:WEIGHT');
+    await user.click(search.getByRole('button', { name: 'Appliquer les filtres' }));
+    expect(await screen.findByText('Aucune mesure ne correspond à ces filtres')).toBeTruthy();
+    await user.click(search.getByRole('button', { name: 'Réinitialiser les filtres' }));
+    expect(await screen.findByText(/Courbe limitée aux mesures chargées/)).toBeTruthy();
+
+    for (const route of [
+      { base, view: 'list' as const },
+      { base, view: 'new' as const },
+      { base, view: 'edit' as const, recordId },
+      { base, view: 'history' as const, recordId },
+      { base, view: 'record' as const, recordId },
+    ]) {
+      rerender(
+        <PatientsArea session={session} context={context} contexts={[context]} route={route}
+          select={select} signOut={vi.fn()} expire={expire} />,
+      );
+    }
+    expect(await screen.findByText('Aucun événement au dossier')).toBeTruthy();
   });
 });
