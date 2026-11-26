@@ -161,6 +161,7 @@ def load_lcov(report, prefix):
     coverage = {}
     for record in records:
         source, lines, totals = None, {}, {}
+        branches, branch_totals = {}, {}
         for row in record.split("\n"):
             key, _, value = row.partition(":")
             if key == "SF":
@@ -180,10 +181,24 @@ def load_lcov(report, prefix):
                 if source is None or key in totals:
                     raise ValueError(f"invalid or duplicate LCOV {key} record")
                 totals[key] = int(value)
+            elif key == "BRDA":
+                line, block, branch, taken = value.split(",")
+                number, block_id, branch_id = int(line), int(block), int(branch)
+                location = (number, block_id, branch_id)
+                hits = 0 if taken == "-" else int(taken)
+                if source is None or number < 1 or min(block_id, branch_id, hits) < 0 or location in branches:
+                    raise ValueError(f"invalid or duplicate LCOV BRDA record: {row!r}")
+                branches[location] = hits > 0
+            elif key in ("BRF", "BRH"):
+                if source is None or key in branch_totals:
+                    raise ValueError(f"invalid or duplicate LCOV {key} record")
+                branch_totals[key] = int(value)
         if source is None or source in coverage:
             raise ValueError(f"missing or duplicate LCOV source: {source}")
         if totals != {"LF": len(lines), "LH": sum(lines.values())}:
             raise ValueError(f"inconsistent LCOV LF/LH counters in {source}")
+        if branch_totals != {"BRF": len(branches), "BRH": sum(branches.values())}:
+            raise ValueError(f"inconsistent LCOV BRF/BRH counters in {source}")
         coverage[source] = lines
     return coverage
 
