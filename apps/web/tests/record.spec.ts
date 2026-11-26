@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './support/browser-coverage';
 import { accessible, base, canal, claire, heading, ids, louis, noOverflow, noRingOnHeading, problem, tilleuls, usesBackground } from './support/patients';
 import { claireRows, claireStatements, type Row, stubRecord, timelineItem } from './support/record';
 

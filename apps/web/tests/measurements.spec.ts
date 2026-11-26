@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './support/browser-coverage';
 import { accessible, base, canal, claire, heading, ids, louis, noOverflow, noRingOnHeading, problem, tilleuls, usesBackground } from './support/patients';
 import { claireMeasurements, DIASTOLIC, type Meas, measurementBody, stubMeasurements, SYSTOLIC } from './support/measurements';
 
@@ -248,12 +248,13 @@ test.describe('S-11 measurements (AT-011-A, AT-011-B)', () => {
   });
 
   test('a refusal of the measurements removes every clinical row at once; an absent record is the restricted state', async ({ page }) => {
-    await stubMeasurements(page, { list: () => ({ status: 403, json: problem(403, 'FORBIDDEN') }) });
+    let outcome: { status: number; json: ReturnType<typeof problem> } = { status: 403, json: problem(403, 'FORBIDDEN') };
+    await stubMeasurements(page, { list: () => outcome });
     await page.goto(MEASURES);
     await expect(page.getByText('Accès non autorisé · 403')).toBeVisible();
     await expect(page.getByText('MARTIN Claire')).toHaveCount(0);
     await expect(rows(page)).toHaveCount(0);
-    await stubMeasurements(page, { list: () => ({ status: 404, json: problem(404, 'NOT_FOUND') }) });
+    outcome = { status: 404, json: problem(404, 'NOT_FOUND') };
     await page.goto(MEASURES);
     await expect(page.getByText('Élément introuvable · 404')).toBeVisible();
     await expect(page.getByText('MARTIN Claire')).toHaveCount(0);

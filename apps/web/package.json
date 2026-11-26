@@ -11,6 +11,8 @@
     "test:unit:coverage": "vitest run --mode unit-coverage --coverage",
     "test:components:coverage": "vitest run --mode component-coverage --coverage",
     "test:smoke": "playwright test",
+    "test:smoke:coverage": "node scripts/run-smoke-coverage.mjs",
+    "coverage:merge": "node scripts/merge-coverage.mjs merge reports/combined-coverage reports/unit-only-coverage/coverage-final.json reports/component-coverage/coverage-final.json reports/smoke-coverage/coverage-final.json",
     "test:e2e-real": "playwright test --config=playwright.real.config.ts",
     "test:demo": "playwright test --config=playwright.demo.config.ts",
     "generate:api": "node scripts/generate-api.mjs",

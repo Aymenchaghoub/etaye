@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './support/browser-coverage';
 import { LIST, NEW, type Reply, accessible, admin, base, canal, candidate, claire, fillIdentity, heading, noOverflow, noRingOnHeading, person, problem, roster, rowNames, stubApi, tilleuls, usesBackground } from './support/patients';
 
 test.describe('S-07 directory', () => {

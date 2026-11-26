@@ -80,3 +80,77 @@ it('offers a new recovery request for an unusable link without sending a reset',
   expect(screen.queryByRole('button', { name: 'Enregistrer le mot de passe' })).toBeNull();
   expect(submit).not.toHaveBeenCalled();
 });
+
+it('validates email locally and enforces server rate limits on recovery requests', async () => {
+  const user = userEvent.setup();
+  const submit = vi.fn<() => Response>(() => Response.json(
+    { code: 'RATE_LIMITED' },
+    { status: 429, headers: { 'Retry-After': '60' } },
+  ));
+  stubAccountRequest(['/api/v1/access-recovery'], submit);
+  render(<RecoveryRequest patient={false} />);
+
+  await user.type(screen.getByRole('textbox', { name: 'Adresse e-mail' }), 'pas-une-adresse');
+  await user.click(screen.getByRole('button', { name: 'Recevoir un lien' }));
+  expect(submit).not.toHaveBeenCalled();
+  expect(screen.getByRole('alert').textContent).toContain('Adresse e-mail');
+
+  const input = screen.getByRole<HTMLInputElement>('textbox', { name: 'Adresse e-mail' });
+  await user.clear(input);
+  await user.type(input, 'nora@example.test');
+  await user.click(screen.getByRole('button', { name: 'Recevoir un lien' }));
+  expect((await screen.findByRole('alert')).textContent).toContain('Trop de demandes');
+  expect(screen.getByRole('button', { name: 'Recevoir un lien' }).hasAttribute('disabled')).toBe(true);
+});
+
+it('rejects too-short, too-long, server-rejected and outage password reset responses safely', async () => {
+  const user = userEvent.setup();
+  const submit = vi.fn<() => Response>()
+    .mockReturnValueOnce(Response.json({ code: 'PASSWORD_TOO_SHORT' }, { status: 400 }))
+    .mockReturnValueOnce(Response.json({ code: 'RATE_LIMITED' }, { status: 429, headers: { 'Retry-After': '30' } }))
+    .mockReturnValueOnce(Response.json({ code: 'DB_UNAVAILABLE' }, { status: 503 }))
+    .mockReturnValueOnce(Response.json({ code: 'INVALID_RECOVERY_LINK' }, { status: 400 }));
+  stubAccountRequest(['/api/v1/access-recovery/complete'], submit);
+  const token = 'B'.repeat(43);
+  window.history.replaceState(null, '', `/recuperation/terminer#${token}`);
+  render(<ResetPassword />);
+
+  const first = screen.getByLabelText<HTMLInputElement>(/^Nouveau mot de passe/);
+  const confirmation = screen.getByLabelText<HTMLInputElement>(/^Confirmer le nouveau mot de passe/);
+  const save = screen.getByRole('button', { name: 'Enregistrer le mot de passe' });
+
+  await user.type(first, 'trop-court');
+  await user.type(confirmation, 'trop-court');
+  await user.click(save);
+  expect(screen.getByRole('alert').textContent).toContain('12 caractères');
+  expect(first.value).toBe('');
+
+  await user.type(first, 'a'.repeat(1025));
+  await user.click(save);
+  expect(screen.getByRole('alert').textContent).toContain('1 024 caractères');
+
+  await user.type(first, 'synthetic-passphrase');
+  await user.type(confirmation, 'synthetic-passphrase');
+  await user.click(save);
+  expect((await screen.findByRole('alert')).textContent).toContain('12 caractères');
+
+  await user.type(first, 'synthetic-passphrase');
+  await user.type(confirmation, 'synthetic-passphrase');
+  await user.click(save);
+  expect((await screen.findByRole('alert')).textContent).toContain('Trop de demandes');
+
+  // Re-render fresh instance for 503 and INVALID_RECOVERY_LINK without timer lockout.
+  cleanup();
+  window.history.replaceState(null, '', `/recuperation/terminer#${token}`);
+  render(<ResetPassword />);
+  await user.type(screen.getByLabelText(/^Nouveau mot de passe/), 'synthetic-passphrase');
+  await user.type(screen.getByLabelText(/^Confirmer le nouveau mot de passe/), 'synthetic-passphrase');
+  await user.click(screen.getByRole('button', { name: 'Enregistrer le mot de passe' }));
+  expect((await screen.findByRole('alert')).textContent).toContain("Le changement n'a pas pu être confirmé");
+
+  await user.type(screen.getByLabelText(/^Nouveau mot de passe/), 'synthetic-passphrase');
+  await user.type(screen.getByLabelText(/^Confirmer le nouveau mot de passe/), 'synthetic-passphrase');
+  await user.click(screen.getByRole('button', { name: 'Enregistrer le mot de passe' }));
+  expect(await screen.findByRole('heading', { name: "Ce lien n'est plus valable" })).toBeTruthy();
+  expect(window.location.hash).toBe('');
+});
