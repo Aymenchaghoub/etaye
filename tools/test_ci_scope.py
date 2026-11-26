@@ -62,7 +62,7 @@ class PathScenarioTest(unittest.TestCase):
             with self.subTest(path=path):
                 self.assertEqual(scopes_of(path), {"web", "package", "sonar-web"})
         self.assertEqual(scopes_of("tools/generate_web_tokens.py"),
-                         {"web", "package", "sonar-web", "sonar-tooling"})
+                         {"web", "package", "sonar-tooling"})
 
     def test_isolation_manifest_is_read_by_api_and_web(self):
         self.assertEqual(scopes_of("apps/api/src/test/resources/isolation/matrix-cases.json"),
@@ -76,7 +76,7 @@ class PathScenarioTest(unittest.TestCase):
         self.assertEqual(scopes_of("tools/run_package_smoke.sh"), {"package"})
         self.assertEqual(scopes_of("tools/run_image_scan.sh"), {"package"})
         self.assertEqual(scopes_of("tools/install_corepack.sh"), {"web", "package", "pnpm", "sonar-web"})
-        self.assertEqual(scopes_of("tools/assert_isolation_matrix.py"), {"api", "sonar-api", "sonar-tooling"})
+        self.assertEqual(scopes_of("tools/assert_isolation_matrix.py"), {"api", "sonar-tooling"})
         self.assertEqual(scopes_of(".github/workflows/api.yml"), {"api"})
         self.assertEqual(scopes_of(".github/workflows/web.yml"), {"web"})
         self.assertEqual(scopes_of(".github/workflows/dependency-review.yml"), {"pnpm"})
@@ -87,7 +87,9 @@ class PathScenarioTest(unittest.TestCase):
         self.assertEqual(scopes_of("apps/web/sonar-project.properties"), {"sonar-web"})
         self.assertEqual(scopes_of("tools/pyproject.toml"), {"sonar-tooling"})
         self.assertEqual(scopes_of("tools/sonar-requirements.txt"), {"sonar-tooling"})
+        self.assertEqual(scopes_of("tools/sub/helper.py"), {"sonar-tooling"})
         self.assertEqual(scopes_of("design/corrections/verify.py"), {"sonar-tooling"})
+        self.assertEqual(scopes_of("design/corrections/prototype.js"), set())
 
     def test_docker_and_compose_reach_the_package_only(self):
         self.assertEqual(scopes_of("infra/demo/compose.yml"), {"package"})

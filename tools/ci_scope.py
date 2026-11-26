@@ -70,13 +70,13 @@ RULES = (
     ("tools/test_assert_coverage_reports.py", frozenset({"api", "web", "sonar-api", "sonar-web", "sonar-tooling"})),
     ("tools/assert_changed_line_coverage.py", frozenset({"api", "web", "sonar-tooling"})),
     ("tools/test_assert_changed_line_coverage.py", frozenset({"api", "web", "sonar-tooling"})),
-    ("tools/assert_isolation_matrix.py", frozenset({"api", "sonar-api", "sonar-tooling"})),
+    ("tools/assert_isolation_matrix.py", frozenset({"api", "sonar-tooling"})),
     ("tools/test_assert_isolation_matrix.py", frozenset({"api", "sonar-tooling"})),
-    ("tools/generate_web_tokens.py", frozenset({"web", "package", "sonar-web", "sonar-tooling"})),
+    ("tools/generate_web_tokens.py", frozenset({"web", "package", "sonar-tooling"})),
     ("tools/test_generate_web_tokens.py", frozenset({"web", "package", "sonar-tooling"})),
     # Remaining first-party Python tooling and design correction scripts analyzed by SonarQube Tooling.
-    ("tools/*.py", frozenset({"sonar-tooling"})),
-    ("design/corrections/**", frozenset({"sonar-tooling"})),
+    ("tools/**/*.py", frozenset({"sonar-tooling"})),
+    ("design/corrections/**/*.py", frozenset({"sonar-tooling"})),
     # The manifest is read by the API matrix test and by a Web unit suite.
     ("apps/api/src/test/resources/isolation/matrix-cases.json", frozenset({"api", "web", "sonar-api", "sonar-web"})),
     # Applications. The delivery package builds both from source.

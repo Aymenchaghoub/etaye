@@ -217,6 +217,25 @@ jobs:
             "sonarqube.yml", sonar_base.replace("    timeout-minutes: 15\n", "    timeout-minutes: 15\n    env:\n      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}\n"))))
         self.assertTrue(any("without gating on trusted == 'true'" in msg for msg in policy.check_workflow(
             "sonarqube.yml", sonar_base.replace("    if: needs.preflight.outputs.trusted == 'true'\n", ""))))
+        self.assertTrue(any("without gating on trusted == 'true'" in msg for msg in policy.check_workflow(
+            "sonarqube.yml",
+            sonar_base.replace(
+                "    if: needs.preflight.outputs.trusted == 'true'",
+                "    if: needs.preflight.outputs.trusted == 'true' || always()",
+            ))))
+        self.assertTrue(any("workflow-level env must not expose" in msg for msg in policy.check_workflow(
+            "sonarqube.yml",
+            sonar_base.replace("permissions:\n", "env:\n  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}\npermissions:\n"))))
+        self.assertTrue(any("may only read ['SONAR_TOKEN']" in msg for msg in policy.check_workflow(
+            "sonarqube.yml", sonar_base.replace("secrets.SONAR_TOKEN", "secrets['OTHER_TOKEN']"))))
+        self.assertTrue(any("may only read ['SONAR_TOKEN']" in msg for msg in policy.check_workflow(
+            "sonarqube.yml", sonar_base.replace("secrets.SONAR_TOKEN", "toJSON(secrets)"))))
+        self.assertTrue(any("job preflight must not reference" in msg for msg in policy.check_workflow(
+            "sonarqube.yml",
+            sonar_base.replace(
+                "jobs:\n",
+                "jobs:\n  preflight:\n    name: SonarQube preflight\n    runs-on: ubuntu-24.04\n    timeout-minutes: 5\n    steps:\n      - run: echo ok\n        env:\n          T: ${{ secrets.SONAR_TOKEN }}\n",
+            ))))
 
     def test_unknown_classifier_scope_is_rejected(self):
         text = mutate('run: echo "$EVENT"', 'run: python3 tools/ci_scope.py --scope mobile --event "$EVENT"')

@@ -60,11 +60,13 @@ def cobertura_counts(report: Path) -> tuple[int, int]:
     measured = 0
     covered_lines = 0
     for cls in classes:
+        seen_numbers: set[int] = set()
         for line in cls.findall("./lines/line"):
             number = int(line.attrib["number"])
             hits = int(line.attrib["hits"])
-            if number < 1 or hits < 0:
-                raise ValueError("Cobertura line record has invalid number or negative hits")
+            if number < 1 or hits < 0 or number in seen_numbers:
+                raise ValueError("Cobertura line record has invalid, duplicate or negative values")
+            seen_numbers.add(number)
             measured += 1
             if hits > 0:
                 covered_lines += 1

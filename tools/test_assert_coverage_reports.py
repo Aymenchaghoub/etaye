@@ -101,6 +101,7 @@ class CoverageReportsTest(unittest.TestCase):
             ("zero covered lines", '<coverage lines-valid="2" lines-covered="0"><packages><package name="t"><classes><class filename="a.py"><lines><line number="1" hits="0"/><line number="2" hits="0"/></lines></class></classes></package></packages></coverage>'),
             ("missing class filename", '<coverage lines-valid="1" lines-covered="1"><packages><package name="t"><classes><class name="a.py"><lines><line number="1" hits="1"/></lines></class></classes></package></packages></coverage>'),
             ("disagreeing counters", '<coverage lines-valid="2" lines-covered="2"><packages><package name="t"><classes><class filename="a.py"><lines><line number="1" hits="1"/><line number="2" hits="0"/></lines></class></classes></package></packages></coverage>'),
+            ("duplicate line number", '<coverage lines-valid="2" lines-covered="2"><packages><package name="t"><classes><class filename="a.py"><lines><line number="1" hits="1"/><line number="1" hits="1"/></lines></class></classes></package></packages></coverage>'),
             ("entity declaration", '<!DOCTYPE coverage [<!ENTITY x "1">]><coverage lines-valid="1" lines-covered="1"/>'),
         ):
             with self.subTest(label):

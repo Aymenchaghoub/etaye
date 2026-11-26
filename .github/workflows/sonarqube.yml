@@ -36,24 +36,27 @@ jobs:
         id: trust
         env:
           EVENT_NAME: ${{ github.event_name }}
+          REF: ${{ github.ref }}
           REF_NAME: ${{ github.ref_name }}
           IS_FORK: ${{ github.event.pull_request.head.repo.fork }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPO: ${{ github.repository }}
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
           ACTOR: ${{ github.actor }}
         run: |
           trusted="true"
           reason=""
           if [[ "$EVENT_NAME" == "pull_request" ]]; then
-            if [[ "$IS_FORK" == "true" ]]; then
+            if [[ "$IS_FORK" != "false" || -z "$HEAD_REPO" || "$HEAD_REPO" != "$BASE_REPO" ]]; then
               trusted="false"
-              reason="external fork pull request (SONAR_TOKEN intentionally unavailable)"
+              reason="external fork or deleted head repository pull request (SONAR_TOKEN intentionally unavailable)"
             elif [[ "$PR_AUTHOR" == "dependabot[bot]" || "$ACTOR" == "dependabot[bot]" ]]; then
               trusted="false"
               reason="Dependabot pull request (SONAR_TOKEN intentionally unavailable)"
             fi
-          elif [[ "$EVENT_NAME" == "workflow_dispatch" && "$REF_NAME" != "main" ]]; then
+          elif [[ "$EVENT_NAME" == "workflow_dispatch" && "$REF" != "refs/heads/main" ]]; then
             trusted="false"
-            reason="unsupported branch '$REF_NAME' for manual run on Free plan (main only)"
+            reason="unsupported ref '$REF_NAME' ($REF) for manual run on Free plan (main branch only)"
           elif [[ "$EVENT_NAME" != "push" && "$EVENT_NAME" != "workflow_dispatch" ]]; then
             trusted="false"
             reason="unsupported event: $EVENT_NAME"
@@ -171,8 +174,7 @@ jobs:
         working-directory: apps/web
         run: |
           rm -rf reports/unit-coverage
-          rm -f reports/unit-tests.json
-          pnpm test:coverage --reporter=json --outputFile=reports/unit-tests.json
+          pnpm test:coverage
       - name: Verify Web LCOV report integrity
         run: python3 tools/assert_coverage_reports.py lcov apps/web/reports/unit-coverage/lcov.info
       - name: Scan Web with SonarScanner for NPM
