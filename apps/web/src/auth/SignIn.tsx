@@ -79,7 +79,7 @@ export function SignIn({ patient, returning, returnTo, demo, onCancel, onSignedI
         Le service est temporairement indisponible. Réessayez dans quelques instants.
       </Banner>}
       <div className="etaye-auth__carte">
-        <form className="etaye-form" noValidate onSubmit={submit} aria-busy={pending}>
+        <form className="etaye-form" noValidate onSubmit={(event) => void submit(event)} aria-busy={pending}>
           <Field id="l-mail" name="email" type="email" label="Adresse e-mail" autoComplete="username"
             autoFocus defaultValue={demo?.email} maxLength={254} error={errors.find(({ id }) => id === 'l-mail')} />
           <Field id="l-pw" name="password" type={showPassword ? 'text' : 'password'} label="Mot de passe"

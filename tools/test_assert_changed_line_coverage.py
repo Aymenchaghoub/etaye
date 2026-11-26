@@ -24,7 +24,7 @@ JACOCO_FIXTURE = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?><!DOC
   </package>
 </report>
 """
-LCOV = "SF:src/record/asof.ts\nDA:1,4\nDA:2,0\nDA:3,1\nLF:3\nLH:2\nend_of_record\n"
+LCOV = "SF:src/record/asof.ts\nDA:1,4\nDA:2,0\nDA:3,1\nLF:3\nLH:2\nBRF:0\nBRH:0\nend_of_record\n"
 
 
 def complete_jacoco(fixture):
@@ -379,7 +379,7 @@ class GateTest(unittest.TestCase):
         code, _, err = self.run_gate(LCOV, "--min-percent", "60", **options)
         self.assertEqual(code, 1)
         self.assertIn("extra.ts", err)
-        empty = "SF:src/record/extra.ts\nLF:0\nLH:0\nend_of_record\n"
+        empty = "SF:src/record/extra.ts\nLF:0\nLH:0\nBRF:0\nBRH:0\nend_of_record\n"
         self.assertEqual(self.run_gate(LCOV + empty, "--min-percent", "60", **options)[0], 0)
 
     def test_a_wholly_untested_file_fails_even_when_the_total_passes(self):

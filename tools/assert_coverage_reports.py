@@ -7,6 +7,8 @@ import re
 import sys
 import xml.etree.ElementTree as ET
 
+from assert_changed_line_coverage import load_jacoco, load_lcov, source_path
+
 
 def _parse_safe_xml(report: Path, kind: str) -> ET.Element:
     text = report.read_text(encoding="utf-8")
@@ -16,34 +18,13 @@ def _parse_safe_xml(report: Path, kind: str) -> ET.Element:
 
 
 def jacoco_counts(report: Path) -> tuple[int, int]:
-    root = _parse_safe_xml(report, "jacoco")
-    counter = root.find("counter[@type='LINE']")
-    if root.tag != "report" or counter is None or root.find(".//sourcefile/line") is None:
-        raise ValueError("JaCoCo report lacks source lines or the top-level LINE counter")
-    covered = int(counter.attrib["covered"])
-    missed = int(counter.attrib["missed"])
-    if missed < 0 or covered < 0:
-        raise ValueError("JaCoCo line counts must be nonnegative")
-    return covered, covered + missed
+    sources = load_jacoco(report, "")
+    return sum(sum(lines.values()) for lines in sources.values()), sum(map(len, sources.values()))
 
 
 def lcov_counts(report: Path) -> tuple[int, int]:
-    text = report.read_text(encoding="utf-8").rstrip() + "\n"
-    *records, tail = text.split("\nend_of_record\n")
-    if not records or tail.strip():
-        raise ValueError("LCOV report lacks complete source records")
-    covered = total = 0
-    for record in records:
-        fields = dict(line.split(":", 1) for line in record.splitlines() if ":" in line)
-        if not fields.get("SF"):
-            raise ValueError("LCOV record lacks its source path")
-        hits = int(fields["LH"])
-        lines = int(fields["LF"])
-        if hits < 0 or hits > lines:
-            raise ValueError("LCOV line hits are outside the recorded line count")
-        covered += hits
-        total += lines
-    return covered, total
+    sources = load_lcov(report, "")
+    return sum(sum(lines.values()) for lines in sources.values()), sum(map(len, sources.values()))
 
 
 def cobertura_counts(report: Path) -> tuple[int, int]:
@@ -59,7 +40,12 @@ def cobertura_counts(report: Path) -> tuple[int, int]:
         raise ValueError("Cobertura report lacks valid class records")
     measured = 0
     covered_lines = 0
+    filenames: set[str] = set()
     for cls in classes:
+        filename = source_path("", cls.attrib["filename"])
+        if filename in filenames:
+            raise ValueError(f"duplicate Cobertura source: {filename}")
+        filenames.add(filename)
         seen_numbers: set[int] = set()
         for line in cls.findall("./lines/line"):
             number = int(line.attrib["number"])

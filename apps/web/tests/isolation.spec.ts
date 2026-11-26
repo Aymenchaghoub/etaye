@@ -1,5 +1,5 @@
 import { AxeBuilder } from '@axe-core/playwright';
-import { expect, test, type Page, type Route } from '@playwright/test';
+import { expect, test, type Page, type Route } from './support/browser-coverage';
 import type { AccessContext, Session } from '../src/api/generated/types.gen';
 import { OUTSIDE_PATH, PRACTICE_A, READ_PATH, RECORD_A, RECORD_B } from '../src/isolation/isolation-journey';
 

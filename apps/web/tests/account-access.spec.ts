@@ -1,5 +1,5 @@
 import { AxeBuilder } from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './support/browser-coverage';
 import type { Session } from '../src/api/generated/types.gen';
 import { allowsAccountPath, checkPausedWork, pauseWork } from '../src/auth/session-work';
 

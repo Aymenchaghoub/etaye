@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './support/browser-coverage';
 import { LIST, NEW, type Reply, accessible, admin, base, canal, candidate, claire, fillIdentity, heading, noOverflow, noRingOnHeading, person, problem, roster, rowNames, stubApi, tilleuls, usesBackground } from './support/patients';
 
 test.describe('S-07 directory', () => {
@@ -369,7 +369,7 @@ test.describe('S-08 correction', () => {
     const live = roster.map((p) => ({ ...p }));
     const calls = await stubApi(page, { roster: live });
     await page.goto(editPath);
-    await expect(heading(page, 'Modifier l’identité')).toBeFocused();
+    await expect(page.getByLabel('Prénom')).toHaveValue('Claire');
     const target = live.find((p) => p.id === claire.id)!;
     Object.assign(target, { phone: '0100000000', version: 8, updatedAt: '2026-11-23T14:02:00Z' });
     await fillIdentity(page, { prenom: 'Claire-Anne', tel: '0600000000' });
@@ -393,7 +393,8 @@ test.describe('S-08 correction', () => {
     const live = roster.map((p) => ({ ...p }));
     await stubApi(page, { roster: live });
     await page.goto(editPath);
-    await expect(heading(page, 'Modifier l’identité')).toBeFocused();
+    // The loading view also focuses the heading. Wait for the initial identity before simulating an edit elsewhere.
+    await expect(page.getByLabel('Prénom')).toHaveValue('Claire');
     Object.assign(live.find((p) => p.id === claire.id)!, { firstName: 'Clara', version: 8 });
     await fillIdentity(page, { tel: '0600000000' });
     await page.getByRole('button', { name: 'Enregistrer l’identité' }).click();

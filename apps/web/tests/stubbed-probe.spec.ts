@@ -1,5 +1,5 @@
 import { AxeBuilder } from '@axe-core/playwright';
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/browser-coverage';
 
 const probePath = '/api/v1/probes/readiness';
 const unavailableMessage = 'Le service est temporairement indisponible.';

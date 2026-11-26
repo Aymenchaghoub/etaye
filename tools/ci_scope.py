@@ -68,8 +68,8 @@ RULES = (
     ("tools/test_check_quality_debt.py", frozenset({"api", "web", "sonar-tooling"})),
     ("tools/assert_coverage_reports.py", frozenset({"api", "web", "sonar-api", "sonar-web", "sonar-tooling"})),
     ("tools/test_assert_coverage_reports.py", frozenset({"api", "web", "sonar-api", "sonar-web", "sonar-tooling"})),
-    ("tools/assert_changed_line_coverage.py", frozenset({"api", "web", "sonar-tooling"})),
-    ("tools/test_assert_changed_line_coverage.py", frozenset({"api", "web", "sonar-tooling"})),
+    ("tools/assert_changed_line_coverage.py", frozenset({"api", "web", "sonar-api", "sonar-web", "sonar-tooling"})),
+    ("tools/test_assert_changed_line_coverage.py", frozenset({"api", "web", "sonar-api", "sonar-web", "sonar-tooling"})),
     ("tools/assert_isolation_matrix.py", frozenset({"api", "sonar-tooling"})),
     ("tools/test_assert_isolation_matrix.py", frozenset({"api", "sonar-tooling"})),
     ("tools/generate_web_tokens.py", frozenset({"web", "package", "sonar-tooling"})),
@@ -169,7 +169,7 @@ def changed_paths(base, head, runner=subprocess.run):
     """Names of added, modified and deleted files; a rename counts as a deletion plus an addition."""
     result = runner(
         ["git", "diff", "--name-only", "--no-renames", "-z", "--end-of-options", base, head],
-        capture_output=True, check=False,
+        capture_output=True, check=False, timeout=10,
     )
     if result.returncode != 0:
         raise RuntimeError(f"git diff {base} {head} exited with {result.returncode}")
@@ -179,17 +179,15 @@ def changed_paths(base, head, runner=subprocess.run):
 def event_base(event, explicit, event_path):
     """The revision a change is compared with. A pull request merge commit and a squash commit on main both have the
     base tip as first parent, but a push may carry several commits: its payload names the revision before it. When that
-    revision is missing (a new branch, a force push, a shallow checkout) the diff fails and everything is verified."""
+    revision is unavailable (missing in the payload or not found locally), everything is verified."""
     if explicit:
         return explicit
     if event == "push" and event_path:
         try:
             before = json.loads(Path(event_path).read_text(encoding="utf-8")).get("before")
         except (OSError, ValueError, AttributeError):
-            before = None
-        # A push payload without a usable `before` is abnormal: a name that Git cannot resolve fails the diff, so
-        # everything is verified instead of assuming a single squash commit.
-        return before if isinstance(before, str) and before else "missing-before-revision"
+            return None
+        return before if isinstance(before, str) and re.fullmatch(r"[0-9a-f]{40}", before) else None
     return "HEAD^1"
 
 
@@ -199,14 +197,17 @@ def run(scope, event, base, head, runner=subprocess.run):
         raise ValueError(f"unknown scope {scope!r}; expected one of {', '.join(SCOPES)}")
     if event not in ("pull_request", "push"):
         return True, f"{event or 'unknown event'}: a manual or scheduled run verifies everything"
+    if base is None:
+        return True, "push base revision unavailable; verifying everything"
     try:
         paths = changed_paths(base, head, runner)
-    except (RuntimeError, OSError) as exc:
+    except (RuntimeError, OSError, subprocess.TimeoutExpired) as exc:
         return True, f"change list unavailable ({exc}); verifying everything"
     relevant, triggers = decide(paths)[scope]
     if not relevant:
         return False, f"{len(paths)} changed path(s), none consumed by the {scope} verification"
-    shown = ", ".join(path if rule else f"{path} (unclassified)" for path, rule in triggers[:5])
+    # Git paths may contain control characters. Keep runner diagnostics on one line.
+    shown = ", ".join(repr(path) if rule else f"{path!r} (unclassified)" for path, rule in triggers[:5])
     more = f" and {len(triggers) - 5} more" if len(triggers) > 5 else ""
     return True, f"{shown}{more}"
 
@@ -217,13 +218,18 @@ def main(argv=None):
     parser.add_argument("--event", default="")
     parser.add_argument("--base", default=None, help="default: HEAD^1, or the `before` revision of a push event")
     parser.add_argument("--head", default="HEAD")
-    parser.add_argument("--github-output", help="append relevant=<bool> to this file")
+    parser.add_argument("--github-output", type=Path, help="append relevant=<bool> to the caller-supplied runner output file")
     args = parser.parse_args(argv)
     base = event_base(args.event, args.base, os.environ.get("GITHUB_EVENT_PATH"))
     relevant, reason = run(args.scope, args.event, base, args.head)
     print(f"{args.scope} verification needed: {str(relevant).lower()} ({reason})")
     if args.github_output:
-        with open(args.github_output, "a", encoding="utf-8") as output:
+        if ".." in args.github_output.parts:
+            raise ValueError("github-output path must not contain '..' segments")
+        output_path = args.github_output.resolve()
+        if args.github_output.is_symlink():
+            raise ValueError("github-output path must not be a symlink")
+        with output_path.open("a", encoding="utf-8") as output:
             output.write(f"relevant={str(relevant).lower()}\n")
     return 0
 

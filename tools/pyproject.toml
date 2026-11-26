@@ -1,7 +1,13 @@
 [tool.coverage.run]
+branch = true
+patch = ["subprocess"]
 source = ["tools", "design/corrections"]
 omit = ["tools/test_*.py"]
 relative_files = true
+
+[tool.coverage.report]
+# Subprocesses that change directory can enumerate zero-hit test modules during combination.
+omit = ["tools/test_*.py"]
 
 [tool.coverage.xml]
 output = "reports/tooling-coverage.xml"
