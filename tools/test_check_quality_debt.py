@@ -1,5 +1,5 @@
 from collections import Counter
-from contextlib import redirect_stderr
+from contextlib import chdir, redirect_stderr, redirect_stdout
 from io import StringIO
 import json
 from pathlib import Path
@@ -83,9 +83,69 @@ class QualityDebtTest(unittest.TestCase):
                              [debt.Diagnostic(("Example.java", "javac", "call() has been deprecated", "call();", 1), 1)])
             for invalid in (report.replace("target/test-classes", "elsewhere"),
                             report + "[WARNING] unmatched warning\n",
-                            report.replace("BUILD SUCCESS", "BUILD FAILURE")):
+                            report.replace("BUILD SUCCESS", "BUILD FAILURE"),
+                            report.replace("[INFO] BUILD SUCCESS", "copied text [INFO] BUILD SUCCESS")):
                 with self.assertRaises(ValueError):
                     list(debt.javac_diagnostics(root, invalid))
+
+    def test_source_must_be_inside_checkout_and_location_must_be_positive(self):
+        with tempfile.TemporaryDirectory() as directory:
+            outside = Path(directory) / "outside.ts"
+            outside.write_text("outside();\n")
+            root = Path(directory) / "repository"
+            root.mkdir()
+            source = root / "source.ts"
+            source.write_text("new();\n")
+            alias = root / "alias.ts"
+            alias.symlink_to(outside)
+            for path in (outside, alias, root / ".." / outside.name):
+                with self.subTest(path=path), self.assertRaisesRegex(ValueError, "outside the checkout"):
+                    debt.diagnostic(root, path, 1, 1, "example", "message")
+            for line, column in ((0, 1), (1, 0), (1, -1), (True, 1)):
+                with self.subTest(line=line, column=column), self.assertRaisesRegex(ValueError, "positive integers"):
+                    debt.diagnostic(root, source, line, column, "example", "message")
+            for path in (root, root / "missing.ts"):
+                with self.subTest(path=path), self.assertRaisesRegex(ValueError, "not a regular file"):
+                    debt.diagnostic(root, path, 1, 1, "example", "message")
+
+    def test_cli_compares_debt_to_a_resolved_commit_and_fails_for_an_unknown_commit(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+
+            def git(*args):
+                return subprocess.run(["git", *args], cwd=root, capture_output=True, check=True, text=True).stdout.strip()
+
+            git("init", "-q", "-b", "main")
+            git("config", "user.name", "CI")
+            git("config", "user.email", "ci@example.test")
+            git("config", "commit.gpgsign", "false")
+            baseline = root / debt.BASELINES["eslint"]
+            baseline.parent.mkdir(parents=True)
+            baseline.write_text("[]", encoding="utf-8")
+            source = root / "example.ts"
+            source.write_text("const example = true;\n", encoding="utf-8")
+            git("add", ".")
+            git("commit", "-qm", "base")
+            git("tag", "-a", "snapshot", "-m", "example base")
+
+            report = root / "eslint.json"
+            report.write_text(json.dumps([
+                {"filePath": str(source), "messages": [], "suppressedMessages": []},
+            ]), encoding="utf-8")
+            with chdir(root), redirect_stderr(StringIO()) as errors, redirect_stdout(StringIO()) as output:
+                self.assertEqual(debt.main(["eslint", str(report), "--base", "snapshot"]), 0, errors.getvalue())
+                self.assertIn("0 recorded diagnostics", output.getvalue())
+                self.assertEqual(debt.main(["eslint", str(report), "--base", "unknown-reference"]), 1)
+                self.assertIn("FAIL quality debt check", errors.getvalue())
+
+    def test_rejects_incomplete_and_malformed_eslint_results(self):
+        for invalid, error in (("[]", ValueError), ("{}", ValueError), ("not JSON", json.JSONDecodeError)):
+            with self.subTest(invalid=invalid), self.assertRaises(error):
+                list(debt.eslint_diagnostics(Path.cwd(), invalid))
+        with self.assertRaisesRegex(ValueError, "unsuppressed diagnostics"):
+            list(debt.eslint_diagnostics(Path.cwd(), json.dumps([{
+                "filePath": "example.ts", "messages": [{"ruleId": "no-undef"}], "suppressedMessages": [],
+            }])))
 
 
 if __name__ == "__main__":

@@ -66,6 +66,21 @@ class DesignReferenceTests(unittest.TestCase):
             self.assertFalse(inspect(site)["ok"])
             self.assertEqual(len(inspect(site)["referencesOutsideSite"]), 1)
 
+    def test_audit_does_not_read_html_or_css_sources_outside_the_site(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            parent = Path(temporary)
+            site = parent / "site"
+            site.mkdir()
+            (site / "index.html").write_text("<p>Valid local source</p>")
+            for name in ("foreign.html", "foreign.css"):
+                foreign = parent / name
+                foreign.write_bytes(b"\xff")  # The audit would raise if it read this source.
+                (site / name).symlink_to(foreign)
+            result = inspect(site)
+            self.assertFalse(result["ok"])
+            self.assertEqual(result["htmlPages"], 1)
+            self.assertEqual({name for name, _ in result["referencesOutsideSite"]}, {"foreign.html", "foreign.css"})
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -46,6 +46,15 @@ class DesignSystemReferenceTests(unittest.TestCase):
         problems = ref.check(resolved_path=path)
         self.assertTrue(any("typography ui-corps" in p for p in problems), problems)
 
+    def test_unterminated_last_token_is_reported_as_missing(self):
+        css = self.folder / "tokens.css"
+        text = ref.TOKENS_CSS.read_text(encoding="utf-8")
+        text = text.replace("  --rayon-3: 12px;\n", "")
+        text = text.replace('Georgia, serif;\n}', 'Georgia, serif;\n  --rayon-3: 12px\n}')
+        css.write_text(text, encoding="utf-8")
+        problems = ref.check(css_path=css)
+        self.assertTrue(any("radius rayon-3" in p for p in problems), problems)
+
     def test_a_missing_block_marker_is_rejected(self):
         text = ref.DOC.read_text(encoding="utf-8").replace("<!-- generated:icons:end -->", "", 1)
         with self.assertRaisesRegex(ValueError, "icons"):
