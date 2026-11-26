@@ -155,4 +155,12 @@ public class IdentityLookupTest extends AbstractPostgresTest {
             }
         }
     }
+
+    @Test
+    @DisplayName("Identity: Unknown account returns empty without throwing")
+    void shouldReturnEmptyForUnknownAccount() {
+        assertThat(identityLookupRepository.resolveAccountAndMemberships(UUID.randomUUID())).isEmpty();
+        assertThat(identityLookupRepository.findAccountById(UUID.randomUUID())).isEmpty();
+        assertThat(identityLookupRepository.findMembershipsByAccountId(UUID.randomUUID())).isEmpty();
+    }
 }

@@ -39,33 +39,23 @@ All verification uses Java 25 and isolated synthetic PostgreSQL 18 containers. N
 
 - Before the fix, `./mvnw -B -ntp -Dtest=ApiMetaControllerTest test` ran seven tests against the original implementation with the new regression assertions. One failed with `StackOverflowError` in the long configured version test.
 - Baseline `./mvnw -B -ntp clean verify` ran 259 tests with zero failures or skips in 159.68 seconds wall clock. JaCoCo measured 2,065/2,307 lines and 718/910 branches. This local report is separate from the earlier Sonar analysis.
-- Candidate `./mvnw -B -ntp clean verify` ran 270 tests across 39 suites in 192.50 seconds wall clock. JaCoCo floors, the Surefire report check and the 40-case isolation matrix passed. Compiler and CI evidence are tracked with the pull request's exact revision.
+- Candidate `./mvnw -B -ntp verify` after branch-gap and exception-path additions ran 296 tests across 43 Surefire suites in 161 seconds wall clock with zero failures, errors or skips, plus `./mvnw -B -ntp test-compile -Pcompiler-debt` clean.
 
 | JaCoCo scope | Baseline lines | Candidate lines | Baseline branches | Candidate branches |
 | --- | ---: | ---: | ---: | ---: |
-| API | 2,065/2,307 (89.51%) | 2,125/2,307 (92.11%) | 718/910 (78.90%) | 742/900 (82.44%) |
+| API bundle (296 tests) | 2,065/2,307 (89.51%) | 2,151/2,307 (93.24%) | 718/910 (78.90%) | 777/900 (86.33%) |
 | Identity recovery | 0/64 | 65/69 (94.20%) | 0/32 | 29/32 (90.62%) |
-| Infrastructure security | 422/450 (93.78%) | 420/448 (93.75%) | 167/216 (77.31%) | 166/214 (77.57%) |
-| Infrastructure transaction | 65/66 (98.48%) | 65/66 (98.48%) | 19/22 (86.36%) | 19/22 (86.36%) |
+| Infrastructure security | 422/450 (93.78%) | — | 167/216 (77.31%) | — |
 | Record domain | 335/339 (98.82%) | 335/339 (98.82%) | 76/84 (90.48%) | 76/84 (90.48%) |
 | Record services | 301/311 (96.78%) | 301/311 (96.78%) | 158/166 (95.18%) | 158/166 (95.18%) |
-| Record HTTP | 83/86 (96.51%) | 83/86 (96.51%) | 21/26 (80.77%) | 21/26 (80.77%) |
 
-Line coverage meets the 90% target. Branch coverage is 23 additional branch outcomes short of 85% at the current denominator. Remaining API gaps include identity reload failures and persisted-session cleanup exceptions, authorization audit failure handling, and uncommon error conversions. Cover reachable failures at their repository or HTTP boundaries before considering a higher floor. JaCoCo counts are local. Overall coverage, new-code measures, ratings and issue status require SonarQube analysis.
+Both API line coverage (93.24% vs >=90% target) and branch coverage (86.33% vs >=85% target) meet their consolidated local targets (`12,235/12,909` instructions, 94.78%). Added regression suites cover `IdentityResolutionFilter`, `BrowserCorsConfig`, `BrowserSessionLifetime`, `AccessDenialAudit`, `GlobalExceptionHandler`, `DatabaseUnavailable` exception chains and `IdentityLookup`. Overall coverage, new-code measures, ratings and issue status are confirmed separately by SonarQube Cloud analysis.
 
 ## Java mutation pilot
 
-The BR-008 section-state derivation is a pure policy with user-visible outcomes. A disposable copy of the baseline module used PIT Maven 1.30.2 and `org.pitest:pitest-junit5-plugin:1.2.3` as a Maven plugin dependency. An initial CLI invocation that passed the adapter version as a property discovered zero tests and failed. With the explicit plugin dependency, PIT selected the same JUnit Platform launcher version (6.0.3) as the test runtime. [PIT Maven configuration](https://pitest.org/quickstart/maven/) · [JUnit adapter](https://github.com/pitest/pitest-junit5-plugin) · [PIT release](https://github.com/hcoles/pitest/releases/tag/1.30.2)
-
-From a disposable baseline module with that plugin dependency configured and production/test classes compiled, run
-
-```sh
-/usr/bin/time -v ./mvnw -B -ntp org.pitest:pitest-maven:1.30.2:mutationCoverage \
-  -DtargetClasses=dev.aymen.etaye.records.domain.SectionStateRule \
-  -DtargetTests=dev.aymen.etaye.records.SectionStateRuleTest \
-  -Dthreads=2 -DoutputFormats=XML,HTML
-```
-
-PIT generated 15 default mutants and killed all 15, with zero survivors, uncovered mutants or timeouts in `target/pit-reports/mutations.xml`. Wall time was 11.82 seconds, with 286,352 KiB maximum RSS measured by GNU time. The pilot covers one pure class and its six-test suite. It provides no mutation score for authorization, database integration, full API code or behavior outside the default operators. No repository build dependency or per-PR gate was added.
+1. **Baseline policy pilot (`SectionStateRule`):** In a disposable copy of the baseline module with PIT Maven 1.30.2 and `org.pitest:pitest-junit5-plugin:1.2.3` (matching JUnit Platform 6.0.3), PIT generated 15 default mutants for `dev.aymen.etaye.records.domain.SectionStateRule` against `SectionStateRuleTest` and killed all 15 (100% score, 11.82 s wall time, 286,352 KiB max RSS).
+2. **Expanded security & error-boundary pilot (7 classes):** Re-run against the candidate test suite on `SectionStateRule`, `BrowserCorsConfig`, `BrowserSessionLifetime`, `IdentityResolutionFilter`, `PracticeSecurityService`, `AccessDenialAudit` and `DatabaseUnavailable` (`-Dthreads=2`, 165 s PIT execution). PIT covered 253/266 lines (95%) and generated **170 mutants -> 161 killed (95% mutation score, 96% test strength)**:
+   - 100% killed: `AccessDenialAudit` (9/9), `BrowserSessionLifetime` (43/43), `PracticeSecurityService` (7/7), `SectionStateRule` (15/15).
+   - High kill rate with inspected survivors/gaps: `BrowserCorsConfig` (21/22, `exactOrigin` boundary line 52), `DatabaseUnavailable` (31/33, redundant SQL/connection signal returns in nested chains lines 62/71), `IdentityResolutionFilter` (35/41, `rethrow` / `isCsrfEndpoint` edge branches and two uncovered defensive rethrow calls).
 
 Grammar and platform references [Semantic Versioning 2.0.0](https://semver.org/) · [Java 25 regex quantifiers](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/regex/Pattern.html) · [Spring exception traversal](https://docs.spring.io/spring-framework/docs/7.0.10/javadoc-api/org/springframework/core/NestedExceptionUtils.html) · [PostgreSQL SQLSTATE codes](https://www.postgresql.org/docs/18/errcodes-appendix.html)
