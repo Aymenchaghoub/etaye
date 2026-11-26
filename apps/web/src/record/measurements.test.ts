@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { Measurement } from '../api/generated/types.gen';
 import {
   buildRows, buildSeries, chartAlternative, chartAxis, conceptLabel, conceptsOf, DIASTOLIC, displayDecimal, MAX_CHART_PANELS, measureOptions,
-  originText, panelMeta, panelTitle, periodFrom, plot, PRESSURE_OPTION, previousRevision, SYSTOLIC, splitPanels,
+  originText, panelMeta, panelTitle, periodFrom, plot, PRESSURE_OPTION, previousRevision, sourceHeadline, SYSTOLIC, splitPanels,
 } from './measurements';
 
 let counter = 0;
@@ -335,5 +335,59 @@ describe('the lineage', () => {
     expect(previousRevision([v1, v2], v2.id)).toBe(v1);
     expect(previousRevision([v1, v2], v1.id)).toBeUndefined();
     expect(previousRevision([v1, v2], 'unknown')).toBeUndefined();
+  });
+
+  it('covers missing branches in originText, sourceHeadline, incomplete plurals, tie-breaks and non-finite inputs', () => {
+    const fallbackVer = buildRows([
+      measurement({ concept: 'WEIGHT', value: '70', unit: 'kg', observedAt: '2026-10-20T08:00:00Z', revision: undefined, version: 2, sourceType: 'PATIENT_REPORTED' }),
+      measurement({ concept: 'WEIGHT', value: '71', unit: 'kg', observedAt: '2026-10-20T08:00:00Z', revision: undefined, version: 1, sourceType: 'DOCUMENT_REPORTED' }),
+    ]);
+    expect(fallbackVer.map((r) => [r.value, r.corrected, originText(r)])).toEqual([
+      ['70', true, 'Déclaré par la patiente'],
+      ['71', false, 'Rapporté par un document'],
+    ]);
+
+    const [patientBp, docBp] = buildRows([
+      ...pressure('gp1', '2026-10-20T09:00:00Z', '120', '70').map((m) => ({ ...m, sourceType: 'PATIENT_REPORTED' as const })),
+      ...pressure('gp2', '2026-10-19T09:00:00Z', '125', '75').map((m) => ({ ...m, sourceType: 'DOCUMENT_REPORTED' as const, authorLabel: '' })),
+    ]);
+    expect(originText(patientBp)).toBe('Déclarée par la patiente');
+    expect(originText(docBp)).toBe('Rapportée par un document');
+    expect(sourceHeadline(patientBp)).toBe('Déclaration de la patiente · 20/10/2026 · Dr Nora Lefebvre');
+    expect(sourceHeadline(docBp)).toBe('Rapporté par un document · 19/10/2026');
+    const obsWeight = buildRows([measurement({ concept: 'WEIGHT', value: '70', unit: 'kg', observedAt: '2026-10-20T08:00:00Z' })])[0];
+    expect(sourceHeadline(obsWeight)).toBe('Mesure au cabinet · 20/10/2026 · Dr Nora Lefebvre');
+
+    const nonFiniteBp = buildRows(pressure('gp3', '2026-10-20T08:00:00Z', '120', 'abc'));
+    expect(nonFiniteBp[0].plotted).toEqual([]);
+    expect(buildSeries(nonFiniteBp)).toEqual([]);
+
+    const orphanIncomplete = buildRows([pressure('gp4', '2026-10-20T08:00:00Z', '120', '70')[0]]);
+    expect(buildSeries(orphanIncomplete)).toEqual([]);
+
+    const multiIncompleteRows = buildRows([
+      ...pressure('g1', '2026-09-14T07:35:00Z', '128', '80'),
+      pressure('g2', '2026-10-01T07:35:00Z', '130', '75')[0],
+      pressure('g3', '2026-10-02T07:35:00Z', '132', '76')[1],
+    ]);
+    const [multiSeries] = buildSeries(multiIncompleteRows);
+    expect(panelMeta(multiSeries)).toBe('1 mesure · pas de courbe · 2 incomplètes non tracées');
+    expect(chartAlternative(multiSeries, 'Pression artérielle')).toBe(
+      'Pression artérielle : 128/80 mmHg le 14/09/2026. 2 mesures incomplètes ne sont pas tracées : voir le tableau.',
+    );
+
+    const singlePoint = buildSeries(buildRows([measurement({ concept: 'WEIGHT', value: '68.4', unit: 'kg', observedAt: '2026-10-20T08:12:00Z' })]))[0];
+    const singlePlot = plot(singlePoint, 'wide');
+    expect(singlePlot.lines[0].points[0].x).toBe(338);
+    expect(chartAxis([0, 0])).toEqual({ min: -1, max: 1, ticks: [-1, 0, 1] });
+    expect(chartAxis([1e18, 2e18])).toEqual({ min: 0, max: 3e18, ticks: [0, 1e18, 2e18, 3e18] });
+    expect(chartAxis([Number.MAX_VALUE * 0.95, Number.MAX_VALUE])).toEqual({
+      min: Number.MAX_VALUE * 0.95,
+      max: Number.MAX_VALUE,
+      ticks: [Number.MAX_VALUE * 0.95, Number.MAX_VALUE],
+    });
+    expect(periodFrom('unknown' as never, new Date('2026-11-25T10:00:00Z'))).toBeUndefined();
+    expect(conceptsOf('other')).toBeUndefined();
+    expect(measureOptions(['Poids', 'WEIGHT'], '').map((o) => o.value)).toEqual(['', 'c:Poids', 'c:WEIGHT']);
   });
 });

@@ -4,6 +4,7 @@ import type { Patient, PatientRegistration, SchedulingPatient } from '../api/gen
 import { ErrorSummary, type FieldError } from '../auth/AuthComponents';
 import { ageLabel, formatDate, isoToParts, parseBirthDate } from './date';
 import { AttemptKey } from './attempt-key';
+import { hasContactEmailShape } from './contact-email';
 import { clearDraft, type DraftValues, readDraft, rememberConfirmation, takeConfirmation, writeDraft } from './memory';
 import { clockTime, EntryHeader, Notice, patientName, Skeleton } from './patient-ui';
 import { useShell } from './PractitionerShell';
@@ -261,7 +262,7 @@ function IdentityForm({ mode, scope, practiceId, base, patient, expire }: {
     const date = parseBirthDate(values);
     if (!date.ok) problems.push({ id: 'dn-j', summary: date.problem.summary, detail: date.problem.detail });
     const email = values.email.trim();
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (email && !hasContactEmailShape(email)) {
       problems.push({ id: 'i-mail', summary: 'Adresse e-mail : format incorrect', detail: 'Erreur : vérifiez le format de l’adresse e-mail.' });
     }
     if (values.phone.trim().length > 40) {

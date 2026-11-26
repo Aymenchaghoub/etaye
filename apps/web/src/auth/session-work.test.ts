@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { AccessContext, Session } from '../api/generated/types.gen';
 import { contextPath, currentContexts } from './access-contexts';
 import { OUTSIDE_PATH, READ_PATH } from '../isolation/isolation-journey';
-import { allowsAccountPath, checkPausedWork, pauseWork } from './session-work';
+import { allowsAccountPath, checkPausedWork, isAccountPath, pauseWork } from './session-work';
 
 const membership = '11111111-1111-4111-8111-111111111111';
 const portal = '22222222-2222-4222-8222-222222222222';
@@ -48,6 +48,24 @@ describe('current access contexts', () => {
     const noGrants = { ...session, membershipIds: [], portalLinkIds: [] };
     expect(currentContexts(noGrants)).toBeUndefined();
     expect(currentContexts({ ...noGrants, contexts: [] })).toEqual([]);
+  });
+});
+
+describe('account route recognition', () => {
+  it('recognizes the landing, exact grant paths and directory without accepting unrelated routes', () => {
+    expect(isAccountPath('/compte')).toBe(true);
+    expect(isAccountPath(practicePath)).toBe(true);
+    expect(isAccountPath(portalPath)).toBe(true);
+    expect(isAccountPath(`${practicePath}/patients`)).toBe(true);
+    expect(isAccountPath(`${practicePath}/extra`)).toBe(false);
+    expect(isAccountPath('/compte/pratiques')).toBe(false);
+    expect(isAccountPath('/connexion')).toBe(false);
+  });
+
+  it('allows the account landing with no grant and still requires one for the directory', () => {
+    const noGrants = { ...session, membershipIds: [], portalLinkIds: [] };
+    expect(allowsAccountPath(noGrants, '/compte')).toBe(true);
+    expect(allowsAccountPath(noGrants, `${practicePath}/patients`)).toBe(false);
   });
 });
 

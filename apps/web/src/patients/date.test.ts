@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ageLabel, ageOn, daysInMonth, formatDate, isoToParts, parseBirthDate } from './date';
+import { ageLabel, ageOn, daysInMonth, EMPTY_DATE, formatDate, isoToParts, parseBirthDate } from './date';
 
 const today = new Date(2026, 10, 23); // 23 November 2026, local time
 
@@ -71,5 +71,35 @@ describe('display of a stored date', () => {
     expect(ageLabel('2025-11-23', today)).toBe('1 an');
     expect(ageLabel('1978-04-18', today)).toBe('48 ans');
     expect(ageLabel('bad', today)).toBe('');
+  });
+
+  it('asserts exact boundary and problem messages across all fields', () => {
+    expect(EMPTY_DATE).toEqual({ day: '', month: '', year: '' });
+    expect(parseBirthDate({ day: ' ', month: ' ', year: ' ' }, today)).toEqual({
+      ok: false,
+      problem: { code: 'missing', summary: 'Date de naissance : obligatoire', detail: 'Erreur : indiquez la date de naissance. Format JJ/MM/AAAA.' },
+    });
+    expect(parseBirthDate({ day: '1', month: '12', year: '1900' }, today)).toEqual({ ok: true, iso: '1900-12-01' });
+    expect(parseBirthDate({ day: '31', month: '01', year: '1900' }, today)).toEqual({ ok: true, iso: '1900-01-31' });
+    expect(parseBirthDate({ day: '10', month: '0', year: '2000' }, today)).toEqual({
+      ok: false,
+      problem: { code: 'impossible', summary: 'Date de naissance : cette date n’existe pas', detail: 'Erreur : cette date n’existe pas. Format JJ/MM/AAAA.' },
+    });
+    expect(parseBirthDate({ day: '10', month: '05', year: '1899' }, today)).toEqual({
+      ok: false,
+      problem: { code: 'year', summary: 'Date de naissance : année à vérifier', detail: 'Erreur : vérifiez l’année de naissance. Format JJ/MM/AAAA.' },
+    });
+    expect(parseBirthDate({ day: '10', month: 'aa', year: '2000' }, today)).toEqual({
+      ok: false,
+      problem: { code: 'invalid', summary: 'Date de naissance : format incorrect', detail: 'Erreur : saisissez le jour, le mois et l’année en chiffres. Format JJ/MM/AAAA.' },
+    });
+    expect(parseBirthDate({ day: '24', month: '11', year: '2026' }, today)).toEqual({
+      ok: false,
+      problem: { code: 'future', summary: 'Date de naissance : dans le futur', detail: 'Erreur : la date de naissance ne peut pas être dans le futur.' },
+    });
+    expect(ageOn('2025-11-23', today)).toBe(1);
+    expect(ageOn('2026-11-23', today)).toBe(0);
+    expect(ageOn('2025-10-30', today)).toBe(1);
+    expect(ageLabel('2024-11-23', today)).toBe('2 ans');
   });
 });

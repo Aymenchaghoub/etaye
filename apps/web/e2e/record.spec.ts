@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from '../tests/support/browser-coverage';
 
 /**
  * Real Spring, PostgreSQL and React stack for story 3.2, on the synthetic demonstration package (Claire Martin, Louis

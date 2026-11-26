@@ -1,4 +1,4 @@
-import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { createContext, type KeyboardEvent as ReactKeyboardEvent, type ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import '../../../../design/received/2026-11-03/icons.css';
 import type { AccessContext, Session } from '../api/generated/types.gen';
 import { contextPath, practiceLabel, roleLabel } from '../auth/access-contexts';
@@ -137,6 +137,9 @@ export function PractitionerShell({ session, context, contexts, select, signOut,
     setMenuOpen(false);
     navigate(path);
   };
+  const dismissGuardOnEscape = (event: ReactKeyboardEvent) => {
+    if (event.key === 'Escape') hold(null);
+  };
   const label = <>
     <span className="etaye-icone etaye-icone--18 etaye-icone--cabinet" aria-hidden="true" />
     <span>
@@ -185,11 +188,12 @@ export function PractitionerShell({ session, context, contexts, select, signOut,
           <div ref={setBannerSlot} />
           <div className="etaye-page">
             {pending && dirty.current && (
-              <div onKeyDown={(event) => { if (event.key === 'Escape') hold(null); }}>
+              <div>
                 <div className="etaye-entete">
                   <div>
                     <div className="etaye-entete__fil">
-                      <a href={patients} onClick={(event) => { event.preventDefault(); hold(null); }}>Patients</a> › {dirty.current.crumb}
+                      <a href={patients} onKeyDown={dismissGuardOnEscape}
+                        onClick={(event) => { event.preventDefault(); hold(null); }}>Patients</a> › {dirty.current.crumb}
                     </div>
                     <h1>Modifications non enregistrées</h1>
                     <div className="etaye-entete__meta">{dirty.current.label} · {practice}</div>
@@ -200,8 +204,8 @@ export function PractitionerShell({ session, context, contexts, select, signOut,
                     <p>Vous avez saisi des informations qui ne sont pas enregistrées. Si vous quittez ce formulaire, elles seront perdues.</p>
                     <div className="etaye-ligne">
                       <button ref={stay} type="button" className="etaye-bouton etaye-bouton--principal"
-                        onClick={() => hold(null)}>Rester sur le formulaire</button>
-                      <button type="button" className="etaye-bouton etaye-bouton--secondaire" onClick={() => {
+                        onKeyDown={dismissGuardOnEscape} onClick={() => hold(null)}>Rester sur le formulaire</button>
+                      <button type="button" className="etaye-bouton etaye-bouton--secondaire" onKeyDown={dismissGuardOnEscape} onClick={() => {
                         const action = pending;
                         const work = dirty.current;
                         dirty.current = null;
