@@ -1,0 +1,103 @@
+name: Package
+
+on:
+  # No path filter, like the required checks: tools/ci_scope.py decides whether the heavy steps run. The check is
+  # not required yet (D-56): it proves the delivery package builds, starts and passes the real-stack journeys.
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    # Floating scanner databases and upstream base images change without any commit.
+    - cron: '41 5 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  # Pull request runs share a group per pull request and a newer push supersedes the older run. A run for a push to
+  # main, a schedule or a manual start gets a group of its own: concurrency keeps only one pending run per group, so
+  # a shared group would silently drop the verification of a merge when two more arrive.
+  group: package-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  package:
+    name: Package verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      # One disposable Compose project on the loopback; no data or credential outlives the job.
+      COMPOSE_PROJECT_NAME: etaye-demo-ci
+      ETAYE_DEMO_WEB_PORT: '4179'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # The pull request merge commit and its first parent (the base tip) are enough to list the changed files.
+          fetch-depth: 2
+      - name: Detect relevant changes
+        id: changes
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        # Fail closed: an unknown path, a failed diff, a scheduled or a manual run verifies everything.
+        run: python3 tools/ci_scope.py --scope package --event "$EVENT_NAME" --github-output "$GITHUB_OUTPUT"
+      - name: Verify the PostgreSQL role provisioning script
+        if: steps.changes.outputs.relevant == 'true'
+        # Five cases on throwaway containers: role attributes (no superuser, no BYPASSRLS), reserved administrator
+        # name, literal passwords, loopback-only port, and a health check that follows role drift. The API tests
+        # create their own roles, so nothing else exercises the script the demonstration and local stacks use.
+        run: bash infra/local/verify-init-roles.sh
+      - name: Build and start the package (API, web, PostgreSQL, Flyway)
+        if: steps.changes.outputs.relevant == 'true'
+        # One fallback for an identified Maven Central transfer failure. Other builds and startup run once.
+        run: bash tools/build_demo_package.sh
+      - if: steps.changes.outputs.relevant == 'true'
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '26'
+      - name: Install Corepack, locked dependencies and Chromium
+        if: steps.changes.outputs.relevant == 'true'
+        run: |
+          bash tools/install_corepack.sh
+          corepack enable
+          pnpm install --frozen-lockfile
+          pnpm --filter etaye-web exec playwright install --with-deps chromium
+      - name: Run the real-stack journeys
+        if: steps.changes.outputs.relevant == 'true'
+        # The record, measurements and patients specs use real sessions, CSRF and database-backed operations.
+        # They include selected cross-practice denials and a stale-version conflict. D-56 tracks the full
+        # isolation journeys and the separate database outage spec.
+        run: bash tools/run_package_smoke.sh
+      - name: Scan the built images (report only)
+        if: steps.changes.outputs.relevant == 'true'
+        run: bash tools/run_image_scan.sh
+      - name: Collect package logs of a failed run
+        if: failure() && steps.changes.outputs.relevant == 'true'
+        run: |
+          mkdir -p reports
+          docker compose -f infra/demo/compose.yml logs --no-color --tail 400 api migrate postgres > reports/package-logs.txt
+      - name: Upload the real-stack evidence
+        if: ${{ !cancelled() && steps.changes.outputs.relevant == 'true' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: package-evidence
+          path: |
+            apps/web/playwright-report/real-*.json
+            reports/image-scan/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Upload diagnostics of a failed run
+        # Synthetic data only: Playwright traces and screenshots, plus the logs of the API, Flyway and PostgreSQL.
+        if: failure() && steps.changes.outputs.relevant == 'true'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: package-diagnostics
+          path: |
+            apps/web/test-results/
+            reports/package-logs.txt
+          if-no-files-found: ignore
+          retention-days: 7
+      - name: Remove the disposable package
+        if: ${{ always() && steps.changes.outputs.relevant == 'true' }}
+        run: docker compose -f infra/demo/compose.yml down --volumes --remove-orphans

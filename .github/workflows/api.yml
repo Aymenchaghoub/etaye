@@ -1,25 +1,23 @@
 name: API
 
 on:
-  # No path filter on pull requests: "API verify" is a required check (D-40), and a required check that
-  # never starts blocks every documentation-only pull request. The job always runs and reports; its
-  # heavy steps run only when a relevant path changed.
+  # No path filter: "API verify" is a required check (D-40), and a required check that never starts blocks
+  # every documentation-only pull request. The job always starts and reports; tools/ci_scope.py decides
+  # whether its heavy steps run, for pull requests and for pushes to main alike.
   pull_request:
   push:
     branches: [main]
-    paths:
-      - 'apps/api/**'
-      - 'tools/assert_test_reports.py'
-      - 'tools/assert_coverage_reports.py'
-      - 'tools/assert_isolation_matrix.py'
-      - '.github/workflows/api.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: api-${{ github.ref }}
-  cancel-in-progress: true
+  # Pull request runs share a group per pull request and a newer push supersedes the older run. A run for a push to
+  # main, a schedule or a manual start gets a group of its own: concurrency keeps only one pending run per group, so
+  # a shared group would silently drop the verification of a merge when two more arrive.
+  group: api-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   verify:
@@ -36,25 +34,31 @@ jobs:
         id: changes
         env:
           EVENT_NAME: ${{ github.event_name }}
-        run: |
-          # Fail closed: anything unexpected runs the full verification.
-          relevant=true
-          if [ "$EVENT_NAME" = "pull_request" ] &&
-              git diff --quiet HEAD^1 HEAD -- apps/api/ tools/assert_test_reports.py tools/assert_coverage_reports.py tools/assert_isolation_matrix.py .github/workflows/api.yml; then
-            relevant=false
-          fi
-          echo "relevant=$relevant" >> "$GITHUB_OUTPUT"
-          echo "Full API verification needed: $relevant"
+        # Fail closed: an unknown path, a failed diff or a manual run verifies everything.
+        run: python3 tools/ci_scope.py --scope api --event "$EVENT_NAME" --github-output "$GITHUB_OUTPUT"
       - if: steps.changes.outputs.relevant == 'true'
         uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
         with:
           distribution: temurin
           java-version: '25'
           cache: maven
+      - name: Check compiler debt
+        if: steps.changes.outputs.relevant == 'true'
+        run: |
+          report="$RUNNER_TEMP/compiler-debt.log"
+          if ! (cd apps/api && ./mvnw -B -ntp -Dstyle.color=never -Pcompiler-debt clean test-compile) > "$report" 2>&1; then
+            cat "$report"
+            exit 1
+          fi
+          base=()
+          if [[ "$GITHUB_EVENT_NAME" == pull_request ]]; then base=(--base HEAD^1); fi
+          python3 tools/check_quality_debt.py javac "$report" "${base[@]}"
       - name: Verify API with Testcontainers
         if: steps.changes.outputs.relevant == 'true'
         working-directory: apps/api
-        run: ./mvnw -B -ntp verify
+        run: |
+          git rev-parse HEAD > "$RUNNER_TEMP/api-coverage-started"
+          ./mvnw -B -ntp clean verify
       - name: Verify Surefire test counts
         if: steps.changes.outputs.relevant == 'true'
         # Raise the minimum whenever the suite grows.
@@ -119,14 +123,24 @@ jobs:
           retention-days: 30
       - name: Verify API coverage report
         if: steps.changes.outputs.relevant == 'true'
+        # Integrity only: the coverage floors are enforced by the JaCoCo `check` goal of `mvnw verify` (pom.xml),
+        # so the same rules fail a local build and this one.
         run: python3 tools/assert_coverage_reports.py jacoco apps/api/target/site/jacoco/jacoco.xml
+      - name: Gate coverage of the changed API lines
+        if: github.event_name == 'pull_request' && steps.changes.outputs.relevant == 'true'
+        # At least 80 % of the executable lines that this pull request adds or modifies must run in the suite.
+        run: >-
+          python3 tools/assert_changed_line_coverage.py jacoco apps/api/target/site/jacoco/jacoco.xml
+          --prefix apps/api/src/main/java/ --include 'apps/api/src/main/java/**/*.java' --min-percent 80
+          --started "$RUNNER_TEMP/api-coverage-started"
       - name: Upload API coverage
-        if: steps.changes.outputs.relevant == 'true'
+        # Also when a coverage floor failed the build: the report shows which lines to cover.
+        if: ${{ !cancelled() && steps.changes.outputs.relevant == 'true' }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: api-coverage
           path: apps/api/target/site/jacoco/
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 7
       - name: Upload Surefire reports
         if: failure() && steps.changes.outputs.relevant == 'true'

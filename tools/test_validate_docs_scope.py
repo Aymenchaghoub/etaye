@@ -53,7 +53,8 @@ class ApplicationScopeTests(unittest.TestCase):
         self.write("docs/planning-artifacts/decisions-assumptions.md", decisions)
         for name in ("apps/api/pom.xml", "apps/api/mvnw", "apps/web/package.json", "infra/local/docker-compose.yml",
                      "package.json", "pnpm-workspace.yaml", "pnpm-lock.yaml", "tsconfig.base.json",
-                     ".github/workflows/api.yml", ".github/workflows/web.yml", ".github/workflows/dependency-review.yml"):
+                     ".github/workflows/api.yml", ".github/workflows/web.yml", ".github/workflows/dependency-review.yml",
+                     ".github/workflows/package.yml"):
             self.write(name)
         self.write(".gitignore", "".join(f"{name}/\n" for name in BUILD_DIRECTORIES))
 
@@ -457,6 +458,8 @@ class ApplicationScopeTests(unittest.TestCase):
                    "apps/api/src/test/resources/fixtures/nested/patient.json",
                    "apps/web/src/components/Panel.tsx", "apps/web/src/styles.css",
                    "apps/web/tests/nested/probe.spec.ts", "apps/web/e2e/outage.spec.ts",
+                   "apps/web/vitest.config.ts", "apps/web/eslint.config.js", "apps/web/eslint-suppressions.json",
+                     "apps/web/eslint-debt.json", "apps/api/compiler-debt.json",
                    "infra/local/verify-init-roles.sh")
         unlisted = ("apps/api/extra.txt", "apps/web/public/extra.txt", "infra/local/extra.sh",
                     "apps/web/package.json/extra.txt", "apps/api/src",
@@ -466,7 +469,8 @@ class ApplicationScopeTests(unittest.TestCase):
                     "apps/api/src/main/resources/archive.zip", "apps/api/src/main/resources/nested/evil.sh",
                     "apps/api/src/test/resources/.env", "apps/web/src/nested/.env",
                     "apps/web/tests/snapshot.png", "apps/web/e2e/script.sh",
-                    "apps/api/src/main/resources/binary.txt")
+                    "apps/api/src/main/resources/binary.txt", "apps/web/eslint.config.mjs",
+                    "apps/web/eslint-suppressions.json.bak")
         for name in (*allowed, *unlisted):
             if name != "apps/api/src" and not name.startswith("apps/web/package.json/"):
                 self.write(name)
@@ -678,12 +682,14 @@ jobs:
                 for value in node:
                     check_node(value)
 
-        for name in ("api.yml", "web.yml", "dependency-review.yml"):
+        for name in ("api.yml", "web.yml", "dependency-review.yml", "package.yml"):
             with self.subTest(path=name):
                 path = ROOT / ".github/workflows" / name
                 workflow = yaml.load(path.read_text(encoding="utf-8"), Loader=UniqueKeySafeLoader)
                 self.assertEqual(workflow["permissions"], {"contents": "read"})
-                self.assertIs(workflow["concurrency"]["cancel-in-progress"], True)
+                # Pull request runs supersede each other; a merge to main is never cancelled (see api.yml).
+                self.assertIn(workflow["concurrency"]["cancel-in-progress"],
+                              (True, "${{ github.event_name == 'pull_request' }}"))
                 for job in workflow["jobs"].values():
                     self.assertGreater(job["timeout-minutes"], 0)
                     checkout = next(step for step in job["steps"] if step.get("uses", "").startswith("actions/checkout@"))

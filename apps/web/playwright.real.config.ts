@@ -9,5 +9,8 @@ export default defineConfig({
     baseURL: process.env.ETAYE_E2E_BASE_URL ?? 'http://localhost:5173',
     browserName: 'chromium',
     headless: true,
+    // Diagnostics for a failed test only; retries stay at 0 so a flake is never hidden.
+    trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
   },
 });

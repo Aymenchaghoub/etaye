@@ -6,6 +6,14 @@ prefix="etaye-init-$(openssl rand -hex 12)"
 containers=()
 failed=0
 
+# The image under test is the one the Compose file ships (pinned by digest there), not a second copy of its name.
+postgres_image=$(
+  POSTGRES_ADMIN_PASSWORD=x ETAYE_OWNER_PASSWORD=x ETAYE_RUNTIME_PASSWORD=x ETAYE_IDENTITY_PASSWORD=x \
+    docker compose -f "$script_dir/docker-compose.yml" config --format json |
+    python3 -c 'import json, sys; print(json.load(sys.stdin)["services"]["postgres"]["image"])'
+)
+[[ -n "$postgres_image" ]]
+
 cleanup() {
   if (( ${#containers[@]} )); then
     docker rm --force --volumes "${containers[@]}" >/dev/null 2>&1 || true
@@ -29,7 +37,7 @@ start_postgres() {
       --env POSTGRES_HOST_AUTH_METHOD=scram-sha-256 \
       --env ETAYE_OWNER_PASSWORD --env ETAYE_RUNTIME_PASSWORD --env ETAYE_IDENTITY_PASSWORD \
       --volume "$script_dir/init-roles.sh:/docker-entrypoint-initdb.d/01-init-roles.sh:ro,z" \
-      postgres:18 >/dev/null
+      "$postgres_image" >/dev/null
 }
 
 before_deadline() {

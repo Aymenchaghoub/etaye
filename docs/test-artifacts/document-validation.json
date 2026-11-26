@@ -1,10 +1,10 @@
 {
   "kind": "documentary-validation-only",
-  "date": "2026-11-25",
+  "date": "2026-11-26",
   "ok": true,
   "checks": {
-    "markdownFiles": 149,
-    "localLinks": 2147,
+    "markdownFiles": 150,
+    "localLinks": 2169,
     "apiOperations": 101,
     "apiSchemas": 102,
     "planningStories": 45,
@@ -32,7 +32,7 @@
       ],
       "trackedBuildOutputCheck": "checked with git ls-files"
     },
-    "projectFilesSecretScanned": 240
+    "projectFilesSecretScanned": 251
   },
   "errors": [],
   "applicationTestsExecuted": false,

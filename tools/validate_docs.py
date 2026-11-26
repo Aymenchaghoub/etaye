@@ -128,7 +128,7 @@ def check_application_scope(root, errors):
     workflows = {"documentation.yml", "codeql.yml", "architecture-pages.yml"}
     forbidden = ("pom.xml", "src", "compose.yaml", "docker-compose.yml")
     if authorized:
-        workflows.update({"api.yml", "web.yml", "dependency-review.yml"})
+        workflows.update({"api.yml", "web.yml", "dependency-review.yml", "package.yml"})
         forbidden += ("packages",)
     else:
         forbidden += ("package.json", "apps", "infra")
@@ -227,7 +227,9 @@ def check_application_scope(root, errors):
                 continue
             if not application_path:
                 continue
-            if name == "apps/web/vitest.config.ts":
+            # Exact paths for quality-check configuration and the bounded debt evidence.
+            if name in {"apps/api/compiler-debt.json", "apps/web/vitest.config.ts", "apps/web/eslint.config.js",
+                        "apps/web/eslint-suppressions.json", "apps/web/eslint-debt.json"}:
                 continue
             if "10.2" in authorized_stories and STORY_10_2_TRACKED_PATH.fullmatch(name):
                 continue

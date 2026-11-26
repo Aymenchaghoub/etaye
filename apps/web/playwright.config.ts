@@ -15,6 +15,9 @@ export default defineConfig({
   use: {
     baseURL,
     browserName: 'chromium',
-    headless: true
+    headless: true,
+    // A screenshot of a failed test only. Recording a trace on every test cost about 50 s (35 %) of this suite in CI,
+    // so CI reruns the failed tests with `--trace on` instead (see .github/workflows/web.yml). Retries stay at 0.
+    screenshot: 'only-on-failure'
   }
 });
