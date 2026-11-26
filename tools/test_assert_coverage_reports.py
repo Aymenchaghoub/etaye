@@ -14,8 +14,9 @@ class CoverageReportsTest(unittest.TestCase):
         self.report = Path(directory.name) / "coverage"
 
     def test_lcov_retains_uncovered_files_in_total(self):
-        self.report.write_text("SF:used.ts\nLF:3\nLH:2\nend_of_record\n"
-                               "SF:unused.ts\nLF:2\nLH:0\nend_of_record\n")
+        self.report.write_text("SF:used.ts\nDA:1,1\nDA:2,0\nDA:3,2\nLF:3\nLH:2\n"
+                               "BRDA:2,0,0,-\nBRDA:2,0,1,1\nBRF:2\nBRH:1\nend_of_record\n"
+                               "SF:unused.ts\nDA:1,0\nDA:2,0\nLF:2\nLH:0\nend_of_record\n")
         with redirect_stdout(StringIO()) as output:
             self.assertEqual(main(["lcov", str(self.report)]), 0)
         self.assertIn("2/5 (40.00%)", output.getvalue())
@@ -33,12 +34,17 @@ class CoverageReportsTest(unittest.TestCase):
                 self.assertIn(f"FAIL {kind}", error.getvalue())
 
     def test_a_valid_jacoco_report_passes(self):
-        self.report.write_text('<report name="x"><package name="p"><sourcefile name="A.java">'
-                               '<line nr="1" mi="0" ci="2"/></sourcefile></package>'
-                               '<counter type="LINE" missed="1" covered="3"/></report>')
+        instructions = '<counter type="INSTRUCTION" missed="1" covered="2"/>'
+        lines = '<counter type="LINE" missed="1" covered="1"/>'
+        self.report.write_text('<report name="x"><package name="p">'
+                               f'<class name="p/A">{instructions}</class><sourcefile name="A.java">'
+                               '<line nr="1" mi="0" ci="2" mb="0" cb="0"/>'
+                               '<line nr="2" mi="1" ci="0" mb="0" cb="0"/>'
+                               f'{instructions}{lines}</sourcefile>{instructions}{lines}</package>'
+                               f'{instructions}{lines}</report>')
         with redirect_stdout(StringIO()) as output:
             self.assertEqual(main(["jacoco", str(self.report)]), 0)
-        self.assertIn("3/4 (75.00%)", output.getvalue())
+        self.assertIn("1/2 (50.00%)", output.getvalue())
 
     def test_jacoco_reports_with_missing_or_inconsistent_evidence_fail(self):
         lines = '<sourcefile name="A.java"><line nr="1" mi="0" ci="2"/></sourcefile>'
@@ -62,12 +68,19 @@ class CoverageReportsTest(unittest.TestCase):
                 self.assertIn("FAIL jacoco", error.getvalue())
 
     def test_lcov_records_with_inconsistent_evidence_fail(self):
+        measured = "SF:a.ts\nDA:1,1\nLF:1\nLH:1\n"
         for label, body in (
             ("hits above the line count", "SF:a.ts\nLF:2\nLH:3\nend_of_record\n"),
             ("negative hits", "SF:a.ts\nLF:2\nLH:-1\nend_of_record\n"),
             ("missing source path", "LF:2\nLH:1\nend_of_record\n"),
             ("missing counters", "SF:a.ts\nend_of_record\n"),
             ("non-numeric counters", "SF:a.ts\nLF:two\nLH:1\nend_of_record\n"),
+            ("claimed hits without DA records", "SF:a.ts\nLF:2\nLH:1\nend_of_record\n"),
+            ("duplicate source", (measured + "end_of_record\n") * 2),
+            ("negative branch hits", measured + "BRDA:1,0,0,-2\nBRF:1\nBRH:0\nend_of_record\n"),
+            ("duplicate branch", measured + "BRDA:1,0,0,1\nBRDA:1,0,0,1\nBRF:2\nBRH:2\nend_of_record\n"),
+            ("claimed branch hits disagree", measured + "BRDA:1,0,0,0\nBRF:1\nBRH:1\nend_of_record\n"),
+            ("branch summary missing", measured + "BRDA:1,0,0,1\nend_of_record\n"),
             ("empty file", ""),
         ):
             with self.subTest(label):
@@ -96,12 +109,14 @@ class CoverageReportsTest(unittest.TestCase):
         self.assertIn("2/3 (66.67%)", output.getvalue())
 
     def test_cobertura_reports_with_missing_or_inconsistent_evidence_fail(self):
+        parsed_line = '<class filename="a.py"><lines><line number="1" hits="1"/></lines></class>'
         for label, body in (
             ("wrong root element", '<report lines-valid="1" lines-covered="1"/>'),
             ("zero covered lines", '<coverage lines-valid="2" lines-covered="0"><packages><package name="t"><classes><class filename="a.py"><lines><line number="1" hits="0"/><line number="2" hits="0"/></lines></class></classes></package></packages></coverage>'),
             ("missing class filename", '<coverage lines-valid="1" lines-covered="1"><packages><package name="t"><classes><class name="a.py"><lines><line number="1" hits="1"/></lines></class></classes></package></packages></coverage>'),
             ("disagreeing counters", '<coverage lines-valid="2" lines-covered="2"><packages><package name="t"><classes><class filename="a.py"><lines><line number="1" hits="1"/><line number="2" hits="0"/></lines></class></classes></package></packages></coverage>'),
             ("duplicate line number", '<coverage lines-valid="2" lines-covered="2"><packages><package name="t"><classes><class filename="a.py"><lines><line number="1" hits="1"/><line number="1" hits="1"/></lines></class></classes></package></packages></coverage>'),
+            ("duplicate file", f'<coverage lines-valid="2" lines-covered="2">{parsed_line * 2}</coverage>'),
             ("entity declaration", '<!DOCTYPE coverage [<!ENTITY x "1">]><coverage lines-valid="1" lines-covered="1"/>'),
         ):
             with self.subTest(label):
