@@ -289,6 +289,7 @@ class RepositoryTest(unittest.TestCase):
         self.assertTrue(policy.check_repository(self.directory({})))
 
     def test_the_repository_workflows_satisfy_the_policy(self):
+        self.assertIn("Dependency review", policy.REQUIRED_JOB_NAMES)
         self.assertEqual(policy.check_repository(ROOT / ".github/workflows"), [])
         names = {path.name for path in (ROOT / ".github/workflows").glob("*.yml")}
         self.assertTrue({"api.yml", "web.yml", "dependency-review.yml"} <= names,

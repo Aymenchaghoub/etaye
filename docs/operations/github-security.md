@@ -82,6 +82,10 @@ Prepared on 2026-11-26 by the [SonarQube Cloud integration](sonarqube-cloud.md) 
 - Official pinned scanners (`sonar-maven-plugin` `5.9.0.7382`, `@sonar/scan` `5.1.0`, `pysonar` `1.11.0.6012` hash-locked) require zero third-party GitHub Actions; the `selected-actions` allowlist and the seven required ruleset checks remain unchanged.
 - `tools/check_workflow_policy.py` enforces a narrow, explicit `pull_request` secret exception for `sonarqube.yml` (`SONAR_TOKEN` only, `branches: [main]`, step-only `env`, job-level `trusted == 'true'` guard).
 
+Authorized on 2026-11-26 ([PR #81](https://github.com/Aymenchaghoub/etaye/pull/81)):
+
+- `Dependency review` (GitHub Actions `15368`) is promoted to the eighth required check in ruleset `26390376` alongside `Planning package checks`, `Analyze tooling`, `Analyze API (Java)`, `Analyze Web (TypeScript)`, `API verify`, `Web verify` and `CodeQL` (`57789`). `.github/workflows/dependency-review.yml` triggers on all `pull_request` events targeting `main` (without a `types:` filter), and `tools/check_workflow_policy.py` (`REQUIRED_JOB_NAMES`) enforces it locally. `Package verify` and `SonarQube Cloud` stay optional during observation.
+
 Generic-pattern and partner-validity options were not enabled: their current individual setup documentation requires organization-owned repositories with Secret Protection. Full-history Gitleaks provides the separate generic-pattern scan without a paid entitlement. [Generic patterns](https://docs.github.com/en/code-security/how-tos/secure-your-secrets/detect-secret-leaks/enabling-secret-scanning-for-generic-patterns), [partner validity checks](https://docs.github.com/en/code-security/how-tos/secure-your-secrets/customize-leak-detection/enable-validity-checks).
 
 This record covers CI checks and repository controls. See the [continuation record](../continuation.md#cicd-audit-two-corrections-in-review--2026-11-25) for the execution scope of the application checks on PR #72.
