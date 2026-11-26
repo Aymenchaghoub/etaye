@@ -4,7 +4,7 @@ Observation started on 2026-11-26 when [PR #73](https://github.com/Aymenchaghoub
 
 ## Package verify
 
-At least ten distinct pull requests opened after PR #73 must execute the heavy verification before the owner reviews whether to make `Package verify` required. Count a PR once, using the run for its latest assessed head and recording the run link. The role verifier, four-image build/start, real-stack journeys and Trivy scan must all have executed. Log a failure even if a later step was skipped. Exclude path-only skips, cancelled runs, reruns of a counted PR, the PR #73 pilot, pushes to `main`, and scheduled or manual runs from the count. Keep the status optional throughout observation. [Package workflow](https://github.com/Aymenchaghoub/etaye/actions/workflows/package.yml)
+At least ten distinct pull requests opened after PR #73 must execute the heavy verification before the owner reviews whether to make `Package verify` required. Count a PR once, using the run for its latest assessed head and recording the run link. A successful observation requires the role verifier, four-image build/start, real-stack journeys and Trivy scan to have executed. Also count and diagnose a heavy verification failure, even if it prevents later steps from running (see PR #79). Exclude path-only skips, cancelled runs, reruns of a counted PR, the PR #73 pilot, pushes to `main`, and scheduled or manual runs from the count. Keep the status optional throughout observation. [Package workflow](https://github.com/Aymenchaghoub/etaye/actions/workflows/package.yml)
 
 For each PR, use the run in its Checks tab. Record the head, check conclusion and whether the four steps actually executed. A later head or a changed rerun outcome updates the existing row. Diagnose and document any unexplained failure before proposing a required status.
 
@@ -17,7 +17,7 @@ gh run view <package-run-id> --json headSha,event,conclusion,url,jobs --jq '
           | {name,status,conclusion}]}'
 ```
 
-**Current count** 7/10 (launch at 0/10; counter never reset). The first `main` push after PR #73 passed all four heavy steps and provides baseline evidence separately from the PR count. [Main baseline run](https://github.com/Aymenchaghoub/etaye/actions/runs/45794380012)
+**Current count** 12 assessed PRs against the 10-PR threshold: 11 completed all four heavy steps successfully and one diagnosed application build failure. The threshold is met. The first `main` push after PR #73 passed all four heavy steps and provides baseline evidence separately from the PR count. [Main baseline run](https://github.com/Aymenchaghoub/etaye/actions/runs/45794380012)
 
 <!-- observation-rows -->
 | PR | Assessed head and Package run | Role / build / browser / scan | Outcome and counting decision |
@@ -31,13 +31,32 @@ gh run view <package-run-id> --json headSha,event,conclusion,url,jobs --jq '
 | [PR #80](https://github.com/Aymenchaghoub/etaye/pull/80) (`@types/node` 26.6.6) | `404bcbc` · [45813437617](https://github.com/Aymenchaghoub/etaye/actions/runs/45813437617) | pass / pass / pass / pass | **6/10.** Passed all four heavy steps on final rebased head (`@types/node` aligns with ADR-002 / Node 26). Merged as `ee037bb`. |
 | [PR #81](https://github.com/Aymenchaghoub/etaye/pull/81) (`docs/ci-observation`) | `6bd5669` · [45808930268](https://github.com/Aymenchaghoub/etaye/actions/runs/45808930268) | skip / skip / skip / skip | **Excluded.** Path-only skip; heavy steps did not execute. Merged as `52e2337`. |
 | [PR #82](https://github.com/Aymenchaghoub/etaye/pull/82) (SonarQube Cloud) | `f02d16e` · [45805181905](https://github.com/Aymenchaghoub/etaye/actions/runs/45805181905) | pass / pass / pass / pass | **7/10.** Passed all four heavy steps (role verifier, four-image build, 11 real-stack browser tests, four Trivy scans). Merged as `52d672e`. |
+| [PR #84](https://github.com/Aymenchaghoub/etaye/pull/84) (coverage report integrity) | `193cf90` · [45892171237](https://github.com/Aymenchaghoub/etaye/actions/runs/45892171237) | pass / pass / pass / pass | **8/10.** All four steps executed. |
+| [PR #85](https://github.com/Aymenchaghoub/etaye/pull/85) (API hardening) | `9cf30a0` · [45894517250](https://github.com/Aymenchaghoub/etaye/actions/runs/45894517250) | pass / pass / pass / pass | **9/10.** All four steps executed. |
+| [PR #86](https://github.com/Aymenchaghoub/etaye/pull/86) (proxy headers) | `0c11cdf` · [45891616410](https://github.com/Aymenchaghoub/etaye/actions/runs/45891616410) | pass / pass / pass / pass | **10/10.** All four steps executed. |
+| [PR #87](https://github.com/Aymenchaghoub/etaye/pull/87) (tooling and CI) | `9d6c38b` · [45890705704](https://github.com/Aymenchaghoub/etaye/actions/runs/45890705704) | pass / pass / pass / pass | **11/10.** All four steps executed. |
+| [PR #88](https://github.com/Aymenchaghoub/etaye/pull/88) (Web tests and coverage) | `8d93ae5` · [45893643404](https://github.com/Aymenchaghoub/etaye/actions/runs/45893643404) | pass / pass / pass / pass | **12/10.** All four steps executed. |
+| [PR #89](https://github.com/Aymenchaghoub/etaye/pull/89) (operations documentation) | `861b6f2` · [45895113332](https://github.com/Aymenchaghoub/etaye/actions/runs/45895113332) | skip / skip / skip / skip | **Excluded.** The successful wrapper classified a documentation-only change. |
 <!-- /observation-rows -->
 
 ## SonarQube Cloud
 
 SonarQube Cloud (Free plan, [`aymenchaghoub`](https://sonarcloud.io/organizations/aymenchaghoub/projects)) landed via [PR #82](https://github.com/Aymenchaghoub/etaye/pull/82) (`52d672e`) and stays optional across at least ten eligible authenticated PRs (excluding Dependabot/fork PRs skipped by `preflight` and path-only skips). [Operations guide](sonarqube-cloud.md)
 
-**Current eligible PR count** 2/10 (`PR #82` `f02d16e` · [45805182021](https://github.com/Aymenchaghoub/etaye/actions/runs/45805182021): API `OK`, Web `OK`, Tooling `OK`; `PR #81` `6bd5669` · [45808930297](https://github.com/Aymenchaghoub/etaye/actions/runs/45808930297): Tooling `OK`, API/Web skipped). Latest `main` baseline (`ee037bb` · [45814104381](https://github.com/Aymenchaghoub/etaye/actions/runs/45814104381)): API `5,635` NCLOC (`89.5%` line / `16` historical issues), Web `6,578` NCLOC (`17.1%` line / `2` historical issues), Tooling `4,352` NCLOC (`53.0%` line / `14` historical issues); all three projects report `Quality Gate OK`.
+**Current eligible PR count** 6/10. Count one authenticated pull request if any in-scope scanner executes. A path-skipped project adds no project execution, and an entirely skipped PR adds no observation.
+
+| PR | Assessed head and run | API / Web / Tooling scan steps | Decision |
+| --- | --- | --- | --- |
+| #82 | `f02d16e` · [45805182021](https://github.com/Aymenchaghoub/etaye/actions/runs/45805182021) | pass / pass / pass | Counted. |
+| #81 | `6bd5669` · [45808930297](https://github.com/Aymenchaghoub/etaye/actions/runs/45808930297) | skip / skip / pass | Counted. |
+| #84 | `193cf90` · [45892171265](https://github.com/Aymenchaghoub/etaye/actions/runs/45892171265) | pass / pass / pass | Counted. |
+| #85 | `9cf30a0` · [45894517170](https://github.com/Aymenchaghoub/etaye/actions/runs/45894517170) | pass / skip / skip | Counted. |
+| #86 | `0c11cdf` · [45891616358](https://github.com/Aymenchaghoub/etaye/actions/runs/45891616358) | skip / skip / skip | Excluded on path scope. |
+| #87 | `9d6c38b` · [45890705667](https://github.com/Aymenchaghoub/etaye/actions/runs/45890705667) | pass / pass / pass | Counted. |
+| #88 | `8d93ae5` · [45893643329](https://github.com/Aymenchaghoub/etaye/actions/runs/45893643329) | pass / pass / pass | Counted. |
+| #89 | `861b6f2` · [45895113442](https://github.com/Aymenchaghoub/etaye/actions/runs/45895113442) | skip / skip / skip | Excluded on path scope. |
+
+Project execution counts within the six observations are API 5, Web 4 and Tooling 5. All executed scan steps passed. The [exact integrated main analysis](https://github.com/Aymenchaghoub/etaye/actions/runs/45895446497) passed all three scanners and contributes no PR observation. [Integrated metrics](quality-baseline.md#verified-integrated-main-at-b4e8ff9)
 
 ## Upstream image vulnerabilities
 
@@ -53,4 +72,8 @@ Review weekly and on affected Dependabot PRs. Record the upstream source, curren
 
 ## Dependency review and delivery scope
 
-`Dependency review` is active as the eighth required check in [main ruleset 26390376](https://github.com/Aymenchaghoub/etaye/rules/26390376) (`integration_id: 15368`, `bypass_actors: []`), synchronized with `.github/workflows/dependency-review.yml` and `tools/check_workflow_policy.py` via PR #81 (`52e2337`). `Package verify` (`7/10`) and `SonarQube Cloud` (`2/10`) remain optional during their respective 10-PR observations. SBOM, provenance and promotion remain deferred to release planning.
+`Dependency review` is active as the eighth required check in [main ruleset 26390376](https://github.com/Aymenchaghoub/etaye/rules/26390376) (`integration_id: 15368`, strict updates, no bypass actors). The policy tool checks seven workflow-owned job names. The GitHub code-scanning integration independently emits the eighth `CodeQL` context (`integration_id: 57789`).
+
+**Proposed owner decision:** require `Package verify` as the ninth check, bound to GitHub Actions (`integration_id: 15368`). First prepare a repository change that adds that job to the policy's required-name checks and their tests, then verify a relevant PR and a documentation-only PR before updating the ruleset. Keep the other eight contexts, strict status policy, and bypass settings. The Package job starts for every pull request, including forks and Dependabot, with read-only permissions and disposable credentials. An irrelevant path permits a documented heavy-step skip while retaining the job context. Keep Trivy findings report-only under the existing policy while treating scanner execution failure as failed verification. Monitor registry, Maven transport and runner/browser reliability after promotion. The observed failure in PR #79 caught a TypeScript/toolchain incompatibility and justified rejecting that update.
+
+Keep all three SonarQube jobs optional. The shared observation threshold remains unmet and checks depend on an external service and trusted-only credentials. Fork and Dependabot runs skip scanners deliberately. A missing token on a trusted, in-scope run fails the relevant scanner job. Continue secret-free native gates and trusted-main scanner verification, with no elevated PR trigger. Revisit promotion only after the ten eligible PRs and an explicit policy for absent analysis. This proposal leaves ruleset 26390376 unchanged.
