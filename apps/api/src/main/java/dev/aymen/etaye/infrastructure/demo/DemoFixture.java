@@ -1,7 +1,9 @@
 package dev.aymen.etaye.infrastructure.demo;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.QueryTimeoutException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -24,23 +26,52 @@ public class DemoFixture {
     private static final UUID OPERATOR = UUID.fromString("2f18200a-ecb4-9aaa-9c5b-90342bb450e8");
 
     private final JdbcTemplate jdbc;
+    private final String managedDatabaseName;
     // The local package runs one API replica. Hold reads through the Spring Session save.
     private final ReentrantReadWriteLock barrier = new ReentrantReadWriteLock(true);
     private final AtomicBoolean resetPending = new AtomicBoolean();
 
-    public DemoFixture(JdbcTemplate jdbc) {
+    public DemoFixture(
+            JdbcTemplate jdbc,
+            @Value("${etaye.demo.managed-database-name:}") String managedDatabaseName) {
         this.jdbc = jdbc;
+        this.managedDatabaseName = managedDatabaseName.strip();
     }
 
     @PostConstruct
     void verifyDatabase() {
-        Boolean dedicated = jdbc.queryForObject("""
-                SELECT current_database() = 'etaye_demo' AND EXISTS (
-                    SELECT FROM pg_namespace WHERE nspname = 'etaye_demo_bootstrap'
-                        AND nspowner = 'postgres'::regrole)
-                """, Boolean.class);
-        if (!Boolean.TRUE.equals(dedicated) || version() == null) {
+        Boolean dedicated;
+        if (managedDatabaseName.isEmpty()) {
+            // to_regrole avoids ERROR 42704 when a managed cluster lacks a 'postgres' role.
+            dedicated = jdbc.queryForObject("""
+                    SELECT current_database() = 'etaye_demo' AND EXISTS (
+                        SELECT FROM pg_namespace WHERE nspname = 'etaye_demo_bootstrap'
+                            AND nspowner = to_regrole('postgres'))
+                    """, Boolean.class);
+        } else {
+            dedicated = jdbc.queryForObject("""
+                    SELECT current_database() = ? AND current_database() ~ '^etaye_demo_[a-z0-9_]{1,52}$'
+                        AND EXISTS (
+                            SELECT FROM pg_catalog.pg_namespace n
+                            JOIN pg_catalog.pg_database d ON d.datname = current_database() AND d.datdba = n.nspowner
+                            JOIN pg_catalog.pg_roles r ON r.oid = n.nspowner
+                            WHERE n.nspname = 'etaye_demo_bootstrap'
+                                AND r.rolname NOT IN ('etaye_owner', 'etaye_runtime', 'etaye_identity')
+                        ) AND EXISTS (
+                            SELECT FROM pg_catalog.pg_class c
+                            JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+                            WHERE n.nspname = 'etaye_demo' AND n.nspowner = to_regrole('etaye_owner')
+                                AND c.relname = 'fixture' AND c.relkind = 'r' AND c.relowner = n.nspowner
+                        )
+                    """, Boolean.class, managedDatabaseName);
+        }
+        if (!Boolean.TRUE.equals(dedicated)) {
             throw new IllegalStateException("The demo requires a provisioned synthetic database");
+        }
+        try {
+            version();
+        } catch (EmptyResultDataAccessException ex) {
+            throw new IllegalStateException("The demo requires a provisioned synthetic database", ex);
         }
     }
 

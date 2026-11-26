@@ -90,6 +90,7 @@ jobs:
           --require-suite dev.aymen.etaye.infrastructure.security.BrowserCorsConfigTest
           --require-suite dev.aymen.etaye.infrastructure.web.ApiMetaControllerTest
           --require-suite dev.aymen.etaye.infrastructure.demo.DemoHttpTest
+          --require-suite dev.aymen.etaye.infrastructure.demo.DemoFixtureManagedTest
           --require-suite dev.aymen.etaye.isolation.ResourceIsolationMatrixHttpTest
           --require-suite dev.aymen.etaye.records.PatientSearchAndRegistrationHttpTest
           --require-suite dev.aymen.etaye.records.PatientSearchMigrationTest
