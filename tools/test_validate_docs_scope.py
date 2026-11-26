@@ -54,7 +54,7 @@ class ApplicationScopeTests(unittest.TestCase):
         for name in ("apps/api/pom.xml", "apps/api/mvnw", "apps/web/package.json", "infra/local/docker-compose.yml",
                      "package.json", "pnpm-workspace.yaml", "pnpm-lock.yaml", "tsconfig.base.json",
                      ".github/workflows/api.yml", ".github/workflows/web.yml", ".github/workflows/dependency-review.yml",
-                     ".github/workflows/package.yml"):
+                     ".github/workflows/package.yml", ".github/workflows/sonarqube.yml"):
             self.write(name)
         self.write(".gitignore", "".join(f"{name}/\n" for name in BUILD_DIRECTORIES))
 
@@ -666,7 +666,7 @@ jobs:
 
     def test_workflows_use_allowlisted_pinned_actions_with_read_only_permissions(self):
         allowed_actions = {"actions/checkout", "actions/setup-java", "actions/setup-node",
-                           "actions/upload-artifact", "actions/dependency-review-action"}
+                           "actions/upload-artifact", "actions/dependency-review-action", "astral-sh/setup-uv"}
 
         def check_node(node):
             if isinstance(node, dict):
@@ -682,7 +682,7 @@ jobs:
                 for value in node:
                     check_node(value)
 
-        for name in ("api.yml", "web.yml", "dependency-review.yml", "package.yml"):
+        for name in ("api.yml", "web.yml", "dependency-review.yml", "package.yml", "sonarqube.yml"):
             with self.subTest(path=name):
                 path = ROOT / ".github/workflows" / name
                 workflow = yaml.load(path.read_text(encoding="utf-8"), Loader=UniqueKeySafeLoader)

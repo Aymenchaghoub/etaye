@@ -180,6 +180,44 @@ class WorkflowInvariantTest(unittest.TestCase):
                          "          EVENT: ${{ github.event_name }}\n          TOKEN: ${{ secrets.GITHUB_TOKEN }}\n")
         self.assertEqual(problems(allowed), [])
 
+    def test_sonarqube_secret_exception_enforces_narrow_guards(self):
+        sonar_base = f"""\
+name: SonarQube Cloud
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: sonarqube-${{{{ github.ref }}}}
+  cancel-in-progress: ${{{{ github.event_name == 'pull_request' }}}}
+jobs:
+  scan:
+    name: SonarQube Scan
+    if: needs.preflight.outputs.trusted == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@{SHA} # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Scan
+        env:
+          SONAR_TOKEN: ${{{{ secrets.SONAR_TOKEN }}}}
+        run: echo ok
+"""
+        self.assertEqual(policy.check_workflow("sonarqube.yml", sonar_base), [])
+        self.assertTrue(any("may only read ['SONAR_TOKEN']" in msg for msg in policy.check_workflow(
+            "sonarqube.yml", sonar_base.replace("secrets.SONAR_TOKEN", "secrets.OTHER_TOKEN"))))
+        self.assertTrue(any("branches to [main]" in msg for msg in policy.check_workflow(
+            "sonarqube.yml", sonar_base.replace("    branches: [main]\n", "", 1))))
+        self.assertTrue(any("job scan env must not expose" in msg for msg in policy.check_workflow(
+            "sonarqube.yml", sonar_base.replace("    timeout-minutes: 15\n", "    timeout-minutes: 15\n    env:\n      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}\n"))))
+        self.assertTrue(any("without gating on trusted == 'true'" in msg for msg in policy.check_workflow(
+            "sonarqube.yml", sonar_base.replace("    if: needs.preflight.outputs.trusted == 'true'\n", ""))))
+
     def test_unknown_classifier_scope_is_rejected(self):
         text = mutate('run: echo "$EVENT"', 'run: python3 tools/ci_scope.py --scope mobile --event "$EVENT"')
         self.assert_flags(text, "unknown scope 'mobile'")

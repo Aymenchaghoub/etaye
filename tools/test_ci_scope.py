@@ -25,29 +25,31 @@ def scopes_of(*paths):
 
 class PathScenarioTest(unittest.TestCase):
     def test_api_only_change(self):
-        self.assertEqual(scopes_of("apps/api/src/main/java/dev/aymen/etaye/Foo.java"), {"api", "package"})
-        self.assertEqual(scopes_of("apps/api/pom.xml"), {"api", "package"})
+        self.assertEqual(scopes_of("apps/api/src/main/java/dev/aymen/etaye/Foo.java"), {"api", "package", "sonar-api"})
+        self.assertEqual(scopes_of("apps/api/pom.xml"), {"api", "package", "sonar-api"})
 
     def test_web_only_change(self):
-        self.assertEqual(scopes_of("apps/web/src/record/asof.ts"), {"web", "package"})
-        self.assertEqual(scopes_of("apps/web/eslint.config.js"), {"web", "package"})
+        self.assertEqual(scopes_of("apps/web/src/record/asof.ts"), {"web", "package", "sonar-web"})
+        self.assertEqual(scopes_of("apps/web/eslint.config.js"), {"web", "package", "sonar-web"})
 
     def test_contract_change_reaches_web_and_package_but_not_api(self):
         # The API does not read the contract today; D-56 and the contract-conformance deferral track that gap.
-        self.assertEqual(scopes_of("docs/contracts/openapi.yaml"), {"web", "package"})
+        self.assertEqual(scopes_of("docs/contracts/openapi.yaml"), {"web", "package", "sonar-web"})
 
     def test_api_tests_are_not_part_of_the_delivery_package(self):
-        self.assertEqual(scopes_of("apps/api/src/test/java/dev/aymen/etaye/FooTest.java"), {"api"})
-        self.assertEqual(scopes_of("apps/api/src/test/resources/isolation/matrix-cases.json"), {"api", "web"})
+        self.assertEqual(scopes_of("apps/api/src/test/java/dev/aymen/etaye/FooTest.java"), {"api", "sonar-api"})
+        self.assertEqual(scopes_of("apps/api/src/test/resources/isolation/matrix-cases.json"),
+                         {"api", "web", "sonar-api", "sonar-web"})
 
     def test_migration_change_reaches_api_and_package(self):
-        self.assertEqual(scopes_of("apps/api/src/main/resources/db/migration/V13__x.sql"), {"api", "package"})
+        self.assertEqual(scopes_of("apps/api/src/main/resources/db/migration/V13__x.sql"),
+                         {"api", "package", "sonar-api"})
 
     def test_shared_typescript_configuration_and_lockfile(self):
-        self.assertEqual(scopes_of("tsconfig.base.json"), {"web", "package"})
-        self.assertEqual(scopes_of("pnpm-lock.yaml"), {"web", "package", "pnpm"})
-        self.assertEqual(scopes_of("apps/web/package.json"), {"web", "package", "pnpm"})
-        self.assertEqual(scopes_of("package.json"), {"web", "package", "pnpm"})
+        self.assertEqual(scopes_of("tsconfig.base.json"), {"web", "package", "sonar-web"})
+        self.assertEqual(scopes_of("pnpm-lock.yaml"), {"web", "package", "pnpm", "sonar-web"})
+        self.assertEqual(scopes_of("apps/web/package.json"), {"web", "package", "pnpm", "sonar-web"})
+        self.assertEqual(scopes_of("package.json"), {"web", "package", "pnpm", "sonar-web"})
 
     def test_design_tokens_icons_and_logos(self):
         for path in (
@@ -56,24 +58,36 @@ class PathScenarioTest(unittest.TestCase):
             "design/received/2026-11-03/export/etaye-design-system/fonts/Inter.woff2",
             "design/offline-reference/site/logos/etaye-logo.svg",
             "tools/fixtures/etaye-tokens.golden.css",
-            "tools/generate_web_tokens.py",
         ):
             with self.subTest(path=path):
-                self.assertEqual(scopes_of(path), {"web", "package"})
+                self.assertEqual(scopes_of(path), {"web", "package", "sonar-web"})
+        self.assertEqual(scopes_of("tools/generate_web_tokens.py"),
+                         {"web", "package", "sonar-web", "sonar-tooling"})
 
     def test_isolation_manifest_is_read_by_api_and_web(self):
-        self.assertEqual(scopes_of("apps/api/src/test/resources/isolation/matrix-cases.json"), {"api", "web"})
+        self.assertEqual(scopes_of("apps/api/src/test/resources/isolation/matrix-cases.json"),
+                         {"api", "web", "sonar-api", "sonar-web"})
 
     def test_ci_scripts_and_workflows_verify_themselves(self):
         self.assertEqual(scopes_of("tools/ci_scope.py"), set(ci_scope.SCOPES))
-        self.assertEqual(scopes_of("tools/assert_test_reports.py"), {"api", "web", "package"})
+        self.assertEqual(scopes_of("tools/assert_test_reports.py"), {"api", "web", "package", "sonar-tooling"})
+        self.assertEqual(scopes_of("tools/assert_coverage_reports.py"),
+                         {"api", "web", "sonar-api", "sonar-web", "sonar-tooling"})
         self.assertEqual(scopes_of("tools/run_package_smoke.sh"), {"package"})
         self.assertEqual(scopes_of("tools/run_image_scan.sh"), {"package"})
-        self.assertEqual(scopes_of("tools/install_corepack.sh"), {"web", "package", "pnpm"})
-        self.assertEqual(scopes_of("tools/assert_isolation_matrix.py"), {"api"})
+        self.assertEqual(scopes_of("tools/install_corepack.sh"), {"web", "package", "pnpm", "sonar-web"})
+        self.assertEqual(scopes_of("tools/assert_isolation_matrix.py"), {"api", "sonar-api", "sonar-tooling"})
         self.assertEqual(scopes_of(".github/workflows/api.yml"), {"api"})
         self.assertEqual(scopes_of(".github/workflows/web.yml"), {"web"})
         self.assertEqual(scopes_of(".github/workflows/dependency-review.yml"), {"pnpm"})
+        self.assertEqual(scopes_of(".github/workflows/sonarqube.yml"),
+                         {"sonar-api", "sonar-web", "sonar-tooling"})
+
+    def test_sonarqube_config_files_trigger_only_their_project(self):
+        self.assertEqual(scopes_of("apps/web/sonar-project.properties"), {"sonar-web"})
+        self.assertEqual(scopes_of("tools/pyproject.toml"), {"sonar-tooling"})
+        self.assertEqual(scopes_of("tools/sonar-requirements.txt"), {"sonar-tooling"})
+        self.assertEqual(scopes_of("design/corrections/verify.py"), {"sonar-tooling"})
 
     def test_docker_and_compose_reach_the_package_only(self):
         self.assertEqual(scopes_of("infra/demo/compose.yml"), {"package"})
@@ -90,10 +104,10 @@ class PathScenarioTest(unittest.TestCase):
             "_bmad/custom/config.toml",
             ".github/workflows/documentation.yml",
             ".github/dependabot.yml",
-            "tools/validate_docs.py",
         ):
             with self.subTest(path=path):
                 self.assertEqual(scopes_of(path), set())
+        self.assertEqual(scopes_of("tools/validate_docs.py"), {"sonar-tooling"})
 
     def test_unknown_paths_run_everything(self):
         for path in ("eslint.config.js", ".node-version", ".npmrc", ".editorconfig", "packages/ui/src/x.ts",
@@ -106,15 +120,15 @@ class PathScenarioTest(unittest.TestCase):
         self.assertEqual(classify_path(".gitattributes"), (ALL, ".gitattributes"))
 
     def test_one_relevant_path_among_many_ignored_ones_is_enough(self):
-        self.assertEqual(scopes_of("docs/a.md", "docs/b.md", "apps/web/src/x.ts"), {"web", "package"})
+        self.assertEqual(scopes_of("docs/a.md", "docs/b.md", "apps/web/src/x.ts"), {"web", "package", "sonar-web"})
 
     def test_an_empty_change_is_not_trusted(self):
         self.assertEqual(scopes_of(), set(ci_scope.SCOPES))
 
     def test_glob_segments(self):
         self.assertEqual(classify_path("apps/api"), (ALL, None), "a bare directory name is not a file path")
-        self.assertEqual(classify_path("apps/webx/package.json")[0], {"web", "package", "pnpm"})
-        self.assertEqual(scopes_of("design/received/2026-11-03/licenses/Inter-OFL.txt"), {"web", "package"})
+        self.assertEqual(classify_path("apps/webx/package.json")[0], {"web", "package", "pnpm", "sonar-web"})
+        self.assertEqual(scopes_of("design/received/2026-11-03/licenses/Inter-OFL.txt"), {"web", "package", "sonar-web"})
         self.assertEqual(scopes_of("design/received/2026-11-03/licenses/README.md"), set())
 
     def test_every_rule_scope_is_known(self):
@@ -148,28 +162,45 @@ class GlobTest(unittest.TestCase):
 class WorkflowReferencesTest(unittest.TestCase):
     """A script a workflow runs, directly or through another script or import, must trigger that workflow."""
 
-    WORKFLOW_SCOPES = {"api.yml": "api", "web.yml": "web", "package.yml": "package", "dependency-review.yml": "pnpm"}
+    WORKFLOW_SCOPES = {
+        "api.yml": {"verify": "api"},
+        "web.yml": {"verify": "web"},
+        "package.yml": {"package": "package"},
+        "dependency-review.yml": {"review": "pnpm"},
+        "sonarqube.yml": {
+            "preflight": "sonar-api",
+            "sonar-api": "sonar-api",
+            "sonar-web": "sonar-web",
+            "sonar-tooling": "sonar-tooling",
+        },
+    }
     REFERENCE = re.compile(r"tools/[A-Za-z0-9_./-]+\.(?:py|sh)")
 
     def test_every_script_reached_from_a_workflow_is_classified_for_it(self):
-        for workflow, scope in self.WORKFLOW_SCOPES.items():
-            queue = set(self.REFERENCE.findall((ROOT / ".github/workflows" / workflow).read_text()))
-            seen = set()
-            while queue:
-                path = queue.pop()
-                if path in seen or not (ROOT / path).is_file():
-                    continue
-                seen.add(path)
-                with self.subTest(workflow=workflow, script=path):
-                    self.assertIn(scope, classify_path(path)[0],
-                                  f"{path} runs in {workflow}; a change to it must trigger the {scope} scope")
-                if path == "tools/ci_scope.py":
-                    continue  # its rule table names every script by design; it is classified for all scopes
-                text = (ROOT / path).read_text()
-                queue |= set(self.REFERENCE.findall(text))
-                if path.endswith(".py"):
-                    queue |= {f"tools/{module}.py" for module in re.findall(r"^(?:import|from)\s+(\w+)", text, re.M)}
-            self.assertTrue(seen, f"{workflow} references no script; the scope mapping is stale")
+        import yaml
+
+        for workflow, job_scopes in self.WORKFLOW_SCOPES.items():
+            data = yaml.safe_load((ROOT / ".github/workflows" / workflow).read_text())
+            for job_id, scope in job_scopes.items():
+                scopes = ("sonar-api", "sonar-web", "sonar-tooling") if workflow == "sonarqube.yml" and job_id == "preflight" else (scope,)
+                queue = set(self.REFERENCE.findall(json.dumps(data["jobs"][job_id])))
+                seen = set()
+                while queue:
+                    path = queue.pop()
+                    if path in seen or not (ROOT / path).is_file():
+                        continue
+                    seen.add(path)
+                    for target_scope in scopes:
+                        with self.subTest(workflow=workflow, job=job_id, scope=target_scope, script=path):
+                            self.assertIn(target_scope, classify_path(path)[0],
+                                          f"{path} runs in {workflow} ({job_id}); a change to it must trigger {target_scope}")
+                    if path == "tools/ci_scope.py":
+                        continue  # its rule table names every script by design; it is classified for all scopes
+                    text = (ROOT / path).read_text()
+                    queue |= set(self.REFERENCE.findall(text))
+                    if path.endswith(".py"):
+                        queue |= {f"tools/{module}.py" for module in re.findall(r"^(?:import|from)\s+(\w+)", text, re.M)}
+                self.assertTrue(seen, f"{workflow} ({job_id}) references no script; the scope mapping is stale")
 
 
 class TrackedFilesAreClassifiedTest(unittest.TestCase):

@@ -1,0 +1,223 @@
+name: SonarQube Cloud
+
+on:
+  # Non-required observational integration on the Free plan: main branch and PRs targeting main only.
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  # Pull request runs supersede stale commits; pushes to main and manual runs keep their own concurrency group.
+  group: sonarqube-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  preflight:
+    name: SonarQube preflight
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      trusted: ${{ steps.trust.outputs.trusted }}
+      skip_reason: ${{ steps.trust.outputs.skip_reason }}
+      sonar_api: ${{ steps.api_scope.outputs.relevant }}
+      sonar_web: ${{ steps.web_scope.outputs.relevant }}
+      sonar_tooling: ${{ steps.tooling_scope.outputs.relevant }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - name: Evaluate event trust for SONAR_TOKEN access
+        id: trust
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          IS_FORK: ${{ github.event.pull_request.head.repo.fork }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          trusted="true"
+          reason=""
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            if [[ "$IS_FORK" == "true" ]]; then
+              trusted="false"
+              reason="external fork pull request (SONAR_TOKEN intentionally unavailable)"
+            elif [[ "$PR_AUTHOR" == "dependabot[bot]" || "$ACTOR" == "dependabot[bot]" ]]; then
+              trusted="false"
+              reason="Dependabot pull request (SONAR_TOKEN intentionally unavailable)"
+            fi
+          elif [[ "$EVENT_NAME" == "workflow_dispatch" && "$REF_NAME" != "main" ]]; then
+            trusted="false"
+            reason="unsupported branch '$REF_NAME' for manual run on Free plan (main only)"
+          elif [[ "$EVENT_NAME" != "push" && "$EVENT_NAME" != "workflow_dispatch" ]]; then
+            trusted="false"
+            reason="unsupported event: $EVENT_NAME"
+          fi
+          echo "trusted=$trusted" >> "$GITHUB_OUTPUT"
+          echo "skip_reason=$reason" >> "$GITHUB_OUTPUT"
+      - name: Detect SonarQube API scope
+        id: api_scope
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: python3 tools/ci_scope.py --scope sonar-api --event "$EVENT_NAME" --github-output "$GITHUB_OUTPUT"
+      - name: Detect SonarQube Web scope
+        id: web_scope
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: python3 tools/ci_scope.py --scope sonar-web --event "$EVENT_NAME" --github-output "$GITHUB_OUTPUT"
+      - name: Detect SonarQube Tooling scope
+        id: tooling_scope
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: python3 tools/ci_scope.py --scope sonar-tooling --event "$EVENT_NAME" --github-output "$GITHUB_OUTPUT"
+      - name: Summarize SonarQube dispatch plan
+        env:
+          TRUSTED: ${{ steps.trust.outputs.trusted }}
+          REASON: ${{ steps.trust.outputs.skip_reason }}
+          API_RELEVANT: ${{ steps.api_scope.outputs.relevant }}
+          WEB_RELEVANT: ${{ steps.web_scope.outputs.relevant }}
+          TOOLING_RELEVANT: ${{ steps.tooling_scope.outputs.relevant }}
+        run: |
+          {
+            echo "## SonarQube Cloud dispatch plan"
+            echo ""
+            if [[ "$TRUSTED" != "true" ]]; then
+              echo "Intentionally skipped: $REASON."
+              echo ""
+            fi
+            echo "| Project | Decision |"
+            echo "| --- | --- |"
+            for pair in "aymenchaghoub_etaye-api:$API_RELEVANT" "aymenchaghoub_etaye-web:$WEB_RELEVANT" "aymenchaghoub_etaye-tooling:$TOOLING_RELEVANT"; do
+              key="${pair%%:*}"
+              rel="${pair##*:}"
+              if [[ "$TRUSTED" != "true" ]]; then
+                echo "| \`$key\` | skipped ($REASON) |"
+              elif [[ "$rel" == "true" ]]; then
+                echo "| \`$key\` | run |"
+              else
+                echo "| \`$key\` | skipped (no relevant path changes) |"
+              fi
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  sonar-api:
+    name: SonarQube API
+    needs: preflight
+    if: needs.preflight.outputs.trusted == 'true' && needs.preflight.outputs.sonar_api == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Require SONAR_TOKEN secret on trusted runs
+        env:
+          TOKEN_PRESENT: ${{ secrets.SONAR_TOKEN != '' }}
+        run: |
+          if [[ "$TOKEN_PRESENT" != "true" ]]; then
+            echo "::error::Missing SONAR_TOKEN repository secret for SonarQube API analysis."
+            exit 1
+          fi
+      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+      - name: Verify API and generate JaCoCo report
+        working-directory: apps/api
+        run: ./mvnw -B -ntp clean verify
+      - name: Verify API JaCoCo report integrity
+        run: python3 tools/assert_coverage_reports.py jacoco apps/api/target/site/jacoco/jacoco.xml
+      - name: Scan API with SonarScanner for Maven
+        working-directory: apps/api
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./mvnw -B -ntp org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.qualitygate.wait=true -Dsonar.qualitygate.timeout=300
+
+  sonar-web:
+    name: SonarQube Web
+    needs: preflight
+    if: needs.preflight.outputs.trusted == 'true' && needs.preflight.outputs.sonar_web == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Require SONAR_TOKEN secret on trusted runs
+        env:
+          TOKEN_PRESENT: ${{ secrets.SONAR_TOKEN != '' }}
+        run: |
+          if [[ "$TOKEN_PRESENT" != "true" ]]; then
+            echo "::error::Missing SONAR_TOKEN repository secret for SonarQube Web analysis."
+            exit 1
+          fi
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '26'
+      - name: Install Corepack and locked dependencies
+        run: |
+          bash tools/install_corepack.sh
+          corepack enable
+          pnpm install --frozen-lockfile
+      - name: Generate Web unit coverage report
+        working-directory: apps/web
+        run: |
+          rm -rf reports/unit-coverage
+          rm -f reports/unit-tests.json
+          pnpm test:coverage --reporter=json --outputFile=reports/unit-tests.json
+      - name: Verify Web LCOV report integrity
+        run: python3 tools/assert_coverage_reports.py lcov apps/web/reports/unit-coverage/lcov.info
+      - name: Scan Web with SonarScanner for NPM
+        working-directory: apps/web
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ../../node_modules/.bin/sonar-scanner-npm -Dsonar.qualitygate.wait=true -Dsonar.qualitygate.timeout=300
+
+  sonar-tooling:
+    name: SonarQube Tooling
+    needs: preflight
+    if: needs.preflight.outputs.trusted == 'true' && needs.preflight.outputs.sonar_tooling == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Require SONAR_TOKEN secret on trusted runs
+        env:
+          TOKEN_PRESENT: ${{ secrets.SONAR_TOKEN != '' }}
+        run: |
+          if [[ "$TOKEN_PRESENT" != "true" ]]; then
+            echo "::error::Missing SONAR_TOKEN repository secret for SonarQube Tooling analysis."
+            exit 1
+          fi
+      - name: Install pinned uv
+        uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+        with:
+          version: 0.12.24
+          enable-cache: false
+      - name: Install hash-locked Python tooling and SonarScanner
+        run: |
+          uv venv --python 3.14 .venv-sonar
+          uv pip sync --python .venv-sonar/bin/python --require-hashes tools/requirements.txt
+          uv pip install --python .venv-sonar/bin/python --require-hashes -r tools/sonar-requirements.txt
+      - name: Run Python tooling tests with coverage
+        run: |
+          mkdir -p reports
+          .venv-sonar/bin/coverage run --rcfile=tools/pyproject.toml -m unittest discover -s tools -p 'test_*.py'
+          .venv-sonar/bin/coverage xml --rcfile=tools/pyproject.toml
+      - name: Verify Python Cobertura report integrity
+        run: .venv-sonar/bin/python tools/assert_coverage_reports.py cobertura reports/tooling-coverage.xml
+      - name: Scan Tooling with SonarScanner for Python
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: .venv-sonar/bin/pysonar --toml-path tools/pyproject.toml --sonar-qualitygate-wait --sonar-qualitygate-timeout 300

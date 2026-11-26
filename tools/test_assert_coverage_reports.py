@@ -77,8 +77,34 @@ class CoverageReportsTest(unittest.TestCase):
                 self.assertIn("FAIL lcov", error.getvalue())
 
     def test_a_missing_report_fails_instead_of_raising(self):
-        for kind in ("jacoco", "lcov"):
+        for kind in ("jacoco", "lcov", "cobertura"):
             with self.subTest(kind):
                 with redirect_stderr(StringIO()) as error:
                     self.assertEqual(main([kind, str(self.report.parent / "absent")]), 1)
                 self.assertIn(f"FAIL {kind}", error.getvalue())
+
+    def test_a_valid_cobertura_report_passes(self):
+        self.report.write_text(
+            '<coverage lines-valid="3" lines-covered="2">'
+            '<packages><package name="tools"><classes>'
+            '<class name="a.py" filename="tools/a.py"><lines>'
+            '<line number="1" hits="1"/><line number="2" hits="0"/><line number="3" hits="2"/>'
+            '</lines></class></classes></package></packages></coverage>'
+        )
+        with redirect_stdout(StringIO()) as output:
+            self.assertEqual(main(["cobertura", str(self.report)]), 0)
+        self.assertIn("2/3 (66.67%)", output.getvalue())
+
+    def test_cobertura_reports_with_missing_or_inconsistent_evidence_fail(self):
+        for label, body in (
+            ("wrong root element", '<report lines-valid="1" lines-covered="1"/>'),
+            ("zero covered lines", '<coverage lines-valid="2" lines-covered="0"><packages><package name="t"><classes><class filename="a.py"><lines><line number="1" hits="0"/><line number="2" hits="0"/></lines></class></classes></package></packages></coverage>'),
+            ("missing class filename", '<coverage lines-valid="1" lines-covered="1"><packages><package name="t"><classes><class name="a.py"><lines><line number="1" hits="1"/></lines></class></classes></package></packages></coverage>'),
+            ("disagreeing counters", '<coverage lines-valid="2" lines-covered="2"><packages><package name="t"><classes><class filename="a.py"><lines><line number="1" hits="1"/><line number="2" hits="0"/></lines></class></classes></package></packages></coverage>'),
+            ("entity declaration", '<!DOCTYPE coverage [<!ENTITY x "1">]><coverage lines-valid="1" lines-covered="1"/>'),
+        ):
+            with self.subTest(label):
+                self.report.write_text(body)
+                with redirect_stderr(StringIO()) as error:
+                    self.assertEqual(main(["cobertura", str(self.report)]), 1)
+                self.assertIn("FAIL cobertura", error.getvalue())

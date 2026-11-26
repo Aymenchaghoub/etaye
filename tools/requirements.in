@@ -2,3 +2,4 @@ openapi-spec-validator==0.9.0
 PyYAML==6.0.3
 ruff==0.17.6
 zizmor==1.33.1
+coverage==7.17.5
