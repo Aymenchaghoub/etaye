@@ -29,6 +29,7 @@ REQUIRED_JOB_NAMES = (
     "Analyze Web (TypeScript)",
     "API verify",
     "Web verify",
+    "Dependency review",
 )
 # Token scopes a job may request above read. `contents: write` is deliberately absent.
 ALLOWED_JOB_WRITE_SCOPES = {"security-events", "pages", "id-token", "attestations"}
