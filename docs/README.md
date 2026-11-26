@@ -20,7 +20,7 @@ The planning, design and implementation records cover different stages of Étaye
 | Security/privacy and measurable quality | [Security/privacy](planning-artifacts/security-privacy.md), [NFRs](planning-artifacts/non-functional-requirements.md) |
 | Actual initial CI and GitHub security | [Repository controls](operations/github-security.md), [CI/CD and quality audit](operations/ci-cd-quality-audit.md), [CI observation](operations/ci-observation.md), [SonarQube Cloud](operations/sonarqube-cloud.md) |
 | Engineering baseline | [Measured quality baseline](operations/quality-baseline.md) |
-| Future delivery and recovery | [CI/CD/deployment](operations/cicd-deployment-strategy.md), [GitHub delivery rules](operations/delivery-rules.md) |
+| Future delivery and recovery | [CI/CD/deployment](operations/cicd-deployment-strategy.md), [deployment readiness](operations/deployment-readiness.md), [GitHub delivery rules](operations/delivery-rules.md) |
 | Dated compatibility/cost evidence | [Hosting assessment](operations/hosting-cost-assessment.md), [official source evidence](operations/technology-and-hosting-sources.md) |
 | Verification design | [Test strategy](test-artifacts/test-strategy.md), [acceptance scenarios](test-artifacts/acceptance-scenarios.md) |
 | Planning backlog and roadmap | [Story delivery order](planning-artifacts/story-delivery-order.md), [10 epics / 45 stories](planning-artifacts/epics/README.md), [roadmap by increment](planning-artifacts/roadmap.md), [implementation stopping point](implementation-artifacts/README.md) |
