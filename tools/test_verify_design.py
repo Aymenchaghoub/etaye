@@ -134,7 +134,7 @@ class _FakePage:
         page = self
 
         class _Action(_FakeLocator):
-            def click(self_inner):
+            def click(self):
                 if name == "Se connecter":
                     page.url = (page.site / "ecrans/S-05/un-seul.html").as_uri()
                 elif name == "Étape suivante":

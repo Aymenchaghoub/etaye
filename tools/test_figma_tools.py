@@ -45,7 +45,7 @@ class _FakeBrowser:
 
 class _FakePlaywright:
     def __enter__(self):
-        return types.SimpleNamespace(chromium=types.SimpleNamespace(launch=lambda: _FakeBrowser()))
+        return types.SimpleNamespace(chromium=types.SimpleNamespace(launch=_FakeBrowser))
 
     def __exit__(self, *_args):
         return False
@@ -95,7 +95,7 @@ class FigmaToolingTests(unittest.TestCase):
     def test_export_figma_layers_exports_batch_from_minimal_site(self):
         fake_pw = types.ModuleType("playwright")
         fake_sync = types.ModuleType("playwright.sync_api")
-        fake_sync.sync_playwright = lambda: _FakePlaywright()
+        fake_sync.sync_playwright = _FakePlaywright
         fake_pw.sync_api = fake_sync
         with tempfile.TemporaryDirectory() as temporary, \
              patch.dict(sys.modules, {"playwright": fake_pw, "playwright.sync_api": fake_sync}):
