@@ -76,6 +76,12 @@ Prepared on 2026-11-25 by the [CI/CD quality hardening](ci-cd-quality-audit.md) 
 - Base images of the demonstration package and the local database are pinned by digest; Dependabot now also covers npm, Maven, Docker and Docker Compose, with a limit of three pull requests per ecosystem, grouping and a seven-day cooldown for version updates (security updates are separate and not delayed). The Corepack bootstrap verifies a release digest and pnpm carries an integrity hash.
 - Not changed, and left to Aymen: the ruleset (`Dependency review` stays optional), repository and Dependabot secrets, the Actions allowlist, environments, and any SonarQube Cloud account or app. No paid service was enabled.
 
+Prepared on 2026-11-26 by the [SonarQube Cloud integration](sonarqube-cloud.md) pull request ([PR #82](https://github.com/Aymenchaghoub/etaye/pull/82)):
+
+- Dedicated non-required workflow `.github/workflows/sonarqube.yml` using `SONAR_TOKEN` (stored in GitHub Actions repository secrets by the owner) on trusted `main` pushes, manual `main` runs, and same-repo pull requests targeting `main` only; fork and Dependabot pull requests are skipped in `preflight` without secret access.
+- Official pinned scanners (`sonar-maven-plugin` `5.9.0.7382`, `@sonar/scan` `5.1.0`, `pysonar` `1.11.0.6012` hash-locked) require zero third-party GitHub Actions; the `selected-actions` allowlist and the seven required ruleset checks remain unchanged.
+- `tools/check_workflow_policy.py` enforces a narrow, explicit `pull_request` secret exception for `sonarqube.yml` (`SONAR_TOKEN` only, `branches: [main]`, step-only `env`, job-level `trusted == 'true'` guard).
+
 Generic-pattern and partner-validity options were not enabled: their current individual setup documentation requires organization-owned repositories with Secret Protection. Full-history Gitleaks provides the separate generic-pattern scan without a paid entitlement. [Generic patterns](https://docs.github.com/en/code-security/how-tos/secure-your-secrets/detect-secret-leaks/enabling-secret-scanning-for-generic-patterns), [partner validity checks](https://docs.github.com/en/code-security/how-tos/secure-your-secrets/customize-leak-detection/enable-validity-checks).
 
 This record covers CI checks and repository controls. See the [continuation record](../continuation.md#cicd-audit-two-corrections-in-review--2026-11-25) for the execution scope of the application checks on PR #72.

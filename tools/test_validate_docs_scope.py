@@ -53,6 +53,7 @@ class ApplicationScopeTests(unittest.TestCase):
         self.write("docs/planning-artifacts/decisions-assumptions.md", decisions)
         for name in ("apps/api/pom.xml", "apps/api/mvnw", "apps/web/package.json", "infra/local/docker-compose.yml",
                      "package.json", "pnpm-workspace.yaml", "pnpm-lock.yaml", "tsconfig.base.json",
+                     "apps/web/sonar-project.properties",
                      ".github/workflows/api.yml", ".github/workflows/web.yml", ".github/workflows/dependency-review.yml",
                      ".github/workflows/package.yml", ".github/workflows/sonarqube.yml"):
             self.write(name)
