@@ -25,9 +25,54 @@ wait_ready() {
   done
 }
 
+verify_security_headers() {
+  python3 - "$base" <<'PY'
+import http.client
+import sys
+from urllib.parse import urlparse
+
+base = urlparse(sys.argv[1])
+routes = [
+    ("/", "200"),
+    ("/connexion", "200"),
+    ("/tokens.css", "200"),
+    ("/api/v1/meta", "200"),
+    ("/api/v1/session", "401"),
+]
+for path, expected_status in routes:
+    conn = http.client.HTTPConnection(base.hostname, base.port, timeout=5)
+    conn.request("GET", path, headers={"Host": "127.0.0.1"})
+    resp = conn.getresponse()
+    resp.read()
+    headers = {}
+    for k, v in resp.getheaders():
+        headers.setdefault(k.lower(), []).append(v)
+    conn.close()
+    assert str(resp.status) == expected_status, f"{path}: expected {expected_status}, got {resp.status}"
+    assert headers.get("x-frame-options") == ["DENY"], f"{path}: X-Frame-Options={headers.get('x-frame-options')}"
+    assert headers.get("x-content-type-options") == ["nosniff"], f"{path}: X-Content-Type-Options={headers.get('x-content-type-options')}"
+    assert len(headers.get("content-security-policy", [])) == 1, f"{path}: CSP missing or duplicated"
+    assert "frame-ancestors 'none'" in headers["content-security-policy"][0], f"{path}: CSP frame-ancestors"
+    assert len(headers.get("permissions-policy", [])) == 1, f"{path}: Permissions-Policy missing"
+    assert "nginx/" not in " ".join(headers.get("server", [])), f"{path}: Server leaks version: {headers.get('server')}"
+# Verify Host header guard returns 421 and still includes security headers
+conn = http.client.HTTPConnection(base.hostname, base.port, timeout=5)
+conn.request("GET", "/", headers={"Host": "evil.example.test"})
+resp = conn.getresponse()
+resp.read()
+h421 = {k.lower(): v for k, v in resp.getheaders()}
+conn.close()
+assert resp.status == 421, f"foreign Host expected 421, got {resp.status}"
+assert h421.get("x-frame-options") == "DENY", f"421 missing X-Frame-Options: {h421}"
+assert "content-security-policy" in h421, f"421 missing CSP: {h421}"
+print(f"PASS security headers verified on {len(routes)} routes + 421")
+PY
+}
+
 # spec name and the number of tests it must run: a spec that runs fewer is a failure, not a pass.
 specs=("record:3" "measurements:3" "patients:5")
 wait_ready
+verify_security_headers
 for entry in "${specs[@]}"; do
   spec=${entry%%:*}
   minimum=${entry##*:}
