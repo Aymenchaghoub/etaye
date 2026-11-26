@@ -229,13 +229,16 @@ test('a lost reset response is reconciled across a showcase reload', async ({ pa
 
 test('an unavailable operator session check offers verification without hiding the catalogue', async ({ page }) => {
   await stub(page, true);
-  await page.route('**/api/v1/session', (route) =>
-    route.fulfill({ status: 503, json: { code: 'SERVICE_UNAVAILABLE' } }), { times: 1 });
+  // The StrictMode mount can start and abort a request before the visible check.
+  let sessionAvailable = false;
+  await page.route('**/api/v1/session', (route) => sessionAvailable ? route.fallback()
+    : route.fulfill({ status: 503, json: { code: 'SERVICE_UNAVAILABLE' } }));
   await page.goto('/demonstration');
   await expect(page.getByRole('alert')).toContainText('Session opérateur indisponible');
   await expect(page.getByRole('button', { name: 'Choisir · Dr Nora Lefebvre' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Connexion opérateur' })).toHaveCount(0);
   await accessible(page);
+  sessionAvailable = true;
   await page.getByRole('button', { name: 'Vérifier la session' }).click();
   await expect(page.getByRole('main')).toBeFocused();
   await expect(page.getByRole('button', { name: 'Réinitialiser la démonstration' })).toBeVisible();

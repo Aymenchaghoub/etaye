@@ -71,7 +71,7 @@ export function RecoveryRequest({ patient }: { patient: boolean }) {
         <button type="submit" form="recovery-form" className="etaye-bouton etaye-bouton--secondaire">Réessayer</button>
       </Banner>}
       <div className="etaye-auth__carte">
-        <form className="etaye-form" id="recovery-form" noValidate onSubmit={submit} aria-busy={pending}>
+        <form className="etaye-form" id="recovery-form" noValidate onSubmit={(event) => void submit(event)} aria-busy={pending}>
           <Field id="r-mail" name="email" type="email" label="Adresse e-mail" autoComplete="email"
             autoFocus maxLength={254} value={address} readOnly={pending} onChange={(event) => setAddress(event.target.value)}
             error={errors[0]} />
@@ -189,7 +189,7 @@ export function ResetPassword() {
         En cas de coupure, essayez d'abord de vous connecter avec votre nouveau mot de passe.
       </Banner>}
       <div className="etaye-auth__carte">
-        <form className="etaye-form" noValidate onSubmit={submit} aria-busy={pending}>
+        <form className="etaye-form" noValidate onSubmit={(event) => void submit(event)} aria-busy={pending}>
           {errors.length > 0 && <ErrorSummary errors={errors} amber />}
           <Field id="r-pw" name="password" type="password" label="Nouveau mot de passe"
             autoComplete="new-password" autoFocus maxLength={2048} hint="12 caractères au moins."

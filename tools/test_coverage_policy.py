@@ -87,8 +87,8 @@ class WebCoverageGateTest(unittest.TestCase):
         return {key: float(value) for key, value in re.findall(r"(lines|statements|functions|branches):\s*([0-9.]+)", block)}
 
     def test_there_is_no_overall_floor_that_unmeasured_components_would_break(self):
-        # The .tsx files read 0 % in the unit report, so an overall floor fails the next UI story without a regression.
-        thresholds = re.search(r"thresholds:\s*\{(.*?)'src/\*\*/\*\.ts'", self.config, re.S)
+        # Only a subset of TSX files executes in the Vitest report.
+        thresholds = re.search(r"thresholds:[^{]*\{(.*?)'src/\*\*/\*\.ts'", self.config, re.S)
         self.assertIsNotNone(thresholds, "the logic-module threshold must be the first threshold")
         self.assertNotRegex(thresholds[1], r"(lines|statements|functions|branches):\s*[0-9]")
 

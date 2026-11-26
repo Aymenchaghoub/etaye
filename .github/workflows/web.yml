@@ -129,14 +129,12 @@ jobs:
         id: unit-coverage
         if: ${{ !cancelled() && steps.unit-tests.outcome == 'success' }}
         run: |
-          python3 tools/assert_test_reports.py vitest apps/web/reports/unit-tests.json --min-tests 102 --require-file src/auth/session-work.test.ts --require-file src/isolation/isolation-journey.test.ts --require-file src/record/evidence.test.ts --require-file src/record/asof.test.ts --require-file src/record/measurements.test.ts --require-file src/record/zone.test.ts
+          python3 tools/assert_test_reports.py vitest apps/web/reports/unit-tests.json --min-tests 125 --require-file src/auth/session-work.test.ts --require-file src/isolation/isolation-journey.test.ts --require-file src/record/evidence.test.ts --require-file src/record/asof.test.ts --require-file src/record/measurements.test.ts --require-file src/record/zone.test.ts --require-file src/auth/SignIn.test.tsx --require-file src/auth/Recovery.test.tsx --require-file src/auth/PracticeSwitchDialog.test.tsx --require-file src/patients/contact-email.test.ts
           python3 tools/assert_coverage_reports.py lcov apps/web/reports/unit-coverage/lcov.info
       - name: Gate coverage of the changed Web logic lines
         if: github.event_name == 'pull_request' && steps.unit-coverage.outcome == 'success'
-        # Logic modules (.ts) only: the page and component files (.tsx) are driven by the browser suite, which
-        # collects no coverage, so they have no line measure to gate. Also left out: the browser entry points
-        # (src/api/browser.ts, src/demo/**), which only a running page executes. See
-        # docs/operations/ci-cd-quality-audit.md. Hooks in .ts files stay in: extract their logic to test it.
+        # Keep the existing logic-only scope while TSX coverage still lacks the Playwright journeys. See
+        # docs/operations/ci-cd-quality-audit.md. The existing browser entry-point exceptions stay in place.
         run: >-
           python3 tools/assert_changed_line_coverage.py lcov apps/web/reports/unit-coverage/lcov.info
           --prefix apps/web/ --include 'apps/web/src/**/*.ts' --exclude 'apps/web/src/**/*.test.ts'
