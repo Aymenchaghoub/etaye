@@ -18,7 +18,7 @@ The planning, design and implementation records cover different stages of Étaye
 | Transport contract and validation | [API guide](contracts/README.md), [OpenAPI](contracts/openapi.yaml), [operation index](contracts/operation-index.json) |
 | AI behavior and evaluation | [AI specification](planning-artifacts/ai-specification.md) |
 | Security/privacy and measurable quality | [Security/privacy](planning-artifacts/security-privacy.md), [NFRs](planning-artifacts/non-functional-requirements.md) |
-| Actual initial CI and GitHub security | [Repository controls](operations/github-security.md), [CI/CD and quality audit](operations/ci-cd-quality-audit.md) |
+| Actual initial CI and GitHub security | [Repository controls](operations/github-security.md), [CI/CD and quality audit](operations/ci-cd-quality-audit.md), [SonarQube Cloud](operations/sonarqube-cloud.md) |
 | Future delivery and recovery | [CI/CD/deployment](operations/cicd-deployment-strategy.md), [GitHub delivery rules](operations/delivery-rules.md) |
 | Dated compatibility/cost evidence | [Hosting assessment](operations/hosting-cost-assessment.md), [official source evidence](operations/technology-and-hosting-sources.md) |
 | Verification design | [Test strategy](test-artifacts/test-strategy.md), [acceptance scenarios](test-artifacts/acceptance-scenarios.md) |

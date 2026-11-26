@@ -1,0 +1,23 @@
+[tool.coverage.run]
+source = ["tools", "design/corrections"]
+omit = ["tools/test_*.py"]
+relative_files = true
+
+[tool.coverage.xml]
+output = "reports/tooling-coverage.xml"
+
+[tool.sonar]
+organization = "aymenchaghoub"
+projectKey = "aymenchaghoub_etaye-tooling"
+projectName = "Étaye — Tooling"
+"host.url" = "https://sonarcloud.io"
+sourceEncoding = "UTF-8"
+"python.version" = "3.14"
+projectBaseDir = "."
+sources = "tools,design/corrections"
+inclusions = "tools/**/*.py,design/corrections/**/*.py"
+tests = "tools"
+"test.inclusions" = "tools/test_*.py"
+exclusions = "tools/test_*.py,tools/fixtures/**,tools/__pycache__/**,design/corrections/__pycache__/**,tools/pyproject.toml,tools/requirements.in,tools/requirements.txt,tools/sonar-requirements.in,tools/sonar-requirements.txt"
+"python.coverage.reportPaths" = "reports/tooling-coverage.xml"
+"working.directory" = ".scannerwork-tooling"

@@ -2,6 +2,16 @@
 
 Updated: 2026-11-26. Owner: Aymen Chaghoub.
 
+## SonarQube Cloud integration in review — 2026-11-26
+
+**Phase.** Integrated SonarQube Cloud Free monorepo analysis for API (`aymenchaghoub_etaye-api`), Web (`aymenchaghoub_etaye-web`) and Tooling (`aymenchaghoub_etaye-tooling`) in isolated worktree `../etaye-sonarqube` on `chore/sonarqube-cloud-integration` from `main` at `38d3366`, submitted as [PR #82](https://github.com/Aymenchaghoub/etaye/pull/82). No paid plan, ruleset edit, allowlist expansion, required check rename or product behavior change was made; PR #81, Dependabot PRs #74–#80, `docs/story-3-3-merge-record` and the cockpit remain untouched.
+
+**Completed artifacts.** `.github/workflows/sonarqube.yml` (dedicated non-required workflow with unprivileged fail-closed `preflight` and scoped `SonarQube API` / `SonarQube Web` / `SonarQube Tooling` jobs), `apps/api/pom.xml` (`sonar-maven-plugin` `5.9.0.7382`), `apps/web/sonar-project.properties` + root `package.json`/`pnpm-lock.yaml` (`@sonar/scan` `5.1.0`), `tools/pyproject.toml` (Python-only `inclusions` + Cobertura config) + `tools/requirements.*` (`coverage==7.17.5`) + `tools/sonar-requirements.*` (`pysonar==1.11.0.6012`), `tools/assert_coverage_reports.py` (Cobertura support with DTD/duplicate-line guards), `tools/ci_scope.py` (`sonar-api`/`sonar-web`/`sonar-tooling`), `tools/check_workflow_policy.py` (strict `SONAR_TOKEN` exception on `sonarqube.yml`), `tools/validate_docs.py` and [SonarQube Cloud operations guide](operations/sonarqube-cloud.md).
+
+**Actual verification.** Independent review (0 Critical, 0 High, 1 Medium, 4 Low, 2 Info), CodeQL alert `#33` (`py/clear-text-logging-sensitive-data`), and all four CodeRabbit inline findings (`PR #82` review `606609b1-...`: strict `&&` trust gating, token rotation Free-plan Personal Token path, `tools/test_validate_docs_scope.py` coverage, and complete test-file rollback list) are resolved and verified across local tooling, workflow policy, documentary, API (`259` tests, `89.47%` lines) and Web (`102` tests, `18.78%` lines) suites. Remote PR #82 checks passed (`16/16` green on `c28108d` and re-verified on the final follow-up commit; `API` `89.5%` line / `78.8%` branch; `Web` `17.1%` line / `16.1%` branch; `Tooling` `53.0%` line / `97.2%` new-code coverage).
+
+**Next action.** Keep PR #82 open for Aymen's review and merge decision; after merge, inspect the first `main` push scans for full-repository baseline issues and observe for at least 10 trusted PRs.
+
 ## PR #73 targeted follow-up — 2026-11-26
 
 **Phase.** Aymen approved the direction of the CI/CD audit and requested targeted hardening and independent review on the same pull request. The merge decision remains his. The work uses the `chore/ci-quality-hardening` worktree against `main` at `7980407`.

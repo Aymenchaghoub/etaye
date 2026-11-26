@@ -19,7 +19,7 @@ import subprocess
 import sys
 from pathlib import Path, PurePosixPath
 
-SCOPES = ("api", "web", "package", "pnpm")
+SCOPES = ("api", "web", "package", "pnpm", "sonar-api", "sonar-web", "sonar-tooling")
 ALL = frozenset(SCOPES)
 NONE = frozenset()
 
@@ -34,8 +34,6 @@ _WEB_TOKEN_INPUTS = (
     "design/offline-reference/site/logos/**",
     "docs/contracts/openapi.yaml",
     "docs/references/hey-api-license.md",
-    "tools/generate_web_tokens.py",
-    "tools/test_generate_web_tokens.py",
     "tools/fixtures/etaye-tokens.golden.css",
 )
 
@@ -50,46 +48,59 @@ RULES = (
     (".github/workflows/web.yml", frozenset({"web"})),
     (".github/workflows/package.yml", frozenset({"package"})),
     (".github/workflows/dependency-review.yml", frozenset({"pnpm"})),
+    (".github/workflows/sonarqube.yml", frozenset({"sonar-api", "sonar-web", "sonar-tooling"})),
+    # SonarQube project configuration files outside the application runtime.
+    ("apps/web/sonar-project.properties", frozenset({"sonar-web"})),
+    ("tools/pyproject.toml", frozenset({"sonar-tooling"})),
+    ("tools/sonar-requirements.in", frozenset({"sonar-tooling"})),
+    ("tools/sonar-requirements.txt", frozenset({"sonar-tooling"})),
+    ("tools/requirements.in", frozenset({"sonar-tooling"})),
+    ("tools/requirements.txt", frozenset({"sonar-tooling"})),
     # Evidence validators run by the verification jobs.
-    ("tools/install_corepack.sh", frozenset({"web", "package", "pnpm"})),
+    ("tools/install_corepack.sh", frozenset({"web", "package", "pnpm", "sonar-web"})),
     ("tools/build_demo_package.sh", frozenset({"package"})),
-    ("tools/test_build_demo_package.py", frozenset({"package"})),
+    ("tools/test_build_demo_package.py", frozenset({"package", "sonar-tooling"})),
     ("tools/run_package_smoke.sh", frozenset({"package"})),
     ("tools/run_image_scan.sh", frozenset({"package"})),
-    ("tools/assert_test_reports.py", frozenset({"api", "web", "package"})),
-    ("tools/test_assert_test_reports.py", frozenset({"api", "web", "package"})),
-    ("tools/check_quality_debt.py", frozenset({"api", "web"})),
-    ("tools/test_check_quality_debt.py", frozenset({"api", "web"})),
-    ("tools/assert_coverage_reports.py", frozenset({"api", "web"})),
-    ("tools/test_assert_coverage_reports.py", frozenset({"api", "web"})),
-    ("tools/assert_changed_line_coverage.py", frozenset({"api", "web"})),
-    ("tools/test_assert_changed_line_coverage.py", frozenset({"api", "web"})),
-    ("tools/assert_isolation_matrix.py", frozenset({"api"})),
-    ("tools/test_assert_isolation_matrix.py", frozenset({"api"})),
+    ("tools/assert_test_reports.py", frozenset({"api", "web", "package", "sonar-tooling"})),
+    ("tools/test_assert_test_reports.py", frozenset({"api", "web", "package", "sonar-tooling"})),
+    ("tools/check_quality_debt.py", frozenset({"api", "web", "sonar-tooling"})),
+    ("tools/test_check_quality_debt.py", frozenset({"api", "web", "sonar-tooling"})),
+    ("tools/assert_coverage_reports.py", frozenset({"api", "web", "sonar-api", "sonar-web", "sonar-tooling"})),
+    ("tools/test_assert_coverage_reports.py", frozenset({"api", "web", "sonar-api", "sonar-web", "sonar-tooling"})),
+    ("tools/assert_changed_line_coverage.py", frozenset({"api", "web", "sonar-tooling"})),
+    ("tools/test_assert_changed_line_coverage.py", frozenset({"api", "web", "sonar-tooling"})),
+    ("tools/assert_isolation_matrix.py", frozenset({"api", "sonar-tooling"})),
+    ("tools/test_assert_isolation_matrix.py", frozenset({"api", "sonar-tooling"})),
+    ("tools/generate_web_tokens.py", frozenset({"web", "package", "sonar-tooling"})),
+    ("tools/test_generate_web_tokens.py", frozenset({"web", "package", "sonar-tooling"})),
+    # Remaining first-party Python tooling and design correction scripts analyzed by SonarQube Tooling.
+    ("tools/**/*.py", frozenset({"sonar-tooling"})),
+    ("design/corrections/**/*.py", frozenset({"sonar-tooling"})),
     # The manifest is read by the API matrix test and by a Web unit suite.
-    ("apps/api/src/test/resources/isolation/matrix-cases.json", frozenset({"api", "web"})),
+    ("apps/api/src/test/resources/isolation/matrix-cases.json", frozenset({"api", "web", "sonar-api", "sonar-web"})),
     # Applications. The delivery package builds both from source.
     # Tests are skipped when the delivery package builds the API (-Dmaven.test.skip=true).
-    ("apps/api/src/test/**", frozenset({"api"})),
-    ("apps/api/**", frozenset({"api", "package"})),
-    ("apps/web/package.json", frozenset({"web", "package", "pnpm"})),
-    ("apps/web/**", frozenset({"web", "package"})),
-    ("apps/*/package.json", frozenset({"web", "package", "pnpm"})),
-    ("packages/*/package.json", frozenset({"web", "package", "pnpm"})),
+    ("apps/api/src/test/**", frozenset({"api", "sonar-api"})),
+    ("apps/api/**", frozenset({"api", "package", "sonar-api"})),
+    ("apps/web/package.json", frozenset({"web", "package", "pnpm", "sonar-web"})),
+    ("apps/web/**", frozenset({"web", "package", "sonar-web"})),
+    ("apps/*/package.json", frozenset({"web", "package", "pnpm", "sonar-web"})),
+    ("packages/*/package.json", frozenset({"web", "package", "pnpm", "sonar-web"})),
     # Workspace manifests and TypeScript base configuration.
-    ("package.json", frozenset({"web", "package", "pnpm"})),
-    ("pnpm-workspace.yaml", frozenset({"web", "package", "pnpm"})),
-    ("pnpm-lock.yaml", frozenset({"web", "package", "pnpm"})),
-    ("tsconfig.json", frozenset({"web", "package"})),
-    ("tsconfig.base.json", frozenset({"web", "package"})),
+    ("package.json", frozenset({"web", "package", "pnpm", "sonar-web"})),
+    ("pnpm-workspace.yaml", frozenset({"web", "package", "pnpm", "sonar-web"})),
+    ("pnpm-lock.yaml", frozenset({"web", "package", "pnpm", "sonar-web"})),
+    ("tsconfig.json", frozenset({"web", "package", "sonar-web"})),
+    ("tsconfig.base.json", frozenset({"web", "package", "sonar-web"})),
     # Design and contract inputs that the Web build and its tests read.
-    *((path, frozenset({"web", "package"})) for path in _WEB_TOKEN_INPUTS),
+    *((path, frozenset({"web", "package", "sonar-web"})) for path in _WEB_TOKEN_INPUTS),
     # Delivery package.
     ("infra/**", frozenset({"package"})),
     (".dockerignore", frozenset({"package"})),
     # Line-ending and diff attributes change how every other file is checked out.
     (".gitattributes", ALL),
-    # Known not to be consumed by any API, Web, package or pnpm verification.
+    # Known not to be consumed by any API, Web, package, pnpm or SonarQube verification.
     (".github/**", NONE),
     ("docs/**", NONE),
     ("design/**", NONE),

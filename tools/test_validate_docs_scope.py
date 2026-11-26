@@ -53,8 +53,9 @@ class ApplicationScopeTests(unittest.TestCase):
         self.write("docs/planning-artifacts/decisions-assumptions.md", decisions)
         for name in ("apps/api/pom.xml", "apps/api/mvnw", "apps/web/package.json", "infra/local/docker-compose.yml",
                      "package.json", "pnpm-workspace.yaml", "pnpm-lock.yaml", "tsconfig.base.json",
+                     "apps/web/sonar-project.properties",
                      ".github/workflows/api.yml", ".github/workflows/web.yml", ".github/workflows/dependency-review.yml",
-                     ".github/workflows/package.yml"):
+                     ".github/workflows/package.yml", ".github/workflows/sonarqube.yml"):
             self.write(name)
         self.write(".gitignore", "".join(f"{name}/\n" for name in BUILD_DIRECTORIES))
 
@@ -459,7 +460,7 @@ class ApplicationScopeTests(unittest.TestCase):
                    "apps/web/src/components/Panel.tsx", "apps/web/src/styles.css",
                    "apps/web/tests/nested/probe.spec.ts", "apps/web/e2e/outage.spec.ts",
                    "apps/web/vitest.config.ts", "apps/web/eslint.config.js", "apps/web/eslint-suppressions.json",
-                     "apps/web/eslint-debt.json", "apps/api/compiler-debt.json",
+                     "apps/web/eslint-debt.json", "apps/api/compiler-debt.json", "apps/web/sonar-project.properties",
                    "infra/local/verify-init-roles.sh")
         unlisted = ("apps/api/extra.txt", "apps/web/public/extra.txt", "infra/local/extra.sh",
                     "apps/web/package.json/extra.txt", "apps/api/src",
@@ -666,7 +667,7 @@ jobs:
 
     def test_workflows_use_allowlisted_pinned_actions_with_read_only_permissions(self):
         allowed_actions = {"actions/checkout", "actions/setup-java", "actions/setup-node",
-                           "actions/upload-artifact", "actions/dependency-review-action"}
+                           "actions/upload-artifact", "actions/dependency-review-action", "astral-sh/setup-uv"}
 
         def check_node(node):
             if isinstance(node, dict):
@@ -682,7 +683,7 @@ jobs:
                 for value in node:
                     check_node(value)
 
-        for name in ("api.yml", "web.yml", "dependency-review.yml", "package.yml"):
+        for name in ("api.yml", "web.yml", "dependency-review.yml", "package.yml", "sonarqube.yml"):
             with self.subTest(path=name):
                 path = ROOT / ".github/workflows" / name
                 workflow = yaml.load(path.read_text(encoding="utf-8"), Loader=UniqueKeySafeLoader)

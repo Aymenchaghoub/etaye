@@ -15,8 +15,11 @@ test-results/
 playwright-report/
 .cache/
 .venv-docs/
+.venv-sonar/
 .venv-visual/
 reports/
+.scannerwork*/
+.coverage
 __pycache__/
 local-reference/
 

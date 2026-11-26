@@ -20,6 +20,12 @@
     <properties>
         <java.version>25</java.version>
         <archunit.version>1.5.1</archunit.version>
+        <sonar-maven-plugin.version>5.9.0.7382</sonar-maven-plugin.version>
+        <sonar.organization>aymenchaghoub</sonar.organization>
+        <sonar.projectKey>aymenchaghoub_etaye-api</sonar.projectKey>
+        <sonar.projectName>Étaye — API</sonar.projectName>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <!-- Coverage floors, set just below the baseline measured on 2026-11-25 (89.5 % of lines, 78.8 % of
              branches, 259 tests). A ratchet: raise them when coverage grows, never lower them to pass a build.
              Override on the command line to see a failure, e.g. -Dcoverage.line.minimum=0.99 -->
@@ -136,6 +142,16 @@
     </profiles>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Pinned for CI SonarQube Cloud scans; not bound to default lifecycle phases. -->
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>${sonar-maven-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

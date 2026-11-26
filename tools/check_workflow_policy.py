@@ -35,6 +35,11 @@ ALLOWED_JOB_WRITE_SCOPES = {"security-events", "pages", "id-token", "attestation
 MAX_TIMEOUT_MINUTES = 30
 MAX_ARTIFACT_RETENTION_DAYS = 30
 FORBIDDEN_TRIGGERS = {"pull_request_target", "workflow_run"}
+# Only the dedicated non-required SonarQube workflow may read SONAR_TOKEN on pull_request (guarded by preflight).
+PULL_REQUEST_ALLOWED_CONTEXTS = {"sonarqube.yml": frozenset({"SONAR_TOKEN"})}
+RESTRICTED_CONTEXT_REF = re.compile(
+    r"\bsecrets(?:\.([A-Za-z0-9_]+)|\[['\"]([A-Za-z0-9_]+)['\"]\])"
+)
 PINNED_USE = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_./-]+@[0-9a-f]{40}")
 USE_LINE = re.compile(r"^\s*(?:-\s*)?uses:\s*(?P<ref>\S+)\s*(?:#\s*(?P<comment>.*))?$")
 VERSION_COMMENT = re.compile(r"v?\d+(?:\.\d+){1,2}\b")
@@ -171,9 +176,49 @@ def check_workflow(name, text):
         elif not VERSION_COMMENT.match(match["comment"] or ""):
             fail(f"line {number}: {reference} has no version comment such as '# v1.2.3'")
 
-    if "secrets." in text and runs_on_pull_request and re.search(r"secrets\.(?!GITHUB_TOKEN\b)", text):
-        fail("a workflow triggered by pull_request must not read repository secrets")
+    declared_refs = _restricted_context_refs(text)
+    if declared_refs and runs_on_pull_request:
+        permitted_refs = PULL_REQUEST_ALLOWED_CONTEXTS.get(name)
+        if permitted_refs is None:
+            fail("a workflow triggered by pull_request must not read repository secrets")
+        else:
+            unexpected_refs = declared_refs - permitted_refs
+            if unexpected_refs:
+                fail(f"a pull_request workflow may only read {sorted(permitted_refs)}, found {sorted(unexpected_refs)}")
+            if not isinstance(pull_request, dict) or pull_request.get("branches") != ["main"]:
+                fail("a pull_request workflow reading repository secrets must restrict pull_request branches to [main]")
+            if _restricted_context_refs(workflow.get("env")):
+                fail("workflow-level env must not expose repository secrets")
+            for job_id, job in workflow["jobs"].items():
+                if not isinstance(job, dict):
+                    continue
+                if _restricted_context_refs(job.get("env")):
+                    fail(f"job {job_id} env must not expose repository secrets")
+                if job_id == "preflight" and _restricted_context_refs(job):
+                    fail("job preflight must not reference repository secrets")
+                job_steps = job.get("steps", [])
+                if _restricted_context_refs(job_steps if isinstance(job_steps, list) else []):
+                    job_if = str(job.get("if") or "")
+                    clauses = [part.strip() for part in job_if.split("&&")]
+                    if (
+                        "||" in job_if
+                        or "always()" in job_if
+                        or "needs.preflight.outputs.trusted == 'true'" not in clauses
+                    ):
+                        fail(f"job {job_id} reads a secret on pull_request without gating on trusted == 'true'")
     return problems
+
+
+def _restricted_context_refs(value):
+    text = str(value or "")
+    refs = {
+        match.group(1) or match.group(2)
+        for match in RESTRICTED_CONTEXT_REF.finditer(text)
+    }
+    refs = {ref for ref in refs if ref.upper() != "GITHUB_TOKEN"}
+    if "tojson(secrets)" in text.lower():
+        refs.add("toJSON(secrets)")
+    return refs
 
 
 def check_repository(workflows_dir, required_names=REQUIRED_JOB_NAMES):
