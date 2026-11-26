@@ -4,6 +4,7 @@ import { hasContactEmailShape } from './contact-email';
 describe('contact email shape', () => {
   it.each([
     'fiction@example.test',
+    'a@example.test',
     'patient+essai@cabinet.exemple.test',
     'patïent@exemple.fr',
     'fiction@example.test.',
