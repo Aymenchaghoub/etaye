@@ -50,24 +50,8 @@ jobs:
         run: bash infra/local/verify-init-roles.sh
       - name: Build and start the package (API, web, PostgreSQL, Flyway)
         if: steps.changes.outputs.relevant == 'true'
-        # The API image downloads Maven and its dependencies from Maven Central on every cold runner, and Central
-        # rate-limits shared addresses (HTTP 429 in three of seven completed runs on 2026-11-25: twice on the wrapper's
-        # download, once on dependency resolution). The first and third attempts use a Google mirror of Central for both; this is a smoke
-        # build of the package, not a release build. Only this network-bound build retries, at most three times, with
-        # each failed attempt in the log; the browser tests never retry.
-        env:
-          CENTRAL_MIRROR: https://maven-central.storage-download.googleapis.com/maven2
-        run: |
-          for attempt in 1 2 3; do
-            mirror=""
-            if (( attempt % 2 == 1 )); then mirror="$CENTRAL_MIRROR"; fi
-            if MAVEN_CENTRAL_MIRROR="$mirror" ./infra/demo/start.sh; then
-              exit 0
-            fi
-            echo "::warning::Package build attempt ${attempt} of 3 failed"
-            sleep $(( attempt * 30 ))
-          done
-          exit 1
+        # One fallback for an identified Maven Central transfer failure. Other builds and startup run once.
+        run: bash tools/build_demo_package.sh
       - if: steps.changes.outputs.relevant == 'true'
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -81,11 +65,12 @@ jobs:
           pnpm --filter etaye-web exec playwright install --with-deps chromium
       - name: Run the real-stack journeys
         if: steps.changes.outputs.relevant == 'true'
-        # Real sessions, CSRF, practice context, row-level security, a cross-practice refusal and a stale-version
-        # conflict, against the package that was just built. Deterministic synthetic fixtures only.
+        # The record, measurements and patients specs use real sessions, CSRF and database-backed operations.
+        # They include selected cross-practice denials and a stale-version conflict. D-56 tracks the full
+        # isolation journeys and the separate database outage spec.
         run: bash tools/run_package_smoke.sh
       - name: Scan the built images (report only)
-        if: steps.changes.outputs.relevant == 'true' && github.event_name != 'pull_request'
+        if: steps.changes.outputs.relevant == 'true'
         run: bash tools/run_image_scan.sh
       - name: Collect package logs of a failed run
         if: failure() && steps.changes.outputs.relevant == 'true'
@@ -99,7 +84,7 @@ jobs:
           name: package-evidence
           path: |
             apps/web/playwright-report/real-*.json
-            reports/image-scan.txt
+            reports/image-scan/
           if-no-files-found: warn
           retention-days: 14
       - name: Upload diagnostics of a failed run

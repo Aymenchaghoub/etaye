@@ -51,7 +51,15 @@ jobs:
         if: steps.changes.outputs.relevant == 'true'
         # New violations fail; the recorded ones live in apps/web/eslint-suppressions.json.
         working-directory: apps/web
-        run: pnpm lint
+        run: |
+          report="$RUNNER_TEMP/eslint.json"
+          if ! pnpm lint --format json --output-file "$report"; then
+            if [[ -f "$report" ]]; then cat "$report"; fi
+            exit 1
+          fi
+          base=()
+          if [[ "$GITHUB_EVENT_NAME" == pull_request ]]; then base=(--base HEAD^1); fi
+          python3 ../../tools/check_quality_debt.py eslint "$report" "${base[@]}"
       - name: Check workspace types
         if: steps.changes.outputs.relevant == 'true'
         run: PATH="$PWD/apps/web/node_modules/.bin:$PATH" pnpm exec tsc -b
@@ -112,7 +120,11 @@ jobs:
         id: unit-tests
         if: ${{ !cancelled() && steps.dependencies.outcome == 'success' }}
         working-directory: apps/web
-        run: pnpm test:coverage --reporter=json --outputFile=reports/unit-tests.json
+        run: |
+          rm -rf reports/unit-coverage
+          rm -f reports/unit-tests.json
+          git rev-parse HEAD > "$RUNNER_TEMP/web-coverage-started"
+          pnpm test:coverage --reporter=json --outputFile=reports/unit-tests.json
       - name: Verify Web coverage report
         id: unit-coverage
         if: ${{ !cancelled() && steps.unit-tests.outcome == 'success' }}
@@ -130,6 +142,8 @@ jobs:
           --prefix apps/web/ --include 'apps/web/src/**/*.ts' --exclude 'apps/web/src/**/*.test.ts'
           --exclude 'apps/web/src/api/generated/**' --exclude 'apps/web/src/**/*.d.ts'
           --exclude 'apps/web/src/api/browser.ts' --exclude 'apps/web/src/demo/**' --min-percent 80
+          --started "$RUNNER_TEMP/web-coverage-started"
+          --line-map apps/web/reports/unit-coverage/coverage-final.json
       - name: Upload Web unit coverage
         # Also when a coverage floor failed the run: the report shows which lines to cover.
         if: ${{ !cancelled() && steps.unit-tests.outcome != 'skipped' }}

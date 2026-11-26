@@ -4,15 +4,19 @@ WORKDIR /src
 COPY apps/api/.mvn .mvn
 COPY apps/api/mvnw apps/api/pom.xml ./
 COPY apps/api/src src
-# Optional mirror of Maven Central for the wrapper download and for dependency resolution (empty: Maven Central). It
-# exists for the CI smoke build, where shared runner addresses are rate-limited (HTTP 429). The wrapper checks the
-# distribution against the SHA-256 pinned in .mvn/wrapper/maven-wrapper.properties; the dependencies are checked by Maven
-# against checksums that the same mirror serves, so a release build must leave this empty.
-ARG MAVEN_CENTRAL_MIRROR=
-RUN if [ -n "$MAVEN_CENTRAL_MIRROR" ]; then \
-      mkdir -p /root/.m2 && printf '<settings><mirrors><mirror><id>central-mirror</id><mirrorOf>central</mirrorOf><url>%s</url></mirror></mirrors></settings>\n' "$MAVEN_CENTRAL_MIRROR" > /root/.m2/settings.xml; \
-    fi
-RUN MVNW_REPOURL="$MAVEN_CENTRAL_MIRROR" ./mvnw -B -ntp -Dmaven.test.skip=true package
+# The package smoke may fall back to this one HTTPS mirror after a confirmed Central transfer failure.
+# The wrapper verifies its distribution against the checked-in SHA-256. Maven -C checks repository-supplied
+# artifact checksums on both routes; those are integrity checks, not an independent signature.
+ARG MAVEN_CENTRAL_SOURCE=central
+RUN case "$MAVEN_CENTRAL_SOURCE" in \
+      central) mirror= ;; \
+      mirror) mirror=https://maven-central.storage-download.googleapis.com/maven2 ;; \
+      *) echo "Unsupported Maven Central source" >&2; exit 1 ;; \
+    esac \
+    && if [ -n "$mirror" ]; then \
+      mkdir -p /root/.m2 && printf '<settings><mirrors><mirror><id>central-mirror</id><mirrorOf>central</mirrorOf><url>%s</url></mirror></mirrors></settings>\n' "$mirror" > /root/.m2/settings.xml; \
+    fi \
+    && MVNW_VERBOSE=true MVNW_REPOURL="$mirror" ./mvnw -B -ntp -C -Dmaven.test.skip=true package
 
 FROM eclipse-temurin:25-jre@sha256:4ed132f6832e9804b123e89a849a7b4502756ae64a4ee08ebab939d9d5d0a9fa
 WORKDIR /app

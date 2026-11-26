@@ -107,7 +107,7 @@ class WebCoverageGateTest(unittest.TestCase):
 
     def test_lint_baseline_stays_recorded_in_the_repository(self):
         self.assertTrue((ROOT / "apps/web/eslint-suppressions.json").is_file())
-        self.assertIn('"lint": "eslint . --max-warnings 0"', (ROOT / "apps/web/package.json").read_text())
+        self.assertIn('"lint": "eslint . --no-inline-config --max-warnings 0"', (ROOT / "apps/web/package.json").read_text())
 
     def test_the_lint_debt_can_only_shrink(self):
         # `eslint --suppress-all` would hide new violations in the baseline file. Pruning lowers this number;
@@ -125,7 +125,7 @@ class WorkflowsKeepTheGatesTest(unittest.TestCase):
 
     def test_the_api_workflow_runs_the_full_verify_without_bypasses(self):
         text = self.text("api.yml")
-        self.assertIn("./mvnw -B -ntp verify", text)
+        self.assertIn("./mvnw -B -ntp clean verify", text)
         for bypass in ("-Dcoverage.", "jacoco.skip", "maven.test.skip", "-DskipTests", "-DskipITs",
                        "test.failure.ignore", "enforcer.skip", "-Dmaven.compiler"):
             with self.subTest(bypass=bypass):

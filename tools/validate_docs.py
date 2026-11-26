@@ -227,8 +227,9 @@ def check_application_scope(root, errors):
                 continue
             if not application_path:
                 continue
-            # Tool configuration of the Web checks, accepted by exact name in every scope.
-            if name in {"apps/web/vitest.config.ts", "apps/web/eslint.config.js", "apps/web/eslint-suppressions.json"}:
+            # Exact paths for quality-check configuration and the bounded debt evidence.
+            if name in {"apps/api/compiler-debt.json", "apps/web/vitest.config.ts", "apps/web/eslint.config.js",
+                        "apps/web/eslint-suppressions.json", "apps/web/eslint-debt.json"}:
                 continue
             if "10.2" in authorized_stories and STORY_10_2_TRACKED_PATH.fullmatch(name):
                 continue

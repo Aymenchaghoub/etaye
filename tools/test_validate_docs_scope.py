@@ -459,6 +459,7 @@ class ApplicationScopeTests(unittest.TestCase):
                    "apps/web/src/components/Panel.tsx", "apps/web/src/styles.css",
                    "apps/web/tests/nested/probe.spec.ts", "apps/web/e2e/outage.spec.ts",
                    "apps/web/vitest.config.ts", "apps/web/eslint.config.js", "apps/web/eslint-suppressions.json",
+                     "apps/web/eslint-debt.json", "apps/api/compiler-debt.json",
                    "infra/local/verify-init-roles.sh")
         unlisted = ("apps/api/extra.txt", "apps/web/public/extra.txt", "infra/local/extra.sh",
                     "apps/web/package.json/extra.txt", "apps/api/src",

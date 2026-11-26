@@ -42,10 +42,23 @@ jobs:
           distribution: temurin
           java-version: '25'
           cache: maven
+      - name: Check compiler debt
+        if: steps.changes.outputs.relevant == 'true'
+        run: |
+          report="$RUNNER_TEMP/compiler-debt.log"
+          if ! (cd apps/api && ./mvnw -B -ntp -Dstyle.color=never -Pcompiler-debt clean test-compile) > "$report" 2>&1; then
+            cat "$report"
+            exit 1
+          fi
+          base=()
+          if [[ "$GITHUB_EVENT_NAME" == pull_request ]]; then base=(--base HEAD^1); fi
+          python3 tools/check_quality_debt.py javac "$report" "${base[@]}"
       - name: Verify API with Testcontainers
         if: steps.changes.outputs.relevant == 'true'
         working-directory: apps/api
-        run: ./mvnw -B -ntp verify
+        run: |
+          git rev-parse HEAD > "$RUNNER_TEMP/api-coverage-started"
+          ./mvnw -B -ntp clean verify
       - name: Verify Surefire test counts
         if: steps.changes.outputs.relevant == 'true'
         # Raise the minimum whenever the suite grows.
@@ -119,6 +132,7 @@ jobs:
         run: >-
           python3 tools/assert_changed_line_coverage.py jacoco apps/api/target/site/jacoco/jacoco.xml
           --prefix apps/api/src/main/java/ --include 'apps/api/src/main/java/**/*.java' --min-percent 80
+          --started "$RUNNER_TEMP/api-coverage-started"
       - name: Upload API coverage
         # Also when a coverage floor failed the build: the report shows which lines to cover.
         if: ${{ !cancelled() && steps.changes.outputs.relevant == 'true' }}

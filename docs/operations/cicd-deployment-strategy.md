@@ -4,31 +4,34 @@ Status: API and Web validation run through GitHub Actions. The promotion, deploy
 
 ## Verification gates and local commands
 
-Updated 2026-11-25 after the [CI/CD quality audit](ci-cd-quality-audit.md). Each gate lives in the tool that owns it, so a local build and CI fail the same way. A check that errors (a missing or malformed report, an unavailable diff) fails closed; a gate that has nothing to measure says so and passes.
+Updated 2026-11-26 after the [CI/CD quality audit](ci-cd-quality-audit.md#14-targeted-hardening-on-pr-73). Use the commands below to reproduce the required gates. A coverage gate can pass with zero changed executable lines once the source inventory, report counters and test-run marker have been verified.
 
 | Gate | Enforced by | Fails when |
 |---|---|---|
 | Which jobs a change needs | `tools/ci_scope.py` (rules and hygiene test in `tools/test_ci_scope.py`) | never skips on a failed diff, a missing parent, a manual or scheduled run, or a path no rule names; the Documentation job fails when a tracked file has no rule |
 | Build environment | Maven Enforcer in `apps/api/pom.xml` | Maven below 3.9.11, a JDK below 25, duplicate dependency versions, divergent transitive versions |
-| API warnings | `-Xlint:all,-serial,-deprecation -Werror` on production compilation | any lint warning in `src/main` |
+| API warnings | `-Xlint:all,-serial,-deprecation -Werror` on production compilation, plus a clean diagnostic compile of main and test sources under `-Pcompiler-debt` | a production warning outside the two tracked categories, any new or stale serial/deprecation diagnostic, or an incomplete diagnostic build |
 | API coverage floors | JaCoCo `check` in `mvnw verify`: 88 % lines and 77 % branches overall, 90 % and 75 % in five packages (security, transaction, identity service, record service, record domain) | a floor is missed |
-| Web lint | `corepack pnpm --filter etaye-web lint`: correctness, Hooks, accessibility and promise rules, no formatting rules | a new violation, or a recorded violation that no longer occurs (prune it) |
+| Web lint | `corepack pnpm --filter etaye-web lint`: correctness, Hooks, accessibility and promise rules. CI checks the exact suppressed diagnostics | a new or stale diagnostic, an inline suppression, or a bulk-suppression entry which ESLint can prune |
 | Web coverage floors | Vitest `thresholds`: 71 % in the logic modules (`.ts`), 95 % in nine pure rule modules; no overall floor, because the `.tsx` files read 0 % and an overall percentage would fall with every UI story | a floor is missed |
-| Changed-line coverage | `tools/assert_changed_line_coverage.py`, pull requests only | fewer than 80 % of the executable lines a pull request adds or changes run (aggregate over the changed files: API production code, Web logic modules `.ts`); a changed file with ten or more such lines is under 50 %; no path of the report exists in the checkout; the report or the diff is unusable |
+| Changed-line coverage | `tools/assert_changed_line_coverage.py`, pull requests only | fewer than 80 % of the executable lines a pull request adds or changes run (aggregate over the changed files: API production code, Web logic modules `.ts`); a changed file with ten or more such lines is under 50 %; a tracked in-scope source is omitted, a reported file or line is absent from the checkout, counters or the independent serialization disagree, or the report predates the test run for that revision |
 | Test and coverage evidence | `tools/assert_test_reports.py`, `tools/assert_coverage_reports.py` | a report is missing, empty, malformed, skipped, or a required suite is absent |
 | Workflow policy | `tools/check_workflow_policy.py`, `actionlint`, `zizmor` in `Planning package checks` | an unpinned action, a dangerous trigger, an expression in a shell script, a missing timeout, a required job that can be skipped (`if`, `needs`) or a required workflow that filters pull requests, a run on push that cancels unconditionally, an orphaned required check name, a syntax or security finding |
 | Pinned floors | `tools/test_coverage_policy.py` | a floor above is lowered, a gate removed, the lint baseline grows, or a workflow switches a gate off from the command line (`-Djacoco.skip`, `--passWithNoTests`, a lower `--min-percent`) without editing this test |
 
 The floors are a ratchet set just under the baseline of 2026-11-25. Raise them as coverage grows; never lower one to pass a build. The 23 page and component files (`.tsx`) read 0 % in the unit report because the Playwright suite collects no coverage; they are verified by that suite, not by a line measure.
 
-`Package verify` (`.github/workflows/package.yml`, not required yet, D-56; 3 min 14 s on its first cold run) checks the delivery package: it runs `infra/local/verify-init-roles.sh` (role attributes, no `BYPASSRLS`), builds the four images, starts the package and runs the three real-stack specs that apply to it. On pushes to `main` and weekly it also scans the built images with a checksummed Trivy and reports fixable high and critical findings without failing the job: the findings sit in third-party base images that a rebuild or a Dependabot digest update fixes. The image build is the only step that retries (at most three attempts), because Maven Central rate-limits shared runner addresses (HTTP 429 in three of seven completed runs on 2026-11-25: twice on the wrapper's download of the Maven distribution, once on dependency resolution); the first and third attempts use a Google mirror of Central for both through `MAVEN_CENTRAL_MIRROR`, which is acceptable for this smoke build because the wrapper verifies the SHA-256 pinned in `maven-wrapper.properties` and Maven checks the dependencies against the mirror's checksums, and which a release build must leave empty; the browser journeys never retry. Base images are pinned by digest and Dependabot covers npm, Maven, Docker and Docker Compose beside Actions and pip.
+`Package verify` (`.github/workflows/package.yml`, optional during the observation period, D-56) exercises the PostgreSQL role provisioning on throwaway containers, builds the four demo images, starts the package and runs 11 tests in `record`, `measurements` and `patients`. The tests cover selected cross-practice denials and stale-version handling. The separate outage spec, story 9.1 demonstration and full story 1.4 isolation replay remain deferred. Trivy reports all HIGH and CRITICAL findings with per-image JSON on relevant pull requests, pushes to `main`, weekly runs and manual runs. Vulnerability findings are informational during observation. Failure to scan all four images fails the step.
+
+The three other images build once. The API image starts against Maven Central, with one retry via a fixed HTTPS mirror only after an explicit Maven download HTTP 429, 502, 503 or 504. Startup and browser tests run once. The wrapper validates its pinned distribution SHA-256, and Maven uses strict checksums on both routes. Repository-supplied artifact checksums verify transfer integrity. Release build design must separately establish its artifact trust policy. Docker base tags include pinned digests, with targeted OS upgrades from signed distro repositories where the pinned bases lack a shipped fix.
 
 Operational dependencies worth knowing when a required check turns red without a repository change: `Planning package checks` downloads the pinned Gitleaks and actionlint releases and runs `zizmor` against GitHub (a new advisory on a pinned action fails the step until Dependabot or a manual bump updates the action); `actionlint` uses the ShellCheck of the runner image; `API verify` resolves the latest Temurin 25 patch, compiles production code with `-Werror` and downloads the checksum-verified Maven distribution from Maven Central, which answered HTTP 429 to the package image build in three of seven completed runs on 2026-11-25 (rerun the job; only the package build retries and uses a mirror for its Maven downloads). A pull request that adds a tracked file no rule of `tools/ci_scope.py` names fails the hygiene test until the file is classified: add it to the scopes it affects, or to the ignored set if no verification reads it.
 
 Run before opening a pull request (Java 25, Node 26 with Corepack, Docker):
 
 ```bash
-(cd apps/api && ./mvnw -B -ntp verify)                    # tests, Enforcer, -Werror, coverage floors
+git rev-parse HEAD > /tmp/etaye-api-coverage-started
+(cd apps/api && ./mvnw -B -ntp clean verify)              # tests, Enforcer, -Werror, coverage floors
 corepack pnpm install --frozen-lockfile
 corepack pnpm --filter etaye-web verify                   # lint, SDK drift, types, unit tests and floors
 corepack pnpm --filter etaye-web build && corepack pnpm --filter etaye-web test:smoke
@@ -38,10 +41,17 @@ git diff --check "$(git merge-base origin/main HEAD)" HEAD
 # Coverage of the lines this branch changes (API shown; the Web form is in .github/workflows/web.yml)
 python3 tools/assert_changed_line_coverage.py jacoco apps/api/target/site/jacoco/jacoco.xml \
   --prefix apps/api/src/main/java/ --include 'apps/api/src/main/java/**/*.java' \
-  --base "$(git merge-base origin/main HEAD)" --head HEAD
+  --started /tmp/etaye-api-coverage-started --base "$(git merge-base origin/main HEAD)" --head HEAD
+# Compiler debt check (run after the coverage gate, since clean removes its reports)
+(cd apps/api && ./mvnw -B -ntp -Dstyle.color=never -Pcompiler-debt clean test-compile) > /tmp/etaye-compiler-debt.log 2>&1 &&
+  python3 tools/check_quality_debt.py javac /tmp/etaye-compiler-debt.log --base "$(git merge-base origin/main HEAD)"
+# ESLint debt check
+corepack pnpm --filter etaye-web lint --format json --output-file /tmp/etaye-eslint.json &&
+  python3 tools/check_quality_debt.py eslint /tmp/etaye-eslint.json --base "$(git merge-base origin/main HEAD)"
 # Delivery package, when infrastructure or either application changed
 export COMPOSE_PROJECT_NAME=etaye-demo-ci ETAYE_DEMO_WEB_PORT=4179
-./infra/demo/start.sh && bash tools/run_package_smoke.sh && bash infra/local/verify-init-roles.sh
+bash tools/build_demo_package.sh && bash tools/run_package_smoke.sh && bash tools/run_image_scan.sh
+bash infra/local/verify-init-roles.sh
 ```
 
 ## Coverage and dependency checks
@@ -50,7 +60,7 @@ Aymen authorized CI quality improvements on 2026-11-22. `API verify` generates J
 
 `Web verify` keeps the Chromium smoke suite and generates a separate Vitest unit coverage report. Run `corepack pnpm --filter etaye-web test:coverage` from the repository root. `apps/web/reports/unit-coverage/lcov.info` includes eligible handwritten TypeScript sources even when unit tests never import them. Generated SDK and test files are excluded. GitHub retains `web-unit-coverage`. These results measure unit coverage. Browser journey evidence is recorded separately.
 
-`Dependency review` checks new dependency advisories exposed by GitHub's dependency graph at high or critical severity. When the pnpm graph changes, the job also runs `corepack pnpm audit --audit-level high` against the complete locked graph. Branch protection can require `Dependency review` after a successful run is observed on the repository. Maven build-resolved transitive coverage depends on dependency submission or a dedicated scanner.
+`Dependency review` checks new dependency advisories exposed by GitHub's dependency graph at high or critical severity. When the pnpm graph changes, the job also runs `corepack pnpm audit --audit-level high` against the complete locked graph. Aymen approved adding it to the ruleset after PR #73 is merged and the first subsequent pull request passes the check. The ruleset change is pending. Maven build-resolved transitive coverage depends on dependency submission or a dedicated scanner.
 
 `API verify` also publishes the adversarial isolation matrix of story 1.4 (UD-33, UD-59 C1) as the `api-isolation-matrix` artifact (`isolation-matrix.json` and `.md`, retained 30 days) and appends it to the job summary. `tools/assert_isolation_matrix.py` fails the job for a zero-case report, a missing, skipped or failing mandatory case in `apps/api/src/test/resources/isolation/matrix-cases.json`, refusals whose responses can be told apart, an identifier or request material in the report, or a missing upload. Source, task and export rows stay `PENDING` until their routes ship (D-55). The scripted browser replay of the matrix (`apps/web/demo-e2e/isolation.spec.ts`) runs locally with the story and joins CI at M6.
 

@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Report fixable high and critical vulnerabilities of the images the demonstration package built. Report only:
-# the findings sit mostly in third-party base images that a rebuild or a Dependabot digest update addresses, so a
-# blocking gate would be red without any change the repository can make. See docs/operations/ci-cd-quality-audit.md.
+# Report all HIGH and CRITICAL findings in the four images built by Compose.
+# Scan failures fail the step; findings remain visible as evidence during the observation period.
 # Verify the upstream release before executing the scanner; no third-party action.
 scanner_version=0.76.2
 scanner_sha256=bc0fc726e017b8927a62b2d3531d7a84ee01769daf5c99ed866dced54089fdbf
@@ -18,20 +17,38 @@ curl --fail --silent --show-error --location \
 printf '%s  %s\n' "$scanner_sha256" "$scanner_archive" | sha256sum --check --status
 tar -xzf "$scanner_archive" --directory "$scanner_temp" trivy
 
-mkdir -p "$repo/reports"
-report="$repo/reports/image-scan.txt"
-: > "$report"
-mapfile -t images < <(docker image ls --filter "reference=${project}-*" --format '{{.Repository}}:{{.Tag}}' | sort)
-if (( ${#images[@]} == 0 )); then
-  echo "No image of the ${project} package was found to scan." >&2
-  exit 1
-fi
-for image in "${images[@]}"; do
-  echo "## ${image}" | tee -a "$report"
-  # A scanner failure (network, database download) is reported, not hidden: only findings are non-blocking.
-  "$scanner_temp/trivy" image --quiet --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed \
-    --format table --exit-code 0 "$image" | tee -a "$report"
+reports="$repo/reports/image-scan"
+mkdir -p "$reports"
+for service in api web postgres migrate; do
+  image="${project}-${service}:latest"
+  docker image inspect "$image" > /dev/null
+  rm -f -- "$reports/$service.json"
+  "$scanner_temp/trivy" image --quiet --image-src docker --offline-scan --scanners vuln \
+    --severity HIGH,CRITICAL --format json --exit-code 0 --output "$reports/$service.json" "$image"
 done
+
+python3 - "$reports" <<'PYTHON'
+import json
+from pathlib import Path
+import sys
+
+reports = Path(sys.argv[1])
+with (reports / "summary.md").open("w", encoding="utf-8") as summary:
+    print("### Package image scan (report only)", file=summary)
+    print("| Service | HIGH | CRITICAL | Distinct advisory IDs | Fixable package findings |", file=summary)
+    print("| --- | ---: | ---: | ---: | ---: |", file=summary)
+    for service in ("api", "web", "postgres", "migrate"):
+        report = json.loads((reports / f"{service}.json").read_text(encoding="utf-8"))
+        if not report["Results"]:
+            raise SystemExit(f"No result targets in the scan of {service}")
+        findings = [item for result in report["Results"] for item in result.get("Vulnerabilities") or []]
+        high = sum(item["Severity"] == "HIGH" for item in findings)
+        critical = sum(item["Severity"] == "CRITICAL" for item in findings)
+        distinct = len({item["VulnerabilityID"] for item in findings})
+        fixable = sum(bool(item.get("FixedVersion")) for item in findings)
+        print(f"| {service} | {high} | {critical} | {distinct} | {fixable} |", file=summary)
+PYTHON
+cat "$reports/summary.md"
 if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
-  { echo '### Image scan (report only: fixable HIGH and CRITICAL)'; echo '```'; cat "$report"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+  cat "$reports/summary.md" >> "$GITHUB_STEP_SUMMARY"
 fi

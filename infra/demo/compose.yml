@@ -39,7 +39,7 @@ services:
       context: ../..
       dockerfile: infra/demo/api.Dockerfile
       args:
-        MAVEN_CENTRAL_MIRROR: ${MAVEN_CENTRAL_MIRROR:-}
+        MAVEN_CENTRAL_SOURCE: ${MAVEN_CENTRAL_SOURCE:-central}
     depends_on:
       migrate:
         condition: service_completed_successfully

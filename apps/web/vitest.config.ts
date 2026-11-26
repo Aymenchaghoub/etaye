@@ -26,7 +26,7 @@ export default defineConfig({
     coverage: {
       include: ['src/**/*.{ts,tsx}'],
       exclude: ['src/api/generated/**', '**/*.test.{ts,tsx}', '**/*.d.ts'],
-      reporter: ['text-summary', 'lcov'],
+      reporter: ['text-summary', 'lcov', 'json'],
       reportsDirectory: 'reports/unit-coverage',
       thresholds: {
         'src/**/*.ts': { lines: 71, statements: 71, functions: 61, branches: 71 },

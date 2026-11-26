@@ -13,7 +13,7 @@
     "test:demo": "playwright test --config=playwright.demo.config.ts",
     "generate:api": "node scripts/generate-api.mjs",
     "check:api": "node scripts/generate-api.mjs --check",
-    "lint": "eslint . --max-warnings 0",
+    "lint": "eslint . --no-inline-config --max-warnings 0",
     "lint:prune": "eslint . --prune-suppressions",
     "verify": "pnpm lint && pnpm check:api && tsc -b && pnpm test:coverage"
   },

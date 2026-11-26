@@ -14,4 +14,8 @@ if [[ ! -f .env ]]; then
     ln -- "$temp" .env 2>/dev/null || [[ -f .env ]]
 fi
 
-docker compose up --build -d "$@"
+case "${1:-}" in
+    --build-only) shift; docker compose --progress plain build "$@" ;;
+    --no-build) shift; docker compose up --no-build -d "$@" ;;
+    *) docker compose up --build -d "$@" ;;
+esac

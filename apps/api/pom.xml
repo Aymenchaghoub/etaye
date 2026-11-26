@@ -98,6 +98,43 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>compiler-debt</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-compile</id>
+                                <configuration combine.self="override">
+                                    <showWarnings>true</showWarnings>
+                                    <compilerArgs>
+                                        <arg>-Xlint:serial,deprecation</arg>
+                                        <arg>-Xmaxwarns</arg>
+                                        <arg>10000</arg>
+                                    </compilerArgs>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>default-testCompile</id>
+                                <configuration>
+                                    <showWarnings>true</showWarnings>
+                                    <compilerArgs>
+                                        <arg>-Xlint:serial,deprecation</arg>
+                                        <arg>-Xmaxwarns</arg>
+                                        <arg>10000</arg>
+                                    </compilerArgs>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
@@ -129,11 +166,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <executions>
-                    <!-- Production code compiles without lint warnings (measured 2026-11-25: zero). Serial and
-                         deprecation are left out: the first is noise for exceptions, and the second
-                         tracks framework upgrades (34 deprecated uses, recorded as technical debt) that a dependency
-                         bump must not turn into a failing build. Test sources keep the default lint level: 100
-                         raw-type and unchecked warnings in five test classes are recorded, not hidden. -->
+                    <!-- The regular production build rejects warnings except for serial and deprecation.
+                         The separate compiler-debt profile measures both categories and test warnings;
+                         CI accepts only the recorded diagnostics (D-68). -->
                     <execution>
                         <id>default-compile</id>
                         <configuration>

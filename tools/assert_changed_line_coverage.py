@@ -7,10 +7,11 @@ changed lines were executed. Lines the coverage tool does not instrument (commen
 not counted. It fails closed: a missing or malformed report, or a change list that cannot be computed, is an error,
 never a pass.
 
-Changed source files that the report does not mention have no executable code to measure (JaCoCo lists every
-compiled class; Vitest lists every included file) and are named in the output so a reviewer can see them.
+All in-scope Git sources must appear in the report, including zero-line records. Javac compilation units
+containing only comments, a package declaration or imports can legitimately produce no class.
 """
 import argparse
+import json
 import re
 import subprocess
 import sys
@@ -49,7 +50,8 @@ def changed_lines(base, head, in_scope, runner=subprocess.run):
         if not in_scope(name):
             continue
         # --text: a `-diff` attribute must not hide the hunks behind "Binary files differ".
-        patch = runner(["git", "-c", "core.quotepath=off", "diff", "--text", "--unified=0", "--no-renames", "--no-color",
+        patch = runner(["git", "--literal-pathspecs", "diff", "--text", "--unified=0", "--no-renames", "--no-color",
+                        "--no-ext-diff", "--no-textconv",
                         "--end-of-options", base, head, "--", name], capture_output=True, check=False)
         if patch.returncode != 0:
             raise RuntimeError(f"git diff of {name} exited with {patch.returncode}")
@@ -69,11 +71,36 @@ def _safe_read(report):
     return text
 
 
+def source_path(prefix, source):
+    components = source.split("/")
+    if any(part in ("", ".", "..") for part in components) or "\\" in source:
+        raise ValueError(f"invalid relative source path in coverage report: {source!r}")
+    return (PurePosixPath(prefix) / source).as_posix()
+
+
+def verify_counters(element, totals):
+    for kind, expected in totals.items():
+        entries = element.findall(f"counter[@type='{kind}']")
+        try:
+            actual = [(int(entry.attrib["missed"]), int(entry.attrib["covered"])) for entry in entries]
+        except (KeyError, ValueError) as exc:
+            raise ValueError(f"malformed JaCoCo {kind} counter") from exc
+        if actual != [expected] and (actual or expected != (0, 0)):
+            raise ValueError(f"inconsistent JaCoCo {kind} counters in {element.tag} {element.get('name')!r}")
+
+
+def jacoco_totals(rows):
+    return {
+        "LINE": (sum(ci == 0 for _, ci, _, _ in rows), sum(ci > 0 for _, ci, _, _ in rows)),
+        "INSTRUCTION": (sum(mi for mi, _, _, _ in rows), sum(ci for _, ci, _, _ in rows)),
+        "BRANCH": (sum(mb for _, _, mb, _ in rows), sum(cb for _, _, _, cb in rows)),
+    }
+
+
 def load_jacoco(report, prefix):
-    """repo-relative source path -> {line number: executed}. Only instrumented lines appear."""
+    """Repository-relative source path -> {line number: executed}. Only instrumented lines appear."""
     text = _safe_read(report)
-    # JaCoCo writes `<!DOCTYPE report PUBLIC ... "report.dtd">`, which expat never fetches. Entity declarations and
-    # an internal DTD subset are the vectors for entity expansion, so those are refused.
+    # JaCoCo writes a public DOCTYPE that expat never fetches. Internal DTD subsets can declare entities.
     if re.search(r"<!\s*ENTITY\b", text, re.IGNORECASE) or re.search(r"<!\s*DOCTYPE[^>\[]*\[", text, re.IGNORECASE):
         raise ValueError("entity declaration or internal DTD subset in the JaCoCo report")
     try:
@@ -82,25 +109,46 @@ def load_jacoco(report, prefix):
         raise ValueError("malformed XML in the JaCoCo report") from exc
     if root.tag != "report" or not root.findall("package"):
         raise ValueError("the JaCoCo report has no packages")
-    coverage = {}
+    coverage, report_rows, packages = {}, [], set()
     for package in root.findall("package"):
         directory = package.get("name")
-        if directory is None:
-            raise ValueError("a JaCoCo package has no name")
+        if directory is None or directory in packages:
+            raise ValueError("missing or duplicate JaCoCo package name")
+        packages.add(directory)
+        package_rows = []
         for source in package.findall("sourcefile"):
-            name = source.get("name")
-            if not name:
-                raise ValueError("a JaCoCo source file has no name")
-            path = PurePosixPath(prefix) / directory / name
-            lines = {}
+            name = source.get("name", "")
+            if not name.endswith(".java") or "/" in name:
+                raise ValueError(f"invalid JaCoCo source name: {name!r}")
+            path = source_path(prefix, f"{directory}/{name}" if directory else name)
+            if path in coverage:
+                raise ValueError(f"duplicate JaCoCo source: {path}")
+            lines, source_rows = {}, []
             for line in source.findall("line"):
                 try:
-                    number, covered_instructions = int(line.attrib["nr"]), int(line.attrib["ci"])
-                    int(line.attrib["mi"])
+                    number, mi, ci, mb, cb = (int(line.attrib[key]) for key in ("nr", "mi", "ci", "mb", "cb"))
                 except (KeyError, ValueError) as exc:
-                    raise ValueError(f"malformed line counters in JaCoCo source {name}") from exc
-                lines[number] = covered_instructions > 0
-            coverage[path.as_posix()] = lines
+                    raise ValueError(f"malformed line counters in JaCoCo source {path}") from exc
+                if number < 1 or number in lines or min(mi, ci, mb, cb) < 0 or mi + ci == 0:
+                    raise ValueError(f"invalid or duplicate JaCoCo line {path}:{number}")
+                lines[number] = ci > 0
+                source_rows.append((mi, ci, mb, cb))
+            verify_counters(source, jacoco_totals(source_rows))
+            coverage[path] = lines
+            package_rows.extend(source_rows)
+        totals = jacoco_totals(package_rows)
+        verify_counters(package, totals)
+        # Class summaries count instructions even when their source line records are missing.
+        for kind in ("INSTRUCTION", "BRANCH"):
+            counters = package.findall(f"class/counter[@type='{kind}']")
+            actual = tuple(sum(int(counter[key]) for counter in (c.attrib for c in counters))
+                           for key in ("missed", "covered"))
+            if actual != totals[kind]:
+                raise ValueError(f"JaCoCo class and source {kind} totals disagree in {directory}")
+        report_rows.extend(package_rows)
+    verify_counters(root, jacoco_totals(report_rows))
+    if not coverage:
+        raise ValueError("the JaCoCo report has no source records")
     return coverage
 
 
@@ -111,45 +159,114 @@ def load_lcov(report, prefix):
         raise ValueError("LCOV report lacks complete source records")
     coverage = {}
     for record in records:
-        source = None
-        lines = {}
-        for row in record.splitlines():
-            if row.startswith("SF:"):
-                source = row[3:].strip()
-            elif row.startswith("DA:"):
+        source, lines, totals = None, {}, {}
+        for row in record.split("\n"):
+            key, _, value = row.partition(":")
+            if key == "SF":
+                if source is not None:
+                    raise ValueError("duplicate LCOV SF record")
+                source = source_path(prefix, value)
+            elif key == "DA":
+                fields = value.split(",")
                 try:
-                    number, hits = (int(part) for part in row[3:].split(",")[:2])
+                    number, hits = map(int, fields[:2])
                 except ValueError as exc:
-                    raise ValueError(f"malformed DA record {row!r} in the LCOV report") from exc
+                    raise ValueError(f"malformed LCOV DA record: {row!r}") from exc
+                if source is None or len(fields) > 3 or number < 1 or hits < 0 or number in lines:
+                    raise ValueError(f"invalid or duplicate LCOV DA record: {row!r}")
                 lines[number] = hits > 0
-        if not source:
-            raise ValueError("LCOV record lacks its source path")
-        coverage[(PurePosixPath(prefix) / source).as_posix()] = lines
+            elif key in ("LF", "LH"):
+                if source is None or key in totals:
+                    raise ValueError(f"invalid or duplicate LCOV {key} record")
+                totals[key] = int(value)
+        if source is None or source in coverage:
+            raise ValueError(f"missing or duplicate LCOV source: {source}")
+        if totals != {"LF": len(lines), "LH": sum(lines.values())}:
+            raise ValueError(f"inconsistent LCOV LF/LH counters in {source}")
+        coverage[source] = lines
     return coverage
 
 
-def require_resolvable(coverage, root):
-    """Fail when no path of the report exists in the checkout: a drifted prefix or absolute paths would otherwise turn
-    every changed file into "not measured" and let the gate pass without measuring anything."""
-    if coverage and not any((root / path).is_file() for path in coverage):
-        sample = next(iter(coverage))
-        raise ValueError(f"none of the {len(coverage)} source paths of the report exists under {root} "
-                         f"(for example {sample}); check --prefix and the report format")
+def verify_lcov_line_map(report, coverage, root):
+    """Cross-check LCOV with Vitest's JSON serialization of the statement map."""
+    records = json.loads(_safe_read(report))
+    expected = {}
+    for filename, record in records.items():
+        absolute = Path(filename)
+        if not absolute.is_absolute() or record["path"] != filename:
+            raise ValueError(f"invalid Vitest statement map path: {filename!r}")
+        path = absolute.relative_to(root.resolve()).as_posix()
+        if path in expected or record["s"].keys() != record["statementMap"].keys():
+            raise ValueError(f"inconsistent Vitest statement map in {path}")
+        lines = {}
+        for key, hits in record["s"].items():
+            number = record["statementMap"][key]["start"]["line"]
+            if type(number) is not int or number < 1 or type(hits) is not int or hits < 0:
+                raise ValueError(f"invalid Vitest statement counter in {path}")
+            lines[number] = lines.get(number, False) or hits > 0
+        expected[path] = lines
+    for path in sorted(coverage.keys() | expected.keys()):
+        if coverage.get(path) != expected.get(path):
+            raise ValueError(f"LCOV and the Vitest statement map disagree for {path}")
+
+
+JAVA_WITHOUT_TYPES = re.compile(
+    r"\s*(?:(?:package|import(?:\s+static)?)\s+[\w$]+(?:\s*\.\s*(?:[\w$]+|\*))*\s*;\s*|;\s*)*"
+)
+
+
+def has_no_java_types(source):
+    # Successful javac is a prerequisite. Only accept the lexical subset known to produce no class.
+    if "\\u" in source:
+        return False
+    without_comments = re.sub(r"//[^\r\n]*|/\*[\s\S]*?\*/", " ", source)
+    return JAVA_WITHOUT_TYPES.fullmatch(without_comments) is not None
+
+
+def require_resolvable(coverage, root, head, prefix, in_scope, kind, runner):
+    listing = runner(["git", "--literal-pathspecs", "ls-tree", "-r", "--name-only", "-z", head, "--", prefix],
+                     cwd=root, capture_output=True, check=False)
+    if listing.returncode:
+        raise RuntimeError(f"cannot list tracked coverage sources at {head}")
+    tracked = {name.decode("utf-8", "surrogateescape") for name in listing.stdout.split(b"\0") if name}
+    for path, lines in coverage.items():
+        if path not in tracked or not (root / path).is_file():
+            raise ValueError(f"coverage source {path!r} does not exist under {prefix!r} at {head}")
+        if lines and max(lines) > len((root / path).read_text(encoding="utf-8").split("\n")):
+            raise ValueError(f"coverage line outside source file {path}")
+    for path in sorted(tracked - coverage.keys()):
+        if not in_scope(path):
+            continue
+        if kind == "jacoco" and has_no_java_types((root / path).read_text(encoding="utf-8")):
+            coverage[path] = {}
+            continue
+        raise ValueError(f"in-scope source omitted from coverage: {path}")
+
+
+def require_fresh(report, started, head, root, prefix, runner):
+    revision = runner(["git", "rev-parse", "--verify", f"{head}^{{commit}}"],
+                      cwd=root, capture_output=True, check=False)
+    if revision.returncode or started.read_bytes().strip() != revision.stdout.strip():
+        raise ValueError("coverage run marker is missing or names a different revision")
+    if report.stat().st_mtime_ns <= started.stat().st_mtime_ns:
+        raise ValueError("coverage report predates this test run")
+    checkout = runner(["git", "diff", "--quiet", head, "--", prefix], cwd=root, capture_output=True, check=False)
+    if checkout.returncode:
+        raise ValueError("coverage source checkout differs from the requested revision")
 
 
 def evaluate(changed, coverage):
-    """Per file (covered, missed, uncovered lines) over changed lines the report instruments, plus unmeasured files."""
-    rows, unmeasured = {}, []
+    """Per file (covered, missed, uncovered lines) over changed lines the report instruments."""
+    rows = {}
     for path, lines in sorted(changed.items()):
-        measured = coverage.get(path)
-        if measured is None:
-            unmeasured.append(path)
-            continue
+        if path not in coverage:
+            raise ValueError(f"changed source omitted from coverage: {path}")
+        measured = coverage[path]
         covered = sorted(line for line in lines if measured.get(line) is True)
         missed = sorted(line for line in lines if measured.get(line) is False)
         if covered or missed:
             rows[path] = (len(covered), len(missed), missed)
-    return rows, unmeasured
+    return rows
 
 
 def ranges(numbers):
@@ -180,6 +297,8 @@ def main(argv=None, runner=subprocess.run):
                         help="a changed file with at least --min-file-lines executable changed lines must reach this")
     parser.add_argument("--min-file-lines", type=int, default=10)
     parser.add_argument("--root", type=Path, default=Path("."), help="repository root, to resolve report paths")
+    parser.add_argument("--line-map", type=Path, help="Vitest JSON statement map (required with LCOV)")
+    parser.add_argument("--started", type=Path, required=True, help="file containing the test run's Git revision, written before testing")
     parser.add_argument("--base", default="HEAD^1")
     parser.add_argument("--head", default="HEAD")
     args = parser.parse_args(argv)
@@ -193,11 +312,17 @@ def main(argv=None, runner=subprocess.run):
     try:
         if not 0 <= args.min_percent <= 100 or not 0 <= args.min_file_percent <= 100:
             raise ValueError("--min-percent and --min-file-percent must be between 0 and 100")
+        require_fresh(args.report, args.started, args.head, args.root, args.prefix, runner)
         coverage = (load_jacoco if args.format == "jacoco" else load_lcov)(args.report, args.prefix)
-        require_resolvable(coverage, args.root)
+        require_resolvable(coverage, args.root, args.head, args.prefix, in_scope, args.format, runner)
+        if args.format == "lcov":
+            if args.line_map is None:
+                raise ValueError("--line-map is required for LCOV")
+            require_fresh(args.line_map, args.started, args.head, args.root, args.prefix, runner)
+            verify_lcov_line_map(args.line_map, coverage, args.root)
         changed = changed_lines(args.base, args.head, in_scope, runner)
-        rows, unmeasured = evaluate(changed, coverage)
-    except (ValueError, RuntimeError, OSError) as exc:
+        rows = evaluate(changed, coverage)
+    except (ValueError, RuntimeError, OSError, KeyError, TypeError, AttributeError) as exc:
         print(f"FAIL changed-line coverage: {exc}", file=sys.stderr)
         return 1
 
@@ -206,8 +331,6 @@ def main(argv=None, runner=subprocess.run):
     for path, (hit, miss, lines) in rows.items():
         suffix = f"  uncovered lines {ranges(lines)}" if lines else ""
         print(f"  {path}: {hit}/{hit + miss}{suffix}")
-    for path in unmeasured:
-        print(f"  {path}: no executable lines in the report (not measured)")
     if covered + missed == 0:
         print(f"PASS changed-line coverage: no executable changed line to measure ({len(changed)} changed source file(s))")
         return 0

@@ -1,6 +1,14 @@
 # Session continuation
 
-Updated: 2026-11-25. Owner: Aymen Chaghoub.
+Updated: 2026-11-26. Owner: Aymen Chaghoub.
+
+## PR #73 targeted follow-up — 2026-11-26
+
+**Phase.** Aymen approved the direction of the CI/CD audit and requested targeted hardening and independent review on the same pull request. The merge decision remains his. The work uses the `chore/ci-quality-hardening` worktree against `main` at `7980407`.
+
+**Artifacts and decisions.** The [audit addendum](operations/ci-cd-quality-audit.md#14-targeted-hardening-on-pr-73) records the stricter coverage evidence, exact diagnostic baselines, four-image scan and narrow Maven fallback. It also records the sequence for requiring `Dependency review`, keeping `Package verify` optional during at least ten pull requests, and deferring SonarQube Cloud and release engineering.
+
+**Next action.** Check the evidence and remaining choices in the audit addendum and on [PR #73](https://github.com/Aymenchaghoub/etaye/pull/73/checks). Aymen decides whether to merge. After a confirmed merge, observe the next PR's `Dependency review` and the first `Package verify` runs on `main`.
 
 ## CI/CD quality hardening, pull request in review — 2026-11-25
 
