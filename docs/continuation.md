@@ -8,7 +8,7 @@ Updated: 2026-11-27. Owner: Aymen Chaghoub.
 
 **Cloud acceptance.** Azure revision `ca-etaye-demo--git-8ea8b9826685` in Belgium Central serves the restricted HTTPS demonstration. The actual Chromium campaign verified sign-in, patient search, record and measurements, practice switching, portal, tenant denials and logout on Neon. The managed schema remains at V11 and uses the existing synthetic fixture generation. Visitor credentials and full evidence remain private.
 
-**Next operational action.** Verify the protected `demo` workflow in OIDC read-only mode against release 46028272952. Retain Single revision mode for the first release. Follow the [runbook](operations/cloud-demo-runbook.md) for future schema changes, a staged traffic switch and recovery. Story 3.4 remains untouched and `development_authorized` remains false.
+**Operations.** [PR #103](https://github.com/Aymenchaghoub/etaye/pull/103) merged the manual protected delivery workflow. [Run 46031644684](https://github.com/Aymenchaghoub/etaye/actions/runs/46031644684) verified GitHub OIDC with the immutable repository subject and the app-only Azure role. The initial app remains in Single revision mode. Azure reported zero replicas before a second successful full cloud acceptance. The first HTTPS response took 42.4 s and warm readiness calls took 44–58 ms. The [runbook](operations/cloud-demo-runbook.md) records exact digests, rollout, pause, restore and rollback procedures. Story 3.4 remains untouched and `development_authorized` remains false.
 
 ## Release candidate blockers corrected — 2026-11-27
 
