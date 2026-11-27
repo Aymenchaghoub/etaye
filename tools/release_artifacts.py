@@ -85,6 +85,7 @@ def image_archive(path: Path) -> dict:
                         raise ValueError(f"{path.name}: unsupported platform layer format {media_type}")
                     if uncompressed != diff_id:
                         raise ValueError(f"{path.name}: layer differs from the image config")
+            return None
 
         with open_member("index.json") as handle:
             index = json.load(handle)
