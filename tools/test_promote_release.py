@@ -5,7 +5,6 @@ import unittest
 from unittest.mock import patch
 
 import promote_release as promotion
-from promote_release import PUBLISH_IMAGES, validate_vulnerabilities
 from test_release_artifacts import GIT_SHA, PLATFORM, digest, write_image
 
 
@@ -14,7 +13,7 @@ class PromotionPolicyTests(unittest.TestCase):
         directory = tempfile.TemporaryDirectory()
         self.addCleanup(directory.cleanup)
         self.root = Path(directory.name)
-        for artifact in PUBLISH_IMAGES.values():
+        for artifact in promotion.PUBLISH_IMAGES.values():
             self.write_report(artifact, [])
 
     def write_report(self, artifact, findings):
@@ -29,14 +28,14 @@ class PromotionPolicyTests(unittest.TestCase):
             "Severity": "HIGH",
         }
         self.write_report("migrate", [finding])
-        validate_vulnerabilities(self.root)
+        promotion.validate_vulnerabilities(self.root)
         self.write_report("migrate", [finding | {"Severity": "CRITICAL"}])
         with self.assertRaisesRegex(ValueError, "requires review"):
-            validate_vulnerabilities(self.root)
+            promotion.validate_vulnerabilities(self.root)
         self.write_report("migrate", [])
         self.write_report("cloud-web", [finding])
         with self.assertRaisesRegex(ValueError, "cloud-web: requires review"):
-            validate_vulnerabilities(self.root)
+            promotion.validate_vulnerabilities(self.root)
 
     def test_increased_occurrences_stop_promotion(self):
         self.write_report("migrate", [{
@@ -46,7 +45,7 @@ class PromotionPolicyTests(unittest.TestCase):
             "Severity": "HIGH",
         }] * 17)
         with self.assertRaisesRegex(ValueError, "occurrence count increased"):
-            validate_vulnerabilities(self.root)
+            promotion.validate_vulnerabilities(self.root)
 
 
     def test_stage_and_finalize_preserve_the_tested_platform_bytes(self):
@@ -54,7 +53,7 @@ class PromotionPolicyTests(unittest.TestCase):
             "gitSha": GIT_SHA,
             "artifacts": {},
         }
-        for artifact in PUBLISH_IMAGES.values():
+        for artifact in promotion.PUBLISH_IMAGES.values():
             _, _, manifest_digest = write_image(self.root / f"{artifact}.tar")
             sbom = self.root / f"sbom-{artifact}.cdx.json"
             sbom.write_text("{}")
@@ -77,7 +76,7 @@ class PromotionPolicyTests(unittest.TestCase):
                     "GITHUB_RUN_ID": "2", "GITHUB_RUN_ATTEMPT": "1", "GITHUB_ACTOR": "fixture", "GH_TOKEN": "fixture",
                 }):
             promotion.stage(self.root, output, GIT_SHA)
-        names = [f"ghcr.io/aymenchaghoub/etaye-{name}" for name in PUBLISH_IMAGES]
+        names = [f"ghcr.io/aymenchaghoub/etaye-{name}" for name in promotion.PUBLISH_IMAGES]
         self.assertEqual(registry.call_count, 3)
         self.assertEqual(run.call_count, 4)
         for call, name in zip(run.call_args_list[1:], names, strict=True):
@@ -114,7 +113,7 @@ class PromotionPolicyTests(unittest.TestCase):
                 "name": f"ghcr.io/aymenchaghoub/etaye-{name}",
                 "digest": "sha256:" + "a" * 64,
                 "reference": f"ghcr.io/aymenchaghoub/etaye-{name}:swapped",
-            } for name in PUBLISH_IMAGES},
+            } for name in promotion.PUBLISH_IMAGES},
         }
         (self.root / "staged-images.json").write_text(json.dumps(document))
         with self.assertRaisesRegex(ValueError, "immutable identity"):
