@@ -46,12 +46,21 @@ STORY_9_1_TRACKED_PATHS = {
     "infra/demo/mark-demo-database.sh",
     "infra/demo/migrate.Dockerfile",
     "infra/demo/nginx.conf",
+    "infra/demo/security-headers.conf",
     "infra/demo/postgres.Dockerfile",
     "infra/demo/start.sh",
     "infra/demo/web.Dockerfile",
 }
 STORY_1_4_TRACKED_PATHS = {"apps/web/demo-e2e/isolation.spec.ts"}
 AZURE_FOUNDATION_PATHS = {"infra/azure/foundation.bicep", "infra/azure/environment.bicep"}
+AZURE_RUNTIME_PATHS = {
+    "infra/azure/app.bicep",
+    "infra/azure/cloud-api.conf",
+    "infra/azure/cloud.conf.template",
+    "infra/azure/nginx.conf",
+    "infra/azure/notice.css",
+    "infra/azure/notice.html",
+}
 RESOURCE_ARTIFACT_SUFFIXES = {
     ".sh", ".bash", ".cmd", ".bat", ".ps1",
     ".class", ".jar", ".war", ".ear", ".exe", ".dll", ".so", ".bin",
@@ -187,8 +196,12 @@ def check_application_scope(root, errors):
     azure_foundation_authorized = bool(re.search(
         r"^\| UD-76 \| Aymen authorized local cloud deployment preparation\b", decisions, re.MULTILINE
     ))
+    authorized_azure_paths = set()
     if azure_foundation_authorized:
         allowed_infra.add("azure")
+        authorized_azure_paths.update(AZURE_FOUNDATION_PATHS)
+    if re.search(r"^\| UD-77 \| Aymen authorized the full cloud demonstration deployment\b", decisions, re.MULTILINE):
+        authorized_azure_paths.update(AZURE_RUNTIME_PATHS)
     infra = root / "infra"
     if infra.exists() or infra.is_symlink():
         if infra.is_symlink() or not infra.is_dir():
@@ -205,7 +218,7 @@ def check_application_scope(root, errors):
         if azure_foundation_authorized and azure is not None and azure.is_dir() and not azure.is_symlink():
             for path in azure.iterdir():
                 name = path.relative_to(root).as_posix()
-                if name not in AZURE_FOUNDATION_PATHS or not is_story_resource(path):
+                if name not in authorized_azure_paths or not is_story_resource(path):
                     errors.append(f"Unexpected Azure foundation artifact: {name}")
 
     build_directories = {"node_modules", "target", "test-results", "playwright-report", "dist"}
@@ -242,7 +255,7 @@ def check_application_scope(root, errors):
                 continue
             if not application_path:
                 continue
-            if azure_foundation_authorized and name in AZURE_FOUNDATION_PATHS:
+            if azure_foundation_authorized and name in authorized_azure_paths:
                 continue
             # Exact paths for quality-check configuration and the bounded debt evidence.
             if name in {"apps/api/compiler-debt.json", "apps/web/vitest.config.ts", "apps/web/eslint.config.js",

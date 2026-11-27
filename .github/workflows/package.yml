@@ -70,6 +70,9 @@ jobs:
         # They include selected cross-practice denials and a stale-version conflict. D-56 tracks the full
         # isolation journeys and the separate database outage spec.
         run: bash tools/run_package_smoke.sh
+      - name: Verify the cloud reverse proxy against the same API
+        if: steps.changes.outputs.relevant == 'true'
+        run: bash tools/run_cloud_proxy_checks.sh
       - name: Scan the built images (report only)
         if: steps.changes.outputs.relevant == 'true'
         run: bash tools/run_image_scan.sh
