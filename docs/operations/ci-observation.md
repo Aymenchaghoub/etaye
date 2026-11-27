@@ -17,7 +17,7 @@ gh run view <package-run-id> --json headSha,event,conclusion,url,jobs --jq '
           | {name,status,conclusion}]}'
 ```
 
-**Current count** 12 assessed PRs against the 10-PR threshold: 11 completed all four heavy steps successfully and one diagnosed application build failure. The threshold is met. The first `main` push after PR #73 passed all four heavy steps and provides baseline evidence separately from the PR count. [Main baseline run](https://github.com/Aymenchaghoub/etaye/actions/runs/45794380012)
+**Current count** 14 assessed PRs against the 10-PR threshold: 13 completed all four heavy steps successfully and one diagnosed application build failure. The threshold is met. The first `main` push after PR #73 passed all four heavy steps and provides baseline evidence separately from the PR count. [Main baseline run](https://github.com/Aymenchaghoub/etaye/actions/runs/45794380012)
 
 <!-- observation-rows -->
 | PR | Assessed head and Package run | Role / build / browser / scan | Outcome and counting decision |
@@ -37,13 +37,15 @@ gh run view <package-run-id> --json headSha,event,conclusion,url,jobs --jq '
 | [PR #87](https://github.com/Aymenchaghoub/etaye/pull/87) (tooling and CI) | `9d6c38b` · [45890705704](https://github.com/Aymenchaghoub/etaye/actions/runs/45890705704) | pass / pass / pass / pass | **11/10.** All four steps executed. |
 | [PR #88](https://github.com/Aymenchaghoub/etaye/pull/88) (Web tests and coverage) | `8d93ae5` · [45893643404](https://github.com/Aymenchaghoub/etaye/actions/runs/45893643404) | pass / pass / pass / pass | **12/10.** All four steps executed. |
 | [PR #89](https://github.com/Aymenchaghoub/etaye/pull/89) (operations documentation) | `861b6f2` · [45895113332](https://github.com/Aymenchaghoub/etaye/actions/runs/45895113332) | skip / skip / skip / skip | **Excluded.** The successful wrapper classified a documentation-only change. |
+| [PR #90](https://github.com/Aymenchaghoub/etaye/pull/90) (managed PostgreSQL compatibility, unmerged Draft) | `812d97c` · [45899172502](https://github.com/Aymenchaghoub/etaye/actions/runs/45899172502) | pass / pass / pass / pass | **13/10.** Passed all four heavy steps (`fix/managed-postgres-compatibility`). |
+| [PR #92](https://github.com/Aymenchaghoub/etaye/pull/92) (GHCR release readiness, unmerged Draft) | `21581f1` · [45962820488](https://github.com/Aymenchaghoub/etaye/actions/runs/45962820488) | pass / pass / pass / pass | **14/10.** Passed all four heavy steps (`ci/ghcr-release-readiness`). |
 <!-- /observation-rows -->
 
 ## SonarQube Cloud
 
 SonarQube Cloud (Free plan, [`aymenchaghoub`](https://sonarcloud.io/organizations/aymenchaghoub/projects)) landed via [PR #82](https://github.com/Aymenchaghoub/etaye/pull/82) (`52d672e`) and stays optional across at least ten eligible authenticated PRs (excluding Dependabot/fork PRs skipped by `preflight` and path-only skips). [Operations guide](sonarqube-cloud.md)
 
-**Current eligible PR count** 6/10. Count one authenticated pull request if any in-scope scanner executes. A path-skipped project adds no project execution, and an entirely skipped PR adds no observation.
+**Current eligible PR count** 8/10. Count one authenticated pull request if any in-scope scanner executes. A path-skipped project adds no project execution, and an entirely skipped PR adds no observation.
 
 | PR | Assessed head and run | API / Web / Tooling scan steps | Decision |
 | --- | --- | --- | --- |
@@ -55,8 +57,10 @@ SonarQube Cloud (Free plan, [`aymenchaghoub`](https://sonarcloud.io/organization
 | #87 | `9d6c38b` · [45890705667](https://github.com/Aymenchaghoub/etaye/actions/runs/45890705667) | pass / pass / pass | Counted. |
 | #88 | `8d93ae5` · [45893643329](https://github.com/Aymenchaghoub/etaye/actions/runs/45893643329) | pass / pass / pass | Counted. |
 | #89 | `861b6f2` · [45895113442](https://github.com/Aymenchaghoub/etaye/actions/runs/45895113442) | skip / skip / skip | Excluded on path scope. |
+| #90 | `812d97c` · [45899172429](https://github.com/Aymenchaghoub/etaye/actions/runs/45899172429) | pass / skip / pass | Counted (unmerged Draft). |
+| #92 | `21581f1` · [45962820436](https://github.com/Aymenchaghoub/etaye/actions/runs/45962820436) | pass / pass / pass | Counted (unmerged Draft). |
 
-Project execution counts within the six observations are API 5, Web 4 and Tooling 5. All executed scan steps passed. The [exact integrated main analysis](https://github.com/Aymenchaghoub/etaye/actions/runs/45895446497) passed all three scanners and contributes no PR observation. [Integrated metrics](quality-baseline.md#verified-integrated-main-at-b4e8ff9)
+Project execution counts within the eight observations are API 7, Web 5 and Tooling 7. All executed scan steps passed. The [exact integrated main analysis](https://github.com/Aymenchaghoub/etaye/actions/runs/45895446497) passed all three scanners and contributes no PR observation. [Integrated metrics](quality-baseline.md#verified-integrated-main-at-b4e8ff9)
 
 ## Upstream image vulnerabilities
 
