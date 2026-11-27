@@ -125,6 +125,13 @@ class PromotionPolicyTests(unittest.TestCase):
                 promotion.require_registry_manifest(swapped, image_digest, auth)
         inspect.assert_not_called()
 
+    def test_flyway_base_uses_the_verified_manifest_revision(self):
+        (self.root / promotion.MANIFEST).write_text(json.dumps({"gitSha": "c" * 40}), encoding="utf-8")
+        with patch("promote_release.subprocess.check_output") as git, \
+                self.assertRaisesRegex(ValueError, "does not match the selected source"):
+            promotion.flyway_base_identity(self.root, GIT_SHA)
+        git.assert_not_called()
+
     def test_git_revision_is_validated_before_reaching_git(self):
         with patch("promote_release.subprocess.check_output") as git:
             for revision in (GIT_SHA[:12], "--output=/tmp/x", GIT_SHA.upper(), ""):
