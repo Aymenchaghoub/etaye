@@ -7,12 +7,15 @@ import type { DayParts } from './asof';
  */
 export type MeasureFilters = { period: 'all' | '3m' | '12m'; concept: string };
 export const NO_MEASURE_FILTER: MeasureFilters = { period: 'all', concept: '' };
+export type LabFilters = { period: MeasureFilters['period']; analyteKey: string };
+export const NO_LAB_FILTER: LabFilters = { period: 'all', analyteKey: '' };
 
 export type RecordView = {
   asOf?: string;
   filters: { kind: string; from: DayParts; to: DayParts };
   /** The period and the measure chosen on S-11 (story 3.3); the same lifetime and scope as the rest of the view. */
   measures?: MeasureFilters;
+  labs?: LabFilters;
 };
 
 const views = new Map<string, RecordView>();

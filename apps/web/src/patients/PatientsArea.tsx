@@ -6,10 +6,13 @@ import { PatientsPage } from './PatientsPage';
 import { ChronologyPage } from '../record/ChronologyPage';
 import { HistoryPage } from '../record/HistoryPage';
 import { MeasurementsPage } from '../record/MeasurementsPage';
+import { LaboratoryPage } from '../record/LaboratoryPage';
 import { RecordPage } from '../record/RecordPage';
 import { hasUsableZone, resolveZone } from '../record/zone';
 import { PractitionerShell } from './PractitionerShell';
 import type { PatientRoute } from './routes';
+
+const recordPages = { record: ChronologyPage, history: HistoryPage, measurements: MeasurementsPage, laboratory: LaboratoryPage };
 
 /**
  * The patient directory of one practice grant (S-07, S-08). The server decides every request: this component only
@@ -37,13 +40,14 @@ export function PatientsArea({ session, context, contexts, route, select, signOu
       {route.view === 'new' && (
         <PatientForm mode="new" scope={scope} practiceId={context.practiceId} base={base} expire={expire} />
       )}
-      {(route.view === 'record' || route.view === 'history' || route.view === 'measurements') && (
+      {(route.view === 'record' || route.view === 'history' || route.view === 'measurements' || route.view === 'laboratory') && (
         <RecordPage tab={route.view} scope={scope} practiceId={context.practiceId} base={base} recordId={route.recordId}
           zone={resolveZone(context.timezone)} zoneKnown={hasUsableZone(context.timezone)} expire={expire}>
           {/* Keyed by practice and record: the state of one record's screen never survives a move to another record. */}
-          {(tab) => (tab === 'record' ? <ChronologyPage key={`${context.practiceId}:${route.recordId}`} />
-            : tab === 'history' ? <HistoryPage key={`${context.practiceId}:${route.recordId}`} />
-              : <MeasurementsPage key={`${context.practiceId}:${route.recordId}`} />)}
+          {(tab) => {
+            const Page = recordPages[tab];
+            return <Page key={`${context.practiceId}:${route.recordId}`} />;
+          }}
         </RecordPage>
       )}
       {route.view === 'edit' && (

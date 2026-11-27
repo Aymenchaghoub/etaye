@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Real-stack browser journeys against the running demonstration package (Spring, PostgreSQL, React, real sessions
-# and CSRF): the same three specs that every story runs by hand. Start the package first, with the same two
+# and CSRF). Start the package first, with the same two
 # variables exported for both commands (this script restarts the API container of that Compose project):
 #   export COMPOSE_PROJECT_NAME=etaye-demo-ci ETAYE_DEMO_WEB_PORT=4179
 #   ./infra/demo/start.sh && bash tools/run_package_smoke.sh
@@ -70,7 +70,7 @@ PY
 }
 
 # spec name and the number of tests it must run: a spec that runs fewer is a failure, not a pass.
-specs=("record:3" "measurements:3" "patients:5")
+specs=("record:3" "measurements:3" "laboratory:3" "patients:5")
 wait_ready
 verify_security_headers
 for entry in "${specs[@]}"; do

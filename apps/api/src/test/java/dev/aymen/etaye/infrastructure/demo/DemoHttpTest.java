@@ -174,7 +174,7 @@ class DemoHttpTest {
                     'UNKNOWN', now(), 'Dr Test');
                 COMMIT;
                 """);
-        assertThat(evidenceCount("source_revision")).isEqualTo(11);
+        assertThat(evidenceCount("source_revision")).isEqualTo(17);
         // Story 3.3 (D-54): an added measurement must not survive the reset either, and a seeded revision must come back.
         ownerExecute("""
                 BEGIN;
@@ -186,6 +186,17 @@ class DemoHttpTest {
                 COMMIT;
                 """);
         assertThat(evidenceCount("measurement")).isEqualTo(7);
+        ownerExecute("""
+                BEGIN;
+                SELECT set_config('etaye.practice_id', etaye_demo.fixture_id('PRA-A')::text, true);
+                INSERT INTO public.lab_result (practice_id, record_id, lineage_id, revision, analyte, numeric_value,
+                    recorded_at, author_label, source_revision_id)
+                VALUES (etaye_demo.fixture_id('PRA-A'), etaye_demo.fixture_id('R-A-001'), gen_random_uuid(), 1,
+                    'EXTRA', 0, now(), 'Dr Test', etaye_demo.fixture_id('SRC-A-002'));
+                COMMIT;
+                """);
+        assertThat(evidenceCount("lab_result")).isEqualTo(10);
+
         var operatorCsrf = csrf(operator);
         var otherCsrf = csrf(anotherOperator);
         var lateLoginCsrf = csrf(null);
@@ -246,14 +257,32 @@ class DemoHttpTest {
                 assertThat(row.getInt(1)).isEqualTo(2);
             }
         }
-        assertThat(evidenceCount("source_revision")).isEqualTo(10);
+        assertThat(evidenceCount("source_revision")).isEqualTo(16);
         assertThat(evidenceCount("clinical_assertion")).isEqualTo(4);
         // The restored rows are exactly the seeded ones: the added revision is gone and no seeded revision is missing.
         assertThat(evidenceReferences()).containsExactlyInAnyOrder("SRC-A-001", "SRC-A-002", "SRC-A-003", "SRC-A-004", "SRC-A-005",
-                "SRC-A-006", "SRC-A-007-v1", "SRC-A-007-v2", "SRC-A-008", "SRC-B-001");
+                "SRC-A-006", "SRC-A-007-v1", "SRC-A-007-v2", "SRC-A-008", "SRC-B-001", "SRC-A-003",
+                "SRC-A-LAB-CORR-1", "SRC-A-LAB-CORR-2", "SRC-A-LAB-COMPARATOR", "SRC-A-LAB-TEXT", "SRC-A-LAB-TREND");
         // The measurements are exactly the seeded ones: the corrected weight lineage (86.4 kg then 68.4 kg) and the two
         // blood-pressure readings; the added measurement is gone.
         assertThat(evidenceCount("measurement")).isEqualTo(6);
+        assertThat(evidenceCount("lab_result")).isEqualTo(9);
+        try (var connection = DemoDatabase.ownerConnection(); var statement = connection.createStatement()) {
+            connection.setAutoCommit(false);
+            statement.execute("SELECT set_config('etaye.practice_id', etaye_demo.fixture_id('PRA-A')::text, true)");
+            try (var rows = statement.executeQuery("""
+                    SELECT numeric_value, revision FROM public.lab_result
+                    WHERE lineage_id = etaye_demo.fixture_id('lineage/LAB-A-PROOF') ORDER BY revision
+                    """)) {
+                assertThat(rows.next()).isTrue();
+                assertThat(rows.getString("numeric_value")).isEqualTo("7.40");
+                assertThat(rows.next()).isTrue();
+                assertThat(rows.getString("numeric_value")).isEqualTo("7.04");
+                assertThat(rows.getInt("revision")).isEqualTo(2);
+                assertThat(rows.next()).isFalse();
+            }
+        }
+
         assertThat(measurementSummary()).containsExactlyInAnyOrder("DIASTOLIC_BLOOD_PRESSURE 80 mmHg r1", "DIASTOLIC_BLOOD_PRESSURE 82 mmHg r1",
                 "SYSTOLIC_BLOOD_PRESSURE 128 mmHg r1", "SYSTOLIC_BLOOD_PRESSURE 134 mmHg r1", "WEIGHT 86.4 kg r1", "WEIGHT 68.4 kg r2");
         assertThat(request(HttpMethod.GET, "/session", nora, null, null).getStatusCode().value()).isEqualTo(401);

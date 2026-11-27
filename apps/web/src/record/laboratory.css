@@ -1,0 +1,28 @@
+.etaye-biologie { min-width: 0; overflow-wrap: anywhere; }
+.etaye-biologie .etaye-tableau { table-layout: fixed; }
+.etaye-biologie th, .etaye-biologie td { vertical-align: top; }
+.etaye-biologie th:nth-child(1) { width: 17%; }
+.etaye-biologie th:nth-child(2) { width: 19%; }
+.etaye-biologie th:nth-child(3) { width: 12%; text-align: right; }
+.etaye-biologie th:nth-child(4) { width: 11%; }
+.etaye-biologie th:nth-child(5) { width: 32%; }
+.etaye-biologie th:nth-child(6) { width: 9%; }
+.etaye-biologie .etaye-col-num { white-space: normal; }
+.etaye-biologie .etaye-repere { min-inline-size: 32px; min-block-size: 32px; }
+.etaye-biologie .etaye-filtres .etaye-champ { min-width: 0; max-width: 100%; }
+.etaye-biologie select, .etaye-biologie .etaye-bouton { max-width: 100%; }
+.etaye-lab-details { border: var(--trait-filet) solid var(--filet); padding: var(--espace-3); }
+.etaye-lab-revisions { display: grid; gap: var(--espace-3); padding-inline-start: var(--espace-6); margin: 0; }
+.etaye-lab-chart { width: 100%; max-width: 480px; }
+.etaye-lab-chart line { stroke: var(--filet-controle); }
+.etaye-lab-chart circle { fill: var(--accent); }
+.etaye-lab-chart text { fill: var(--encre-2); font: 12px var(--font-donnee); }
+
+@media (max-width: 760px) {
+  .etaye-onglets { flex-wrap: wrap; overflow-x: visible; }
+  .etaye-onglets a { white-space: normal; }
+  .etaye-biologie .etaye-tableau--empile td:nth-child(5),
+  .etaye-biologie .etaye-tableau--empile td:nth-child(6),
+  .etaye-biologie .etaye-lab-long-value { grid-column: 1 / -1; }
+  .etaye-biologie .etaye-repere { margin-block-start: var(--espace-1); }
+}

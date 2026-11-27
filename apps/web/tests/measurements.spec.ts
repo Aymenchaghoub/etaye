@@ -60,7 +60,7 @@ test.describe('S-11 measurements (AT-011-A, AT-011-B)', () => {
     await expect(weight.getByRole('img')).toHaveCount(0);
     // Nothing writes, nothing is delivered by another story, and the order is fixed (no sortable header).
     await expect(page.getByRole('button', { name: /Saisir|Corriger la mesure|Enregistrer|Ajouter/ })).toHaveCount(0);
-    await expect(page.getByRole('link', { name: /Biologie|Documents/ })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: 'Documents' })).toHaveCount(0);
     await expect(page.locator('th button, th [aria-sort]')).toHaveCount(0);
     await expect(page.getByText('R-A-001')).toHaveCount(0);
     await expect(page.getByText('Date inconnue')).toHaveCount(0);
@@ -666,7 +666,7 @@ test.describe('long untrusted content and the layout (AT-011-C)', () => {
   test('the tab bar keeps the ink of the approved specimens, never the accent of a plain link', async ({ page }) => {
     await stubMeasurements(page);
     await page.goto(MEASURES);
-    await expect(tabs(page).getByRole('link')).toHaveCount(3);
+    await expect(tabs(page).getByRole('link')).toHaveCount(4);
     for (const scheme of ['light', 'dark'] as const) {
       await page.emulateMedia({ colorScheme: scheme });
       const colors = await page.evaluate(() => {
@@ -685,7 +685,7 @@ test.describe('long untrusted content and the layout (AT-011-C)', () => {
           secondary: probe('--encre-2'), ink: probe('--encre'), accent: probe('--accent'),
         };
       });
-      expect(colors.inactive, scheme).toEqual([colors.secondary, colors.secondary]);
+      expect(colors.inactive, scheme).toEqual([colors.secondary, colors.secondary, colors.secondary]);
       expect(colors.current, scheme).toEqual([colors.ink]);
       expect(colors.secondary).not.toEqual(colors.accent);
     }

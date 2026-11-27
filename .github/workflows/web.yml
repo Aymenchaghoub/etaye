@@ -93,6 +93,7 @@ jobs:
           --require-file tests/isolation.spec.ts
           --require-file tests/record.spec.ts
           --require-file tests/measurements.spec.ts
+          --require-file tests/laboratory.spec.ts
       - name: Upload Playwright and axe evidence
         if: always() && steps.changes.outputs.relevant == 'true'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

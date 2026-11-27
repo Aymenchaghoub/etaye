@@ -102,6 +102,7 @@ jobs:
           --require-suite dev.aymen.etaye.records.RecordEvidenceHttpTest
           --require-suite dev.aymen.etaye.records.RecordEvidenceMigrationTest
           --require-suite dev.aymen.etaye.records.MeasurementFixtureHttpTest
+          --require-suite dev.aymen.etaye.records.LabResultHttpTest
           --require-suite dev.aymen.etaye.records.MeasurementHttpTest
           --require-suite dev.aymen.etaye.records.MeasurementMigrationTest
       - name: Verify isolation matrix report

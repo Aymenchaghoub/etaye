@@ -1,7 +1,7 @@
 import { version } from '../../package.json';
 import { createClient } from './generated/client';
-import { acceptInvitation, completeRecovery, createPatient, editPatient, getApiMeta, getCsrfToken, getHistorySummary, getPatientRecord, getReadiness, getSession, getSourceRevision, getTimeline, inspectInvitation, listDemoScenarios, listMeasurementRevisions, listMeasurements, requestRecovery, resetSyntheticDemo, searchPatients, signIn, signOut } from './generated/sdk.gen';
-import type { ActivationWritable, CredentialsWritable, PatientEdit, PatientRegistration, Problem, SourceKind } from './generated/types.gen';
+import { acceptInvitation, completeRecovery, createPatient, editPatient, getApiMeta, getCsrfToken, getHistorySummary, getPatientRecord, getReadiness, getSession, getSourceRevision, getTimeline, inspectInvitation, listDemoScenarios, listLabAnalytes, listLabResultRevisions, listLabResults, listMeasurementRevisions, listMeasurements, requestRecovery, resetSyntheticDemo, searchPatients, signIn, signOut } from './generated/sdk.gen';
+import type { ActivationWritable, CredentialsWritable, PatientEdit, PatientRegistration, Problem, SourceKind, ListLabResultsData, ListLabAnalytesData } from './generated/types.gen';
 
 export type AccountResult<T> =
   | { ok: true; data: T; etag?: string }
@@ -96,6 +96,21 @@ export function createBrowserApi(origin: string, transportEnabled: boolean, tran
     readMeasurementRevisions(practiceId: string, measurementId: string, asOf?: string, signal?: AbortSignal) {
       return accountRequest((deadline) => listMeasurementRevisions({
         client, path: { practiceId, measurementId }, query: { asOf }, signal: deadline, cache: 'no-store',
+      }), signal);
+    },
+    readLabResults(practiceId: string, recordId: string, query: ListLabResultsData['query'], signal?: AbortSignal) {
+      return accountRequest((deadline) => listLabResults({
+        client, path: { practiceId, recordId }, query, signal: deadline, cache: 'no-store',
+      }), signal);
+    },
+    readLabAnalytes(practiceId: string, recordId: string, query: ListLabAnalytesData['query'], signal?: AbortSignal) {
+      return accountRequest((deadline) => listLabAnalytes({
+        client, path: { practiceId, recordId }, query, signal: deadline, cache: 'no-store',
+      }), signal);
+    },
+    readLabRevisions(practiceId: string, recordId: string, labResultId: string, asOf?: string, signal?: AbortSignal) {
+      return accountRequest((deadline) => listLabResultRevisions({
+        client, path: { practiceId, recordId, labResultId }, query: { asOf }, signal: deadline, cache: 'no-store',
       }), signal);
     },
     // Patient directory (story 3.1). The query text travels only in the request: it is never logged or stored here.

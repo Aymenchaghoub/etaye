@@ -134,7 +134,7 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
 
         Set<String> rlsTables = Set.of(
                 "account", "membership", "patient", "patient_record", "portal_link", "invitation",
-                "audit_event", "outbox_event", "idempotency_receipt", "source_revision", "clinical_assertion", "measurement");
+                "audit_event", "outbox_event", "idempotency_receipt", "source_revision", "clinical_assertion", "measurement", "lab_result");
 
         for (String tbl : allRelations) {
             String qualifiedTable = "public." + tbl;
@@ -165,19 +165,20 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
         );
 
         Map<String, Map<String, Set<String>>> expectedTablePrivileges = Map.of(
-                "etaye_runtime", Map.of(
-                        "patient", Set.of("SELECT", "INSERT"),
-                        "patient_record", Set.of("SELECT", "INSERT"),
+                "etaye_runtime", Map.ofEntries(
+                        Map.entry("patient", Set.of("SELECT", "INSERT")),
+                        Map.entry("patient_record", Set.of("SELECT", "INSERT")),
                         // Story 3.2 serves the evidence read-only: entry and correction arrive with increment 2 (D-60).
-                        "source_revision", Set.of("SELECT"),
-                        "clinical_assertion", Set.of("SELECT"),
+                        Map.entry("source_revision", Set.of("SELECT")),
+                        Map.entry("clinical_assertion", Set.of("SELECT")),
                         // Story 3.3 serves the measurements read-only as well: entry and correction arrive with increment 2 (D-24).
-                        "measurement", Set.of("SELECT"),
-                        "audit_event", Set.of("INSERT"),
-                        "outbox_event", Set.of("INSERT"),
-                        "idempotency_receipt", Set.of("SELECT", "INSERT"),
-                        "spring_session", Set.of("SELECT", "INSERT", "UPDATE", "DELETE"),
-                        "spring_session_attributes", Set.of("SELECT", "INSERT", "UPDATE", "DELETE")
+                        Map.entry("measurement", Set.of("SELECT")),
+                        Map.entry("lab_result", Set.of("SELECT")),
+                        Map.entry("audit_event", Set.of("INSERT")),
+                        Map.entry("outbox_event", Set.of("INSERT")),
+                        Map.entry("idempotency_receipt", Set.of("SELECT", "INSERT")),
+                        Map.entry("spring_session", Set.of("SELECT", "INSERT", "UPDATE", "DELETE")),
+                        Map.entry("spring_session_attributes", Set.of("SELECT", "INSERT", "UPDATE", "DELETE"))
                 ),
                 "etaye_identity", Map.of()
         );
@@ -235,7 +236,7 @@ public class PracticeIsolationTest extends AbstractPostgresTest {
                         expectedColPrivs = Set.of("SELECT", "INSERT", "UPDATE");
                     } else if (Set.of("patient", "patient_record", "idempotency_receipt").contains(table)) {
                         expectedColPrivs = Set.of("SELECT", "INSERT");
-                    } else if (Set.of("source_revision", "clinical_assertion", "measurement").contains(table)) {
+                    } else if (Set.of("source_revision", "clinical_assertion", "measurement", "lab_result").contains(table)) {
                         expectedColPrivs = Set.of("SELECT");
                     } else if (Set.of("audit_event", "outbox_event").contains(table)) {
                         expectedColPrivs = Set.of("INSERT");
