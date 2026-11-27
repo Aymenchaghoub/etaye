@@ -122,7 +122,7 @@ The manifest records the full source SHA, image and archive checksums, scanner d
 
 Proposed baseline: zero failing required tests, nonzero expected suites, no unexplained skip, no unresolved relevant secret/critical exploitable dependency finding, all applicable Sonar gates pass and human review of detected security hotspots, no broken migration/contract, complete critical journey evidence, no unresolved blocking visual mismatch. Coverage target new business code≥80% line and meaningful branch cases, not an excuse to omit risk-based tests; exact gates reviewed when app exists. Account plan may limit custom Sonar gates, so enforce additional thresholds explicitly in CI rather than falsely claiming a paid setting is available.
 
-The initial public-repository main ruleset is active and recorded in [GitHub security](github-security.md). The eight required contexts include the application suites. The [observation record](ci-observation.md#dependency-review-and-delivery-scope) proposes adding Package verify and keeps SonarQube optional.
+The initial public-repository main ruleset is active and recorded in [GitHub security](github-security.md). Its nine required contexts enforce the planning, CodeQL, dependency review, application (`API verify`, `Web verify`) and full-stack delivery package (`Package verify`) suites. The [observation record](ci-observation.md#dependency-review-and-delivery-scope) keeps all three SonarQube jobs optional after completing the 10-PR observation.
 
 ## Production artifact boundary
 

@@ -41,6 +41,24 @@ The squash merge of the six consolidation PRs followed #87 → #86 → #84 → #
 
 Native coverage denominators differ from SonarQube's executable-line and branch inventory. The unit-only, component-only and browser-only Web reports track different tests. Their percentages must never be averaged.
 
+## Final verified consolidation baseline at 5b38f3c
+
+Following the sequential merges of [#90](https://github.com/Aymenchaghoub/etaye/pull/90) (`f402352`), [#92](https://github.com/Aymenchaghoub/etaye/pull/92) (`1640268`), [#91](https://github.com/Aymenchaghoub/etaye/pull/91) (`efb29e6`), [#93](https://github.com/Aymenchaghoub/etaye/pull/93) (`b7efbd7`), promotion of `Package verify` in ruleset `26390376`, and [#94](https://github.com/Aymenchaghoub/etaye/pull/94) (`5b38f3c`), all six `push` workflows on exact `main` (`5b38f3cf7f845447cbebb06bb826cd3ef524f33d`) passed:
+
+- [Documentation (`45977362069`)](https://github.com/Aymenchaghoub/etaye/actions/runs/45977362069): `308` Python tests (`8.171 s`), Cobertura `3,106/3,331` lines (`93.25%`), `1,371/1,582` branches (`86.66%`), policy checks, `actionlint`, `zizmor`, and Gitleaks passed.
+- [API (`45977361977`)](https://github.com/Aymenchaghoub/etaye/actions/runs/45977361977): `298` Maven tests (`0` failures/errors/skips), JaCoCo `2,163/2,314` lines (`93.47%`), `780/900` branches (`86.67%`).
+- [Web (`45977361988`)](https://github.com/Aymenchaghoub/etaye/actions/runs/45977361988): `206` Chromium smoke tests + Vitest (`13` + `10` files), combined LCOV `2,360/2,413` lines (`97.80%`), `2,382/2,704` branches (`88.09%`).
+- [CodeQL (`45977362071`)](https://github.com/Aymenchaghoub/etaye/actions/runs/45977362071) & [Package (`45977361983`)](https://github.com/Aymenchaghoub/etaye/actions/runs/45977361983): all three CodeQL jobs and all four heavy `Package verify` stages succeeded; GitHub reports `0` open CodeQL, Dependabot and secret-scanning alerts.
+- [SonarQube Cloud (`45977362068`)](https://github.com/Aymenchaghoub/etaye/actions/runs/45977362068) on exact `5b38f3cf7f845447cbebb06bb826cd3ef524f33d`:
+
+| Project | Security / reliability / maintainability | Open issues | Overall | Lines | Branches | Duplication | Hotspots | Quality Gate | NCLOC |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | ---: |
+| API | D / A / A | 9 vuln. (`0` bug/smell) | 91.6% | 93.5% | 86.7% | 0.0% | 0 | OK | 5,660 |
+| Web | A / A / A | 0 | 92.9% | 97.5% | 88.1% | 0.7% | 0 | OK | 6,589 |
+| Tooling | A / A / A | 0 | 91.1% | 93.2% | 86.7% | 0.0% | 0 | OK | 4,819 |
+
+The nine open API vulnerability findings remain for manual owner triage in SonarQube Cloud. [Finding dispositions](api-quality-remediation.md#final-independent-review-at-b4e8ff9)
+
 ## Independent local baseline at 389c48d
 
 | Scope | Command or entry point | Actual results |
