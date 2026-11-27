@@ -161,9 +161,119 @@ run_case() {
   fi
 }
 
+verify_nonsuperuser_createrole_provisioning() {
+  local name="$prefix-managed" root_password admin_password owner_password runtime_password identity_password result
+  root_password=$(openssl rand -hex 24) || return 1
+  admin_password=$(openssl rand -hex 24) || return 1
+  owner_password=$(openssl rand -hex 24) || return 1
+  runtime_password=$(openssl rand -hex 24) || return 1
+  identity_password=$(openssl rand -hex 24) || return 1
+  containers+=("$name")
+  docker run --detach --name "$name" \
+    --env POSTGRES_USER=postgres --env "POSTGRES_PASSWORD=$root_password" \
+    --env POSTGRES_DB=postgres --env POSTGRES_HOST_AUTH_METHOD=scram-sha-256 \
+    "$postgres_image" >/dev/null || return 1
+
+  local deadline=$((SECONDS + 60)) running
+  while (( SECONDS < deadline )); do
+    running=$(before_deadline "$deadline" docker inspect --format '{{.State.Running}}' "$name") || return 1
+    [[ "$running" == true ]] || return 1
+    if before_deadline "$deadline" docker exec "$name" pg_isready --host=127.0.0.1 --username=postgres --dbname=postgres >/dev/null; then
+      break
+    fi
+    sleep 1
+  done
+
+  PGPASSWORD="$root_password" docker exec -i --env PGPASSWORD "$name" \
+    psql -X -w -v ON_ERROR_STOP=1 --host=127.0.0.1 --username=postgres --dbname=postgres <<SQL >/dev/null || return 1
+CREATE ROLE etaye_test_admin WITH LOGIN PASSWORD '$admin_password' NOSUPERUSER NOCREATEDB CREATEROLE NOBYPASSRLS;
+CREATE DATABASE etaye_demo_managed OWNER etaye_test_admin;
+SQL
+
+  run_managed_init() {
+    docker exec -i \
+      --env PGHOST=127.0.0.1 \
+      --env POSTGRES_ADMIN_USER=etaye_test_admin \
+      --env "POSTGRES_ADMIN_PASSWORD=$admin_password" \
+      --env POSTGRES_DB=etaye_demo_managed \
+      --env "ETAYE_OWNER_PASSWORD=$owner_password" \
+      --env "ETAYE_RUNTIME_PASSWORD=$runtime_password" \
+      --env "ETAYE_IDENTITY_PASSWORD=$identity_password" \
+      "$name" bash -s < "$script_dir/init-roles.sh" >/dev/null
+  }
+
+  run_managed_init || return 1
+  # Resuming provisioning also removes a stale explicit grant from this schema.
+  PGPASSWORD="$owner_password" docker exec --env PGPASSWORD "$name" \
+    psql -X -w -v ON_ERROR_STOP=1 --host=127.0.0.1 --username=etaye_owner --dbname=etaye_demo_managed \
+    --command='GRANT CREATE ON SCHEMA public TO etaye_runtime' >/dev/null || return 1
+  run_managed_init || return 1
+
+  result=$(PGPASSWORD="$admin_password" docker exec -i --env PGPASSWORD "$name" \
+    psql -X -w -At -v ON_ERROR_STOP=1 --host=127.0.0.1 --username=etaye_test_admin --dbname=etaye_demo_managed <<'SQL'
+SELECT count(*) = 3
+   AND bool_and(rolcanlogin AND NOT (rolsuper OR rolcreatedb OR rolcreaterole OR rolreplication OR rolbypassrls))
+   AND NOT EXISTS (
+       SELECT FROM pg_catalog.pg_auth_members AS membership
+       JOIN pg_catalog.pg_roles AS member_role ON member_role.oid = membership.member
+       WHERE member_role.rolname IN ('etaye_owner', 'etaye_runtime', 'etaye_identity')
+   )
+   AND EXISTS (
+       SELECT FROM pg_catalog.pg_namespace AS schema
+       JOIN pg_catalog.pg_roles AS owner ON owner.oid = schema.nspowner
+       WHERE schema.nspname = 'public' AND owner.rolname = 'etaye_owner'
+   )
+   AND has_schema_privilege('etaye_runtime', 'public', 'USAGE')
+   AND has_schema_privilege('etaye_identity', 'public', 'USAGE')
+   AND NOT has_schema_privilege('etaye_runtime', 'public', 'CREATE')
+   AND NOT has_schema_privilege('etaye_identity', 'public', 'CREATE')
+   AND NOT pg_has_role('etaye_test_admin', 'etaye_owner', 'SET')
+   AND NOT pg_has_role('etaye_test_admin', 'etaye_owner', 'USAGE')
+FROM pg_catalog.pg_roles
+WHERE rolname IN ('etaye_owner', 'etaye_runtime', 'etaye_identity');
+SQL
+  ) || return 1
+  [[ "$result" == t ]] || return 1
+
+  # Also verify mark-demo-database.sh refuses unmarked custom DB names and succeeds once explicitly confirmed.
+  if docker exec -i \
+      --env PGHOST=127.0.0.1 \
+      --env POSTGRES_ADMIN_USER=etaye_test_admin \
+      --env "POSTGRES_ADMIN_PASSWORD=$admin_password" \
+      --env POSTGRES_DB=etaye_demo_managed \
+      "$name" bash -s < "$script_dir/../demo/mark-demo-database.sh" >/dev/null 2>&1; then
+    return 1
+  fi
+
+  docker exec -i \
+    --env PGHOST=127.0.0.1 \
+    --env POSTGRES_ADMIN_USER=etaye_test_admin \
+    --env "POSTGRES_ADMIN_PASSWORD=$admin_password" \
+    --env POSTGRES_DB=etaye_demo_managed \
+    --env ETAYE_MANAGED_DEMO_DB=etaye_demo_managed \
+    "$name" bash -s < "$script_dir/../demo/mark-demo-database.sh" >/dev/null || return 1
+
+  local marked
+  marked=$(PGPASSWORD="$admin_password" docker exec -i --env PGPASSWORD "$name" \
+    psql -X -w -At -v ON_ERROR_STOP=1 --host=127.0.0.1 --username=etaye_test_admin --dbname=etaye_demo_managed <<'SQL'
+SELECT EXISTS (
+    SELECT FROM pg_catalog.pg_namespace n
+    JOIN pg_catalog.pg_roles r ON r.oid = n.nspowner
+    WHERE n.nspname = 'etaye_demo_bootstrap' AND r.rolname = 'etaye_test_admin'
+) AND EXISTS (
+    SELECT FROM pg_catalog.pg_namespace n
+    JOIN pg_catalog.pg_roles r ON r.oid = n.nspowner
+    WHERE n.nspname = 'etaye_demo' AND r.rolname = 'etaye_owner'
+) AND NOT pg_has_role('etaye_test_admin', 'etaye_owner', 'SET');
+SQL
+  ) || return 1
+  [[ "$marked" == t ]]
+}
+
 run_case "Application role attributes and public schema owner" verify_roles_and_schema
 run_case "Admin collision with etaye_runtime is refused" verify_admin_collision
 run_case "Owner can authenticate with the literal password" verify_literal_password
 run_case "Compose fixes the administrator name and binds the port to the loopback" verify_compose_settings
 run_case "Health check follows the role attributes on every start" verify_health_follows_role_attributes
+run_case "Non-superuser CREATEROLE admin provisions roles, public owner, and demo schemas idempotently" verify_nonsuperuser_createrole_provisioning
 exit "$failed"
