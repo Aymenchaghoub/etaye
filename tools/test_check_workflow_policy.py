@@ -327,11 +327,27 @@ class RepositoryTest(unittest.TestCase):
         self.assertTrue(policy.check_repository(self.directory({})))
 
     def test_the_repository_workflows_satisfy_the_policy(self):
+        self.assertEqual(len(policy.REQUIRED_JOB_NAMES), 8)
         self.assertIn("Dependency review", policy.REQUIRED_JOB_NAMES)
+        self.assertIn("Package verify", policy.REQUIRED_JOB_NAMES)
         self.assertEqual(policy.check_repository(ROOT / ".github/workflows"), [])
         names = {path.name for path in (ROOT / ".github/workflows").glob("*.yml")}
-        self.assertTrue({"api.yml", "web.yml", "dependency-review.yml"} <= names,
+        self.assertTrue({"api.yml", "web.yml", "dependency-review.yml", "package.yml"} <= names,
                         "the policy must cover the workflows the previous check ignored")
+
+    def test_package_verify_preserves_unfiltered_fork_and_secret_free_invariants(self):
+        package_text = (ROOT / ".github/workflows/package.yml").read_text()
+        self.assertEqual(policy.check_workflow("package.yml", package_text), [])
+        for mutated, fragment in (
+            (package_text.replace("  pull_request:\n", "  pull_request:\n    paths: ['apps/**']\n"),
+             "must not filter pull requests with paths"),
+            (package_text.replace("    name: Package verify\n", "    name: Package verify\n    if: github.event_name != 'pull_request'\n"),
+             "must not use if"),
+            (package_text.replace("      COMPOSE_PROJECT_NAME:", "      LEAK: ${{ secrets.SONAR_TOKEN }}\n      COMPOSE_PROJECT_NAME:"),
+             "must not read repository secrets"),
+        ):
+            found = policy.check_workflow("package.yml", mutated)
+            self.assertTrue(any(fragment in line for line in found), f"expected {fragment!r} in {found}")
 
 
 if __name__ == "__main__":
