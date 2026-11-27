@@ -136,9 +136,12 @@ def require_registry_manifest(reference: str, digest: str, authfile: Path) -> No
 
 
 def flyway_base_identity(root: Path, source_sha: str) -> dict:
-    exact_sha(source_sha)
+    # The guard stays in this function: the security analysis tracks validated revisions
+    # across the subprocess boundary, not across a helper call.
+    if not GIT_SHA.fullmatch(source_sha):
+        raise ValueError("Expected a full Git SHA")
     source = subprocess.check_output(
-        ["git", "show", f"{source_sha}:infra/demo/migrate.Dockerfile"], text=True,
+        ["git", "show", "--end-of-options", f"{source_sha}:infra/demo/migrate.Dockerfile"], text=True,
     )
     match = re.fullmatch(r"FROM flyway/flyway:[0-9.]+@(sha256:[a-f0-9]{64})", source.splitlines()[0])
     if match is None:
@@ -216,7 +219,9 @@ def stage(root: Path, output: Path, source_sha: str) -> None:
 
 
 def verify_attestation(subject: str, source_sha: str, predicate: str) -> bytes:
-    exact_sha(source_sha)
+    # Keep the revision guard beside the command, where the security analysis can see it.
+    if not GIT_SHA.fullmatch(source_sha):
+        raise ValueError("Expected a full Git SHA")
     subject = attestation_subject(subject)
     if predicate not in (SLSA, CYCLONEDX):
         raise ValueError("Unexpected attestation predicate")
