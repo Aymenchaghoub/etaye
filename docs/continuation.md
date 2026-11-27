@@ -2,6 +2,16 @@
 
 Updated: 2026-11-27. Owner: Aymen Chaghoub.
 
+## First cloud deployment in progress — 2026-11-27
+
+**Phase and owner approvals.** Aymen selected Azure Container Apps Consumption, Neon Free and GHCR for the synthetic demonstration. The owner explicitly approved the Neon role replacement and dedicated database, one-shot migration and synthetic fixture, and registration of `Microsoft.App` alone. The baseline is verified `origin/main` at `3484df863d9ef9e98c920d8b383369433fc2b59e`.
+
+**Verified.** Neon `demo` has `etaye_demo_cloud` with the three restricted SQL roles, authenticated hostname-verified direct TLS, the valid eight-version Flyway history and the existing synthetic fixture at generation 1. Live RLS verified unscoped and cross-practice denials, connection context cleanup and identity privileges. A complete logical backup was verified against selected protected rows and the Flyway history. Azure provider registration made regional quotas visible and one environment is available in each permitted region. The provider rejected Germany West Central with `MaxNumberOfEnvironmentsInSubExceeded`; its approvable Belgium Central alternative passed provider-level what-if. No Azure resources, GHCR packages or demo URL are active.
+
+**Artifacts.** The [cloud demo runbook](operations/cloud-demo-runbook.md) records decisions, observed privileges, backup and proposed delivery. [Bicep](../infra/azure/foundation.bicep) describes the proposed foundation. Local checkpoint, operation evidence and review pages are outside the repository. Release and access design remain under preparation.
+
+**Open choices and next action.** Confirm Azure credit balance, review the foundation PR and obtain separate creation approval. Prepare the exact cloud runtime candidate, review its access model and validate the GHCR publication and OIDC setup before their own approvals. An isolated Neon restore needs separate approval. Story 3.4 phase 0 remains the next functional candidate. `development_authorized` is false.
+
 ## Technical consolidation mission closed — 2026-11-27
 
 **Phase.** The engineering consolidation and governance baseline is complete on `main` at [`5b38f3cf7f845447cbebb06bb826cd3ef524f33d`](https://github.com/Aymenchaghoub/etaye/commit/5b38f3cf7f845447cbebb06bb826cd3ef524f33d). Following the six consolidation PRs (`#87 → #86 → #84 → #88 → #85 → #89` at [`b4e8ff9b352a82389150bf3adcd2ab9a72fb6900`](https://github.com/Aymenchaghoub/etaye/commit/b4e8ff9b352a82389150bf3adcd2ab9a72fb6900)), all remaining engineering and governance PRs (**#90 → #92 → #91 → #93 → #94**) have been reviewed, verified and squash-merged to `main`:
