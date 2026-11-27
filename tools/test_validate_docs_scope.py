@@ -692,19 +692,21 @@ jobs:
                            "actions/upload-artifact", "actions/dependency-review-action",
                            "astral-sh/setup-uv"}
 
-        def check_node(node):
+        def check_node(node, *, release=False):
             if isinstance(node, dict):
                 self.assertNotIn("services", node)
                 if "permissions" in node:
-                    self.assertEqual(node["permissions"], {"contents": "read"})
+                    if not release:
+                        self.assertEqual(node["permissions"], {"contents": "read"})
                 if "uses" in node:
                     self.assertRegex(node["uses"], r"^[\w./-]+@[0-9a-fA-F]{40}$")
-                    self.assertIn(node["uses"].split("@")[0], allowed_actions)
+                    actions = allowed_actions | {"actions/attest", "actions/download-artifact"} if release else allowed_actions
+                    self.assertIn(node["uses"].split("@")[0], actions)
                 for value in node.values():
-                    check_node(value)
+                    check_node(value, release=release)
             elif isinstance(node, list):
                 for value in node:
-                    check_node(value)
+                    check_node(value, release=release)
 
         for name in ("api.yml", "web.yml", "dependency-review.yml", "package.yml", "sonarqube.yml"):
             with self.subTest(path=name):
@@ -722,7 +724,12 @@ jobs:
 
         release_workflow = yaml.load((ROOT / ".github/workflows/release.yml").read_text(encoding="utf-8"),
                                      Loader=UniqueKeySafeLoader)
-        check_node(release_workflow)
+        check_node(release_workflow, release=True)
+        self.assertEqual(release_workflow["permissions"], {"contents": "read"})
+        self.assertEqual(release_workflow["jobs"]["candidate"]["permissions"],
+                         {"contents": "read", "actions": "read"})
+        self.assertEqual(release_workflow["jobs"]["publish"]["permissions"],
+                         {"contents": "read", "packages": "write", "attestations": "write", "id-token": "write"})
 
 
 if __name__ == "__main__":
