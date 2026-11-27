@@ -125,3 +125,38 @@ class CoverageReportsTest(unittest.TestCase):
                 with redirect_stderr(StringIO()) as error:
                     self.assertEqual(main(["cobertura", str(self.report)]), 1)
                 self.assertIn("FAIL cobertura", error.getvalue())
+
+    def test_numeric_line_and_branch_floors_pass_and_fail_closed(self):
+        self.report.write_text(
+            '<coverage lines-valid="10" lines-covered="9" branches-valid="10" branches-covered="9">'
+            '<packages><package name="t"><classes><class filename="a.py"><lines>'
+            + "".join(f'<line number="{i}" hits="1"/>' for i in range(1, 10))
+            + '<line number="10" hits="0"/></lines></class></classes></package></packages></coverage>'
+        )
+        with redirect_stdout(StringIO()) as output:
+            self.assertEqual(main(["cobertura", str(self.report), "--min-lines", "90", "--min-branches", "85"]), 0)
+        self.assertIn("branches 9/10 (90.00%)", output.getvalue())
+
+        with redirect_stderr(StringIO()) as error:
+            self.assertEqual(main(["cobertura", str(self.report), "--min-lines", "95"]), 1)
+        self.assertIn("line coverage 90.00% (9/10) is below 95%", error.getvalue())
+
+        with redirect_stderr(StringIO()) as error:
+            self.assertEqual(main(["cobertura", str(self.report), "--min-branches", "95"]), 1)
+        self.assertIn("branch coverage 90.00% (9/10) is below 95%", error.getvalue())
+
+        self.report.write_text(
+            '<coverage lines-valid="1" lines-covered="1">'
+            '<packages><package name="t"><classes><class filename="a.py"><lines>'
+            '<line number="1" hits="1"/></lines></class></classes></package></packages></coverage>'
+        )
+        with redirect_stderr(StringIO()) as error:
+            self.assertEqual(main(["cobertura", str(self.report), "--min-branches", "85"]), 1)
+        self.assertIn("does not contain branch counters", error.getvalue())
+
+        self.report.write_text("SF:used.ts\nDA:1,1\nDA:2,1\nLF:2\nLH:2\nBRDA:2,0,0,1\nBRDA:2,0,1,0\nBRF:2\nBRH:1\nend_of_record\n")
+        with redirect_stdout(StringIO()):
+            self.assertEqual(main(["lcov", str(self.report), "--min-lines", "90", "--min-branches", "50"]), 0)
+        with redirect_stderr(StringIO()) as error:
+            self.assertEqual(main(["lcov", str(self.report), "--min-lines", "90", "--min-branches", "85"]), 1)
+        self.assertIn("branch coverage 50.00% (1/2) is below 85%", error.getvalue())

@@ -26,14 +26,14 @@
         <sonar.projectName>Étaye — API</sonar.projectName>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-        <!-- Coverage floors, set just below the baseline measured on 2026-11-25 (89.5 % of lines, 78.8 % of
-             branches, 259 tests). A ratchet: raise them when coverage grows, never lower them to pass a build.
+        <!-- Coverage floors, ratcheted to protect the consolidated baseline (93.48 % lines / 86.67 % branches).
+             A ratchet: raise them when coverage grows, never lower them to pass a build.
              Override on the command line to see a failure, e.g. -Dcoverage.line.minimum=0.99 -->
-        <coverage.line.minimum>0.88</coverage.line.minimum>
-        <coverage.branch.minimum>0.77</coverage.branch.minimum>
+        <coverage.line.minimum>0.90</coverage.line.minimum>
+        <coverage.branch.minimum>0.85</coverage.branch.minimum>
         <!-- Packages that carry authorization, practice isolation, transactions and record access. -->
         <coverage.critical.line.minimum>0.90</coverage.critical.line.minimum>
-        <coverage.critical.branch.minimum>0.75</coverage.critical.branch.minimum>
+        <coverage.critical.branch.minimum>0.80</coverage.critical.branch.minimum>
     </properties>
 
     <dependencies>

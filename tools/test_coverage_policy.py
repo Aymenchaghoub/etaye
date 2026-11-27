@@ -19,13 +19,13 @@ NS = {"m": "http://maven.apache.org/POM/4.0.0"}
 # Baselines measured on 2026-11-25 (docs/operations/ci-cd-quality-audit.md), minus a small margin.
 LINT_DEBT_LIMIT = 21  # violations recorded in apps/web/eslint-suppressions.json on 2026-11-25
 CHANGED_LINE_MINIMUM = 80
-API_FLOORS = {"coverage.line.minimum": 0.88, "coverage.branch.minimum": 0.77,
-              "coverage.critical.line.minimum": 0.90, "coverage.critical.branch.minimum": 0.75}
+API_FLOORS = {"coverage.line.minimum": 0.90, "coverage.branch.minimum": 0.85,
+              "coverage.critical.line.minimum": 0.90, "coverage.critical.branch.minimum": 0.80}
 CRITICAL_PACKAGES = {
     "dev.aymen.etaye.infrastructure.security", "dev.aymen.etaye.infrastructure.transaction",
     "dev.aymen.etaye.identity.service", "dev.aymen.etaye.records.service", "dev.aymen.etaye.records.domain",
 }
-WEB_FLOORS = {"logic": {"lines": 71, "statements": 71, "functions": 61, "branches": 71},
+WEB_FLOORS = {"logic": {"lines": 80, "statements": 80, "functions": 70, "branches": 80},
               "rules": {"lines": 95, "statements": 95, "functions": 90, "branches": 87}}
 
 
@@ -208,6 +208,19 @@ class WorkflowsKeepTheGatesTest(unittest.TestCase):
                 lines = re.search(r"--min-file-lines (\d+)", command)
                 self.assertTrue(percent is None or int(percent[1]) >= 50, "the per-file floor was lowered")
                 self.assertTrue(lines is None or int(lines[1]) <= 10, "the per-file floor now ignores small files")
+
+    def test_combined_web_and_python_anti_regression_floors_stay_enforced(self):
+        web_text = self.text("web.yml")
+        self.assertRegex(
+            web_text,
+            r"assert_coverage_reports\.py lcov apps/web/reports/combined-coverage/lcov\.info --min-lines 90 --min-branches 85",
+        )
+        doc_text = self.text("documentation.yml")
+        self.assertIn("coverage run --rcfile=tools/pyproject.toml", doc_text)
+        self.assertRegex(
+            doc_text,
+            r"assert_coverage_reports\.py cobertura reports/tooling-coverage\.xml --min-lines 90 --min-branches 85",
+        )
 
 
 if __name__ == "__main__":

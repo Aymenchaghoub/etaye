@@ -39,8 +39,12 @@ jobs:
           uv pip sync --python .venv-docs/bin/python --require-hashes tools/requirements.txt
       - name: Lint first-party Python tooling
         run: .venv-docs/bin/ruff check --select E9,F tools design/corrections design/figma-background-study docs/design/background-study
-      - name: Verify resume kit preservation and archive integrity
-        run: .venv-docs/bin/python -m unittest discover -s tools -p 'test_*.py'
+      - name: Verify resume kit preservation, archive integrity and Python coverage floors
+        run: |
+          mkdir -p reports
+          .venv-docs/bin/coverage run --rcfile=tools/pyproject.toml -m unittest discover -s tools -p 'test_*.py'
+          .venv-docs/bin/coverage xml --rcfile=tools/pyproject.toml
+          .venv-docs/bin/python tools/assert_coverage_reports.py cobertura reports/tooling-coverage.xml --min-lines 90 --min-branches 85
       # The runner image ships another Node line (22.x on 2026-11-25); the tooling tests run on the
       # Node line of the project (ADR-002).
       - name: Set up Node 26
