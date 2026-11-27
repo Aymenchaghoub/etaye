@@ -4,6 +4,8 @@ Updated: 2026-11-25. Owner: Aymen Chaghoub. Audit baseline: `main` at `798040712
 
 This audit challenges the pipeline; it does not describe it favorably. A green check is treated as a claim that needs evidence. Labels follow AGENTS.md: **User decision**, **Verified observation**, **Proposal**, **[ASSUMPTION]**, **To verify**.
 
+The findings and counters below are dated. The [integrated main baseline](quality-baseline.md#verified-integrated-main-at-b4e8ff9) and [observation ledger](ci-observation.md) record the post-consolidation evidence and current owner decisions.
+
 ## 1. Authority and scope
 
 **User decision (mission brief, 2026-11-25).** Aymen asked for an independent CI/CD, DevSecOps and quality audit, followed by justified implementation, validation, an independent self-review and a pull request left unmerged. Authorized: repository-side CI, build, quality-tooling and security-automation changes, the tests those changes need, and their documentation. Not authorized: product features, business rules, UX or architecture changes, story authorization, remote settings (ruleset, required checks, permissions, secrets, environments, integrations), paid services, deployment, merging or auto-merge.

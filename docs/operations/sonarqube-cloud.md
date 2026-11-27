@@ -17,18 +17,18 @@ Verified against the official SonarQube Cloud documentation and the live `sonarc
 | Quality gate | Read-only built-in `Sonar way` (`id=9`) | Custom quality gates and custom quality profiles require Team, Enterprise or OSS plans and are **rejected** here to stay on Free. |
 | AI / Advanced SAST / SCA / Webhooks / SOT | Not available on Free | AI CodeFix, Advanced SAST, Sonar SCA, Webhooks and Scoped Organization Tokens are disabled/not used. |
 
-### Conflict between read-only `Sonar way` and unmeasured `.tsx` files
+### New-code gate and Web coverage
 
-The built-in `Sonar way` gate enforces six read-only conditions on New Code: Reliability A (`new_reliability_rating <= 1`), Security A (`new_security_rating <= 1`), Maintainability A (`new_maintainability_rating <= 1`), Coverage `>= 80%` (`new_coverage >= 80`), Duplication `<= 3%` (`new_duplicated_lines_density <= 3`), and Security Hotspots Reviewed `100%`.
+The built-in `Sonar way` gate evaluates New Code ratings A, coverage at least 80%, duplication at most 3% and 100% new security hotspots reviewed. The gate can report `OK` while overall-code findings still affect a project rating.
 
-In Étaye, Vitest measures `.ts` logic/rule modules (`71%` / `95%` floors), while `.tsx` pages and components are driven by Playwright Chromium smoke and real-stack specs that collect no V8 coverage (D-70). Removing `.tsx` files from `sonar.sources` or adding `**/*.tsx` to `sonar.coverage.exclusions` would hide UI code from static analysis or artificially inflate SonarQube Web coverage above the truthful ~`17–19%` baseline. Therefore, `.tsx` files remain in both quality analysis and coverage reporting, and `SonarQube Web` stays **non-required** on the Free plan: a future UI story touching `.tsx` files may turn `SonarQube Web` red on `new_coverage` without blocking merge, while `Web verify` remains the authoritative required check.
+[PR #88](https://github.com/Aymenchaghoub/etaye/pull/88) added Vitest component tests and Playwright Chromium V8 coverage in the stubbed smoke suite. SonarQube Web now imports combined LCOV from unit, component and browser execution. The CI changed-line gate still uses the separate Vitest report and covers mapped TypeScript logic only. The production build has its own step and contains no browser coverage instrumentation. [Measured integrated main results](quality-baseline.md#verified-integrated-main-at-b4e8ff9)
 
 ## 2. Monorepo projects, scopes and scanners
 
 | Project key | Display name | Scope & exclusions | Coverage input | Pinned scanner |
 |---|---|---|---|---|
 | `aymenchaghoub_etaye-api` | `Étaye — API` | `apps/api` (`pom.xml`: Maven default `src/main/java` + `src/test/java` + compiled `target/classes`; no security/record/domain exclusions) | `apps/api/target/site/jacoco/jacoco.xml` | `org.sonarsource.scanner.maven:sonar-maven-plugin:5.9.0.7382` via `./mvnw` |
-| `aymenchaghoub_etaye-web` | `Étaye — Web` | `apps/web/sonar-project.properties`: `sonar.sources=src`; tests in `**/*.test.ts,**/*.test.tsx,tests/**,e2e/**,demo-e2e/**`; excludes `src/api/generated/**`, build/report/cache dirs | `apps/web/reports/unit-coverage/lcov.info` | `@sonar/scan@5.1.0` (`sonar-scanner-npm`, locked in `pnpm-lock.yaml`) |
+| `aymenchaghoub_etaye-web` | `Étaye — Web` | `apps/web/sonar-project.properties`: `sonar.sources=src`; tests in `**/*.test.ts,**/*.test.tsx,tests/**,e2e/**,demo-e2e/**`; excludes `src/api/generated/**`, build/report/cache dirs | `apps/web/reports/combined-coverage/lcov.info` | `@sonar/scan@5.1.0` (`sonar-scanner-npm`, locked in `pnpm-lock.yaml`) |
 | `aymenchaghoub_etaye-tooling` | `Étaye — Tooling` | `tools/pyproject.toml`: `sonar.sources=tools,design/corrections`, `sonar.inclusions=tools/**/*.py,design/corrections/**/*.py` (Python only, aligned with `.github/codeql-config.yml`); tests `tools/test_*.py`; excludes fixtures, caches and dependency manifests | `reports/tooling-coverage.xml` (`coverage==7.17.5`, Cobertura XML) | `pysonar==1.11.0.6012` (hash-locked in `tools/sonar-requirements.txt`) |
 
 ## 3. Architecture decision
@@ -36,7 +36,7 @@ In Étaye, Vitest measures `.ts` logic/rule modules (`71%` / `95%` floors), whil
 Three integration options were compared:
 
 1. **Extend `API verify`, `Web verify`, and `Planning package checks` directly:** Rejected because those jobs are required status checks in ruleset `26390376`. Coupling them to `sonarcloud.io` and `SONAR_TOKEN` violates required-check independence, exposes a repository secret in required PR workflows, and breaks fork/Dependabot PR behavior.
-2. **Dedicated `.github/workflows/sonarqube.yml` workflow (Selected):** Isolates `SONAR_TOKEN` to one non-required workflow (`pull_request` on `branches: [main]`, `push` on `branches: [main]`, `workflow_dispatch`), keeps all seven required checks unchanged and secret-free, uses `tools/ci_scope.py` (`sonar-api`, `sonar-web`, `sonar-tooling`) in an unprivileged `preflight` job, checks out `fetch-depth: 0` inside each active job, generates and verifies fresh revision-matched coverage on the exact checkout, and enforces `-Dsonar.qualitygate.wait=true` (`300s` timeout). Because `SonarQube Web` runs only Vitest (`~2s`) instead of Playwright (`~3m`), it finishes faster than `Web verify`.
+2. **Dedicated `.github/workflows/sonarqube.yml` workflow (Selected):** Isolates `SONAR_TOKEN` to one non-required workflow (`pull_request` on `branches: [main]`, `push` on `branches: [main]`, `workflow_dispatch`), keeps all eight required checks unchanged and independent of Sonar credentials, uses `tools/ci_scope.py` (`sonar-api`, `sonar-web`, `sonar-tooling`) in an unprivileged `preflight` job, checks out `fetch-depth: 0` inside each active job, generates and verifies fresh revision-matched coverage on the exact checkout, and enforces `-Dsonar.qualitygate.wait=true` (`300s` timeout). `SonarQube Web` executes Vitest and Playwright before importing the combined report.
 3. **Separate artifact-consuming jobs inside existing workflows / `workflow_run`:** Rejected because placing Sonar jobs in `api.yml`/`web.yml`/`documentation.yml` spreads `SONAR_TOKEN` across all three required workflows (and `api.yml`/`web.yml` lack `branches: [main]` on `pull_request`), while `workflow_run` is forbidden by `tools/check_workflow_policy.py` and runs outside the PR check context.
 
 ## 4. Security, secret handling and untrusted PRs
@@ -58,13 +58,13 @@ Observed on [PR #82](https://github.com/Aymenchaghoub/etaye/pull/82) ([workflow 
 | `aymenchaghoub_etaye-web` | `OK` (`0` new issues) | `17.1%` lines (`478/2790`), `16.1%` branches (`434/2697`), `16.6%` Sonar combined | Vitest LCOV reports `18.78%` (`447/2380` lines, `434/2697` branches); Sonar counts additional executable lines across unmeasured `.tsx`/`.ts` files | `36s` / `1m01s` |
 | `aymenchaghoub_etaye-tooling` | `OK` (`93.2%` new coverage on 59 lines, `0` new issues) | `51.1%` lines (`1550/3033`) | `coverage.py` reports `52.70%` (`1550/2941` statements); same `1,550` covered lines against Sonar's executable-line count | `43s` / `59s` |
 
-Full `main` branch project totals and historical issue triage will populate on the first `push` to `main` after PR #82 merges.
+See the [post-consolidation main results](quality-baseline.md#verified-integrated-main-at-b4e8ff9) and [API issue dispositions](api-quality-remediation.md).
 
 ## 6. Failure investigation, token rotation and observation
 
 - **Distinguishing failures:** `preflight` summary + GitHub status distinguish intentional skips (`skipped` jobs) from missing credentials (`Require SONAR_TOKEN secret` step failure), test/coverage integrity errors (`mvnw verify`, `test:coverage`, `coverage run`, `assert_coverage_reports.py`), scanner/network errors, and quality gate failures (`sonar.qualitygate.wait=true` non-zero exit).
 - **Token rotation procedure:** On the Free plan (Scoped Organization Tokens require Team/Enterprise), generate a new personal token in SonarQube Cloud (`My account > Access tokens > Personal Tokens`) for an account with `Execute Analysis` permission on the project (note that personal tokens inherit that user's other permissions), update the GitHub repository secret `SONAR_TOKEN` (`Settings > Secrets and variables > Actions`), rerun `SonarQube Cloud` on a trusted PR or `main`, and revoke the previous token in SonarQube Cloud.
-- **Observation period:** Keep all three `SonarQube` checks non-required for at least 10 trusted PRs and `main` merges. Only `SonarQube API` and `SonarQube Tooling` are candidates for future required-check promotion unless D-70 (Playwright V8 coverage) or a custom quality gate resolves the `.tsx` `new_coverage` conflict on `SonarQube Web`.
+- **Observation period:** Keep all three `SonarQube` checks optional for at least ten eligible authenticated PRs. Main runs, reruns and fully skipped PRs do not raise the count. Consider any promotion only with an explicit trust and missing-analysis policy. [Observation ledger](ci-observation.md#sonarqube-cloud)
 
 ## 7. Rollback
 

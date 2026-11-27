@@ -2,9 +2,15 @@
 
 Updated: 2026-11-02. Aymen explicitly authorized making etaye public, initial documentation CI/first PR, and useful free security/quality features. Application implementation remains forbidden. Never enable a paid trial, billing plan or unbounded paid AI usage under this authorization.
 
+## Current integrated verification — 2026-11-26
+
+The active strict [main ruleset 26390376](https://github.com/Aymenchaghoub/etaye/rules/26390376) has eight contexts: `Planning package checks`, `Analyze tooling`, `Analyze API (Java)`, `Analyze Web (TypeScript)`, `CodeQL`, `API verify`, `Web verify`, and `Dependency review`. Seven are GitHub Actions jobs and the aggregate `CodeQL` is emitted by GitHub code scanning independently. Pull request checks are required on the final assessed PR head, and the squash commit has its own workflow evidence. [CI observation and proposed owner decision](ci-observation.md)
+
+GitHub returned zero open CodeQL and Dependabot alerts. The three CodeQL analyzers and Gitleaks ran on integrated main `b4e8ff9`. Trivy found upstream Flyway and PostgreSQL occurrences and produced an image-specific report, with zero HIGH/CRITICAL findings in API and Web. The SonarQube API project still has nine open tickets with individual recommended dispositions. [Integrated evidence](quality-baseline.md#verified-integrated-main-at-b4e8ff9) · [Container observations](deployment-readiness.md#exact-integrated-main-image-evidence) · [API dispositions](api-quality-remediation.md#final-independent-review-at-b4e8ff9)
+
 ## Planned and observed controls
 
-The exact final remote settings and first run/PR evidence are recorded below after verification. A local file is configuration, not proof that GitHub executed it.
+The current post-consolidation settings and earlier dated records appear below. A local file is configuration, not proof that GitHub executed it.
 
 - Documentation CI: typed contract validation, links/anchors/fixture/traceability/asset checks, BMAD spine lint, Ruff fatal/undefined-name checks and full-history Gitleaks CLI. Python dependencies and scanner checksums pinned; no app build or fake coverage.
 - CodeQL full-stack setup: Java 25 (`apps/api`), TypeScript (`apps/web`), and Python (`tools/`, `design/corrections/`) static analysis using the `security-and-quality` query suite (UD-49). Full SHA-pinned actions; contents:read by default and security-events:write only for the analyzers.

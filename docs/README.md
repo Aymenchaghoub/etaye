@@ -1,6 +1,6 @@
 # Documentation index
 
-The planning, design and implementation records cover different stages of Étaye. Stories 10.1 and 10.2 provide the runnable platform foundation, the generated client and the token bridge; stories 1.1 to 1.4, 3.1, 3.2 and 9.1 add access, patient and record screens and the local demonstration. See [implementation records](implementation-artifacts/README.md) for the verified scope and [design coverage](design/coverage.csv) for approved surfaces. Development authorization is granted per story.
+The planning, design and implementation records cover different stages of Étaye. Stories 10.1 and 10.2 provide the runnable platform foundation, the generated client and the token bridge; stories 1.1 to 1.4, 3.1 to 3.3 and 9.1 add access, patient and record screens, measurement reading and the local demonstration. See [implementation records](implementation-artifacts/README.md) for the verified scope and [design coverage](design/coverage.csv) for approved surfaces. Development authorization is granted per story.
 
 | Authority / purpose | Artifact |
 |---|---|
@@ -19,7 +19,7 @@ The planning, design and implementation records cover different stages of Étaye
 | AI behavior and evaluation | [AI specification](planning-artifacts/ai-specification.md) |
 | Security/privacy and measurable quality | [Security/privacy](planning-artifacts/security-privacy.md), [NFRs](planning-artifacts/non-functional-requirements.md) |
 | Actual initial CI and GitHub security | [Repository controls](operations/github-security.md), [CI/CD and quality audit](operations/ci-cd-quality-audit.md), [CI observation](operations/ci-observation.md), [SonarQube Cloud](operations/sonarqube-cloud.md) |
-| Engineering baseline | [Measured quality baseline](operations/quality-baseline.md) |
+| Engineering baseline | [Measured quality baseline](operations/quality-baseline.md), [integrated main verification](operations/quality-baseline.md#verified-integrated-main-at-b4e8ff9), [API finding dispositions](operations/api-quality-remediation.md#final-independent-review-at-b4e8ff9) |
 | Future delivery and recovery | [CI/CD/deployment](operations/cicd-deployment-strategy.md), [deployment readiness](operations/deployment-readiness.md), [GitHub delivery rules](operations/delivery-rules.md) |
 | Dated compatibility/cost evidence | [Hosting assessment](operations/hosting-cost-assessment.md), [official source evidence](operations/technology-and-hosting-sources.md) |
 | Verification design | [Test strategy](test-artifacts/test-strategy.md), [acceptance scenarios](test-artifacts/acceptance-scenarios.md) |
