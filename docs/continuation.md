@@ -2,6 +2,18 @@
 
 Updated: 2026-11-27. Owner: Aymen Chaghoub.
 
+## Release candidate blockers corrected — 2026-11-27
+
+**Trigger.** The first protected-main release rehearsal [46001297479](https://github.com/Aymenchaghoub/etaye/actions/runs/46001297479) for `333e008` failed its candidate verification with "The PostgreSQL upstream archive does not match the pinned platform digest". Separately, the `SonarQube Tooling` quality gate failed on PR #98 and `main` while the nine required GitHub checks passed.
+
+**Verified observation.** Replayed on the hosted runner ([46009617625](https://github.com/Aymenchaghoub/etaye/actions/runs/46009617625)): image `ubuntu-24.04` runs Docker Engine 28.0.4 with its classic image store, which saves a pulled image as a normalized OCI archive (reserialized manifest, uncompressed layers) instead of the pinned platform manifest `32f5fdbf4d27…` of the unchanged upstream index `c6993038…`. The derived package images keep their config digest, so only the external base archive was rejected. SonarCloud reported four MAJOR vulnerabilities (`pythonsecurity:S6350`, `S8705` twice, `S8707`), all in the new `tools/promote_release.py`.
+
+**Delivered.** [PR #99](https://github.com/Aymenchaghoub/etaye/pull/99) (`42112f7`) validates each promotion input at its point of use: exact commit SHA, workspace-bound paths, registry reference bound to the verified digest, attestation subject allowlist and `--` operands. The upstream base archive is now copied from its registry with `skopeo copy --preserve-digests` through [archive_upstream_base.sh](../tools/archive_upstream_base.sh), the same digest comparison is kept, archive indexes are retained on failure and regression tests replay both defects.
+
+**User decision.** From 2026-11-27 no pull request is merged while any SonarQube quality gate fails, even when GitHub allows the merge. Quality thresholds, the ruleset and historical issue dispositions stay unchanged; the private merge helper enforces the rule.
+
+**Next action.** Dispatch the release for the corrected protected `main` SHA, approve the publishing environment, verify registry digests and attestations, then deploy `ca-etaye-demo` and run the cloud acceptance. `development_authorized` is false and Story 3.4 is untouched.
+
 ## First cloud deployment in progress — 2026-11-27
 
 **Phase and owner approvals.** Aymen selected Azure Container Apps Consumption, Neon Free and GHCR for the synthetic demonstration. The owner explicitly approved the Neon role replacement and dedicated database, one-shot migration and synthetic fixture, and registration of `Microsoft.App` alone. The baseline is verified `origin/main` at `3484df863d9ef9e98c920d8b383369433fc2b59e`.

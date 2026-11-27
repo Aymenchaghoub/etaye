@@ -195,6 +195,20 @@ def runtime_evidence(root: Path) -> tuple[dict, dict]:
     return runtimes, {"before": describe(before), "after": describe(after), "playwright": evidence}
 
 
+def upstream_platform(root: Path, upstream_digest: str) -> str:
+    """Return the single Linux amd64 manifest of the index pinned in the PostgreSQL Dockerfile."""
+    upstream_index = file_at(root, "upstream-postgres-index.json")
+    if "sha256:" + describe(upstream_index)["sha256"] != upstream_digest:
+        raise ValueError("The upstream PostgreSQL index does not match the Dockerfile pin")
+    platforms = [
+        item["digest"] for item in json.loads(upstream_index.read_bytes())["manifests"]
+        if (item.get("platform", {}).get("os"), item.get("platform", {}).get("architecture")) == ("linux", "amd64")
+    ]
+    if len(platforms) != 1 or not DIGEST.fullmatch(platforms[0]):
+        raise ValueError("Expected one Linux amd64 PostgreSQL platform in the pinned index")
+    return platforms[0]
+
+
 def generate_manifest(root: Path, git_sha: str, upstream_digest: str) -> dict:
     if not GIT_SHA.fullmatch(git_sha) or not DIGEST.fullmatch(upstream_digest):
         raise ValueError("Expected a full Git SHA and a pinned upstream PostgreSQL digest")
@@ -211,21 +225,18 @@ def generate_manifest(root: Path, git_sha: str, upstream_digest: str) -> dict:
     ):
         raise ValueError("Missing Trivy version or database evidence")
 
+    platform = upstream_platform(root, upstream_digest)
     upstream_index = file_at(root, "upstream-postgres-index.json")
-    if "sha256:" + describe(upstream_index)["sha256"] != upstream_digest:
-        raise ValueError("The upstream PostgreSQL index does not match the Dockerfile pin")
-    upstream_manifests = json.loads(upstream_index.read_bytes())["manifests"]
-    upstream_platform = [
-        item["digest"] for item in upstream_manifests
-        if (item.get("platform", {}).get("os"), item.get("platform", {}).get("architecture")) == ("linux", "amd64")
-    ]
 
     artifacts = {}
     for service in (*PACKAGE_IMAGES, UPSTREAM_IMAGE):
         identity = image_archive(file_at(root, f"{service}.tar"))
         if service == UPSTREAM_IMAGE:
-            if upstream_platform != [identity["ociManifestDigest"]]:
-                raise ValueError("The PostgreSQL upstream archive does not match the pinned platform digest")
+            if identity["ociManifestDigest"] != platform:
+                raise ValueError(
+                    "The PostgreSQL upstream archive does not match the pinned platform digest: "
+                    f"expected {platform}, archived {identity['ociManifestDigest']}"
+                )
             source = {
                 "kind": "external-base",
                 "baseOf": "postgres",
@@ -284,13 +295,17 @@ def upstream_pin(revision: str) -> str:
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("operation", choices=("generate", "verify"))
+    parser.add_argument("operation", choices=("generate", "verify", "upstream-platform"))
     parser.add_argument("directory", type=Path)
     parser.add_argument("--git-sha", required=True)
     parser.add_argument("--require-published", action="store_true")
     args = parser.parse_args(argv)
     try:
         digest = upstream_pin(args.git_sha)
+        if args.operation == "upstream-platform":
+            # Only the platform digest is printed: the shell caller passes it on to Skopeo.
+            print(upstream_platform(args.directory, digest))
+            return 0
         if args.operation == "generate":
             if args.require_published:
                 raise ValueError("A local dry run can never generate a published release")

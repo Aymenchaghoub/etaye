@@ -4,11 +4,14 @@ import gzip
 import hashlib
 from io import BytesIO, StringIO
 import json
+import os
 from pathlib import Path
+import stat
 import subprocess
 import tarfile
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import release_artifacts as release
 
@@ -18,6 +21,7 @@ INDEX_TYPE = "application/vnd.oci.image.index.v1+json"
 MANIFEST_TYPE = "application/vnd.oci.image.manifest.v1+json"
 CONFIG_TYPE = "application/vnd.oci.image.config.v1+json"
 LAYER_TYPE = "application/vnd.oci.image.layer.v1.tar+gzip"
+UNCOMPRESSED_LAYER_TYPE = "application/vnd.oci.image.layer.v1.tar"
 PLATFORM = {"os": "linux", "architecture": "amd64"}
 
 
@@ -34,7 +38,7 @@ def write_json(path, data):
 
 
 def write_image(path, *, bad_digest=False, incorrect_layer=False, duplicate=False, os="linux",
-                with_referrer=False, bad_referrer=False):
+                with_referrer=False, bad_referrer=False, uncompressed=False):
     blobs = {}
 
     def blob(content, media_type):
@@ -43,7 +47,9 @@ def write_image(path, *, bad_digest=False, incorrect_layer=False, duplicate=Fals
         return {"mediaType": media_type, "digest": checksum, "size": len(content)}
 
     layer_content = path.name.encode()
-    layer = blob(gzip.compress(layer_content, mtime=0), LAYER_TYPE)
+    # The classic Docker store keeps the image config but saves layers uncompressed with a new manifest.
+    layer_type = UNCOMPRESSED_LAYER_TYPE if uncompressed else LAYER_TYPE
+    layer = blob(layer_content if uncompressed else gzip.compress(layer_content, mtime=0), layer_type)
     diff_id = digest(b"unrelated layer" if incorrect_layer else layer_content)
     config = blob(encode({"os": os, "architecture": "amd64", "rootfs": {"diff_ids": [diff_id]}}), CONFIG_TYPE)
     manifest = blob(encode({"schemaVersion": 2, "config": config, "layers": [layer]}), MANIFEST_TYPE)
@@ -269,3 +275,94 @@ class ReleaseArtifactsTests(unittest.TestCase):
             with redirect_stdout(StringIO()):
                 for operation in ("generate", "verify"):
                     self.assertEqual(release.main([operation, str(self.root), "--git-sha", revision]), 0)
+
+    def pinned_checkout(self):
+        """Commit a Dockerfile pinned to this test's upstream index in the current directory."""
+        subprocess.run(["git", "init", "-q"], check=True)
+        dockerfile = Path("infra/demo/postgres.Dockerfile")
+        dockerfile.parent.mkdir(parents=True)
+        dockerfile.write_text(f"FROM postgres:18@{self.upstream_digest}\n", encoding="utf-8")
+        subprocess.run(["git", "add", "."], check=True)
+        subprocess.run([
+            "git", "-c", "user.name=Fixture", "-c", "user.email=fixture@example.test",
+            "-c", "commit.gpgsign=false", "-c", "core.hooksPath=/dev/null", "commit", "-qm", "Fixture",
+        ], check=True)
+        return subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+
+    def test_upstream_platform_requires_the_pinned_index_and_one_platform(self):
+        index = self.root / "upstream-postgres-index.json"
+        expected = release.upstream_platform(self.root, self.upstream_digest)
+        self.assertRegex(expected, r"^sha256:[0-9a-f]{64}$")
+        with tempfile.TemporaryDirectory() as checkout, chdir(checkout):
+            revision = self.pinned_checkout()
+            with redirect_stdout(StringIO()) as output:
+                code = release.main(["upstream-platform", str(self.root), "--git-sha", revision])
+            self.assertEqual((code, output.getvalue()), (0, expected + "\n"))
+            with redirect_stdout(StringIO()) as output:
+                code = release.main(["upstream-platform", str(self.root), "--git-sha", GIT_SHA[:12]])
+            self.assertEqual((code, output.getvalue()), (1, ""))
+
+        # An attestation manifest has an unknown platform and is never the base platform.
+        attestation = {"digest": "sha256:" + "e" * 64, "platform": {"os": "unknown", "architecture": "unknown"}}
+        with_index = {"manifests": [{"digest": expected, "platform": PLATFORM}, attestation]}
+        write_json(index, with_index)
+        self.assertEqual(release.upstream_platform(self.root, digest(encode(with_index))), expected)
+
+        # Zero or two Linux amd64 manifests are rejected, and so is an index that is not the pinned bytes.
+        for manifests in ([attestation], with_index["manifests"] + [{"digest": "sha256:" + "f" * 64, "platform": PLATFORM}]):
+            write_json(index, {"manifests": manifests})
+            with self.subTest(manifests=manifests), self.assertRaisesRegex(ValueError, "one Linux amd64"):
+                release.upstream_platform(self.root, digest(encode({"manifests": manifests})))
+        with self.assertRaisesRegex(ValueError, "does not match the Dockerfile pin"):
+            release.upstream_platform(self.root, digest(b"another index"))
+
+    def test_rejects_upstream_archive_saved_through_the_classic_docker_store(self):
+        # Run 46001297479: Docker Engine 28 saved the pulled base with a reserialized manifest and
+        # uncompressed layers. The content is equivalent, but it is no longer the pinned platform bytes.
+        path = self.root / f"{release.UPSTREAM_IMAGE}.tar"
+        pinned = path.read_bytes()
+        write_image(path, uncompressed=True)
+        with self.assertRaisesRegex(ValueError, "does not match the pinned platform digest"):
+            self.generate()
+        path.write_bytes(pinned)
+        self.generate()
+
+    def test_upstream_base_is_copied_from_the_registry_with_its_bytes_preserved(self):
+        script = Path(release.__file__).with_name("archive_upstream_base.sh")
+        stubs = self.root / "bin"
+        stubs.mkdir()
+        calls = self.root / "skopeo-calls.txt"
+        stub = stubs / "skopeo"
+        stub.write_text(
+            f'#!/usr/bin/env bash\nprintf "%s\\n" "$@" >> "{calls}"\n[[ -z "${{SKOPEO_FAIL:-}}" ]]\n',
+            encoding="utf-8",
+        )
+        stub.chmod(stub.stat().st_mode | stat.S_IXUSR)
+        index = self.root / "upstream-postgres-index.json"
+        archive = self.root / "upstream-postgres.tar"
+        pinned = index.read_bytes()
+        platform = json.loads(pinned)["manifests"][0]["digest"]
+        environment = patch.dict("os.environ", {"PATH": f"{stubs}{os.pathsep}{os.environ['PATH']}"})
+        with tempfile.TemporaryDirectory() as checkout, chdir(checkout):
+            revision = self.pinned_checkout()
+            command = ["bash", str(script), str(index), "docker.io/library/postgres", str(archive), revision]
+            with environment:
+                completed = subprocess.run(command, capture_output=True, text=True)
+                self.assertEqual(completed.returncode, 0, completed.stderr)
+                self.assertEqual(calls.read_text(encoding="utf-8").splitlines(), [
+                    "copy", "--preserve-digests",
+                    f"docker://docker.io/library/postgres@{platform}",
+                    f"oci-archive:{archive}:upstream-postgres",
+                ])
+
+                # An index edited after the registry read never reaches Skopeo.
+                write_json(index, {"manifests": [{"digest": "sha256:" + "0" * 64, "platform": PLATFORM}]})
+                edited = subprocess.run(command, capture_output=True, text=True)
+                self.assertNotEqual(edited.returncode, 0)
+                self.assertIn("does not match the Dockerfile pin", edited.stderr)
+                self.assertEqual(len(calls.read_text(encoding="utf-8").splitlines()), 4)
+
+                # A copy that cannot keep the registry bytes fails the rehearsal.
+                index.write_bytes(pinned)
+                with patch.dict("os.environ", {"SKOPEO_FAIL": "1"}):
+                    self.assertNotEqual(subprocess.run(command, capture_output=True, text=True).returncode, 0)

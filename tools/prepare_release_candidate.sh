@@ -85,8 +85,16 @@ if [[ "$instruction" != FROM || -n "$trailing" || ! "$upstream_flyway" =~ ^flywa
 fi
 docker buildx imagetools inspect --raw "$upstream_flyway" > "$reports/upstream-flyway-index.json"
 
-docker pull --platform linux/amd64 "$upstream"
-docker image save --platform linux/amd64 --output "$reports/upstream-postgres.tar" "$upstream"
+# The hosted runner keeps the classic Docker store, which saves a pulled image with a reserialized
+# manifest. Copy the pinned platform from its registry so the scanned archive keeps the registry bytes.
+bash tools/archive_upstream_base.sh "$reports/upstream-postgres-index.json" \
+  "docker.io/library/${upstream%%:*}" "$reports/upstream-postgres.tar" "$git_sha"
+
+# Retain each archive index beside the reports, so a digest mismatch can be diagnosed without the archives.
+for archive in "$reports"/*.tar; do
+  service=$(basename -- "$archive" .tar)
+  tar -xOf "$archive" index.json > "$reports/$service-archive-index.json"
+done
 
 # Use one database snapshot for every image. Only the released scanner binary is executed.
 bash tools/install_trivy.sh "$scanner_temp"
