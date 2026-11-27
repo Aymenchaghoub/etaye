@@ -16,6 +16,9 @@ if docker container inspect "$container" >/dev/null 2>&1 || docker image inspect
 fi
 auth=$(mktemp -d)
 cleanup() {
+    if [[ $? != 0 ]]; then
+        docker logs --tail 15 "$container" >&2 || true
+    fi
     docker container rm --force "$container" >/dev/null 2>&1 || true
     docker image rm "$image" >/dev/null 2>&1 || true
     if [[ -f "$auth/visitors" ]]; then
@@ -32,7 +35,7 @@ chmod 644 "$auth/visitors"
 docker build --platform linux/amd64 --target cloud --file infra/demo/web.Dockerfile --tag "$image" .
 docker run --detach --name "$container" --network "container:$api" --cpus 0.25 --memory 512m \
     --env ETAYE_INGRESS_HOST=127.0.0.1 \
-    --volume "$auth:/run/etaye-secrets:ro,Z" "$image" >/dev/null
+    --volume "$auth/visitors:/run/etaye-secrets/visitors:ro,Z" "$image" >/dev/null
 capture() {
     docker container inspect "$container" | python3 -c '
 import json, sys
