@@ -1,0 +1,21 @@
+body {
+    margin: 0;
+    background: var(--papier);
+    color: var(--encre);
+    font: 1rem/1.6 var(--font-texte);
+}
+
+main {
+    max-width: 38rem;
+    margin: 8vh auto;
+    padding: var(--espace-6);
+}
+
+a {
+    color: var(--accent);
+}
+
+a:focus-visible {
+    outline: var(--trait-focus) solid var(--accent);
+    outline-offset: var(--espace-1);
+}
