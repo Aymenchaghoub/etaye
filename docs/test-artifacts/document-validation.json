@@ -1,10 +1,10 @@
 {
   "kind": "documentary-validation-only",
   "date": "2026-11-27",
-  "ok": false,
+  "ok": true,
   "checks": {
     "markdownFiles": 158,
-    "localLinks": 2353,
+    "localLinks": 2354,
     "apiOperations": 103,
     "apiSchemas": 104,
     "planningStories": 45,
@@ -35,9 +35,7 @@
     },
     "projectFilesSecretScanned": 269
   },
-  "errors": [
-    "Operation index differs from the authoritative API contract"
-  ],
+  "errors": [],
   "applicationTestsExecuted": false,
   "independentReview": "Automated documentary checks; not independent design approval"
 }

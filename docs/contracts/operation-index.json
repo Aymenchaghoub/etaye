@@ -228,6 +228,12 @@
     "permission": "CLINICAL_READ"
   },
   {
+    "operationId": "appendLabResult",
+    "method": "post",
+    "path": "/practices/{practiceId}/records/{recordId}/lab-results",
+    "permission": "CLINICAL_WRITE"
+  },
+  {
     "operationId": "listLabResultRevisions",
     "method": "get",
     "path": "/practices/{practiceId}/records/{recordId}/lab-results/{labResultId}/revisions",
@@ -238,12 +244,6 @@
     "method": "get",
     "path": "/practices/{practiceId}/records/{recordId}/lab-results/analytes",
     "permission": "CLINICAL_READ"
-  },
-  {
-    "operationId": "appendLabResult",
-    "method": "post",
-    "path": "/practices/{practiceId}/records/{recordId}/lab-results",
-    "permission": "CLINICAL_WRITE"
   },
   {
     "operationId": "correctLabResult",
