@@ -20,7 +20,7 @@ else
   exit 1
 fi
 
-if [[ -n "${PGHOST:-}" && -z "${PGPASSWORD:-}" && -n "${POSTGRES_ADMIN_PASSWORD:-}" ]]; then
+if [[ ( -n "${PGHOST:-}" || -n "${PGHOSTADDR:-}" || -n "${PGSERVICE:-}" ) && -z "${PGPASSWORD:-}" && -n "${POSTGRES_ADMIN_PASSWORD:-}" ]]; then
   export PGPASSWORD="$POSTGRES_ADMIN_PASSWORD"
 fi
 

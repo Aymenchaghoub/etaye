@@ -120,7 +120,8 @@ class DemoFixtureManagedTest {
             restored.verifyDatabase();
             assertThat(restored.version()).isEqualTo(managed.version());
             assertIsolation(pg, RESTORE_DATABASE);
-            jdbc(pg, RESTORE_DATABASE, OWNER, ownerPassword).execute("DELETE FROM etaye_demo.fixture");
+            jdbc(pg, RESTORE_DATABASE, OWNER, ownerPassword)
+                    .execute("DROP FUNCTION etaye_demo.reset_fixture(uuid, text, text, text, text)");
             refuses(restored);
 
             var freshDatabase = "etaye_demo_fresh";
@@ -130,6 +131,8 @@ class DemoFixtureManagedTest {
             assertThat(fresh.migrate().migrationsExecuted).isEqualTo(8);
             fresh.validate();
             assertSuccess(seed(pg, freshDatabase));
+            jdbc(pg, freshDatabase, OWNER, ownerPassword).execute("DELETE FROM etaye_demo.fixture");
+            refuses(new DemoFixture(jdbc(pg, freshDatabase, RUNTIME, runtimePassword), freshDatabase));
 
             var ordinaryDatabase = "etaye_ordinary";
             createDatabase(pg, ordinaryDatabase);

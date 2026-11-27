@@ -27,8 +27,8 @@ esac
 : "${ETAYE_RUNTIME_PASSWORD:?ETAYE_RUNTIME_PASSWORD is required}"
 : "${ETAYE_IDENTITY_PASSWORD:?ETAYE_IDENTITY_PASSWORD is required}"
 
-# When connecting to a managed or remote host over TCP, pass admin password via PGPASSWORD without CLI args.
-if [[ -n "${PGHOST:-}" && -z "${PGPASSWORD:-}" && -n "${POSTGRES_ADMIN_PASSWORD:-}" ]]; then
+# When connecting to a managed or remote host (via PGHOST, PGHOSTADDR or PGSERVICE), pass admin password via PGPASSWORD without CLI args.
+if [[ ( -n "${PGHOST:-}" || -n "${PGHOSTADDR:-}" || -n "${PGSERVICE:-}" ) && -z "${PGPASSWORD:-}" && -n "${POSTGRES_ADMIN_PASSWORD:-}" ]]; then
   export PGPASSWORD="$POSTGRES_ADMIN_PASSWORD"
 fi
 

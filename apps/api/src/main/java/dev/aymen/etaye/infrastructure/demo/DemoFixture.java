@@ -62,7 +62,7 @@ public class DemoFixture {
                             JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
                             WHERE n.nspname = 'etaye_demo' AND n.nspowner = to_regrole('etaye_owner')
                                 AND c.relname = 'fixture' AND c.relkind = 'r' AND c.relowner = n.nspowner
-                        )
+                        ) AND to_regprocedure('etaye_demo.reset_fixture(uuid,text,text,text,text)') IS NOT NULL
                     """, Boolean.class, managedDatabaseName);
         }
         if (!Boolean.TRUE.equals(dedicated)) {
