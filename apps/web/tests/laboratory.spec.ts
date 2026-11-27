@@ -223,6 +223,56 @@ test('source and correction history announce loading independently', async ({ pa
   expect(requests.some(url => url.pathname.endsWith('/lab-results'))).toBe(true);
 });
 
+test('uncertain comparison stays in the table and does not merge incompatible units', async ({ page }) => {
+  const other = { ...numeric, id: text.id, unit: 'mmol/L' };
+  await stubLabs(page, { list: () => ({ json: asPage([numeric, other]) }) });
+  await page.goto(LABS);
+  await expect(resultRows(page)).toHaveCount(2);
+  await expect(page.getByText(/La comparaison nécessite des dates distinctes/)).toBeVisible();
+  await expect(page.locator('.etaye-lab-chart')).toHaveCount(0);
+  await accessible(page);
+});
+
+test('comparable axis labels and points keep distinct exact large decimals', async ({ page }) => {
+  const lower = { ...numeric, comparator: undefined, numericValue: '999999999999.123455',
+    lowerBound: '2', upperBound: '8', intervalSource: 'Laboratoire fictif', intervalUnit: numeric.unit,
+    comparisonContext: { method: 'A', fasting: 'À jeun', samplingWindow: 'Matin' } };
+  const upper = { ...lower, id: ids(3310), numericValue: '999999999999.123456',
+    eventDate: { ...eventDate, instant: '2026-10-22T06:00:00Z' } };
+  await page.setViewportSize({ width: 390, height: 844 });
+  await stubLabs(page, { list: () => ({ json: asPage([upper, lower]) }) });
+  await page.goto(LABS);
+  const chart = page.getByRole('img', { name: /Analyse A · µmol\/L/ });
+  await expect(chart.locator('text')).toHaveText(['999999999999,123455', '999999999999,123456', '12/10/26', '22/10/26']);
+  expect(new Set(await chart.locator('circle').evaluateAll(points => points.map(point => point.getAttribute('cy')))).size).toBe(2);
+  await noOverflow(page);
+  await accessible(page);
+});
+
+test('long correction and source prose remains legible and keyboard-accessible', async ({ page }) => {
+  const reason = 'R'.repeat(1000);
+  const excerpt = 'E'.repeat(500);
+  const corrected = { ...newer, correctionReason: reason };
+  await page.setViewportSize({ width: 320, height: 844 });
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await stubLabs(page, { list: () => ({ json: asPage([corrected]) }),
+    revisions: () => ({ json: { revisions: [numeric, corrected] } }),
+    source: () => ({ json: { id: sourceRef.id, reference: sourceRef.reference, revision: 1, sourceType: 'DOCUMENT_REPORTED',
+      eventDate, recordedAt: sourceRef.recordedAt, authorLabel: sourceRef.author, excerpt } }) });
+  await page.goto(LABS);
+  const marker = resultRows(page).first().getByRole('link');
+  await marker.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('region', { name: 'Source SRC-A-003' })).toContainText(excerpt);
+  const history = page.getByRole('button', { name: 'Historique du résultat · Analyse A' });
+  await history.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('.etaye-lab-revisions li').last()).toContainText(reason);
+  await expect(history).toBeFocused();
+  await noOverflow(page);
+  await accessible(page);
+});
+
 test('a rejected future date keeps the current data, and a date before the first result is explicitly empty', async ({ page }) => {
   const { requests } = await stubLabs(page, { list: url => {
     const asOf = url.searchParams.get('asOf');

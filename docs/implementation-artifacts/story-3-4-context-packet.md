@@ -16,6 +16,8 @@ A practitioner with current access to a practice-local record can read seeded la
 
 All repository references in this packet were consulted against `main` at **`4b3ee192ce298bdf398376585f6a745f5f847da6`** on 2026-11-27. This revision pins the exact bytes of each linked source. The contract baseline reports version `0.5.0-planning`, with 101 operations counted in OpenAPI and its index. Its guide header still gives the earlier count of 100. The Figma and offline reference versions are pinned below.
 
+The contract-first implementation branch adds the analyte and revision reads, for 103 operations in the current OpenAPI and index. This packet retains the 101-operation count for the source revision above. [Implementation record](story-3-4-implementation-record.md)
+
 | Sources at that revision | Scope applied to 3.4 |
 |---|---|
 | [Epic 3](../planning-artifacts/epics/epic-3.md), [story index](../planning-artifacts/epics/story-index.json), [delivery order](../planning-artifacts/story-delivery-order.md), [roadmap](../planning-artifacts/roadmap.md), [traceability](../traceability.md), [decision register](../planning-artifacts/decisions-assumptions.md), [deferred register](../planning-artifacts/deferred-work.md) | Story 3.4 and dependency 3.2, M2, increment allocations, UD-16/28/32/37/40/60, 3.2 and 3.3 decisions, D-01/24/25/44/45/49/54/55/61–66. |

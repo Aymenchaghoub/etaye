@@ -28,6 +28,10 @@ describe('laboratory values retain what their source supplied', () => {
       .toBe('0–11,0 unité A · Laboratoire fictif');
     expect(labInterval({ ...row, referenceIntervalText: 'Tel que fourni', intervalContext: 'À jeun' }))
       .toBe('Tel que fourni · À jeun');
+    expect(labInterval({ ...row, lowerBound: '0', upperBound: '11.0', intervalUnit: 'unité A', referenceIntervalText: 'À vérifier' }))
+      .toBe('À vérifier · 0–11,0 unité A');
+    expect(labInterval({ ...row, intervalUnit: 'unité B', referenceIntervalText: 'Texte fourni' }))
+      .toBe('Texte fourni · Unité de l’intervalle unité B');
     expect(labSourceNotice({ ...row, upperBound: '1' })).toBeUndefined();
     expect(labSourceNotice({ ...row, outsideInterval: 'ABOVE' })).toContain('mention de la source');
     expect(labSourceNotice({ ...row, outsideInterval: 'BELOW' })).toContain('En dessous');
@@ -52,6 +56,7 @@ describe('point series require exact, sufficiently dated compatible facts', () =
     const ineligible: LabResult[] = [
       { ...another, comparator: 'LT' }, { ...another, unit: 'unité B' },
       { ...another, comparisonContext: undefined }, { ...another, comparisonContext: { method: 'B', fasting: 'À jeun', samplingWindow: 'Matin' } },
+      { ...another, intervalContext: 'Autres conditions' },
       { ...another, eventDate: { precision: 'UNKNOWN' } }, { ...another, unconfirmedTranscription: true },
       { ...another, lowerBound: undefined, upperBound: undefined }, { ...another, intervalSource: 'Autre laboratoire' },
       { ...another, numericValue: 'not a decimal' }, { ...another, valueKind: 'QUALITATIVE' },
@@ -61,10 +66,29 @@ describe('point series require exact, sufficiently dated compatible facts', () =
     ];
     expect(comparableSeries([compatible, ...ineligible])).toEqual([]);
     expect(comparableSeries([compatible, another, ...ineligible])).toMatchObject([{ points: [
-      { date: '2026-10-20', value: 7.04, label: '7,040' }, { date: '2026-10-22', value: 7.04, label: '7,040' },
+      { date: '2026-10-20', scaledValue: 7040000n, label: '7,040' }, { date: '2026-10-22', scaledValue: 7040000n, label: '7,040' },
     ] }]);
     expect(comparableSeries([compatible, compatible])).toEqual([]);
     expect(comparableSeries([compatible, another, ...Array<LabResult>(100).fill(compatible)])).toEqual([]);
+  });
+
+  it('distinguishes observations that differ by one micro-unit near the decimal limit', () => {
+    const [series] = comparableSeries([
+      { ...compatible, numericValue: '999999999999.123455' },
+      { ...another, numericValue: '999999999999.123456' },
+      { ...another, numericValue: '-0.01' },
+    ]);
+    const [first, second, negative] = series.points;
+    expect(second.scaledValue - first.scaledValue).toBe(1n);
+    expect(second.valueLabel).toBe('999999999999,123456');
+    expect(negative.scaledValue).toBe(-10000n);
+  });
+
+  it('compares numerically equal bounds without changing their displayed scale', () => {
+    const equivalent = { ...another, lowerBound: '2.0', upperBound: '8.00' };
+    expect(comparableSeries([compatible, equivalent])[0].points).toHaveLength(2);
+    expect(labInterval(equivalent)).toContain('2,0–8,00');
+    expect(comparableSeries([compatible, { ...equivalent, upperBound: '8.01' }])).toEqual([]);
   });
 
   it('keeps the source instant rather than the day grouping for instant points', () => {

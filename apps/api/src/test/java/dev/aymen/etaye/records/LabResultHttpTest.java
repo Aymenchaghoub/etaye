@@ -17,12 +17,14 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.client.RestClient;
 
 import java.net.URI;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = "etaye.demo.enabled=true")
 @ActiveProfiles("test")
@@ -170,7 +172,13 @@ class LabResultHttpTest {
         var initial = get(nora, base + "?limit=1");
         String cursor = initial.getBody().get("nextCursor").toString();
         var next = get(nora, base + "?limit=1&cursor=" + cursor);
-        assertThat(items(next)).hasSize(1).isNotEqualTo(items(initial));
+        var tied = List.of(items(initial).getFirst(), items(next).getFirst());
+        assertThat(tied).extracting(row -> row.get("numericValue")).containsExactlyInAnyOrder("104", "5.2");
+        assertThat(tied).extracting(row -> row.get("eventDate")).containsOnly(tied.getFirst().get("eventDate"));
+        assertThat(tied).extracting(row -> row.get("recordedAt")).containsOnly(tied.getFirst().get("recordedAt"));
+        var last = get(nora, base + "?limit=1&cursor=" + next.getBody().get("nextCursor"));
+        assertThat(items(last)).extracting(row -> row.get("numericValue")).containsExactly("96");
+        assertThat(last.getBody()).containsEntry("nextCursor", null);
         assertThat(next.getBody().get("viewAt")).isEqualTo(initial.getBody().get("viewAt"));
         assertThat(get(nora, list(marie) + "?cursor=" + cursor).getStatusCode().value()).isEqualTo(400);
         assertThat(get(sami, base + "?cursor=" + cursor).getStatusCode().value()).isEqualTo(400);
@@ -204,6 +212,114 @@ class LabResultHttpTest {
         assertThat(from).extracting(row -> row.get("numericValue")).containsExactly("0.060");
         var until = items(get(nora, base + "?to=2026-10-22T00:00:00Z"));
         assertThat(until).noneMatch(row -> "QUALITATIVE".equals(row.get("valueKind")));
+    }
+
+    @Test
+    void aLongLineageKeepsTheOriginalAndTheNewestNinetyNine() throws SQLException {
+        inCanalFixture("""
+                DO $$
+                DECLARE
+                    previous uuid;
+                    current uuid;
+                    lineage uuid := gen_random_uuid();
+                BEGIN
+                    FOR position IN 1..105 LOOP
+                        current := etaye_demo.fixture_id('test-lab-lineage-' || position);
+                        INSERT INTO public.lab_result (id, practice_id, record_id, lineage_id, revision, analyte,
+                            numeric_value, specimen_on, source_revision_id, author_label, recorded_at, supersedes_id, correction_reason)
+                        VALUES (current, etaye_demo.fixture_id('PRA-B'), etaye_demo.fixture_id('R-B-001'), lineage,
+                            position, 'Analyse fictive avec révisions', position, DATE '2026-10-29',
+                            etaye_demo.fixture_id('SRC-B-001'), 'Dr Essai', '2026-10-29T10:00:00Z'::timestamptz + position * interval '1 second',
+                            previous, CASE WHEN previous IS NOT NULL THEN repeat('r', 1000) END);
+                        previous := current;
+                    END LOOP;
+                END $$
+                """);
+        String base = list(hugo).replace(practiceA, practiceB);
+        String original = value("SELECT etaye_demo.fixture_id('test-lab-lineage-1')");
+        String current = value("SELECT etaye_demo.fixture_id('test-lab-lineage-105')");
+        String sami = login("sami.rahmani@example.test");
+        var response = get(sami, base + "/" + current + "/revisions");
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        assertThat(response.getBody()).containsEntry("truncated", true);
+        assertThat(response.getBody().get("revisions"))
+                .asInstanceOf(org.assertj.core.api.InstanceOfAssertFactories.list(Map.class))
+                .hasSize(100).satisfies(rows -> {
+                    assertThat(rows.getFirst().get("id")).isEqualTo(original);
+                    assertThat(rows.get(1).get("revision")).isEqualTo(7);
+                    assertThat(rows.getLast().get("id")).isEqualTo(current);
+                    assertThat(rows.getLast().get("correctionReason")).isEqualTo("r".repeat(1000));
+                });
+        assertThat(get(sami, base + "/" + original + "/revisions").getBody()).isEqualTo(response.getBody());
+    }
+
+    @Test
+    void dateBoundariesUseTheCabinetZoneOnADaylightSavingChange() throws SQLException {
+        inCanalFixture("""
+                INSERT INTO public.lab_result (practice_id, record_id, lineage_id, revision, analyte,
+                    numeric_value, specimen_on, source_revision_id, author_label, recorded_at)
+                VALUES (etaye_demo.fixture_id('PRA-B'), etaye_demo.fixture_id('R-B-001'), gen_random_uuid(), 1,
+                    'Analyse fictive à date seule', 1, DATE '2026-10-25', etaye_demo.fixture_id('SRC-B-001'),
+                    'Dr Essai', '2026-10-29T10:00:00Z');
+                """);
+        String base = list(hugo).replace(practiceA, practiceB);
+        String sami = login("sami.rahmani@example.test");
+        // Paris still observes UTC+02 at midnight on the day clocks fall back to UTC+01.
+        String midnight = "2026-10-24T22:00:00Z";
+        assertThat(items(get(sami, base + "?to=" + midnight))).isEmpty();
+        assertThat(items(get(sami, base + "?from=" + midnight + "&to=2026-10-24T22:01:00Z")))
+                .singleElement().satisfies(row -> assertThat(row.get("specimenDate")).isEqualTo(
+                        Map.of("precision", "DATE", "date", "2026-10-25", "timezone", "Europe/Paris")));
+    }
+
+    private static void inCanalFixture(String sql) throws SQLException {
+        try (var connection = DemoDatabase.ownerConnection(); var command = connection.createStatement()) {
+            connection.setAutoCommit(false);
+            command.execute("SELECT set_config('etaye.practice_id', etaye_demo.fixture_id('PRA-B')::text, true)");
+            command.execute(sql);
+            connection.commit();
+        }
+    }
+
+    @Test
+    void storageRefusesInconsistentValuesBoundsSourcesAndPredecessors() throws SQLException {
+        try (var connection = DemoDatabase.ownerConnection(); var command = connection.createStatement()) {
+            connection.setAutoCommit(false);
+            command.execute("SELECT set_config('etaye.practice_id', etaye_demo.fixture_id('PRA-A')::text, true)");
+            invalidLab(connection, 1, 7, "Texte", null, null, "SRC-A-LAB-CORR-1", null, "2026-10-22T08:00:00Z", "23514");
+            invalidLab(connection, 1, null, null, null, null, "SRC-A-LAB-CORR-1", null, "2026-10-22T08:00:00Z", "23514");
+            invalidLab(connection, 1, 7, null, 9, 2, "SRC-A-LAB-CORR-1", null, "2026-10-22T08:00:00Z", "23514");
+            invalidLab(connection, 1, 7, null, null, null, "SRC-A-002", null, "2026-10-22T08:00:00Z", "23503");
+            invalidLab(connection, 1, 7, null, null, null, "SRC-A-LAB-CORR-1", null, "2026-10-20T08:00:00Z", "23514");
+            invalidLab(connection, 3, 7, null, null, null, "SRC-A-LAB-CORR-1", "LAB-A-PROOF-1", "2026-10-22T08:00:00Z", "23514");
+        }
+    }
+
+    private static void invalidLab(Connection connection, int revision, Integer number, String text, Integer lower, Integer upper,
+                                   String source, String predecessor, String recorded, String state) throws SQLException {
+        var before = connection.setSavepoint();
+        try (var command = connection.prepareStatement("""
+                INSERT INTO public.lab_result (practice_id, record_id, lineage_id, revision, analyte, numeric_value,
+                    qualitative_value, lower_bound, upper_bound, source_revision_id, supersedes_id, correction_reason, author_label, recorded_at)
+                SELECT etaye_demo.fixture_id('PRA-A'), etaye_demo.fixture_id('R-A-003'),
+                    coalesce(etaye_demo.fixture_id(?), gen_random_uuid()), ?, 'Analyse A', ?, ?, ?, ?,
+                    etaye_demo.fixture_id(?), etaye_demo.fixture_id(?), ?, 'Dr Essai', ?::timestamptz
+                """)) {
+            command.setString(1, predecessor == null ? null : "lineage/LAB-A-PROOF");
+            command.setInt(2, revision);
+            command.setObject(3, number);
+            command.setString(4, text);
+            command.setObject(5, lower);
+            command.setObject(6, upper);
+            command.setString(7, source);
+            command.setString(8, predecessor);
+            command.setString(9, predecessor == null ? null : "Correction fictive");
+            command.setString(10, recorded);
+            assertThatThrownBy(command::executeUpdate).isInstanceOfSatisfying(SQLException.class,
+                    error -> assertThat(error.getSQLState()).isEqualTo(state));
+        } finally {
+            connection.rollback(before);
+        }
     }
 
     @Test

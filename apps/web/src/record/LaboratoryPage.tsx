@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef, useState, type FormEvent, type MutableRefObject } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, type FormEvent, type MutableRefObject, type ReactNode } from 'react';
 import { accountApi, type AccountResult } from '../api/browser';
 import type { LabAnalytePage, LabResult, LabResultPage, ListLabResultsData } from '../api/generated/types.gen';
 import { Notice, Skeleton } from '../patients/patient-ui';
@@ -185,24 +185,29 @@ function LabResults({ first, query, historical, filtered, bounded, reset, reload
   </div>;
 
   const viewAt = first.viewAt ?? ctx.asOf;
+  const series = nextCursor ? [] : comparableSeries(items);
+  const numericAnalytes = items.filter(row => row.valueKind === 'NUMERIC').map(row => row.analyte);
+  const insufficientContext = !nextCursor && !series.length && new Set(numericAnalytes).size < numericAnalytes.length;
   return <>
     {bounded && <p className="etaye-2">La période ne comprend que les résultats dont la date est connue.</p>}
-    <ResultsTable rows={items} viewAt={viewAt} />
-    {results.status === 'loading' && <p role="status">Chargement de la suite…</p>}
-    {results.status !== 'idle' && results.status !== 'loading' &&
-      <Notice kind="attention" alert title="Suite de la liste indisponible">Les résultats déjà affichés restent consultables.</Notice>}
-    {nextCursor && results.status !== 'loading' &&
-      <div className="etaye-ligne"><Retry run={results.status === 'restart' ? reload : () => { void results.next(); }}
-        wait={results.wait} label={results.status === 'idle' ? 'Afficher plus de résultats'
-          : results.status === 'restart' ? 'Recharger la liste' : 'Réessayer d’afficher la suite'} /></div>}
-    {nextCursor && <p className="etaye-2">Affichez la liste complète pour comparer les résultats chargés.</p>}
-    {!nextCursor && comparableSeries(items).map((series, index) => <LabChart key={index} series={series} />)}
+    <ResultsTable rows={items} viewAt={viewAt}>
+      {results.status === 'loading' && <p role="status">Chargement de la suite…</p>}
+      {results.status !== 'idle' && results.status !== 'loading' &&
+        <Notice kind="attention" alert title="Suite de la liste indisponible">Les résultats déjà affichés restent consultables.</Notice>}
+      {nextCursor && results.status !== 'loading' &&
+        <div className="etaye-ligne"><Retry run={results.status === 'restart' ? reload : () => { void results.next(); }}
+          wait={results.wait} label={results.status === 'idle' ? 'Afficher plus de résultats'
+            : results.status === 'restart' ? 'Recharger la liste' : 'Réessayer d’afficher la suite'} /></div>}
+      {nextCursor && <p className="etaye-2">Affichez la liste complète pour comparer les résultats chargés.</p>}
+      {insufficientContext && <p className="etaye-2">La comparaison nécessite des dates distinctes et des unités, intervalles et conditions de prélèvement compatibles.</p>}
+      {series.map((group, index) => <LabChart key={index} series={group} />)}
+    </ResultsTable>
   </>;
 }
 
 type MarkerRegistry = MutableRefObject<Map<string, (element: string) => void>>;
 
-function ResultsTable({ rows, viewAt }: { rows: LabResult[]; viewAt?: string }) {
+function ResultsTable({ rows, viewAt, children }: { rows: LabResult[]; viewAt?: string; children?: ReactNode }) {
   const ctx = useRecord();
   const id = useId();
   const registry = useRef(new Map<string, (element: string) => void>());
@@ -235,6 +240,7 @@ function ResultsTable({ rows, viewAt }: { rows: LabResult[]; viewAt?: string }) 
         })}</tbody>
       </table>
     </section>
+    {children}
     {corrected.map(row => <LabHistory key={row.id} row={row} viewAt={viewAt} />)}
     <section className="etaye-pile" aria-label="Sources datées">
       <h2 className="ui-section">Sources datées</h2>
@@ -307,31 +313,33 @@ function LabChart({ series }: { series: LabSeries }) {
   const id = useId();
   const { zone } = useRecord();
   const ticks = series.points.map(point => Date.parse(point.date));
-  const values = series.points.map(point => point.value);
   const first = Math.min(...ticks);
   const last = Math.max(...ticks);
-  const low = Math.min(...values);
-  const high = Math.max(...values);
+  const low = series.points.reduce((min, point) => point.scaledValue < min.scaledValue ? point : min);
+  const high = series.points.reduce((max, point) => point.scaledValue > max.scaledValue ? point : max);
+  const span = high.scaledValue - low.scaledValue;
+  const axis = Math.max(68, Math.max(low.valueLabel.length, high.valueLabel.length) * 8 + 10);
+  const firstX = axis + 22;
+  const lastX = 278;
   const dateLabel = (date: string) => date.includes('T') ? formatInstant(date, zone) : date.split('-').reverse().join('/');
   const axisDate = (date: number) => new Intl.DateTimeFormat('fr-FR', {
     day: '2-digit', month: '2-digit', year: '2-digit',
     timeZone: series.points[0].date.includes('T') ? zone : 'UTC',
   }).format(date);
-  const axisValue = (value: number) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 6, useGrouping: false }).format(value);
-  const y = (value: number) => high === low ? 78 : 126 - (value - low) / (high - low) * 88;
+  const y = (value: bigint) => span === 0n ? 78 : 126 - Number(value - low.scaledValue) / Number(span) * 88;
   return <section className="etaye-panneau" aria-labelledby={id}>
     <div className="etaye-panneau__tete"><h2 id={id}>Résultats comparables · {series.analyte}</h2></div>
     <div className="etaye-panneau__corps etaye-pile">
       <p>{series.interval}. Chaque point correspond à un résultat daté. Le tableau reste la référence.</p>
       <svg className="etaye-lab-chart" viewBox="0 0 320 152" role="img"
         aria-label={`${series.analyte} · ${series.unit} · ${series.points.map(point => `${dateLabel(point.date)} · ${point.label}`).join(' ; ')}`}>
-        <line x1="68" x2="68" y1="18" y2="126" /><line x1="68" x2="306" y1="126" y2="126" />
-        <text x="63" y={y(low) - 4} textAnchor="end">{axisValue(low)}</text>
-        {high !== low && <text x="63" y={y(high) - 4} textAnchor="end">{axisValue(high)}</text>}
-        <text x="90" y="146" textAnchor="middle">{axisDate(first)}</text>
-        <text x="278" y="146" textAnchor="middle">{axisDate(last)}</text>
+        <line x1={axis} x2={axis} y1="18" y2="126" /><line x1={axis} x2="306" y1="126" y2="126" />
+        <text x={axis - 5} y={y(low.scaledValue) - 4} textAnchor="end">{low.valueLabel}</text>
+        {span > 0n && <text x={axis - 5} y={y(high.scaledValue) - 4} textAnchor="end">{high.valueLabel}</text>}
+        <text x={firstX} y="146" textAnchor="middle">{axisDate(first)}</text>
+        <text x={lastX} y="146" textAnchor="middle">{axisDate(last)}</text>
         {series.points.map((point, index) =>
-          <circle key={index} cx={90 + (Date.parse(point.date) - first) / (last - first) * 188} cy={y(point.value)} r="5">
+          <circle key={index} cx={firstX + (Date.parse(point.date) - first) / (last - first) * (lastX - firstX)} cy={y(point.scaledValue)} r="5">
             <title>{dateLabel(point.date)} · {point.label} {series.unit}</title>
           </circle>)}
       </svg>

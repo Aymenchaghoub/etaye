@@ -19,9 +19,10 @@ export function labInterval(row: LabResult): string {
   const bounds = lower !== null && upper !== null ? `${lower}–${upper}${unit}`
     : lower !== null ? `Borne basse fournie ${lower}${unit}`
       : upper !== null ? `Borne haute fournie ${upper}${unit}` : null;
-  const interval = row.referenceIntervalText ?? bounds;
-  if (!interval) return 'Intervalle non fourni';
-  return [interval, row.intervalSource, row.intervalContext].filter(Boolean).join(' · ');
+  const interval = row.referenceIntervalText ?? bounds ?? 'Intervalle non fourni';
+  const details = bounds && row.referenceIntervalText && bounds !== row.referenceIntervalText ? bounds : null;
+  const textUnit = !bounds && row.intervalUnit ? `Unité de l’intervalle ${row.intervalUnit}` : null;
+  return [interval, details, textUnit, row.intervalSource, row.intervalContext].filter(Boolean).join(' · ');
 }
 
 export function labSourceNotice(row: LabResult): string | undefined {
@@ -41,13 +42,24 @@ export function labDates(row: LabResult, zone: string) {
   };
 }
 
-export type LabPoint = { date: string; value: number; label: string };
+export type LabPoint = { date: string; scaledValue: bigint; valueLabel: string; label: string };
 export type LabSeries = { analyte: string; unit: string; interval: string; points: LabPoint[] };
 
 function pointTime(date: EventDate): string | undefined {
   if (date.precision === 'INSTANT' && date.instant && Number.isFinite(Date.parse(date.instant))) return date.instant;
   if (date.precision === 'DATE' && date.date && Number.isFinite(Date.parse(date.date))) return date.date;
   return undefined;
+}
+
+function scaledDecimal(value: string): bigint | undefined {
+  const parts = /^(-?)(\d{1,12})(?:\.(\d{1,6}))?$/.exec(value);
+  if (!parts) return undefined;
+  const magnitude = BigInt(parts[2] + (parts[3] ?? '').padEnd(6, '0'));
+  return parts[1] ? -magnitude : magnitude;
+}
+
+function comparableBound(value: string | undefined): string | undefined {
+  return value === undefined ? undefined : scaledDecimal(value)?.toString() ?? value;
 }
 
 /** Same reported context is an eligibility requirement, never inferred from matching concentrations. */
@@ -61,13 +73,13 @@ export function comparableSeries(rows: LabResult[]): LabSeries[] {
       || !row.unit || row.intervalUnit !== row.unit || !row.intervalSource
       || !context?.method || !context.fasting || !context.samplingWindow
       || (row.lowerBound === undefined && row.upperBound === undefined && !row.referenceIntervalText)) continue;
-    const value = Number(row.numericValue);
-    if (!Number.isFinite(value)) continue;
+    const scaledValue = scaledDecimal(row.numericValue);
+    if (scaledValue === undefined) continue;
     const key = JSON.stringify([row.analyte, row.unit, row.eventDate.precision, row.intervalSource,
       context.method, context.fasting, context.samplingWindow,
-      row.lowerBound, row.upperBound, row.referenceIntervalText]);
+      comparableBound(row.lowerBound), comparableBound(row.upperBound), row.referenceIntervalText, row.intervalContext]);
     const group = groups.get(key) ?? { analyte: row.analyte, unit: row.unit, interval: labInterval(row), points: [] };
-    group.points.push({ date, value, label: labValue(row) });
+    group.points.push({ date, scaledValue, valueLabel: displayDecimal(row.numericValue), label: labValue(row) });
     groups.set(key, group);
   }
   return [...groups.values()]
