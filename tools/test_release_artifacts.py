@@ -33,7 +33,8 @@ def write_json(path, data):
     path.write_bytes(encode(data))
 
 
-def write_image(path, *, bad_digest=False, incorrect_layer=False, duplicate=False, os="linux"):
+def write_image(path, *, bad_digest=False, incorrect_layer=False, duplicate=False, os="linux",
+                with_referrer=False, bad_referrer=False):
     blobs = {}
 
     def blob(content, media_type):
@@ -49,7 +50,12 @@ def write_image(path, *, bad_digest=False, incorrect_layer=False, duplicate=Fals
     descriptor = manifest | {"platform": PLATFORM}
     if bad_digest:
         descriptor["digest"] = "sha256:wrong"
-    index = {"schemaVersion": 2, "mediaType": INDEX_TYPE, "manifests": [descriptor]}
+    manifests = [descriptor]
+    if with_referrer or bad_referrer:
+        ref_manifest = blob(encode({"schemaVersion": 2, "config": config, "layers": [layer]}), MANIFEST_TYPE)
+        subject = manifest["digest"] if with_referrer else "sha256:" + "0" * 64
+        manifests.append(ref_manifest | {"annotations": {"io.containerd.manifest.subject": subject}})
+    index = {"schemaVersion": 2, "mediaType": INDEX_TYPE, "manifests": manifests}
     blobs["index.json"] = encode(index)
     entries = list(blobs.items())
     if duplicate:
@@ -206,6 +212,18 @@ class ReleaseArtifactsTests(unittest.TestCase):
         (self.root / "api.tar").write_bytes((self.root / "web.tar").read_bytes())
         with self.assertRaisesRegex(ValueError, "OCI manifest differs from tested runtime"):
             self.generate()
+
+    def test_accepts_subject_bound_referrer_manifest_and_rejects_unrelated_referrer(self):
+        path = self.root / "ref.tar"
+        expected_config, expected_diff, expected_manifest = write_image(path, with_referrer=True)
+        identity = release.image_archive(path)
+        self.assertEqual(identity["ociManifestDigest"], expected_manifest)
+        self.assertEqual(identity["imageConfigDigest"], expected_config)
+        self.assertEqual(identity["layerDiffIds"], [expected_diff])
+
+        write_image(path, bad_referrer=True)
+        with self.assertRaisesRegex(ValueError, "expected one platform image manifest"):
+            release.image_archive(path)
 
     def test_rejects_invalid_oci_layer_digest_duplicate_or_platform(self):
         path = self.root / "bad.tar"

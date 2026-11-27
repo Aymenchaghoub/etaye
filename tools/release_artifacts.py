@@ -89,9 +89,25 @@ def image_archive(path: Path) -> dict:
         with open_member("index.json") as handle:
             index = json.load(handle)
         manifests = index["manifests"]
-        if index["schemaVersion"] != 2 or len(manifests) != 1 or manifests[0]["mediaType"] not in IMAGE_MEDIA_TYPES:
+        if index["schemaVersion"] != 2 or not manifests:
             raise ValueError(f"{path.name}: expected one platform image manifest")
-        manifest = read_blob(manifests[0], parse_json=True)
+        primary = [
+            item for item in manifests
+            if item.get("mediaType") in IMAGE_MEDIA_TYPES
+            and not item.get("annotations", {}).get("io.containerd.manifest.subject")
+        ]
+        if len(primary) != 1:
+            raise ValueError(f"{path.name}: expected one platform image manifest")
+        primary_digest = primary[0]["digest"]
+        for item in manifests:
+            if item is primary[0]:
+                continue
+            subject = item.get("annotations", {}).get("io.containerd.manifest.subject")
+            if item.get("mediaType") not in IMAGE_MEDIA_TYPES or subject != primary_digest:
+                raise ValueError(f"{path.name}: expected one platform image manifest")
+            # Verify optional Docker/OCI referrer/attestation manifest blob integrity as well.
+            read_blob(item, parse_json=True)
+        manifest = read_blob(primary[0], parse_json=True)
         config = read_blob(manifest["config"], parse_json=True)
         if (config["os"], config["architecture"]) != ("linux", "amd64"):
             raise ValueError(f"{path.name}: expected linux/amd64")
@@ -103,7 +119,7 @@ def image_archive(path: Path) -> dict:
             read_blob(layer, diff_id=diff_id)
         return {
             "archive": describe(path),
-            "ociManifestDigest": manifests[0]["digest"],
+            "ociManifestDigest": primary_digest,
             "imageConfigDigest": manifest["config"]["digest"],
             "layerDiffIds": diff_ids,
         }
