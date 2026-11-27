@@ -41,6 +41,7 @@ STORY_9_1_TRACKED_PATHS = {
     "apps/web/warmup.html",
     "infra/demo/README.md",
     "infra/demo/api.Dockerfile",
+    "infra/demo/bootstrap-managed-demo.sh",
     "infra/demo/compose.yml",
     "infra/demo/mark-demo-database.sh",
     "infra/demo/migrate.Dockerfile",
