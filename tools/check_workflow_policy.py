@@ -19,9 +19,9 @@ import ci_scope
 
 ROOT = Path(__file__).resolve().parents[1]
 
-# Job names that the ruleset on main requires. The ruleset also requires `CodeQL`, which GitHub code scanning
-# reports itself. Keep this list in step with the ruleset: a renamed job would leave a required check that
-# never reports, which blocks every merge.
+# Job names that the ruleset on main requires (plus `Package verify`, prepared for promotion alongside the
+# eight active checks). The ruleset also requires `CodeQL`, which GitHub code scanning reports itself. Keep this
+# list in step with the ruleset: a renamed job would leave a required check that never reports, which blocks every merge.
 REQUIRED_JOB_NAMES = (
     "Planning package checks",
     "Analyze tooling",
@@ -30,6 +30,7 @@ REQUIRED_JOB_NAMES = (
     "API verify",
     "Web verify",
     "Dependency review",
+    "Package verify",
 )
 # Token scopes a job may request above read. `contents: write` is deliberately absent.
 ALLOWED_JOB_WRITE_SCOPES = {"security-events", "pages", "id-token", "attestations"}

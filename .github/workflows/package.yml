@@ -1,8 +1,9 @@
 name: Package
 
 on:
-  # No path filter, like the required checks: tools/ci_scope.py decides whether the heavy steps run. The check is
-  # not required yet (D-56): it proves the delivery package builds, starts and passes the real-stack journeys.
+  # No path filter: "Package verify" is enforced by repository workflow policy for promotion to the 9th required
+  # ruleset check. The job always starts cleanly on every pull request (including forks and Dependabot, with
+  # read-only permissions and zero repository secrets); tools/ci_scope.py decides whether heavy steps run.
   pull_request:
   push:
     branches: [main]
