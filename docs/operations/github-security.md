@@ -2,11 +2,11 @@
 
 Updated: 2026-11-02. Aymen explicitly authorized making etaye public, initial documentation CI/first PR, and useful free security/quality features. Application implementation remains forbidden. Never enable a paid trial, billing plan or unbounded paid AI usage under this authorization.
 
-## Current integrated verification — 2026-11-26
+## Current integrated verification — 2026-11-27
 
-The active strict [main ruleset 26390376](https://github.com/Aymenchaghoub/etaye/rules/26390376) has eight contexts: `Planning package checks`, `Analyze tooling`, `Analyze API (Java)`, `Analyze Web (TypeScript)`, `CodeQL`, `API verify`, `Web verify`, and `Dependency review`. Seven are GitHub Actions jobs and the aggregate `CodeQL` is emitted by GitHub code scanning independently. Pull request checks are required on the final assessed PR head, and the squash commit has its own workflow evidence. [CI observation and proposed owner decision](ci-observation.md)
+The active strict [main ruleset 26390376](https://github.com/Aymenchaghoub/etaye/rules/26390376) enforces nine contexts: `Planning package checks`, `Analyze tooling`, `Analyze API (Java)`, `Analyze Web (TypeScript)`, `CodeQL` (`57789`), `API verify`, `Web verify`, `Dependency review` (`15368`), and `Package verify` (`15368`). Eight are GitHub Actions jobs (`tools/check_workflow_policy.py`) and the aggregate `CodeQL` context is emitted by GitHub code scanning independently. Pull request checks are required on the final assessed PR head, and the squash commit has its own workflow evidence. [CI observation and active governance decisions](ci-observation.md#dependency-review-and-delivery-scope)
 
-GitHub returned zero open CodeQL and Dependabot alerts. The three CodeQL analyzers and Gitleaks ran on integrated main `b4e8ff9`. Trivy found upstream Flyway and PostgreSQL occurrences and produced an image-specific report, with zero HIGH/CRITICAL findings in API and Web. The SonarQube API project still has nine open tickets with individual recommended dispositions. [Integrated evidence](quality-baseline.md#verified-integrated-main-at-b4e8ff9) · [Container observations](deployment-readiness.md#exact-integrated-main-image-evidence) · [API dispositions](api-quality-remediation.md#final-independent-review-at-b4e8ff9)
+GitHub returned zero open CodeQL, Dependabot and secret-scanning alerts at `5b38f3c`. All three CodeQL analyzers, Gitleaks, native coverage ratchets and SonarQube Cloud ran on `main` (`5b38f3c`). Trivy found upstream Flyway and PostgreSQL occurrences and produced per-image reports, with zero HIGH/CRITICAL findings in API and Web. The SonarQube API project retains nine open historical findings pending Aymen's manual false-positive review. [Final main metrics](quality-baseline.md#final-verified-consolidation-baseline-at-5b38f3c) · [Container observations](deployment-readiness.md#exact-integrated-main-image-evidence) · [API dispositions](api-quality-remediation.md#final-independent-review-at-b4e8ff9)
 
 ## Planned and observed controls
 
@@ -91,6 +91,11 @@ Prepared on 2026-11-26 by the [SonarQube Cloud integration](sonarqube-cloud.md) 
 Authorized on 2026-11-26 ([PR #81](https://github.com/Aymenchaghoub/etaye/pull/81)):
 
 - `Dependency review` (GitHub Actions `15368`) is promoted to the eighth required check in ruleset `26390376` alongside `Planning package checks`, `Analyze tooling`, `Analyze API (Java)`, `Analyze Web (TypeScript)`, `API verify`, `Web verify` and `CodeQL` (`57789`). `.github/workflows/dependency-review.yml` triggers on all `pull_request` events targeting `main` (without a `types:` filter), and `tools/check_workflow_policy.py` (`REQUIRED_JOB_NAMES`) enforces it locally. `Package verify` and `SonarQube Cloud` stay optional during observation.
+
+Authorized on 2026-11-27 ([PR #93](https://github.com/Aymenchaghoub/etaye/pull/93), [PR #94](https://github.com/Aymenchaghoub/etaye/pull/94)):
+
+- `Package verify` (`integration_id: 15368`) is promoted to the ninth required check in ruleset `26390376` after PR #93 (`b7efbd7`) added it to `tools/check_workflow_policy.py` and PR #93 + `main` (`b7efbd7`) validated cleanly. Before/after JSON diff confirmed only that entry was added, keeping all eight existing checks, `strict_required_status_checks_policy: true`, `do_not_enforce_on_create: true`, and `bypass_actors: []` intact.
+- PR #94 (`5b38f3c`) validated live against the nine-check ruleset (`16/16` PR checks) and tightened native anti-regression coverage thresholds (`90/85` API bundle, `90/80` critical packages, `90/85` combined Web LCOV, `90/85` Python Cobertura, `80/80/70/80` Web `.ts`), while SonarQube Cloud (`10/10` PR observations) stays optional to preserve fork and Dependabot compatibility.
 
 Generic-pattern and partner-validity options were not enabled: their current individual setup documentation requires organization-owned repositories with Secret Protection. Full-history Gitleaks provides the separate generic-pattern scan without a paid entitlement. [Generic patterns](https://docs.github.com/en/code-security/how-tos/secure-your-secrets/detect-secret-leaks/enabling-secret-scanning-for-generic-patterns), [partner validity checks](https://docs.github.com/en/code-security/how-tos/secure-your-secrets/customize-leak-detection/enable-validity-checks).
 
