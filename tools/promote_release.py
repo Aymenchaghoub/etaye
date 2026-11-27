@@ -136,13 +136,13 @@ def require_registry_manifest(reference: str, digest: str, authfile: Path) -> No
 
 
 def flyway_base_identity(root: Path, source_sha: str) -> dict:
-    # The guard stays in this function: the security analysis tracks validated revisions
-    # across the subprocess boundary, not across a helper call.
     if not GIT_SHA.fullmatch(source_sha):
         raise ValueError("Expected a full Git SHA")
-    source = subprocess.check_output(
-        ["git", "show", "--end-of-options", f"{source_sha}:infra/demo/migrate.Dockerfile"], text=True,
-    )
+    # Read the committed pin from the exact verified checkout.
+    checkout = subprocess.check_output(["git", "rev-parse", "--verify", "HEAD"], text=True).strip()
+    if checkout != source_sha:
+        raise ValueError("The checkout does not match the selected source")
+    source = subprocess.check_output(["git", "show", "HEAD:infra/demo/migrate.Dockerfile"], text=True)
     match = re.fullmatch(r"FROM flyway/flyway:[0-9.]+@(sha256:[a-f0-9]{64})", source.splitlines()[0])
     if match is None:
         raise ValueError("Expected a pinned Flyway base in the selected source")
@@ -219,18 +219,25 @@ def stage(root: Path, output: Path, source_sha: str) -> None:
 
 
 def verify_attestation(subject: str, source_sha: str, predicate: str) -> bytes:
-    # Keep the revision guard beside the command, where the security analysis can see it.
-    if not GIT_SHA.fullmatch(source_sha):
-        raise ValueError("Expected a full Git SHA")
+    exact_sha(source_sha)
     subject = attestation_subject(subject)
     if predicate not in (SLSA, CYCLONEDX):
         raise ValueError("Unexpected attestation predicate")
-    return subprocess.check_output(
+    proof = subprocess.check_output(
         ["gh", "attestation", "verify", "--repo", REPOSITORY,
          "--signer-workflow", WORKFLOW, "--source-ref", "refs/heads/main",
-         "--source-digest", source_sha, "--deny-self-hosted-runners",
-         "--predicate-type", predicate, "--format", "json", "--", subject],
+         "--deny-self-hosted-runners", "--predicate-type", predicate, "--format", "json", "--", subject],
     )
+    # Enforce the source SHA on the verified Fulcio certificate's GitHub OIDC claim.
+    # Predicate metadata is supplied by the workflow and cannot establish this binding.
+    matching = []
+    for entry in json.loads(proof):
+        certificate = entry["verificationResult"]["signature"]["certificate"]
+        if certificate.get("sourceRepositoryDigest") == source_sha:
+            matching.append(entry)
+    if not matching:
+        raise ValueError("No verified attestation certificate matches the selected source")
+    return json.dumps(matching, indent=2).encode() + b"\n"
 
 
 def finalize(output: Path, source_sha: str) -> None:
@@ -267,8 +274,11 @@ def main() -> int:
         elif args.operation == "finalize":
             finalize(args.published, args.git_sha)
         else:
-            record = workspace_path(args.published, "published directory") / PUBLISHED_MANIFEST
-            proof = verify_attestation(str(record), args.git_sha, SLSA)
+            revision = exact_sha(args.git_sha)
+            record = Path(attestation_subject(str(args.published / PUBLISHED_MANIFEST)))
+            if read_json(record).get("gitSha") != revision:
+                raise ValueError("Published manifest does not match the selected source")
+            proof = verify_attestation(str(record), revision, SLSA)
             (record.parent / "manifest-attestation-verification.json").write_bytes(proof)
     except (KeyError, ValueError, OSError, subprocess.CalledProcessError) as error:
         print(f"Release promotion stopped: {error}", file=sys.stderr)

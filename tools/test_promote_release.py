@@ -1,3 +1,5 @@
+from contextlib import redirect_stderr
+import io
 import json
 from hashlib import sha256
 from pathlib import Path
@@ -7,6 +9,15 @@ from unittest.mock import patch
 
 import promote_release as promotion
 from test_release_artifacts import GIT_SHA, PLATFORM, digest, write_image
+
+
+def verified_attestation(revision):
+    return {
+        "verificationResult": {
+            "signature": {"certificate": {"sourceRepositoryDigest": revision}},
+            "statement": {"predicate": {"sourceRepositoryDigest": GIT_SHA}},
+        },
+    }
 
 
 class PromotionPolicyTests(unittest.TestCase):
@@ -74,18 +85,24 @@ class PromotionPolicyTests(unittest.TestCase):
         with patch("promote_release.verify_manifest"), patch("promote_release.upstream_pin"), \
                 patch("promote_release.subprocess.run") as run, \
                 patch("promote_release.require_registry_manifest") as registry, \
-                patch("promote_release.subprocess.check_output", return_value=f"FROM flyway/flyway:13.13.0@{digest(content)}"), \
+                patch("promote_release.subprocess.check_output", side_effect=[
+                    GIT_SHA + "\n", f"FROM flyway/flyway:13.13.0@{digest(content)}",
+                ]) as git, \
                 patch.dict("os.environ", {
                     "GITHUB_RUN_ID": "2", "GITHUB_RUN_ATTEMPT": "1", "GITHUB_ACTOR": "fixture", "GH_TOKEN": "fixture",
                 }):
             promotion.stage(self.root, output, GIT_SHA)
+        self.assertEqual([call.args[0] for call in git.call_args_list], [
+            ["git", "rev-parse", "--verify", "HEAD"],
+            ["git", "show", "HEAD:infra/demo/migrate.Dockerfile"],
+        ])
         names = [f"ghcr.io/aymenchaghoub/etaye-{name}" for name in promotion.PUBLISH_IMAGES]
         self.assertEqual(registry.call_count, 3)
         self.assertEqual(run.call_count, 4)
         for call, name in zip(run.call_args_list[1:], names, strict=True):
             self.assertIn("--preserve-digests", call.args[0])
             self.assertEqual(call.args[0][-1], f"docker://{name}:sha-{GIT_SHA}-run-2-1")
-        with patch("promote_release.subprocess.check_output", return_value=b"[]") as verified:
+        with patch("promote_release.subprocess.check_output", return_value=json.dumps([verified_attestation(GIT_SHA)]).encode()) as verified:
             promotion.finalize(output, GIT_SHA)
         document = json.loads((output / promotion.PUBLISHED_MANIFEST).read_bytes())
         self.assertEqual(document["mode"], "published")
@@ -125,6 +142,12 @@ class PromotionPolicyTests(unittest.TestCase):
                 promotion.require_registry_manifest(swapped, image_digest, auth)
         inspect.assert_not_called()
 
+    def test_flyway_pin_is_not_read_from_a_different_checkout(self):
+        with patch("promote_release.subprocess.check_output", return_value="c" * 40) as git, \
+                self.assertRaisesRegex(ValueError, "checkout does not match the selected source"):
+            promotion.flyway_base_identity(self.root, GIT_SHA)
+        git.assert_called_once_with(["git", "rev-parse", "--verify", "HEAD"], text=True)
+
     def test_git_revision_is_validated_before_reaching_git(self):
         with patch("promote_release.subprocess.check_output") as git:
             for revision in (GIT_SHA[:12], "--output=/tmp/x", GIT_SHA.upper(), ""):
@@ -156,10 +179,18 @@ class PromotionPolicyTests(unittest.TestCase):
     def test_attestation_verification_accepts_only_the_exact_release_subjects(self):
         image = f"oci://ghcr.io/aymenchaghoub/etaye-api@sha256:{'a' * 64}"
         record = str(self.root / promotion.PUBLISHED_MANIFEST)
-        with patch("promote_release.subprocess.check_output", return_value=b"[]") as verify:
+        with patch("promote_release.subprocess.check_output", return_value=json.dumps([verified_attestation(GIT_SHA)]).encode()) as verify:
             for subject in (image, record):
                 promotion.verify_attestation(subject, GIT_SHA, promotion.SLSA)
             self.assertEqual([call.args[0][-2:] for call in verify.call_args_list], [["--", image], ["--", record]])
+            for call in verify.call_args_list:
+                command = call.args[0]
+                self.assertEqual(command, [
+                    "gh", "attestation", "verify", "--repo", promotion.REPOSITORY,
+                    "--signer-workflow", promotion.WORKFLOW, "--source-ref", "refs/heads/main",
+                    "--deny-self-hosted-runners", "--predicate-type", promotion.SLSA,
+                    "--format", "json", "--", command[-1],
+                ])
             verify.reset_mock()
             for subject in (
                 image + ":latest",
@@ -175,6 +206,36 @@ class PromotionPolicyTests(unittest.TestCase):
             with self.subTest(predicate="unexpected"), self.assertRaisesRegex(ValueError, "attestation predicate"):
                 promotion.verify_attestation(image, GIT_SHA, "https://evil.example/p")
         verify.assert_not_called()
+
+    def test_attestation_uses_the_verified_certificate_revision(self):
+        record = str(self.root / promotion.PUBLISHED_MANIFEST)
+        matching = verified_attestation(GIT_SHA)
+        wrong_revision = verified_attestation("c" * 40)
+        missing_revision = verified_attestation(GIT_SHA)
+        missing_revision["verificationResult"]["signature"]["certificate"].clear()
+        with patch("promote_release.subprocess.check_output") as gh:
+            gh.return_value = json.dumps([wrong_revision, matching, missing_revision]).encode()
+            verified = promotion.verify_attestation(record, GIT_SHA, promotion.CYCLONEDX)
+            self.assertEqual(json.loads(verified), [matching])
+            for proof in ([], [wrong_revision], [missing_revision]):
+                with self.subTest(proof=proof), self.assertRaisesRegex(ValueError, "certificate matches"):
+                    gh.return_value = json.dumps(proof).encode()
+                    promotion.verify_attestation(record, GIT_SHA, promotion.SLSA)
+
+    def test_published_manifest_must_match_before_attestation_verification(self):
+        record = self.root / promotion.PUBLISHED_MANIFEST
+        args = ["promote_release.py", "verify-manifest", str(self.root), str(self.root), GIT_SHA]
+        with patch("sys.argv", args), patch("promote_release.verify_attestation") as verify:
+            record.write_text(json.dumps({"gitSha": "c" * 40}), encoding="utf-8")
+            with redirect_stderr(io.StringIO()):
+                self.assertEqual(promotion.main(), 1)
+            verify.assert_not_called()
+
+            record.write_text(json.dumps({"gitSha": GIT_SHA}), encoding="utf-8")
+            verify.return_value = b"verified proof"
+            self.assertEqual(promotion.main(), 0)
+            verify.assert_called_once_with(str(record), GIT_SHA, promotion.SLSA)
+            self.assertEqual((self.root / "manifest-attestation-verification.json").read_bytes(), b"verified proof")
 
     def test_finalize_rejects_substitution_even_with_a_plausible_digest(self):
         document = {
