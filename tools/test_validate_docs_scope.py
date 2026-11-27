@@ -414,6 +414,23 @@ class ApplicationScopeTests(unittest.TestCase):
         _, errors = self.check_scope()
         self.assertIn(f"Unexpected Azure foundation artifact: {extra}", errors)
 
+    def test_cloud_delivery_workflow_requires_the_visible_deployment_decision(self):
+        self.authorize()
+        workflow = ".github/workflows/deploy-demo.yml"
+        register = "docs/planning-artifacts/decisions-assumptions.md"
+        story_decision = "| UD-41 | Authorized for story 10.1 only |\n"
+        cloud_decision = "| UD-77 | Aymen authorized the full cloud demonstration deployment |\n"
+        self.write(workflow)
+        for accepted, record in ((False, ""), (False, f"<!--\n{cloud_decision}-->\n"), (True, cloud_decision)):
+            with self.subTest(accepted=accepted, record=record):
+                self.write(register, story_decision + record)
+                scope, errors = self.check_scope()
+                self.assertEqual(scope["authorizedStories"], ["10.1"])
+                if accepted:
+                    self.assertEqual(errors, [])
+                else:
+                    self.assertEqual(errors, ["Unexpected workflows for story 10.1"])
+
     def test_invalid_config_fails_closed(self):
         self.write("apps/web/package.json")
         invalid_list = '[etaye] authorized_stories must be'

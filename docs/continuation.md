@@ -2,6 +2,14 @@
 
 Updated: 2026-11-27. Owner: Aymen Chaghoub.
 
+## First cloud release and acceptance — 2026-11-27
+
+**Release.** [PR #102](https://github.com/Aymenchaghoub/etaye/pull/102) fixed both main Tooling S8705 findings and closed the PR-specific S6350 without suppressions. The exact head passed nine required checks and Tooling Sonar. Protected `main` release `8ea8b9826685aef45ea32bd8c5a59ef1bb3a1d11` passed the applicable main gate. [Publication 46028272952](https://github.com/Aymenchaghoub/etaye/actions/runs/46028272952) signed the final release manifest and verified the API, cloud Web and migrator OCI digests plus their SLSA and CycloneDX attestations. All three digests were fetched anonymously.
+
+**Cloud acceptance.** Azure revision `ca-etaye-demo--git-8ea8b9826685` in Belgium Central serves the restricted HTTPS demonstration. The actual Chromium campaign verified sign-in, patient search, record and measurements, practice switching, portal, tenant denials and logout on Neon. The managed schema remains at V11 and uses the existing synthetic fixture generation. Visitor credentials and full evidence remain private.
+
+**Next operational action.** Verify the protected `demo` workflow in OIDC read-only mode against release 46028272952. Retain Single revision mode for the first release. Follow the [runbook](operations/cloud-demo-runbook.md) for future schema changes, a staged traffic switch and recovery. Story 3.4 remains untouched and `development_authorized` remains false.
+
 ## Release candidate blockers corrected — 2026-11-27
 
 **Trigger.** The first protected-main release rehearsal [46001297479](https://github.com/Aymenchaghoub/etaye/actions/runs/46001297479) for `333e008` failed its candidate verification with "The PostgreSQL upstream archive does not match the pinned platform digest". Separately, the `SonarQube Tooling` quality gate failed on PR #98 and `main` while the nine required GitHub checks passed.
@@ -16,13 +24,13 @@ Updated: 2026-11-27. Owner: Aymen Chaghoub.
 
 ## First cloud deployment in progress — 2026-11-27
 
-**Phase and owner approvals.** Aymen selected Azure Container Apps Consumption, Neon Free and GHCR for the synthetic demonstration. The owner explicitly approved the Neon role replacement and dedicated database, one-shot migration and synthetic fixture, and registration of `Microsoft.App` alone. The baseline is verified `origin/main` at `3484df863d9ef9e98c920d8b383369433fc2b59e`.
+**Owner decisions.** UD-76 records the initial Neon and Azure provider approvals. UD-77 records Aymen's full scoped authorization for the rest of the deployment mission, including reviewed deployment PR merges, exact GHCR publication and first restricted HTTPS rollout. The owner reported USD 100 of Azure for Students credit through November 2027. The subscription limit is On and the EUR 1 monthly budget remains active.
 
-**Verified.** Neon `demo` has `etaye_demo_cloud` with the three restricted SQL roles, authenticated hostname-verified direct TLS, the valid eight-version Flyway history and the existing synthetic fixture at generation 1. Live RLS verified unscoped and cross-practice denials, connection context cleanup and identity privileges. A complete logical backup was verified against selected protected rows and the Flyway history. Azure provider registration made regional quotas visible and one environment is available in each permitted region. The provider rejected Germany West Central with `MaxNumberOfEnvironmentsInSubExceeded`; its approvable Belgium Central alternative passed provider-level what-if. No Azure resources, GHCR packages or demo URL are active.
+**Neon active.** Project `etaye` branch `demo` has `etaye_demo_cloud` with restricted SQL roles, authenticated hostname-verified direct TLS, eight valid Flyway versions and the frozen synthetic fixture at generation 1. Live RLS verified unscoped and cross-practice denials, connection context cleanup and identity privileges. An isolated Neon restore validated the backup and its target was removed. The exact rehearsal preserves provider ACLs and application ownership.
 
-**Artifacts.** The [cloud demo runbook](operations/cloud-demo-runbook.md) records decisions, observed privileges, backup and proposed delivery. [Bicep](../infra/azure/foundation.bicep) describes the proposed foundation. Local checkpoint, operation evidence and review pages are outside the repository. Release and access design remain under preparation.
+**Azure foundation active.** [PR #96](https://github.com/Aymenchaghoub/etaye/pull/96) integrated the foundation and the operator created `rg-etaye-demo` and `cae-etaye-demo` in Belgium Central, in Consumption with live log streaming and disabled persistence. [PR #97](https://github.com/Aymenchaghoub/etaye/pull/97) merged the restricted runtime and verified real loopback reverse proxy behaviour. Provider what-if shows that deploying the runtime adds only the Container App. A demo-scoped identity and exact GitHub environment federation exist. App-scoped RBAC and OIDC dispatch follow first deployment.
 
-**Open choices and next action.** Confirm Azure credit balance, review the foundation PR and obtain separate creation approval. Prepare the exact cloud runtime candidate, review its access model and validate the GHCR publication and OIDC setup before their own approvals. An isolated Neon restore needs separate approval. Story 3.4 phase 0 remains the next functional candidate. `development_authorized` is false.
+**Next action.** [PR #98](https://github.com/Aymenchaghoub/etaye/pull/98) verifies and publishes exact OCI archives after the protected-main gate. The private deployment checkpoint contains the exact staged sequence and evidence. Complete the verified publication, set the approved package visibility, deploy the immutable images and run the cloud acceptance against the actual synthetic service. The [runbook](operations/cloud-demo-runbook.md) records the scoped operation and recovery path. Story 3.4 phase 0 remains the next functional candidate. `development_authorized` remains false.
 
 ## Technical consolidation mission closed — 2026-11-27
 

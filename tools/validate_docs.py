@@ -136,11 +136,31 @@ def check_application_scope(root, errors):
     scope_label = "story 10.1"
     if len(authorized_stories) > 1:
         scope_label = f"stories {', '.join(authorized_stories[:-1])} and {authorized_stories[-1]}"
+    decisions = ""
+    if authorized:
+        register = "docs/planning-artifacts/decisions-assumptions.md"
+        try:
+            decisions = (root / register).read_text(encoding="utf-8")
+        except (OSError, UnicodeError):
+            decisions = ""
+        # Keep line boundaries while ignoring fenced examples and hidden comments.
+        decisions = re.sub(
+            r"^ {0,3}(?P<fence>`{3,})[^`\n]*(?:\n|\Z).*?(?:^ {0,3}(?P=fence)`*[ \t]*$|\Z)"
+            r"|<!--.*?(?:-->|\Z)",
+            lambda hidden: "\n" * hidden[0].count("\n"),
+            decisions,
+            flags=re.MULTILINE | re.DOTALL,
+        )
+    cloud_delivery_authorized = bool(re.search(
+        r"^\| UD-77 \| Aymen authorized the full cloud demonstration deployment\b", decisions, re.MULTILINE
+    ))
     workflows = {"documentation.yml", "codeql.yml", "architecture-pages.yml"}
     forbidden = ("pom.xml", "src", "compose.yaml", "docker-compose.yml")
     if authorized:
         workflows.update({"api.yml", "web.yml", "dependency-review.yml", "package.yml", "release.yml", "sonarqube.yml"})
         forbidden += ("packages",)
+        if cloud_delivery_authorized and (root / ".github/workflows/deploy-demo.yml").is_file():
+            workflows.add("deploy-demo.yml")
     else:
         forbidden += ("package.json", "apps", "infra")
     workflow_dir = root / ".github/workflows"
@@ -157,19 +177,6 @@ def check_application_scope(root, errors):
     if not authorized:
         return scope
 
-    register = "docs/planning-artifacts/decisions-assumptions.md"
-    try:
-        decisions = (root / register).read_text(encoding="utf-8")
-    except (OSError, UnicodeError):
-        decisions = ""
-    # Keep line boundaries while ignoring fenced examples and hidden comments.
-    decisions = re.sub(
-        r"^ {0,3}(?P<fence>`{3,})[^`\n]*(?:\n|\Z).*?(?:^ {0,3}(?P=fence)`*[ \t]*$|\Z)"
-        r"|<!--.*?(?:-->|\Z)",
-        lambda hidden: "\n" * hidden[0].count("\n"),
-        decisions,
-        flags=re.MULTILINE | re.DOTALL,
-    )
     for story in authorized_stories:
         decision_id = decision_ids[story]
         rows = re.findall(rf"^[ \t]*\|[ \t]*{decision_id}[ \t]*\|(?:([^|\n]*)\|)?", decisions, re.MULTILINE)

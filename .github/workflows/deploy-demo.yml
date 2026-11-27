@@ -1,0 +1,116 @@
+name: Verify or stage the Azure demo release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_run:
+        description: Successful protected-main publication run ID
+        required: true
+        type: string
+      source_sha:
+        description: Full SHA recorded in the signed release manifest
+        required: true
+        type: string
+      stage:
+        description: Stage the verified revision without moving public traffic
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: etaye-demo-delivery
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Verify the signed release
+    if: github.ref == 'refs/heads/main' && github.ref_protected
+    permissions:
+      contents: read
+      actions: read
+      attestations: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Check publication workflow identity
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_RUN: ${{ inputs.release_run }}
+          RELEASE_SHA: ${{ inputs.source_sha }}
+        run: |
+          set -euo pipefail
+          [[ "$RELEASE_RUN" =~ ^[0-9]+$ && "$RELEASE_SHA" =~ ^[a-f0-9]{40}$ ]]
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RELEASE_RUN" |
+            jq -e --arg sha "$RELEASE_SHA" --arg repo "$GITHUB_REPOSITORY" '
+              .path == ".github/workflows/release.yml" and .head_sha == $sha and
+              .head_branch == "main" and .event == "workflow_dispatch" and
+              .conclusion == "success" and .head_repository.full_name == $repo'
+          endpoint="repos/$GITHUB_REPOSITORY/environments/demo"
+          gh api "$endpoint" | jq -e '
+            .name == "demo" and .deployment_branch_policy.custom_branch_policies and
+            any(.protection_rules[]; .type == "required_reviewers" and (.reviewers | length) > 0)'
+          gh api "$endpoint/deployment-branch-policies" | jq -e '
+            .total_count == 1 and .branch_policies[0].name == "main" and .branch_policies[0].type == "branch"'
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: published-release-${{ inputs.source_sha }}
+          run-id: ${{ inputs.release_run }}
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/release
+          digest-mismatch: error
+      - name: Verify release, manifest signature and exact image subjects
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_SHA: ${{ inputs.source_sha }}
+        run: |
+          bash tools/verify_published_demo.sh "$RUNNER_TEMP/release/published-manifest.json" "$RELEASE_SHA"
+      - name: Retain the verified deployment input
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: demo-deployment-input
+          path: ${{ runner.temp }}/release/published-manifest.json
+          retention-days: 1
+          if-no-files-found: error
+
+  azure:
+    name: Verify Azure OIDC or stage the demo revision
+    if: github.ref == 'refs/heads/main' && github.ref_protected
+    needs: verify
+    environment: demo
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: demo-deployment-input
+          path: ${{ runner.temp }}/release
+          digest-mismatch: error
+      - name: Federate and operate on the single demo application
+        env:
+          AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+          AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          RELEASE_SHA: ${{ inputs.source_sha }}
+          STAGE: ${{ inputs.stage }}
+          AZURE_CONFIG_DIR: ${{ runner.temp }}/azure
+        run: |
+          bash tools/stage_azure_demo.sh "$RUNNER_TEMP/release/published-manifest.json" "$RELEASE_SHA" "$STAGE"
+      - name: Retain the Azure revision evidence
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: demo-revision-evidence
+          path: ${{ runner.temp }}/demo-revision-evidence.json
+          retention-days: 7
+          if-no-files-found: error
