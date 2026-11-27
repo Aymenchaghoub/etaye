@@ -12,5 +12,9 @@ git_sha=${4:?Pass the expected full commit SHA}
 repo=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 
 # The pin comes from the Git object, so an edited index in the evidence directory is rejected first.
-platform=$(python3 "$repo/tools/release_artifacts.py" upstream-platform "$(dirname -- "$index")" --git-sha "$git_sha")
+artifacts="$repo/tools/release_artifacts.py"
+platform=$(python3 "$artifacts" upstream-platform "$(dirname -- "$index")" --git-sha "$git_sha")
 skopeo copy --preserve-digests "docker://$repository@$platform" "oci-archive:$archive:upstream-postgres"
+# Trivy 0.76 opens a file only as a Docker archive or as an OCI layout directory. Append the Docker index
+# derived from the unchanged platform manifest so the scanner reads the registry bytes.
+python3 "$artifacts" docker-archive-index "$archive" --git-sha "$git_sha"

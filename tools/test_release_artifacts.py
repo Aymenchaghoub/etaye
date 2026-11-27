@@ -366,3 +366,35 @@ class ReleaseArtifactsTests(unittest.TestCase):
                 index.write_bytes(pinned)
                 with patch.dict("os.environ", {"SKOPEO_FAIL": "1"}):
                     self.assertNotEqual(subprocess.run(command, capture_output=True, text=True).returncode, 0)
+
+    def test_docker_archive_index_enables_legacy_scanners_on_oci_archives(self):
+        # Trivy 0.76 opens a file only as a Docker archive (manifest.json) or an OCI layout directory,
+        # never as an OCI tar archive. add_docker_archive_index appends a Docker-format manifest.json
+        # derived from the unchanged OCI platform manifest so the scanner reads the registry bytes.
+        path = self.root / "oci-only.tar"
+        config_digest, diff_id, manifest_digest = write_image(path)
+        # Before: no manifest.json in the archive.
+        with tarfile.open(path, mode="r:") as archive:
+            self.assertNotIn("manifest.json", archive.getnames())
+
+        release.add_docker_archive_index(path)
+
+        # After: manifest.json present and the archive still passes image_archive verification.
+        identity = release.image_archive(path)
+        self.assertEqual(identity["ociManifestDigest"], manifest_digest)
+        self.assertEqual(identity["imageConfigDigest"], config_digest)
+        self.assertEqual(identity["layerDiffIds"], [diff_id])
+
+        # The Docker index references the correct config and layer blobs.
+        with tarfile.open(path, mode="r:") as archive:
+            self.assertIn("manifest.json", archive.getnames())
+            with archive.extractfile("manifest.json") as handle:
+                docker_index = json.load(handle)
+        self.assertEqual(len(docker_index), 1)
+        entry = docker_index[0]
+        self.assertEqual(entry["Config"], "blobs/sha256/" + config_digest.removeprefix("sha256:"))
+        self.assertIsNone(entry["RepoTags"])
+
+        # Calling it again on an archive that already has manifest.json is rejected.
+        with self.assertRaisesRegex(ValueError, "already holds a Docker archive index"):
+            release.add_docker_archive_index(path)

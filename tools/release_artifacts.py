@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import gzip
 import hashlib
+import io
 import json
 from pathlib import Path
 import re
@@ -209,6 +210,30 @@ def upstream_platform(root: Path, upstream_digest: str) -> str:
     return platforms[0]
 
 
+def add_docker_archive_index(path: Path) -> None:
+    """Append the Docker archive index that the pinned scanner needs to open a registry-faithful OCI archive.
+
+    Trivy 0.76 opens a file only as a Docker archive or as an OCI layout directory, never as an OCI archive.
+    The index is derived from the unchanged platform manifest, so the scanned bytes remain the registry bytes.
+    """
+    identity = image_archive(path)
+    with tarfile.open(path, mode="r:") as archive:
+        if "manifest.json" in archive.getnames():
+            raise ValueError(f"{path.name}: already holds a Docker archive index")
+        member = "blobs/sha256/" + identity["ociManifestDigest"].removeprefix("sha256:")
+        with archive.extractfile(member) as handle:
+            manifest = json.load(handle)
+    entry = json.dumps([{
+        "Config": "blobs/sha256/" + manifest["config"]["digest"].removeprefix("sha256:"),
+        "RepoTags": None,
+        "Layers": ["blobs/sha256/" + layer["digest"].removeprefix("sha256:") for layer in manifest["layers"]],
+    }]).encode()
+    with tarfile.open(path, mode="a:") as archive:
+        info = tarfile.TarInfo("manifest.json")
+        info.size, info.mode = len(entry), 0o600
+        archive.addfile(info, io.BytesIO(entry))
+
+
 def generate_manifest(root: Path, git_sha: str, upstream_digest: str) -> dict:
     if not GIT_SHA.fullmatch(git_sha) or not DIGEST.fullmatch(upstream_digest):
         raise ValueError("Expected a full Git SHA and a pinned upstream PostgreSQL digest")
@@ -295,7 +320,7 @@ def upstream_pin(revision: str) -> str:
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("operation", choices=("generate", "verify", "upstream-platform"))
+    parser.add_argument("operation", choices=("generate", "verify", "upstream-platform", "docker-archive-index"))
     parser.add_argument("directory", type=Path)
     parser.add_argument("--git-sha", required=True)
     parser.add_argument("--require-published", action="store_true")
@@ -305,6 +330,9 @@ def main(argv=None) -> int:
         if args.operation == "upstream-platform":
             # Only the platform digest is printed: the shell caller passes it on to Skopeo.
             print(upstream_platform(args.directory, digest))
+            return 0
+        if args.operation == "docker-archive-index":
+            add_docker_archive_index(file_at(args.directory.parent, args.directory.name))
             return 0
         if args.operation == "generate":
             if args.require_published:
