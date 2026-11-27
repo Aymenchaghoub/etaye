@@ -1,4 +1,5 @@
 import json
+from hashlib import sha256
 from pathlib import Path
 import tempfile
 import unittest
@@ -13,6 +14,9 @@ class PromotionPolicyTests(unittest.TestCase):
         directory = tempfile.TemporaryDirectory()
         self.addCleanup(directory.cleanup)
         self.root = Path(directory.name)
+        environment = patch.dict("os.environ", {"RUNNER_TEMP": str(self.root)})
+        environment.start()
+        self.addCleanup(environment.stop)
         for artifact in promotion.PUBLISH_IMAGES.values():
             self.write_report(artifact, [])
 
@@ -46,7 +50,6 @@ class PromotionPolicyTests(unittest.TestCase):
         }] * 17)
         with self.assertRaisesRegex(ValueError, "occurrence count increased"):
             promotion.validate_vulnerabilities(self.root)
-
 
     def test_stage_and_finalize_preserve_the_tested_platform_bytes(self):
         candidate = {
@@ -90,21 +93,88 @@ class PromotionPolicyTests(unittest.TestCase):
                          "docker.io/flyway/flyway@sha256:" + "d" * 64)
         self.assertEqual(document["provenance"]["status"], "verified")
         self.assertEqual(verified.call_count, 6)
+        for call in verified.call_args_list:
+            self.assertEqual(call.args[0][-2], "--")
         for name, entry in document["images"].items():
             self.assertEqual(entry["reference"], f"ghcr.io/aymenchaghoub/etaye-{name}@{entry['digest']}")
         self.assertEqual((output / "image-checksums.txt").read_text().count("ghcr.io/"), 3)
 
     def test_registry_rejects_bytes_that_differ_from_the_candidate(self):
-        from hashlib import sha256
-
         raw = b"exact bytes from the registry"
-        reference = "docker://ghcr.io/aymenchaghoub/etaye-api"
+        image_digest = "sha256:" + sha256(raw).hexdigest()
+        reference = f"docker://ghcr.io/aymenchaghoub/etaye-api@{image_digest}"
         auth = self.root / "auth.json"
-        digest = "sha256:" + sha256(raw).hexdigest()
-        with patch("promote_release.subprocess.check_output", return_value=raw):
-            promotion.require_registry_manifest(reference, digest, auth)
-            with self.assertRaisesRegex(ValueError, "manifest bytes differ"):
-                promotion.require_registry_manifest(reference, "sha256:" + "a" * 64, auth)
+        with patch("promote_release.subprocess.check_output", return_value=raw) as inspect:
+            promotion.require_registry_manifest(reference, image_digest, auth)
+            self.assertEqual(inspect.call_args.args[0][-2:], ["--", reference])
+            promotion.require_registry_manifest(
+                reference.replace("etaye-api@", "etaye-web@"), image_digest, auth,
+            )
+        with patch("promote_release.subprocess.check_output", return_value=b"other registry bytes"), \
+                self.assertRaisesRegex(ValueError, "manifest bytes differ"):
+            promotion.require_registry_manifest(reference, image_digest, auth)
+        inspect.reset_mock()
+        for swapped in (
+            reference + ":latest",
+            reference.replace("aymenchaghoub/", "aymenchaghoub/other-"),
+            reference.replace("etaye-api@", "etaye-api@sha256:short"),
+            reference.replace("ghcr.io", "ghcr.io/evil.io"),
+            "--authfile=" + reference,
+        ):
+            with self.subTest(reference=swapped), self.assertRaisesRegex(ValueError, "exact reference"):
+                promotion.require_registry_manifest(swapped, image_digest, auth)
+        inspect.assert_not_called()
+
+    def test_git_revision_is_validated_before_reaching_git(self):
+        with patch("promote_release.subprocess.check_output") as git:
+            for revision in (GIT_SHA[:12], "--output=/tmp/x", GIT_SHA.upper(), ""):
+                with self.subTest(revision=revision), self.assertRaisesRegex(ValueError, "full Git SHA"):
+                    promotion.flyway_base_identity(self.root, revision)
+                with self.subTest(stage=revision), self.assertRaisesRegex(ValueError, "full Git SHA"):
+                    promotion.stage(self.root, self.root / "published", revision)
+        git.assert_not_called()
+        self.assertFalse((self.root / "published").exists())
+
+    def test_stage_keeps_every_path_inside_the_runner_workspace(self):
+        outside = self.root.parent / (self.root.name + "-outside")
+        self.addCleanup(lambda: outside.rmdir() if outside.exists() else None)
+        for candidate, output in (
+            (self.root, outside),
+            (self.root / ".." / "elsewhere", self.root / "published"),
+            (self.root, Path("relative/published")),
+        ):
+            with self.subTest(output=output), self.assertRaisesRegex(ValueError, "RUNNER_TEMP"):
+                promotion.stage(candidate, output, GIT_SHA)
+        self.assertFalse((self.root / "published").exists())
+        self.assertFalse(outside.exists())
+        with patch.dict("os.environ", {"RUNNER_TEMP": ""}):
+            with self.assertRaisesRegex(ValueError, "RUNNER_TEMP"):
+                promotion.stage(self.root, self.root / "published", GIT_SHA)
+            with self.assertRaisesRegex(ValueError, "RUNNER_TEMP"):
+                promotion.finalize(self.root, GIT_SHA)
+
+    def test_attestation_verification_accepts_only_the_exact_release_subjects(self):
+        image = f"oci://ghcr.io/aymenchaghoub/etaye-api@sha256:{'a' * 64}"
+        record = str(self.root / promotion.PUBLISHED_MANIFEST)
+        with patch("promote_release.subprocess.check_output", return_value=b"[]") as verify:
+            for subject in (image, record):
+                promotion.verify_attestation(subject, GIT_SHA, promotion.SLSA)
+            self.assertEqual([call.args[0][-2:] for call in verify.call_args_list], [["--", image], ["--", record]])
+            verify.reset_mock()
+            for subject in (
+                image + ":latest",
+                image.replace("etaye-api@", "other/etaye-api@"),
+                "--repo",
+                str(self.root / "another.json"),
+                str(self.root.parent / promotion.PUBLISHED_MANIFEST),
+            ):
+                with self.subTest(subject=subject), self.assertRaises(ValueError):
+                    promotion.verify_attestation(subject, GIT_SHA, promotion.SLSA)
+            with self.subTest(revision=GIT_SHA[:12]), self.assertRaisesRegex(ValueError, "full Git SHA"):
+                promotion.verify_attestation(image, GIT_SHA[:12], promotion.SLSA)
+            with self.subTest(predicate="unexpected"), self.assertRaisesRegex(ValueError, "attestation predicate"):
+                promotion.verify_attestation(image, GIT_SHA, "https://evil.example/p")
+        verify.assert_not_called()
 
     def test_finalize_rejects_substitution_even_with_a_plausible_digest(self):
         document = {
