@@ -78,6 +78,13 @@ if [[ "$instruction" != FROM || -n "$trailing" || ! "$upstream" =~ ^postgres:[0-
   exit 1
 fi
 docker buildx imagetools inspect --raw "$upstream" > "$reports/upstream-postgres-index.json"
+read -r instruction upstream_flyway trailing < infra/demo/migrate.Dockerfile
+if [[ "$instruction" != FROM || -n "$trailing" || ! "$upstream_flyway" =~ ^flyway/flyway:[0-9.]+@sha256:[a-f0-9]{64}$ ]]; then
+  echo "The Flyway base image must be pinned and traceable." >&2
+  exit 1
+fi
+docker buildx imagetools inspect --raw "$upstream_flyway" > "$reports/upstream-flyway-index.json"
+
 docker pull --platform linux/amd64 "$upstream"
 docker image save --platform linux/amd64 --output "$reports/upstream-postgres.tar" "$upstream"
 

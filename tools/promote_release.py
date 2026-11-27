@@ -97,10 +97,36 @@ def require_registry_manifest(reference: str, digest: str, authfile: Path) -> No
         raise ValueError("Registry platform manifest bytes differ from the tested image")
 
 
+def flyway_base_identity(root: Path, source_sha: str) -> dict:
+    source = subprocess.check_output(
+        ["git", "show", f"{source_sha}:infra/demo/migrate.Dockerfile"], text=True,
+    )
+    match = re.fullmatch(r"FROM flyway/flyway:[0-9.]+@(sha256:[a-f0-9]{64})", source.splitlines()[0])
+    if match is None:
+        raise ValueError("Expected a pinned Flyway base in the selected source")
+    index = root / "upstream-flyway-index.json"
+    receipt = describe(index)
+    if "sha256:" + receipt["sha256"] != match[1]:
+        raise ValueError("Flyway upstream index differs from the source pin")
+    platforms = [
+        manifest["digest"] for manifest in read_json(index)["manifests"]
+        if (manifest.get("platform", {}).get("os"), manifest.get("platform", {}).get("architecture"))
+        == ("linux", "amd64")
+    ]
+    if len(platforms) != 1 or not DIGEST.fullmatch(platforms[0]):
+        raise ValueError("Expected one Linux amd64 Flyway base")
+    return {
+        "indexReference": f"docker.io/flyway/flyway@{match[1]}",
+        "platformReference": f"docker.io/flyway/flyway@{platforms[0]}",
+        "index": receipt,
+    }
+
+
 def stage(root: Path, output: Path, source_sha: str) -> None:
     verify_manifest(root, source_sha, upstream_pin(source_sha))
     validate_vulnerabilities(root)
     candidate = read_json(root / MANIFEST)
+    migrator_base = flyway_base_identity(root, source_sha)
     run_id, attempt = os.environ["GITHUB_RUN_ID"], os.environ["GITHUB_RUN_ATTEMPT"]
     if not all(re.fullmatch(r"[0-9]+", item) for item in (run_id, attempt)):
         raise ValueError("Invalid GitHub run identity")
@@ -134,6 +160,7 @@ def stage(root: Path, output: Path, source_sha: str) -> None:
                 "sbom": evidence["sbom"], "vulnerabilityReport": evidence["vulnerabilityReport"],
             }
     shutil.copyfile(root / MANIFEST, output / MANIFEST)
+    shutil.copyfile(root / migrator_base["index"]["file"], output / migrator_base["index"]["file"])
     with (output / "image-checksums.txt").open("x", encoding="utf-8") as checksums:
         for entry in entries.values():
             print(entry["digest"].removeprefix("sha256:"), entry["name"], file=checksums)
@@ -141,6 +168,7 @@ def stage(root: Path, output: Path, source_sha: str) -> None:
                 shutil.copyfile(root / report["file"], output / report["file"])
     write_json(output / "staged-images.json", {
         "gitSha": source_sha, "images": entries, "candidate": describe(output / MANIFEST),
+        "flywayUpstream": migrator_base,
         "workflowRun": f"https://github.com/{REPOSITORY}/actions/runs/{run_id}/attempts/{attempt}",
     })
 

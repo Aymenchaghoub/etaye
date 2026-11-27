@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 import promote_release as promotion
 from promote_release import PUBLISH_IMAGES, validate_vulnerabilities
-from test_release_artifacts import GIT_SHA, write_image
+from test_release_artifacts import GIT_SHA, PLATFORM, digest, write_image
 
 
 class PromotionPolicyTests(unittest.TestCase):
@@ -55,20 +55,24 @@ class PromotionPolicyTests(unittest.TestCase):
             "artifacts": {},
         }
         for artifact in PUBLISH_IMAGES.values():
-            _, _, digest = write_image(self.root / f"{artifact}.tar")
+            _, _, manifest_digest = write_image(self.root / f"{artifact}.tar")
             sbom = self.root / f"sbom-{artifact}.cdx.json"
             sbom.write_text("{}")
             report = self.root / f"trivy-{artifact}.json"
             candidate["artifacts"][artifact] = {
-                "ociManifestDigest": digest,
+                "ociManifestDigest": manifest_digest,
                 "sbom": promotion.describe(sbom),
                 "vulnerabilityReport": promotion.describe(report),
             }
         (self.root / promotion.MANIFEST).write_text(json.dumps(candidate))
         output = self.root / "published"
+        index = self.root / "upstream-flyway-index.json"
+        content = json.dumps({"manifests": [{"digest": "sha256:" + "d" * 64, "platform": PLATFORM}]}).encode()
+        index.write_bytes(content)
         with patch("promote_release.verify_manifest"), patch("promote_release.upstream_pin"), \
                 patch("promote_release.subprocess.run") as run, \
                 patch("promote_release.require_registry_manifest") as registry, \
+                patch("promote_release.subprocess.check_output", return_value=f"FROM flyway/flyway:13.13.0@{digest(content)}"), \
                 patch.dict("os.environ", {
                     "GITHUB_RUN_ID": "2", "GITHUB_RUN_ATTEMPT": "1", "GITHUB_ACTOR": "fixture", "GH_TOKEN": "fixture",
                 }):
@@ -83,6 +87,8 @@ class PromotionPolicyTests(unittest.TestCase):
             promotion.finalize(output, GIT_SHA)
         document = json.loads((output / promotion.PUBLISHED_MANIFEST).read_bytes())
         self.assertEqual(document["mode"], "published")
+        self.assertEqual(document["flywayUpstream"]["platformReference"],
+                         "docker.io/flyway/flyway@sha256:" + "d" * 64)
         self.assertEqual(document["provenance"]["status"], "verified")
         self.assertEqual(verified.call_count, 6)
         for name, entry in document["images"].items():
