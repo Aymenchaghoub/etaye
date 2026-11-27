@@ -26,7 +26,7 @@ Updated: 2026-11-27. Owner: Aymen Chaghoub.
 
 **Functional continuation.** The local cockpit confirms 45 stories and 10 merged (including Story 3.3 on PR #71). The next functional candidate is **Story 3.4** (`development_authorized = false` maintained in `_bmad/custom/config.toml`). Merged consolidation worktrees are cleaned up.
 
-**Next action.** Authorize/merge the final closure documentation PR if desired, complete Aymen's manual false-positive status updates on the nine SonarQube API issues (`aymenchaghoub_etaye-api`), then begin **Story 3.4 phase 0** from `main`.
+**Next action.** Aymen approved merging this closure record in [PR #95](https://github.com/Aymenchaghoub/etaye/pull/95). Aymen owns the manual disposition of the nine SonarQube API findings (`aymenchaghoub_etaye-api`). Resume with **Story 3.4 phase 0** from `main` when Aymen requests it. The story still requires separate authorization before implementation.
 
 ## CI/CD, SonarQube Cloud and open-PR closure complete — 2026-11-26
 
