@@ -62,6 +62,7 @@ RULES = (
     ("tools/build_demo_package.sh", frozenset({"package"})),
     ("tools/test_build_demo_package.py", frozenset({"package", "sonar-tooling"})),
     ("tools/run_package_smoke.sh", frozenset({"package"})),
+    ("tools/run_cloud_proxy_checks.sh", frozenset({"package"})),
     ("tools/run_image_scan.sh", frozenset({"package"})),
     ("tools/install_trivy.sh", frozenset({"package"})),
     ("tools/prepare_release_candidate.sh", frozenset({"package"})),

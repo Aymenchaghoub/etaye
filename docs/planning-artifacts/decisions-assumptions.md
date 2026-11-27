@@ -158,6 +158,7 @@ These are reviewable in the pull request that carries them; Aymen can revert any
 | Decision | Statement | Effect |
 | --- | --- | --- |
 | UD-76 | Aymen authorized local cloud deployment preparation for the existing synthetic application on Azure Container Apps Consumption, Neon Free and GHCR. He approved the scoped Neon role replacement and database preparation, then the one-shot migration and synthetic fixture. He also approved registering Microsoft.App alone on Azure for Students. | Allows the named Bicep foundation files and reviewable deployment work. Azure resource creation, GitHub workflow merge, GHCR publishing and package visibility, deployment identity, first exposure, recurring deployment and restore each retain their own approval. No functional story is authorized. [Deployment record](../operations/cloud-demo-runbook.md#deployment-record) |
+| UD-77 | Aymen authorized the full cloud demonstration deployment, including scoped Azure, Neon and GitHub mutations, GHCR publication, the first secure HTTPS rollout and controlled continuous delivery. The owner confirmed USD 100 in Azure for Students credit through November 2027. | Ordinary deployment decisions and reviewed deployment PR merges can proceed. Preserve technical gates, the existing free-cost envelope, spending limit, budget, synthetic-only operation and the protected Neon branch. The global development authorization remains false. [Runbook](../operations/cloud-demo-runbook.md) |
 
 ## Working assumptions and decisions to revisit
 

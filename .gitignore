@@ -25,3 +25,8 @@ local-reference/
 
 # Archify run output (final diagrams are committed under docs/architecture-views)
 .archify/
+
+# Local Neon context and downloaded connection settings.
+/.neon
+/env.txt
+/env ([0-9]*).txt
