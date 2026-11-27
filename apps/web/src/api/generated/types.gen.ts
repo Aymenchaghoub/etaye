@@ -406,6 +406,23 @@ export type LabResult = {
     sourceType: 'PATIENT_REPORTED' | 'PRACTITIONER_OBSERVED' | 'DOCUMENT_REPORTED';
     correctionReason?: string;
     sourceRevisionId: string;
+    specimenDate?: EventDate;
+    resultDate?: EventDate;
+    intervalUnit?: string;
+    intervalContext?: string;
+    /**
+     * Explicit direction supplied by the source.
+     */
+    outsideInterval?: 'BELOW' | 'ABOVE';
+    /**
+     * True only when the source marks the transcription unconfirmed.
+     */
+    unconfirmedTranscription?: boolean;
+    supersedesId?: string;
+    recordedAt?: string;
+    authorLabel?: string;
+    sourceReference?: string;
+    revision?: number;
 };
 
 export type Upload = {
@@ -824,6 +841,10 @@ export type MeasurementRevisionList = {
 export type LabResultPage = {
     items: Array<LabResult>;
     nextCursor: string | null;
+    /**
+     * Recording-time cutoff pinned across this result traversal.
+     */
+    viewAt?: string;
 };
 
 export type RecordDocumentPage = {
@@ -1012,6 +1033,22 @@ export type HistorySummary = {
         HistorySection,
         HistorySection
     ];
+};
+
+export type LabResultRevisionList = {
+    revisions: Array<LabResult>;
+    /**
+     * The response kept the original and the latest 99 visible revisions.
+     */
+    truncated?: boolean;
+};
+
+export type LabAnalytePage = {
+    items: Array<{
+        key: string;
+        label: string;
+    }>;
+    nextCursor: string | null;
 };
 
 export type CredentialsWritable = {
@@ -3257,6 +3294,7 @@ export type ListLabResultsData = {
          * Past instant. Returns, for every lineage, the latest revision recorded at or before it; read-only, same authorization as the current view; a future instant is rejected with 400.
          */
         asOf?: string;
+        analyteKey?: string;
     };
     url: '/practices/{practiceId}/records/{recordId}/lab-results';
 };
@@ -3361,6 +3399,115 @@ export type AppendLabResultResponses = {
 };
 
 export type AppendLabResultResponse = AppendLabResultResponses[keyof AppendLabResultResponses];
+
+export type ListLabResultRevisionsData = {
+    body?: never;
+    path: {
+        practiceId: string;
+        recordId: string;
+        labResultId: string;
+    };
+    query?: {
+        /**
+         * Past instant. Returns, for every lineage, the latest revision recorded at or before it; read-only, same authorization as the current view; a future instant is rejected with 400.
+         */
+        asOf?: string;
+    };
+    url: '/practices/{practiceId}/records/{recordId}/lab-results/{labResultId}/revisions';
+};
+
+export type ListLabResultRevisionsErrors = {
+    /**
+     * Malformed request
+     */
+    400: Problem;
+    /**
+     * Missing or expired session
+     */
+    401: Problem;
+    /**
+     * Forbidden action on visible resource or CSRF failure
+     */
+    403: Problem;
+    /**
+     * Not found or inaccessible resource
+     */
+    404: Problem;
+    /**
+     * Rate limit or quota exceeded
+     */
+    429: Problem;
+    /**
+     * Service temporarily unavailable
+     */
+    503: Problem;
+};
+
+export type ListLabResultRevisionsError = ListLabResultRevisionsErrors[keyof ListLabResultRevisionsErrors];
+
+export type ListLabResultRevisionsResponses = {
+    /**
+     * Successful outcome; no automatic review or publication.
+     */
+    200: LabResultRevisionList;
+};
+
+export type ListLabResultRevisionsResponse = ListLabResultRevisionsResponses[keyof ListLabResultRevisionsResponses];
+
+export type ListLabAnalytesData = {
+    body?: never;
+    path: {
+        practiceId: string;
+        recordId: string;
+    };
+    query?: {
+        /**
+         * Past instant. Returns, for every lineage, the latest revision recorded at or before it; read-only, same authorization as the current view; a future instant is rejected with 400.
+         */
+        asOf?: string;
+        cursor?: string;
+        limit?: number;
+    };
+    url: '/practices/{practiceId}/records/{recordId}/lab-results/analytes';
+};
+
+export type ListLabAnalytesErrors = {
+    /**
+     * Malformed request
+     */
+    400: Problem;
+    /**
+     * Missing or expired session
+     */
+    401: Problem;
+    /**
+     * Forbidden action on visible resource or CSRF failure
+     */
+    403: Problem;
+    /**
+     * Not found or inaccessible resource
+     */
+    404: Problem;
+    /**
+     * Rate limit or quota exceeded
+     */
+    429: Problem;
+    /**
+     * Service temporarily unavailable
+     */
+    503: Problem;
+};
+
+export type ListLabAnalytesError = ListLabAnalytesErrors[keyof ListLabAnalytesErrors];
+
+export type ListLabAnalytesResponses = {
+    /**
+     * Successful outcome; no automatic review or publication.
+     */
+    200: LabAnalytePage;
+};
+
+export type ListLabAnalytesResponse = ListLabAnalytesResponses[keyof ListLabAnalytesResponses];
 
 export type CorrectLabResultData = {
     body: LabInput;

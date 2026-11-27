@@ -330,6 +330,8 @@ CORE families need the full evidence of the named design exception (UD-16); ever
 | 2 | correctAssertion | POST /practices/{practiceId}/assertions/{assertionId}/corrections | CLINICAL_WRITE | in contract |
 | 1 | listMeasurements | GET /practices/{practiceId}/records/{recordId}/measurements | CLINICAL_READ | in contract |
 | 1 | listLabResults | GET /practices/{practiceId}/records/{recordId}/lab-results | CLINICAL_READ | in contract |
+| 1 | listLabResultRevisions | GET /practices/{practiceId}/records/{recordId}/lab-results/{labResultId}/revisions | CLINICAL_READ | in contract |
+| 1 | listLabAnalytes | GET /practices/{practiceId}/records/{recordId}/lab-results/analytes | CLINICAL_READ | in contract |
 | 1 | listRecordDocuments | GET /practices/{practiceId}/records/{recordId}/documents | CLINICAL_READ | in contract |
 | 1 | listOfferedSlots | GET /practices/{practiceId}/slots | SCHEDULE_MANAGE_OR_SELF_APPOINTMENTS | in contract |
 | 1 | listAppointments | GET /practices/{practiceId}/appointments | SCHEDULE_MANAGE | in contract |

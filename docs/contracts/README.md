@@ -1,6 +1,6 @@
 # Documentary API contract
 
-Status: Versioned contract with implemented and planned operations. `openapi.yaml` is OpenAPI 3.1 written in JSON syntax (valid YAML 1.2). [Operation index](operation-index.json) maps all operations. [Business rules](../planning-artifacts/business-rules.md), [access matrix](../planning-artifacts/access-matrix.md), [data dictionary](../planning-artifacts/data-dictionary.md) and ADRs are authoritative companions. Version 0.5.0-planning (2026-11-24) contains 100 operations.
+Status: Versioned contract with implemented and planned operations. `openapi.yaml` is OpenAPI 3.1 written in JSON syntax (valid YAML 1.2). [Operation index](operation-index.json) maps all operations. [Business rules](../planning-artifacts/business-rules.md), [access matrix](../planning-artifacts/access-matrix.md), [data dictionary](../planning-artifacts/data-dictionary.md) and ADRs are authoritative companions. Version 0.5.0-planning (2026-11-24) contains 103 operations.
 
 ## Runtime coverage
 
@@ -67,6 +67,16 @@ Story 3.3 serves the read side of the measurements: `listMeasurements` and `list
 **The `asOf` view.** The rule of the evidence reads applies: each lineage contributes the latest revision recorded at or before the instant; a lineage whose first revision is later is absent; `listMeasurementRevisions` lists only the revisions recorded at or before the instant, and a `measurementId` recorded after it is a `404` byte-identical to an absent resource, so nothing discloses a later revision. A future instant is a `400`.
 
 **Practice time zone (D-64).** The membership `AccessContext` of `GET /session` carries `timezone`, the IANA zone of the practice. A client reads and shows every instant of the record screens in that zone; the server still exchanges absolute instants.
+
+## Laboratory result reads (story 3.4)
+
+The list returns the latest revision per lineage recorded at or before the view instant. It applies filters after revision selection. Rows are newest effective event first, with unknown dates last and recording time and UUID as descending tie-breakers. The effective date is specimen date or, if none, result date. A date-only field sorts as the first instant of that day in the practice zone, with its date-only precision retained on the wire. Period bounds are inclusive `from` and exclusive `to`. Unknown events appear in the unbounded list and are excluded by an active period bound. The response includes no total.
+
+The runtime response may provide separate precision-aware `specimenDate` and `resultDate` objects. The original instant fields remain available when supplied. `eventDate` is the effective date and is UNKNOWN when neither is supplied. A quantitative decimal preserves its entered scale and comparator. Qualitative text and supplied interval text, bounds, unit and context remain independent. Outside-interval and transcription notices represent explicit statements of the source alone. Comparing plotted points requires a known event date, finite exact numeric result, exact matching analyte, units, interval, source laboratory and supplied method/fasting/time context. The table preserves all readings.
+
+`listLabAnalytes` returns exact distinct labels in scoped label/key order, paged with an opaque cursor, 25 by default and at most 100. Its keys are scoped to the practice and record and carry no plain clinical text. The options do not depend on the active analyte or period filters. The client can load further choices and can pin discovery to the result page's `viewAt`. `listLabResults` accepts an optional `analyteKey` and compares it exactly within the authorized scope. Both traversals pin their original recording-time cutoff, including the default current view. The cursor is bound to operation, actor, practice, record, requested view and applicable filters. Invalid, inconsistent or out-of-scope cursors return 400 and the client can restart.
+
+`listLabResultRevisions` uses a revision ID scoped to the route record and lists its visible lineage oldest first. Above 100 revisions, it returns the first and most recent 99 and signals truncation. A guessed, wrong-record or later-than-view revision is hidden like an absent record. The lab reads use current CLINICAL_READ and no-store without an ETag. Follow the authorized source reference at the same view instant. I-07 and both lab POST operations belong to D-24.
 
 ## Synthetic demonstration
 
