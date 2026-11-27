@@ -16,7 +16,7 @@ oidc=$(curl --fail --silent --show-error --max-time 15 \
     --header "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
     "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api%3A%2F%2FAzureADTokenExchange" | jq -er .value)
 az login --service-principal --username "$AZURE_CLIENT_ID" --tenant "$AZURE_TENANT_ID" \
-    --federated-token "$oidc" --only-show-errors --output none
+    --federated-token "$oidc" --allow-no-subscriptions --only-show-errors --output none
 unset oidc
 path="/subscriptions/$AZURE_SUBSCRIPTION_ID/resourceGroups/rg-etaye-demo/providers/Microsoft.App/containerApps/ca-etaye-demo"
 version='api-version=2025-07-01'
@@ -48,6 +48,10 @@ jq -e '
     all(.properties.configuration.ingress.traffic[]; .latestRevision != true) and
     any(.properties.configuration.ingress.traffic[]; .weight == 100 and (.revisionName | type == "string"))
 ' <<<"$before" >/dev/null
+active_source=$(jq -er '.tags.SourceSha | select(test("^[a-f0-9]{40}$"))' <<<"$before")
+git merge-base --is-ancestor "$active_source" "$source"
+git diff --quiet "$active_source" "$source" -- apps/api/src/main/resources/db ||
+    { echo 'This release requires controlled one-shot schema migration and compatibility verification.' >&2; exit 1; }
 payload=$(mktemp "$RUNNER_TEMP/demo-template.XXXXXX")
 trap 'unlink "$payload"' EXIT
 api=$(jq -er '.images.api.reference' "$manifest")
