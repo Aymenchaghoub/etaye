@@ -19,6 +19,12 @@ The first deployment uses protected main `8ea8b9826685aef45ea32bd8c5a59ef1bb3a1d
 
 The owner authorized the remaining deployment operations within the existing scope and cost limits under UD-77. Record the deployed revision, exact source SHA, API and Web registry digests, migrator reference, app URL, schema version, release manifest and previous compatible revision after deployment. Store sensitive evidence outside Git. The operator's private checkpoint, migration catalog results and audit logs remain in the deployment evidence directory.
 
+| Image | Exact first-release reference |
+| --- | --- |
+| API | `ghcr.io/aymenchaghoub/etaye-api@sha256:eb369ce4f5b13cbb7c003a3561a77d87dcf3cd1f6afc294b19810764652cb99e` |
+| Cloud Web | `ghcr.io/aymenchaghoub/etaye-web@sha256:0647dded658e2c996f9193388b2b000466eaa59b43580f27c30a139cf47d3043` |
+| Migrator | `ghcr.io/aymenchaghoub/etaye-migrate@sha256:855912c4d1e6fac69427afd711127293c24466191f17e8cecc959dc8f91798e9` |
+
 ## Neon provisioning and credentials
 
 Use Neon CLI with the existing authenticated profile and PostgreSQL 18 client tools. Resolve the target by explicit project and branch IDs on every management command. Check the scope and the endpoint returned for that branch before PostgreSQL operations. The protected `production` branch and other Neon projects are outside the deployment scope.
@@ -95,7 +101,7 @@ The [release workflow](../../.github/workflows/release.yml) dispatches on protec
 
 For first deployment, verify the signed manifest and its source SHA, verify all three image attestations and compare the anonymous registry manifests by digest. Supply the selected API and Web digests, direct Neon hostname, authorized operator IPv4, visitor password hash and separate runtime and identity passwords to the Bicep parameters. Use a mode-0600 secure parameter file outside Git and a separate placeholder file for provider validation and what-if. Apply only the expected Container App change. Remove transient parameter files after use. Verify the ingress hostname, resource allocation, revision state and exact image digests from Azure.
 
-The [protected delivery workflow](../../.github/workflows/deploy-demo.yml) takes the publication run ID and full release SHA. Start with `stage=false` to verify release integrity and federated access without writing the app. The GitHub `demo` environment requires review and restricts deployment to main. The Azure managed identity trusts `repo:Aymenchaghoub/etaye:environment:demo` with audience `api://AzureADTokenExchange`. Its custom revision publisher role is assigned only to `ca-etaye-demo`. Runtime database credentials stay in Container Apps secrets.
+The [protected delivery workflow](../../.github/workflows/deploy-demo.yml) takes the publication run ID and full release SHA. Start with `stage=false` to verify release integrity and federated access without writing the app. The GitHub `demo` environment requires review and restricts deployment to main. The Azure managed identity trusts the one immutable GitHub repository subject for `Aymenchaghoub/etaye` and `demo`. The subject is the repository's `sub_claim_prefix` from `GET /repos/Aymenchaghoub/etaye/actions/oidc/customization/sub`, followed by `:environment:demo`. Keep the exact issuer `https://token.actions.githubusercontent.com` and audience `api://AzureADTokenExchange`. The initial legacy name-only binding returned `AADSTS700213`. [GitHub immutable subjects](https://docs.github.com/en/actions/reference/security/oidc#immutable-subject-claims) Its custom revision publisher role is assigned only to `ca-etaye-demo`. Runtime database credentials stay in Container Apps secrets. Protected run 46031644684 verified this federation in read-only mode against the actual healthy revision. [OIDC verification](https://github.com/Aymenchaghoub/etaye/actions/runs/46031644684)
 
 The staging step requires Multiple revision mode and verifies that existing traffic is already pinned to one named revision before applying the new image digests. Keep Single mode for the first release and its replica envelope. Before enabling staging on a future release, assess overlapping replicas, verify the migration and compatibility prerequisites, pin known-good traffic and document how to test the candidate through restricted access. Switch traffic as a separate controlled operation after readiness and authenticated acceptance. [Entra federation](https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-create-trust-user-assigned-managed-identity) · [GitHub environments](https://docs.github.com/en/actions/reference/workflows-and-actions/deployments-and-environments)
 
@@ -104,10 +110,40 @@ The staging step requires Multiple revision mode and verifies that existing traf
 Before first rollout, verify the approved audience, resources and costs, and record the exact source SHA and immutable image digests. Verify role restrictions and validated schema before adding traffic. Gate subsequent promotion on known-good compatibility, staging and approved traffic switching. Keep authenticated Playwright traffic within the approved ingress access rules.
 
 - Capture DNS, certificate, HTTP redirection, frontend load, API routing, readiness, response headers and cookie attributes. Exercise sign-in, logout and CSRF, practice switching, patient search, record and measurement read, portal permissions, cross-practice denial, and reset denial with synthetic identities.
-- Check restricted and error states, browser console, accessibility smoke, runtime and identity privilege boundaries and sanitized logs. Measure cold and warm response times, Neon wake time, replica count, CPU, memory and errors. Label confidence limits. The first campaign verified the restricted TLS route, secure cookies, CSRF, cross-practice denial, operator route denial and the clinical and portal journeys. A first timeline assertion timed out during startup and passed on the same revision in the full rerun.
+- Check restricted and error states, browser console, accessibility smoke, runtime and identity privilege boundaries and sanitized logs. Measure cold and warm response times, Neon wake time, replica count, CPU, memory and errors. Label confidence limits. The first campaign verified the restricted TLS route, secure cookies, CSRF, cross-practice denial, operator route denial and the clinical and portal journeys. A first timeline assertion timed out at five seconds during startup. Both the warm rerun and the rerun after Azure reported zero replicas passed. The first HTTPS challenge after scale-to-zero took 42.4 s. The next authenticated database-ready call took 115 ms, followed by eight readiness calls in 44–58 ms. The window reported a peak working set of about 317 MiB and peak Azure CPU metric of 21%. The bounded sequence did not separate Neon wake latency from the startup of the app and its network.
 - Capture app and revision status plus short live system and container streams for startup incidents. Inspect subscription cost and Neon project usage when testing. Keep an approved operator path to stop the app if usage becomes abnormal and to restart the same verified revision. Avoid monitoring pings that keep the service awake.
 - Roll application back to the previous known-good compatible revision by immutable digest or controlled revision activation. Verify readiness, security headers, synthetic access and tenant denials. Database migrations remain forward-only. When data recovery is independently approved, restore to an isolated target and verify before switching.
 - Rotate the runtime and identity passwords independently and update their corresponding app secret references. Verify new connections and quarantine old local copies. Keep the schema owner and provisioning credentials outside the running API. Revoke continuous delivery by removing its federated credential and demo-scoped Azure assignments after approval.
 - If Neon sleeps, check the direct endpoint, allow bounded retry after wake and review application and database startup logs. An unhealthy revision, an unavailable image digest, failed attestation verification or a quota error blocks promotion.
 
 The next functional candidate is Story 3.4 phase 0. Its design and written authorization are independent of this deployment. The global development authorization remains false.
+
+
+### Inspect, pause and resume the demo
+
+Use the Azure control plane for routine status so the checks do not send traffic to the app. Review a small, sanitized log sample only when diagnosing an incident.
+
+```bash
+az containerapp revision list --subscription "$ETAYE_AZURE_SUBSCRIPTION" \
+  --resource-group rg-etaye-demo --name ca-etaye-demo \
+  --query '[].{revision:name,health:properties.healthState,state:properties.runningState,replicas:properties.replicas}' -o table
+
+az containerapp logs show --subscription "$ETAYE_AZURE_SUBSCRIPTION" \
+  --resource-group rg-etaye-demo --name ca-etaye-demo --type system --tail 30
+```
+
+If activity exceeds the approved envelope, first confirm that `demo-operator` is the sole ingress allow rule. Replace its address with the reserved documentation address below to pause external traffic while preserving the HTTPS and visitor authentication configuration. Azure then has room to scale the app to zero. Set `ETAYE_APPROVED_IPV4` from the operator's current authorized address and apply the second command to resume. Keep the ingress rule list and audit evidence private.
+
+```bash
+az containerapp ingress access-restriction set --subscription "$ETAYE_AZURE_SUBSCRIPTION" \
+  --resource-group rg-etaye-demo --name ca-etaye-demo \
+  --rule-name demo-operator --action Allow --ip-address 192.0.2.1/32
+
+az containerapp ingress access-restriction set --subscription "$ETAYE_AZURE_SUBSCRIPTION" \
+  --resource-group rg-etaye-demo --name ca-etaye-demo \
+  --rule-name demo-operator --action Allow --ip-address "$ETAYE_APPROVED_IPV4/32"
+```
+
+Verify the only app revision, approved ingress rule, HTTPS visitor challenge and signed-in synthetic readiness after resumption. Use the signed initial release as the first known-good digest pair. For a future Multiple revision deployment, restore the reviewed known-good traffic pin when a candidate fails. Treat database recovery separately and validate a restore in an isolated synthetic target before considering a switch.
+
+To revoke deployment access, remove the one `Etaye Demo Revision Publisher` role assignment at the `ca-etaye-demo` resource and, if needed, remove the exact `github-demo` federated credential after recording the rollback decision. This identity serves workflow access to Azure only. Runtime database secrets and the public registry images have independent access paths.
