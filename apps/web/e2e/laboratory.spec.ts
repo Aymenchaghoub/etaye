@@ -53,8 +53,10 @@ test('Nora reads Claire’s non-inferred intervals and exact laboratory source',
   await page.getByRole('button', {name:'Appliquer les filtres'}).click();
   await expect(rows(page)).toHaveCount(2);
   await expect(rows(page).filter({ hasText: 'Glucose' })).toHaveCount(0);
+  await accessible(page);
   await page.goto(louis);
   await expect(page.getByText('Aucun résultat de biologie', {exact: true})).toBeVisible();
+  await accessible(page);
 });
 
 test('Marie provides qualitative, comparator and matched point evidence, with both sides of a correction', async ({ page }) => {
@@ -79,11 +81,13 @@ test('Marie provides qualitative, comparator and matched point evidence, with bo
   await expect(rows(page).first()).toContainText('7,40');
   await expect(page.getByRole('button', {name: 'Historique du résultat · Analyse A'})).toHaveCount(0);
   await expect(page.locator('.etaye-biologie')).not.toContainText('7,04');
+  await accessible(page);
 
   await page.getByRole('button', { name: 'Changer de date' }).click();
   await choose(page, ['21', '10', '2026', '10', '15']);
   await expect(rows(page)).toHaveCount(1);
   await expect(rows(page).first()).toContainText('7,04');
+  await accessible(page);
 });
 
 test('foreign and restricted records hide their content', async ({ page }) => {
@@ -91,6 +95,7 @@ test('foreign and restricted records hide their content', async ({ page }) => {
   await page.goto(hugoThroughNora);
   await expect(heading(page, 'Élément introuvable')).toBeVisible();
   await expect(rows(page)).toHaveCount(0);
+  await accessible(page);
   await page.context().clearCookies();
   await signIn(page, 'mila.dubois@example.test');
   await page.goto(`${grant('MEM-MILA-A')}/patients/${fixtureId('R-A-001')}/biologie`);
