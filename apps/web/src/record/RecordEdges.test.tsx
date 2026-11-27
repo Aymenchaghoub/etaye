@@ -2,13 +2,15 @@
 import { cleanup, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { AccessContext, HistorySummary, Record as PatientRecord, Session } from '../api/generated/types.gen';
+import type { AccessContext, HistorySummary, LabResult, Record as PatientRecord, Session } from '../api/generated/types.gen';
 import { clearPatientMemory } from '../patients/memory';
 import { PatientsPage } from '../patients/PatientsPage';
 import { PractitionerShell } from '../patients/PractitionerShell';
 import { ChronologyPage } from './ChronologyPage';
 import { HistoryPage } from './HistoryPage';
+import { LaboratoryPage } from './LaboratoryPage';
 import { MeasurementsPage } from './MeasurementsPage';
+import { clearRecordMemory } from './memory';
 import { RecordPage } from './RecordPage';
 import { PatientsArea } from '../patients/PatientsArea';
 
@@ -130,6 +132,7 @@ afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
   clearPatientMemory();
+  clearRecordMemory();
 });
 
 describe('PatientsPage and Record edge states', () => {
@@ -407,5 +410,177 @@ describe('PatientsPage and Record edge states', () => {
       );
     }
     expect(await screen.findByText('Aucun événement au dossier')).toBeTruthy();
+  });
+});
+
+const labView = '2026-11-15T10:00:00Z';
+const firstAnalyte = 'a'.repeat(64);
+const secondAnalyte = 'b'.repeat(64);
+const labOriginal: LabResult = {
+  id: 'lab-1', practiceId, version: 1, createdAt: labView, updatedAt: labView,
+  analyte: 'Analyse A', valueKind: 'NUMERIC', numericValue: '7.04', unit: 'unité A',
+  eventDate: { precision: 'DATE', date: '2026-10-20' },
+  specimenDate: { precision: 'DATE', date: '2026-10-20' },
+  sourceType: 'DOCUMENT_REPORTED', sourceRevisionId: 'src-1',
+};
+const labNewer: LabResult = {
+  ...labOriginal, id: 'lab-2', version: 2, revision: 2, supersedesId: labOriginal.id,
+  sourceRevisionId: 'src-2', sourceReference: 'SRC-A-002', correctionReason: 'Transcription corrigée',
+  recordedAt: labView, authorLabel: 'Dr Nora', resultDate: { precision: 'DATE', date: '2026-10-21' },
+  outsideInterval: 'ABOVE', upperBound: '7', unconfirmedTranscription: true,
+};
+
+const labPage = (items: LabResult[], nextCursor: string | null = null) => Response.json({ items, nextCursor, viewAt: labView });
+const analytePage = (items = [{ key: firstAnalyte, label: 'Analyse A' }], nextCursor: string | null = null) =>
+  Response.json({ items, nextCursor });
+const labProblem = (status: number) => Response.json({ status }, { status, headers: { 'Retry-After': '1' } });
+
+function renderLaboratory(handle: (url: URL) => Response, expire = vi.fn()) {
+  vi.stubGlobal('fetch', vi.fn((request: Request) => {
+    const url = new URL(request.url);
+    if (url.pathname.endsWith(`/records/${recordId}`)) return Promise.resolve(Response.json(recordPayload));
+    if (url.pathname.endsWith('/history')) return Promise.resolve(Response.json(conflictingHistory));
+    return Promise.resolve(handle(url));
+  }));
+  return render(
+    <PractitionerShell session={session} context={context} contexts={[context]} select={vi.fn()} signOut={vi.fn()}>
+      <RecordPage tab="laboratory" scope="lab-scope" practiceId={practiceId} base={base} recordId={recordId}
+        zone="Europe/Paris" zoneKnown expire={expire}>
+        {() => <LaboratoryPage />}
+      </RecordPage>
+    </PractitionerShell>,
+  );
+}
+
+describe('LaboratoryPage edge states', () => {
+  it('recovers the list and choices independently, then applies and resets a bounded exact filter', async () => {
+    const user = userEvent.setup();
+    let listMode = 503;
+    let choiceMode = 503;
+    const applied: URL[] = [];
+    renderLaboratory(url => {
+      if (url.pathname.endsWith('/analytes')) return choiceMode ? labProblem(choiceMode) : analytePage();
+      if (!url.pathname.endsWith('/lab-results')) throw new Error(`Unexpected ${url.pathname}`);
+      applied.push(url);
+      return listMode ? labProblem(listMode) : labPage(url.searchParams.has('analyteKey') ? [] : [labNewer]);
+    });
+
+    expect(await screen.findByText('Résultats non chargés')).toBeTruthy();
+    listMode = 429;
+    await user.click(screen.getByRole('button', { name: 'Réessayer', exact: true }));
+    expect((await screen.findByRole('button', { name: /Réessayer dans/ })).hasAttribute('disabled')).toBe(true);
+    listMode = 0;
+    await user.click(await screen.findByRole('button', { name: 'Réessayer', exact: true }, { timeout: 2500 }));
+    await screen.findByText('Au-dessus de l’intervalle fourni · mention de la source');
+    expect(screen.getByText('Saisie manuelle · à vérifier contre la source')).toBeTruthy();
+    expect(screen.getByText('21/10/2026')).toBeTruthy();
+
+    choiceMode = 429;
+    await user.click(await screen.findByRole('button', { name: 'Réessayer les analyses', exact: true }));
+    expect((await screen.findByRole('button', { name: /Réessayer les analyses dans/ })).hasAttribute('disabled')).toBe(true);
+    choiceMode = 0;
+    await user.click(await screen.findByRole('button', { name: 'Réessayer les analyses', exact: true }, { timeout: 2500 }));
+    await user.selectOptions(await screen.findByLabelText('Analyse'), firstAnalyte);
+    await user.selectOptions(screen.getByLabelText('Période'), '3m');
+    await user.click(screen.getByRole('button', { name: 'Appliquer les filtres' }));
+    expect(await screen.findByText('Aucun résultat pour ces filtres')).toBeTruthy();
+    expect(screen.getByText('La période ne comprend que les résultats dont la date est connue.')).toBeTruthy();
+    expect(applied.at(-1)?.searchParams.get('analyteKey')).toBe(firstAnalyte);
+    expect(applied.at(-1)?.searchParams.has('from')).toBe(true);
+    await user.click(screen.getByRole('button', { name: 'Réinitialiser les filtres' }));
+    expect(await screen.findByText('Analyse A', { selector: 'td' })).toBeTruthy();
+    expect(applied.at(-1)?.searchParams.has('analyteKey')).toBe(false);
+  });
+
+  it('keeps the list visible across throttling and restarts each pagination from its own view', async () => {
+    const user = userEvent.setup();
+    let nextList = 429;
+    let restart = false;
+    let nextAnalyte = 400;
+    renderLaboratory(url => {
+      const paginating = url.searchParams.has('cursor');
+      if (url.pathname.endsWith('/analytes')) {
+        if (paginating && nextAnalyte) return labProblem(nextAnalyte);
+        return paginating
+          ? analytePage([{ key: secondAnalyte, label: 'Analyse B' }])
+          : analytePage(undefined, 'analyte-next');
+      }
+      if (paginating) return labProblem(nextList);
+      return labPage([labOriginal], restart ? null : 'lab-next');
+    });
+
+    await user.click(await screen.findByRole('button', { name: 'Afficher plus d’analyses' }));
+    await screen.findByRole('button', { name: 'Réessayer les analyses' });
+    nextAnalyte = 0;
+    await user.click(screen.getByRole('button', { name: 'Réessayer les analyses' }));
+    await user.click(await screen.findByRole('button', { name: 'Afficher plus d’analyses' }));
+    await screen.findByRole('option', { name: 'Analyse B' });
+
+    await user.click(screen.getByRole('button', { name: 'Afficher plus de résultats' }));
+    expect((await screen.findByRole('button', { name: /Réessayer d’afficher la suite dans/ })).hasAttribute('disabled')).toBe(true);
+    expect(screen.getByText('Analyse A', { selector: 'td' })).toBeTruthy();
+    nextList = 400;
+    await user.click(await screen.findByRole('button', { name: 'Réessayer d’afficher la suite', exact: true }, { timeout: 2500 }));
+    restart = true;
+    await user.click(await screen.findByRole('button', { name: 'Recharger la liste' }));
+    expect(await screen.findByText('Analyse A', { selector: 'td' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Afficher plus de résultats' })).toBeNull();
+  });
+
+  it('shows partial lineage with optional provenance and drops the record when a source becomes hidden', async () => {
+    const user = userEvent.setup();
+    let historyLimited = true;
+    renderLaboratory(url => {
+      if (url.pathname.endsWith('/analytes')) return analytePage();
+      if (url.pathname.endsWith('/revisions')) return historyLimited
+        ? labProblem(429)
+        : Response.json({ revisions: [{ ...labOriginal, unit: undefined }, labNewer], truncated: true });
+      if (url.pathname.includes('/sources/')) return labProblem(404);
+      return labPage([labNewer]);
+    });
+
+    const history = await screen.findByRole('button', { name: /Historique du résultat/ });
+    await user.click(history);
+    await screen.findByText('Historique temporairement indisponible');
+    historyLimited = false;
+    await user.click(await screen.findByRole('button', { name: 'Réessayer', exact: true }, { timeout: 2500 }));
+    expect(await screen.findByText(/Historique partiel/)).toBeTruthy();
+    expect(screen.getByText('Version 1 · 7,04')).toBeTruthy();
+    expect(screen.getByText('Version 2 · 7,04 unité A · version affichée')).toBeTruthy();
+    await user.click(history);
+    expect(screen.queryByText(/Historique partiel/)).toBeNull();
+
+    await user.click(screen.getByRole('link', { name: /Source 1 · Analyse A/ }));
+    expect(await screen.findByRole('heading', { name: 'Élément introuvable' })).toBeTruthy();
+    expect(screen.queryByText('Analyse A', { selector: 'td' })).toBeNull();
+  });
+
+  it('charts equal exact date-only points and expires a session refused on the next results page', async () => {
+    const user = userEvent.setup();
+    const expire = vi.fn();
+    const equivalent: LabResult = {
+      ...labOriginal, lowerBound: '2', upperBound: '8', intervalUnit: 'unité A',
+      intervalSource: 'Laboratoire fictif', comparisonContext: { method: 'A', fasting: 'À jeun', samplingWindow: 'Matin' },
+    };
+    const another: LabResult = {
+      ...equivalent, id: 'lab-3', eventDate: { precision: 'DATE', date: '2026-10-22' },
+      specimenDate: undefined, resultDate: { precision: 'DATE', date: '2026-10-22' },
+    };
+    renderLaboratory(url => {
+      if (url.pathname.endsWith('/analytes')) return analytePage();
+      if (url.searchParams.get('cursor') === 'page-2') return labPage([another]);
+      if (url.searchParams.has('cursor')) return labProblem(401);
+      return labPage([equivalent], url.searchParams.has('from') ? 'stale-page' : 'page-2');
+    }, expire);
+    await user.click(await screen.findByRole('button', { name: 'Afficher plus de résultats' }));
+    const chart = await screen.findByRole('img', { name: /Analyse A · unité A/ });
+    expect(chart.querySelectorAll('circle')).toHaveLength(2);
+    expect(chart.querySelectorAll('text')).toHaveLength(3);
+    expect(screen.getByRole('link', { name: /Source 1 · Analyse A · 22\/10\/2026/ })).toBeTruthy();
+
+    await user.selectOptions(screen.getByLabelText('Période'), '12m');
+    await user.click(screen.getByRole('button', { name: 'Appliquer les filtres' }));
+    await user.click(await screen.findByRole('button', { name: 'Afficher plus de résultats' }));
+    expect(expire).toHaveBeenCalledOnce();
   });
 });

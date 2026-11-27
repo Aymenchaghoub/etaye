@@ -315,8 +315,9 @@ function LabChart({ series }: { series: LabSeries }) {
   const ticks = series.points.map(point => Date.parse(point.date));
   const first = Math.min(...ticks);
   const last = Math.max(...ticks);
-  const low = series.points.reduce((min, point) => point.scaledValue < min.scaledValue ? point : min);
-  const high = series.points.reduce((max, point) => point.scaledValue > max.scaledValue ? point : max);
+  const initial = series.points[0];
+  const low = series.points.reduce((min, point) => point.scaledValue < min.scaledValue ? point : min, initial);
+  const high = series.points.reduce((max, point) => point.scaledValue > max.scaledValue ? point : max, initial);
   const span = high.scaledValue - low.scaledValue;
   const axis = Math.max(68, Math.max(low.valueLabel.length, high.valueLabel.length) * 8 + 10);
   const firstX = axis + 22;
@@ -324,7 +325,7 @@ function LabChart({ series }: { series: LabSeries }) {
   const dateLabel = (date: string) => date.includes('T') ? formatInstant(date, zone) : date.split('-').reverse().join('/');
   const axisDate = (date: number) => new Intl.DateTimeFormat('fr-FR', {
     day: '2-digit', month: '2-digit', year: '2-digit',
-    timeZone: series.points[0].date.includes('T') ? zone : 'UTC',
+    timeZone: initial.date.includes('T') ? zone : 'UTC',
   }).format(date);
   const y = (value: bigint) => span === 0n ? 78 : 126 - Number(value - low.scaledValue) / Number(span) * 88;
   return <section className="etaye-panneau" aria-labelledby={id}>
