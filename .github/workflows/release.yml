@@ -150,7 +150,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          export DOCKER_CONFIG="$(mktemp -d)"
+          DOCKER_CONFIG=$(mktemp -d)
+          export DOCKER_CONFIG
           trap 'docker logout ghcr.io >/dev/null; rmdir "$DOCKER_CONFIG" 2>/dev/null || true' EXIT
           printf '%s\n' "$GH_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
           python3 tools/promote_release.py finalize "$RUNNER_TEMP/etaye-release" "$RUNNER_TEMP/etaye-published" "$GITHUB_SHA"
