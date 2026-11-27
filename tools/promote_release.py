@@ -14,11 +14,13 @@ import sys
 import tarfile
 import tempfile
 
-from release_artifacts import DIGEST, MANIFEST, describe, image_archive, upstream_pin, verify_manifest
+from release_artifacts import DIGEST, GIT_SHA, MANIFEST, describe, image_archive, upstream_pin, verify_manifest
 
 PUBLISH_IMAGES = {"api": "api", "web": "cloud-web", "migrate": "migrate"}
 REPOSITORY = "Aymenchaghoub/etaye"
 REGISTRY = "ghcr.io"
+IMAGE_NAMES = tuple(f"{REGISTRY}/aymenchaghoub/etaye-{package}" for package in PUBLISH_IMAGES)
+ATTESTATION_SUBJECT = re.compile(r"oci://ghcr\.io/aymenchaghoub/etaye-(?:api|web|migrate)@sha256:[0-9a-f]{64}")
 WORKFLOW = f"{REPOSITORY}/.github/workflows/release.yml"
 PUBLISHED_MANIFEST = "published-manifest.json"
 SLSA = "https://slsa.dev/provenance/v1"
@@ -51,6 +53,41 @@ def write_json(path: Path, document: dict) -> None:
     with path.open("x", encoding="utf-8") as handle:
         json.dump(document, handle, indent=2, sort_keys=True)
         handle.write("\n")
+
+
+def exact_sha(source_sha: str) -> str:
+    """Keep caller-supplied revisions from becoming Git or GitHub command arguments."""
+    if not GIT_SHA.fullmatch(source_sha):
+        raise ValueError("Expected a full Git SHA")
+    return source_sha
+
+
+def workspace_path(path: Path, label: str) -> Path:
+    """Resolve a caller-supplied path and keep it inside the runner workspace."""
+    supplied, workspace = Path(path), Path(os.environ.get("RUNNER_TEMP", ""))
+    if not supplied.is_absolute() or ".." in supplied.parts or not workspace.is_absolute():
+        raise ValueError(f"Expected an absolute {label} inside RUNNER_TEMP")
+    resolved, root = supplied.resolve(), workspace.resolve()
+    if not resolved.is_relative_to(root):
+        raise ValueError(f"Expected an absolute {label} inside RUNNER_TEMP")
+    return resolved
+
+
+def registry_reference(reference: str, digest: str) -> str:
+    """Accept only the reference that carries exactly the verified digest of a published image."""
+    if not DIGEST.fullmatch(digest) or reference not in {f"docker://{name}@{digest}" for name in IMAGE_NAMES}:
+        raise ValueError("Expected the exact reference of a verified image digest")
+    return reference
+
+
+def attestation_subject(subject: str) -> str:
+    """Accept only a published image digest or the published release record."""
+    if ATTESTATION_SUBJECT.fullmatch(subject):
+        return subject
+    record = workspace_path(Path(subject), "release record")
+    if record.name != PUBLISHED_MANIFEST:
+        raise ValueError("Unexpected attestation subject")
+    return str(record)
 
 
 def validate_vulnerabilities(root: Path) -> None:
@@ -90,14 +127,16 @@ def oci_layout(archive_path: Path, layout: Path, digest: str) -> None:
 
 
 def require_registry_manifest(reference: str, digest: str, authfile: Path) -> None:
+    reference = registry_reference(reference, digest)
     raw = subprocess.check_output(
-        ["skopeo", "inspect", "--authfile", str(authfile), "--raw", reference],
+        ["skopeo", "inspect", "--authfile", str(authfile), "--raw", "--", reference],
     )
     if "sha256:" + hashlib.sha256(raw).hexdigest() != digest:
         raise ValueError("Registry platform manifest bytes differ from the tested image")
 
 
 def flyway_base_identity(root: Path, source_sha: str) -> dict:
+    exact_sha(source_sha)
     source = subprocess.check_output(
         ["git", "show", f"{source_sha}:infra/demo/migrate.Dockerfile"], text=True,
     )
@@ -123,6 +162,9 @@ def flyway_base_identity(root: Path, source_sha: str) -> dict:
 
 
 def stage(root: Path, output: Path, source_sha: str) -> None:
+    exact_sha(source_sha)
+    root = workspace_path(root, "candidate directory")
+    output = workspace_path(output, "published directory")
     verify_manifest(root, source_sha, upstream_pin(source_sha))
     validate_vulnerabilities(root)
     candidate = read_json(root / MANIFEST)
@@ -174,15 +216,21 @@ def stage(root: Path, output: Path, source_sha: str) -> None:
 
 
 def verify_attestation(subject: str, source_sha: str, predicate: str) -> bytes:
+    exact_sha(source_sha)
+    subject = attestation_subject(subject)
+    if predicate not in (SLSA, CYCLONEDX):
+        raise ValueError("Unexpected attestation predicate")
     return subprocess.check_output(
-        ["gh", "attestation", "verify", subject, "--repo", REPOSITORY,
+        ["gh", "attestation", "verify", "--repo", REPOSITORY,
          "--signer-workflow", WORKFLOW, "--source-ref", "refs/heads/main",
          "--source-digest", source_sha, "--deny-self-hosted-runners",
-         "--predicate-type", predicate, "--format", "json"],
+         "--predicate-type", predicate, "--format", "json", "--", subject],
     )
 
 
 def finalize(output: Path, source_sha: str) -> None:
+    exact_sha(source_sha)
+    output = workspace_path(output, "published directory")
     staged = read_json(output / "staged-images.json")
     if staged["gitSha"] != source_sha or set(staged["images"]) != set(PUBLISH_IMAGES):
         raise ValueError("Unexpected staged release identity")
@@ -214,8 +262,9 @@ def main() -> int:
         elif args.operation == "finalize":
             finalize(args.published, args.git_sha)
         else:
-            proof = verify_attestation(str(args.published / PUBLISHED_MANIFEST), args.git_sha, SLSA)
-            (args.published / "manifest-attestation-verification.json").write_bytes(proof)
+            record = workspace_path(args.published, "published directory") / PUBLISHED_MANIFEST
+            proof = verify_attestation(str(record), args.git_sha, SLSA)
+            (record.parent / "manifest-attestation-verification.json").write_bytes(proof)
     except (KeyError, ValueError, OSError, subprocess.CalledProcessError) as error:
         print(f"Release promotion stopped: {error}", file=sys.stderr)
         return 1
