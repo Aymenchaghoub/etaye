@@ -422,7 +422,7 @@ class ReleaseArtifactsTests(unittest.TestCase):
             ["blobs/sha256/" + layer["digest"].removeprefix("sha256:") for layer in manifest["layers"]],
         )
         self.assertEqual({appended["Config"], *appended["Layers"]}, verified_references)
-        self.assertTrue(verified_references <= names)
+        self.assertLessEqual(verified_references, names)
         # The complete archive still passes verification with unchanged image identity.
         identity = release.image_archive(path)
         self.assertEqual(identity["ociManifestDigest"], manifest_digest)
