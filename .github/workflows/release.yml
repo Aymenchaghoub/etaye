@@ -1,22 +1,38 @@
-name: Release candidate dry run
+name: Verify or publish a release candidate
 
 on:
   workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Exact current protected main SHA
+        required: true
+        type: string
+      publish:
+        description: Request GHCR publication after candidate verification and environment review
+        default: false
+        type: boolean
 
 permissions:
   contents: read
 
 concurrency:
-  group: release-candidate-${{ github.sha }}
+  group: release-candidate
   cancel-in-progress: false
 
 jobs:
   candidate:
     name: Verify the local release candidate
     if: github.ref == 'refs/heads/main' && github.ref_protected
+    permissions:
+      contents: read
+      actions: read
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
+      - name: Validate release selection
+        env:
+          SELECTED_SHA: ${{ inputs.source_sha }}
+        run: test "$SELECTED_SHA" = "$GITHUB_SHA"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -40,3 +56,118 @@ jobs:
             !${{ runner.temp }}/etaye-release/*.tar
           if-no-files-found: error
           retention-days: 7
+      - name: Retain original artifacts for approved promotion
+        if: inputs.publish
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-candidate-archives-${{ github.sha }}
+          path: ${{ runner.temp }}/etaye-release/*.tar
+          compression-level: 0
+          if-no-files-found: error
+          retention-days: 1
+      - name: Verify publishing environment exists with a reviewer and a main-only branch rule
+        if: inputs.publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          environment="repos/$GITHUB_REPOSITORY/environments/ghcr-release"
+          gh api "$environment" | jq -e '
+            .name == "ghcr-release" and .deployment_branch_policy.custom_branch_policies and
+            any(.protection_rules[]; .type == "required_reviewers" and (.reviewers | length) > 0)'
+          gh api "$environment/deployment-branch-policies" | jq -e '
+            .total_count == 1 and .branch_policies[0].name == "main" and .branch_policies[0].type == "branch"'
+
+  publish:
+    name: Publish the verified GHCR candidate
+    if: github.ref == 'refs/heads/main' && github.ref_protected && inputs.publish
+    needs: candidate
+    environment: ghcr-release
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release-candidate-evidence-${{ github.sha }}
+          path: ${{ runner.temp }}/etaye-release
+          digest-mismatch: error
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release-candidate-archives-${{ github.sha }}
+          path: ${{ runner.temp }}/etaye-release
+          digest-mismatch: error
+      - name: Verify publishing tools
+        run: |
+          command -v skopeo || { sudo apt-get update && sudo apt-get install -y --no-install-recommends skopeo; }
+          skopeo --version
+      - name: Reverify and stage the exact OCI manifests at GHCR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/promote_release.py stage "$RUNNER_TEMP/etaye-release" "$RUNNER_TEMP/etaye-published" "$GITHUB_SHA"
+      - name: Attest image build provenance
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-checksums: ${{ runner.temp }}/etaye-published/image-checksums.txt
+          create-storage-record: false
+      - name: Read staged image digests
+        id: staged
+        run: |
+          set -euo pipefail
+          for name in api web migrate; do
+            digest=$(jq -er --arg name "$name" '.images[$name].digest | select(test("^sha256:[a-f0-9]{64}$"))' "$RUNNER_TEMP/etaye-published/staged-images.json")
+            printf '%s=%s\n' "$name" "$digest" >> "$GITHUB_OUTPUT"
+          done
+      - name: Attest API CycloneDX SBOM
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-name: ghcr.io/aymenchaghoub/etaye-api
+          subject-digest: ${{ steps.staged.outputs.api }}
+          sbom-path: ${{ runner.temp }}/etaye-published/sbom-api.cdx.json
+          create-storage-record: false
+      - name: Attest cloud web CycloneDX SBOM
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-name: ghcr.io/aymenchaghoub/etaye-web
+          subject-digest: ${{ steps.staged.outputs.web }}
+          sbom-path: ${{ runner.temp }}/etaye-published/sbom-cloud-web.cdx.json
+          create-storage-record: false
+      - name: Attest migrator CycloneDX SBOM
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-name: ghcr.io/aymenchaghoub/etaye-migrate
+          subject-digest: ${{ steps.staged.outputs.migrate }}
+          sbom-path: ${{ runner.temp }}/etaye-published/sbom-migrate.cdx.json
+          create-storage-record: false
+      - name: Verify image attestations and create release record
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          DOCKER_CONFIG=$(mktemp -d)
+          export DOCKER_CONFIG
+          trap 'docker logout ghcr.io >/dev/null; rmdir "$DOCKER_CONFIG" 2>/dev/null || true' EXIT
+          printf '%s\n' "$GH_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+          python3 tools/promote_release.py finalize "$RUNNER_TEMP/etaye-release" "$RUNNER_TEMP/etaye-published" "$GITHUB_SHA"
+      - name: Attest the final release record
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: ${{ runner.temp }}/etaye-published/published-manifest.json
+          create-storage-record: false
+      - name: Verify the release record attestation
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/promote_release.py verify-manifest "$RUNNER_TEMP/etaye-release" "$RUNNER_TEMP/etaye-published" "$GITHUB_SHA"
+      - name: Retain the verified release record
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: published-release-${{ github.sha }}
+          path: ${{ runner.temp }}/etaye-published/
+          if-no-files-found: error
+          retention-days: 30

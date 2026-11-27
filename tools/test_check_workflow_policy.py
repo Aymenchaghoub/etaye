@@ -114,24 +114,24 @@ class WorkflowInvariantTest(unittest.TestCase):
             with self.subTest(scope=scope):
                 self.assert_flags(denied, "outside the allowed write scopes")
 
-    def test_release_rehearsal_requires_protected_main_and_read_only_permissions(self):
+    def test_release_requires_manual_opt_in_and_isolated_publication_permissions(self):
         workflow = (ROOT / ".github/workflows/release.yml").read_text(encoding="utf-8")
         self.assertEqual(problems(workflow, name="release.yml"), [])
-        guard = policy.RELEASE_REF_GUARD
-        replacements = {
-            (guard, "github.ref == 'refs/heads/feature'"): "only run on protected main",
-            (guard, "github.ref == 'refs/heads/main'"): "only run on protected main",
-            ("  workflow_dispatch:", "  workflow_dispatch:\n  push:"): "only manual workflow_dispatch",
-            ("  workflow_dispatch:", "  workflow_dispatch:\n    inputs: {}"): "without inputs",
-            ("    runs-on:", "    permissions: {id-token: write}\n    runs-on:"): "must inherit",
-            ("    runs-on:", "    environment: publish\n    runs-on:"): "without an environment",
-            ("  contents: read", "  contents: read\n  packages: write"): "grant only contents: read",
-            (f"actions/checkout@{SHA}", "actions/checkout@v7"): "not pinned to a full commit SHA",
-        }
-        for (original, replacement), expected in replacements.items():
+        cases = [
+            ("  workflow_dispatch:", "  push:\n  workflow_dispatch:", "only manual workflow_dispatch"),
+            ("default: false", "default: true", "opt-in publication"),
+            (policy.RELEASE_REF_GUARD, "github.ref == 'refs/heads/main'", "only run on protected main"),
+            (" && inputs.publish", "", "expected publication gate"),
+            ("environment: ghcr-release", "environment: other", "protected publishing environment"),
+            ("needs: candidate", "needs: preflight", "verified candidate"),
+            ("packages: write", "packages: read", "publishing permissions"),
+            ("actions: read", "packages: write", "outside the allowed write scopes"),
+            ("  contents: read", "  contents: write", "at workflow level"),
+        ]
+        for original, replacement, expected in cases:
             with self.subTest(replacement=replacement):
                 self.assertIn(original, workflow)
-                result = problems(workflow.replace(original, replacement), name="release.yml")
+                result = problems(workflow.replace(original, replacement, 1), name="release.yml")
                 self.assertTrue(any(expected in item for item in result), result)
 
     def test_checkout_must_not_persist_credentials(self):

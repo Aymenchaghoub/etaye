@@ -63,6 +63,10 @@ done
 bash tools/run_package_smoke.sh
 capture_runtime > "$reports/runtime-after.txt"
 cmp "$reports/runtime-before.txt" "$reports/runtime-after.txt"
+bash tools/run_cloud_proxy_checks.sh "$reports"
+cat "$reports/cloud-runtime-before.txt" >> "$reports/runtime-before.txt"
+cat "$reports/cloud-runtime-after.txt" >> "$reports/runtime-after.txt"
+cmp "$reports/runtime-before.txt" "$reports/runtime-after.txt"
 for spec in record measurements patients; do
   cp -- "apps/web/playwright-report/real-$spec.json" "$reports/"
 done
@@ -74,6 +78,13 @@ if [[ "$instruction" != FROM || -n "$trailing" || ! "$upstream" =~ ^postgres:[0-
   exit 1
 fi
 docker buildx imagetools inspect --raw "$upstream" > "$reports/upstream-postgres-index.json"
+read -r instruction upstream_flyway trailing < infra/demo/migrate.Dockerfile
+if [[ "$instruction" != FROM || -n "$trailing" || ! "$upstream_flyway" =~ ^flyway/flyway:[0-9.]+@sha256:[a-f0-9]{64}$ ]]; then
+  echo "The Flyway base image must be pinned and traceable." >&2
+  exit 1
+fi
+docker buildx imagetools inspect --raw "$upstream_flyway" > "$reports/upstream-flyway-index.json"
+
 docker pull --platform linux/amd64 "$upstream"
 docker image save --platform linux/amd64 --output "$reports/upstream-postgres.tar" "$upstream"
 
@@ -89,7 +100,7 @@ cache=$(realpath -m -- "${RELEASE_TRIVY_CACHE:-$scanner_temp/cache}")
   sha256sum db/trivy.db java-db/trivy-java.db
 ) > "$reports/scanner-database-sha256.txt"
 scan=("$scanner" image --cache-dir "$cache" --skip-db-update --skip-java-db-update --offline-scan --quiet)
-for service in api web migrate postgres upstream-postgres; do
+for service in api web migrate postgres cloud-web upstream-postgres; do
   (
     cd "$reports"
     "${scan[@]}" --input "$service.tar" --format cyclonedx --output "sbom-$service.cdx.json"

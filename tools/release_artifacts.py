@@ -14,7 +14,7 @@ import tarfile
 
 from assert_test_reports import read_playwright
 
-PACKAGE_IMAGES = ("api", "web", "migrate", "postgres")
+PACKAGE_IMAGES = ("api", "web", "migrate", "postgres", "cloud-web")
 UPSTREAM_IMAGE = "upstream-postgres"
 TESTS = {"record": 3, "measurements": 3, "patients": 5}
 GIT_SHA = re.compile(r"[0-9a-f]{40}")
