@@ -57,6 +57,41 @@ public class LabResultRepository {
     private static final String SOURCE = """
             JOIN source_revision s ON s.practice_id = c.practice_id AND s.record_id = c.record_id AND s.id = c.source_revision_id
             """;
+    private static final String REVISION_LIST = BOUNDED_LINEAGE
+            + "SELECT c.*, s.reference, s.source_type FROM bounded c " + SOURCE + " ORDER BY c.revision";
+
+    private static final String FILTERED = CURRENT + """
+            , dated AS (
+                SELECT *, COALESCE(specimen_at, specimen_on::timestamp AT TIME ZONE :timezone,
+                    result_at, result_on::timestamp AT TIME ZONE :timezone, '-infinity'::timestamptz) AS event_sort
+                FROM current_revision
+            ), filtered AS (
+                SELECT * FROM dated
+                WHERE (CAST(:analyteKey AS text) IS NULL OR analyte_key = :analyteKey)
+                  AND (CAST(:from AS timestamptz) IS NULL OR event_sort >= :from)
+                  AND (CAST(:to AS timestamptz) IS NULL OR
+                      (event_sort < :to AND event_sort > '-infinity'::timestamptz))
+            )
+            """;
+    private static final String RESULT_POSITION = FILTERED + "SELECT EXISTS (SELECT 1 FROM filtered WHERE id = :after)";
+    private static final String RESULT_PAGE = FILTERED + "SELECT c.*, s.reference, s.source_type FROM filtered c " + SOURCE + """
+            WHERE CAST(:after AS uuid) IS NULL OR (c.event_sort, c.recorded_at, c.id) <
+                (SELECT event_sort, recorded_at, id FROM filtered WHERE id = :after)
+            ORDER BY c.event_sort DESC, c.recorded_at DESC, c.id DESC LIMIT :limit
+            """;
+
+    private static final String OPTIONS = CURRENT + """
+            , options AS (
+                SELECT DISTINCT analyte_key, analyte COLLATE "C" AS label FROM current_revision
+            )
+            """;
+    private static final String OPTION_POSITION = OPTIONS + "SELECT EXISTS (SELECT 1 FROM options WHERE analyte_key = :after)";
+    private static final String OPTION_PAGE = OPTIONS + """
+            SELECT analyte_key, label FROM options
+            WHERE CAST(:after AS text) IS NULL OR (label, analyte_key) >
+                (SELECT label, analyte_key FROM options WHERE analyte_key = :after)
+            ORDER BY label, analyte_key LIMIT :limit
+            """;
 
     private final NamedParameterJdbcTemplate jdbc;
 
@@ -66,72 +101,32 @@ public class LabResultRepository {
 
     /** Latest visible revision first, then filter. The endpoint accepts only an exact, opaque analyte selector. */
     public List<LabResultView> page(Snapshot snapshot, Filters filters, UUID after, int limit) {
-        var args = parameters(snapshot).addValue("limit", limit);
-        StringBuilder filter = new StringBuilder();
-        if (filters.analyteKey() != null) {
-            filter.append(" AND analyte_key = :analyteKey");
-            args.addValue("analyteKey", filters.analyteKey());
-        }
-        if (filters.from() != null) {
-            filter.append(" AND event_sort >= :from");
-            args.addValue("from", utc(filters.from()));
-        }
-        if (filters.to() != null) {
-            filter.append(" AND event_sort < :to AND event_sort > '-infinity'::timestamptz");
-            args.addValue("to", utc(filters.to()));
-        }
-        String query = CURRENT + """
-                , dated AS (
-                    SELECT *, COALESCE(specimen_at, specimen_on::timestamp AT TIME ZONE :timezone,
-                        result_at, result_on::timestamp AT TIME ZONE :timezone, '-infinity'::timestamptz) AS event_sort
-                    FROM current_revision
-                ), filtered AS (
-                    SELECT * FROM dated WHERE TRUE
-                """ + filter + ") ";
-        String position = "";
+        var args = parameters(snapshot).addValue("limit", limit).addValue("after", after)
+                .addValue("analyteKey", filters.analyteKey())
+                .addValue("from", utc(filters.from())).addValue("to", utc(filters.to()));
         if (after != null) {
-            args.addValue("after", after);
-            requirePosition(query + "SELECT EXISTS (SELECT 1 FROM filtered WHERE id = :after)", args);
-            position = """
-                    WHERE (c.event_sort, c.recorded_at, c.id) <
-                        (SELECT event_sort, recorded_at, id FROM filtered WHERE id = :after)
-                    """;
+            requirePosition(jdbc.queryForObject(RESULT_POSITION, args, Boolean.class));
         }
-        return jdbc.query(query + "SELECT c.*, s.reference, s.source_type FROM filtered c " + SOURCE + position
-                + " ORDER BY c.event_sort DESC, c.recorded_at DESC, c.id DESC LIMIT :limit",
-                args, (rs, row) -> map(rs, snapshot.timezone()));
+        return jdbc.query(RESULT_PAGE, args, (rs, row) -> map(rs, snapshot.timezone()));
     }
 
     public List<Analyte> analytes(Snapshot snapshot, String after, int limit) {
-        var args = parameters(snapshot).addValue("limit", limit);
-        String options = CURRENT + """
-                , options AS (
-                    SELECT DISTINCT analyte_key, analyte COLLATE "C" AS label FROM current_revision
-                )
-                """;
-        String position = "";
+        var args = parameters(snapshot).addValue("limit", limit).addValue("after", after);
         if (after != null) {
-            args.addValue("after", after);
-            requirePosition(options + "SELECT EXISTS (SELECT 1 FROM options WHERE analyte_key = :after)", args);
-            position = """
-                    WHERE (label, analyte_key) >
-                        (SELECT label, analyte_key FROM options WHERE analyte_key = :after)
-                    """;
+            requirePosition(jdbc.queryForObject(OPTION_POSITION, args, Boolean.class));
         }
-        return jdbc.query(options + "SELECT analyte_key, label FROM options " + position
-                + "ORDER BY label, analyte_key LIMIT :limit", args,
+        return jdbc.query(OPTION_PAGE, args,
                 (rs, row) -> new Analyte(rs.getString("analyte_key"), rs.getString("label")));
     }
 
     /** The original plus enough newest revisions to detect truncation without reading the entire lineage. */
     public List<LabResultView> lineage(Snapshot snapshot, UUID id) {
-        return jdbc.query(BOUNDED_LINEAGE + "SELECT c.*, s.reference, s.source_type FROM bounded c " + SOURCE
-                + " ORDER BY c.revision", parameters(snapshot).addValue("id", id),
+        return jdbc.query(REVISION_LIST, parameters(snapshot).addValue("id", id),
                 (rs, row) -> map(rs, snapshot.timezone()));
     }
 
-    private void requirePosition(String query, MapSqlParameterSource args) {
-        if (!Boolean.TRUE.equals(jdbc.queryForObject(query, args, Boolean.class))) {
+    private static void requirePosition(Boolean exists) {
+        if (!Boolean.TRUE.equals(exists)) {
             throw new InvalidParameterException("cursor does not belong to this view");
         }
     }
@@ -174,6 +169,6 @@ public class LabResultRepository {
     }
 
     private static OffsetDateTime utc(Instant value) {
-        return OffsetDateTime.ofInstant(value, ZoneOffset.UTC);
+        return value == null ? null : OffsetDateTime.ofInstant(value, ZoneOffset.UTC);
     }
 }
