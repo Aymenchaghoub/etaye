@@ -277,6 +277,7 @@ Every row inherits these checks; the local acceptance criterion adds the product
 | Figma | Required: new S-12 journey frame and relevant state variants; foundations/component source refs per SP-FIGMA |
 | Functional acceptance | **AC-S12-F:** Interval comes from the associated lab source or reads “Intervalle non fourni”; no generic normal interval is invented. Also satisfy SP-SECURITY and the applicable business-rule guards |
 | Visual acceptance | **AC-S12-V:** Numeric columns align; units and interval never depend on hover or color alone. Also satisfy SP-A11Y and matching-viewport visual review |
+| Increment 1 scope (UD-78) | Read-only Biologie tab in the S-09/10/11 frame. Filters for exact analyte and period, fixed descending order and explicit date precision. Exact dated source opens in place (D-45); bounded correction history and the UD-32 past-instant view respect recorded time and current permission. Show comparable numeric points with usable dates and matching supplied unit, interval and context, with the table as reference. Missing and incompatible data stay explicit. In increment 2, I-07 adds entry and correction (D-24). File viewing keeps its 5.3/3.5 ownership. [Specimen review](reviews/2026-11-27-story-3-4-design-review.md) |
 
 <a id="s-13"></a>
 ## S-13 — Record documents and clinician source viewer

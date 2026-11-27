@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="fr" data-theme="clair">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Revue design S-12 · Étaye</title>
+  <link rel="stylesheet" href="../../../../design/offline-reference/site/tokens/tokens.css">
+  <link rel="stylesheet" href="../../../../design/offline-reference/site/css/etaye.css">
+  <link rel="stylesheet" href="../../../../design/offline-reference/site/css/review-corrections.css">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--fond); color: var(--encre); font: 400 15px/22px var(--font-texte); }
+    .wrap { width: min(100%, 1490px); margin: auto; padding: var(--espace-6); overflow-wrap: anywhere; }
+    header { border-bottom: var(--trait-filet) solid var(--filet); }
+    header .wrap { display: flex; align-items: center; gap: var(--espace-4); min-height: 56px; padding-block: var(--espace-2); }
+    header img { height: 22px; width: auto; }
+    h1 { margin: 0 0 var(--espace-3); font: 500 26px/32px var(--font-document); }
+    p { margin: 0 0 var(--espace-3); }
+    a { color: var(--accent); }
+    form { display: flex; align-items: end; gap: var(--espace-3); flex-wrap: wrap; margin-block: var(--espace-6) var(--espace-3); }
+    form .etaye-champ { min-width: 0; }
+    select { max-width: 100%; }
+    iframe { display: block; border: 0; transform-origin: top left; background: var(--surface); }
+    #preview { overflow: hidden; outline: var(--trait-filet) solid var(--filet); margin-top: var(--espace-4); }
+    .choices { margin-block: var(--espace-8); padding: var(--espace-4); background: var(--surface); border: var(--trait-filet) solid var(--filet); }
+    .choices p:last-child { margin-bottom: 0; }
+    :focus-visible { outline: var(--trait-focus) solid var(--accent); outline-offset: 2px; }
+    @media (max-width: 450px) { .wrap { padding: var(--espace-4); } form .etaye-champ:first-child { width: 100%; } }
+  </style>
+</head>
+<body class="etaye-root">
+  <header>
+    <div class="wrap">
+      <img class="etaye-logo-c" alt="Étaye" src="../../../../design/offline-reference/site/logos/etaye-logo.svg">
+      <img class="etaye-logo-s" alt="Étaye" src="../../../../design/offline-reference/site/logos/etaye-logo-sombre.svg">
+      <span>Story 3.4 · Revue de design</span>
+    </div>
+  </header>
+  <main class="wrap">
+    <h1>Biologie · S-12 en lecture seule</h1>
+    <p>Les spécimens montrent les résultats, les intervalles fournis, les sources datées et les révisions. Les valeurs et les personnes sont fictives. Les contrôles illustrent des parcours préparés localement.</p>
+    <p><a href="../2026-11-27-story-3-4-design-review.md">Notes de revue et limites</a> · <a href="../../../../design/offline-reference/site/ecrans/S-12/claire.html">Référence S-12 importée</a></p>
+    <form aria-label="Choix du spécimen">
+      <label class="etaye-champ"><span class="etaye-champ__libelle">État</span>
+        <select id="state" class="etaye-champ__saisie">
+          <optgroup label="Résultats et provenance">
+            <option value="claire">Résultats de Claire</option>
+            <option value="valeurs">Comparateur, texte et intervalle absent</option>
+            <option value="contexte">Unités et contextes différents</option>
+            <option value="tendance">Points comparables</option>
+            <option value="correction">Historique ouvert</option>
+            <option value="history-loading">Chargement de l’historique</option>
+            <option value="history-error">Échec de l’historique</option>
+            <option value="source">Source datée ouverte</option>
+            <option value="source-loading">Chargement de la source</option>
+            <option value="source-error">Source indisponible</option>
+          </optgroup>
+          <optgroup label="Liste et filtres">
+            <option value="vide">Dossier sans résultat</option>
+            <option value="filtre-resultat">Filtre avec résultats</option>
+            <option value="filtre">Filtre sans résultat</option>
+            <option value="chargement">Chargement des résultats</option>
+            <option value="erreur">Échec du panneau Biologie</option>
+            <option value="pagination">Échec de la page suivante</option>
+            <option value="attente">Limite temporaire de requêtes</option>
+          </optgroup>
+          <optgroup label="Vue historique et accessibilité">
+            <option value="avant-tout">Vue avant le premier résultat</option>
+            <option value="avant-correction">Vue avant la correction</option>
+            <option value="apres-correction">Vue après la correction</option>
+            <option value="date-invalide">Date future refusée</option>
+            <option value="long">Contenu long et focus clavier</option>
+          </optgroup>
+        </select>
+      </label>
+      <label class="etaye-champ"><span class="etaye-champ__libelle">Format</span>
+        <select id="viewport" class="etaye-champ__saisie">
+          <option value="1440,1024">Bureau · 1440 × 1024</option>
+          <option value="1024,768">Tablette · 1024 × 768</option>
+          <option value="768,1024">Tablette · 768 × 1024</option>
+          <option value="390,844">Mobile · 390 × 844</option>
+          <option value="320,844">Mobile · 320 × 844</option>
+        </select>
+      </label>
+      <label class="etaye-champ"><span class="etaye-champ__libelle">Thème</span>
+        <select id="theme" class="etaye-champ__saisie"><option value="clair">Clair</option><option value="sombre">Sombre</option></select>
+      </label>
+      <a class="etaye-bouton etaye-bouton--secondaire" id="open" href="specimen.html" target="_blank" rel="noopener">Ouvrir le spécimen dans un nouvel onglet</a>
+    </form>
+    <div id="preview"><iframe id="specimen" title="Spécimen Biologie" src="specimen.html"></iframe></div>
+    <section class="choices" aria-labelledby="shared-title">
+      <h2 id="shared-title" class="ui-section">États repris du dossier</h2>
+      <p>Une erreur du dossier entier reprend S-09. Un refus masque les données du dossier. L’expiration mène à la page de session neutre.</p>
+      <p><a href="../2026-11-24-story-3-2-specimens/specimens/s09-echec.html">Échec du dossier</a> · <a href="../2026-11-24-story-3-2-runtime/s36-restreint-clair-1440.webp">Accès restreint</a> · <a href="../2026-11-20-story-1-2-review.md">Session expirée</a></p>
+    </section>
+    <section class="choices" aria-labelledby="decision-title">
+      <h2 id="decision-title" class="ui-section">Décision de design</h2>
+      <p>Après revue, indique dans la conversation « J’approuve le design S-12 tel que présenté » ou les états à modifier. L’autorisation écrite de développement pour la story 3.4 suit séparément.</p>
+    </section>
+  </main>
+  <script>
+    const state = document.getElementById('state');
+    const viewport = document.getElementById('viewport');
+    const theme = document.getElementById('theme');
+    const frame = document.getElementById('specimen');
+    const preview = document.getElementById('preview');
+    const open = document.getElementById('open');
+    const initial = new URLSearchParams(location.search);
+    if ([...viewport.options].some(option => option.value === initial.get('format'))) viewport.value = initial.get('format');
+    else if (innerWidth < 760) viewport.value = innerWidth < 390 ? '320,844' : '390,844';
+    if ([...state.options].some(option => option.value === initial.get('etat'))) state.value = initial.get('etat');
+    if (initial.get('theme') === 'sombre') theme.value = 'sombre';
+
+    function fitPreview() {
+      const [width, height] = viewport.value.split(',').map(Number);
+      const scale = Math.min(1, preview.clientWidth / width);
+      frame.width = width;
+      frame.height = height;
+      frame.style.transform = 'scale(' + scale + ')';
+      preview.style.height = Math.ceil(height * scale) + 'px';
+    }
+    function update() {
+      document.documentElement.dataset.theme = theme.value;
+      const url = new URL('specimen.html', location.href);
+      url.searchParams.set('etat', state.value);
+      url.searchParams.set('theme', theme.value);
+      if (open.href !== url.href) {
+        frame.src = url.href;
+        open.href = url.href;
+      }
+      frame.title = state.selectedOptions[0].text;
+      fitPreview();
+    }
+    for (const control of [state, viewport, theme]) control.addEventListener('change', update);
+    window.addEventListener('resize', fitPreview);
+    update();
+  </script>
+</body>
+</html>
