@@ -41,6 +41,7 @@ STORY_9_1_TRACKED_PATHS = {
     "apps/web/warmup.html",
     "infra/demo/README.md",
     "infra/demo/api.Dockerfile",
+    "infra/demo/bootstrap-managed-demo.sh",
     "infra/demo/compose.yml",
     "infra/demo/mark-demo-database.sh",
     "infra/demo/migrate.Dockerfile",
@@ -128,7 +129,7 @@ def check_application_scope(root, errors):
     workflows = {"documentation.yml", "codeql.yml", "architecture-pages.yml"}
     forbidden = ("pom.xml", "src", "compose.yaml", "docker-compose.yml")
     if authorized:
-        workflows.update({"api.yml", "web.yml", "dependency-review.yml", "package.yml", "sonarqube.yml"})
+        workflows.update({"api.yml", "web.yml", "dependency-review.yml", "package.yml", "release.yml", "sonarqube.yml"})
         forbidden += ("packages",)
     else:
         forbidden += ("package.json", "apps", "infra")

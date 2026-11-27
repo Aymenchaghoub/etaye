@@ -4,18 +4,11 @@ set -euo pipefail
 # Report all HIGH and CRITICAL findings in the four images built by Compose.
 # Scan failures fail the step; findings remain visible as evidence during the observation period.
 # Verify the upstream release before executing the scanner; no third-party action.
-scanner_version=0.76.2
-scanner_sha256=bc0fc726e017b8927a62b2d3531d7a84ee01769daf5c99ed866dced54089fdbf
 project=${COMPOSE_PROJECT_NAME:-etaye-demo}
 repo=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 scanner_temp=$(mktemp -d)
 trap 'rm -rf "$scanner_temp"' EXIT
-scanner_archive="$scanner_temp/trivy.tar.gz"
-curl --fail --silent --show-error --location \
-  "https://github.com/aquasecurity/trivy/releases/download/v${scanner_version}/trivy_${scanner_version}_Linux-64bit.tar.gz" \
-  --output "$scanner_archive"
-printf '%s  %s\n' "$scanner_sha256" "$scanner_archive" | sha256sum --check --status
-tar -xzf "$scanner_archive" --directory "$scanner_temp" trivy
+bash "$repo/tools/install_trivy.sh" "$scanner_temp"
 
 reports="$repo/reports/image-scan"
 mkdir -p "$reports"

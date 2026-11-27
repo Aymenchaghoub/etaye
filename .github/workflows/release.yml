@@ -1,0 +1,42 @@
+name: Release candidate dry run
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-candidate-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  candidate:
+    name: Verify the local release candidate
+    if: github.ref == 'refs/heads/main' && github.ref_protected
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '26'
+      - name: Install Corepack, locked dependencies and Chromium
+        run: |
+          bash tools/install_corepack.sh
+          corepack enable
+          pnpm install --frozen-lockfile
+          pnpm --filter etaye-web exec playwright install --with-deps chromium
+      - name: Build, test, scan and verify the same candidate
+        run: bash tools/prepare_release_candidate.sh "$RUNNER_TEMP/etaye-release" "$GITHUB_SHA"
+      - name: Retain dry-run manifest and reports
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-candidate-evidence-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/etaye-release/
+            !${{ runner.temp }}/etaye-release/*.tar
+          if-no-files-found: error
+          retention-days: 7

@@ -37,8 +37,8 @@ gh run view <package-run-id> --json headSha,event,conclusion,url,jobs --jq '
 | [PR #87](https://github.com/Aymenchaghoub/etaye/pull/87) (tooling and CI) | `9d6c38b` · [45890705704](https://github.com/Aymenchaghoub/etaye/actions/runs/45890705704) | pass / pass / pass / pass | **11/10.** All four steps executed. |
 | [PR #88](https://github.com/Aymenchaghoub/etaye/pull/88) (Web tests and coverage) | `8d93ae5` · [45893643404](https://github.com/Aymenchaghoub/etaye/actions/runs/45893643404) | pass / pass / pass / pass | **12/10.** All four steps executed. |
 | [PR #89](https://github.com/Aymenchaghoub/etaye/pull/89) (operations documentation) | `861b6f2` · [45895113332](https://github.com/Aymenchaghoub/etaye/actions/runs/45895113332) | skip / skip / skip / skip | **Excluded.** The successful wrapper classified a documentation-only change. |
-| [PR #90](https://github.com/Aymenchaghoub/etaye/pull/90) (managed PostgreSQL compatibility, unmerged Draft) | `812d97c` · [45899172502](https://github.com/Aymenchaghoub/etaye/actions/runs/45899172502) | pass / pass / pass / pass | **13/10.** Passed all four heavy steps (`fix/managed-postgres-compatibility`). |
-| [PR #92](https://github.com/Aymenchaghoub/etaye/pull/92) (GHCR release readiness, unmerged Draft) | `21581f1` · [45962820488](https://github.com/Aymenchaghoub/etaye/actions/runs/45962820488) | pass / pass / pass / pass | **14/10.** Passed all four heavy steps (`ci/ghcr-release-readiness`). |
+| [PR #90](https://github.com/Aymenchaghoub/etaye/pull/90) (managed PostgreSQL compatibility) | `8889360` · [45969202995](https://github.com/Aymenchaghoub/etaye/actions/runs/45969202995) | pass / pass / pass / pass | **13/10.** Passed all four heavy steps (`fix/managed-postgres-compatibility`). Merged as `f402352`. |
+| [PR #92](https://github.com/Aymenchaghoub/etaye/pull/92) (GHCR release readiness) | `5cd9d87` · [45969893665](https://github.com/Aymenchaghoub/etaye/actions/runs/45969893665) | pass / pass / pass / pass | **14/10.** Passed all four heavy steps (`ci/ghcr-release-readiness`). Merged as `1640268`. |
 <!-- /observation-rows -->
 
 ## SonarQube Cloud
@@ -57,8 +57,8 @@ SonarQube Cloud (Free plan, [`aymenchaghoub`](https://sonarcloud.io/organization
 | #87 | `9d6c38b` · [45890705667](https://github.com/Aymenchaghoub/etaye/actions/runs/45890705667) | pass / pass / pass | Counted. |
 | #88 | `8d93ae5` · [45893643329](https://github.com/Aymenchaghoub/etaye/actions/runs/45893643329) | pass / pass / pass | Counted. |
 | #89 | `861b6f2` · [45895113442](https://github.com/Aymenchaghoub/etaye/actions/runs/45895113442) | skip / skip / skip | Excluded on path scope. |
-| #90 | `812d97c` · [45899172429](https://github.com/Aymenchaghoub/etaye/actions/runs/45899172429) | pass / skip / pass | Counted (unmerged Draft). |
-| #92 | `21581f1` · [45962820436](https://github.com/Aymenchaghoub/etaye/actions/runs/45962820436) | pass / pass / pass | Counted (unmerged Draft). |
+| #90 | `8889360` · [45969203270](https://github.com/Aymenchaghoub/etaye/actions/runs/45969203270) | pass / skip / pass | Counted (merged as `f402352`). |
+| #92 | `5cd9d87` · [45969893621](https://github.com/Aymenchaghoub/etaye/actions/runs/45969893621) | pass / pass / pass | Counted (merged as `1640268`). |
 
 Project execution counts within the eight observations are API 7, Web 5 and Tooling 7. All executed scan steps passed. The [exact integrated main analysis](https://github.com/Aymenchaghoub/etaye/actions/runs/45895446497) passed all three scanners and contributes no PR observation. [Integrated metrics](quality-baseline.md#verified-integrated-main-at-b4e8ff9)
 
