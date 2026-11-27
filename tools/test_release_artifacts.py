@@ -398,3 +398,55 @@ class ReleaseArtifactsTests(unittest.TestCase):
         # Calling it again on an archive that already has manifest.json is rejected.
         with self.assertRaisesRegex(ValueError, "already holds a Docker archive index"):
             release.add_docker_archive_index(path)
+
+    def test_docker_archive_index_references_only_verified_blobs(self):
+        # The appended Docker index cannot name blobs other than those in the verified OCI platform manifest.
+        path = self.root / "refs.tar"
+        config_digest, diff_id, manifest_digest = write_image(path)
+
+        release.add_docker_archive_index(path)
+
+        with tarfile.open(path, mode="r:") as archive:
+            names = set(archive.getnames())
+            with archive.extractfile("blobs/sha256/" + manifest_digest.removeprefix("sha256:")) as handle:
+                manifest = json.load(handle)
+            with archive.extractfile("manifest.json") as handle:
+                appended = json.load(handle)[0]
+        verified_references = {
+            "blobs/sha256/" + manifest["config"]["digest"].removeprefix("sha256:"),
+            *("blobs/sha256/" + layer["digest"].removeprefix("sha256:") for layer in manifest["layers"]),
+        }
+        self.assertEqual(appended["Config"], "blobs/sha256/" + manifest["config"]["digest"].removeprefix("sha256:"))
+        self.assertEqual(
+            appended["Layers"],
+            ["blobs/sha256/" + layer["digest"].removeprefix("sha256:") for layer in manifest["layers"]],
+        )
+        self.assertEqual({appended["Config"], *appended["Layers"]}, verified_references)
+        self.assertTrue(verified_references <= names)
+        # The complete archive still passes verification with unchanged image identity.
+        identity = release.image_archive(path)
+        self.assertEqual(identity["ociManifestDigest"], manifest_digest)
+        self.assertEqual(identity["imageConfigDigest"], config_digest)
+        self.assertEqual(identity["layerDiffIds"], [diff_id])
+
+    def test_docker_archive_index_rejects_tampered_archives(self):
+        # A blob whose bytes differ from its verified digest fails before any index is appended.
+        path = self.root / "tampered.tar"
+        _, _, manifest_digest = write_image(path)
+        with tarfile.open(path, mode="r:") as archive:
+            members = [(member, archive.extractfile(member).read()) for member in archive.getmembers() if member.isfile()]
+            with archive.extractfile("blobs/sha256/" + manifest_digest.removeprefix("sha256:")) as handle:
+                manifest = json.load(handle)
+        layer_member = "blobs/sha256/" + manifest["layers"][0]["digest"].removeprefix("sha256:")
+        with tarfile.open(path, mode="w:") as archive:
+            for member, content in members:
+                if member.name == layer_member:
+                    content = b"tampered layer bytes"
+                entry = tarfile.TarInfo(member.name)
+                entry.size = len(content)
+                archive.addfile(entry, BytesIO(content))
+        with self.assertRaisesRegex(ValueError, "invalid (size|bytes)"):
+            release.add_docker_archive_index(path)
+        # Nothing was appended to the rejected archive.
+        with tarfile.open(path, mode="r:") as archive:
+            self.assertNotIn("manifest.json", archive.getnames())

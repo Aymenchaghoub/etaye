@@ -215,23 +215,50 @@ def add_docker_archive_index(path: Path) -> None:
 
     Trivy 0.76 opens a file only as a Docker archive or as an OCI layout directory, never as an OCI archive.
     The index is derived from the unchanged platform manifest, so the scanned bytes remain the registry bytes.
+    References are taken only from the verified platform manifest member, and the complete archive is
+    re-verified after appending so the added index cannot name blobs other than the verified ones.
     """
     identity = image_archive(path)
+    member = "blobs/sha256/" + identity["ociManifestDigest"].removeprefix("sha256:")
     with tarfile.open(path, mode="r:") as archive:
         if "manifest.json" in archive.getnames():
             raise ValueError(f"{path.name}: already holds a Docker archive index")
-        member = "blobs/sha256/" + identity["ociManifestDigest"].removeprefix("sha256:")
         with archive.extractfile(member) as handle:
-            manifest = json.load(handle)
+            raw_manifest = handle.read()
+    # Re-read of the verified member must still match the digest image_archive checked.
+    if "sha256:" + hashlib.sha256(raw_manifest).hexdigest() != identity["ociManifestDigest"]:
+        raise ValueError(f"{path.name}: platform manifest changed after verification")
+    manifest = json.loads(raw_manifest)
+    config_member = "blobs/sha256/" + manifest["config"]["digest"].removeprefix("sha256:")
+    if manifest["config"]["digest"] != identity["imageConfigDigest"]:
+        raise ValueError(f"{path.name}: image config differs from the verified manifest")
+    layer_members = ["blobs/sha256/" + layer["digest"].removeprefix("sha256:") for layer in manifest["layers"]]
     entry = json.dumps([{
-        "Config": "blobs/sha256/" + manifest["config"]["digest"].removeprefix("sha256:"),
+        "Config": config_member,
         "RepoTags": None,
-        "Layers": ["blobs/sha256/" + layer["digest"].removeprefix("sha256:") for layer in manifest["layers"]],
+        "Layers": layer_members,
     }]).encode()
     with tarfile.open(path, mode="a:") as archive:
         info = tarfile.TarInfo("manifest.json")
         info.size, info.mode = len(entry), 0o600
         archive.addfile(info, io.BytesIO(entry))
+    # Re-verify the complete archive, then read back the appended index from disk.
+    verified = image_archive(path)
+    if (
+        verified["ociManifestDigest"] != identity["ociManifestDigest"]
+        or verified["imageConfigDigest"] != identity["imageConfigDigest"]
+        or verified["layerDiffIds"] != identity["layerDiffIds"]
+    ):
+        raise ValueError(f"{path.name}: appending the Docker index changed verified image identity")
+    with tarfile.open(path, mode="r:") as archive:
+        names = set(archive.getnames())
+        with archive.extractfile("manifest.json") as handle:
+            appended = json.load(handle)
+    if appended != json.loads(entry):
+        raise ValueError(f"{path.name}: appended Docker index differs from the verified platform manifest")
+    references = {appended[0]["Config"], *appended[0]["Layers"]}
+    if references != {config_member, *layer_members} or not references <= names:
+        raise ValueError(f"{path.name}: appended Docker index references blobs outside the verified manifest")
 
 
 def generate_manifest(root: Path, git_sha: str, upstream_digest: str) -> dict:
