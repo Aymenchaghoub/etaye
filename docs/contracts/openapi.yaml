@@ -9955,6 +9955,33 @@
           "revision": {
             "type": "integer",
             "minimum": 1
+          },
+          "comparisonContext": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Explicitly supplied comparison facts used to decide which results may share a point series.",
+            "properties": {
+              "method": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "fasting": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "samplingWindow": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              }
+            },
+            "required": [
+              "method",
+              "fasting",
+              "samplingWindow"
+            ]
           }
         },
         "required": [

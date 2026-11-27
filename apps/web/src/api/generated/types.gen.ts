@@ -423,6 +423,14 @@ export type LabResult = {
     authorLabel?: string;
     sourceReference?: string;
     revision?: number;
+    /**
+     * Explicitly supplied comparison facts used to decide which results may share a point series.
+     */
+    comparisonContext?: {
+        method: string;
+        fasting: string;
+        samplingWindow: string;
+    };
 };
 
 export type Upload = {
