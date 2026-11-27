@@ -134,6 +134,26 @@ class WorkflowInvariantTest(unittest.TestCase):
                 result = problems(workflow.replace(original, replacement, 1), name="release.yml")
                 self.assertTrue(any(expected in item for item in result), result)
 
+    def test_demo_delivery_only_stages_verified_main_uploads_using_environment_oidc(self):
+        workflow = (ROOT / ".github/workflows/deploy-demo.yml").read_text(encoding="utf-8")
+        self.assertEqual(problems(workflow, name="deploy-demo.yml"), [])
+        cases = (
+            ("  workflow_dispatch:", "  push:\n  workflow_dispatch:", "must be manual"),
+            ("default: false", "default: true", "opt-in staging"),
+            ("cancel-in-progress: false", "cancel-in-progress: true", "must be serialized"),
+            (policy.RELEASE_REF_GUARD, "github.ref == 'refs/heads/main'", "only run on protected main"),
+            ("needs: verify", "needs: other", "verified release evidence"),
+            ("environment: demo", "environment: other", "the demo environment"),
+            ("id-token: write", "id-token: read", "scope OIDC"),
+            ("${{ vars.AZURE_CLIENT_ID }}", "${{ secrets.AZURE_CLIENT_ID }}", "must not read repository secrets"),
+        )
+        for original, replacement, expected in cases:
+            with self.subTest(expected=expected):
+                self.assertIn(original, workflow)
+                self.assertTrue(any(expected in item for item in problems(
+                    workflow.replace(original, replacement, 1), name="deploy-demo.yml"
+                )))
+
     def test_checkout_must_not_persist_credentials(self):
         self.assert_flags(mutate("          persist-credentials: false\n", ""), "persist-credentials: false")
         self.assert_flags(mutate("persist-credentials: false", "persist-credentials: true"),

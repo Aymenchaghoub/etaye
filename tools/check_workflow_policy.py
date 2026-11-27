@@ -137,8 +137,29 @@ def check_workflow(name, text):
             fail("release must use only manual workflow_dispatch with an exact SHA and opt-in publication")
         if set(workflow["jobs"]) != {"candidate", "publish"}:
             fail("release must have separate candidate and publication jobs")
+    demo_delivery = name == "deploy-demo.yml"
+    if demo_delivery:
+        dispatch = triggers.get("workflow_dispatch") or {}
+        inputs = dispatch.get("inputs", {}) if isinstance(dispatch, dict) else {}
+        expected_inputs = {
+            "release_run": {"type": "string", "required": "true"},
+            "source_sha": {"type": "string", "required": "true"},
+            "stage": {"type": "boolean", "default": "false"},
+        }
+        input_contract = {
+            key: {field: value for field, value in spec.items() if field != "description"}
+            for key, spec in inputs.items() if isinstance(spec, dict)
+        }
+        if set(triggers) != {"workflow_dispatch"} or input_contract != expected_inputs:
+            fail("demo delivery must be manual with a selected release and opt-in staging")
+        if workflow.get("concurrency") != {"group": "etaye-demo-delivery", "cancel-in-progress": "false"}:
+            fail("demo delivery must be serialized without cancelling an active deployment")
+        if set(workflow["jobs"]) != {"verify", "azure"}:
+            fail("demo delivery must isolate release verification and Azure federation")
 
     permissions = workflow.get("permissions")
+    if demo_delivery and permissions != {"contents": "read"}:
+        fail("demo delivery requires top-level contents read")
     if release_rehearsal and permissions != {"contents": "read"}:
         fail("release must grant only contents: read at workflow level")
     if permissions is None:
@@ -203,6 +224,16 @@ def check_workflow(name, text):
                     fail(f"{where} must request exactly the narrowly scoped publishing permissions")
             elif job.get("permissions") != {"contents": "read", "actions": "read"} or "environment" in job:
                 fail(f"{where} must be read-only without an environment")
+        if demo_delivery:
+            if job.get("if") != RELEASE_REF_GUARD:
+                fail(f"{where} must only run on protected main")
+            if job_id == "azure":
+                if job.get("environment") != "demo" or job.get("needs") != "verify":
+                    fail(f"{where} requires verified release evidence and the demo environment")
+                if job.get("permissions") != {"contents": "read", "id-token": "write"}:
+                    fail(f"{where} must scope OIDC to the verified demo job")
+            elif job.get("permissions") != {"contents": "read", "actions": "read", "attestations": "read"} or "environment" in job:
+                fail(f"{where} must be read-only without an environment")
         steps = job.get("steps", [])
         for index, step in enumerate(steps if isinstance(steps, list) else []):
             if not isinstance(step, dict):
@@ -246,6 +277,8 @@ def check_workflow(name, text):
                 fail(f"line {number}: {reference} has no version comment such as '# v1.2.3'")
 
     declared_refs = _restricted_context_refs(text)
+    if declared_refs and demo_delivery:
+        fail("demo delivery uses OIDC and must not read repository secrets")
     if declared_refs and release_rehearsal:
         fail("release must not read repository secrets")
     if declared_refs and runs_on_pull_request:

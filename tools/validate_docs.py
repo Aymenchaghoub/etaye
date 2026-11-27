@@ -137,6 +137,18 @@ def check_application_scope(root, errors):
     if len(authorized_stories) > 1:
         scope_label = f"stories {', '.join(authorized_stories[:-1])} and {authorized_stories[-1]}"
     workflows = {"documentation.yml", "codeql.yml", "architecture-pages.yml"}
+    cloud_delivery_authorized = False
+    if authorized:
+        try:
+            decision_source = (root / "docs/planning-artifacts/decisions-assumptions.md").read_text(encoding="utf-8")
+        except (OSError, UnicodeError):
+            decision_source = ""
+        cloud_delivery_authorized = bool(re.search(
+            r"^\| UD-77 \| Aymen authorized the full cloud demonstration deployment\b",
+            decision_source, re.MULTILINE,
+        ))
+    if cloud_delivery_authorized and (root / ".github/workflows/deploy-demo.yml").is_file():
+        workflows.add("deploy-demo.yml")
     forbidden = ("pom.xml", "src", "compose.yaml", "docker-compose.yml")
     if authorized:
         workflows.update({"api.yml", "web.yml", "dependency-review.yml", "package.yml", "release.yml", "sonarqube.yml"})
