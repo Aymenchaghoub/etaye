@@ -392,6 +392,28 @@ class ApplicationScopeTests(unittest.TestCase):
                 _, errors = self.check_scope()
                 self.assertEqual(errors, ["Application implementation artifact created: packages"])
 
+    def test_azure_foundation_scope_requires_decision_and_exact_artifacts(self):
+        self.authorize()
+        foundation = "infra/azure/foundation.bicep"
+        extra = "infra/azure/private.bicepparam"
+        self.write(foundation, "targetScope = 'subscription'\n")
+        _, errors = self.check_scope()
+        self.assertTrue(any("only allows infra/local" in error for error in errors))
+
+        register = self.root / "docs/planning-artifacts/decisions-assumptions.md"
+        with register.open("a", encoding="utf-8") as decisions:
+            decisions.write("| UD-76 | Aymen authorized local cloud deployment preparation |\n")
+        self.write(".git")
+        entries = "".join(f"100644 {'0' * 40} 0\t{name}\0" for name in (foundation, extra))
+        index = subprocess.CompletedProcess([], 0, entries.encode())
+        with patch("validate_docs.subprocess.run", return_value=index):
+            _, errors = self.check_scope()
+        self.assertEqual(errors, [f"Unexpected tracked path for story 10.1: {extra}"])
+
+        self.write(extra)
+        _, errors = self.check_scope()
+        self.assertIn(f"Unexpected Azure foundation artifact: {extra}", errors)
+
     def test_invalid_config_fails_closed(self):
         self.write("apps/web/package.json")
         invalid_list = '[etaye] authorized_stories must be'

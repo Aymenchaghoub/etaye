@@ -10,3 +10,6 @@
 **/*.user.toml
 **/reports
 **/local-reference
+.neon
+env.txt
+env ([0-9]*).txt

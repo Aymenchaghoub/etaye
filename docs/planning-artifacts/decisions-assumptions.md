@@ -153,6 +153,12 @@ Sources: Aymen's story 1.1 arbitration reply recorded under UD-50 and his story 
 
 These are reviewable in the pull request that carries them; Aymen can revert any of them. The remaining open decisions are listed in section 11 of the [roadmap](roadmap.md); UD-29 to UD-37 settled the others.
 
+## Cloud deployment preparation — 2026-11-27
+
+| Decision | Statement | Effect |
+| --- | --- | --- |
+| UD-76 | Aymen authorized local cloud deployment preparation for the existing synthetic application on Azure Container Apps Consumption, Neon Free and GHCR. He approved the scoped Neon role replacement and database preparation, then the one-shot migration and synthetic fixture. He also approved registering Microsoft.App alone on Azure for Students. | Allows the named Bicep foundation files and reviewable deployment work. Azure resource creation, GitHub workflow merge, GHCR publishing and package visibility, deployment identity, first exposure, recurring deployment and restore each retain their own approval. No functional story is authorized. [Deployment record](../operations/cloud-demo-runbook.md#deployment-record) |
+
 ## Working assumptions and decisions to revisit
 
 | ID | Classification and working choice | Rationale | Consequences and impact if changed | Owner / explicit revisit trigger |
