@@ -21,6 +21,8 @@
 @media (max-width: 760px) {
   .etaye-onglets { flex-wrap: wrap; overflow-x: visible; }
   .etaye-onglets a { white-space: normal; }
+}
+@media (max-width: 900px) {
   .etaye-biologie .etaye-tableau--empile td:nth-child(5),
   .etaye-biologie .etaye-tableau--empile td:nth-child(6),
   .etaye-biologie .etaye-lab-long-value { grid-column: 1 / -1; }

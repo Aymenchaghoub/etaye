@@ -110,6 +110,11 @@
   .etaye-app { grid-template-columns: 216px minmax(0, 1fr); }
   .etaye-top__logo { width: 184px; }
 }
+@media (761px <= width <= 900px) {
+  .etaye-app { grid-template-rows: minmax(56px, auto) minmax(0, 1fr); }
+  .etaye-top { padding-block: var(--espace-1); }
+  .etaye-top__logo { width: 18vw; }
+}
 @media (max-width: 760px) {
   .etaye-app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
   .etaye-top { padding: var(--espace-2) var(--espace-3); gap: var(--espace-2); flex-wrap: wrap; }

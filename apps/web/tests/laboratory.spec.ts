@@ -210,7 +210,41 @@ test('rate limited and authorization failures never render a successful clinical
   await accessible(page);
 });
 
-for (const width of [320, 390, 1440]) {
+test('source and correction history announce loading independently', async ({ page }) => {
+  const { requests } = await stubLabs(page, { list: () => ({ json: asPage([newer]) }) });
+  await page.route(url => /\/sources\/[^/]+$|\/lab-results\/[^/]+\/revisions$/.test(url.pathname), () => {});
+  await page.goto(LABS);
+  await resultRows(page).first().getByRole('link').click();
+  await page.getByRole('button', { name: 'Historique du résultat · Analyse A' }).click();
+  await expect(page.getByText('Chargement de la source…')).toBeVisible();
+  await expect(page.getByText('Chargement de l’historique…')).toBeVisible();
+  await expect(resultRows(page)).toHaveCount(1);
+  await accessible(page);
+  expect(requests.some(url => url.pathname.endsWith('/lab-results'))).toBe(true);
+});
+
+test('a rejected future date keeps the current data, and a date before the first result is explicitly empty', async ({ page }) => {
+  const { requests } = await stubLabs(page, { list: url => {
+    const asOf = url.searchParams.get('asOf');
+    return asOf ? { json: { ...asPage([]), viewAt: asOf } } : undefined;
+  } });
+  await page.goto(LABS);
+  await expect(resultRows(page)).toHaveCount(2);
+  await page.getByRole('button', { name: 'Voir le dossier à une date passée' }).click();
+  for (const [part, value] of [['j', '1'], ['m', '9'], ['a', '2090'], ['h', '9'], ['mi', '00']]) await page.locator(`#as-${part}`).fill(value);
+  await page.getByRole('button', { name: 'Afficher cette date' }).click();
+  await expect(page.getByRole('alert').filter({ hasText: 'une date future ne peut pas être affichée' })).toBeVisible();
+  await expect(resultRows(page)).toHaveCount(2);
+  expect(requests.filter(url => url.pathname.endsWith('/lab-results')).some(url => url.searchParams.has('asOf'))).toBe(false);
+  await accessible(page);
+  await page.locator('#as-a').fill('2026');
+  await page.getByRole('button', { name: 'Afficher cette date' }).click();
+  await expect(page.getByText('Aucun résultat enregistré à cette date.')).toBeVisible();
+  await expect(resultRows(page)).toHaveCount(0);
+  await accessible(page);
+});
+
+for (const width of [320, 390, 768, 1440]) {
   test(`long values preserve source, unit, focus and record tabs at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 880 });
     await stubLabs(page, { list: () => ({ json: asPage([{ ...numeric, comparator: 'LE', numericValue: '999999999999.123456',
@@ -222,6 +256,15 @@ for (const width of [320, 390, 1440]) {
     const marker = resultRows(page).first().getByRole('link');
     await marker.focus();
     await expect(marker).toBeFocused();
+    if (width === 768) {
+      const headerFits = await page.locator('.etaye-top').evaluate(header => {
+        const context = header.querySelector('.etaye-contexte')?.getBoundingClientRect();
+        const top = header.getBoundingClientRect();
+        return Boolean(context && context.top >= top.top && context.bottom <= top.bottom);
+      });
+      expect(headerFits).toBe(true);
+      await expect(page.locator('.etaye-biologie thead')).toBeHidden();
+    }
     await noOverflow(page);
     await accessible(page);
   });
