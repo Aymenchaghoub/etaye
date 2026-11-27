@@ -34,8 +34,15 @@ REQUIRED_JOB_NAMES = (
 )
 # Token scopes a job may request above read. `contents: write` is deliberately absent.
 ALLOWED_JOB_WRITE_SCOPES = {"security-events", "pages", "id-token", "attestations"}
-# This rehearsal has no publication path. A future activation requires a reviewed policy change.
 RELEASE_REF_GUARD = "github.ref == 'refs/heads/main' && github.ref_protected"
+RELEASE_PUBLISH_PERMISSIONS = {
+    "contents": "read", "packages": "write", "attestations": "write", "id-token": "write",
+}
+RELEASE_INPUTS = {
+    "source_sha": {"type": "string", "required": "true"},
+    "publish": {"type": "boolean", "default": "false"},
+}
+
 MAX_TIMEOUT_MINUTES = 30
 MAX_ARTIFACT_RETENTION_DAYS = 30
 FORBIDDEN_TRIGGERS = {"pull_request_target", "workflow_run"}
@@ -119,12 +126,21 @@ def check_workflow(name, text):
     pull_request = triggers.get("pull_request")
     runs_on_pull_request = "pull_request" in triggers
     release_rehearsal = name == "release.yml"
-    if release_rehearsal and (set(triggers) != {"workflow_dispatch"} or triggers["workflow_dispatch"]):
-        fail("release rehearsal must use only manual workflow_dispatch without inputs")
+    if release_rehearsal:
+        dispatch = triggers.get("workflow_dispatch") or {}
+        inputs = dispatch.get("inputs", {}) if isinstance(dispatch, dict) else {}
+        input_contract = {
+            name: {key: value for key, value in spec.items() if key != "description"}
+            for name, spec in inputs.items() if isinstance(spec, dict)
+        }
+        if set(triggers) != {"workflow_dispatch"} or input_contract != RELEASE_INPUTS:
+            fail("release must use only manual workflow_dispatch with an exact SHA and opt-in publication")
+        if set(workflow["jobs"]) != {"candidate", "publish"}:
+            fail("release must have separate candidate and publication jobs")
 
     permissions = workflow.get("permissions")
     if release_rehearsal and permissions != {"contents": "read"}:
-        fail("release rehearsal must grant only contents: read")
+        fail("release must grant only contents: read at workflow level")
     if permissions is None:
         fail("missing top-level permissions; the default token scope must be stated")
     else:
@@ -172,13 +188,21 @@ def check_workflow(name, text):
         if not isinstance(runner, str) or runner.endswith("-latest") or "${{" in runner:
             fail(f"{where} must pin its runner image, not use a floating label or an expression")
         extra = _elevated(job.get("permissions"))
-        if extra and (set(extra) - ALLOWED_JOB_WRITE_SCOPES or any(level != "write" for level in extra.values())):
+        publication = release_rehearsal and job_id == "publish"
+        allowed_write = ALLOWED_JOB_WRITE_SCOPES | ({"packages"} if publication else set())
+        if extra and (set(extra) - allowed_write or any(level != "write" for level in extra.values())):
             fail(f"{where} requests permissions outside the allowed write scopes: {extra}")
         if release_rehearsal:
-            if job.get("if") != RELEASE_REF_GUARD:
-                fail(f"{where} must only run on protected main")
-            if "permissions" in job or "environment" in job:
-                fail(f"{where} must inherit release rehearsal permissions without an environment")
+            guard = RELEASE_REF_GUARD + (" && inputs.publish" if publication else "")
+            if job.get("if") != guard:
+                fail(f"{where} must only run on protected main with the expected publication gate")
+            if publication:
+                if job.get("needs") != "candidate" or job.get("environment") != "ghcr-release":
+                    fail(f"{where} requires the verified candidate and protected publishing environment")
+                if job.get("permissions") != RELEASE_PUBLISH_PERMISSIONS:
+                    fail(f"{where} must request exactly the narrowly scoped publishing permissions")
+            elif job.get("permissions") != {"contents": "read", "actions": "read"} or "environment" in job:
+                fail(f"{where} must be read-only without an environment")
         steps = job.get("steps", [])
         for index, step in enumerate(steps if isinstance(steps, list) else []):
             if not isinstance(step, dict):
@@ -223,7 +247,7 @@ def check_workflow(name, text):
 
     declared_refs = _restricted_context_refs(text)
     if declared_refs and release_rehearsal:
-        fail("release rehearsal must not read repository secrets")
+        fail("release must not read repository secrets")
     if declared_refs and runs_on_pull_request:
         permitted_refs = PULL_REQUEST_ALLOWED_CONTEXTS.get(name)
         if permitted_refs is None:
