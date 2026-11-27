@@ -55,7 +55,7 @@ class ApplicationScopeTests(unittest.TestCase):
                      "package.json", "pnpm-workspace.yaml", "pnpm-lock.yaml", "tsconfig.base.json",
                      "apps/web/sonar-project.properties",
                      ".github/workflows/api.yml", ".github/workflows/web.yml", ".github/workflows/dependency-review.yml",
-                     ".github/workflows/package.yml", ".github/workflows/sonarqube.yml"):
+                     ".github/workflows/package.yml", ".github/workflows/release.yml", ".github/workflows/sonarqube.yml"):
             self.write(name)
         self.write(".gitignore", "".join(f"{name}/\n" for name in BUILD_DIRECTORIES))
 
@@ -667,7 +667,8 @@ jobs:
 
     def test_workflows_use_allowlisted_pinned_actions_with_read_only_permissions(self):
         allowed_actions = {"actions/checkout", "actions/setup-java", "actions/setup-node",
-                           "actions/upload-artifact", "actions/dependency-review-action", "astral-sh/setup-uv"}
+                           "actions/upload-artifact", "actions/dependency-review-action",
+                           "astral-sh/setup-uv"}
 
         def check_node(node):
             if isinstance(node, dict):
@@ -696,6 +697,10 @@ jobs:
                     checkout = next(step for step in job["steps"] if step.get("uses", "").startswith("actions/checkout@"))
                     self.assertIs(checkout["with"]["persist-credentials"], False)
                 check_node(workflow)
+
+        release_workflow = yaml.load((ROOT / ".github/workflows/release.yml").read_text(encoding="utf-8"),
+                                     Loader=UniqueKeySafeLoader)
+        check_node(release_workflow)
 
 
 if __name__ == "__main__":

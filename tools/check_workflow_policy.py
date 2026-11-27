@@ -33,6 +33,8 @@ REQUIRED_JOB_NAMES = (
 )
 # Token scopes a job may request above read. `contents: write` is deliberately absent.
 ALLOWED_JOB_WRITE_SCOPES = {"security-events", "pages", "id-token", "attestations"}
+# This rehearsal has no publication path. A future activation requires a reviewed policy change.
+RELEASE_REF_GUARD = "github.ref == 'refs/heads/main' && github.ref_protected"
 MAX_TIMEOUT_MINUTES = 30
 MAX_ARTIFACT_RETENTION_DAYS = 30
 FORBIDDEN_TRIGGERS = {"pull_request_target", "workflow_run"}
@@ -115,8 +117,13 @@ def check_workflow(name, text):
         fail(f"trigger {trigger} runs with elevated context on untrusted input")
     pull_request = triggers.get("pull_request")
     runs_on_pull_request = "pull_request" in triggers
+    release_rehearsal = name == "release.yml"
+    if release_rehearsal and (set(triggers) != {"workflow_dispatch"} or triggers["workflow_dispatch"]):
+        fail("release rehearsal must use only manual workflow_dispatch without inputs")
 
     permissions = workflow.get("permissions")
+    if release_rehearsal and permissions != {"contents": "read"}:
+        fail("release rehearsal must grant only contents: read")
     if permissions is None:
         fail("missing top-level permissions; the default token scope must be stated")
     else:
@@ -166,6 +173,11 @@ def check_workflow(name, text):
         extra = _elevated(job.get("permissions"))
         if extra and (set(extra) - ALLOWED_JOB_WRITE_SCOPES or any(level != "write" for level in extra.values())):
             fail(f"{where} requests permissions outside the allowed write scopes: {extra}")
+        if release_rehearsal:
+            if job.get("if") != RELEASE_REF_GUARD:
+                fail(f"{where} must only run on protected main")
+            if "permissions" in job or "environment" in job:
+                fail(f"{where} must inherit release rehearsal permissions without an environment")
         steps = job.get("steps", [])
         for index, step in enumerate(steps if isinstance(steps, list) else []):
             if not isinstance(step, dict):
@@ -209,6 +221,8 @@ def check_workflow(name, text):
                 fail(f"line {number}: {reference} has no version comment such as '# v1.2.3'")
 
     declared_refs = _restricted_context_refs(text)
+    if declared_refs and release_rehearsal:
+        fail("release rehearsal must not read repository secrets")
     if declared_refs and runs_on_pull_request:
         permitted_refs = PULL_REQUEST_ALLOWED_CONTEXTS.get(name)
         if permitted_refs is None:
@@ -286,7 +300,7 @@ def main(argv=None):
     if problems:
         return 1
     count = len(list(args.workflows.glob("*.y*ml")))
-    print(f"PASS workflow policy: {count} workflows, {len(REQUIRED_JOB_NAMES)} required check names produced once")
+    print(f"PASS workflow policy: {count} workflows, {len(REQUIRED_JOB_NAMES)} required workflow job names produced once; CodeQL is reported by GitHub code scanning")
     return 0
 
 
