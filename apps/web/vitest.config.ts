@@ -28,7 +28,7 @@ export default defineConfig(({ mode }) => {
           : componentsOnly ? 'reports/component-coverage' : 'reports/unit-coverage',
         // The component-only report measures its standalone contribution. The logic floors apply in both full and unit-only runs.
         thresholds: componentsOnly ? undefined : {
-          'src/**/*.ts': { lines: 71, statements: 71, functions: 61, branches: 71 },
+          'src/**/*.ts': { lines: 80, statements: 80, functions: 70, branches: 80 },
           [`src/{${ruleModules.join(',')}}.ts`]: { lines: 95, statements: 95, functions: 90, branches: 87 },
         },
       },

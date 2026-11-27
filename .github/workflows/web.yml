@@ -142,7 +142,7 @@ jobs:
           python3 tools/assert_coverage_reports.py lcov apps/web/reports/component-coverage/lcov.info
           if [[ -f apps/web/reports/combined-coverage/lcov.info ]]; then
             python3 tools/assert_coverage_reports.py lcov apps/web/reports/smoke-coverage/lcov.info
-            python3 tools/assert_coverage_reports.py lcov apps/web/reports/combined-coverage/lcov.info
+            python3 tools/assert_coverage_reports.py lcov apps/web/reports/combined-coverage/lcov.info --min-lines 90 --min-branches 85
           fi
       - name: Gate coverage of the changed Web logic lines
         if: github.event_name == 'pull_request' && steps.unit-coverage.outcome == 'success'
