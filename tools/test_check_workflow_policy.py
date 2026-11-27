@@ -142,6 +142,8 @@ class WorkflowInvariantTest(unittest.TestCase):
             ("default: false", "default: true", "opt-in staging"),
             ("cancel-in-progress: false", "cancel-in-progress: true", "must be serialized"),
             (policy.RELEASE_REF_GUARD, "github.ref == 'refs/heads/main'", "only run on protected main"),
+            ("  azure:\n", "  unexpected:\n", "must isolate release verification"),
+            ("permissions:\n  contents: read", "permissions:\n  contents: none", "top-level contents read"),
             ("needs: verify", "needs: other", "verified release evidence"),
             ("environment: demo", "environment: other", "the demo environment"),
             ("id-token: write", "id-token: read", "scope OIDC"),

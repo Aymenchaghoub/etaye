@@ -2,6 +2,14 @@
 
 Updated: 2026-11-27. Owner: Aymen Chaghoub.
 
+## First cloud release and acceptance — 2026-11-27
+
+**Release.** [PR #102](https://github.com/Aymenchaghoub/etaye/pull/102) fixed both main Tooling S8705 findings and closed the PR-specific S6350 without suppressions. The exact head passed nine required checks and Tooling Sonar. Protected `main` release `8ea8b9826685aef45ea32bd8c5a59ef1bb3a1d11` passed the applicable main gate. [Publication 46028272952](https://github.com/Aymenchaghoub/etaye/actions/runs/46028272952) signed the final release manifest and verified the API, cloud Web and migrator OCI digests plus their SLSA and CycloneDX attestations. All three digests were fetched anonymously.
+
+**Cloud acceptance.** Azure revision `ca-etaye-demo--git-8ea8b9826685` in Belgium Central serves the restricted HTTPS demonstration. The actual Chromium campaign verified sign-in, patient search, record and measurements, practice switching, portal, tenant denials and logout on Neon. The managed schema remains at V11 and uses the existing synthetic fixture generation. Visitor credentials and full evidence remain private.
+
+**Next operational action.** Verify the protected `demo` workflow in OIDC read-only mode against release 46028272952. Retain Single revision mode for the first release. Follow the [runbook](operations/cloud-demo-runbook.md) for future schema changes, a staged traffic switch and recovery. Story 3.4 remains untouched and `development_authorized` remains false.
+
 ## Release candidate blockers corrected — 2026-11-27
 
 **Trigger.** The first protected-main release rehearsal [46001297479](https://github.com/Aymenchaghoub/etaye/actions/runs/46001297479) for `333e008` failed its candidate verification with "The PostgreSQL upstream archive does not match the pinned platform digest". Separately, the `SonarQube Tooling` quality gate failed on PR #98 and `main` while the nine required GitHub checks passed.

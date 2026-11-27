@@ -15,6 +15,7 @@ done
 oidc=$(curl --fail --silent --show-error --max-time 15 \
     --header "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
     "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api%3A%2F%2FAzureADTokenExchange" | jq -er .value)
+printf '::add-mask::%s\n' "$oidc"
 az login --service-principal --username "$AZURE_CLIENT_ID" --tenant "$AZURE_TENANT_ID" \
     --federated-token "$oidc" --allow-no-subscriptions --only-show-errors --output none
 unset oidc
