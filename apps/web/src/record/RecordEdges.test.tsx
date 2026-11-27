@@ -467,19 +467,19 @@ describe('LaboratoryPage edge states', () => {
 
     expect(await screen.findByText('Résultats non chargés')).toBeTruthy();
     listMode = 429;
-    await user.click(screen.getByRole('button', { name: 'Réessayer', exact: true }));
+    await user.click(screen.getByRole('button', { name: 'Réessayer' }));
     expect((await screen.findByRole('button', { name: /Réessayer dans/ })).hasAttribute('disabled')).toBe(true);
     listMode = 0;
-    await user.click(await screen.findByRole('button', { name: 'Réessayer', exact: true }, { timeout: 2500 }));
+    await user.click(await screen.findByRole('button', { name: 'Réessayer' }, { timeout: 2500 }));
     await screen.findByText('Au-dessus de l’intervalle fourni · mention de la source');
     expect(screen.getByText('Saisie manuelle · à vérifier contre la source')).toBeTruthy();
     expect(screen.getByText('21/10/2026')).toBeTruthy();
 
     choiceMode = 429;
-    await user.click(await screen.findByRole('button', { name: 'Réessayer les analyses', exact: true }));
+    await user.click(await screen.findByRole('button', { name: 'Réessayer les analyses' }));
     expect((await screen.findByRole('button', { name: /Réessayer les analyses dans/ })).hasAttribute('disabled')).toBe(true);
     choiceMode = 0;
-    await user.click(await screen.findByRole('button', { name: 'Réessayer les analyses', exact: true }, { timeout: 2500 }));
+    await user.click(await screen.findByRole('button', { name: 'Réessayer les analyses' }, { timeout: 2500 }));
     await user.selectOptions(await screen.findByLabelText('Analyse'), firstAnalyte);
     await user.selectOptions(screen.getByLabelText('Période'), '3m');
     await user.click(screen.getByRole('button', { name: 'Appliquer les filtres' }));
@@ -520,7 +520,7 @@ describe('LaboratoryPage edge states', () => {
     expect((await screen.findByRole('button', { name: /Réessayer d’afficher la suite dans/ })).hasAttribute('disabled')).toBe(true);
     expect(screen.getByText('Analyse A', { selector: 'td' })).toBeTruthy();
     nextList = 400;
-    await user.click(await screen.findByRole('button', { name: 'Réessayer d’afficher la suite', exact: true }, { timeout: 2500 }));
+    await user.click(await screen.findByRole('button', { name: 'Réessayer d’afficher la suite' }, { timeout: 2500 }));
     restart = true;
     await user.click(await screen.findByRole('button', { name: 'Recharger la liste' }));
     expect(await screen.findByText('Analyse A', { selector: 'td' })).toBeTruthy();
@@ -543,7 +543,7 @@ describe('LaboratoryPage edge states', () => {
     await user.click(history);
     await screen.findByText('Historique temporairement indisponible');
     historyLimited = false;
-    await user.click(await screen.findByRole('button', { name: 'Réessayer', exact: true }, { timeout: 2500 }));
+    await user.click(await screen.findByRole('button', { name: 'Réessayer' }, { timeout: 2500 }));
     expect(await screen.findByText(/Historique partiel/)).toBeTruthy();
     expect(screen.getByText('Version 1 · 7,04')).toBeTruthy();
     expect(screen.getByText('Version 2 · 7,04 unité A · version affichée')).toBeTruthy();
