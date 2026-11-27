@@ -27,6 +27,7 @@ function useMore<T>(first: Page<T>, load: (cursor: string, signal: AbortSignal) 
     if (page.nextCursor === null || active.current) return;
     const controller = new AbortController();
     active.current = controller;
+    setWait(0);
     setStatus('loading');
     const result = await load(page.nextCursor, controller.signal);
     if (controller.signal.aborted) return;
@@ -34,7 +35,6 @@ function useMore<T>(first: Page<T>, load: (cursor: string, signal: AbortSignal) 
     if (result.ok) {
       setPage({ items: [...page.items, ...result.data.items], nextCursor: result.data.nextCursor });
       setStatus('idle');
-      setWait(0);
     } else if (result.status === 401) expire();
     else if (result.status === 403 || result.status === 404) refused(result.status);
     else if (result.status === 429) { setWait(result.retryAfter); setStatus('limited'); }
