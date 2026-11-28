@@ -4,12 +4,16 @@ Toutes les personnes et les données sont fictives. N’utilisez aucune donnée 
 Utilisez le mot de passe commun Etaye-Jeu-Fictif-91! pour les comptes préchargés.
 
 Bienvenue et identité · 8 min
+Depuis le dépôt, lancez cette commande pour démarrer la démo avec la boîte locale.
+ETAYE_DEMO_RECOVERY_INBOX=true ./infra/demo/start.sh
+
 À /connexion, ouvrez l’espace de nora.lefebvre@example.test. Dans un autre
 profil de navigateur, choisissez « Mot de passe oublié ? » et demandez un
-lien pour Nora. Pour activer la boîte locale, lancez la démo avec
-ETAYE_DEMO_RECOVERY_INBOX=true, puis utilisez python3 infra/demo/recovery-inbox.py
-depuis le dépôt. Ouvrez le fichier privé indiqué, suivez le lien de Nora, puis
-supprimez le fichier. Reprenez la session expirée avec le nouveau mot de passe.
+lien pour Nora. Lancez ensuite python3 infra/demo/recovery-inbox.py depuis le
+dépôt. Si vous avez choisi un projet Compose personnalisé, exportez la même
+valeur de COMPOSE_PROJECT_NAME dans ce terminal. Ouvrez le fichier privé
+indiqué, suivez le lien de Nora, puis supprimez le fichier. Reprenez la
+session expirée avec le nouveau mot de passe.
 
 Dans un profil déconnecté, activez le compte d’Alex Rivière avec
 /invitation#etaye-fictional-invitation-INV-TEAM-01. Déconnectez-vous puis ouvrez

@@ -28,6 +28,9 @@ test('the local gateway warms up, reports its API version and uses both generate
   for (const route of ['Bienvenue et identité', 'Deux cabinets', 'Accueil d’un patient', 'Dossier et preuves', 'Plateforme et isolation']) {
     await expect(guide.locator('body')).toContainText(route);
   }
+  await expect(guide.locator('body')).toContainText(
+    /ETAYE_DEMO_RECOVERY_INBOX=true[\s\S]+Mot de passe oublié[\s\S]+recovery-inbox\.py/,
+  );
   expect(await guide.evaluate(() => document.characterSet)).toBe('UTF-8');
   await guide.close();
 
@@ -56,9 +59,14 @@ test('a protected write needs CSRF and a scoped refusal leaves only a safe audit
   expect(problem.correlationId).toEqual(expect.any(String));
   const receipt = demoCompose(['exec', '-T', 'postgres', 'psql', '-XAt', '-U', 'postgres', '-d', 'etaye_demo',
     '-v', 'ON_ERROR_STOP=1', '-v', `correlation=${problem.correlationId}`], `
-      SELECT event_type, resource_type, outcome, resource_id IS NULL, safe_metadata->>'operation'
+      SELECT event_type, resource_type, outcome, practice_id, actor_account_id, resource_id IS NULL,
+             safe_metadata = jsonb_build_object(
+               'operation', 'GET /api/v1/practices/{practiceId}/records/{recordId}',
+               'reason', 'CAPABILITY_MISSING',
+               'capability', 'CLINICAL_READ'
+             )
       FROM audit_event
       WHERE correlation_id = :'correlation';
     `);
-  expect(receipt).toBe('ACCESS_DENIED|API_OPERATION|DENIED|t|GET /api/v1/practices/{practiceId}/records/{recordId}');
+  expect(receipt).toBe(['ACCESS_DENIED', 'API_OPERATION', 'DENIED', practice, fixtureId('ACC-MILA'), 't', 't'].join('|'));
 });

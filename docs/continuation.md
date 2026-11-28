@@ -10,6 +10,8 @@ Updated: 2026-11-28. Owner: Aymen Chaghoub.
 
 **Access and delivery.** The existing synthetic recovery inbox is explicitly enabled for the local verification project. It stays on the API container's loopback, and the Docker operator opens a private snapshot using the documented helper. The walkthrough reuses the existing fixture, product screens and permission checks. Deliver the branch through its pull request. I-07, clinical entry and correction, cloud deployment and application operations remain outside this walkthrough change.
 
+**PR #106 review follow-up.** CodeRabbit returned three comments on `a411e36`. Both guides now enable the inbox before requesting a link and explain how to keep the same Compose project for the export. The platform spec confirms the published guide's order and checks Mila's audit receipt against the expected practice, actor and exact safe metadata. The affected platform and identity suites passed all five scenarios in separate invocations against the custom Compose project at `http://localhost:4186`. Web verification and build passed. [PR review and checks](https://github.com/Aymenchaghoub/etaye/pull/106)
+
 ## Story 3.4 implementation and runtime review — 2026-11-28
 
 **Scope and branch.** `feat/3.4-laboratory-results` implements S-12 read-only under UD-78/79/80. The scoped allowlist includes 3.4 and the global development flag remains false. The contract preceded the V13/V14, API and Web changes. I-07 and the lab writes resume in increment 2 (D-24). [Implementation record](implementation-artifacts/story-3-4-implementation-record.md)
