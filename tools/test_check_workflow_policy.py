@@ -140,6 +140,9 @@ class WorkflowInvariantTest(unittest.TestCase):
         cases = (
             ("  workflow_dispatch:", "  push:\n  workflow_dispatch:", "must be manual"),
             ("default: false", "default: true", "opt-in staging"),
+            ("      migration_receipt:\n        description: Signed migration receipt for a release with database changes\n        required: false",
+             "      migration_receipt:\n        description: Signed migration receipt for a release with database changes\n        required: true",
+             "must be manual"),
             ("cancel-in-progress: false", "cancel-in-progress: true", "must be serialized"),
             (policy.RELEASE_REF_GUARD, "github.ref == 'refs/heads/main'", "only run on protected main"),
             ("  azure:\n", "  unexpected:\n", "must isolate release verification"),

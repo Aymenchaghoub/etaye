@@ -15,6 +15,10 @@ on:
         description: Stage the verified revision without moving public traffic
         default: false
         type: boolean
+      migration_receipt:
+        description: Signed migration receipt for a release with database changes
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -104,6 +108,8 @@ jobs:
           AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
           RELEASE_SHA: ${{ inputs.source_sha }}
           STAGE: ${{ inputs.stage }}
+          DEMO_MIGRATION_RECEIPT: ${{ inputs.migration_receipt }}
+          DEMO_MIGRATION_PUBLIC_KEY: ${{ vars.DEMO_MIGRATION_PUBLIC_KEY }}
           AZURE_CONFIG_DIR: ${{ runner.temp }}/azure
         run: |
           bash tools/stage_azure_demo.sh "$RUNNER_TEMP/release/published-manifest.json" "$RELEASE_SHA" "$STAGE"

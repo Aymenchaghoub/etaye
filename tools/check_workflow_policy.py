@@ -145,6 +145,7 @@ def check_workflow(name, text):
             "release_run": {"type": "string", "required": "true"},
             "source_sha": {"type": "string", "required": "true"},
             "stage": {"type": "boolean", "default": "false"},
+            "migration_receipt": {"type": "string", "required": "false"},
         }
         input_contract = {
             key: {field: value for field, value in spec.items() if field != "description"}
