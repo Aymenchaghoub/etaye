@@ -1,14 +1,14 @@
 # Session continuation
 
-Updated: 2026-11-27. Owner: Aymen Chaghoub.
+Updated: 2026-11-28. Owner: Aymen Chaghoub.
 
-## Story 3.4 implementation and runtime review — 2026-11-27
+## Story 3.4 implementation and runtime review — 2026-11-28
 
 **Scope and branch.** `feat/3.4-laboratory-results` implements S-12 read-only under UD-78/79/80. The scoped allowlist includes 3.4 and the global development flag remains false. The contract preceded the V13/V14, API and Web changes. I-07 and the lab writes resume in increment 2 (D-24). [Implementation record](implementation-artifacts/story-3-4-implementation-record.md)
 
 **Tested locally.** Java 25 `clean verify` passed 306 tests. The loopback package passed 14 real browser cases and the real stop/pause/recovery spec passed separately. The S-12 stubbed browser suite passed 19 tests with axe-core, including the narrow tablet correction, exact chart decimals, text and bound retention and keyboard review of long provenance. The [running-UI page](design/reviews/2026-11-27-story-3-4-runtime.html) compares the approved specimens and the application at matching widths and themes. Its images are kept in the sibling design receipts directory. The packet records the Figma quota and approved offline fallback.
 
-**Review and next action.** UD-81 specifies the single Zcode GLM-5.4 three-lens review without Codex subagents. Zcode reviewed the complete diff at `2c69bd3`. The single report is triaged in the implementation record. Review fixes and added verification are at `c121abc`. Verify the branch checks and capture Aymen’s running-UI decision before merge. Runtime approval and merge authorization are separate. The local demonstration is available at `http://127.0.0.1:4184/connexion`, Compose project `etaye-demo-story34`.
+**Review and next action.** UD-81 specifies the single Zcode GLM-5.4 three-lens review without Codex subagents. Zcode reviewed the complete diff at `2c69bd3`. The single report is triaged in the implementation record. The BMAD fixes are at `c121abc`. Later commits address the first SonarQube report and verify pagination recovery through `f6d8cab`. The [draft PR #105](https://github.com/Aymenchaghoub/etaye/pull/105) is open and [CodeRabbit completed the first review without actionable comments on `80420c2`](https://github.com/Aymenchaghoub/etaye/pull/105#issuecomment-7228872058). Verify the branch checks and capture Aymen’s running-UI decision before merge. Runtime approval and merge authorization are separate. The local demonstration is available at `http://127.0.0.1:4184/connexion`, Compose project `etaye-demo-story34`.
 
 ## Story 3.4 phase 0 — 2026-11-27
 
