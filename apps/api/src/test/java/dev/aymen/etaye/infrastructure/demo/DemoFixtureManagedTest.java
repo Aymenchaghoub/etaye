@@ -110,6 +110,12 @@ class DemoFixtureManagedTest {
             assertThat(managed.version()).isEqualTo(new DemoFixture.Version("etaye-design-v1", 1L));
             refuses(new DemoFixture(runtime, ""));
             refuses(new DemoFixture(runtime, RESTORE_DATABASE));
+            var throughLabs = Flyway.configure()
+                    .dataSource(databaseUrl(pg, DEMO_DATABASE), OWNER, ownerPassword)
+                    .locations("classpath:db/migration").target("13").load();
+            assertThat(throughLabs.migrate().migrationsExecuted).isEqualTo(1);
+            assertSuccess(seed(pg, DEMO_DATABASE));
+            assertIsolation(pg, DEMO_DATABASE);
             assertThat(flyway.migrate().migrationsExecuted).isEqualTo(1);
             flyway.validate();
             assertSuccess(seed(pg, DEMO_DATABASE));
@@ -136,7 +142,7 @@ class DemoFixtureManagedTest {
             createDatabase(pg, freshDatabase);
             mark(pg, freshDatabase);
             var fresh = schema(pg, freshDatabase);
-            assertThat(fresh.migrate().migrationsExecuted).isEqualTo(9);
+            assertThat(fresh.migrate().migrationsExecuted).isEqualTo(10);
             fresh.validate();
             assertSuccess(seed(pg, freshDatabase));
             jdbc(pg, freshDatabase, OWNER, ownerPassword).execute("DELETE FROM etaye_demo.fixture");

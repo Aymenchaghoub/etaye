@@ -292,6 +292,15 @@ class LabResultHttpTest {
             invalidLab(connection, 1, 7, null, null, null, "SRC-A-002", null, "2026-10-22T08:00:00Z", "23503");
             invalidLab(connection, 1, 7, null, null, null, "SRC-A-LAB-CORR-1", null, "2026-10-20T08:00:00Z", "23514");
             invalidLab(connection, 3, 7, null, null, null, "SRC-A-LAB-CORR-1", "LAB-A-PROOF-1", "2026-10-22T08:00:00Z", "23514");
+            invalidLab(connection, 2, 7, null, null, null, "SRC-A-LAB-CORR-1", "absent-lab", "2026-10-22T08:00:00Z", "23514");
+            assertThatThrownBy(() -> command.executeUpdate("""
+                    INSERT INTO public.lab_result (id, practice_id, record_id, lineage_id, revision, analyte, numeric_value,
+                        source_revision_id, supersedes_id, correction_reason, author_label, recorded_at)
+                    VALUES (etaye_demo.fixture_id('test-self-reference'), etaye_demo.fixture_id('PRA-A'),
+                        etaye_demo.fixture_id('R-A-003'), gen_random_uuid(), 2, 'Analyse A', 7,
+                        etaye_demo.fixture_id('SRC-A-LAB-CORR-1'), etaye_demo.fixture_id('test-self-reference'),
+                        'Correction fictive', 'Dr Essai', '2026-10-22T08:00:00Z');
+                    """)).isInstanceOfSatisfying(SQLException.class, error -> assertThat(error.getSQLState()).isEqualTo("23514"));
         }
     }
 

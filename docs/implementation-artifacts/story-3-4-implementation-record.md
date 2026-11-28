@@ -70,3 +70,14 @@ Zcode CLI `4.0.0-50`, runtime `0.18.0`, model `GLM-5.4`. The single review used 
 [PR #105](https://github.com/Aymenchaghoub/etaye/pull/105) opened as a draft at `80420c2`. `Package verify`, `Web verify`, `CodeQL`, dependency review and the planning checks passed there. `API verify` stopped at Maven Central HTTP 429 in the compiler-debt step, before Testcontainers. The missing matrix upload followed that failure. [First API job](https://github.com/Aymenchaghoub/etaye/actions/runs/46073367226/job/140755297356)
 
 SonarQube flagged two dynamically assembled API queries under S2077. `e3c9c0b` uses fixed, parameter-bound statements for both pages and cursor checks. The local API suite and changed-line gate were rerun on that revision. The Web report flagged two reductions without an initial value and insufficient new-code coverage. `2fb0014` initializes both reductions and adds four component scenarios for independent errors, throttling and scoped cursor recovery, bounded lineage and equal dated values. `f6d8cab` clears the elapsed retry delay when starting the next request, so a stale cursor can immediately restart the list after a prior throttle. Web verification passed 174 Vitest tests plus the production build at that revision. The pipeline reruns these checks on the updated head. CodeRabbit completed its first requested review on `80420c2` with no actionable comments. [First review](https://github.com/Aymenchaghoub/etaye/pull/105#issuecomment-7228872058)
+
+The hosted API, Web, package, CodeQL and SonarQube checks all passed at `feca4f8`. The rebuilt local package passed 14 real-stack cases, and local Chromium passed the full 225-case suite before the follow-up regression test. [Draft PR checks](https://github.com/Aymenchaghoub/etaye/pull/105/checks)
+
+### CodeRabbit follow-up on `feca4f8`
+
+| Finding | Resolution |
+| --- | --- |
+| Browser evidence floor did not grow with the laboratory suite | `Web verify` requires 226 smoke cases, including the added historical return case. The Vitest and Surefire report guards also match the new totals. |
+| A correction could reference its own row | V15 adds a validated constraint and requires an existing same-lineage predecessor at insertion. Existing migration files are unchanged. SQL tests cover absent and self-referential predecessors. Managed bootstrap accepts the new schema history. |
+| Lab test fixtures could affect the demo reset setup count | The reset test checks its one-row increment against the observed baseline and still checks the exact seeded count after reset. |
+| Returning from history could keep the old current window | The query anchor tracks the selected snapshot. The browser test advances the clock during the historical view and checks both bounds on return. |

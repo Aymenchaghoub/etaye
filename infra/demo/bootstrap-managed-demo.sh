@@ -75,9 +75,9 @@ BEGIN
        OR NOT EXISTS (
            SELECT FROM public.flyway_schema_history WHERE version IS NOT NULL
            HAVING array_agg(version::integer ORDER BY version::integer)
-               IN (ARRAY[1, 2, 3, 4, 7, 8, 9, 11], ARRAY[1, 2, 3, 4, 7, 8, 9, 11, 13])
+               IN (ARRAY[1, 2, 3, 4, 7, 8, 9, 11], ARRAY[1, 2, 3, 4, 7, 8, 9, 11, 13], ARRAY[1, 2, 3, 4, 7, 8, 9, 11, 13, 15])
        ) THEN
-        RAISE EXCEPTION 'The managed demo requires a supported schema history through version 11 or 13';
+        RAISE EXCEPTION 'The managed demo requires a supported schema history through version 11, 13 or 15';
     END IF;
 END
 $managed_guard$;

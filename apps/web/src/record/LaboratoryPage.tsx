@@ -57,28 +57,30 @@ export function LaboratoryPage() {
   const applied = ctx.view.labs ?? NO_LAB_FILTER;
   const [draft, setDraft] = useState(applied);
   const [refresh, setRefresh] = useState(0);
-  const [currentAnchor, setCurrentAnchor] = useState(Date.now);
-  const anchor = useMemo(() => new Date(ctx.asOf ?? currentAnchor), [ctx.asOf, currentAnchor]);
+  const { anchor, revision } = useMemo(() => ({
+    anchor: new Date(ctx.asOf ?? Date.now()),
+    revision: refresh,
+  }), [ctx.asOf, refresh]);
   const query = useMemo(() => ({
     from: periodFrom(applied.period, anchor, ctx.zone),
     to: applied.period === 'all' ? undefined : anchor.toISOString(),
     analyteKey: applied.analyteKey || undefined,
     asOf: ctx.asOf,
   }), [ctx.zone, ctx.asOf, anchor, applied]);
-  const scope = JSON.stringify([ctx.practiceId, ctx.recordId, query, refresh]);
+  const scope = JSON.stringify([ctx.practiceId, ctx.recordId, query, revision]);
   const [results] = useRemote((signal) => accountApi.readLabResults(ctx.practiceId, ctx.recordId, query, signal), scope, ctx.expire);
   const refused = useRefusal(results);
   const viewAt = results.phase === 'ready' ? results.data.viewAt ?? ctx.asOf : undefined;
-  const reload = () => { setCurrentAnchor(Date.now()); setRefresh(value => value + 1); };
+  const reload = () => setRefresh(value => value + 1);
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setCurrentAnchor(Date.now());
+    reload();
     ctx.setView({ labs: draft });
   }
   function reset() {
     setDraft(NO_LAB_FILTER);
-    setCurrentAnchor(Date.now());
+    reload();
     ctx.setView({ labs: NO_LAB_FILTER });
   }
 

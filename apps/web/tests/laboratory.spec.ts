@@ -123,6 +123,32 @@ test('exact analyte and period filter can yield no results and can be reset', as
   await expect(resultRows(page)).toHaveCount(2);
 });
 
+test('returning from history recalculates a bounded filter against the current time', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-11-28T09:00:00Z'));
+  const { requests } = await stubLabs(page);
+  const latestList = () => requests.filter(url => url.pathname.endsWith('/lab-results')).at(-1)?.searchParams;
+  await page.goto(LABS);
+  await expect(resultRows(page)).toHaveCount(2);
+  await page.getByLabel('Période', { exact: true }).selectOption('3m');
+  await page.getByRole('button', { name: 'Appliquer les filtres' }).click();
+  await expect.poll(() => latestList()?.get('to')).toBe('2026-11-28T09:00:00.000Z');
+  const firstFrom = latestList()?.get('from');
+
+  await page.getByRole('button', { name: 'Voir le dossier à une date passée' }).click();
+  for (const [part, value] of [['j', '21'], ['m', '10'], ['a', '2026'], ['h', '10'], ['mi', '14']]) {
+    await page.locator(`#as-${part}`).fill(value);
+  }
+  await page.getByRole('button', { name: 'Afficher cette date' }).click();
+  await expect.poll(() => latestList()?.get('to')).toBe('2026-10-21T08:14:00.000Z');
+  expect(latestList()?.get('asOf')).toBe('2026-10-21T08:14:00.000Z');
+
+  await page.clock.setFixedTime(new Date('2026-11-29T10:00:00Z'));
+  await page.getByRole('button', { name: 'Revenir à la situation actuelle' }).click();
+  await expect.poll(() => latestList()?.get('to')).toBe('2026-11-29T10:00:00.000Z');
+  expect(latestList()?.get('asOf')).toBeNull();
+  expect(latestList()?.get('from')).not.toBe(firstFrom);
+});
+
 test('a failing next page and its retry preserve existing rows and keep the same cursor', async ({ page }) => {
   let overflowAttempts = 0;
   const { requests } = await stubLabs(page, { list: url => {

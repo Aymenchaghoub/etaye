@@ -186,6 +186,7 @@ class DemoHttpTest {
                 COMMIT;
                 """);
         assertThat(evidenceCount("measurement")).isEqualTo(7);
+        int labCountBeforeInsert = evidenceCount("lab_result");
         ownerExecute("""
                 BEGIN;
                 SELECT set_config('etaye.practice_id', etaye_demo.fixture_id('PRA-A')::text, true);
@@ -195,7 +196,7 @@ class DemoHttpTest {
                     'EXTRA', 0, now(), 'Dr Test', etaye_demo.fixture_id('SRC-A-002'));
                 COMMIT;
                 """);
-        assertThat(evidenceCount("lab_result")).isEqualTo(10);
+        assertThat(evidenceCount("lab_result")).isEqualTo(labCountBeforeInsert + 1);
 
         var operatorCsrf = csrf(operator);
         var otherCsrf = csrf(anotherOperator);
