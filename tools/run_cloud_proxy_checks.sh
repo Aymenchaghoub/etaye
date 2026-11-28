@@ -33,9 +33,13 @@ printf 'demo:%s\n' "$hash" > "$auth/visitors"
 # The nginx worker reads the mounted hash. The directory stays owner-only.
 chmod 644 "$auth/visitors"
 docker build --platform linux/amd64 --target cloud --file infra/demo/web.Dockerfile --tag "$image" .
+# Exercise the maximum length accepted by the startup script and the Nginx host map.
+printf -v label 'a%.0s' {1..63}
+custom_host="$label.$label.$label.${label:0:61}"
+test "${#custom_host}" = 253
 start_proxy() {
     docker run --detach --name "$container" --network "container:$api" --cpus 0.25 --memory 512m \
-        --env ETAYE_INGRESS_HOST=127.0.0.1 --env ETAYE_CUSTOM_INGRESS_HOST=demo.example.test \
+        --env ETAYE_INGRESS_HOST=127.0.0.1 --env ETAYE_CUSTOM_INGRESS_HOST="$custom_host" \
         "$@" "$image" >/dev/null
 }
 
@@ -48,7 +52,7 @@ print(json.dumps(record["Id"]), json.dumps(record["Image"]), json.dumps(record.g
 }
 host=$(docker container inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$api")
 check_proxy() {
-    ETAYE_PROXY_TEST_PASSWORD="$password" python3 - "$host" "$1" <<'PY'
+    ETAYE_PROXY_TEST_PASSWORD="$password" python3 - "$host" "$1" "$custom_host" <<'PY'
 import base64
 from contextlib import closing
 import http.client
@@ -58,7 +62,7 @@ import os
 import sys
 import time
 
-host, mode = sys.argv[1:]
+host, mode, custom_host = sys.argv[1:]
 token = base64.b64encode(("demo:" + os.environ["ETAYE_PROXY_TEST_PASSWORD"]).encode()).decode()
 
 def exchange(path, status, *, method="GET", request_host="127.0.0.1", port=8081, body=None, extra=None):
@@ -90,7 +94,7 @@ else:
 
 exchange("/", 421, request_host="other.example.test")
 exchange("/ready", 200, port=8082)
-for hostname in ("127.0.0.1", "demo.example.test"):
+for hostname in ("127.0.0.1", custom_host):
     if mode == "basic":
         _, challenge = exchange("/connexion", 401, request_host=hostname)
         assert challenge["WWW-Authenticate"] == 'Basic realm="Etaye Demo"'
@@ -116,7 +120,7 @@ request("/api/v1/probes/readiness", 200)
 
 if mode == "ip-restricted":
     login = json.dumps({"email": "missing@example.test", "password": "synthetic-invalid-password"})
-    payload, headers = request("/api/v1/csrf", 200, request_host="demo.example.test")
+    payload, headers = request("/api/v1/csrf", 200, request_host=custom_host)
     csrf = json.loads(payload)
     cookie = SimpleCookie()
     cookie.load(headers["Set-Cookie"])
@@ -124,11 +128,11 @@ if mode == "ip-restricted":
     assert session["secure"] and session["httponly"] and session["samesite"].lower() == "lax"
     assert session["path"] == "/" and not session["domain"]
     login_headers = {"Content-Type": "application/json", "Cookie": f"{session.key}={session.value}"}
-    request("/api/v1/session", 403, method="POST", request_host="demo.example.test", body=login, extra=login_headers)
+    request("/api/v1/session", 403, method="POST", request_host=custom_host, body=login, extra=login_headers)
     login_headers[csrf["headerName"]] = csrf["token"]
-    _, rejected = request("/api/v1/session", 401, method="POST", request_host="demo.example.test", body=login, extra=login_headers)
+    _, rejected = request("/api/v1/session", 401, method="POST", request_host=custom_host, body=login, extra=login_headers)
     assert "WWW-Authenticate" not in rejected
-    request("/api/v1/session", 401, request_host="demo.example.test", extra={"Cookie": login_headers["Cookie"]})
+    request("/api/v1/session", 401, request_host=custom_host, extra={"Cookie": login_headers["Cookie"]})
 
 print(f"PASS cloud proxy ({mode}): both hosts, readiness, visitor gate, headers, session routing and write isolation")
 PY
