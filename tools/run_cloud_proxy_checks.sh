@@ -73,6 +73,8 @@ def exchange(path, status, *, method="GET", request_host="127.0.0.1", port=8081,
         response = conn.getresponse()
         payload = response.read()
     assert response.status == status, f"{method} {path}: {response.status} != {status}"
+    expected_hsts = ["max-age=300"] if port == 8081 else None
+    assert response.headers.get_all("Strict-Transport-Security") == expected_hsts, f"{method} {path}: HSTS on port {port}"
     return payload, response.headers
 
 

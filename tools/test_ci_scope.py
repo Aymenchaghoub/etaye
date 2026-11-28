@@ -45,6 +45,11 @@ class PathScenarioTest(unittest.TestCase):
         self.assertEqual(scopes_of("apps/api/src/main/resources/db/migration/V13__x.sql"),
                          {"api", "package", "sonar-api"})
 
+    def test_cloud_proxy_configuration_reaches_package_and_all_quality_gates(self):
+        for path in ("infra/azure/cloud.conf", "infra/azure/cloud-api.conf"):
+            with self.subTest(path=path):
+                self.assertEqual(scopes_of(path), {"package", "sonar-api", "sonar-web", "sonar-tooling"})
+
     def test_shared_typescript_configuration_and_lockfile(self):
         self.assertEqual(scopes_of("tsconfig.base.json"), {"web", "package", "sonar-web"})
         self.assertEqual(scopes_of("pnpm-lock.yaml"), {"web", "package", "pnpm", "sonar-web"})

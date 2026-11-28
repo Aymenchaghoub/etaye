@@ -103,6 +103,8 @@ RULES = (
     # Design and contract inputs that the Web build and its tests read.
     *((path, frozenset({"web", "package", "sonar-web"})) for path in _WEB_TOKEN_INPUTS),
     # Delivery package.
+    # Cloud ingress changes cross the Web and API boundary and use all three release quality gates.
+    ("infra/azure/cloud*.conf", frozenset({"package", "sonar-api", "sonar-web", "sonar-tooling"})),
     ("infra/**", frozenset({"package"})),
     (".dockerignore", frozenset({"package"})),
     # Line-ending and diff attributes change how every other file is checked out.
