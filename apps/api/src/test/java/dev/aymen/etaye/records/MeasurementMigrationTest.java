@@ -130,7 +130,7 @@ public class MeasurementMigrationTest extends AbstractPostgresTest {
             }
 
             var result = Flyway.configure().dataSource(container.getJdbcUrl(), OWNER_USER, OWNER_PASSWORD)
-                    .locations("classpath:db/migration", "classpath:db/demo").load().migrate();
+                    .locations("classpath:db/migration", "classpath:db/demo").target("12").load().migrate();
             assertThat(result.success).isTrue();
             assertThat(result.targetSchemaVersion).isEqualTo("12");
 

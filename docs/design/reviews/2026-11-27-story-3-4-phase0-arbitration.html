@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="fr" data-theme="clair">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Étaye · Arbitrage de la story 3.4</title>
+  <link rel="stylesheet" href="../../../design/offline-reference/site/tokens/tokens.css">
+  <style>
+    * { box-sizing: border-box; }
+    :root { color-scheme: light; }
+    :root[data-theme="sombre"] { color-scheme: dark; }
+    body { margin: 0; background: var(--fond); color: var(--encre); font: 400 15px/22px var(--font-texte); }
+    .wrap { max-width: 1100px; margin: auto; padding-inline: var(--espace-6); }
+    .top { border-bottom: var(--trait-filet) solid var(--filet); }
+    .top .wrap { min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: var(--espace-4); flex-wrap: wrap; padding-block: var(--espace-2); }
+    .logo img { height: 22px; width: auto; vertical-align: middle; }
+    [data-theme="clair"] .logo-dark, [data-theme="sombre"] .logo-light { display: none; }
+    main { padding-block: var(--espace-8) var(--espace-12); overflow-wrap: anywhere; }
+    h1 { margin: var(--espace-2) 0 var(--espace-3); font: 500 32px/40px var(--font-document); }
+    h2 { margin: 0 0 var(--espace-4); font: 500 22px/28px var(--font-texte); }
+    h3, legend { margin: 0 0 var(--espace-2); font: 600 16px/24px var(--font-texte); }
+    p, ul, ol { margin: 0 0 var(--espace-3); }
+    li + li { margin-top: var(--espace-1); }
+    a { color: var(--accent); text-underline-offset: 3px; }
+    a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible, textarea:focus-visible {
+      outline: var(--trait-focus) solid var(--accent); outline-offset: 2px;
+    }
+    button, textarea { font: inherit; color: var(--encre); background: var(--surface); border: var(--trait-filet) solid var(--filet-controle); border-radius: var(--rayon-1); padding: var(--espace-2) var(--espace-3); }
+    button { min-height: 44px; cursor: pointer; }
+    .primary { color: var(--encre-inverse); background: var(--encre); }
+    .intro { max-width: 68ch; color: var(--encre-2); }
+    section { margin-block: var(--espace-8); }
+    .columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--espace-4); }
+    .panel, fieldset { min-inline-size: 0; background: var(--surface); border: var(--trait-filet) solid var(--filet); padding: var(--espace-4); }
+    .panel p:last-child { margin-bottom: 0; }
+    .excerpt { margin: var(--espace-3) 0; padding: var(--espace-3); border: var(--trait-filet) solid var(--filet); background: var(--surface-2); }
+    .excerpt span { display: block; }
+    .value { font-family: var(--font-donnee); }
+    .meta { color: var(--encre-2); }
+    .flow { display: flex; flex-wrap: wrap; gap: 0 var(--espace-3); padding-bottom: var(--espace-2); border-bottom: var(--trait-filet) solid var(--filet); }
+    .active { border-bottom: 2px solid var(--encre); }
+    details { margin-top: var(--espace-3); }
+    summary { color: var(--accent); cursor: pointer; padding-block: var(--espace-2); }
+    fieldset { margin: 0 0 var(--espace-4); }
+    legend { padding-inline: var(--espace-1); }
+    label.option { display: flex; align-items: flex-start; gap: var(--espace-3); min-height: 44px; padding-block: var(--espace-2); }
+    label.option input { flex: none; margin-top: 4px; accent-color: var(--accent); }
+    textarea { display: block; width: 100%; min-height: 7em; margin-block: var(--espace-2); resize: vertical; }
+    .status { color: var(--encre-2); }
+    @media (max-width: 760px) {
+      .wrap { padding-inline: var(--espace-4); }
+      .columns { grid-template-columns: minmax(0, 1fr); }
+      h1 { font-size: 26px; line-height: 32px; }
+    }
+    @media (max-width: 359px) {
+      .wrap, .panel, fieldset { padding-inline: var(--espace-3); }
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <span class="logo">
+        <img class="logo-light" src="../../../design/offline-reference/site/logos/etaye-logo.svg" alt="Étaye">
+        <img class="logo-dark" src="../../../design/offline-reference/site/logos/etaye-logo-sombre.svg" alt="Étaye">
+      </span>
+      <button type="button" id="theme" aria-pressed="false">Thème sombre</button>
+    </div>
+  </header>
+  <main class="wrap">
+    <h1>Biologie du dossier</h1>
+    <p class="intro">Arbitrage de la story 3.4 · Incrément 1 · Dossier de préparation du 27 novembre 2026</p>
+    <p class="intro">Le praticien consulte des résultats fictifs avec leurs dates, leurs intervalles fournis et leurs sources. D-24 rattache la saisie et la correction à l’incrément 2.</p>
+    <p><a href="../../implementation-artifacts/story-3-4-context-packet.md">Dossier de préparation et critères AT-012</a></p>
+
+    <section aria-labelledby="compare-title">
+      <h2 id="compare-title">Référence actuelle et proposition pour S-12</h2>
+      <div class="columns">
+        <article class="panel">
+          <h3>Référence actuelle</h3>
+          <p>S-12 est importé en huit états de bureau. L’écran de Claire montre la table, un tracé avec bande d’intervalle et l’action « Saisir un résultat ». « Documents » apparaît parmi les onglets.</p>
+          <div class="excerpt">
+            <p class="flow">Chronologie · Antécédents et allergies · Mesures · <strong>Biologie</strong> · Documents</p>
+            <p><strong>Saisir un résultat</strong></p>
+            <span>Créatinine · 12/10/2026</span>
+            <span class="value">104 µmol/L · 60–110</span>
+            <span class="meta">Saisie manuelle · DOC-A-001</span>
+          </div>
+          <p><a href="../../../design/offline-reference/site/ecrans/S-12/claire.html">Ouvrir l’état de Claire</a> · <a href="../../../design/offline-reference/site/ecrans/S-12/corrige.html">Ouvrir l’exemple de correction</a></p>
+        </article>
+        <article class="panel">
+          <h3>Proposition en lecture seule</h3>
+          <p>Biologie rejoint les onglets du dossier déjà livré. La table garde le résultat, l’intervalle fourni et l’accès à la source datée. L’historique présente les révisions existantes.</p>
+          <div class="excerpt">
+            <p class="flow">Chronologie · Antécédents et allergies · Mesures · <strong class="active">Biologie</strong></p>
+            <p><strong>Créatinine</strong> · Prélèvement du 12/10/2026</p>
+            <span class="value">104 µmol/L</span>
+            <span>Intervalle fourni · 60–110 µmol/L</span>
+            <details>
+              <summary>Source datée</summary>
+              <p class="meta">Bilan fictif du 12 octobre 2026 · page 1 · enregistré le 13/10/2026.</p>
+            </details>
+          </div>
+          <p class="meta">Extrait de comparaison. Le jeu synthétique et les états complets seront soumis à la revue de design.</p>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="write-title">
+      <h2 id="write-title">I-07 · Revue de l’incrément 2</h2>
+      <p>Les six références importées couvrent le formulaire, les variantes textuelles, la correction et un exemple d’erreur. La future revue devra trancher le choix de source, les champs facultatifs, le récapitulatif, les erreurs de version et le retour du focus.</p>
+      <p><a href="../../../design/offline-reference/site/ecrans/I-07/ouvert.html">Ouvrir le formulaire de référence</a> · <a href="../../../design/offline-reference/site/ecrans/I-07/erreur.html">Ouvrir son état d’erreur</a></p>
+    </section>
+
+    <section aria-labelledby="choices-title">
+      <h2 id="choices-title">Choix de périmètre</h2>
+      <form id="arbitrage">
+        <fieldset>
+          <legend>A · Accès aux sources</legend>
+          <p>Le catalogue mentionne l’inspection du PDF. Le dossier dispose déjà d’une lecture de la source datée à l’intérieur de la page.</p>
+          <label class="option"><input type="radio" name="A" value="A1" required><span><strong>A1 · Recommandé.</strong> Reprendre la lecture sur place de la source exacte et rendre son repère de page lisible. Le lecteur de document reste rattaché aux stories 5.3 et 3.5.</span></label>
+          <label class="option"><input type="radio" name="A" value="A2"><span><strong>A2.</strong> Suspendre la proposition et arbitrer séparément l’accès au document avant la revue S-12.</span></label>
+        </fieldset>
+        <fieldset>
+          <legend>B · Historique et données de démonstration</legend>
+          <p>Le dossier actuel contient des extraits datés. Les résultats structurés et leurs historiques correspondants restent à préparer.</p>
+          <label class="option"><input type="radio" name="B" value="B1" required><span><strong>B1 · Recommandé.</strong> Prévoir une lecture bornée des révisions et des cas synthétiques explicites pour valeur textuelle, comparateur, intervalle absent et correction. Conserver les trois valeurs de référence de Claire avec une source qui justifie chaque valeur et intervalle.</span></label>
+          <label class="option"><input type="radio" name="B" value="B2"><span><strong>B2.</strong> Demander une autre proposition d’historique et de jeu synthétique avant de préparer les états.</span></label>
+        </fieldset>
+        <fieldset>
+          <legend>C · Dates, filtre et ordre</legend>
+          <p>Le contrat définit une date d’événement et des heures de prélèvement et de résultat facultatives. Le tri et la signification des bornes de période restent à préciser.</p>
+          <label class="option"><input type="radio" name="C" value="C1" required><span><strong>C1 · Recommandé.</strong> Afficher chaque date avec sa précision. Trier par prélèvement, puis par date de résultat en l’absence de prélèvement. Garder les dates inconnues en fin de liste hors filtre de période. Filtrer par analyse exacte et période dans le fuseau du cabinet, avec des colonnes dans un ordre fixe.</span></label>
+          <label class="option"><input type="radio" name="C" value="C2"><span><strong>C2.</strong> Préciser une autre règle de date ou de filtre avant la revue.</span></label>
+        </fieldset>
+        <fieldset>
+          <legend>D · Intervalles et tracé</legend>
+          <p>La référence trace une ligne avec une bande pour deux valeurs. La comparabilité dépend aussi du contexte fourni par les sources.</p>
+          <label class="option"><input type="radio" name="D" value="D1" required><span><strong>D1 · Recommandé.</strong> Afficher individuellement les valeurs et intervalles tels que fournis. Montrer les mentions d’écart et de transcription à vérifier lorsque la source les indique. Tracer uniquement des points chiffrés comparables et datés, au vu de l’unité, de l’intervalle et du contexte fourni. La table reste la référence.</span></label>
+          <label class="option"><input type="radio" name="D" value="D2"><span><strong>D2.</strong> Garder la même table et acter un report explicite du tracé, avec son déclencheur de reprise.</span></label>
+        </fieldset>
+        <fieldset>
+          <legend>E · Revue des états de S-12</legend>
+          <p>Il reste à montrer la lecture courante et passée, l’historique, la source, les filtres, les cas vides, le chargement, l’erreur et la reprise, la restriction, le focus et le contenu long. Le dossier décrit les preuves SAMPLED de l’AT-012-C.</p>
+          <label class="option"><input type="radio" name="E" value="E1" required><span><strong>E1 · Recommandé.</strong> Préparer les spécimens S-12 dans les deux thèmes et aux tailles prévues après l’arbitrage. Soumettre la revue de design à une approbation écrite distincte.</span></label>
+          <label class="option"><input type="radio" name="E" value="E2"><span><strong>E2.</strong> Demander des modifications au plan des états ou des preuves avant la revue.</span></label>
+        </fieldset>
+        <button type="submit" class="primary">Préparer ma réponse</button>
+        <p id="recap-status" class="status" role="status"></p>
+        <label for="recap">Réponse à copier dans la conversation</label>
+        <textarea id="recap" readonly></textarea>
+      </form>
+    </section>
+
+    <section aria-labelledby="approvals-title">
+      <h2 id="approvals-title">Approbations suivantes</h2>
+      <ol>
+        <li>Retour d’Aymen sur A–E. Le périmètre accepté est consigné dans le registre des décisions.</li>
+        <li>Après présentation des spécimens, approbation écrite des états S-12 présentés ou demande de modifications. I-07 aura sa revue à la reprise de D-24.</li>
+        <li>Autorisation écrite distincte pour la seule story 3.4 et le périmètre approuvé. L’UD correspondant permettra d’ajouter <code>3.4</code> à <code>authorized_stories</code>, avec <code>development_authorized = false</code>, avant le contrôle de readiness BMAD.</li>
+      </ol>
+      <p>L’approbation de l’interface en fonctionnement et l’autorisation de fusion font chacune l’objet d’une décision ultérieure.</p>
+    </section>
+  </main>
+  <script>
+    const themeButton = document.getElementById('theme');
+    const form = document.getElementById('arbitrage');
+    const recap = document.getElementById('recap');
+    themeButton.addEventListener('click', () => {
+      const dark = document.documentElement.dataset.theme !== 'sombre';
+      document.documentElement.dataset.theme = dark ? 'sombre' : 'clair';
+      themeButton.setAttribute('aria-pressed', String(dark));
+    });
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const choices = Array.from(new FormData(form).values()).join(', ');
+      recap.value = 'Arbitrage Story 3.4 — ' + choices + '.\nDemandes ou précisions éventuelles :\nJe donnerai séparément mon approbation du design et mon autorisation écrite pour la story 3.4.';
+      document.getElementById('recap-status').textContent = 'Réponse prête à copier.';
+      recap.focus();
+      recap.select();
+    });
+  </script>
+</body>
+</html>

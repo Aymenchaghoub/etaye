@@ -33,9 +33,8 @@ if [[ "$v5" != "$guard"$'\n'* ]]; then
   echo "V5 bootstrap guard differs from the reviewed migration." >&2
   exit 1
 fi
-# The managed schema is already at V11. Install the historical definitions in
-# order, then invoke V12's restore once. Earlier top-level calls precede their
-# foreign-key-safe replacement and cannot run against the complete schema.
+# Install historical definitions in order. The final definition matches the
+# schema so its reset includes every table with a reference to the fixture.
 without_initial_call() {
   awk -v call="$1" '$0 == call { count++; next } { print } END { if (count != 1) exit 1 }'
 }
@@ -43,6 +42,7 @@ v5_body=$(without_initial_call 'SELECT etaye_demo.restore_fixture();' <<< "${v5#
 v6=$(without_initial_call 'SELECT etaye_demo.restore_fixture(false);' < "$demo_dir/V6__correct_invitation_fixture_dates.sql")
 v10=$(without_initial_call 'SELECT etaye_demo.seed_evidence();' < "$demo_dir/V10__seed_record_evidence.sql")
 v12=$(without_initial_call 'SELECT etaye_demo.seed_measurements();' < "$demo_dir/V12__seed_measurements.sql")
+v14=$(without_initial_call 'SELECT etaye_demo.seed_laboratory_results();' < "$demo_dir/V14__seed_laboratory_results.sql")
 
 export PGPASSWORD="$ETAYE_OWNER_PASSWORD"
 
@@ -72,15 +72,18 @@ BEGIN
     END IF;
 
     IF EXISTS (SELECT FROM public.flyway_schema_history WHERE NOT success)
-       OR (SELECT array_agg(version::integer ORDER BY version::integer)
-           FROM public.flyway_schema_history WHERE version IS NOT NULL)
-           IS DISTINCT FROM ARRAY[1, 2, 3, 4, 7, 8, 9, 11] THEN
-        RAISE EXCEPTION 'The managed demo requires schema versions 1, 2, 3, 4, 7, 8, 9 and 11';
+       OR NOT EXISTS (
+           SELECT FROM public.flyway_schema_history WHERE version IS NOT NULL
+           HAVING array_agg(version::integer ORDER BY version::integer)
+               IN (ARRAY[1, 2, 3, 4, 7, 8, 9, 11], ARRAY[1, 2, 3, 4, 7, 8, 9, 11, 13], ARRAY[1, 2, 3, 4, 7, 8, 9, 11, 13, 15])
+       ) THEN
+        RAISE EXCEPTION 'The managed demo requires a supported schema history through version 11, 13 or 15';
     END IF;
 END
 $managed_guard$;
 
-SELECT to_regclass('etaye_demo.fixture') IS NOT NULL AS seeded \gset
+SELECT EXISTS (SELECT FROM public.flyway_schema_history WHERE version = '13') AS has_labs,
+    to_regclass('etaye_demo.fixture') IS NOT NULL AS seeded \gset
 \if :seeded
 DO $verify_seeded$
 BEGIN
@@ -91,6 +94,23 @@ BEGIN
     END IF;
 END
 $verify_seeded$;
+\if :has_labs
+SELECT to_regprocedure('etaye_demo.seed_laboratory_results()') IS NULL AS needs_lab_seed \gset
+\if :needs_lab_seed
+LOCK TABLE public.lab_result IN ACCESS EXCLUSIVE MODE;
+DO $new_lab_table$
+BEGIN
+    IF pg_relation_size('public.lab_result'::regclass) <> 0 THEN
+        RAISE EXCEPTION 'Refusing to seed an initialized laboratory result heap';
+    END IF;
+END
+$new_lab_table$;
+SQL
+  printf '%s\n' "$v14"
+  cat <<'SQL'
+SELECT etaye_demo.seed_laboratory_results();
+\endif
+\endif
 \else
 DO $empty$
 DECLARE
@@ -120,6 +140,7 @@ END
 $empty$;
 SQL
   printf '%s\n' "$v5_body" "$v6" "$v10" "$v12"
+  printf '\\if :has_labs\n%s\n\\endif\n' "$v14"
   printf 'SELECT etaye_demo.restore_fixture(true);\n\\endif\n'
 } | psql -X -w -v ON_ERROR_STOP=1 --username etaye_owner --dbname "$target_db" --single-transaction --file=-
 

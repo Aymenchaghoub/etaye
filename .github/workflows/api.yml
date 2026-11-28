@@ -63,7 +63,7 @@ jobs:
         if: steps.changes.outputs.relevant == 'true'
         # Raise the minimum whenever the suite grows.
         run: >-
-          python3 tools/assert_test_reports.py surefire apps/api/target/surefire-reports --min-tests 270
+          python3 tools/assert_test_reports.py surefire apps/api/target/surefire-reports --min-tests 306
           --require-suite dev.aymen.etaye.ArchitectureTest
           --require-suite dev.aymen.etaye.identity.IdentityLookupTest
           --require-suite dev.aymen.etaye.identity.recovery.LocalRecoveryInboxTest
@@ -102,6 +102,7 @@ jobs:
           --require-suite dev.aymen.etaye.records.RecordEvidenceHttpTest
           --require-suite dev.aymen.etaye.records.RecordEvidenceMigrationTest
           --require-suite dev.aymen.etaye.records.MeasurementFixtureHttpTest
+          --require-suite dev.aymen.etaye.records.LabResultHttpTest
           --require-suite dev.aymen.etaye.records.MeasurementHttpTest
           --require-suite dev.aymen.etaye.records.MeasurementMigrationTest
       - name: Verify isolation matrix report

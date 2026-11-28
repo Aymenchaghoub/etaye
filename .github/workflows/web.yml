@@ -84,7 +84,7 @@ jobs:
         if: steps.changes.outputs.relevant == 'true'
         # Raise the minimum whenever the suite grows.
         run: >-
-          python3 tools/assert_test_reports.py playwright apps/web/playwright-report/smoke.json --min-tests 206
+          python3 tools/assert_test_reports.py playwright apps/web/playwright-report/smoke.json --min-tests 226
           --require-file tests/stubbed-probe.spec.ts
           --require-file tests/account-access.spec.ts
           --require-file tests/invitation-access.spec.ts
@@ -93,6 +93,7 @@ jobs:
           --require-file tests/isolation.spec.ts
           --require-file tests/record.spec.ts
           --require-file tests/measurements.spec.ts
+          --require-file tests/laboratory.spec.ts
       - name: Upload Playwright and axe evidence
         if: always() && steps.changes.outputs.relevant == 'true'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -136,7 +137,7 @@ jobs:
         id: unit-coverage
         if: ${{ !cancelled() && steps.unit-tests.outcome == 'success' }}
         run: |
-          python3 tools/assert_test_reports.py vitest apps/web/reports/unit-tests.json --min-tests 163 --require-file src/auth/access-contexts.test.ts --require-file src/auth/session-work.test.ts --require-file src/isolation/isolation-journey.test.ts --require-file src/record/evidence.test.ts --require-file src/record/asof.test.ts --require-file src/record/measurements.test.ts --require-file src/record/zone.test.ts --require-file src/auth/SignIn.test.tsx --require-file src/auth/Recovery.test.tsx --require-file src/auth/PracticeSwitchDialog.test.tsx --require-file src/patients/contact-email.test.ts --require-file src/auth/AuthApp.test.tsx --require-file src/auth/Invitation.test.tsx --require-file src/demo/DemoShowcase.test.tsx --require-file src/patients/PatientForm.test.tsx --require-file src/patients/PractitionerShell.test.tsx --require-file src/record/RecordEdges.test.tsx
+          python3 tools/assert_test_reports.py vitest apps/web/reports/unit-tests.json --min-tests 174 --require-file src/auth/access-contexts.test.ts --require-file src/auth/session-work.test.ts --require-file src/isolation/isolation-journey.test.ts --require-file src/record/evidence.test.ts --require-file src/record/asof.test.ts --require-file src/record/measurements.test.ts --require-file src/record/lab-results.test.ts --require-file src/record/zone.test.ts --require-file src/auth/SignIn.test.tsx --require-file src/auth/Recovery.test.tsx --require-file src/auth/PracticeSwitchDialog.test.tsx --require-file src/patients/contact-email.test.ts --require-file src/auth/AuthApp.test.tsx --require-file src/auth/Invitation.test.tsx --require-file src/demo/DemoShowcase.test.tsx --require-file src/patients/PatientForm.test.tsx --require-file src/patients/PractitionerShell.test.tsx --require-file src/record/RecordEdges.test.tsx
           python3 tools/assert_coverage_reports.py lcov apps/web/reports/unit-coverage/lcov.info
           python3 tools/assert_coverage_reports.py lcov apps/web/reports/unit-only-coverage/lcov.info
           python3 tools/assert_coverage_reports.py lcov apps/web/reports/component-coverage/lcov.info

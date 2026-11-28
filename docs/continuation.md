@@ -1,6 +1,26 @@
 # Session continuation
 
-Updated: 2026-11-27. Owner: Aymen Chaghoub.
+Updated: 2026-11-28. Owner: Aymen Chaghoub.
+
+## Story 3.4 implementation and runtime review — 2026-11-28
+
+**Scope and branch.** `feat/3.4-laboratory-results` implements S-12 read-only under UD-78/79/80. The scoped allowlist includes 3.4 and the global development flag remains false. The contract preceded the V13/V14, API and Web changes. I-07 and the lab writes resume in increment 2 (D-24). [Implementation record](implementation-artifacts/story-3-4-implementation-record.md)
+
+**Verified application revision `ef9afa9`.** GitHub passed 306 API tests, 174 Vitest tests, 226 Chromium smoke scenarios (20 laboratory cases with axe-core checks), 14 real-stack scenarios, CodeQL and all three SonarQube quality gates. The separate local stop/pause/recovery scenario passed earlier. Three simultaneous local smoke cases timed out and passed twice in isolation. The [running-UI page](design/reviews/2026-11-27-story-3-4-runtime.html) compares the approved specimens and application at matching widths and themes. The packet records the Figma quota and approved offline fallback.
+
+**Review and approval.** At Aymen's request (UD-81), Zcode GLM-5.4 reviewed the complete diff at `2c69bd3` with one report and three lenses. The implementation record tracks its disposition and the four subsequent CodeRabbit findings, resolved at `ef9afa9`. Aymen approved the running interface and separately authorized the squash merge of [PR #105](https://github.com/Aymenchaghoub/etaye/pull/105) under [UD-82](planning-artifacts/decisions-assumptions.md#story-34-running-interface-and-merge-decisions--2026-11-28). The local demonstration is available at `http://127.0.0.1:4184/connexion`, Compose project `etaye-demo-story34`.
+
+**Delivery handoff.** Follow [PR #105 checks and review](https://github.com/Aymenchaghoub/etaye/pull/105/checks) for the exact merge revision and the follow-up to the CodeRabbit quota notice. After a confirmed merge, synchronize the principal checkout and the local cockpit with `origin/main`. Preserve the unmerged partial edits in the separate story 3.4 Web worktree.
+
+## Story 3.4 phase 0 — 2026-11-27
+
+**Phase and deliverables.** Documentary preparation is complete on `docs/story-3-4-phase-0`, from `main` at `4b3ee192ce298bdf398376585f6a745f5f847da6`. Story 3.2 is integrated through PR #68. The [context packet](implementation-artifacts/story-3-4-context-packet.md) pins the sources, tracks design gaps and maps the proposed contract, data model and verification to AT-012-A/B/C. The [local arbitration page](design/reviews/2026-11-27-story-3-4-phase0-arbitration.html) compares the received S-12 reference with the proposed increment-1 read scope and presents choices A–E. D-24 assigns I-07, lab entry and correction to increment 2.
+
+**Access and evidence.** Figma returned metadata for both desktop sections and no overlapping unresolved comments. The Starter call limit then blocked live frame screenshots and further property reads. Phase 0 used the recorded 2026-11-18 offline exception and opened five S-12/I-07 reference renders. The local arbitration page passed link, focus, recap and viewport checks in Chromium at five widths in both themes, with zero axe-core violations. Opened artwork and a checksum list are in the local sibling receipt folder `../etaye-design-receipts/2026-11-27-story-3-4-phase0/`. `python3 tools/validate_docs.py` passed with zero errors. The BMAD core and module configs were resolved. Application tests, running-UI review and BMAD readiness are pending their respective phases.
+
+**Scope and design follow-up.** Aymen replied “Oui je valide tout tes recommandations” to A1–E1. [UD-78](planning-artifacts/decisions-assumptions.md#story-34-scope-arbitration--2026-11-27) records the scope and preparation of the review. The epic, S-12 catalog, AT-012 traceability and D-24 now reflect that arbitration. The [S-12 gallery](design/reviews/2026-11-27-story-3-4-specimens/index.html) presents 22 synthetic specimen states, with separate links to the approved whole-record failure, restriction and expiry references. Chromium rendered 220 state/size/theme combinations. Axe-core reported zero violations in 44 scans with incomplete findings for native select and SVG contrast, checked separately for those text pairs. The opened comparisons, keyboard/reflow details and pending evidence are in the [design review](design/reviews/2026-11-27-story-3-4-design-review.md).
+
+**Approval and next action.** Aymen approved S-12 (UD-79) and authorized story 3.4 (UD-80). The scoped allowlist includes 3.4 and the global flag stays false. The installed BMAD readiness gate passes for this story. Begin contract-first on `feat/3.4-laboratory-results`, then verify API, Web and real-stack behavior and open the running comparisons for Aymen. I-07 remains in increment 2.
 
 ## First cloud release and acceptance — 2026-11-27
 

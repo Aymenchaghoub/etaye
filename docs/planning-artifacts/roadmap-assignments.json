@@ -846,6 +846,14 @@
       "increment": 1,
       "status": "contract"
     },
+    "listLabResultRevisions": {
+      "increment": 1,
+      "status": "contract"
+    },
+    "listLabAnalytes": {
+      "increment": 1,
+      "status": "contract"
+    },
     "appendLabResult": {
       "increment": 2,
       "status": "contract"

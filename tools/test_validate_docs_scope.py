@@ -334,6 +334,23 @@ class ApplicationScopeTests(unittest.TestCase):
         _, errors = self.check_scope()
         self.assertEqual(errors, [])
 
+    def test_story_3_4_scope_requires_ud_80(self):
+        stories = ("10.1", "10.2", "1.2", "1.1", "1.3", "9.1", "1.4", "3.1", "3.2", "3.3", "3.4")
+        self.authorize(story_10_2=True)
+        self.configure(f"authorized_stories = {list(stories)}")
+        decisions = self.root / "docs/planning-artifacts/decisions-assumptions.md"
+        with decisions.open("a", encoding="utf-8") as stream:
+            for story, decision in zip(stories[2:-1], (48, 50, 53, 56, 61, 65, 69, 73), strict=True):
+                stream.write(f"| UD-{decision} | Authorized for **story {story} only**. |\n")
+            stream.write("| UD-79 | Design of story 3.4 approved. |\n")
+        scope, errors = self.check_scope()
+        self.assertEqual(scope["authorizedStories"], list(stories))
+        self.assertIn("Story 3.4 authorization requires UD-80", errors[0])
+        with decisions.open("a", encoding="utf-8") as stream:
+            stream.write("| UD-80 | Authorized for **story 3.4 only**. |\n")
+        _, errors = self.check_scope()
+        self.assertEqual(errors, [])
+
     def test_demo_delivery_paths_require_story_9_1_scope(self):
         self.authorize(story_10_2=True)
         decisions = self.root / "docs/planning-artifacts/decisions-assumptions.md"

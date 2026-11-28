@@ -160,6 +160,28 @@ These are reviewable in the pull request that carries them; Aymen can revert any
 | UD-76 | Aymen authorized local cloud deployment preparation for the existing synthetic application on Azure Container Apps Consumption, Neon Free and GHCR. He approved the scoped Neon role replacement and database preparation, then the one-shot migration and synthetic fixture. He also approved registering Microsoft.App alone on Azure for Students. | Allows the named Bicep foundation files and reviewable deployment work. Azure resource creation, GitHub workflow merge, GHCR publishing and package visibility, deployment identity, first exposure, recurring deployment and restore each retain their own approval. No functional story is authorized. [Deployment record](../operations/cloud-demo-runbook.md#deployment-record) |
 | UD-77 | Aymen authorized the full cloud demonstration deployment, including scoped Azure, Neon and GitHub mutations, GHCR publication, the first secure HTTPS rollout and controlled continuous delivery. The owner confirmed USD 100 in Azure for Students credit through November 2027. | Ordinary deployment decisions and reviewed deployment PR merges can proceed. Preserve technical gates, the existing free-cost envelope, spending limit, budget, synthetic-only operation and the protected Neon branch. The global development authorization remains false. [Runbook](../operations/cloud-demo-runbook.md) |
 
+## Story 3.4 scope arbitration — 2026-11-27
+
+| Decision | Statement | Effect |
+| --- | --- | --- |
+| UD-78 | Aymen replied “Oui je valide tout tes recommandations” to the explicit recommendation A1, B1, C1, D1 and E1. **A1** S-12 is read-only in increment 1 and opens the exact dated source in place. File viewing remains in 5.3/3.5. **B1** Provide bounded lab revision reading and synthetic proof for comparator, qualitative, missing-interval and corrected results. Preserve the three canonical Claire values and provide exact supporting evidence. **C1** Preserve supplied date precision and use fixed descending specimen date, or result date if absent, with unknown dates explicit. Filter by exact analyte and period in the practice zone. **D1** Show source-supplied interval and transcription notices. Plot dated numeric points only with compatible unit, interval and supplied context, with the table as the reference. **E1** Prepare the responsive S-12 design specimens for written review, then request separate written authorization for 3.4. | **Scope arbitration.** S-12 design approval and story development authorization are pending. D-24 retains I-07, `appendLabResult`, `correctLabResult` and write-dependent AT-012 checks for increment 2. `3.4` remains outside the allowlist. Running-UI approval and merge remain later decisions. [Arbitration page](../design/reviews/2026-11-27-story-3-4-phase0-arbitration.html) · [Context packet](../implementation-artifacts/story-3-4-context-packet.md#arbitration-outcome-ud-78) · [Design review](../design/reviews/2026-11-27-story-3-4-design-review.md) |
+
+## Story 3.4 design and development decisions — 2026-11-27
+
+Aymen replied “Oui je valide et j’autorise la développement et tu peux la commencer” after reviewing the 22-state S-12 gallery and a prompt asking for design approval. The message explicitly confirms the design and separately grants development.
+
+| Decision | Statement | Effect |
+| --- | --- | --- |
+| UD-79 | Aymen approves the design of the 22 S-12 read-only specimens as presented under UD-78. | Design approval covers the gallery and its recorded limits. I-07 retains its increment-2 review. The running interface and any difference from the gallery require their own review. [Design review](../design/reviews/2026-11-27-story-3-4-design-review.md) |
+| UD-80 | Authorized for **story 3.4 only**, within the increment-1 read-only scope and approved design of UD-78 and UD-79. | Enables the contract-first implementation of the lab result and bounded lineage reads, scoped synthetic storage/seed, S-12, real-stack verification and design comparison. D-24 retains I-07 and both writes. The global flag remains false, and running-UI and merge decisions remain separate. [Context packet](../implementation-artifacts/story-3-4-context-packet.md) |
+| UD-81 | Aymen asks to continue story 3.4 and perform its BMAD three-lens review with Zcode and GLM-5.4, without Codex subagents. | The end-of-story review follows the recorded Zcode method in isolated, guarded mode. Subsequent implementation and review triage are performed by the primary agent. [Delivery rules](../operations/delivery-rules.md) |
+
+## Story 3.4 running interface and merge decisions — 2026-11-28
+
+| Decision | Statement | Effect |
+| --- | --- | --- |
+| UD-82 | After receiving the S-12 running comparison for application revision `ef9afa9`, Aymen wrote “j'approuve, tu peux merger”. He approves the running interface as presented, including the responsive layout, dated sources and correction history. He also authorizes the squash merge of PR #105 into `main`. | The running-UI and merge authorization decisions are recorded for story 3.4. The merge follows the repository delivery checks. D-24 still governs I-07 and the two increment-2 write operations. [Running comparison](../design/reviews/2026-11-27-story-3-4-runtime.html) · [PR #105](https://github.com/Aymenchaghoub/etaye/pull/105) |
+
 ## Working assumptions and decisions to revisit
 
 | ID | Classification and working choice | Rationale | Consequences and impact if changed | Owner / explicit revisit trigger |

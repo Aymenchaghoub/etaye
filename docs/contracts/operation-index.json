@@ -234,6 +234,18 @@
     "permission": "CLINICAL_WRITE"
   },
   {
+    "operationId": "listLabResultRevisions",
+    "method": "get",
+    "path": "/practices/{practiceId}/records/{recordId}/lab-results/{labResultId}/revisions",
+    "permission": "CLINICAL_READ"
+  },
+  {
+    "operationId": "listLabAnalytes",
+    "method": "get",
+    "path": "/practices/{practiceId}/records/{recordId}/lab-results/analytes",
+    "permission": "CLINICAL_READ"
+  },
+  {
     "operationId": "correctLabResult",
     "method": "post",
     "path": "/practices/{practiceId}/lab-results/{labResultId}/corrections",

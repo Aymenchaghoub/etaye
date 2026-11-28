@@ -16,7 +16,9 @@ export type SourceHandle = { id: string; reference: string; number: number };
  * The two parts are returned separately so a screen can place the marker beside the item and the button under it.
  */
 export function useSource(source: SourceHandle, practiceId: string, asOf: string | undefined, expire: () => void,
-  variant: 'inline' | 'alone' = 'inline', external?: { markerId: string }): { marker: ReactNode; panel: ReactNode; activate: () => void; regionId: string } {
+  variant: 'inline' | 'alone' = 'inline',
+  external?: { markerId: string; label?: string; backLabel?: string; failureText?: string },
+): { marker: ReactNode; panel: ReactNode; activate: () => void; regionId: string } {
   const { refused, zone } = useRecord();
   const uid = useId();
   // A screen that places the marker elsewhere (the table of S-11) names its own marker, so "Revenir à l'élément" returns there.
@@ -65,7 +67,7 @@ export function useSource(source: SourceHandle, practiceId: string, asOf: string
     <div className="etaye-source">
       <button ref={button} type="button" className="etaye-bouton etaye-bouton--discret" aria-expanded={open}
         aria-controls={regionId} onClick={() => setOpen((value) => !value)}>
-        {open ? 'Masquer la source' : 'Afficher la source'}<span className="etaye-vh"> {source.reference}</span>
+        {external?.label ?? <>{open ? 'Masquer la source' : 'Afficher la source'}<span className="etaye-vh"> {source.reference}</span></>}
       </button>
       {open && (
         <div className="etaye-source__corps" id={regionId} role="region" aria-label={`Source ${source.reference}`}
@@ -74,10 +76,10 @@ export function useSource(source: SourceHandle, practiceId: string, asOf: string
           {remote && remote.phase !== 'loading' && remote.phase !== 'ready' && (
             <Notice kind="attention" alert title="La source n’a pas pu être chargée"
               actions={<button className="etaye-bouton etaye-bouton--secondaire" type="button" onClick={() => setAttempt((n) => n + 1)}>Réessayer</button>}>
-              La déclaration affichée au-dessus reste visible ; seul l’extrait manque. Rien n’a été supprimé.
+              {external?.failureText ?? 'La déclaration affichée au-dessus reste visible ; seul l’extrait manque. Rien n’a été supprimé.'}
             </Notice>
           )}
-          {remote?.phase === 'ready' && <SourceBody source={remote.data} back={markerId} zone={zone} />}
+          {remote?.phase === 'ready' && <SourceBody source={remote.data} back={markerId} zone={zone} backLabel={external?.backLabel} />}
         </div>
       )}
     </div>
@@ -85,7 +87,7 @@ export function useSource(source: SourceHandle, practiceId: string, asOf: string
   return { marker, panel, activate, regionId };
 }
 
-function SourceBody({ source, back, zone }: { source: Source; back: string; zone: string }) {
+function SourceBody({ source, back, zone, backLabel = 'Revenir à l’élément' }: { source: Source; back: string; zone: string; backLabel?: string }) {
   const event = eventLabel(source.eventDate, zone);
   const state = originState[source.sourceType];
   return <>
@@ -111,7 +113,7 @@ function SourceBody({ source, back, zone }: { source: Source; back: string; zone
     {source.excerpt && <div className="etaye-source-texte">{source.excerpt}</div>}
     <div>
       <a className="etaye-bouton etaye-bouton--discret" href={`#${back}`}
-        onClick={(event) => { event.preventDefault(); document.getElementById(back)?.focus(); }}>Revenir à l’élément</a>
+        onClick={(event) => { event.preventDefault(); document.getElementById(back)?.focus(); }}>{backLabel}</a>
     </div>
   </>;
 }

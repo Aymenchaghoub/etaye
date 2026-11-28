@@ -7,7 +7,7 @@ import { ACCOUNT_PATH } from '../auth/session-work';
 import { ageOn, formatDate } from '../patients/date';
 import { EntryHeader, Notice, patientName, Skeleton } from '../patients/patient-ui';
 import { useShell } from '../patients/PractitionerShell';
-import { historyPath, measurementsPath, patientsPath, recordPath } from '../patients/routes';
+import { historyPath, laboratoryPath, measurementsPath, patientsPath, recordPath } from '../patients/routes';
 import { EMPTY_INSTANT, instantParts, type InstantParts, parseAsOf } from './asof';
 import { clock, sectionWords } from './evidence';
 import { readView, type RecordView, writeView } from './memory';
@@ -15,7 +15,9 @@ import { type Remote, useRemote } from './remote';
 import { zoneWords } from './zone';
 import './record.css';
 
-export type RecordTab = 'record' | 'history' | 'measurements';
+export type RecordTab = 'record' | 'history' | 'measurements' | 'laboratory';
+
+const recordTitles = { record: 'Chronologie', history: 'Antécédents et allergies', measurements: 'Mesures', laboratory: 'Biologie' };
 
 export type RecordContext = {
   scope: string;
@@ -196,11 +198,12 @@ function Frame({ tab, patientLabel, ready, children }: { tab: RecordTab; patient
     <a aria-current={tab === target ? 'page' : undefined} href={path}
       onClick={(event) => { event.preventDefault(); ctx.go(path); }}>{label}</a>
   );
-  const title = tab === 'record' ? 'Chronologie' : tab === 'history' ? 'Antécédents et allergies' : 'Mesures';
+  const title = recordTitles[tab];
   const meta = past ? `${ctx.practiceName} · vue historique au ${date} à ${time}`
     : tab === 'record' ? `${ctx.practiceName} · dates de survenue et d’enregistrement affichées séparément`
       : tab === 'history' ? 'Chaque déclaration garde sa date, son auteur et son origine'
-        : `${ctx.practiceName} · valeurs actuelles · les versions corrigées restent consultables`;
+        : tab === 'laboratory' ? 'Intervalles tels que fournis par chaque source'
+          : `${ctx.practiceName} · valeurs actuelles · les versions corrigées restent consultables`;
 
   return <>
     <EntryHeader title={title} meta={meta} crumb={patientLabel} onCrumb={() => ctx.go(patientsPath(ctx.base))}
@@ -233,6 +236,7 @@ function Frame({ tab, patientLabel, ready, children }: { tab: RecordTab; patient
       {tabLink('record', 'Chronologie', recordPath(ctx.base, ctx.recordId))}
       {tabLink('history', 'Antécédents et allergies', historyPath(ctx.base, ctx.recordId))}
       {tabLink('measurements', 'Mesures', measurementsPath(ctx.base, ctx.recordId))}
+      {tabLink('laboratory', 'Biologie', laboratoryPath(ctx.base, ctx.recordId))}
     </nav>
     {children}
   </>;

@@ -2718,7 +2718,7 @@
       "get": {
         "operationId": "listLabResults",
         "summary": "listLabResults",
-        "description": "Requires CLINICAL_READ. Practice IDs select context, never grant authority. Apply business rules and typed input semantics in README. Optional asOf returns the record as known at a past instant (UD-32).",
+        "description": "Requires CLINICAL_READ and a record in the selected practice. Returns the latest visible revision per lineage. Orders by specimen date with result-date fallback, newest first and unknown last. The cursor pins the view instant and filters. Private no-store. See contract guide for date precision.",
         "x-required-permissions": [
           "CLINICAL_READ"
         ],
@@ -2765,6 +2765,14 @@
           },
           {
             "$ref": "#/components/parameters/AsOf"
+          },
+          {
+            "name": "analyteKey",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
           }
         ],
         "responses": {
@@ -2883,6 +2891,147 @@
                 "$ref": "#/components/schemas/LabInput"
               }
             }
+          }
+        }
+      }
+    },
+    "/practices/{practiceId}/records/{recordId}/lab-results/{labResultId}/revisions": {
+      "get": {
+        "operationId": "listLabResultRevisions",
+        "summary": "listLabResultRevisions",
+        "description": "Returns the bounded immutable revisions of the requested result within the record, in ascending revision order. A revision outside the practice, record or asOf view is hidden. Private no-store.",
+        "x-required-permissions": [
+          "CLINICAL_READ"
+        ],
+        "parameters": [
+          {
+            "name": "practiceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "recordId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/AsOf"
+          },
+          {
+            "name": "labResultId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful outcome; no automatic review or publication.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabResultRevisionList"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem404"
+          },
+          "429": {
+            "$ref": "#/components/responses/Problem429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Problem503"
+          }
+        }
+      }
+    },
+    "/practices/{practiceId}/records/{recordId}/lab-results/analytes": {
+      "get": {
+        "operationId": "listLabAnalytes",
+        "summary": "listLabAnalytes",
+        "description": "Returns bounded exact analyte options for the authorized record and view. Options are independent of result filters. Private no-store.",
+        "x-required-permissions": [
+          "CLINICAL_READ"
+        ],
+        "parameters": [
+          {
+            "name": "practiceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "recordId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/AsOf"
+          },
+          {
+            "$ref": "#/components/parameters/Cursor"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful outcome; no automatic review or publication.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabAnalytePage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem404"
+          },
+          "429": {
+            "$ref": "#/components/responses/Problem429"
+          },
+          "503": {
+            "$ref": "#/components/responses/Problem503"
           }
         }
       }
@@ -9758,6 +9907,81 @@
           "sourceRevisionId": {
             "type": "string",
             "format": "uuid"
+          },
+          "specimenDate": {
+            "$ref": "#/components/schemas/EventDate"
+          },
+          "resultDate": {
+            "$ref": "#/components/schemas/EventDate"
+          },
+          "intervalUnit": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "intervalContext": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "outsideInterval": {
+            "type": "string",
+            "enum": [
+              "BELOW",
+              "ABOVE"
+            ],
+            "description": "Explicit direction supplied by the source."
+          },
+          "unconfirmedTranscription": {
+            "type": "boolean",
+            "description": "True only when the source marks the transcription unconfirmed."
+          },
+          "supersedesId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "authorLabel": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "sourceReference": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "comparisonContext": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Explicitly supplied comparison facts used to decide which results may share a point series.",
+            "properties": {
+              "method": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "fasting": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "samplingWindow": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              }
+            },
+            "required": [
+              "method",
+              "fasting",
+              "samplingWindow"
+            ]
           }
         },
         "required": [
@@ -11607,6 +11831,11 @@
               "null"
             ],
             "maxLength": 1024
+          },
+          "viewAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Recording-time cutoff pinned across this result traversal."
           }
         },
         "required": [
@@ -12299,6 +12528,67 @@
         "required": [
           "asOf",
           "sections"
+        ]
+      },
+      "LabResultRevisionList": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "revisions": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/LabResult"
+            }
+          },
+          "truncated": {
+            "type": "boolean",
+            "description": "The response kept the original and the latest 99 visible revisions."
+          }
+        },
+        "required": [
+          "revisions"
+        ]
+      },
+      "LabAnalytePage": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                }
+              },
+              "required": [
+                "key",
+                "label"
+              ]
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 1024
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
         ]
       }
     },

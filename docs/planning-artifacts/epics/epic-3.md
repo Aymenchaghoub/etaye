@@ -66,7 +66,7 @@ As a practitioner, I want to see laboratory results with their supplied interval
 - Requirements: FR-007. Rules: BR-009. Journey: J-02.
 - Design: S-12; interactions I-07. Acceptance test design: AT-012.
 - Dependencies: Story 3.2 (see [roadmap](../roadmap.md)). Gates: Aymen's development authorization and the core design families (UD-16).
-- Delivery: Increment 1, Red-thread slice (web). Deferred parts: Entering and correcting laboratory results (I-07; appendLabResult, correctLabResult) → Increment 2 (D-24).
+- Delivery: Increment 1, Red-thread slice (web). Under [UD-78](../decisions-assumptions.md#story-34-scope-arbitration--2026-11-27), S-12 reads seeded results, exact sources, bounded correction lineage and the historical view. It preserves date precision, exact analyte and period filters, and comparable numeric points under supplied unit/interval/context. Approve the S-12 specimens and authorize this story separately. Deferred parts: Entering and correcting laboratory results (I-07; appendLabResult, correctLabResult), their invalid/stale write cases and the write design review → Increment 2 (D-24). The protected file viewer stays with 5.3/3.5.
 - Read before refinement: [PRD](../prd/prd.md), [rules](../business-rules.md), [access](../access-matrix.md), [architecture](../architecture/ARCHITECTURE-SPINE.md), [data](../data-model.md), [contracts](../../contracts/openapi.yaml), [screen catalog](../../design/screen-catalog.md), [test strategy](../../test-artifacts/test-strategy.md).
 - Assumptions: apply relevant A-01–A-12 from the decision register; never treat them as verified facts. Record any changed source/version and resulting AC change in the future story.
 

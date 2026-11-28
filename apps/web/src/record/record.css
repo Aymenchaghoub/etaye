@@ -99,6 +99,10 @@ select.etaye-champ__saisie { appearance: none; padding-right: var(--espace-8); b
 @media (max-width: 1100px) {
   .etaye-cols--2 { grid-template-columns: minmax(0, 1fr); }
 }
+@media (761px <= width <= 900px) {
+  .etaye-banniere { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); }
+  .etaye-allergies { min-width: 0; }
+}
 @media (max-width: 760px) {
   .etaye-cols--egal { grid-template-columns: minmax(0, 1fr); }
   .etaye-allergies { min-width: 0; }
@@ -161,6 +165,13 @@ select.etaye-champ__saisie { appearance: none; padding-right: var(--espace-8); b
   .etaye-tableau--empile td { border: 0; padding: 2px var(--espace-2); }
   .etaye-tableau--empile td[data-l]::before { content: attr(data-l); display: block; color: var(--encre-3); font: 400 12px/16px var(--font-texte); }
   .etaye-tableau--empile td.etaye-col-num { text-align: left; white-space: normal; overflow-wrap: anywhere; }
+}
+@media (761px <= width <= 900px) {
+  .etaye-biologie .etaye-tableau--empile thead { display: none; }
+  .etaye-biologie .etaye-tableau--empile tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--espace-1) var(--espace-3); padding: var(--espace-2) 0; border-bottom: var(--trait-filet) solid var(--filet); }
+  .etaye-biologie .etaye-tableau--empile td { border: 0; padding: 2px var(--espace-2); }
+  .etaye-biologie .etaye-tableau--empile td[data-l]::before { content: attr(data-l); display: block; color: var(--encre-3); font: 400 12px/16px var(--font-texte); }
+  .etaye-biologie .etaye-tableau--empile td.etaye-col-num { text-align: left; }
 }
 @media (max-width: 420px) {
   .etaye-onglets { flex-wrap: wrap; overflow-x: visible; }

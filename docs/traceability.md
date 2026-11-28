@@ -161,6 +161,16 @@ UD-71 confirms that story 3.3 is read-only and records what the build deliberate
 | `appendMeasurement`, `correctMeasurement`, I-06, the AT-011-B parts that need writes (invalid input, stale correction, unit validation), the concept and unit catalogue | Deferred (D-24, D-66, increment 2) | Not applicable in increment 1 |
 | Date-only and unknown observed time, "Date inconnue" row | Deferred (D-65) | Not applicable in increment 1 |
 
+## Story 3.4 scope allocation
+
+| Test | Increment 1 under UD-78 | Increment 2 under D-24 |
+|---|---|---|
+| AT-012-A | Read seeded numeric and qualitative results, with supplied comparator, unit, interval, dates and exact source. | Enter and correct through I-07. |
+| AT-012-B | Read seeded correction lineage, preserve explicit interval absence and the as-of and authorization boundaries. Document extraction resumes under D-01. | Validate manual input, source selection, correction reason, version and retry guards. |
+| AT-012-C | S-12 specimen approval and a separate SAMPLED running-UI matrix. Whole-record refusal and expiry reuse the approved destinations. | I-07 form, recovery and responsive design review. |
+
+[Scope decision UD-78](planning-artifacts/decisions-assumptions.md#story-34-scope-arbitration--2026-11-27) · [Exact acceptance text](planning-artifacts/epics/epic-3.md#story-34-enter-and-correct-laboratory-results) · [S-12 design review](design/reviews/2026-11-27-story-3-4-design-review.md)
+
 ## Story 3.2 record evidence verification
 
 Executed evidence for the delivered read side. [Implementation record](implementation-artifacts/story-3-2-implementation-record.md) · [Running-UI review](design/reviews/2026-11-24-story-3-2-runtime.md) (visual approval pending Aymen's decision).

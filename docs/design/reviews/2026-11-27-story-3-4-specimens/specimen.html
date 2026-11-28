@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html data-theme="clair" lang="fr">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Biologie · Étaye
+  </title>
+  <link href="../../../../design/offline-reference/site/tokens/tokens.css" rel="stylesheet"/>
+  <link href="../../../../design/offline-reference/site/css/etaye.css" rel="stylesheet"/>
+  <link href="../../../../design/offline-reference/site/css/review-corrections.css" rel="stylesheet"/>
+  <style>
+   body { margin: 0; background: var(--fond); }
+.etaye-root h1[tabindex="-1"]:focus { outline: none; }
+[hidden] { display: none !important; }
+#page { overflow-wrap: anywhere; }
+#page h2, #page h3 { margin: 0; }
+#page p { margin: 0; }
+#lab-content { min-width: 0; }
+.etaye-tableau { table-layout: fixed; }
+.etaye-tableau td, .etaye-tableau th { overflow-wrap: anywhere; vertical-align: top; }
+.etaye-tableau .etaye-col-num { white-space: normal; }
+.etaye-tableau th:nth-child(1) { width: 17%; }
+.etaye-tableau th:nth-child(2) { width: 19%; }
+.etaye-tableau th:nth-child(3) { width: 12%; text-align: right; }
+.etaye-tableau th:nth-child(4) { width: 11%; }
+.etaye-tableau th:nth-child(5) { width: 32%; }
+.etaye-tableau th:nth-child(6) { width: 9%; }
+#lab-content .etaye-bouton { max-width: 100%; white-space: normal; text-align: start; }
+.etaye-repere { min-inline-size: 32px; min-block-size: 32px; top: 0; vertical-align: middle; }
+.etaye-filtres, .spec-date { display: flex; align-items: end; flex-wrap: wrap; gap: var(--espace-3); }
+.etaye-filtres .etaye-champ { min-width: 0; }
+.spec-date .j, .spec-date .m, .spec-date .h, .spec-date .mi { width: 72px; }
+.spec-date .a { width: 104px; }
+.spec-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--espace-2); }
+.lab-details { padding: var(--espace-3); border: var(--trait-filet) solid var(--filet); background: var(--surface); }
+.lab-details > .etaye-bouton { justify-self: start; }
+.lab-details > div:not([hidden]) { display: grid; gap: var(--espace-2); margin-top: var(--espace-2); }
+.lab-history { display: grid; gap: var(--espace-2); padding-inline-start: var(--espace-6); margin: 0; }
+.lab-chart { width: 100%; max-width: 480px; color: var(--encre-2); }
+.lab-chart line { stroke: var(--filet-controle); }
+.lab-chart circle { fill: var(--accent); }
+.lab-chart text { fill: var(--encre-2); font: 13px var(--font-donnee); }
+#identity > div { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 760px) {
+  .etaye-onglets { flex-wrap: wrap; overflow-x: visible; }
+  .etaye-onglets a { white-space: normal; }
+  .etaye-tableau--empile td[data-l]::before { color: var(--encre-2); }
+  .etaye-tableau--empile tr { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .etaye-tableau--empile td:nth-child(5), .etaye-tableau--empile td:nth-child(6) { grid-column: 1 / -1; }
+  .etaye-tableau--empile .lab-long-value { grid-column: 1 / -1; }
+  .etaye-tableau--empile .etaye-repere { margin-block-start: var(--espace-1); }
+}
+  </style>
+  <script defer="" src="specimen.js">
+  </script>
+ </head>
+ <body class="etaye-root">
+  <div class="etaye-root etaye-app">
+   <header class="etaye-top">
+    <button aria-expanded="false" aria-label="Ouvrir le menu" class="etaye-fermer etaye-top__menu" data-menu="true" type="button">
+     <span aria-hidden="true" class="etaye-icone etaye-icone--18 etaye-icone--menu">
+     </span>
+    </button>
+    <a class="etaye-top__logo" href="../2026-11-24-story-3-2-specimens/specimens/s07-liste.html">
+     <img alt="Étaye" class="etaye-logo-c" src="../../../../design/offline-reference/site/logos/etaye-logo.svg" style="height:22px"/>
+     <img alt="Étaye" class="etaye-logo-s" src="../../../../design/offline-reference/site/logos/etaye-logo-sombre.svg" style="height:22px"/>
+    </a>
+    <div class="etaye-contexte">
+     <span aria-hidden="true" class="etaye-icone etaye-icone--18 etaye-icone--cabinet">
+     </span>
+     <span>
+      <span class="etaye-contexte__cabinet">
+       Cabinet des Tilleuls
+      </span>
+      <span class="etaye-contexte__role">
+       Praticienne · Dr Nora Lefebvre
+      </span>
+     </span>
+    </div>
+    <div class="etaye-top__droite">
+     <span class="etaye-demo">
+      Démonstration — personnes et données fictives
+     </span>
+     <span class="etaye-compte__nom">
+      Dr Nora Lefebvre
+     </span>
+     <button class="etaye-bouton etaye-bouton--discret" type="button">
+      Se déconnecter
+     </button>
+    </div>
+   </header>
+   <nav aria-label="Navigation principale" class="etaye-nav">
+    <ul class="etaye-nav__liste">
+     <li>
+      <a aria-current="page" class="etaye-nav__rangee" href="../2026-11-24-story-3-2-specimens/specimens/s07-liste.html">
+       <span aria-hidden="true" class="etaye-icone etaye-icone--18 etaye-icone--patients">
+       </span>
+       Patients
+      </a>
+     </li>
+    </ul>
+   </nav>
+   <main class="etaye-main" id="contenu">
+    <header aria-label="Patient affiché" class="etaye-banniere" id="identity">
+     <div>
+      <div class="etaye-banniere__nom">
+       MARTIN Claire
+      </div>
+      <div class="etaye-banniere__traits">
+       <span>
+        Naissance
+        <span class="etaye-num">
+         18/04/1978
+        </span>
+        ·
+        <span class="etaye-num">
+         48
+        </span>
+        ans
+       </span>
+      </div>
+     </div>
+     <div class="etaye-allergies" role="note" style="background:var(--attention-fond)">
+      <div class="etaye-allergies__titre" style="color:var(--attention)">
+       <span aria-hidden="true" class="etaye-icone etaye-icone--alerte">
+       </span>
+       Allergies
+      </div>
+      <div class="etaye-allergies__liste" style="font-weight:400">
+       Déclarations discordantes à préciser · ne pas conclure à l'absence
+      </div>
+     </div>
+    </header>
+    <div class="etaye-page" id="page">
+     <div class="etaye-entete">
+      <div>
+       <div class="etaye-entete__fil">
+        <a href="../2026-11-24-story-3-2-specimens/specimens/s07-liste.html">
+         Patients
+        </a>
+        › MARTIN Claire
+       </div>
+       <h1 data-focus="" tabindex="-1">
+        Biologie
+       </h1>
+       <div class="etaye-entete__meta">
+        Intervalles tels que fournis par chaque source
+       </div>
+      </div>
+      <div class="etaye-entete__actions">
+       <button aria-controls="asof-region" aria-expanded="false" class="etaye-bouton etaye-bouton--secondaire" data-closed="Voir le dossier à une date passée" data-disclosure="" data-open="Masquer le choix de date" type="button">
+        Voir le dossier à une date passée
+       </button>
+      </div>
+     </div>
+     <section aria-label="Choix de la date de la vue historique" class="etaye-panneau" hidden="" id="asof-region">
+      <form class="etaye-panneau__corps etaye-pile" novalidate="">
+       <div aria-describedby="as-aide" aria-labelledby="as-l" class="etaye-champ" role="group">
+        <span class="etaye-champ__libelle" id="as-l">
+         Voir le dossier tel qu'il était le
+        </span>
+        <div class="spec-date">
+         <div class="etaye-champ j">
+          <label class="etaye-champ__libelle" for="as-j">
+           Jour
+          </label>
+          <input class="etaye-champ__saisie etaye-num" id="as-j" inputmode="numeric" maxlength="2" placeholder="JJ" type="text" value=""/>
+         </div>
+         <div class="etaye-champ m">
+          <label class="etaye-champ__libelle" for="as-m">
+           Mois
+          </label>
+          <input class="etaye-champ__saisie etaye-num" id="as-m" inputmode="numeric" maxlength="2" placeholder="MM" type="text" value=""/>
+         </div>
+         <div class="etaye-champ a">
+          <label class="etaye-champ__libelle" for="as-a">
+           Année
+          </label>
+          <input class="etaye-champ__saisie etaye-num" id="as-a" inputmode="numeric" maxlength="4" placeholder="AAAA" type="text" value=""/>
+         </div>
+         <div class="etaye-champ h">
+          <label class="etaye-champ__libelle" for="as-h">
+           Heure
+          </label>
+          <input class="etaye-champ__saisie etaye-num" id="as-h" inputmode="numeric" maxlength="2" placeholder="HH" type="text" value=""/>
+         </div>
+         <div class="etaye-champ mi">
+          <label class="etaye-champ__libelle" for="as-mi">
+           Minute
+          </label>
+          <input class="etaye-champ__saisie etaye-num" id="as-mi" inputmode="numeric" maxlength="2" placeholder="MM" type="text" value=""/>
+         </div>
+         <button class="etaye-bouton etaye-bouton--secondaire" type="submit">
+          Afficher cette date
+         </button>
+        </div>
+        <span class="etaye-champ__aide" id="as-aide">
+         Heure de Paris. Lecture seule : le dossier s'affiche tel qu'il était à cet instant. Une date future est refusée.
+        </span>
+       </div>
+      </form>
+     </section>
+     <nav aria-label="Sections" class="etaye-onglets">
+      <a href="../2026-11-24-story-3-2-specimens/specimens/s09-claire.html">
+       Chronologie
+      </a>
+      <a href="../2026-11-24-story-3-2-specimens/specimens/s10-claire.html">
+       Antécédents et allergies
+      </a>
+      <a href="../2026-11-25-story-3-3-specimens/specimens/s11-claire.html">
+       Mesures
+      </a>
+      <a aria-current="page" href="specimen.html">
+       Biologie
+      </a>
+     </nav>
+     <div class="etaye-pile" id="lab-content">
+     </div>
+    </div>
+   </main>
+  </div>
+ </body>
+</html>

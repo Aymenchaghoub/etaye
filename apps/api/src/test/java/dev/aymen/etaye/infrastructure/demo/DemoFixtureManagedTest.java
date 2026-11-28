@@ -71,9 +71,12 @@ class DemoFixtureManagedTest {
             assertThat(versionFour.migrate().migrationsExecuted).isEqualTo(4);
             versionFour.validate();
             assertThat(seed(pg, DEMO_DATABASE).getExitCode()).isNotZero();
+            var throughMeasurements = Flyway.configure()
+                    .dataSource(databaseUrl(pg, DEMO_DATABASE), OWNER, ownerPassword)
+                    .locations("classpath:db/migration").target("11").load();
+            assertThat(throughMeasurements.migrate().migrationsExecuted).isEqualTo(4);
             var flyway = schema(pg, DEMO_DATABASE);
-            assertThat(flyway.migrate().migrationsExecuted).isEqualTo(4);
-            flyway.validate();
+            throughMeasurements.validate();
 
             var practiceId = UUID.randomUUID();
             owner.update("INSERT INTO practice (id, display_name) VALUES (?, ?)", practiceId, "Synthetic guard test");
@@ -101,12 +104,23 @@ class DemoFixtureManagedTest {
 
             assertSuccess(seed(pg, DEMO_DATABASE));
             assertSuccess(seed(pg, DEMO_DATABASE));
-            assertThat(flyway.info().applied()).hasSize(8);
-            flyway.validate();
+            assertThat(throughMeasurements.info().applied()).hasSize(8);
+            throughMeasurements.validate();
             managed.verifyDatabase();
             assertThat(managed.version()).isEqualTo(new DemoFixture.Version("etaye-design-v1", 1L));
             refuses(new DemoFixture(runtime, ""));
             refuses(new DemoFixture(runtime, RESTORE_DATABASE));
+            var throughLabs = Flyway.configure()
+                    .dataSource(databaseUrl(pg, DEMO_DATABASE), OWNER, ownerPassword)
+                    .locations("classpath:db/migration").target("13").load();
+            assertThat(throughLabs.migrate().migrationsExecuted).isEqualTo(1);
+            assertSuccess(seed(pg, DEMO_DATABASE));
+            assertIsolation(pg, DEMO_DATABASE);
+            assertThat(flyway.migrate().migrationsExecuted).isEqualTo(1);
+            flyway.validate();
+            assertSuccess(seed(pg, DEMO_DATABASE));
+            assertSuccess(seed(pg, DEMO_DATABASE));
+            assertThat(managed.version().generation()).isEqualTo(1L);
             assertIsolation(pg, DEMO_DATABASE);
 
             reset(runtime, managed);
@@ -128,7 +142,7 @@ class DemoFixtureManagedTest {
             createDatabase(pg, freshDatabase);
             mark(pg, freshDatabase);
             var fresh = schema(pg, freshDatabase);
-            assertThat(fresh.migrate().migrationsExecuted).isEqualTo(8);
+            assertThat(fresh.migrate().migrationsExecuted).isEqualTo(10);
             fresh.validate();
             assertSuccess(seed(pg, freshDatabase));
             jdbc(pg, freshDatabase, OWNER, ownerPassword).execute("DELETE FROM etaye_demo.fixture");
@@ -203,7 +217,7 @@ class DemoFixtureManagedTest {
                 WHERE n.nspname = 'public' AND c.relkind = 'r' AND (c.relrowsecurity OR c.relforcerowsecurity)
                 """, String.class)).containsExactlyInAnyOrder(
                 "account", "membership", "patient", "patient_record", "audit_event", "outbox_event",
-                "idempotency_receipt", "portal_link", "invitation", "source_revision", "clinical_assertion", "measurement");
+                "idempotency_receipt", "portal_link", "invitation", "source_revision", "clinical_assertion", "measurement", "lab_result");
         assertThat(owner.queryForObject("""
                 SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
                 WHERE n.nspname = 'public' AND c.relkind = 'r' AND c.relrowsecurity <> c.relforcerowsecurity
@@ -232,6 +246,10 @@ class DemoFixtureManagedTest {
                 try (var scoped = statement.executeQuery("SELECT count(*) FROM patient")) {
                     assertThat(scoped.next()).isTrue();
                     assertThat(scoped.getInt(1)).isEqualTo(alias.equals(PRACTICE_A) ? 3 : 1);
+                }
+                try (var labs = statement.executeQuery("SELECT count(*) FROM lab_result")) {
+                    assertThat(labs.next()).isTrue();
+                    assertThat(labs.getInt(1)).isEqualTo(alias.equals(PRACTICE_A) ? 9 : 0);
                 }
                 connection.commit();
             }
