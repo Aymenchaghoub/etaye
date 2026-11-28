@@ -361,7 +361,8 @@ class ApplicationScopeTests(unittest.TestCase):
                          "| UD-56 | Authorized for story 9.1 only. |\n")
         self.write(".git")
         allowed = ("apps/web/warmup.html", "apps/web/playwright.demo.config.ts",
-                   "apps/web/demo-e2e/journey.spec.ts", "infra/demo/compose.yml")
+                   "apps/web/demo-e2e/journey.spec.ts", "apps/web/demo-e2e/identity.spec.ts",
+                   "infra/demo/compose.yml", "infra/demo/recovery-inbox.py", "infra/demo/walkthrough.fr.txt")
         denied = "infra/demo/.env"
         for name in (*allowed, denied):
             self.write(name)

@@ -2,6 +2,14 @@
 
 Updated: 2026-11-28. Owner: Aymen Chaghoub.
 
+## Expanded local demonstration — 2026-11-28
+
+**Scope and artifacts.** `feat/9.1-demo-journey-coverage` extends the walkthrough of the eleven merged increment-1 stories at baseline `bffafbd7a2fadf782fcd652ed634dc1660b9721b`. The [baseline audit](implementation-artifacts/local-demo-coverage.md) distinguishes covered product surfaces, API-only proof and deferred work. The [Compose guide](../infra/demo/README.md#guided-routes) and packaged French text describe identity, practice switching, patient reception, record evidence and platform checks. The two existing replay files stay in place.
+
+**Verified.** Java 25 Maven verification passed 306 tests. Web frozen install, lint, SDK parity, types, build, 174 Vitest tests and 226 Chromium smoke tests passed. Seven real Compose invocations passed 13 tests, including a 367 ms measured operator reset and successful authentication with the restored credential. The documentary validator and 329 Python tooling tests passed. The local validation project is `etaye-demo-coverage-final` on `http://localhost:4179`.
+
+**Access and delivery.** The existing synthetic recovery inbox is explicitly enabled for the local verification project. It stays on the API container's loopback, and the Docker operator opens a private snapshot using the documented helper. The walkthrough reuses the existing fixture, product screens and permission checks. Deliver the branch through its pull request. I-07, clinical entry and correction, cloud deployment and application operations remain outside this walkthrough change.
+
 ## Story 3.4 implementation and runtime review — 2026-11-28
 
 **Scope and branch.** `feat/3.4-laboratory-results` implements S-12 read-only under UD-78/79/80. The scoped allowlist includes 3.4 and the global development flag remains false. The contract preceded the V13/V14, API and Web changes. I-07 and the lab writes resume in increment 2 (D-24). [Implementation record](implementation-artifacts/story-3-4-implementation-record.md)

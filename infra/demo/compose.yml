@@ -49,6 +49,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${ETAYE_RUNTIME_PASSWORD:?Run ./start.sh first}
       ETAYE_IDENTITY_PASSWORD: ${ETAYE_IDENTITY_PASSWORD:?Run ./start.sh first}
       ETAYE_DEMO_ENABLED: "true"
+      # The recovery inbox listens on the API container's own loopback and has no published port.
+      ETAYE_DEMO_RECOVERY_INBOX: ${ETAYE_DEMO_RECOVERY_INBOX:-false}
       # Loopback package only: fictional practitioners register and correct patients (story 3.1).
       ETAYE_DEMO_PATIENT_INPUT_ENABLED: "true"
 

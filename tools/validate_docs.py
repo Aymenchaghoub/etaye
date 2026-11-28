@@ -36,7 +36,13 @@ STORY_10_2_TRACKED_PATH = re.compile(
 STORY_1_3_WEB_FIXTURES = {"apps/web/tests/fixtures/practice-switch.html",
                           "apps/web/tests/fixtures/practice-switch.tsx"}
 STORY_9_1_TRACKED_PATHS = {
+    "apps/web/demo-e2e/identity.spec.ts",
     "apps/web/demo-e2e/journey.spec.ts",
+    "apps/web/demo-e2e/platform.spec.ts",
+    "apps/web/demo-e2e/practices.spec.ts",
+    "apps/web/demo-e2e/reception.spec.ts",
+    "apps/web/demo-e2e/record-evidence.spec.ts",
+    "apps/web/demo-e2e/support.ts",
     "apps/web/playwright.demo.config.ts",
     "apps/web/warmup.html",
     "infra/demo/README.md",
@@ -48,7 +54,9 @@ STORY_9_1_TRACKED_PATHS = {
     "infra/demo/nginx.conf",
     "infra/demo/security-headers.conf",
     "infra/demo/postgres.Dockerfile",
+    "infra/demo/recovery-inbox.py",
     "infra/demo/start.sh",
+    "infra/demo/walkthrough.fr.txt",
     "infra/demo/web.Dockerfile",
 }
 STORY_1_4_TRACKED_PATHS = {"apps/web/demo-e2e/isolation.spec.ts"}
