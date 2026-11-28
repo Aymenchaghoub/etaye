@@ -1,0 +1,58 @@
+Étaye · Démonstration locale
+
+Toutes les personnes et les données sont fictives. N’utilisez aucune donnée réelle.
+Utilisez le mot de passe commun Etaye-Jeu-Fictif-91! pour les comptes préchargés.
+
+Bienvenue et identité · 8 min
+Depuis le dépôt, lancez cette commande pour démarrer la démo avec la boîte locale.
+ETAYE_DEMO_RECOVERY_INBOX=true ./infra/demo/start.sh
+
+À /connexion, ouvrez l’espace de nora.lefebvre@example.test. Dans un autre
+profil de navigateur, choisissez « Mot de passe oublié ? » et demandez un
+lien pour Nora. Lancez ensuite python3 infra/demo/recovery-inbox.py depuis le
+dépôt. Si vous avez choisi un projet Compose personnalisé, exportez la même
+valeur de COMPOSE_PROJECT_NAME dans ce terminal. Ouvrez le fichier privé
+indiqué, suivez le lien de Nora, puis supprimez le fichier. Reprenez la
+session expirée avec le nouveau mot de passe.
+
+Dans un profil déconnecté, activez le compte d’Alex Rivière avec
+/invitation#etaye-fictional-invitation-INV-TEAM-01. Déconnectez-vous puis ouvrez
+/invitation#etaye-fictional-invitation-INV-PORTAL-03. Pour Marie Collet, entrez
+le 12/03/1990 et un mot de passe fictif. Son espace patient s’ouvre.
+
+Deux cabinets · 3 min
+Connectez-vous avec sami.rahmani@example.test. Dans « Choisir un contexte de
+travail », ouvrez le Cabinet des Tilleuls. Claire est dans « Patients ».
+Choisissez « Changer de contexte » pour ouvrir le Cabinet du Canal, où figure
+Hugo. Revenez aux Tilleuls et vérifiez que chaque cabinet garde sa liste.
+
+Accueil d’un patient · 6 min
+Comme Nora, cherchez « Mar Claire » dans « Patients », puis « Créer un dossier
+patient ». Enregistrez Jeanne Dupont, née le 02/06/1985. Proposez ensuite
+Juliette Dupont avec la même date pour voir le signalement d’un dossier
+semblable. Vérifiez qu’il s’agit d’une autre personne fictive avant de
+choisir « Créer quand même ».
+Ouvrez « Modifier l’identité » pour Jeanne dans deux onglets. Enregistrez une
+correction dans le second, puis essayez d’enregistrer la première version.
+La saisie reste affichée pendant la comparaison. Relisez et enregistrez.
+
+Dossier et preuves · 6 min
+Comme Nora, ouvrez Claire dans « Patients ». Explorez la chronologie, puis
+« Antécédents et allergies » → « Examiner les sources ». Dans « Mesures »,
+comparez le poids actuel au dossier du 20/10/2026 à 10:14. Revenez à la
+situation actuelle. Dans « Biologie », ouvrez la source du glucose et son
+intervalle fourni. Dans le dossier de Marie, examinez l’intervalle absent
+d’Analyse B et les deux versions d’Analyse A.
+
+Plateforme et isolation · 4 min
+La racine attend la disponibilité de la base. Ouvrez /api/v1/meta pour les
+versions, et /demonstration?theme=clair ou /demonstration?theme=sombre pour
+les thèmes. Sur la démonstration, « Prouvez l’isolation » rejoue les contrôles
+d’accès avec Nora, mila.dubois@example.test et claire.martin@example.test.
+Les vérifications CSRF et audit sont décrites dans infra/demo/README.md.
+
+Réinitialiser
+Connectez-vous avec operateur@example.test, revenez à /demonstration puis
+confirmez « Réinitialiser la démonstration ». Le jeu fictif est restauré et
+les sessions ouvertes sont fermées. Attendez 30 secondes entre deux
+réinitialisations.

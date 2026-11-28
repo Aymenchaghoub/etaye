@@ -14,7 +14,7 @@ COPY docs/decisions docs/decisions
 COPY docs/references/hey-api-license.md docs/references/hey-api-license.md
 COPY tools tools
 FROM dependencies AS build-local
-COPY infra/demo/README.md /demo-guide.txt
+COPY infra/demo/walkthrough.fr.txt /demo-guide.txt
 ENV VITE_ETAYE_LOCAL_DEMO=true
 RUN corepack pnpm --filter etaye-web build && cp /demo-guide.txt apps/web/dist/demo-guide.txt
 

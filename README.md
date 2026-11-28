@@ -9,7 +9,7 @@
 
 ## Current scope
 
-Nine stories of increment 1 are merged, listed in merge order. The [API guide](docs/contracts/README.md#runtime-coverage) lists the operations served so far.
+Eleven stories of increment 1 are merged, listed in merge order. The [API guide](docs/contracts/README.md#runtime-coverage) lists the operations served so far.
 
 - **Story 10.1** delivers a runnable Spring Boot, React and PostgreSQL foundation. It includes a technical readiness page, practice-scoped patient and record API operations, session and CSRF foundations, and an audit trail for access denials. [PR #33](https://github.com/Aymenchaghoub/etaye/pull/33) · [Implementation record](docs/implementation-artifacts/story-10-1-implementation-record.md)
 - **Story 10.2** adds the OpenAPI-generated TypeScript client, version discovery, and the token generator for the light and dark web themes. [PR #44](https://github.com/Aymenchaghoub/etaye/pull/44) · [Implementation record](docs/implementation-artifacts/story-10-2-implementation-record.md)
@@ -20,11 +20,13 @@ Nine stories of increment 1 are merged, listed in merge order. The [API guide](d
 - **Story 1.4** adds the guided isolation proof and an adversarial isolation matrix measured in the `API verify` job. [PR #58](https://github.com/Aymenchaghoub/etaye/pull/58) · [Implementation record](docs/implementation-artifacts/story-1-4-implementation-record.md)
 - **Story 3.1** adds the practitioner shell with patient search, registration with the duplicate rule, and correction under `If-Match`. [PR #59](https://github.com/Aymenchaghoub/etaye/pull/59) · [Implementation record](docs/implementation-artifacts/story-3-1-implementation-record.md)
 - **Story 3.2** adds read-only exploration of a record: the dated chronology, explicit assertions, sources and a view at a past instant. [PR #68](https://github.com/Aymenchaghoub/etaye/pull/68) · [Implementation record](docs/implementation-artifacts/story-3-2-implementation-record.md)
+- **Story 3.3** adds measurement readings, eligible trends and the correction history. [PR #71](https://github.com/Aymenchaghoub/etaye/pull/71) · [Implementation record](docs/implementation-artifacts/story-3-3-implementation-record.md)
+- **Story 3.4** adds laboratory results with supplied intervals, dated sources and the correction history. [PR #105](https://github.com/Aymenchaghoub/etaye/pull/105) · [Implementation record](docs/implementation-artifacts/story-3-4-implementation-record.md)
 - The consultation workspace, documents and publication, the patient portal pages and the Expo client are planned. [Story delivery order](docs/planning-artifacts/story-delivery-order.md) · [Roadmap](docs/planning-artifacts/roadmap.md) · [Design coverage](docs/design/coverage.csv)
 
 ## Run the local demonstration
 
-Start the Compose package with `./infra/demo/start.sh` and open `http://localhost:4179`. Choose a fictional practitioner, patient or administration scenario. As the practitioner you can search and register patients and read a record's chronology and sources; **Prouvez l’isolation** replays four real refusals against the running API. The guide lists the fictional accounts, the reset procedure and the recorded Playwright walkthrough. [Local demonstration guide](infra/demo/README.md)
+Start the Compose package with `./infra/demo/start.sh` and open `http://localhost:4179`. Follow the guided routes for account activation and recovery, two isolated practices, patient registration and identity correction, dated record evidence, and the platform checks. The record route includes measurements and laboratory results. **Prouvez l’isolation** replays the existing access checks against the running API. All people and records are fictional. [Local demonstration guide](infra/demo/README.md) · [Baseline coverage audit](docs/implementation-artifacts/local-demo-coverage.md)
 
 ## Develop locally
 
