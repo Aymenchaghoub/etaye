@@ -176,6 +176,12 @@ Aymen replied “Oui je valide et j’autorise la développement et tu peux la c
 | UD-80 | Authorized for **story 3.4 only**, within the increment-1 read-only scope and approved design of UD-78 and UD-79. | Enables the contract-first implementation of the lab result and bounded lineage reads, scoped synthetic storage/seed, S-12, real-stack verification and design comparison. D-24 retains I-07 and both writes. The global flag remains false, and running-UI and merge decisions remain separate. [Context packet](../implementation-artifacts/story-3-4-context-packet.md) |
 | UD-81 | Aymen asks to continue story 3.4 and perform its BMAD three-lens review with Zcode and GLM-5.4, without Codex subagents. | The end-of-story review follows the recorded Zcode method in isolated, guarded mode. Subsequent implementation and review triage are performed by the primary agent. [Delivery rules](../operations/delivery-rules.md) |
 
+## Story 3.4 running interface and merge decisions — 2026-11-28
+
+| Decision | Statement | Effect |
+| --- | --- | --- |
+| UD-82 | After receiving the S-12 running comparison for application revision `ef9afa9`, Aymen wrote “j'approuve, tu peux merger”. He approves the running interface as presented, including the responsive layout, dated sources and correction history. He also authorizes the squash merge of PR #105 into `main`. | The running-UI and merge authorization decisions are recorded for story 3.4. The merge follows the repository delivery checks. D-24 still governs I-07 and the two increment-2 write operations. [Running comparison](../design/reviews/2026-11-27-story-3-4-runtime.html) · [PR #105](https://github.com/Aymenchaghoub/etaye/pull/105) |
+
 ## Working assumptions and decisions to revisit
 
 | ID | Classification and working choice | Rationale | Consequences and impact if changed | Owner / explicit revisit trigger |
