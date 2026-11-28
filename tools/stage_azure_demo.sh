@@ -50,9 +50,16 @@ jq -e '
     any(.properties.configuration.ingress.traffic[]; .weight == 100 and (.revisionName | type == "string"))
 ' <<<"$before" >/dev/null
 active_source=$(jq -er '.tags.SourceSha | select(test("^[a-f0-9]{40}$"))' <<<"$before")
+traffic_pin=$(jq -er '.properties.configuration.ingress.traffic[]
+    | select(.weight == 100 and (.revisionName | type == "string")) | .revisionName' <<<"$before")
 git merge-base --is-ancestor "$active_source" "$source"
-git diff --quiet "$active_source" "$source" -- apps/api/src/main/resources/db ||
-    { echo 'This release requires controlled one-shot schema migration and compatibility verification.' >&2; exit 1; }
+receipt_digest=
+if git diff --quiet "$active_source" "$source" -- apps/api/src/main/resources/db; then
+    [[ -z "${DEMO_MIGRATION_RECEIPT:-}" ]] ||
+        { echo 'This release has no database changes and takes no migration receipt.' >&2; exit 1; }
+else
+    receipt_digest=$(bash tools/verify_demo_migration_receipt.sh "$manifest" "$source" "$active_source" "$traffic_pin")
+fi
 payload=$(mktemp "$RUNNER_TEMP/demo-template.XXXXXX")
 trap 'unlink "$payload"' EXIT
 api=$(jq -er '.images.api.reference' "$manifest")
@@ -70,10 +77,16 @@ jq --arg api "$api" --arg web "$web" --arg revision "$revision" '
 az rest --method patch --url "$url?$version" --body "@$payload" --only-show-errors --output none
 for attempt in {1..40}; do
     result=$(read_app)
+    jq -e --arg pin "$traffic_pin" '
+        .properties.configuration.activeRevisionsMode == "Multiple" and
+        all(.properties.configuration.ingress.traffic[]; .latestRevision != true) and
+        any(.properties.configuration.ingress.traffic[]; .weight == 100 and .revisionName == $pin)
+    ' <<<"$result" >/dev/null
     if jq -e --arg revision "ca-etaye-demo--$revision" '.properties.latestReadyRevisionName == $revision' <<<"$result" >/dev/null; then
-        jq --arg sha "$source" '
+        jq --arg sha "$source" --arg receipt "$receipt_digest" '
             {app:.name,mode:"staged-no-traffic",sourceSha:$sha,revision:.properties.latestReadyRevisionName,
              traffic:.properties.configuration.ingress.traffic,images:[.properties.template.containers[].image]}
+            + (if $receipt == "" then {} else {migrationReceiptSha256:$receipt} end)
         ' <<<"$result" > "$evidence"
         exit 0
     fi

@@ -2,6 +2,12 @@
 
 Updated: 2026-11-28. Owner: Aymen Chaghoub.
 
+## Protected staging after the demonstration release — 2026-11-28
+
+**Release.** [PR #106](https://github.com/Aymenchaghoub/etaye/pull/106) merged to protected main at `016d99a7e8f03da458d23aff189cf216ce62f7d6`. The required checks and applicable SonarQube gates passed. All three CodeRabbit threads were resolved. The follow-up review reached the included quota. [Publication 46142317544](https://github.com/Aymenchaghoub/etaye/actions/runs/46142317544) published the exact candidate. The signed manifest, immutable registry manifests and both image attestations verified. The runtime images had zero high or critical scan findings. The migrator's 16 high findings match the already reviewed first release.
+
+**User decision and delivery boundary.** Aymen approved preparation of the migration and adaptation of protected staging after comparing the options. Azure still serves `8ea8b98` in Single mode and Neon is at V11, with synthetic fixture generation 1. The proof verifier and workflow are proposed on `fix/demo-migration-staging`. The [runbook](operations/cloud-demo-runbook.md#stage-a-release-with-database-changes) records the release, pinned revision, exact managed history and migration proof checks. The signing key enrollment, active database migration, change to revision mode and traffic promotion require the reviewed live procedure and are outside the preparation step.
+
 ## Expanded local demonstration — 2026-11-28
 
 **Scope and artifacts.** `feat/9.1-demo-journey-coverage` extends the walkthrough of the eleven merged increment-1 stories at baseline `bffafbd7a2fadf782fcd652ed634dc1660b9721b`. The [baseline audit](implementation-artifacts/local-demo-coverage.md) distinguishes covered product surfaces, API-only proof and deferred work. The [Compose guide](../infra/demo/README.md#guided-routes) and packaged French text describe identity, practice switching, patient reception, record evidence and platform checks. The two existing replay files stay in place.
