@@ -102,6 +102,7 @@ class PathScenarioTest(unittest.TestCase):
     def test_docker_and_compose_reach_the_package_only(self):
         self.assertEqual(scopes_of("infra/demo/compose.yml"), {"package"})
         self.assertEqual(scopes_of("infra/local/init-roles.sh"), {"package"})
+        self.assertEqual(scopes_of("tools/configure_cloud_edge.sh"), {"package"})
         self.assertEqual(scopes_of(".dockerignore"), {"package"})
 
     def test_documentation_and_agent_tooling_change_nothing(self):

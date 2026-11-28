@@ -2,6 +2,14 @@
 
 Updated: 2026-11-28. Owner: Aymen Chaghoub.
 
+## Cloud demo private access preparation — 2026-11-28
+
+**Phase and artifacts.** `fix/demo-domain-private-access`, based on main `016d99a7e8f0`, prepares a Basic-by-default Nginx configuration with explicit IP-only mode and an optional same-origin custom hostname. [UD-83](planning-artifacts/decisions-assumptions.md#cloud-demo-private-access-preparation--2026-11-28) records Aymen's scope. The [cloud access document](operations/cloud-demo-access.md) records two domain candidates, verified rates, the DNS and certificate procedure, rollback and prerequisites for a public showcase.
+
+**Verified.** Azure read-back found one operator IPv4 allow rule, no custom domains or extra ports and active source `8ea8b9826685` in Single mode. Operator-network requests observed the Basic challenge over TLS and a redirect from HTTP. The local cloud image passed real Spring and PostgreSQL regressions for both edge modes and both host paths. Unsupported settings fail closed. Java 25 Maven verify passed 306 tests and the real Compose package passed 14 Chromium scenarios. Bicep compiles and retains the HTTPS-only Nginx ingress and single operator rule. Azure provider what-if predicted an update to the existing app and no new resources.
+
+**Open and next.** Review the PR and check its exact-head CI. Prepare a compatible signed release with restricted staging and retain the live V11 revision while [PR #107](https://github.com/Aymenchaghoub/etaye/pull/107) is pending. Verify both allowed and independent disallowed sources before any transition. The owner still chooses the domain and certificate lifecycle before any purchase or external DNS change. Public access remains outside this work.
+
 ## Expanded local demonstration — 2026-11-28
 
 **Scope and artifacts.** `feat/9.1-demo-journey-coverage` extends the walkthrough of the eleven merged increment-1 stories at baseline `bffafbd7a2fadf782fcd652ed634dc1660b9721b`. The [baseline audit](implementation-artifacts/local-demo-coverage.md) distinguishes covered product surfaces, API-only proof and deferred work. The [Compose guide](../infra/demo/README.md#guided-routes) and packaged French text describe identity, practice switching, patient reception, record evidence and platform checks. The two existing replay files stay in place.
