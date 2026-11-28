@@ -182,6 +182,12 @@ Aymen replied “Oui je valide et j’autorise la développement et tu peux la c
 | --- | --- | --- |
 | UD-82 | After receiving the S-12 running comparison for application revision `ef9afa9`, Aymen wrote “j'approuve, tu peux merger”. He approves the running interface as presented, including the responsive layout, dated sources and correction history. He also authorizes the squash merge of PR #105 into `main`. | The running-UI and merge authorization decisions are recorded for story 3.4. The merge follows the repository delivery checks. D-24 still governs I-07 and the two increment-2 write operations. [Running comparison](../design/reviews/2026-11-27-story-3-4-runtime.html) · [PR #105](https://github.com/Aymenchaghoub/etaye/pull/105) |
 
+## Cloud demo private access preparation — 2026-11-28
+
+| Decision | Statement | Effect |
+| --- | --- | --- |
+| UD-83 | Aymen authorized preparation of a custom HTTPS hostname and conditional removal of the Nginx Basic challenge. The live simplification depends on effective existing IP restrictions, unchanged app security and a compatible authorized deployment. A custom domain purchase, external DNS changes, new paid services and public exposure each require explicit approval. | Prepare and verify the opt-in edge mode and optional domain binding. Retain the operator-only IP allowlist, keep Basic as the default and rollback, and assess the public prerequisites. The candidate name, certificate choice and live acceptance evidence remain open. No feature development or new identity provider is authorized. [Cloud access preparation](../operations/cloud-demo-access.md) |
+
 ## Working assumptions and decisions to revisit
 
 | ID | Classification and working choice | Rationale | Consequences and impact if changed | Owner / explicit revisit trigger |

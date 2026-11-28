@@ -97,6 +97,8 @@ The runtime uses one same-origin Container App. Nginx is the only ingress on por
 
 The first access model requires the operator's approved IPv4 address and independent Basic authentication before application sign-in. Keep visitor credentials in the operator's private store. Open the French synthetic-data notice before entering the app and use only fixture identities. The shared demonstration allows clinical reads. Patient writes, fixture reset, invitation acceptance and account recovery are blocked at ingress. The runtime uses no external AI or email services.
 
+The [cloud access preparation](cloud-demo-access.md) documents the explicit IP-restricted profile, the default Basic rollback, optional same-origin HTTPS hostname binding and the separate rollout gates. Azure retains the operator-only policy in both private profiles.
+
 The [release workflow](../../.github/workflows/release.yml) dispatches on protected main. It verifies the exact candidate archives and reports before the protected publishing job copies the verified OCI manifests to GHCR. That job compares registry bytes, verifies SLSA and CycloneDX metadata and signs the final release manifest. The initial API and Web scans had zero high or critical findings. The migrator had 16 reviewed high findings and zero critical findings. Secret scans of the exact three archives and image configurations found zero findings. Store the signed release record and its evidence independently of the workflow artifact retention.
 
 For first deployment, verify the signed manifest and its source SHA, verify all three image attestations and compare the anonymous registry manifests by digest. Supply the selected API and Web digests, direct Neon hostname, authorized operator IPv4, visitor password hash and separate runtime and identity passwords to the Bicep parameters. Use a mode-0600 secure parameter file outside Git and a separate placeholder file for provider validation and what-if. Apply only the expected Container App change. Remove transient parameter files after use. Verify the ingress hostname, resource allocation, revision state and exact image digests from Azure.
@@ -104,6 +106,17 @@ For first deployment, verify the signed manifest and its source SHA, verify all 
 The [protected delivery workflow](../../.github/workflows/deploy-demo.yml) takes the publication run ID and full release SHA. Start with `stage=false` to verify release integrity and federated access without writing the app. The GitHub `demo` environment requires review and restricts deployment to main. The Azure managed identity trusts the one immutable GitHub repository subject for `Aymenchaghoub/etaye` and `demo`. The subject is the repository's `sub_claim_prefix` from `GET /repos/Aymenchaghoub/etaye/actions/oidc/customization/sub`, followed by `:environment:demo`. Keep the exact issuer `https://token.actions.githubusercontent.com` and audience `api://AzureADTokenExchange`. The initial legacy name-only binding returned `AADSTS700213`. [GitHub immutable subjects](https://docs.github.com/en/actions/reference/security/oidc#immutable-subject-claims) Its custom revision publisher role is assigned only to `ca-etaye-demo`. Runtime database credentials stay in Container Apps secrets. Protected run 46031644684 verified this federation in read-only mode against the actual healthy revision. [OIDC verification](https://github.com/Aymenchaghoub/etaye/actions/runs/46031644684)
 
 The staging step requires Multiple revision mode and verifies that existing traffic is already pinned to one named revision before applying the new image digests. Keep Single mode for the first release and its replica envelope. Before enabling staging on a future release, assess overlapping replicas, verify the migration and compatibility prerequisites, pin known-good traffic and document how to test the candidate through restricted access. Switch traffic as a separate controlled operation after readiness and authenticated acceptance. [Entra federation](https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-create-trust-user-assigned-managed-identity) · [GitHub environments](https://docs.github.com/en/actions/reference/workflows-and-actions/deployments-and-environments)
+
+Both settings are application-scope changes: they create no revision and leave the serving replicas and the ingress rule as they are. Read back `Multiple` and one named entry at `100` with no `latestRevision` entry before any staging run.
+
+```bash
+az containerapp revision set-mode --subscription "$ETAYE_AZURE_SUBSCRIPTION" \
+  --resource-group rg-etaye-demo --name ca-etaye-demo --mode multiple
+
+az containerapp ingress traffic set --subscription "$ETAYE_AZURE_SUBSCRIPTION" \
+  --resource-group rg-etaye-demo --name ca-etaye-demo \
+  --revision-weight "$ETAYE_KNOWN_GOOD_REVISION=100"
+```
 
 ### Stage a release with database changes
 
@@ -129,7 +142,7 @@ The protected `demo` environment accepts an operator-signed migration receipt fo
      -f source_sha="$ETAYE_RELEASE_SHA" -f stage=true -F migration_receipt=@receipt-input.txt
    ```
 
-4. Review the protected `demo` job only after the receipt and capacity assessment match the approved operation. The workflow checks that the same traffic pin holds while waiting for the candidate. Test the staged HTTPS revision with the restricted browser campaign and record the deployment evidence. Traffic promotion remains a separate operator action. Releases without database changes take no receipt.
+4. Review the protected `demo` job only after the receipt and capacity assessment match the approved operation. The workflow checks that the same traffic pin holds while waiting for the candidate. Follow the [exact candidate hostname procedure](cloud-demo-access.md#verify-an-unpromoted-revision) for the restricted browser campaign and record the deployment evidence. Traffic promotion remains a separate operator action. Releases without database changes take no receipt.
 
 ## First acceptance, rollback and operation
 
@@ -170,6 +183,6 @@ az containerapp ingress access-restriction set --subscription "$ETAYE_AZURE_SUBS
   --rule-name demo-operator --action Allow --ip-address "$ETAYE_APPROVED_IPV4/32"
 ```
 
-Verify the only app revision, approved ingress rule, HTTPS visitor challenge and signed-in synthetic readiness after resumption. Use the signed initial release as the first known-good digest pair. For a future Multiple revision deployment, restore the reviewed known-good traffic pin when a candidate fails. Treat database recovery separately and validate a restore in an isolated synthetic target before considering a switch.
+After resumption, verify the expected serving revision, the approved ingress rule and signed-in synthetic readiness over HTTPS. In `basic` mode, expect a visitor challenge before Étaye sign-in. In `ip-restricted` mode, expect direct access to Étaye sign-in from the operator network and denial from an independent network. Use the signed initial release as the first known-good digest pair. For a future Multiple revision deployment, restore the reviewed known-good traffic pin when a candidate fails. Treat database recovery separately and validate a restore in an isolated synthetic target before considering a switch.
 
 To revoke deployment access, remove the one `Etaye Demo Revision Publisher` role assignment at the `ca-etaye-demo` resource and, if needed, remove the exact `github-demo` federated credential after recording the rollback decision. This identity serves workflow access to Azure only. Runtime database secrets and the public registry images have independent access paths.

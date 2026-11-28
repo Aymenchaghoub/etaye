@@ -64,7 +64,7 @@ AZURE_FOUNDATION_PATHS = {"infra/azure/foundation.bicep", "infra/azure/environme
 AZURE_RUNTIME_PATHS = {
     "infra/azure/app.bicep",
     "infra/azure/cloud-api.conf",
-    "infra/azure/cloud.conf.template",
+    "infra/azure/cloud.conf",
     "infra/azure/nginx.conf",
     "infra/azure/notice.css",
     "infra/azure/notice.html",

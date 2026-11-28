@@ -27,10 +27,9 @@ COPY infra/demo/security-headers.conf /etc/nginx/etaye/security-headers.conf
 FROM proxy AS cloud-proxy
 RUN mkdir -p /etc/nginx/cloud-conf && chown nginx:nginx /etc/nginx/cloud-conf
 COPY infra/azure/nginx.conf /etc/nginx/nginx.conf
-COPY infra/azure/cloud.conf.template /etc/nginx/templates/cloud.conf.template
+COPY infra/azure/cloud.conf /etc/nginx/cloud-conf/cloud.conf
 COPY infra/azure/cloud-api.conf /etc/nginx/etaye/cloud-api.conf
-ENV NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx/cloud-conf
-ENV NGINX_ENVSUBST_FILTER=^ETAYE_INGRESS_HOST$
+COPY --chmod=755 tools/configure_cloud_edge.sh /docker-entrypoint.d/15-etaye-cloud-edge.sh
 
 FROM cloud-proxy AS cloud
 COPY --from=build-cloud /src/apps/web/dist /usr/share/nginx/html

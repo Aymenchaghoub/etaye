@@ -31,12 +31,39 @@ param identityPassword string
 @description('Visitor entry in the nginx password file, stored as a salted hash.')
 param visitorHash string
 
+@description('Visitor gate for both hostnames. IP-restricted mode assumes the operator-only ingress rule in this template.')
+@allowed([
+  'basic'
+  'ip-restricted'
+])
+param edgeAuthMode string = 'basic'
+
+type CustomDemoDomain = {
+  @minLength(1)
+  @maxLength(253)
+  hostname: string
+  @minLength(1)
+  certificateId: string
+}
+
+@description('Optional custom hostname and existing certificate in the Container Apps environment.')
+param customDemoDomain CustomDemoDomain?
+
+@description('Unique lowercase change tag for a configuration-only revision of an already deployed commit.')
+@minLength(1)
+@maxLength(20)
+param revisionTag string?
+
 resource environment 'Microsoft.App/managedEnvironments@2025-07-01' existing = {
   name: 'cae-etaye-demo'
 }
 
 var appName = 'ca-etaye-demo'
 var host = '${appName}.${environment.properties.defaultDomain}'
+var customHost = customDemoDomain.?hostname ?? ''
+var browserOrigins = empty(customHost) ? 'https://${host}' : 'https://${host},https://${customHost}'
+var releaseSuffix = 'git-${substring(sourceSha, 0, 12)}'
+var revisionSuffix = empty(revisionTag) ? releaseSuffix : '${releaseSuffix}-${revisionTag}'
 var jdbcUrl = 'jdbc:postgresql://${neonDirectHost}:5432/etaye_demo_cloud?sslmode=verify-full&sslfactory=org.postgresql.ssl.DefaultJavaSSLFactory&channelBinding=require&connectTimeout=8&socketTimeout=10'
 var packagePrefix = 'ghcr.io/aymenchaghoub/etaye'
 
@@ -62,6 +89,13 @@ resource application 'Microsoft.App/containerApps@2025-07-01' = {
         allowInsecure: false
         targetPort: 8081
         transport: 'http'
+        customDomains: customDemoDomain == null ? [] : [
+          {
+            name: customHost
+            bindingType: 'SniEnabled'
+            certificateId: customDemoDomain!.certificateId
+          }
+        ]
         ipSecurityRestrictions: [
           {
             name: 'demo-operator'
@@ -72,7 +106,7 @@ resource application 'Microsoft.App/containerApps@2025-07-01' = {
       }
     }
     template: {
-      revisionSuffix: 'git-${substring(sourceSha, 0, 12)}'
+      revisionSuffix: revisionSuffix
       scale: {
         minReplicas: 0
         maxReplicas: 1
@@ -96,6 +130,8 @@ resource application 'Microsoft.App/containerApps@2025-07-01' = {
           ]
           env: [
             { name: 'ETAYE_INGRESS_HOST', value: host }
+            { name: 'ETAYE_CUSTOM_INGRESS_HOST', value: customHost }
+            { name: 'ETAYE_EDGE_AUTH_MODE', value: edgeAuthMode }
           ]
           probes: [
             { type: 'Startup', tcpSocket: { port: 8081 }, periodSeconds: 2, timeoutSeconds: 2, failureThreshold: 60 }
@@ -116,7 +152,7 @@ resource application 'Microsoft.App/containerApps@2025-07-01' = {
             { name: 'SPRING_FLYWAY_ENABLED', value: 'false' }
             { name: 'ETAYE_DEMO_ENABLED', value: 'false' }
             { name: 'ETAYE_DEMO_PATIENT_INPUT_ENABLED', value: 'false' }
-            { name: 'ETAYE_WEB_ALLOWED_ORIGINS', value: 'https://${host}' }
+            { name: 'ETAYE_WEB_ALLOWED_ORIGINS', value: browserOrigins }
             { name: 'SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE', value: '0' }
             { name: 'SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE', value: '4' }
             { name: 'SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT', value: '9000' }
