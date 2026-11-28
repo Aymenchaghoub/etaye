@@ -107,6 +107,17 @@ The [protected delivery workflow](../../.github/workflows/deploy-demo.yml) takes
 
 The staging step requires Multiple revision mode and verifies that existing traffic is already pinned to one named revision before applying the new image digests. Keep Single mode for the first release and its replica envelope. Before enabling staging on a future release, assess overlapping replicas, verify the migration and compatibility prerequisites, pin known-good traffic and document how to test the candidate through restricted access. Switch traffic as a separate controlled operation after readiness and authenticated acceptance. [Entra federation](https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-create-trust-user-assigned-managed-identity) · [GitHub environments](https://docs.github.com/en/actions/reference/workflows-and-actions/deployments-and-environments)
 
+Both settings are application-scope changes: they create no revision and leave the serving replicas and the ingress rule as they are. Read back `Multiple` and one named entry at `100` with no `latestRevision` entry before any staging run.
+
+```bash
+az containerapp revision set-mode --subscription "$ETAYE_AZURE_SUBSCRIPTION" \
+  --resource-group rg-etaye-demo --name ca-etaye-demo --mode multiple
+
+az containerapp ingress traffic set --subscription "$ETAYE_AZURE_SUBSCRIPTION" \
+  --resource-group rg-etaye-demo --name ca-etaye-demo \
+  --revision-weight "$ETAYE_KNOWN_GOOD_REVISION=100"
+```
+
 ### Stage a release with database changes
 
 The protected `demo` environment accepts an operator-signed migration receipt for releases with changes under the database resource directory. Stage the exact source SHA and publication run. Keep the operator's signing key and the Neon credential outside GitHub. After the key enrollment is approved, set `DEMO_MIGRATION_PUBLIC_KEY` in the protected environment to the first two fields of its Ed25519 OpenSSH public key. Staging verifies the signature with that key and preserves the receipt's SHA-256 digest in the revision evidence.
