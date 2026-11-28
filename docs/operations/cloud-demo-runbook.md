@@ -107,6 +107,32 @@ The [protected delivery workflow](../../.github/workflows/deploy-demo.yml) takes
 
 The staging step requires Multiple revision mode and verifies that existing traffic is already pinned to one named revision before applying the new image digests. Keep Single mode for the first release and its replica envelope. Before enabling staging on a future release, assess overlapping replicas, verify the migration and compatibility prerequisites, pin known-good traffic and document how to test the candidate through restricted access. Switch traffic as a separate controlled operation after readiness and authenticated acceptance. [Entra federation](https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-create-trust-user-assigned-managed-identity) · [GitHub environments](https://docs.github.com/en/actions/reference/workflows-and-actions/deployments-and-environments)
 
+### Stage a release with database changes
+
+The protected `demo` environment accepts an operator-signed migration receipt for releases with changes under the database resource directory. Stage the exact source SHA and publication run. Keep the operator's signing key and the Neon credential outside GitHub. After the key enrollment is approved, set `DEMO_MIGRATION_PUBLIC_KEY` in the protected environment to the first two fields of its Ed25519 OpenSSH public key. Staging verifies the signature with that key and preserves the receipt's SHA-256 digest in the revision evidence.
+
+1. Download and verify the published release. Confirm the serving revision, its source SHA and its traffic pin in Azure. Confirm the exact Neon demo database, Flyway history and intended migrations. Rehearse a fresh backup restore and upgrade on an isolated copy, preserving fixture generation and testing the old runtime against the upgraded schema. The protected Neon branch stays outside this procedure.
+2. After approval for the live step, take or confirm a fresh recoverable backup and apply the schema migrations with the exact signed migrator as the schema owner. Inspect the pending list first, then run migrate and validate with `filesystem:/flyway/schema`. Use one migration process and preserve the old workload. The switch from V11 to the published `016d99a` schema applies V13 and V15. V14 is the local fixture loader. The live fixture retains its generation and existing rows.
+3. Record the results after checking the serving version on the upgraded database. Sign a private `receipt.json` with these fields:
+
+   | Field | Required value |
+   | --- | --- |
+   | `version`, `database` | `1`, `etaye_demo_cloud` |
+   | `activeSha`, `activeRevision` | Exact source SHA and Azure revision still serving |
+   | `candidateSha`, `migrator` | Exact candidate SHA and `.images.migrate.reference` from the signed manifest |
+   | `schemaBefore`, `schemaAfter` | Arrays of version strings in numeric order, matching the successful managed Flyway histories and the respective release trees |
+   | `backupRestored`, `flywayValidated`, `activeCompatible` | True after the documented checks pass |
+   | `verifiedAt` | UTC UNIX timestamp in seconds. A receipt is valid for 24 hours. |
+
+   ```sh
+   ssh-keygen -Y sign -f "$ETAYE_MIGRATION_SIGNING_KEY" -n etaye-demo-migration receipt.json
+   printf '%s.%s' "$(base64 -w0 receipt.json)" "$(base64 -w0 receipt.json.sig)" > receipt-input.txt
+   gh workflow run deploy-demo.yml --ref main -f release_run="$ETAYE_RELEASE_RUN_ID" \
+     -f source_sha="$ETAYE_RELEASE_SHA" -f stage=true -F migration_receipt=@receipt-input.txt
+   ```
+
+4. Review the protected `demo` job only after the receipt and capacity assessment match the approved operation. The workflow checks that the same traffic pin holds while waiting for the candidate. Follow the [exact candidate hostname procedure](cloud-demo-access.md#verify-an-unpromoted-revision) for the restricted browser campaign and record the deployment evidence. Traffic promotion remains a separate operator action. Releases without database changes take no receipt.
+
 ## First acceptance, rollback and operation
 
 Before first rollout, verify the approved audience, resources and costs, and record the exact source SHA and immutable image digests. Verify role restrictions and validated schema before adding traffic. Gate subsequent promotion on known-good compatibility, staging and approved traffic switching. Keep authenticated Playwright traffic within the approved ingress access rules.
